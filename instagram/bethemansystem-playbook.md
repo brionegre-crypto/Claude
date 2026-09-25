@@ -10,45 +10,54 @@
 
 The **Name** field is searchable, but the bio is not. Put your main keyword in the Name field instead of repeating the handle.
 
-### Name field (64 character max)
+> **Updated from a review of go.bethemansystem.com.** What the site actually offers:
+> - **Free:** *Step 1 of 7*, a worksheet built on one question, "What type of man do you want to be?", which ends in a one-sentence vision statement. Signing up also adds the man to the weekly Thursday email. URL: `go.bethemansystem.com/framework`
+> - **Low-ticket store:** The Weekly Scorecard, The Father's Field Guide, The Godly Husband Field Guide, Christian Marriage Workbook for Men, The Husband's Devotional (30 Mornings), Men's Discipleship Workbook, Men's Bible Study (8 Weeks), The Prayer Strategy for Men, and the Father & Son, Christian Couples, and Forty Cards for Men conversation card sets
+> - **Membership:** The Be The Man Club, $17/month. It includes all 11 tools, Steps 1–7, a monthly Club-only tool, and the weekly email.
+> - **Voice:** calm, specific, anti-hype. "A mechanism, not a mood." "On an ordinary Tuesday." "Would your wife be able to tell?" Christian, but practical rather than preachy.
+> - **Tagline:** *Break the cycle. Build the system. Be the man.*
+> - **Brand colors:** near-black `#0B0B0C`, amber `#E18B1F`, cream `#F2EEE6`, charcoal `#141416`
+>
+> Everything below uses your real offer, not a made-up freebie.
 
-Pick one:
+### Name field (64 character max)
 
 | Option | Why it works |
 |---|---|
-| `Be The Man \| Discipline for Dads` | Brand plus two high-intent search terms (recommended) |
-| `Be The Man \| Men's Discipline Coach` | Use this if you sell coaching |
-| `Be The Man \| Fatherhood & Discipline` | Use this if fatherhood content is your strongest pillar |
+| `Be The Man \| Discipline for Husbands & Dads` | Covers your three main audiences: discipline, marriage, fatherhood (recommended) |
+| `Be The Man \| Christian Men's Discipline` | Leads with faith, which matches the store |
+| `Be The Man \| Systems for Christian Men` | Leads with the "system" angle |
 
 ### Bio (150 character max)
 
-**Option A (recommended, about 135 characters):**
+**Option A (recommended; drives to the free Step 1):**
 ```
-Run your life like a business.
-Discipline • Fatherhood • Leadership
-For men done making excuses.
-⬇️ Free 30-Day Discipline Blueprint
-```
-
-**Option B (authority angle):**
-```
-Helping men build unbreakable discipline
-& lead their families like a CEO.
-Dad • Husband • Builder
-⬇️ Get the Be The Man Scorecard (free)
+Break the cycle. Build the system.
+Discipline • Marriage • Fatherhood
+A mechanism, not a mood.
+⬇️ Free Step 1: what man do you want to be?
 ```
 
-**Option C (identity angle):**
+**Option B (faith-forward):**
 ```
-The operating system for modern men.
-Own your mornings. Lead your home.
-Build your empire.
-⬇️ Start the free 7-Day Reset
+Tools for Christian husbands & fathers.
+Not more conviction — a system.
+Weekly email every Thursday.
+⬇️ Start Step 1 free
+```
+
+**Option C (the wife test):**
+```
+Would your wife be able to tell?
+Systems for husbands & dads who meant it
+every time. Break the cycle.
+⬇️ Step 1 is free
 ```
 
 ### Other profile settings
 
-- **Link:** Use a single landing page (systeme.io funnel or link-in-bio) with **one** free lead magnet at the top. Suggested: *"The Be The Man 30-Day Discipline Blueprint (PDF)"*, a one-page daily scorecard plus a 30-day checklist.
+- **Link:** `go.bethemansystem.com/framework`, the free Step 1 page. Send cold traffic here, not to the Club checkout. If you use a multi-link page, order the links: 1) Free Step 1, 2) The Be The Man Club ($17/mo), 3) The Weekly Scorecard.
+- **Comment-to-DM keyword:** `STEP1`. Auto-DM the `/framework` link.
 - **Profile photo:** A clear face shot or a bold monogram logo on a high-contrast background. It has to be readable at 40px.
 - **Category:** "Coach" or "Education".
 - **Story Highlights** (use consistent covers):
@@ -57,11 +66,11 @@ Build your empire.
   3. **FATHERHOOD**: dad content
   4. **THE SYSTEM**: the "run yourself like a business" framework
   5. **WINS**: follower DMs and results
-  6. **FREE**: lead magnet walkthrough
+  6. **FREE**: Step 1 walkthrough
 - **Pinned posts (3):**
   1. An origin-story Reel ("Why I built the Be The Man System")
   2. Your best-performing saveable carousel
-  3. A lead magnet post ("Comment BLUEPRINT and I'll send it to you")
+  3. A Step 1 post ("Comment STEP1 and I'll send it to you")
 
 ---
 
@@ -154,7 +163,7 @@ Instagram search now indexes captions, on-screen text, alt text, and spoken audi
 [Takeaway in one sentence]
 
 💾 Save this for your next weekly review.
-👇 Comment "SYSTEM" and I'll DM you the free blueprint.
+👇 Comment "STEP1" and I'll send you the free worksheet.
 
 #mensdiscipline #fatherhood #selfimprovementformen #bethemansystem
 ```
@@ -166,7 +175,7 @@ Instagram search now indexes captions, on-screen text, alt text, and spoken audi
 ### Community engagement (30 minutes a day)
 - **15 minutes before posting:** leave thoughtful comments (10+ words, not emojis) on 10–15 posts from bigger accounts in men's development, fatherhood, and fitness. Their audience sees you.
 - **First 60 minutes after posting:** reply to every comment with a question to keep the thread going.
-- **DMs:** Welcome new followers who engage. Use comment-to-DM keywords ("Comment BLUEPRINT") with ManyChat or Instagram's built-in automations to grow your email list.
+- **DMs:** Welcome new followers who engage. Use comment-to-DM keywords ("Comment STEP1") with ManyChat or Instagram's built-in automations to grow your email list.
 - **Collabs:** Do one Collab post a month with a dad creator, fitness coach, or faith-based men's account. The post shows up to both audiences.
 - **Story interactivity:** polls ("Did you hit your 5 AM today?") and question boxes ("What's your biggest discipline struggle?"). The answers become next week's content.
 
@@ -225,13 +234,118 @@ Adjust the weekly schedule to match.
 
 ## Do this today (checklist)
 
-- [ ] Change the Name field to `Be The Man | Discipline for Dads`
+- [ ] Change the Name field to `Be The Man | Discipline for Husbands & Dads`
 - [ ] Paste in bio Option A
-- [ ] Set up the link-in-bio page with one free lead magnet
+- [ ] Set the bio link to `go.bethemansystem.com/framework`
 - [ ] Switch the category to Coach or Education
 - [ ] Create the 6 Story Highlight covers and fill START HERE
 - [ ] Pin 3 posts (origin story, best carousel, lead magnet)
 - [ ] Build one Canva carousel template in brand colors
 - [ ] Draft this week's 3 Reels and 2 carousels from the pillar examples above
-- [ ] Set up the "BLUEPRINT" comment-to-DM automation
+- [ ] Set up the "STEP1" comment-to-DM automation
 - [ ] Create the analytics tracking sheet and block Sunday for your review
+
+---
+
+## Canva designs (created with the "Be The Man" brand kit)
+
+Open each design, check it, then download it as a PNG. Suggested order and captions:
+
+| # | Design | Edit link | When to post |
+|---|---|---|---|
+| 1 | "What type of man do you want to be?" (Step 1 post) | https://www.canva.com/d/j9b4DDMYvQ31XMi | Day 1; pin it |
+| 2 | "You meant it every time." | https://www.canva.com/d/4Xux2DZfbcIQNsE | Day 2 |
+| 3 | "A goal says what. A system says when." | https://www.canva.com/d/9CkPaj8SzKnBl12 | Day 3; pin it |
+| 4 | "Would your wife be able to tell?" | https://www.canva.com/d/W9V9L6R_nT9qUPN | Day 5 |
+| 5 | The Be The Man Club, $17/mo | https://www.canva.com/d/Ey9e-Sv8wuiD3Pl | Day 7; pin it |
+| 6 | Story: Step 1 (add a link sticker to `/framework`) | https://www.canva.com/d/9P05DGd8HjV3obF | Any day; save it to the START HERE highlight |
+
+### Captions
+
+**1. Step 1**
+```
+Self discipline for men doesn't start with a bigger goal.
+
+It starts with one question: what type of man do you want to be?
+
+The attributes of that man. What each one looks like on an ordinary Tuesday. How the people in your house would know without you telling them.
+
+Then one sentence that says who he is. Every step after this gets checked against it.
+
+Twenty minutes. A pen, not your phone.
+
+💾 Save this for tonight.
+👇 Comment "STEP1" and I'll send you the worksheet free.
+
+#christianmen #mensdiscipline #godlyhusband #christianfather #bethemansystem
+```
+
+**2. You meant it every time**
+```
+New Year's. Sunday morning. The car after the argument.
+
+You meant it every time.
+
+Men don't lack conviction. What they lack is a first step that comes before the promise: a starting point the rest gets built on.
+
+That's Step 1. It's free.
+
+👇 Comment "STEP1" and I'll send it.
+
+#christianmen #selfimprovementformen #fatherhood #mensmindset #bethemansystem
+```
+
+**3. A goal says what. A system says when.**
+```
+How to stay disciplined when motivation runs out:
+
+Stop adding goals. Add a *when*.
+
+A promise with no time attached isn't a plan. It's a feeling with a deadline you never set.
+
+Every decision needs three things written down before the week starts:
+→ When it happens
+→ What counts as a miss
+→ How you'd know it held
+
+Missing once is not failure. The sheet tells you exactly what is.
+
+💾 Save this. Do it Sunday.
+
+#mensdiscipline #disciplinehabits #goalsettingformen #christianmen #bethemansystem
+```
+
+**4. Would your wife be able to tell?**
+```
+That's the whole test.
+
+Not because you announced it. Because it showed up at dinner, at bedtime, and on an ordinary Tuesday.
+
+Three of the four decisions on the Weekly Scorecard are things she can see without being told. The fourth is you naming the miss before she has to.
+
+📤 Send this to a man who's ready.
+👇 Comment "STEP1" to start free.
+
+#godlyhusband #christianmarriage #howtobeabetterhusband #christianmen #bethemansystem
+```
+
+**5. The Be The Man Club**
+```
+The Be The Man Club. $17 a month.
+
+→ All 11 tools in the store, free the day you join
+→ Steps 1–7, every worksheet, in order
+→ The monthly tool, which is Club-only and not sold anywhere
+→ One email a week: a time, a trigger, and a way to tell if it held
+
+No group chat. No badges. Cancel anytime; the files are yours to keep.
+
+If you haven't done Step 1 yet, start there. It's free.
+
+🔗 Link in bio.
+
+#christianmen #fatherhood #mensdiscipline #godlyhusband #bethemansystem
+```
+
+### Revised SEO keywords for this audience
+christian men · godly husband · christian father · how to be a better husband · how to be a better father · men's discipline · self discipline for men · how to stay disciplined · christian marriage · men's bible study · prayer for men · discipleship for men · weekly review · goal setting for men · fatherhood
