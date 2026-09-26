@@ -1099,6 +1099,7 @@ def build_classes(args, notion):
         if title.lower() not in seen:
             seen.add(title.lower())
             classes.append(pid)
+    classes.reverse()  # newest first, like the links you added by hand
     pages = exporter.pages
 
     print("\n%d classes will each get their own note, and a >> link to each will be added" % len(classes))
@@ -1142,8 +1143,20 @@ def build_classes(args, notion):
     if args.back_links_only:
         state["index_linked"] = list(set(state["index_linked"]) | set(classes))
         save_state(state)
+    if not state["index_linked"]:
+        existing_links = link_count(index_id)
+        if existing_links:
+            print('\n"%s" already has %d >> link(s). The newest classes are:' % (index_name, existing_links))
+            for pid in classes[:min(existing_links + 2, len(classes))]:
+                print("   - " + pages[pid]["title"])
+            k = input("How many of the newest classes are already linked? Type a number (0 if none): ").strip()
+            if not k.isdigit() or int(k) > len(classes):
+                sys.exit("Cancelled. Nothing was changed.")
+            state["index_linked"] = classes[:int(k)]
+            save_state(state)
     todo = [pid for pid in classes if pid not in state["index_linked"]]
     if todo:
+        print("\nNext link to add: " + pages[todo[0]]["title"])
         if not ask_click(index_id, index_name):
             sys.exit('\n! Notes wasn\'t showing "%s" in front, so no links were typed. Run the same command again.'
                      % index_name)
