@@ -855,6 +855,67 @@ def build_hub(args):
     print("\nDone. Open ✱ Ministry to check it.")
 
 
+# --------------------------------------------------------------------------
+# Undo: remove the notes this script created
+# --------------------------------------------------------------------------
+
+AS_DELETED_IDS = '''
+on run argv
+    tell application "Notes"
+        try
+            set ids to id of notes of folder "Recently Deleted" of account (item 1 of argv)
+        on error
+            return ""
+        end try
+    end tell
+    set AppleScript's text item delimiters to linefeed
+    return ids as text
+end run
+'''
+
+AS_DELETE_NOTE = '''
+on run argv
+    tell application "Notes"
+        if not (exists note id (item 1 of argv)) then return "missing"
+        delete note id (item 1 of argv)
+    end tell
+    return "deleted"
+end run
+'''
+
+
+def remove_imported(args):
+    state = load_state()
+    in_trash = set(osa(AS_DELETED_IDS, args.account).splitlines())
+    targets = [(pid, nid) for pid, nid in state["notes"].items() if nid not in in_trash]
+    if not targets:
+        print("No imported notes left to remove.")
+        return
+    print("This removes the %d notes this script created from Notion (listed in %s)."
+          % (len(targets), os.path.basename(STATE_PATH)))
+    print("Your own notes, including ✱ Ministry, ✱ Family and ✱ Home, are not touched.")
+    if input('Type DELETE to continue: ').strip() != "DELETE":
+        print("Cancelled. Nothing was removed.")
+        return
+    removed = 0
+    for n, (pid, nid) in enumerate(targets, 1):
+        result = osa(AS_DELETE_NOTE, nid)
+        if result == "deleted":
+            removed += 1
+            if removed == 1 and nid not in set(osa(AS_DELETED_IDS, args.account).splitlines()):
+                print("\n! The first note was deleted permanently instead of going to Recently Deleted.")
+                if input("Type YES to delete the rest permanently too: ").strip() != "YES":
+                    del state["notes"][pid]
+                    save_state(state)
+                    print("Stopped after 1 note.")
+                    return
+        del state["notes"][pid]
+        save_state(state)
+        print("  [%d/%d] %s" % (n, len(targets), "removed" if result == "deleted" else "already gone"))
+    print("\nRemoved %d notes. They're in Recently Deleted for 30 days if you need any back." % removed)
+    print("Done.")
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--root", default=DEFAULT_ROOT, help="Notion page ID or URL to copy (default: Sermon Prep & Teaching)")
@@ -871,6 +932,8 @@ def main():
                     help="URL style for note links (try 'notes' if links don't open)")
     ap.add_argument("--font", help="Font family to use (default: whatever your existing notes use)")
     ap.add_argument("--font-size", help="Body font size in px (default: whatever your existing notes use)")
+    ap.add_argument("--remove-imported", action="store_true",
+                    help="Delete the notes this script created (moves them to Recently Deleted)")
     ap.add_argument("--build-hub", action="store_true",
                     help="Rebuild ✱ Ministry in the ✱ Family layout with real >> links (needs --hub-id)")
     ap.add_argument("--ui-delay", type=float, default=1.2,
@@ -880,6 +943,9 @@ def main():
     args = ap.parse_args()
     if args.build_hub:
         build_hub(args)
+        return
+    if args.remove_imported:
+        remove_imported(args)
         return
 
     root_match = HEX32_RE.search(norm(args.root.split("?")[0]))
