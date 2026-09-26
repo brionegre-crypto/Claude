@@ -358,19 +358,58 @@ end run
 
 AS_FIND = '''
 on run argv
+    set out to ""
     tell application "Notes"
-        if (item 3 of argv) is "exact" then
-            set found to (notes of account (item 1 of argv) whose name is (item 2 of argv))
-        else
-            set found to (notes of account (item 1 of argv) whose name contains (item 2 of argv))
-            if (count of found) is not 1 then return ""
-        end if
-        if (count of found) = 0 then return ""
-        set n to item 1 of found
-        return (id of n) & linefeed & ((count of attachments of n) as text)
+        repeat with n in (notes of account (item 1 of argv) whose name is (item 2 of argv))
+            set out to out & (id of n) & tab & ((count of attachments of n) as text) & tab & (name of container of n) & tab & ((modification date of n) as text) & tab & (length of (plaintext of n)) & linefeed
+        end repeat
+    end tell
+    return out
+end run
+'''
+
+AS_BY_ID = '''
+on run argv
+    tell application "Notes"
+        set n to note id (item 1 of argv)
+        return (id of n) & tab & ((count of attachments of n) as text) & tab & (name of container of n) & tab & ((modification date of n) as text) & tab & (length of (plaintext of n)) & linefeed
     end tell
 end run
 '''
+
+
+def find_hub(args):
+    """Return (note id, attachment count) for the hub note, or None. Notes in
+    Recently Deleted are ignored; if several real notes share the name, list
+    them and let the user pick one with --hub-id."""
+    matched = args.hub
+    if args.hub_id:
+        rows = [osa(AS_BY_ID, args.hub_id)]
+    else:
+        rows = []
+        names = [args.hub, "%s %s" % (args.marker, args.hub)]
+        if not args.hub.lower().endswith("hub"):
+            names += ["%s Hub" % args.hub, "%s %s Hub" % (args.marker, args.hub)]
+        for name in names:
+            rows = [r for r in osa(AS_FIND, args.account, name).splitlines() if r.strip()]
+            if rows:
+                matched = name
+                break
+    notes = [r.split("\t") for r in rows]
+    live = [n for n in notes if n[2].strip().lower() != "recently deleted"]
+    if len(live) == 1:
+        return live[0][0], live[0][1]
+    if not live:
+        print('\n! Could not find your hub note "%s" in account "%s".' % (args.hub, args.account))
+        print('  Rerun with --hub "Exact Note Name". Notes already created are just updated.')
+        return None
+    print('\n! %d notes are named "%s", so the script did not pick one:' % (len(live), matched))
+    for i, (nid, att, folder, modified, length) in enumerate(live, 1):
+        print("  %d) folder: %s | last edited: %s | %s characters | %s attachments"
+              % (i, folder, modified, length, att))
+        print("     --hub-id \"%s\"" % nid)
+    print("  Open each in Notes to see which is your real hub, then rerun with its --hub-id line.")
+    return None
 
 AS_BODY = '''
 on run argv
@@ -575,16 +614,10 @@ def update_hub(args, exporter, uuids, state, font):
     if not classes:
         print("\nNo class pages matched for the hub; skipping hub.")
         return
-    found = ""
-    for name in (args.hub, "%s %s" % (args.marker, args.hub)):
-        found = found or osa(AS_FIND, args.account, name, "exact")
+    found = find_hub(args)
     if not found:
-        found = osa(AS_FIND, args.account, "Ministry", "contains")
-    if not found:
-        print('\n! Could not find your hub note "%s" in account "%s".' % (args.hub, args.account))
-        print('  Rerun with --hub "Exact Note Name" (only the hub step will run).')
         return
-    hub_id, attachments = found.split("\n")
+    hub_id, attachments = found
     links = "".join("<li>%s</li>" % link_placeholder(c, pages[c]["display"]) for c in classes)
     section = with_font(resolve_links(
         "<div><br></div><h2>%s</h2><ul>%s</ul><div>All teaching: %s</div>" % (
@@ -604,8 +637,8 @@ def update_hub(args, exporter, uuids, state, font):
         f.write(old)
     osa(AS_UPDATE, hub_id, html_text=old + section)
     state["hub_done"] = True
-    print('\nAdded "%s" section to "%s" (previous version saved to %s).'
-          % (args.hub_heading, args.hub, os.path.basename(backup)))
+    print('\nAdded "%s" section to your hub note (previous version saved to %s).'
+          % (args.hub_heading, os.path.basename(backup)))
 
 
 def main():
@@ -615,7 +648,8 @@ def main():
     ap.add_argument("--account", default="iCloud", help="Apple Notes account (default: iCloud)")
     ap.add_argument("--folder", default="Notes", help="Apple Notes folder (Forever Notes keeps everything in Notes)")
     ap.add_argument("--marker", default="✱", help="Prefix for hub/collection note titles (default: ✱)")
-    ap.add_argument("--hub", default="Ministry Hub", help="Name of your hub note; ✱ prefix is tried automatically")
+    ap.add_argument("--hub", default="Ministry", help="Name of your hub note; ✱ prefix and ' Hub' are tried automatically")
+    ap.add_argument("--hub-id", help="Exact note id of your hub, when several notes share its name")
     ap.add_argument("--hub-heading", default="Classes", help="Headline added to the hub note")
     ap.add_argument("--hub-match", default="class", help="Root sub-pages whose title matches this go under the hub headline")
     ap.add_argument("--no-hub", action="store_true", help="Don't touch the hub note")
