@@ -980,11 +980,8 @@ AS_UI_APPEND_LINK = '''
 on run argv
     set q to item 1 of argv
     set d to (item 2 of argv) as real
-    set expectedRole to item 3 of argv
     tell application "System Events" to tell process "Notes"
         if not frontmost then error "Notes is no longer the front app."
-        set r to value of attribute "AXRole" of (value of attribute "AXFocusedUIElement")
-        if r is not expectedRole then error "The cursor is no longer inside the note."
         key code 125 using command down
         delay 0.2
         key code 36
@@ -1003,11 +1000,8 @@ AS_UI_TOP_LINK = '''
 on run argv
     set q to item 1 of argv
     set d to (item 2 of argv) as real
-    set expectedRole to item 3 of argv
     tell application "System Events" to tell process "Notes"
         if not frontmost then error "Notes is no longer the front app."
-        set r to value of attribute "AXRole" of (value of attribute "AXFocusedUIElement")
-        if r is not expectedRole then error "The cursor is no longer inside the note."
         key code 126 using command down
         delay 0.2
         key code 124 using command down
@@ -1029,23 +1023,42 @@ NOT_TEXT_ROLES = ("none", "AXWindow", "AXOutline", "AXTable", "AXList", "AXRow",
                   "AXButton", "AXTextField", "AXSearchField", "AXScrollArea")
 
 
-def focus_note(nid, title, role=None, wait=8):
-    """Open a note and make sure the cursor is inside it. Tries without help
-    first (when a role is known), then asks you to click. Returns the role."""
+AS_PLAINTEXT = '''
+on run argv
+    tell application "Notes" to return plaintext of note id (item 1 of argv)
+end run
+'''
+
+
+def link_count(nid):
+    # Notes shows each >> link as one object-replacement character in its text.
+    return osa(AS_PLAINTEXT, nid).count("\ufffc")
+
+
+def note_ready(nid):
+    front, _, selected = osa(AS_UI_STATE).split("\t")
+    return front == "true" and selected in (nid, "none")
+
+
+def ask_click(nid, title, wait=8):
     osa(AS_UI_SHOW, nid)
-    time.sleep(1.2)
-    front, now, selected = osa(AS_UI_STATE).split("\t")
-    if role and front == "true" and selected == nid and now == role:
-        return role
     print('\n>>> Click once inside the "%s" note text now.' % title)
     for n in range(wait, 0, -1):
         print("    %d…" % n, end="\r", flush=True)
         time.sleep(1)
-    front, now, selected = osa(AS_UI_STATE).split("\t")
-    if front == "true" and selected == nid and now not in NOT_TEXT_ROLES and (not role or now == role):
-        print("    Got it.  ")
-        return now
-    return None
+    print("            ")
+    return note_ready(nid)
+
+
+def type_link(script, nid, query, delay):
+    """Type one >> link and report whether a new link really appeared."""
+    before = link_count(nid)
+    try:
+        osa(script, query, str(delay))
+    except RuntimeError:
+        return False
+    time.sleep(0.4)
+    return link_count(nid) == before + 1
 
 
 def ask(prompt, yes="YES"):
@@ -1130,23 +1143,23 @@ def build_classes(args, notion):
         state["index_linked"] = list(set(state["index_linked"]) | set(classes))
         save_state(state)
     todo = [pid for pid in classes if pid not in state["index_linked"]]
-    role = None
     if todo:
-        role = focus_note(index_id, index_name)
-        if not role:
-            sys.exit('\n! The cursor wasn\'t inside "%s", so no links were typed.\n'
-                     "  Run the same command again; class notes are kept, not duplicated." % index_name)
-        print("\nTyping %d >> links into \"%s\" — hands off until it says Done…" % (len(todo), index_name))
+        if not ask_click(index_id, index_name):
+            sys.exit('\n! Notes wasn\'t showing "%s" in front, so no links were typed. Run the same command again.'
+                     % index_name)
+        print("Typing %d >> links into \"%s\" — hands off until it says Done…" % (len(todo), index_name))
         for n, pid in enumerate(todo, 1):
-            try:
-                osa(AS_UI_APPEND_LINK, picker_query(pages[pid]["title"]), str(args.ui_delay), role)
-            except RuntimeError as e:
-                print("\n! Stopped at %d/%d: %s" % (n, len(todo), e.args[0].split("execution error: ")[-1]))
-                print("  Run the same command again to finish; links already added won't be repeated.")
+            title = pages[pid]["title"]
+            ok = type_link(AS_UI_APPEND_LINK, index_id, picker_query(title), args.ui_delay)
+            if not ok and ask_click(index_id, index_name):
+                ok = type_link(AS_UI_APPEND_LINK, index_id, picker_query(title), args.ui_delay)
+            if not ok:
+                print("\n! Stopped at %d/%d: the >> link for \"%s\" didn't appear." % (n, len(todo), title))
+                print("  Run the same command again to continue; links already added won't be repeated.")
                 return
             state["index_linked"].append(pid)
             save_state(state)
-            print("  [%d/%d] %s" % (n, len(todo), pages[pid]["title"]))
+            print("  [%d/%d] %s" % (n, len(todo), title))
 
     body = osa(AS_BODY, index_id)
     missed = [pages[pid]["title"] for pid in classes
@@ -1162,23 +1175,17 @@ def build_classes(args, notion):
     if todo:
         print('\nAdding ">> %s" under the title of %d class notes — hands off unless asked to click…'
               % (index_name, len(todo)))
+        print("  (If it asks you to click into a note, click its text; it then carries on by itself.)")
     for n, pid in enumerate(todo, 1):
         title, nid = pages[pid]["title"], note_ids[pid]
-        now = focus_note(nid, title, role)
-        if not now:
+        osa(AS_UI_SHOW, nid)
+        time.sleep(1.2)
+        ok = note_ready(nid) and type_link(AS_UI_TOP_LINK, nid, back_query, args.ui_delay)
+        if not ok and ask_click(nid, title):
+            ok = type_link(AS_UI_TOP_LINK, nid, back_query, args.ui_delay)
+        if not ok:
             skipped.append(title)
-            print("  [%d/%d] skipped (cursor not in note): %s" % (n, len(todo), title))
-            continue
-        role = now
-        try:
-            osa(AS_UI_TOP_LINK, back_query, str(args.ui_delay), role)
-        except RuntimeError as e:
-            skipped.append(title)
-            print("  [%d/%d] skipped (%s): %s" % (n, len(todo), e.args[0].split("execution error: ")[-1], title))
-            continue
-        if ">>" + back_query in html.unescape(osa(AS_BODY, nid)):
-            skipped.append(title)
-            print("  [%d/%d] link didn't take: %s" % (n, len(todo), title))
+            print("  [%d/%d] skipped: %s" % (n, len(todo), title))
             continue
         state["uplinked"].append(pid)
         save_state(state)
