@@ -999,6 +999,55 @@ end run
 '''
 
 
+AS_UI_TOP_LINK = '''
+on run argv
+    set q to item 1 of argv
+    set d to (item 2 of argv) as real
+    set expectedRole to item 3 of argv
+    tell application "System Events" to tell process "Notes"
+        if not frontmost then error "Notes is no longer the front app."
+        set r to value of attribute "AXRole" of (value of attribute "AXFocusedUIElement")
+        if r is not expectedRole then error "The cursor is no longer inside the note."
+        key code 126 using command down
+        delay 0.2
+        key code 124 using command down
+        delay 0.2
+        key code 36
+        keystroke ">>"
+        delay d
+        keystroke q
+        delay d
+        key code 36
+        delay 0.4
+        key code 36
+        delay 0.3
+    end tell
+end run
+'''
+
+NOT_TEXT_ROLES = ("none", "AXWindow", "AXOutline", "AXTable", "AXList", "AXRow", "AXCell",
+                  "AXButton", "AXTextField", "AXSearchField", "AXScrollArea")
+
+
+def focus_note(nid, title, role=None, wait=8):
+    """Open a note and make sure the cursor is inside it. Tries without help
+    first (when a role is known), then asks you to click. Returns the role."""
+    osa(AS_UI_SHOW, nid)
+    time.sleep(1.2)
+    front, now, selected = osa(AS_UI_STATE).split("\t")
+    if role and front == "true" and selected == nid and now == role:
+        return role
+    print('\n>>> Click once inside the "%s" note text now.' % title)
+    for n in range(wait, 0, -1):
+        print("    %d…" % n, end="\r", flush=True)
+        time.sleep(1)
+    front, now, selected = osa(AS_UI_STATE).split("\t")
+    if front == "true" and selected == nid and now not in NOT_TEXT_ROLES and (not role or now == role):
+        print("    Got it.  ")
+        return now
+    return None
+
+
 def ask(prompt, yes="YES"):
     return input(prompt).strip().upper() == yes
 
@@ -1046,15 +1095,19 @@ def build_classes(args, notion):
 
     # 3. Create the class notes, checking the first one with you
     state = load_state()
-    live_names = {}
+    state.setdefault("index_linked", [])
+    state.setdefault("uplinked", [])
+    live_names, note_ids = {}, {}
     for n, pid in enumerate(classes, 1):
         page = pages[pid]
         existing = [r.split("\t")[0] for r in osa(AS_FIND, args.account, page["title"]).splitlines() if r.strip()]
         existing = [nid for nid in existing if nid not in trash]
         if existing:
+            note_ids[pid] = existing[0]
             print("  [%d/%d] already exists, kept: %s" % (n, len(classes), page["title"]))
             continue
         nid = osa(AS_CREATE, args.account, args.folder, html_text=class_note_html(page))
+        note_ids[pid] = nid
         state["notes"][pid] = nid
         save_state(state)
         print("  [%d/%d] created: %s" % (n, len(classes), page["title"]))
@@ -1073,28 +1126,27 @@ def build_classes(args, notion):
     if osa(AS_UI_ENABLED) != "true":
         sys.exit("\n! Terminal needs Accessibility permission to type the >> links. The class notes are made;\n"
                  "  turn on Terminal in System Settings → Privacy & Security → Accessibility and run again.")
-    osa(AS_UI_SHOW, index_id)
-    print('\n>>> Click once inside the "%s" note text now.' % index_name)
-    for n in range(8, 0, -1):
-        print("    %d…" % n, end="\r", flush=True)
-        time.sleep(1)
-    front, role, selected = osa(AS_UI_STATE).split("\t")
-    not_text = ("none", "AXWindow", "AXOutline", "AXTable", "AXList", "AXRow", "AXCell",
-                "AXButton", "AXTextField", "AXSearchField", "AXScrollArea")
-    if front != "true" or selected != index_id or role in not_text:
-        sys.exit('\n! The cursor wasn\'t inside "%s" (focus: %s), so no links were typed.\n'
-                 "  Run the same command again; existing class notes are kept, not duplicated." % (index_name, role))
-    print("\nGot it. Typing %d >> links — hands off the keyboard and mouse until it says Done…" % len(classes))
-    for n, pid in enumerate(classes, 1):
-        try:
-            osa(AS_UI_APPEND_LINK, picker_query(pages[pid]["title"]), str(args.ui_delay), role)
-        except RuntimeError as e:
-            print("\n! Stopped at %d/%d: %s" % (n, len(classes), e.args[0].split("execution error: ")[-1]))
-            print("  Not linked yet:")
-            for later in classes[n - 1:]:
-                print("   - " + pages[later]["title"])
-            return
-        print("  [%d/%d] %s" % (n, len(classes), pages[pid]["title"]))
+    if args.back_links_only:
+        state["index_linked"] = list(set(state["index_linked"]) | set(classes))
+        save_state(state)
+    todo = [pid for pid in classes if pid not in state["index_linked"]]
+    role = None
+    if todo:
+        role = focus_note(index_id, index_name)
+        if not role:
+            sys.exit('\n! The cursor wasn\'t inside "%s", so no links were typed.\n'
+                     "  Run the same command again; class notes are kept, not duplicated." % index_name)
+        print("\nTyping %d >> links into \"%s\" — hands off until it says Done…" % (len(todo), index_name))
+        for n, pid in enumerate(todo, 1):
+            try:
+                osa(AS_UI_APPEND_LINK, picker_query(pages[pid]["title"]), str(args.ui_delay), role)
+            except RuntimeError as e:
+                print("\n! Stopped at %d/%d: %s" % (n, len(todo), e.args[0].split("execution error: ")[-1]))
+                print("  Run the same command again to finish; links already added won't be repeated.")
+                return
+            state["index_linked"].append(pid)
+            save_state(state)
+            print("  [%d/%d] %s" % (n, len(todo), pages[pid]["title"]))
 
     body = osa(AS_BODY, index_id)
     missed = [pages[pid]["title"] for pid in classes
@@ -1103,6 +1155,39 @@ def build_classes(args, notion):
         print("\n! These didn't turn into links (the typed text is still in the note). Fix them by hand:")
         for title in missed:
             print("   - " + title)
+    # Back-link at the top of each class note
+    todo = [pid for pid in classes if pid not in state["uplinked"]]
+    back_query = picker_query(index_name)
+    skipped = []
+    if todo:
+        print('\nAdding ">> %s" under the title of %d class notes — hands off unless asked to click…'
+              % (index_name, len(todo)))
+    for n, pid in enumerate(todo, 1):
+        title, nid = pages[pid]["title"], note_ids[pid]
+        now = focus_note(nid, title, role)
+        if not now:
+            skipped.append(title)
+            print("  [%d/%d] skipped (cursor not in note): %s" % (n, len(todo), title))
+            continue
+        role = now
+        try:
+            osa(AS_UI_TOP_LINK, back_query, str(args.ui_delay), role)
+        except RuntimeError as e:
+            skipped.append(title)
+            print("  [%d/%d] skipped (%s): %s" % (n, len(todo), e.args[0].split("execution error: ")[-1], title))
+            continue
+        if ">>" + back_query in html.unescape(osa(AS_BODY, nid)):
+            skipped.append(title)
+            print("  [%d/%d] link didn't take: %s" % (n, len(todo), title))
+            continue
+        state["uplinked"].append(pid)
+        save_state(state)
+        print("  [%d/%d] %s" % (n, len(todo), title))
+    if skipped:
+        print("\n! These class notes still need the >> %s link at the top (rerun, or add by hand):" % index_name)
+        for title in skipped:
+            print("   - " + title)
+
     titles = [pages[pid]["title"] for pid in classes]
     unsure = [t for t in titles
               if any(picker_query(t).lower() in o.lower() for o in titles if o != t)]
@@ -1132,6 +1217,8 @@ def main():
     ap.add_argument("--font-size", help="Body font size in px (default: whatever your existing notes use)")
     ap.add_argument("--classes", action="store_true",
                     help="Make one note per Sabbath class and type >> links to them into your index note")
+    ap.add_argument("--back-links-only", action="store_true",
+                    help="With --classes: skip typing links into the index note (already done)")
     ap.add_argument("--index-note", help='Exact name of your Sabbath Classes note (default: finds one containing "Sabbath Classes")')
     ap.add_argument("--remove-imported", action="store_true",
                     help="Delete the notes this script created (moves them to Recently Deleted)")
