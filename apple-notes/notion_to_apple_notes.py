@@ -705,45 +705,30 @@ AS_UI_ENABLED = '''
 tell application "System Events" to return (UI elements enabled) as text
 '''
 
-AS_UI_FOCUS = '''
+AS_UI_SHOW = '''
 on run argv
     tell application "Notes"
         activate
         show note id (item 1 of argv)
     end tell
-    delay 1.5
-    tell application "System Events" to tell process "Notes"
-        set frontmost to true
-        -- Find the note's text area itself instead of guessing where it is.
-        set ta to missing value
-        repeat with e in (entire contents of window 1)
-            try
-                if role of e is "AXTextArea" then
-                    set ta to contents of e
-                    exit repeat
-                end if
-            end try
-        end repeat
-        if ta is missing value then return "no text area found" & tab & "none"
-        try
-            set focused of ta to true
-        end try
-        set {tx, ty} to position of ta
-        click at {tx + 30, ty + 12}
-        delay 0.6
-        set r to "none"
-        try
-            set r to value of attribute "AXRole" of (value of attribute "AXFocusedUIElement")
-        end try
-    end tell
-    set sel to "none"
-    tell application "Notes"
-        try
-            set sel to id of item 1 of (get selection)
-        end try
-    end tell
-    return r & tab & sel
 end run
+'''
+
+AS_UI_STATE = '''
+tell application "System Events" to tell process "Notes"
+    set front to frontmost as text
+    set r to "none"
+    try
+        set r to value of attribute "AXRole" of (value of attribute "AXFocusedUIElement")
+    end try
+end tell
+set sel to "none"
+tell application "Notes"
+    try
+        set sel to id of item 1 of (get selection)
+    end try
+end tell
+return front & tab & r & tab & sel
 '''
 
 AS_UI_LINK = '''
@@ -751,10 +736,11 @@ on run argv
     set lineIndex to (item 1 of argv) as integer
     set q to item 2 of argv
     set d to (item 3 of argv) as real
+    set expectedRole to item 4 of argv
     tell application "System Events" to tell process "Notes"
         if not frontmost then error "Notes is no longer the front app."
         set r to value of attribute "AXRole" of (value of attribute "AXFocusedUIElement")
-        if r does not contain "Text" then error "The cursor is no longer inside the note."
+        if r is not expectedRole then error "The cursor is no longer inside the note."
         key code 126 using command down
         delay 0.2
         repeat lineIndex times
@@ -831,17 +817,24 @@ def build_hub(args):
     osa(AS_UPDATE, args.hub_id, html_text="".join(html for html, _ in lines))
     print("Rebuilt the ✱ Ministry layout (headings and spacing).")
 
-    print("\nAdding the >> links. Don't touch the keyboard or mouse until it says Done…")
-    role, selected = osa(AS_UI_FOCUS, args.hub_id).split("\t")
-    if "Text" not in role or selected != args.hub_id:
-        print("\n! Couldn't put the cursor inside ✱ Ministry (focus: %s), so no links were typed." % role)
-        print("  The layout is in place with an empty line for each link. Rerun the same command,")
-        print("  or add them by hand: click each empty line and type >> and the note name.")
+    osa(AS_UI_SHOW, args.hub_id)
+    print("\n>>> Click once inside the ✱ Ministry note text now (anywhere in the text).")
+    for n in range(8, 0, -1):
+        print("    %d…" % n, end="\r", flush=True)
+        time.sleep(1)
+    front, role, selected = osa(AS_UI_STATE).split("\t")
+    not_text = ("none", "AXWindow", "AXOutline", "AXTable", "AXList", "AXRow", "AXCell",
+                "AXButton", "AXTextField", "AXSearchField", "AXScrollArea")
+    if front != "true" or selected != args.hub_id or role in not_text:
+        print("\n! The cursor wasn't inside ✱ Ministry (front app: %s, focus: %s), so no links were typed."
+              % ("Notes" if front == "true" else "another app", role))
+        print("  Run the same command again and click inside the note text during the countdown.")
         return
+    print("\nGot it. Adding the >> links — hands off the keyboard and mouse until it says Done…")
     failed = []
     for index, name in reversed(links):  # bottom-up: a miss can't shift lines still to do
         try:
-            osa(AS_UI_LINK, str(index), link_query(name), str(args.ui_delay))
+            osa(AS_UI_LINK, str(index), link_query(name), str(args.ui_delay), role)
             print("  linked: " + name)
         except RuntimeError as e:
             print("\n! Stopped: %s" % e.args[0].split("execution error: ")[-1])
