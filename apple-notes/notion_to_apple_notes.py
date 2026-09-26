@@ -414,7 +414,12 @@ def find_hub(args):
             if rows:
                 matched = name
                 break
-    notes = [r.split("\t") for r in rows]
+    notes, seen = [], set()
+    for r in rows:  # Notes can report the same note twice
+        fields = r.split("\t")
+        if fields[0] not in seen:
+            seen.add(fields[0])
+            notes.append(fields)
     live = [n for n in notes if n[2].strip().lower() != "recently deleted"]
     if len(live) == 1:
         return live[0][0], live[0][1]
