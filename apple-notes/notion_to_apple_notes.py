@@ -716,7 +716,7 @@ end run
 
 AS_UI_STATE = '''
 tell application "System Events" to tell process "Notes"
-    set front to frontmost as text
+    set isFront to frontmost as text
     set r to "none"
     try
         set r to value of attribute "AXRole" of (value of attribute "AXFocusedUIElement")
@@ -728,7 +728,7 @@ tell application "Notes"
         set sel to id of item 1 of (get selection)
     end try
 end tell
-return front & tab & r & tab & sel
+return isFront & tab & r & tab & sel
 '''
 
 AS_UI_LINK = '''
