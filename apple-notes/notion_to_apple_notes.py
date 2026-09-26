@@ -571,14 +571,24 @@ def main():
         sys.exit("--root must be a Notion page ID or URL")
     root_id = root_match.group(1)
 
-    token = os.environ.get("NOTION_TOKEN") or getpass.getpass("Notion integration secret: ").strip()
+    token = os.environ.get("NOTION_TOKEN") or getpass.getpass("Paste your Notion secret (it stays hidden) and press Enter: ")
+    token = token.strip().strip("\"'“”‘’ ")
+    if not token or "paste" in token.lower():
+        sys.exit("No Notion secret given. Run `unset NOTION_TOKEN`, then run the script again and paste it when asked.")
     notion = Notion(token)
 
     print("Reading Notion…")
     try:
         root_title = notion.page_title(root_id)
     except NotionError as e:
-        sys.exit("%s\n\nIs the page connected to your integration? See README step 1." % e)
+        if " 401 " in str(e):
+            sys.exit("Notion says the secret is invalid. Copy it again from notion.so/profile/integrations "
+                     "(Internal Integration Secret → Show → Copy), run `unset NOTION_TOKEN`, then run the "
+                     "script again and paste it when asked.")
+        if " 404 " in str(e):
+            sys.exit("Notion can't see Sermon Prep & Teaching. Open that page → ••• → Connections and add "
+                     "your integration, then run again.")
+        sys.exit(str(e))
     exporter = Exporter(notion, root_id, args.only)
     exporter.crawl(root_id, root_title)
     pages = exporter.pages
