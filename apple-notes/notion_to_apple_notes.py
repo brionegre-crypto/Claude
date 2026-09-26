@@ -420,7 +420,8 @@ def find_hub(args):
         if fields[0] not in seen:
             seen.add(fields[0])
             notes.append(fields)
-    live = [n for n in notes if n[2].strip().lower() != "recently deleted"]
+    live = [n for n in notes if n[2].strip().lower() != "recently deleted"
+            and osa(AS_IS_DELETED, args.account, n[0]) != "true"]
     if len(live) == 1:
         return live[0][0], live[0][1]
     if not live:
@@ -689,6 +690,17 @@ on run argv
 end run
 '''
 
+AS_IS_DELETED = '''
+on run argv
+    tell application "Notes"
+        try
+            return ((id of notes of folder "Recently Deleted" of account (item 1 of argv)) contains (item 2 of argv)) as text
+        end try
+    end tell
+    return "false"
+end run
+'''
+
 AS_UI_ENABLED = '''
 tell application "System Events" to return (UI elements enabled) as text
 '''
@@ -775,6 +787,9 @@ def build_hub(args):
         sys.exit('--build-hub needs --hub-id "x-coredata://…" for the ✱ Ministry note to rebuild.')
     lines = hub_layout()
     links = [(i, name) for i, (_, name) in enumerate(lines) if name]
+    if osa(AS_IS_DELETED, args.account, args.hub_id) == "true":
+        sys.exit("! That note is in Recently Deleted, so it can't be edited. Nothing was changed.\n"
+                 "  Use the --hub-id of the ✱ Ministry note that isn't deleted.")
 
     print("Checking the notes the hub will link to…")
     missing = []
