@@ -208,6 +208,9 @@ class Exporter:
                 self.crawl(child_id, title, parent_id)
         return link_placeholder(child_id, title)
 
+    def pages_as_links(self, page_id):
+        return True
+
     def block_children(self, block):
         return self.notion.children(block["id"]) if block.get("has_children") else []
 
@@ -217,6 +220,11 @@ class Exporter:
                    "to_do": "ul", "child_page": "ul"}
         while i < len(blocks):
             kind = blocks[i]["type"]
+            if kind == "child_page" and not self.pages_as_links(page_id):
+                title = clean_title(blocks[i]["child_page"]["title"])
+                out.append(self.add_child(page_id, blocks[i]["id"], title))
+                i += 1
+                continue
             if kind in grouped:
                 items = []
                 while i < len(blocks) and blocks[i]["type"] == kind:
@@ -249,9 +257,9 @@ class Exporter:
         if kind == "paragraph":
             return "<div>%s</div>%s" % (text or "<br>", kids())
         if kind == "heading_1":
-            return "<h2>%s</h2>%s" % (text, kids())
+            return "<div><h2>%s</h2></div>%s" % (text, kids())
         if kind == "heading_2":
-            return "<h3>%s</h3>%s" % (text, kids())
+            return "<div><h3>%s</h3></div>%s" % (text, kids())
         if kind == "heading_3":
             return "<div><b>%s</b></div>%s" % (text, kids())
         if kind == "quote":
@@ -916,6 +924,196 @@ def remove_imported(args):
     print("Done.")
 
 
+# --------------------------------------------------------------------------
+# Sabbath Classes: one note per class, >> links typed into your own index note
+# --------------------------------------------------------------------------
+
+SABBATH_ID = "9a659ef9321a4c4f8af8bba837e8cd88"
+CLASS_SKIP = ("YouTube Description", "Bible Highlighting System", "Bible Studies", "March Consecration")
+
+
+class ClassExporter(Exporter):
+    """Direct sub-pages of the root are classes (one note each). Anything nested
+    inside a class is written into that class's note as a section."""
+
+    def pages_as_links(self, page_id):
+        return page_id == self.root_id
+
+    def add_child(self, parent_id, child_id, title):
+        if parent_id == self.root_id:
+            return Exporter.add_child(self, parent_id, child_id, title)
+        depth = self.pages[parent_id]["depth"]
+        heading = "<div><h2>%s</h2></div>" if depth <= 1 else "<div><h3>%s</h3></div>"
+        try:
+            blocks = self.notion.children(child_id)
+        except NotionError:
+            return heading % esc(title)
+        self.pages[norm(child_id)] = {"title": title, "parent": parent_id, "children": [],
+                                      "html": "", "depth": depth + 1}
+        return "<div><br></div>" + heading % esc(title) + self.render_blocks(blocks, norm(child_id))
+
+
+def class_note_html(page):
+    return "<div><h1>%s</h1></div>%s" % (esc(page["title"]), page["html"])
+
+
+def picker_query(title):
+    # Type only a plain run of the title: quotes, apostrophes, dashes and emoji
+    # can be changed by Notes as you type and then miss the match.
+    parts = re.findall(r"[A-Za-z0-9][A-Za-z0-9 ,.:;()&!?+/-]*", title)
+    return (max(parts, key=len).strip() if parts else title)[:60].strip()
+
+
+AS_FIND_CONTAINS = '''
+on run argv
+    set out to ""
+    tell application "Notes"
+        repeat with n in (notes of account (item 1 of argv) whose name contains (item 2 of argv))
+            set out to out & (id of n) & tab & (name of n) & linefeed
+        end repeat
+    end tell
+    return out
+end run
+'''
+
+AS_UI_APPEND_LINK = '''
+on run argv
+    set q to item 1 of argv
+    set d to (item 2 of argv) as real
+    set expectedRole to item 3 of argv
+    tell application "System Events" to tell process "Notes"
+        if not frontmost then error "Notes is no longer the front app."
+        set r to value of attribute "AXRole" of (value of attribute "AXFocusedUIElement")
+        if r is not expectedRole then error "The cursor is no longer inside the note."
+        key code 125 using command down
+        delay 0.2
+        key code 36
+        keystroke ">>"
+        delay d
+        keystroke q
+        delay d
+        key code 36
+        delay 0.5
+    end tell
+end run
+'''
+
+
+def ask(prompt, yes="YES"):
+    return input(prompt).strip().upper() == yes
+
+
+def build_classes(args, notion):
+    trash = set(osa(AS_DELETED_IDS, args.account).splitlines())
+
+    # 1. Your index note
+    rows = [r.split("\t", 1) for r in osa(AS_FIND_CONTAINS, args.account,
+                                          args.index_note or "Sabbath Classes").splitlines() if "\t" in r]
+    rows = [(nid, name) for nid, name in dict(rows).items() if nid not in trash]
+    if args.index_note:
+        rows = [(nid, name) for nid, name in rows if name == args.index_note]
+    if not rows:
+        sys.exit('! No note named like "%s" found (outside Recently Deleted). Create it first, or pass '
+                 '--index-note "Exact Name". Nothing was changed.' % (args.index_note or "Sabbath Classes"))
+    if len(rows) > 1:
+        print("Several notes match:")
+        for i, (nid, name) in enumerate(rows, 1):
+            print("  %d) %s" % (i, name))
+        pick = input("Type the number of your Sabbath Classes note: ").strip()
+        if not pick.isdigit() or not 1 <= int(pick) <= len(rows):
+            sys.exit("Cancelled. Nothing was changed.")
+        rows = [rows[int(pick) - 1]]
+    index_id, index_name = rows[0]
+
+    # 2. Read the classes from Notion
+    print("\nReading the Sabbath Classes page from Notion…")
+    exporter = ClassExporter(notion, SABBATH_ID, None)
+    exporter.should_crawl = lambda parent, title: not (
+        parent == exporter.root_id and title.startswith(CLASS_SKIP))
+    exporter.crawl(SABBATH_ID, "Sabbath Classes")
+    classes, seen = [], set()
+    for pid in exporter.pages[exporter.root_id]["children"]:
+        title = exporter.pages[pid]["title"]
+        if title.lower() not in seen:
+            seen.add(title.lower())
+            classes.append(pid)
+    pages = exporter.pages
+
+    print("\n%d classes will each get their own note, and a >> link to each will be added" % len(classes))
+    print('to the end of your note "%s".' % index_name)
+    if not ask("Type YES to start: "):
+        sys.exit("Cancelled. Nothing was changed.")
+
+    # 3. Create the class notes, checking the first one with you
+    state = load_state()
+    live_names = {}
+    for n, pid in enumerate(classes, 1):
+        page = pages[pid]
+        existing = [r.split("\t")[0] for r in osa(AS_FIND, args.account, page["title"]).splitlines() if r.strip()]
+        existing = [nid for nid in existing if nid not in trash]
+        if existing:
+            print("  [%d/%d] already exists, kept: %s" % (n, len(classes), page["title"]))
+            continue
+        nid = osa(AS_CREATE, args.account, args.folder, html_text=class_note_html(page))
+        state["notes"][pid] = nid
+        save_state(state)
+        print("  [%d/%d] created: %s" % (n, len(classes), page["title"]))
+        if not live_names:
+            live_names[pid] = nid
+            osa(AS_UI_SHOW, nid)
+            print('\nCheck "%s" in Notes: are the text and heading sizes right?' % page["title"])
+            if not ask("Type YES if it looks right (anything else deletes this test note and stops): "):
+                osa(AS_DELETE_NOTE, nid)
+                del state["notes"][pid]
+                save_state(state)
+                sys.exit("Stopped and removed the test note. Tell Claude what looks off.")
+            print()
+
+    # 4. Type the >> links into your note
+    if osa(AS_UI_ENABLED) != "true":
+        sys.exit("\n! Terminal needs Accessibility permission to type the >> links. The class notes are made;\n"
+                 "  turn on Terminal in System Settings → Privacy & Security → Accessibility and run again.")
+    osa(AS_UI_SHOW, index_id)
+    print('\n>>> Click once inside the "%s" note text now.' % index_name)
+    for n in range(8, 0, -1):
+        print("    %d…" % n, end="\r", flush=True)
+        time.sleep(1)
+    front, role, selected = osa(AS_UI_STATE).split("\t")
+    not_text = ("none", "AXWindow", "AXOutline", "AXTable", "AXList", "AXRow", "AXCell",
+                "AXButton", "AXTextField", "AXSearchField", "AXScrollArea")
+    if front != "true" or selected != index_id or role in not_text:
+        sys.exit('\n! The cursor wasn\'t inside "%s" (focus: %s), so no links were typed.\n'
+                 "  Run the same command again; existing class notes are kept, not duplicated." % (index_name, role))
+    print("\nGot it. Typing %d >> links — hands off the keyboard and mouse until it says Done…" % len(classes))
+    for n, pid in enumerate(classes, 1):
+        try:
+            osa(AS_UI_APPEND_LINK, picker_query(pages[pid]["title"]), str(args.ui_delay), role)
+        except RuntimeError as e:
+            print("\n! Stopped at %d/%d: %s" % (n, len(classes), e.args[0].split("execution error: ")[-1]))
+            print("  Not linked yet:")
+            for later in classes[n - 1:]:
+                print("   - " + pages[later]["title"])
+            return
+        print("  [%d/%d] %s" % (n, len(classes), pages[pid]["title"]))
+
+    body = osa(AS_BODY, index_id)
+    missed = [pages[pid]["title"] for pid in classes
+              if ">>" + picker_query(pages[pid]["title"]) in html.unescape(body)]
+    if missed:
+        print("\n! These didn't turn into links (the typed text is still in the note). Fix them by hand:")
+        for title in missed:
+            print("   - " + title)
+    titles = [pages[pid]["title"] for pid in classes]
+    unsure = [t for t in titles
+              if any(picker_query(t).lower() in o.lower() for o in titles if o != t)]
+    if unsure:
+        print("\nThese titles also appear inside other class names, so tap each to make sure it opens")
+        print("the right note (if not, delete the link and type >> with more of the name):")
+        for t in unsure:
+            print("   - " + t)
+    print("\nDone. Open \"%s\" and tap a few links to check they open the right class." % index_name)
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--root", default=DEFAULT_ROOT, help="Notion page ID or URL to copy (default: Sermon Prep & Teaching)")
@@ -932,6 +1130,9 @@ def main():
                     help="URL style for note links (try 'notes' if links don't open)")
     ap.add_argument("--font", help="Font family to use (default: whatever your existing notes use)")
     ap.add_argument("--font-size", help="Body font size in px (default: whatever your existing notes use)")
+    ap.add_argument("--classes", action="store_true",
+                    help="Make one note per Sabbath class and type >> links to them into your index note")
+    ap.add_argument("--index-note", help='Exact name of your Sabbath Classes note (default: finds one containing "Sabbath Classes")')
     ap.add_argument("--remove-imported", action="store_true",
                     help="Delete the notes this script created (moves them to Recently Deleted)")
     ap.add_argument("--build-hub", action="store_true",
@@ -946,6 +1147,10 @@ def main():
         return
     if args.remove_imported:
         remove_imported(args)
+        return
+    if args.classes:
+        token = os.environ.get("NOTION_TOKEN") or getpass.getpass("Paste your Notion secret (it stays hidden) and press Enter: ")
+        build_classes(args, Notion(token.strip().strip("\"'“”‘’ ")))
         return
 
     root_match = HEX32_RE.search(norm(args.root.split("?")[0]))

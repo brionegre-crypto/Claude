@@ -92,6 +92,18 @@ It first checks every linked note exists, and saves a backup (`ministry-hub-back
 before changing anything. The categories live in `HUB_CATEGORIES` at the top of that section
 of the script.
 
+## Sabbath Classes: one note per class, `>>` links in your own note
+
+```bash
+python3 notion_to_apple_notes.py --classes
+```
+Reads the Notion Sabbath Classes page (classes only: skips the YouTube descriptions, Bible
+Highlighting System, Bible Studies, March Consecration and the duplicate Jonah Study), makes one
+note per class in Notes' own Title/Heading/Subheading/Body styles (lessons nested in a class go
+inside that class's note), checks the first note with you, then types a `>>` link to every class
+at the end of your existing Sabbath Classes note after you click into it. Classes that already
+exist as notes are kept, not duplicated.
+
 ## Two things to know
 - **Tags:** the `#SabbathClass`-style tags are written into each note, but Apple Notes
   sometimes treats hashtags added by a script as plain text until the tag is edited.
