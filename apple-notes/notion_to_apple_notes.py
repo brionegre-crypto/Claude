@@ -665,6 +665,176 @@ def update_hub(args, exporter, uuids, state, font):
           % (args.hub_heading, os.path.basename(backup)))
 
 
+# --------------------------------------------------------------------------
+# Rebuild the ✱ Ministry hub in the ✱ Family layout, with real >> note links
+# --------------------------------------------------------------------------
+
+HUB_TITLE = "✱ Ministry"
+HUB_TOP_LINKS = ["✱ Home"]
+HUB_CATEGORIES = [
+    ("Classes", ["✱ Sabbath Classes", "✱ Feasts Classes", "✱ Kid's Classes", "✱ Bible Basics Class"]),
+    ("Preaching", ["✱ Sermon Drafts", "✱ Preached Sermons",
+                   "2026 Preaching Calendar — Year of the Built House", "✱ Sermon Tools"]),
+    ("Bible Study & Discipleship", ["✱ Bible in a Year", "Bible in a Year & Discipleship Programs",
+                                    "The Names of God — Complete Reference",
+                                    "Personal Consecration Guide — Ezra 8:21–23",
+                                    "March Consecration (Theme + Fast Outline)"]),
+    ("Templates", ["C.R.A.C. Sermon Flow Template", "C.R.A.C. Bible Study Template"]),
+    ("All Teaching", ["✱ Sermon Prep & Teaching"]),
+]
+
+AS_COUNT_NAMED = '''
+on run argv
+    tell application "Notes" to return (count of (notes of account (item 1 of argv) whose name is (item 2 of argv))) as text
+end run
+'''
+
+AS_UI_ENABLED = '''
+tell application "System Events" to return (UI elements enabled) as text
+'''
+
+AS_UI_FOCUS = '''
+on run argv
+    tell application "Notes"
+        activate
+        show note id (item 1 of argv)
+    end tell
+    delay 1.5
+    tell application "System Events" to tell process "Notes"
+        set frontmost to true
+        set {wx, wy} to position of window 1
+        set {ww, wh} to size of window 1
+        click at {(wx + ww * 0.72) as integer, (wy + wh * 0.6) as integer}
+        delay 0.6
+        set r to "none"
+        try
+            set r to value of attribute "AXRole" of (value of attribute "AXFocusedUIElement")
+        end try
+    end tell
+    set sel to "none"
+    tell application "Notes"
+        try
+            set sel to id of item 1 of (get selection)
+        end try
+    end tell
+    return r & tab & sel
+end run
+'''
+
+AS_UI_LINK = '''
+on run argv
+    set lineIndex to (item 1 of argv) as integer
+    set q to item 2 of argv
+    set d to (item 3 of argv) as real
+    tell application "System Events" to tell process "Notes"
+        if not frontmost then error "Notes is no longer the front app."
+        set r to value of attribute "AXRole" of (value of attribute "AXFocusedUIElement")
+        if r does not contain "Text" then error "The cursor is no longer inside the note."
+        key code 126 using command down
+        delay 0.2
+        repeat lineIndex times
+            key code 125
+        end repeat
+        key code 124 using command down
+        delay 0.2
+        keystroke ">>"
+        delay d
+        keystroke q
+        delay d
+        key code 36
+        delay 0.5
+    end tell
+end run
+'''
+
+
+def hub_layout():
+    """Lines of the new hub, as (html, link_name or None). Each entry is one
+    line in the note, so a link's line number is its index here."""
+    font = ' style="font-family: %s"' % esc(SYSTEM_FONT)
+    lines = [('<div%s><h1>%s</h1></div>' % (font, esc(HUB_TITLE)), None)]
+    for name in HUB_TOP_LINKS:
+        lines.append(("<div%s><br></div>" % font, name))
+    for heading, names in HUB_CATEGORIES:
+        lines.append(("<div%s><br></div>" % font, None))
+        lines.append(("<div%s><b><u><h3>%s</h3></u></b></div>" % (font, esc(heading)), None))
+        for name in names:
+            lines.append(("<div%s><br></div>" % font, name))
+    lines.append(("<div%s><br></div>" % font, None))
+    return lines
+
+
+def link_query(name):
+    # Typing an apostrophe can turn into a curly quote and miss the match,
+    # so only type up to the first one ("✱ Kid's Classes" -> "✱ Kid").
+    return re.split(r"['’]", name)[0].rstrip()
+
+
+def build_hub(args):
+    if not args.hub_id:
+        sys.exit('--build-hub needs --hub-id "x-coredata://…" for the ✱ Ministry note to rebuild.')
+    lines = hub_layout()
+    links = [(i, name) for i, (_, name) in enumerate(lines) if name]
+
+    print("Checking the notes the hub will link to…")
+    missing = []
+    for _, name in links:
+        count = int(osa(AS_COUNT_NAMED, args.account, name) or 0)
+        if count == 0:
+            missing.append(name)
+        elif count > 1:
+            print('  note: %d notes are named "%s"; the link goes to the top match.' % (count, name))
+    if missing:
+        print("\n! These notes weren't found, so nothing was changed:")
+        for name in missing:
+            print("   - " + name)
+        sys.exit(1)
+    if osa(AS_UI_ENABLED) != "true":
+        sys.exit("\n! Terminal needs Accessibility permission to type the >> links.\n"
+                 "  System Settings → Privacy & Security → Accessibility → turn on Terminal,\n"
+                 "  quit Terminal (⌘Q), reopen it, and run the same command again. Nothing was changed.")
+
+    old = osa(AS_BODY, args.hub_id)
+    backup = os.path.join(HERE, "ministry-hub-backup-%d.html" % int(time.time()))
+    with open(backup, "w", encoding="utf-8") as f:
+        f.write(old)
+    print("Saved a copy of the current ✱ Ministry to %s" % os.path.basename(backup))
+
+    osa(AS_UPDATE, args.hub_id, html_text="".join(html for html, _ in lines))
+    print("Rebuilt the ✱ Ministry layout (headings and spacing).")
+
+    print("\nAdding the >> links. Don't touch the keyboard or mouse until it says Done…")
+    role, selected = osa(AS_UI_FOCUS, args.hub_id).split("\t")
+    if "Text" not in role or selected != args.hub_id:
+        print("\n! Couldn't put the cursor inside ✱ Ministry (focus: %s), so no links were typed." % role)
+        print("  The layout is in place with an empty line for each link. Rerun the same command,")
+        print("  or add them by hand: click each empty line and type >> and the note name.")
+        return
+    failed = []
+    for index, name in reversed(links):  # bottom-up: a miss can't shift lines still to do
+        try:
+            osa(AS_UI_LINK, str(index), link_query(name), str(args.ui_delay))
+            print("  linked: " + name)
+        except RuntimeError as e:
+            print("\n! Stopped: %s" % e.args[0].split("execution error: ")[-1])
+            failed = [n for i, n in links if i <= index]
+            break
+
+    body = osa(AS_BODY, args.hub_id)
+    typed_but_unlinked = [n for _, n in links if "&gt;&gt;" + esc(link_query(n)) in body
+                          or ">>" + link_query(n) in body]
+    for name in typed_but_unlinked:
+        if name not in failed:
+            failed.append(name)
+    if failed:
+        print("\n! These links need to be added by hand (click the line, type >> and the name):")
+        for name in failed:
+            print("   - " + name)
+    else:
+        print("\nAll %d links added." % len(links))
+    print("\nDone. Open ✱ Ministry to check it.")
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--root", default=DEFAULT_ROOT, help="Notion page ID or URL to copy (default: Sermon Prep & Teaching)")
@@ -681,9 +851,16 @@ def main():
                     help="URL style for note links (try 'notes' if links don't open)")
     ap.add_argument("--font", help="Font family to use (default: whatever your existing notes use)")
     ap.add_argument("--font-size", help="Body font size in px (default: whatever your existing notes use)")
+    ap.add_argument("--build-hub", action="store_true",
+                    help="Rebuild ✱ Ministry in the ✱ Family layout with real >> links (needs --hub-id)")
+    ap.add_argument("--ui-delay", type=float, default=1.2,
+                    help="Seconds to wait for Notes' >> suggestions while typing links")
     ap.add_argument("--hub-only", action="store_true", help="Only add the Classes section to the hub (after a full run)")
     ap.add_argument("--dry-run", action="store_true", help="Read Notion and write HTML previews only")
     args = ap.parse_args()
+    if args.build_hub:
+        build_hub(args)
+        return
 
     root_match = HEX32_RE.search(norm(args.root.split("?")[0]))
     if not root_match:

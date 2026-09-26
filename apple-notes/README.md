@@ -79,6 +79,19 @@ and rerun. The full run takes several minutes; leave Notes open.
 | `--hub-only` | the notes are already transferred and you only need the Classes section added to the hub |
 | `--no-hub` | you'd rather add the Classes headline yourself |
 
+## Rebuild the ✱ Ministry hub (✱ Family layout, real `>>` links)
+
+```bash
+python3 notion_to_apple_notes.py --build-hub --hub-id "x-coredata://…/ICNote/p500"
+```
+Replaces the hub's content with a `>> ✱ Home` link and bold, underlined category headings
+(Classes, Preaching, Bible Study & Discipleship, Templates, All Teaching), then types a real
+`>>` link for each note, the way you would. Needs Terminal turned on under System Settings →
+Privacy & Security → **Accessibility**. Don't touch the keyboard or mouse while it types.
+It first checks every linked note exists, and saves a backup (`ministry-hub-backup-….html`)
+before changing anything. The categories live in `HUB_CATEGORIES` at the top of that section
+of the script.
+
 ## Two things to know
 - **Tags:** the `#SabbathClass`-style tags are written into each note, but Apple Notes
   sometimes treats hashtags added by a script as plain text until the tag is edited.
