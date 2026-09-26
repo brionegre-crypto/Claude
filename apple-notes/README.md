@@ -21,6 +21,10 @@ into Apple Notes, organized the way your Forever ✱ Notes system expects:
   four Slothfulness lessons) link from their parent class note.
 - Headings, bold/italic, lists, checklists, tables, quotes and links carry over.
   Images uploaded to Notion are shown as a link back to the original Notion page.
+- **Fonts match your notes:** before writing, the script reads your hub note and your
+  recent notes, finds the font and size they use, and applies it to every imported note.
+  If your notes use Apple's standard font, imported notes use it too. It prints the font
+  it picked, e.g. `Font: system default`.
 - Safe to rerun: it remembers what it created (`state.json`) and updates those notes
   instead of making duplicates. The hub headline is only added once.
 
@@ -70,6 +74,7 @@ and rerun. The full run takes several minutes; leave Notes open.
 | `--hub "✱ Ministry"` | your hub note has a different name (it tries `Ministry Hub`, `✱ Ministry Hub`, then any single note containing "Ministry") |
 | `--account "On My Mac"` | your notes aren't in iCloud |
 | `--link-style notes` | links don't open a note in step 2 — rerun with this and it rewrites them |
+| `--font "Avenir Next" --font-size 16` | you want a specific font instead of the one it detects |
 | `--no-hub` | you'd rather add the Classes headline yourself |
 
 ## Two things to know

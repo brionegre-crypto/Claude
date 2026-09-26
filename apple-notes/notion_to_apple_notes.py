@@ -379,6 +379,64 @@ end run
 '''
 
 
+AS_SAMPLE = '''
+on run argv
+    set sep to "<!--NOTE-BREAK-->"
+    set out to ""
+    tell application "Notes"
+        set acct to account (item 1 of argv)
+        set hubs to (notes of acct whose name contains (item 2 of argv))
+        repeat with n in hubs
+            set out to out & (body of n) & sep
+        end repeat
+        set ns to notes of acct
+        set total to count of ns
+        if total > 15 then set total to 15
+        repeat with i from 1 to total
+            set out to out & (body of item i of ns) & sep
+        end repeat
+    end tell
+    return out
+end run
+'''
+
+# Apple Notes' own body font. Used when your notes don't name a font, which is
+# what Notes does for text typed in its default style.
+SYSTEM_FONT = "-apple-system, '.AppleSystemUIFont', 'SF Pro Text', 'Helvetica Neue'"
+
+
+def detect_font(args, note_ids=()):
+    """Find the font family and size your existing notes use, so imported notes
+    match them. Notes created by a script otherwise fall back to Helvetica."""
+    try:
+        sample = osa(AS_SAMPLE, args.account, args.hub.split()[0])
+    except (RuntimeError, OSError) as e:
+        print("  (Couldn't read your notes to match the font: %s)" % e)
+        return SYSTEM_FONT, None
+    ours = set(note_ids)
+    families, sizes = {}, {}
+    for body in sample.split("<!--NOTE-BREAK-->"):
+        if not body.strip() or any(i in body for i in ours):
+            continue
+        for fam in re.findall(r"font-family:\s*([^;\"]+)", body) + re.findall(r'<font[^>]*face="([^"]+)"', body):
+            fam = fam.strip().strip("'")
+            if fam and "courier" not in fam.lower() and "menlo" not in fam.lower():
+                families[fam] = families.get(fam, 0) + 1
+        for size in re.findall(r"font-size:\s*(\d+(?:\.\d+)?)px", body):
+            sizes[size] = sizes.get(size, 0) + 1
+    family = max(families, key=families.get) if families else SYSTEM_FONT
+    size = max(sizes, key=sizes.get) if sizes else None
+    return family, size
+
+
+def with_font(body, font):
+    family, size = font
+    style = "font-family: %s" % family
+    if size:
+        style += "; font-size: %spx" % size
+    return '<div style="%s">%s</div>' % (esc(style), body)
+
+
 def osa(script, *args, html_text=None):
     with tempfile.TemporaryDirectory() as tmp:
         script_path = os.path.join(tmp, "s.applescript")
@@ -510,7 +568,7 @@ def write_preview(exporter, bodies):
     print("\nDry run: wrote %d previews to %s (nothing changed in Apple Notes)." % (len(bodies), out))
 
 
-def update_hub(args, exporter, uuids, state):
+def update_hub(args, exporter, uuids, state, font):
     pages = exporter.pages
     root = pages[exporter.root_id]
     classes = [c for c in root["children"] if re.search(args.hub_match, pages[c]["title"], re.I)]
@@ -528,10 +586,10 @@ def update_hub(args, exporter, uuids, state):
         return
     hub_id, attachments = found.split("\n")
     links = "".join("<li>%s</li>" % link_placeholder(c, pages[c]["display"]) for c in classes)
-    section = resolve_links(
+    section = with_font(resolve_links(
         "<div><br></div><h2>%s</h2><ul>%s</ul><div>All teaching: %s</div>" % (
             esc(args.hub_heading), links, link_placeholder(exporter.root_id, root["display"])),
-        pages, uuids, args.link_style)
+        pages, uuids, args.link_style), font)
     if int(attachments or 0) > 0:
         # Rewriting a note's body through AppleScript drops attachments, so don't.
         print('\n! "%s" has attachments, so the script will not edit it. Paste this in by hand:'
@@ -563,6 +621,8 @@ def main():
     ap.add_argument("--no-hub", action="store_true", help="Don't touch the hub note")
     ap.add_argument("--link-style", choices=["applenotes", "notes"], default="applenotes",
                     help="URL style for note links (try 'notes' if links don't open)")
+    ap.add_argument("--font", help="Font family to use (default: whatever your existing notes use)")
+    ap.add_argument("--font-size", help="Body font size in px (default: whatever your existing notes use)")
     ap.add_argument("--dry-run", action="store_true", help="Read Notion and write HTML previews only")
     args = ap.parse_args()
 
@@ -601,9 +661,14 @@ def main():
         return
 
     state = load_state()
+    family, size = detect_font(args, state["notes"].values())
+    font = (args.font or family, args.font_size or size)
+    print("\nFont: %s%s (matched to your existing notes)" % (
+        "system default" if font[0] == SYSTEM_FONT else font[0],
+        ", %spx" % font[1] if font[1] else ""))
     print('\nWriting to Apple Notes (account "%s", folder "%s")…' % (args.account, args.folder))
     for n, (pid, body) in enumerate(bodies.items(), 1):
-        plain = resolve_links(body, pages, {}, args.link_style)
+        plain = with_font(resolve_links(body, pages, {}, args.link_style), font)
         existing = state["notes"].get(pid)
         if existing and osa(AS_EXISTS, existing) == "true":
             osa(AS_UPDATE, existing, html_text=plain)
@@ -628,14 +693,14 @@ def main():
         linked = [pid for pid, body in bodies.items() if LINK_RE.search(body)]
         for pid in linked:
             osa(AS_UPDATE, pages[pid]["note_id"],
-                html_text=resolve_links(bodies[pid], pages, uuids, args.link_style))
+                html_text=with_font(resolve_links(bodies[pid], pages, uuids, args.link_style), font))
         print("  Added links in %d notes." % len(linked))
         missing = len(note_ids) - len(uuids)
         if missing:
             print("  ! %d notes weren't in the Notes database yet; rerun to link them." % missing)
 
     if not args.no_hub and not state.get("hub_done"):
-        update_hub(args, exporter, uuids, state)
+        update_hub(args, exporter, uuids, state, font)
     save_state(state)
     print("\nDone.")
 
