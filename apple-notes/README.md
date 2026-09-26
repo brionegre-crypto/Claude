@@ -76,6 +76,7 @@ and rerun. The full run takes several minutes; leave Notes open.
 | `--account "On My Mac"` | your notes aren't in iCloud |
 | `--link-style notes` | links don't open a note in step 2 — rerun with this and it rewrites them |
 | `--font "Avenir Next" --font-size 16` | you want a specific font instead of the one it detects |
+| `--hub-only` | the notes are already transferred and you only need the Classes section added to the hub |
 | `--no-hub` | you'd rather add the Classes headline yourself |
 
 ## Two things to know

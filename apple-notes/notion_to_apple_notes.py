@@ -172,8 +172,9 @@ def rich(rich_text):
 class Exporter:
     """Walks the Notion tree and builds one HTML body per page."""
 
-    def __init__(self, notion, root_id, only=None):
+    def __init__(self, notion, root_id, only=None, max_depth=None):
         self.notion = notion
+        self.max_depth = max_depth
         self.root_id = norm(root_id)
         self.only = [o.lower() for o in (only or [])]
         self.pages = {}  # id -> {title, parent, children, html}
@@ -187,13 +188,9 @@ class Exporter:
         page_id = norm(page_id)
         if page_id in self.pages:
             return
+        depth = self.pages[parent_id]["depth"] + 1 if parent_id else 0
         self.pages[page_id] = {"title": title, "parent": parent_id,
-                               "children": [], "html": ""}
-        depth = 0
-        p = parent_id
-        while p:
-            depth += 1
-            p = self.pages[p]["parent"]
+                               "children": [], "html": "", "depth": depth}
         print("  " * depth + "- " + title)
         try:
             blocks = self.notion.children(page_id)
@@ -207,7 +204,8 @@ class Exporter:
         """Crawl a sub-page and return the HTML that links to it."""
         if self.should_crawl(parent_id, title):
             self.pages[parent_id]["children"].append(norm(child_id))
-            self.crawl(child_id, title, parent_id)
+            if self.max_depth is None or self.pages[parent_id]["depth"] < self.max_depth:
+                self.crawl(child_id, title, parent_id)
         return link_placeholder(child_id, title)
 
     def block_children(self, block):
@@ -360,22 +358,43 @@ AS_FIND = '''
 on run argv
     set out to ""
     tell application "Notes"
-        repeat with n in (notes of account (item 1 of argv) whose name is (item 2 of argv))
-            set out to out & (id of n) & tab & ((count of attachments of n) as text) & tab & (name of container of n) & tab & ((modification date of n) as text) & tab & (length of (plaintext of n)) & linefeed
-        end repeat
+        set matchIds to id of (notes of account (item 1 of argv) whose name is (item 2 of argv))
     end tell
+    repeat with nid in matchIds
+        set out to out & my describeNote(contents of nid)
+    end repeat
     return out
 end run
+''' + '''
+on describeNote(nid)
+    tell application "Notes"
+        set n to note id nid
+        set folderName to "?"
+        try
+            set folderName to (name of (container of n)) as text
+        end try
+        set attachCount to "unknown"
+        try
+            set attachCount to (count of attachments of n) as text
+        end try
+        set edited to ""
+        try
+            set edited to (modification date of n) as text
+        end try
+        set charCount to "?"
+        try
+            set charCount to (length of (plaintext of n)) as text
+        end try
+    end tell
+    return nid & tab & attachCount & tab & folderName & tab & edited & tab & charCount & linefeed
+end describeNote
 '''
 
 AS_BY_ID = '''
 on run argv
-    tell application "Notes"
-        set n to note id (item 1 of argv)
-        return (id of n) & tab & ((count of attachments of n) as text) & tab & (name of container of n) & tab & ((modification date of n) as text) & tab & (length of (plaintext of n)) & linefeed
-    end tell
+    return my describeNote(item 1 of argv)
 end run
-'''
+''' + AS_FIND.split("end run", 1)[1]
 
 
 def find_hub(args):
@@ -623,7 +642,7 @@ def update_hub(args, exporter, uuids, state, font):
         "<div><br></div><h2>%s</h2><ul>%s</ul><div>All teaching: %s</div>" % (
             esc(args.hub_heading), links, link_placeholder(exporter.root_id, root["display"])),
         pages, uuids, args.link_style), font)
-    if int(attachments or 0) > 0:
+    if not attachments.isdigit() or int(attachments) > 0:
         # Rewriting a note's body through AppleScript drops attachments, so don't.
         print('\n! "%s" has attachments, so the script will not edit it. Paste this in by hand:'
               % args.hub)
@@ -657,6 +676,7 @@ def main():
                     help="URL style for note links (try 'notes' if links don't open)")
     ap.add_argument("--font", help="Font family to use (default: whatever your existing notes use)")
     ap.add_argument("--font-size", help="Body font size in px (default: whatever your existing notes use)")
+    ap.add_argument("--hub-only", action="store_true", help="Only add the Classes section to the hub (after a full run)")
     ap.add_argument("--dry-run", action="store_true", help="Read Notion and write HTML previews only")
     args = ap.parse_args()
 
@@ -683,10 +703,24 @@ def main():
             sys.exit("Notion can't see Sermon Prep & Teaching. Open that page → ••• → Connections and add "
                      "your integration, then run again.")
         sys.exit(str(e))
-    exporter = Exporter(notion, root_id, args.only)
+    exporter = Exporter(notion, root_id, args.only, max_depth=1 if args.hub_only else None)
     exporter.crawl(root_id, root_title)
     pages = exporter.pages
     apply_forever_notes(exporter, args.marker)
+
+    if args.hub_only:
+        state = load_state()
+        family, size = detect_font(args, state["notes"].values())
+        font = (args.font or family, args.font_size or size)
+        for pid, page in pages.items():
+            if pid in state["notes"]:
+                page["note_id"] = state["notes"][pid]
+        uuids = note_identifiers([p["note_id"] for p in pages.values() if "note_id" in p])
+        update_hub(args, exporter, uuids, state, font)
+        save_state(state)
+        print("\nDone.")
+        return
+
     bodies = {pid: note_html(pid, p, pages) for pid, p in pages.items()}
     print("\n%d pages read from Notion." % len(pages))
 
