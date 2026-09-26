@@ -714,9 +714,22 @@ on run argv
     delay 1.5
     tell application "System Events" to tell process "Notes"
         set frontmost to true
-        set {wx, wy} to position of window 1
-        set {ww, wh} to size of window 1
-        click at {(wx + ww * 0.72) as integer, (wy + wh * 0.6) as integer}
+        -- Find the note's text area itself instead of guessing where it is.
+        set ta to missing value
+        repeat with e in (entire contents of window 1)
+            try
+                if role of e is "AXTextArea" then
+                    set ta to contents of e
+                    exit repeat
+                end if
+            end try
+        end repeat
+        if ta is missing value then return "no text area found" & tab & "none"
+        try
+            set focused of ta to true
+        end try
+        set {tx, ty} to position of ta
+        click at {tx + 30, ty + 12}
         delay 0.6
         set r to "none"
         try
