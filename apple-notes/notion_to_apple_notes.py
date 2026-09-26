@@ -672,16 +672,10 @@ def update_hub(args, exporter, uuids, state, font):
 
 HUB_TITLE = "✱ Ministry"
 HUB_TOP_LINKS = ["✱ Home"]
+# Each entry is a note name, or (text before the link, note name).
 HUB_CATEGORIES = [
-    ("Classes", ["✱ Sabbath Classes", "✱ Feasts Classes", "✱ Kid's Classes", "✱ Bible Basics Class"]),
-    ("Preaching", ["✱ Sermon Drafts", "✱ Preached Sermons",
-                   "2026 Preaching Calendar — Year of the Built House", "✱ Sermon Tools"]),
-    ("Bible Study & Discipleship", ["✱ Bible in a Year", "Bible in a Year & Discipleship Programs",
-                                    "The Names of God — Complete Reference",
-                                    "Personal Consecration Guide — Ezra 8:21–23",
-                                    "March Consecration (Theme + Fast Outline)"]),
-    ("Templates", ["C.R.A.C. Sermon Flow Template", "C.R.A.C. Bible Study Template"]),
-    ("All Teaching", ["✱ Sermon Prep & Teaching"]),
+    ("Classes", ["✱ Sabbath Classes", "✱ Feasts Classes", "✱ Kid's Classes", "✱ Bible Basics Class",
+                 ("All teaching:", "✱ Sermon Prep & Teaching")]),
 ]
 
 AS_COUNT_NAMED = '''
@@ -748,6 +742,7 @@ on run argv
         end repeat
         key code 124 using command down
         delay 0.2
+        if (item 5 of argv) is "space" then keystroke " "
         keystroke ">>"
         delay d
         keystroke q
@@ -765,12 +760,14 @@ def hub_layout():
     font = ' style="font-family: %s"' % esc(SYSTEM_FONT)
     lines = [('<div%s><h1>%s</h1></div>' % (font, esc(HUB_TITLE)), None)]
     for name in HUB_TOP_LINKS:
-        lines.append(("<div%s><br></div>" % font, name))
+        lines.append(("<div%s><br></div>" % font, (name, False)))
     for heading, names in HUB_CATEGORIES:
         lines.append(("<div%s><br></div>" % font, None))
         lines.append(("<div%s><b><u><h3>%s</h3></u></b></div>" % (font, esc(heading)), None))
-        for name in names:
-            lines.append(("<div%s><br></div>" % font, name))
+        for entry in names:
+            label, name = entry if isinstance(entry, tuple) else ("", entry)
+            lines.append(("<div%s>%s</div>" % (font, esc(label) if label else "<br>"),
+                          (name, bool(label))))
     lines.append(("<div%s><br></div>" % font, None))
     return lines
 
@@ -785,7 +782,8 @@ def build_hub(args):
     if not args.hub_id:
         sys.exit('--build-hub needs --hub-id "x-coredata://…" for the ✱ Ministry note to rebuild.')
     lines = hub_layout()
-    links = [(i, name) for i, (_, name) in enumerate(lines) if name]
+    links = [(i, link[0]) for i, (_, link) in enumerate(lines) if link]
+    after_text = {i for i, (_, link) in enumerate(lines) if link and link[1]}
     if osa(AS_IS_DELETED, args.account, args.hub_id) == "true":
         sys.exit("! That note is in Recently Deleted, so it can't be edited. Nothing was changed.\n"
                  "  Use the --hub-id of the ✱ Ministry note that isn't deleted.")
@@ -834,7 +832,8 @@ def build_hub(args):
     failed = []
     for index, name in reversed(links):  # bottom-up: a miss can't shift lines still to do
         try:
-            osa(AS_UI_LINK, str(index), link_query(name), str(args.ui_delay), role)
+            osa(AS_UI_LINK, str(index), link_query(name), str(args.ui_delay), role,
+                "space" if index in after_text else "")
             print("  linked: " + name)
         except RuntimeError as e:
             print("\n! Stopped: %s" % e.args[0].split("execution error: ")[-1])
