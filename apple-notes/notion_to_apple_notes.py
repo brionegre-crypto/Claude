@@ -1092,15 +1092,26 @@ def ask_click(nid, title, wait=8):
     return note_ready(nid)
 
 
-def type_link(script, nid, query, delay):
+def wait_for_links(nid, at_least, seconds=6.0):
+    # Notes saves typing a moment after it happens, so poll before deciding.
+    waited = 0.0
+    while True:
+        count = link_count(nid)
+        if count >= at_least or waited >= seconds:
+            return count
+        time.sleep(0.5)
+        waited += 0.5
+
+
+def type_link(script, nid, query, delay, before=None):
     """Type one >> link and report whether a new link really appeared."""
-    before = link_count(nid)
+    if before is None:
+        before = wait_for_links(nid, 10 ** 6, seconds=0)
     try:
         osa(script, query, str(delay))
     except RuntimeError:
         return False
-    time.sleep(0.4)
-    return link_count(nid) == before + 1
+    return wait_for_links(nid, before + 1) >= before + 1
 
 
 def ask(prompt, yes="YES"):
@@ -1212,9 +1223,17 @@ def build_classes(args, notion):
         print("Typing %d >> links into \"%s\" — hands off until it says Done…" % (len(todo), index_name))
         for n, pid in enumerate(todo, 1):
             title = pages[pid]["title"]
-            ok = type_link(AS_UI_APPEND_LINK, index_id, picker_query(title), args.ui_delay)
+            before = link_count(index_id)
+            ok = type_link(AS_UI_APPEND_LINK, index_id, picker_query(title), args.ui_delay, before)
+            if not ok and wait_for_links(index_id, before + 1, seconds=4) > before:
+                ok = True
+            if not ok and ">>" + picker_query(title) in osa(AS_PLAINTEXT, index_id):
+                print('\n! Notes didn\'t turn ">>%s" into a link (the text is at the end of "%s").'
+                      % (picker_query(title), index_name))
+                print("  Delete that line, then run the same command again.")
+                return
             if not ok and ask_click(index_id, index_name):
-                ok = type_link(AS_UI_APPEND_LINK, index_id, picker_query(title), args.ui_delay)
+                ok = type_link(AS_UI_APPEND_LINK, index_id, picker_query(title), args.ui_delay, before)
             if not ok:
                 print("\n! Stopped at %d/%d: the >> link for \"%s\" didn't appear." % (n, len(todo), title))
                 print("  Run the same command again to continue; links already added won't be repeated.")
@@ -1242,9 +1261,12 @@ def build_classes(args, notion):
         title, nid = pages[pid]["title"], note_ids[pid]
         osa(AS_UI_SHOW, nid)
         time.sleep(1.2)
-        ok = note_ready(nid) and type_link(AS_UI_TOP_LINK, nid, back_query, args.ui_delay)
-        if not ok and ask_click(nid, title):
-            ok = type_link(AS_UI_TOP_LINK, nid, back_query, args.ui_delay)
+        before = link_count(nid)
+        ok = note_ready(nid) and type_link(AS_UI_TOP_LINK, nid, back_query, args.ui_delay, before)
+        if not ok and wait_for_links(nid, before + 1, seconds=4) > before:
+            ok = True
+        if not ok and ">>" + back_query not in osa(AS_PLAINTEXT, nid) and ask_click(nid, title):
+            ok = type_link(AS_UI_TOP_LINK, nid, back_query, args.ui_delay, before)
         if not ok:
             skipped.append(title)
             print("  [%d/%d] skipped: %s" % (n, len(todo), title))
