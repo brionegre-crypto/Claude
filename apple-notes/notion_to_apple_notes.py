@@ -234,7 +234,10 @@ class Exporter:
                 continue
             out.append(self.render_block(blocks[i], page_id))
             i += 1
-        return "".join(out)
+        return self.join_blocks(out)
+
+    def join_blocks(self, parts):
+        return "".join(parts)
 
     def render_list_item(self, block, page_id):
         kind = block["type"]
@@ -932,9 +935,28 @@ SABBATH_ID = "9a659ef9321a4c4f8af8bba837e8cd88"
 CLASS_SKIP = ("YouTube Description", "Bible Highlighting System", "Bible Studies", "March Consecration")
 
 
+BLANK = "<div><br></div>"
+
+
 class ClassExporter(Exporter):
     """Direct sub-pages of the root are classes (one note each). Anything nested
     inside a class is written into that class's note as a section."""
+
+    def join_blocks(self, parts):
+        # One blank line between blocks (paragraphs, headings, whole lists),
+        # like a note typed in Notes; Notion's own empty lines are dropped.
+        kept = []
+        for p in parts:
+            while p.startswith(BLANK):
+                p = p[len(BLANK):]
+            if p:
+                kept.append(p)
+        out = ""
+        for i, p in enumerate(kept):
+            after_heading = i and re.match(r"<div><(h2|h3|b)>", kept[i - 1]) and kept[i - 1].endswith("</div>") \
+                and kept[i - 1].count("<div>") == 1
+            out += ("" if i == 0 or after_heading else BLANK) + p
+        return out
 
     def pages_as_links(self, page_id):
         return page_id == self.root_id
@@ -950,11 +972,33 @@ class ClassExporter(Exporter):
             return heading % esc(title)
         self.pages[norm(child_id)] = {"title": title, "parent": parent_id, "children": [],
                                       "html": "", "depth": depth + 1}
-        return "<div><br></div>" + heading % esc(title) + self.render_blocks(blocks, norm(child_id))
+        body = self.render_blocks(blocks, norm(child_id))
+        return heading % esc(title) + body
 
 
-def class_note_html(page):
-    return "<div><h1>%s</h1></div>%s" % (esc(page["title"]), page["html"])
+def class_note_html(page, font_px):
+    style = "font-family: -apple-system, 'SF Pro Text', 'Helvetica Neue'; font-size: %spx" % font_px
+    return '<div style="%s"><div><h1>%s</h1></div>%s%s</div>' % (
+        esc(style), esc(page["title"]), BLANK, page["html"])
+
+
+def check_size(nid, page, font_px, created_new, state, pid):
+    """Show the first note and let you adjust the text size until it looks right."""
+    while True:
+        osa(AS_UI_SHOW, nid)
+        ans = input('\nCheck "%s" in Notes. Spacing and text size OK?\n'
+                    "Type YES, or a number for a different text size (now %s): " % (page["title"], font_px)).strip()
+        if ans.upper() == "YES":
+            return font_px
+        if ans.isdigit() and 8 <= int(ans) <= 40:
+            font_px = ans
+            osa(AS_UPDATE, nid, html_text=class_note_html(page, font_px))
+            continue
+        if created_new:
+            osa(AS_DELETE_NOTE, nid)
+            state["notes"].pop(pid, None)
+            save_state(state)
+        sys.exit("Stopped. Tell Claude what looks off (spacing, size, headings…).")
 
 
 def picker_query(title):
@@ -1013,8 +1057,6 @@ on run argv
         delay d
         key code 36
         delay 0.4
-        key code 36
-        delay 0.3
     end tell
 end run
 '''
@@ -1111,29 +1153,36 @@ def build_classes(args, notion):
     state = load_state()
     state.setdefault("index_linked", [])
     state.setdefault("uplinked", [])
-    live_names, note_ids = {}, {}
+    note_ids = {}
+    font_px = args.font_size or state.get("font_px") or "16"
+    checked = False
     for n, pid in enumerate(classes, 1):
         page = pages[pid]
         existing = [r.split("\t")[0] for r in osa(AS_FIND, args.account, page["title"]).splitlines() if r.strip()]
         existing = [nid for nid in existing if nid not in trash]
-        if existing:
+        if existing and not args.rewrite:
             note_ids[pid] = existing[0]
             print("  [%d/%d] already exists, kept: %s" % (n, len(classes), page["title"]))
             continue
-        nid = osa(AS_CREATE, args.account, args.folder, html_text=class_note_html(page))
+        if existing:
+            nid, created_new = existing[0], False
+            osa(AS_UPDATE, nid, html_text=class_note_html(page, font_px))
+            if pid in state["uplinked"]:
+                state["uplinked"].remove(pid)  # rewriting removes the >> link at the top; it's added again below
+            verb = "rewritten"
+        else:
+            nid, created_new = osa(AS_CREATE, args.account, args.folder,
+                                   html_text=class_note_html(page, font_px)), True
+            verb = "created"
         note_ids[pid] = nid
         state["notes"][pid] = nid
         save_state(state)
-        print("  [%d/%d] created: %s" % (n, len(classes), page["title"]))
-        if not live_names:
-            live_names[pid] = nid
-            osa(AS_UI_SHOW, nid)
-            print('\nCheck "%s" in Notes: are the text and heading sizes right?' % page["title"])
-            if not ask("Type YES if it looks right (anything else deletes this test note and stops): "):
-                osa(AS_DELETE_NOTE, nid)
-                del state["notes"][pid]
-                save_state(state)
-                sys.exit("Stopped and removed the test note. Tell Claude what looks off.")
+        print("  [%d/%d] %s: %s" % (n, len(classes), verb, page["title"]))
+        if not checked:
+            font_px = check_size(nid, page, font_px, created_new, state, pid)
+            state["font_px"] = font_px
+            save_state(state)
+            checked = True
             print()
 
     # 4. Type the >> links into your note
@@ -1237,6 +1286,8 @@ def main():
     ap.add_argument("--font-size", help="Body font size in px (default: whatever your existing notes use)")
     ap.add_argument("--classes", action="store_true",
                     help="Make one note per Sabbath class and type >> links to them into your index note")
+    ap.add_argument("--rewrite", action="store_true",
+                    help="With --classes: rewrite existing class notes (spacing, font, size)")
     ap.add_argument("--back-links-only", action="store_true",
                     help="With --classes: skip typing links into the index note (already done)")
     ap.add_argument("--index-note", help='Exact name of your Sabbath Classes note (default: finds one containing "Sabbath Classes")')
