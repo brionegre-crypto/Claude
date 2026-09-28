@@ -12,6 +12,7 @@ The member portal is a systeme.io classic course, delivered through the membersh
 "The Be The Man Club - Membership" ($17/month) grants:
 - Full access to the portal course (added 2026-09-28)
 - The 22 downloadable files it already delivered (kept unchanged)
+- **Pending:** community access. It has to be added in the dashboard (product resources → community). The API needs the community's numeric ID, and it can't look that up.
 
 Buying the membership enrolls the man in the portal automatically.
 
@@ -22,7 +23,7 @@ Buying the membership enrolls the man in the portal automatically.
 | Start here | Welcome to the club · Your first week in the club | On |
 | The 7-step framework | Steps 1–7, one lesson each, each linking its worksheet PDF | On |
 | The member library | The Weekly Scorecard · Marriage · Fatherhood · Faith (all 11 tools, PDF and Excel links) | Off |
-| The brotherhood | Link to the systeme.io community (pending: needs the community to be created first) | – |
+| The brotherhood | Join the brotherhood: link to https://go.bethemansystem.com/community/be-the-man-club, a first-post template and community norms | Off |
 
 All lessons unlock at once (no drip).
 
