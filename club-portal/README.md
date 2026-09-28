@@ -37,4 +37,12 @@ All lessons unlock at once (no drip).
 - **Check that canceling removes access.** According to systeme.io's help pages, subscription resources are revoked automatically when the subscription ends. Confirm it with a test purchase and cancel (100% coupon). If access stays, note that the plan allows only one automation rule, and the opt-in form already uses it. Either upgrade and add a rule (sale canceled → revoke portal access), or remove canceled members by hand under Contacts.
 - **Monthly Club-only tool:** add each month's tool as a new lesson (e.g. a "Monthly tools" module) and link its file.
 - **Instagram copy:** the Club caption in `instagram/bethemansystem-playbook.md` says "No group chat". Update it once the community is live.
+
+## Join the Club page
+
+On 2026-09-28 the checkout page ("Join the Club - Membership Checkout") was updated to describe the portal, the full framework, the brotherhood and the 20% member discount. The "What this is not" section no longer says there's no group chat. The form and payment button were not touched.
+
+## Promo videos
+
+See `instagram/posts/README.md`: `out/reel-club-portal.mp4` (9:16) and `out/youtube-club-portal.mp4` (16:9).
 - Framework lesson pages describe how to work each step. They do not reproduce the worksheet contents. If a lesson's framing does not match its PDF, edit it in the course editor.

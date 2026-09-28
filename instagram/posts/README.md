@@ -30,3 +30,16 @@ Missing once is not failure. One bad day shouldn't cost you a month.
 ```
 
 To change any text, edit `build.mjs` and run `node build.mjs`. It needs Node and Playwright.
+
+## Club portal promo video
+
+Two 43-second, silent walkthroughs of the members' portal. A finger taps through Start here → the framework (Step 1 download) → the member library (marriage tools) → the brotherhood (writing a first post). Captions sell each benefit, and it ends on a $17/month call to action.
+
+| File | Size | Use |
+|---|---|---|
+| `out/reel-club-portal.mp4` | 1080×1920 (9:16) | Instagram Reel / Story, YouTube Shorts, TikTok. Ends on "link in bio" |
+| `out/youtube-club-portal.mp4` | 1920×1080 (16:9) | YouTube video, website embed. Ends on "link in the description" |
+
+The phone screens recreate the real portal (same modules, lesson names and copy) in HTML; they are not a screen recording. Add music or a voiceover in Instagram, YouTube or CapCut.
+
+Rebuild: `node reel.mjs` (9:16) or `node reel.mjs --yt` (16:9). The ffmpeg with H.264 comes from `pip install imageio-ffmpeg`. Pass seconds for stills to check (`node reel.mjs --yt 5 20`). The scene and timeline are in `reel-club-portal.html`.

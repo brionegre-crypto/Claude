@@ -1,0 +1,443 @@
+<!doctype html>
+<html><head><script>if(location.hash==='#yt')document.documentElement.classList.add('yt')</script><meta charset="utf-8">
+<link rel="stylesheet" href="fonts.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--ink:#0B0B0C;--coal:#141416;--amber:#E18B1F;--cream:#F2EEE6;--stone:#BFBCB6;--mute:#8C877E;
+  --hd:#1C1A18;--bg:#F6F5F3;--txt:#1C1A18;--sec:#A8582B;--line:#E6E2DC}
+html,body{width:1080px;height:1920px;overflow:hidden;background:var(--ink);font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased}
+#stage{position:relative;width:1080px;height:1920px;overflow:hidden;background:radial-gradient(120% 70% at 50% 0%,#1d1b19 0%,var(--ink) 62%)}
+#stage::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:.06;z-index:50;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+.oswald{font-family:'Oswald';text-transform:uppercase}
+.brand{position:absolute;left:0;right:0;top:70px;display:flex;justify-content:center;align-items:center;gap:18px;
+  font-family:'Oswald';font-weight:500;letter-spacing:.32em;font-size:26px;color:var(--cream);text-transform:uppercase;z-index:20}
+.brand i{display:block;width:44px;height:3px;background:var(--amber)}
+/* captions */
+.cap{position:absolute;left:70px;right:70px;top:130px;height:220px;display:flex;align-items:center;justify-content:center;text-align:center;
+  font-family:'Oswald';font-weight:700;text-transform:uppercase;font-size:70px;line-height:1.02;color:var(--cream);opacity:0;z-index:20}
+.cap em{font-style:normal;color:var(--amber)}
+/* intro / outro */
+.card{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:0 96px;z-index:30;opacity:0}
+.card .h{font-family:'Oswald';font-weight:700;text-transform:uppercase;color:var(--cream);line-height:.98}
+.card .h em{font-style:normal;color:var(--amber)}
+.card .label{font-family:'Oswald';font-weight:500;letter-spacing:.24em;font-size:32px;color:var(--amber);text-transform:uppercase}
+.card .rule{width:110px;height:5px;background:var(--amber)}
+.card .body{font-size:40px;line-height:1.45;color:var(--stone)}
+.card .body b{color:var(--cream)}
+.plus{list-style:none;display:flex;flex-direction:column;gap:44px}
+.plus li{display:flex;gap:30px;align-items:flex-start;font-size:50px;line-height:1.2;color:var(--stone)}
+.plus li b{color:var(--cream);font-weight:700}
+.plus li::before{content:"+";font-family:'Oswald';font-weight:700;color:var(--amber);font-size:64px;line-height:.9}
+.cta{display:inline-flex;align-self:flex-start;align-items:center;gap:18px;background:var(--amber);color:var(--ink);font-family:'Oswald';font-weight:700;
+  text-transform:uppercase;letter-spacing:.08em;font-size:44px;padding:30px 48px;border-radius:2px}
+/* phone */
+#phone{position:absolute;left:150px;top:370px;width:780px;height:1450px;transform-origin:50% 0;border-radius:70px;background:#050505;
+  box-shadow:0 0 0 3px #2a2826,0 50px 120px rgba(0,0,0,.7),0 0 140px rgba(225,139,31,.10);z-index:10}
+#screen{position:absolute;left:16px;top:16px;width:748px;height:1418px;border-radius:56px;overflow:hidden;background:var(--bg)}
+.status{position:absolute;top:0;left:0;right:0;height:58px;display:flex;justify-content:space-between;align-items:center;padding:6px 48px 0;
+  font-weight:600;font-size:24px;color:#fff;background:var(--hd);z-index:5}
+.status .notch{position:absolute;left:50%;top:12px;width:200px;height:36px;margin-left:-100px;border-radius:20px;background:#000}
+.sc{position:absolute;left:0;top:58px;width:748px;height:1360px;overflow:hidden;background:var(--bg);will-change:transform}
+.scroll{position:absolute;left:0;top:0;width:100%}
+.appbar{height:96px;background:var(--hd);color:#fff;display:flex;align-items:center;gap:20px;padding:0 32px;font-family:'Oswald';font-weight:500;
+  font-size:30px;letter-spacing:.04em}
+.appbar .back{font-size:40px;line-height:1;color:var(--amber);width:36px}
+.appbar .crumb{font-family:'Inter';font-weight:500;font-size:24px;color:#cfc9c1;letter-spacing:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.appbar .logo{display:flex;gap:14px;align-items:center;letter-spacing:.28em;font-size:24px;text-transform:uppercase}
+.appbar .logo i{display:block;width:30px;height:3px;background:var(--amber)}
+.appbar .sp{flex:1}
+.appbar .ava{width:48px;height:48px;border-radius:50%;background:#3a342d;color:var(--cream);display:flex;align-items:center;justify-content:center;font-family:'Inter';font-size:15px;font-weight:600}
+.hero{background:var(--hd);color:#fff;padding:26px 40px 48px}
+.hero h1{font-family:'Oswald';font-weight:700;text-transform:uppercase;font-size:56px;line-height:1.02}
+.hero p{margin-top:18px;font-size:24px;line-height:1.5;color:#cfc9c1}
+.prog{margin-top:26px;height:10px;background:#3a342d;border-radius:6px;overflow:hidden}
+.prog i{display:block;height:100%;width:0;background:var(--amber)}
+.progl{margin-top:10px;font-size:20px;color:#a39c92}
+.wrap{padding:30px 32px 60px}
+.mod{background:#fff;border:1px solid var(--line);border-radius:18px;padding:30px 30px;margin-bottom:20px;display:flex;align-items:center;gap:24px}
+.mod .n{width:60px;height:60px;border-radius:14px;background:#F3E6DC;color:var(--sec);font-family:'Oswald';font-weight:700;font-size:32px;display:flex;align-items:center;justify-content:center}
+.mod .t{flex:1}
+.mod .t b{display:block;font-family:'Oswald';font-weight:500;font-size:34px;color:var(--txt);text-transform:uppercase;letter-spacing:.01em}
+.mod .t span{font-size:22px;color:#8a8279}
+.chev{color:#b7aea3;font-size:34px}
+.les{background:#fff;border:1px solid var(--line);border-radius:16px;padding:26px 26px;margin-bottom:14px;display:flex;align-items:center;gap:22px}
+.les .ic{width:52px;height:52px;border-radius:50%;border:3px solid #d9d2c9;flex:0 0 52px}
+.les .ic.doc{border-radius:12px;border:none;background:#F3E6DC;position:relative}
+.les .ic.doc::after{content:"";position:absolute;left:15px;top:12px;width:22px;height:28px;border:3px solid var(--sec);border-radius:3px}
+.les b{flex:1;font-size:27px;font-weight:600;color:var(--txt);line-height:1.3}
+.modh{font-family:'Oswald';font-weight:700;text-transform:uppercase;font-size:44px;color:var(--txt);margin:6px 0 6px}
+.modsub{font-size:22px;color:#8a8279;margin-bottom:26px}
+/* lesson page */
+.lp{padding:40px 40px 80px;color:var(--txt)}
+.lp h1{font-family:'Oswald';font-weight:700;text-transform:uppercase;font-size:52px;line-height:1.04;margin-bottom:26px}
+.lp h2{font-family:'Oswald';font-weight:700;text-transform:uppercase;font-size:36px;line-height:1.1;margin:40px 0 18px}
+.lp p{font-size:26px;line-height:1.6;color:#3b3631;margin-bottom:18px}
+.lp ul,.lp ol{padding-left:34px;margin-bottom:18px}
+.lp li{font-size:26px;line-height:1.55;color:#3b3631;margin-bottom:12px}
+.lp li::marker{color:var(--sec);font-weight:700}
+.lp b{color:var(--txt)}
+.dl{display:flex;align-items:center;gap:18px;background:var(--sec);color:#fff;border-radius:14px;padding:24px 28px;font-weight:700;font-size:26px;margin:6px 0 26px}
+.dl i{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-style:normal;font-size:24px}
+.tool{background:#fff;border:1px solid var(--line);border-radius:18px;padding:28px;margin-bottom:22px}
+.tool b{display:block;font-family:'Oswald';font-weight:500;text-transform:uppercase;font-size:32px;margin-bottom:8px}
+.tool p{font-size:23px;margin-bottom:16px;color:#5a534b;line-height:1.5}
+.tool .row{display:flex;gap:14px;flex-wrap:wrap}
+.chip{display:inline-flex;align-items:center;gap:10px;background:#F3E6DC;color:var(--sec);border-radius:40px;padding:14px 22px;font-weight:700;font-size:22px}
+.chip::before{content:"↓";font-size:24px}
+.cmt{margin-top:40px;border-top:1px solid var(--line);padding-top:30px}
+.cmt h3{font-family:'Oswald';font-weight:500;text-transform:uppercase;font-size:30px;margin-bottom:18px}
+.box{border:2px solid var(--line);background:#fff;border-radius:14px;padding:24px;font-size:24px;color:#9a9188;min-height:120px}
+.toast{position:absolute;left:40px;right:40px;bottom:60px;background:#1C1A18;color:#fff;border-radius:18px;padding:26px 30px;font-size:24px;display:flex;gap:18px;align-items:center;
+  opacity:0;transform:translateY(30px);z-index:8;box-shadow:0 20px 40px rgba(0,0,0,.3)}
+.toast i{width:40px;height:40px;border-radius:50%;background:var(--amber);color:var(--ink);display:flex;align-items:center;justify-content:center;font-style:normal;font-weight:700;flex:0 0 40px}
+/* community */
+.cm-hero{background:var(--hd);color:#fff;padding:30px 40px 40px}
+.cm-hero h1{font-family:'Oswald';font-weight:700;text-transform:uppercase;font-size:50px}
+.badge{display:inline-block;margin-top:14px;background:rgba(225,139,31,.18);color:var(--amber);border-radius:30px;padding:8px 18px;font-size:20px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+.compose{background:#fff;border:1px solid var(--line);border-radius:18px;padding:26px;margin:30px 32px 24px}
+.compose .who{display:flex;gap:16px;align-items:center;margin-bottom:18px;font-weight:600;font-size:24px;color:var(--txt)}
+.compose .who .ava{width:52px;height:52px;border-radius:50%;background:#3a342d;color:var(--cream);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700}
+.compose .field{min-height:150px;font-size:26px;line-height:1.5;color:var(--txt)}
+.compose .ph{color:#9a9188}
+.caret{display:inline-block;width:3px;height:30px;background:var(--sec);vertical-align:-5px;margin-left:2px}
+.compose .bar{display:flex;justify-content:flex-end;margin-top:16px}
+.btn{background:var(--sec);color:#fff;border-radius:12px;padding:16px 34px;font-weight:700;font-size:24px}
+.post{background:#fff;border:1px solid var(--line);border-radius:18px;padding:26px;margin:0 32px 20px;opacity:0}
+.post .who{display:flex;gap:16px;align-items:center;margin-bottom:14px;font-weight:600;font-size:24px}
+.post .who .ava{width:52px;height:52px;border-radius:50%;background:#3a342d;color:var(--cream);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700}
+.post .who span{font-weight:400;color:#8a8279;font-size:20px}
+.post p{font-size:25px;line-height:1.55;color:#3b3631}
+.empty{margin:10px 32px;padding:30px;text-align:center;color:#9a9188;font-size:22px}
+/* finger */
+#finger{position:absolute;left:0;top:0;width:84px;height:84px;margin:-42px 0 0 -42px;border-radius:50%;
+  background:rgba(255,255,255,.55);border:3px solid rgba(255,255,255,.9);box-shadow:0 6px 24px rgba(0,0,0,.35);z-index:40;opacity:0}
+#ripple{position:absolute;left:0;top:0;width:84px;height:84px;margin:-42px 0 0 -42px;border-radius:50%;border:5px solid var(--amber);z-index:39;opacity:0}
+.handle{position:absolute;left:0;right:0;bottom:30px;text-align:center;font-size:26px;color:var(--mute);letter-spacing:.04em;z-index:20}
+.handle b{color:var(--cream);font-weight:600}
+
+/* ---- YouTube 16:9 layout ---- */
+html.yt,html.yt body{width:1920px;height:1080px}
+html.yt #stage{width:1920px;height:1080px;background:radial-gradient(90% 90% at 75% 10%,#1d1b19 0%,var(--ink) 62%)}
+html.yt .brand{left:140px;right:auto;top:84px;justify-content:flex-start}
+html.yt .brand i:last-child{display:none}
+html.yt .cap{left:140px;right:auto;width:980px;top:0;height:1080px;justify-content:flex-start;text-align:left;font-size:104px;line-height:1}
+html.yt #phone{left:1270px;top:56px;transform-origin:0 0}
+html.yt .card{padding:0 170px}
+html.yt .card .body{font-size:44px}
+html.yt .plus li{font-size:56px}
+html.yt .handle{left:140px;right:auto;text-align:left;bottom:70px;font-size:28px}
+</style></head>
+<body><div id="stage">
+<div class="brand" id="brand"><i></i>Be The Man<i></i></div>
+
+<div class="cap" id="c1"><div>One login.<br><em>Everything in one place.</em></div></div>
+<div class="cap" id="c2"><div>Day one: a plan for<br><em>your first week.</em></div></div>
+<div class="cap" id="c3"><div>All 7 steps of the<br><em>framework. In order.</em></div></div>
+<div class="cap" id="c4"><div>Every tool in the store.<br><em>Free. Yours to keep.</em></div></div>
+<div class="cap" id="c5"><div>The brotherhood.<br><em>Men running the same system.</em></div></div>
+
+<div id="phone"><div id="screen">
+  <div class="status"><span>9:41</span><div class="notch"></div><span>●●● ▮</span></div>
+
+  <!-- HOME -->
+  <div class="sc" id="home"><div class="scroll">
+    <div class="appbar"><div class="logo"><i></i>Be The Man</div><div class="sp"></div><div class="ava">YOU</div></div>
+    <div class="hero"><h1>The Be The Man Club</h1>
+      <p>Your home base: every tool from the store, Steps 1 to 7 of the framework in order, and the brotherhood of men doing the same work.</p>
+      <div class="prog"><i id="progbar"></i></div><div class="progl" id="progl">0% complete</div></div>
+    <div class="wrap">
+      <div class="mod" id="m1"><div class="n">1</div><div class="t"><b>Start here</b><span>2 lessons</span></div><div class="chev">›</div></div>
+      <div class="mod" id="m2"><div class="n">2</div><div class="t"><b>The 7-step framework</b><span>7 lessons</span></div><div class="chev">›</div></div>
+      <div class="mod" id="m3"><div class="n">3</div><div class="t"><b>The member library</b><span>4 lessons · 11 tools</span></div><div class="chev">›</div></div>
+      <div class="mod" id="m4"><div class="n">4</div><div class="t"><b>The brotherhood</b><span>1 lesson · private community</span></div><div class="chev">›</div></div>
+    </div>
+  </div></div>
+
+  <!-- MODULE: START HERE -->
+  <div class="sc" id="mStart"><div class="scroll">
+    <div class="appbar"><span class="back">‹</span><span class="crumb">The Be The Man Club</span></div>
+    <div class="wrap"><div class="modh">Start here</div><div class="modsub">Module 1 · 2 lessons</div>
+      <div class="les" id="lWelcome"><div class="ic doc"></div><b>Welcome to the club</b><div class="chev">›</div></div>
+      <div class="les"><div class="ic doc"></div><b>Your first week in the club</b><div class="chev">›</div></div>
+    </div></div></div>
+
+  <!-- LESSON: WELCOME -->
+  <div class="sc" id="welcome"><div class="scroll">
+    <div class="appbar"><span class="back" id="bkWelcome">‹</span><span class="crumb">Start here</span></div>
+    <div class="lp"><h1>Welcome to the club</h1>
+      <p>You joined because you have meant it before. New Year's, a Sunday morning, the car after an argument. You meant it every time, and it did not hold.</p>
+      <p>This club exists to fix that. Not with more conviction, but with a system: <b>a mechanism, not a mood.</b></p>
+      <h2>What your membership includes</h2>
+      <ul>
+        <li><b>The 7-step framework.</b> Every worksheet from Step 1 to Step 7, in order.</li>
+        <li><b>The member library.</b> All 11 tools from the store, free.</li>
+        <li><b>The monthly tool.</b> Club-only, not sold anywhere else.</li>
+        <li><b>The Thursday email.</b> A time, a trigger, and a way to tell if it held.</li>
+        <li><b>The brotherhood.</b> A private community of men doing the same work.</li>
+        <li><b>20% off anything new.</b> Code CLUB20 at checkout.</li>
+      </ul>
+      <h2>How to use this portal</h2>
+      <ol><li><b>Read "Your first week in the club".</b> Three things to do in seven days.</li>
+        <li><b>Work the framework one step at a time.</b></li>
+        <li><b>Pull tools from the library when you need them.</b></li>
+        <li><b>Come back every Sunday.</b></li></ol>
+    </div></div></div>
+
+  <!-- MODULE: FRAMEWORK -->
+  <div class="sc" id="mFrame"><div class="scroll">
+    <div class="appbar"><span class="back">‹</span><span class="crumb">The Be The Man Club</span></div>
+    <div class="wrap"><div class="modh">The 7-step framework</div><div class="modsub">Module 2 · 7 lessons</div>
+      <div class="les" id="lStep1"><div class="ic"></div><b>Step 1: what type of man do you want to be?</b></div>
+      <div class="les"><div class="ic"></div><b>Step 2: what are your goals?</b></div>
+      <div class="les"><div class="ic"></div><b>Step 3: what has stopped you so far?</b></div>
+      <div class="les"><div class="ic"></div><b>Step 4: the laws of a system that holds</b></div>
+      <div class="les"><div class="ic"></div><b>Step 5: the four pillars</b></div>
+      <div class="les"><div class="ic"></div><b>Step 6: why you need a system</b></div>
+      <div class="les"><div class="ic"></div><b>Step 7: God at the center</b></div>
+    </div></div></div>
+
+  <!-- LESSON: STEP 1 -->
+  <div class="sc" id="step1"><div class="scroll">
+    <div class="appbar"><span class="back" id="bkStep1">‹</span><span class="crumb">The 7-step framework</span></div>
+    <div class="lp"><h1>Step 1: what type of man do you want to be?</h1>
+      <div class="dl" id="dlStep1"><i>↓</i>Download the Step 1 worksheet (PDF)</div>
+      <p>Most men start with a goal. Step 1 comes before the goal. It asks one question, and the answer becomes the standard every later step is measured against.</p>
+      <h2>How to work this step</h2>
+      <ol><li><b>Name the attributes</b> of the man you want to be.</li>
+        <li><b>Make each one ordinary:</b> what it looks like on a Tuesday.</li>
+        <li><b>Apply the house test.</b> Would they know without being told?</li>
+        <li><b>Write the sentence</b> that says who he is.</li></ol>
+      <div class="cmt"><h3>Discussion</h3><div class="box">Share your Step 1 sentence with the brotherhood…</div></div>
+    </div></div>
+    <div class="toast" id="tStep1"><i>✓</i>Step1-WhatTypeofManDoYouWanttoBe.pdf saved</div>
+  </div>
+
+  <!-- MODULE: LIBRARY -->
+  <div class="sc" id="mLib"><div class="scroll">
+    <div class="appbar"><span class="back">‹</span><span class="crumb">The Be The Man Club</span></div>
+    <div class="wrap"><div class="modh">The member library</div><div class="modsub">Module 3 · all 11 tools, free for members</div>
+      <div class="les"><div class="ic doc"></div><b>The Weekly Scorecard</b><div class="chev">›</div></div>
+      <div class="les" id="lMarriage"><div class="ic doc"></div><b>Marriage: tools for husbands</b><div class="chev">›</div></div>
+      <div class="les"><div class="ic doc"></div><b>Fatherhood: tools for dads</b><div class="chev">›</div></div>
+      <div class="les"><div class="ic doc"></div><b>Faith: tools for discipleship and prayer</b><div class="chev">›</div></div>
+    </div></div></div>
+
+  <!-- LESSON: MARRIAGE -->
+  <div class="sc" id="marriage"><div class="scroll">
+    <div class="appbar"><span class="back" id="bkMar">‹</span><span class="crumb">The member library</span></div>
+    <div class="lp"><h1>Marriage: tools for husbands</h1>
+      <p>Four tools for the man who wants his wife to be able to tell, without being told.</p>
+      <div class="tool"><b>The Godly Husband Field Guide</b><p>The main guide, with a tracker to keep it running week to week.</p>
+        <div class="row"><span class="chip" id="dlGH">Field guide (PDF)</span><span class="chip">Tracker (Excel)</span></div></div>
+      <div class="tool"><b>The Christian Marriage Workbook for Men</b><p>A workbook to write in, for going deeper on your part.</p>
+        <div class="row"><span class="chip">Workbook (PDF)</span></div></div>
+      <div class="tool"><b>The Husband's Devotional: 30 mornings</b><p>One short devotional a morning for a month.</p>
+        <div class="row"><span class="chip" id="dlDev">Devotional (PDF)</span></div></div>
+      <div class="tool"><b>Christian Couples Conversation Cards</b><p>For the conversations that do not happen on their own.</p>
+        <div class="row"><span class="chip">Cards (PDF)</span></div></div>
+    </div></div>
+    <div class="toast" id="tGH"><i>✓</i>The_Godly_Husband_Field_Guide.pdf saved</div>
+    <div class="toast" id="tDev"><i>✓</i>The_Husbands_Devotional_30_Mornings.pdf saved</div>
+  </div>
+
+  <!-- LESSON: BROTHERHOOD -->
+  <div class="sc" id="brother"><div class="scroll">
+    <div class="appbar"><span class="back">‹</span><span class="crumb">The brotherhood</span></div>
+    <div class="lp"><h1>Join the brotherhood</h1>
+      <div class="dl" id="openCm"><i>→</i>Open the Be The Man Club community</div>
+      <p>A man working the system alone can explain away a missed week. A man who told other men what he was going to do has a harder time doing that.</p>
+      <h2>Your first post</h2>
+      <ol><li>Your first name and where you are in life.</li><li>Your Step 1 sentence.</li><li>The one decision on your scorecard this week.</li></ol>
+    </div></div></div>
+
+  <!-- COMMUNITY -->
+  <div class="sc" id="cm"><div class="scroll">
+    <div class="appbar"><span class="back">‹</span><span class="crumb">Community</span></div>
+    <div class="cm-hero"><h1>Be The Man Club</h1><div class="badge">Members only</div></div>
+    <div class="compose" id="compose"><div class="who"><div class="ava">YOU</div>Post to the brotherhood</div>
+      <div class="field" id="field"><span class="ph" id="ph">What did you decide this week?</span><span id="typed"></span><span class="caret" id="caret"></span></div>
+      <div class="bar"><span class="btn" id="postBtn">Post</span></div></div>
+    <div class="post" id="post"><div class="who"><div class="ava">YOU</div><div>You <span>· just now</span></div></div><p id="postText"></p></div>
+  </div></div>
+</div></div>
+
+<div id="finger"></div><div id="ripple"></div>
+
+<!-- intro -->
+<div class="card" id="intro">
+  <div class="label">The Be The Man Club</div>
+  <div style="height:40px"></div>
+  <div class="h" style="font-size:130px">Here's what's<br><em>inside.</em></div>
+  <div style="height:48px"></div><div class="rule"></div><div style="height:44px"></div>
+  <div class="body">A look around the members' portal. <b>$17 a month.</b></div>
+</div>
+<!-- plus -->
+<div class="card" id="plus">
+  <div class="label">And every month</div><div style="height:56px"></div>
+  <ul class="plus">
+    <li><span><b>A Club-only tool,</b> not sold anywhere</span></li>
+    <li><span><b>One email every Thursday:</b> a time, a trigger, a test</span></li>
+    <li><span><b>20% off anything new</b> that isn't already included</span></li>
+    <li><span><b>Cancel anytime.</b> The files are yours to keep</span></li>
+  </ul>
+</div>
+<!-- outro -->
+<div class="card" id="outro">
+  <div class="label">Break the cycle. Build the system.</div>
+  <div style="height:40px"></div>
+  <div class="h" style="font-size:120px">The Be The Man<br>Club. <em>$17 a month.</em></div>
+  <div style="height:56px"></div><div class="rule"></div><div style="height:50px"></div>
+  <div class="body">Portal. Framework. All 11 tools. The brotherhood.<br><b>Be the man.</b></div>
+  <div style="height:70px"></div>
+  <div class="cta" id="ctaTxt">Join the Club · link in bio</div>
+</div>
+<div class="handle" id="handle"><b>@bethemansystem</b> · go.bethemansystem.com</div>
+</div>
+
+<script>
+const TOTAL = 43;
+const YT = document.documentElement.classList.contains('yt');
+const BASE = YT ? .655 : 1;
+const $ = s => document.querySelector(s);
+const clamp = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v));
+const ease = x => x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
+const seg = (t, a, b) => ease(clamp((t - a) / (b - a)));
+const fadeWin = (t, a, b, f = .35) => Math.min(seg(t, a, a + f), 1 - seg(t, b - f, b));
+
+// navigation: [time, screenId, direction(+1 forward, -1 back)]
+const NAV = [[0, 'home', 1], [4.9, 'mStart', 1], [6.3, 'welcome', 1], [11.1, 'home', -1], [12.1, 'mFrame', 1], [13.5, 'step1', 1],
+  [18.1, 'home', -1], [19.0, 'mLib', 1], [20.2, 'marriage', 1], [25.1, 'home', -1], [25.9, 'brother', 1], [27.5, 'cm', 1]];
+const TR = .38;
+
+// scroll keyframes per screen: [t, px]
+const SCROLL = {
+  welcome: [[7.2, 0], [8.4, 480], [9.4, 480], [10.4, 760]],
+  step1: [[15.6, 0], [17.0, 560]],
+  marriage: [[22.0, 0], [23.2, 420]],
+};
+const scrollAt = (id, t) => {
+  const k = SCROLL[id]; if (!k) return 0;
+  if (t <= k[0][0]) return k[0][1];
+  for (let i = 1; i < k.length; i++) if (t <= k[i][0]) return k[i - 1][1] + (k[i][1] - k[i - 1][1]) * seg(t, k[i - 1][0], k[i][0]);
+  return k[k.length - 1][1];
+};
+
+// taps: [t, screenId, selector]
+const TAPS = [[4.7, 'home', '#m1'], [6.1, 'mStart', '#lWelcome'], [10.9, 'welcome', '#bkWelcome'], [11.9, 'home', '#m2'], [13.3, 'mFrame', '#lStep1'],
+  [14.6, 'step1', '#dlStep1'], [17.9, 'step1', '#bkStep1'], [18.8, 'home', '#m3'], [20.0, 'mLib', '#lMarriage'], [21.0, 'marriage', '#dlGH'],
+  [24.0, 'marriage', '#dlDev'], [24.9, 'marriage', '#bkMar'], [25.7, 'home', '#m4'], [27.3, 'brother', '#openCm'], [28.3, 'cm', '#field'], [31.7, 'cm', '#postBtn']];
+// swipes: [t0, t1, x, y0, y1] in screen coords (drives finger during scrolls)
+const SWIPES = [[7.2, 8.4, 470, 1150, 630], [9.4, 10.4, 470, 1150, 690], [15.6, 17.0, 470, 1180, 620], [22.0, 23.2, 470, 1100, 680]];
+
+const TYPE = { a: 28.6, b: 31.3, text: 'First name, husband and dad of two. My Step 1 sentence: I am a man who is home when he is home. This week: phone in the drawer 6 to 8 pm.' };
+
+let POS = {};
+function pinAppbars() {
+  document.querySelectorAll('.sc').forEach(s => {
+    const sc = s.querySelector('.scroll'), bar = sc.querySelector(':scope > .appbar');
+    if (!bar) return;
+    bar.style.position = 'absolute'; bar.style.left = 0; bar.style.right = 0; bar.style.top = 0; bar.style.zIndex = 4;
+    s.insertBefore(bar, sc); sc.style.top = '96px';
+  });
+}
+function measure() {
+  const scr = $('#screen').getBoundingClientRect(), S = scr.width / 748;
+  document.querySelectorAll('.sc').forEach(s => { s.style.transform = 'none'; s.style.visibility = 'visible'; s.querySelector('.scroll').style.transform = 'none'; });
+  for (const [t, id, sel] of TAPS) {
+    const r = document.querySelector('#' + id + ' ' + sel).getBoundingClientRect();
+    const el = document.querySelector('#' + id + ' ' + sel);
+    POS[t] = { x: (r.left + r.width / 2 - scr.left) / S, y: (r.top + r.height / 2 - scr.top) / S - (el.closest('.scroll') ? scrollAt(id, t) : 0) };
+  }
+}
+
+function fingerPath(t) {
+  // build keyframes: arrive 0.55s before each tap from previous point; swipes override
+  for (const [a, b, x, y0, y1] of SWIPES) {
+    if (t >= a - .35 && t <= b + .25) {
+      const p = seg(t, a, b);
+      return { x, y: t < a ? y0 : y0 + (y1 - y0) * p, show: 1, press: t >= a && t <= b ? 1 : 0 };
+    }
+  }
+  const keys = [{ t: 3.6, x: 620, y: 1500 }];
+  for (const [tt] of TAPS) keys.push({ t: tt, x: POS[tt].x, y: POS[tt].y, tap: 1 });
+  for (const [a, b, x, y0, y1] of SWIPES) { keys.push({ t: a - .35, x, y: y0 }); keys.push({ t: b + .25, x, y: y1 }); }
+  keys.sort((p, q) => p.t - q.t);
+  if (t < keys[0].t) return { x: keys[0].x, y: keys[0].y, show: 0 };
+  let k = keys.length - 1;
+  for (let i = 1; i < keys.length; i++) if (t < keys[i].t) { k = i; break; }
+  const A = keys[k - 1] || keys[0], B = keys[k];
+  if (t >= keys[keys.length - 1].t) return { x: B.x, y: B.y, show: 1 };
+  const start = Math.max(A.t + .1, B.t - .6);
+  const p = seg(t, start, B.t);
+  return { x: A.x + (B.x - A.x) * p, y: A.y + (B.y - A.y) * p, show: 1 };
+}
+
+function render(t) {
+  // intro / phone entrance
+  const introO = 1 - seg(t, 2.4, 2.9);
+  $('#intro').style.opacity = t < 3 ? Math.min(seg(t, 0, .4), introO) : 0;
+  $('#intro').style.transform = `translateY(${(1 - seg(t, 0, .6)) * 40}px)`;
+  const phoneIn = seg(t, 2.5, 3.3);
+  const phoneOut = seg(t, 32.9, 33.5);
+  const ph = $('#phone');
+  ph.style.opacity = phoneIn * (1 - phoneOut);
+  ph.style.transform = `translateY(${(1 - phoneIn) * 300 + phoneOut * 60}px) scale(${BASE * (1 - phoneOut * .06)})`;
+
+  // captions
+  const caps = [['#c1', 3.2, 6.2], ['#c2', 6.3, 11.1], ['#c3', 11.3, 18.1], ['#c4', 18.3, 25.0], ['#c5', 25.2, 33.3]];
+  for (const [id, a, b] of caps) {
+    const o = fadeWin(t, a, b);
+    $(id).style.opacity = o; $(id).style.transform = `translateY(${(1 - o) * 24}px)`;
+  }
+  $('#plus').style.opacity = fadeWin(t, 33.5, 37.8, .45);
+  $('#plus').style.transform = `translateY(${(1 - seg(t, 33.5, 34.1)) * 40}px)`;
+  $('#plus').querySelectorAll('li').forEach((li, i) => { const o = seg(t, 33.8 + i * .45, 34.2 + i * .45); li.style.opacity = o; li.style.transform = `translateX(${(1 - o) * 40}px)`; });
+  const outO = seg(t, 38.0, 38.6);
+  $('#outro').style.opacity = outO; $('#outro').style.transform = `translateY(${(1 - outO) * 40}px)`;
+  $('#brand').style.opacity = t < 3 ? 1 : (t > 33.3 && t < 38 ? 1 - fadeWin(t, 33.3, 38) : 1);
+
+  // screens
+  let cur = 0; for (let i = 0; i < NAV.length; i++) if (t >= NAV[i][0]) cur = i;
+  const [ct, cid, dir] = NAV[cur];
+  const p = seg(t, ct, ct + TR);
+  document.querySelectorAll('.sc').forEach(s => { s.style.visibility = 'hidden'; s.style.transform = 'none'; s.style.zIndex = 1; });
+  const cs = $('#' + cid); cs.style.visibility = 'visible'; cs.style.zIndex = 3;
+  cs.style.transform = cur === 0 ? 'none' : `translateX(${(1 - p) * 100 * dir}%)`;
+  if (cur > 0 && p < 1) { const ps = $('#' + NAV[cur - 1][1]); ps.style.visibility = 'visible'; ps.style.zIndex = 2; ps.style.transform = `translateX(${-p * 30 * dir}%)`; }
+  for (const id of Object.keys(SCROLL)) $('#' + id + ' .scroll').style.transform = `translateY(${-scrollAt(id, t)}px)`;
+
+  // progress bar grows as lessons are visited
+  const prog = t > 17.9 ? 15 : t > 10.9 ? 8 : 0;
+  $('#progbar').style.width = prog + '%'; $('#progl').textContent = prog + '% complete';
+
+  // toasts
+  const toast = (id, a) => { const o = fadeWin(t, a, a + 1.5, .25); $(id).style.opacity = o; $(id).style.transform = `translateY(${(1 - o) * 30}px)`; };
+  toast('#tStep1', 14.75); toast('#tGH', 21.15); toast('#tDev', 24.15);
+
+  // typing
+  const n = Math.floor(TYPE.text.length * clamp((t - TYPE.a) / (TYPE.b - TYPE.a)));
+  $('#typed').textContent = TYPE.text.slice(0, n);
+  $('#ph').style.display = t >= TYPE.a ? 'none' : '';
+  $('#caret').style.display = t >= 28.4 && t < 31.8 && Math.floor(t * 2.5) % 2 === 0 ? '' : 'none';
+  const posted = seg(t, 31.8, 32.2);
+  $('#postText').textContent = TYPE.text;
+  $('#post').style.opacity = posted; $('#post').style.transform = `translateY(${(1 - posted) * 30}px)`;
+  if (t >= 31.8) { $('#typed').textContent = ''; $('#ph').style.display = ''; }
+
+  // finger
+  const scr = $('#screen').getBoundingClientRect(), S = scr.width / 748;
+  const f = fingerPath(t);
+  let press = f.press || 0, rip = 0, rp = null;
+  for (const [tt] of TAPS) { if (t >= tt - .12 && t <= tt + .12) press = 1; if (t >= tt && t < tt + .55) { rip = (t - tt) / .55; rp = POS[tt]; } }
+  const show = f.show * phoneIn * (1 - phoneOut);
+  const fx = scr.left + f.x * S, fy = scr.top + f.y * S;
+  $('#finger').style.opacity = show;
+  $('#finger').style.transform = `translate(${fx}px,${fy}px) scale(${S * (1 - press * .18)})`;
+  $('#ripple').style.opacity = rip ? (1 - rip) * show : 0;
+  if (rp) $('#ripple').style.transform = `translate(${scr.left + rp.x * S}px,${scr.top + rp.y * S}px) scale(${S * (1 + rip * 1.4)})`;
+}
+if (YT) $('#ctaTxt').textContent = 'Join the Club · link in the description';
+window.ready = document.fonts.ready.then(() => { pinAppbars(); measure(); render(0); return true; });
+</script>
+</body></html>
