@@ -12,9 +12,9 @@ The member portal is a systeme.io classic course, delivered through the membersh
 "The Be The Man Club - Membership" ($17/month) grants:
 - Full access to the portal course (added 2026-09-28)
 - The 22 downloadable files it already delivered (kept unchanged)
-- **Pending:** community access. It has to be added in the dashboard (product resources → community). The API needs the community's numeric ID, and it can't look that up.
+- Access to the "Be The Man Club" community (https://go.bethemansystem.com/community/be-the-man-club)
 
-Buying the membership enrolls the man in the portal automatically.
+Buying the membership enrolls the man in the portal and the community automatically.
 
 ## Portal structure
 
@@ -34,7 +34,7 @@ All lessons unlock at once (no drip).
 
 ## Known gaps / to-dos
 
-- **Cancellations do not remove portal access automatically.** The current plan allows one automation rule, and the opt-in form already uses it. Either upgrade and add a rule (sale canceled on "Join the Club - Membership Checkout" → revoke access to the portal course), or remove canceled members by hand under Contacts.
+- **Check that canceling removes access.** According to systeme.io's help pages, subscription resources are revoked automatically when the subscription ends. Confirm it with a test purchase and cancel (100% coupon). If access stays, note that the plan allows only one automation rule, and the opt-in form already uses it. Either upgrade and add a rule (sale canceled → revoke portal access), or remove canceled members by hand under Contacts.
 - **Monthly Club-only tool:** add each month's tool as a new lesson (e.g. a "Monthly tools" module) and link its file.
 - **Instagram copy:** the Club caption in `instagram/bethemansystem-playbook.md` says "No group chat". Update it once the community is live.
 - Framework lesson pages describe how to work each step. They do not reproduce the worksheet contents. If a lesson's framing does not match its PDF, edit it in the course editor.
