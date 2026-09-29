@@ -54,6 +54,8 @@ See `instagram/posts/README.md`: `out/reel-club-portal.mp4` (9:16) and `out/yout
 - **Affiliate commission:** 30% on the Club checkout offer and on the Scorecard add-on (payout delay 30 days). **You still have to switch on the affiliate program in systeme.io** (Settings → Affiliate program) and choose whether members join automatically or need approval.
 - **Welcome sequence:** emails 2–7 (the six framework lessons, reworded to say "the next email" instead of "next week") are saved **inactive** in the "Framework" campaign. They're activated on Nov 6, the day after the last Thursday broadcast, each 7 days after the previous one, so October subscribers don't get every lesson twice. A reminder is scheduled in the Claude session.
 
+- **Free intro call:** booking calendar "Free 15-minute call: where are you stuck?" (https://systeme.io/dashboard/calendar/45235). 15 minutes, Mon–Thu 7:00–9:00 PM Central, booked 12 h to 30 days ahead, max 4 a day, 15-minute buffer, reminders 24 h and 1 h before, cancellation up to 2 h before. Location: phone (Brian calls the man; Brian's number is shown as a fallback).
+
 ### Blocked by the plan's 15-page limit
 
 The account is at 15 funnel pages, the plan maximum across all funnels, so no new pages can be added. That blocks the upsell page (replaced by the order bump above), the link-in-bio page, the exit popup and the training sign-up/watch pages. An empty funnel called "Links, popups and training" was created while testing the limit; delete it or use it after upgrading. To unblock these, upgrade the plan or delete some of the 11 separate store checkout pages.
