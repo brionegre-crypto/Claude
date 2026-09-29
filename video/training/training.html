@@ -1,0 +1,177 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<link rel="stylesheet" href="../../instagram/posts/fonts.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--ink:#0B0B0C;--coal:#141416;--slab:#1c1b1a;--amber:#E18B1F;--cream:#F2EEE6;--stone:#BFBCB6;--mute:#8C877E}
+html,body{width:1920px;height:1080px;overflow:hidden;background:var(--ink);font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased;color:var(--cream)}
+#stage{position:relative;width:1920px;height:1080px;overflow:hidden;background:radial-gradient(90% 90% at 70% 0%,#1d1b19 0%,var(--ink) 62%)}
+#stage::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:.06;z-index:50;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+.brand{position:absolute;left:140px;top:84px;display:flex;align-items:center;gap:18px;font-family:'Oswald';font-weight:500;letter-spacing:.32em;font-size:24px;text-transform:uppercase;z-index:10}
+.brand i{display:block;width:44px;height:3px;background:var(--amber)}
+.foot{position:absolute;left:140px;right:140px;bottom:64px;display:flex;justify-content:space-between;font-size:22px;color:var(--mute);z-index:10}
+.foot b{color:var(--cream);font-weight:600}
+.bar{position:absolute;left:0;bottom:0;height:5px;background:var(--amber);z-index:10}
+.slide{position:absolute;inset:0;padding:190px 140px 150px;display:flex;flex-direction:column;justify-content:center;opacity:0}
+[data-b]{opacity:0}
+.label{font-family:'Oswald';font-weight:500;letter-spacing:.24em;font-size:30px;color:var(--amber);text-transform:uppercase;margin-bottom:34px}
+.h{font-family:'Oswald';font-weight:700;text-transform:uppercase;line-height:1;color:var(--cream)}
+.h em,.q em{font-style:normal;color:var(--amber)}
+.xl{font-size:150px}.l{font-size:112px}.m{font-size:84px}.s{font-size:60px}
+.body{font-size:42px;line-height:1.45;color:var(--stone);max-width:1400px;margin-top:40px}
+.body b{color:var(--cream)}
+.rule{width:110px;height:5px;background:var(--amber);margin:44px 0}
+.lines{display:flex;flex-direction:column;gap:22px}
+.lines .h{font-size:92px}
+.after{margin-top:60px;font-family:'Lora';font-style:italic;font-weight:500;font-size:58px;color:var(--stone)}
+.after b{font-style:normal;font-family:'Oswald';font-weight:700;text-transform:uppercase;color:var(--amber);font-size:62px}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:40px;margin-top:20px}
+.card{background:var(--slab);border-top:5px solid var(--amber);padding:44px 40px;min-height:330px}
+.card .n{font-family:'Oswald';font-weight:700;color:var(--amber);font-size:72px;line-height:1}
+.card .t{font-family:'Oswald';font-weight:700;text-transform:uppercase;font-size:50px;margin:18px 0 16px;line-height:1.05}
+.card p{font-size:32px;line-height:1.4;color:var(--stone)}
+.grid4{display:grid;grid-template-columns:1fr 1fr;gap:34px 60px;margin-top:10px}
+.item{display:flex;gap:30px;align-items:flex-start}
+.item .n{flex:0 0 84px;height:84px;background:var(--amber);color:var(--ink);font-family:'Oswald';font-weight:700;font-size:48px;display:flex;align-items:center;justify-content:center}
+.item .t{font-family:'Oswald';font-weight:700;text-transform:uppercase;font-size:46px;line-height:1.05}
+.item p{font-size:31px;line-height:1.4;color:var(--stone);margin-top:10px}
+.quote{font-family:'Lora';font-style:italic;font-weight:500;font-size:62px;line-height:1.3;color:var(--cream);border-left:6px solid var(--amber);padding-left:44px;max-width:1500px}
+.tag{margin-top:26px;padding-left:50px;font-size:34px;color:var(--amber);font-weight:600}
+.weak{margin-top:60px;font-family:'Lora';font-style:italic;font-size:46px;color:var(--mute);padding-left:50px}
+.weak s{text-decoration-color:var(--amber);text-decoration-thickness:4px}
+.weak span{font-family:'Inter';font-style:normal;font-size:30px;color:var(--mute);margin-left:24px}
+.steps{list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:18px 70px;margin-top:10px}
+.steps li{display:flex;gap:26px;align-items:center;font-size:40px;color:var(--stone);padding:16px 0;border-bottom:1px solid #2a2927}
+.steps li .n{font-family:'Oswald';font-weight:700;color:var(--mute);font-size:44px;width:50px}
+.steps li.hi{color:var(--cream)}
+.steps li.hi .n{color:var(--amber)}
+.hl{position:absolute;inset:-4px -18px;border:3px solid var(--amber);opacity:0}
+.steps li{position:relative}
+.boxes{display:grid;grid-template-columns:repeat(3,1fr);gap:40px}
+.box{background:var(--cream);color:var(--ink);padding:48px 44px;min-height:340px}
+.box h4{font-family:'Oswald';font-weight:500;letter-spacing:.2em;font-size:28px;color:#B8680F;margin-bottom:22px}
+.box p{font-size:40px;line-height:1.35;font-weight:600}
+.url{font-family:'Oswald';font-weight:700;font-size:96px;color:var(--amber);margin-top:40px;letter-spacing:.01em}
+.plus{list-style:none;display:flex;flex-direction:column;gap:26px;margin-top:40px}
+.plus li{font-size:44px;color:var(--stone);display:flex;gap:26px}
+.plus li::before{content:"+";font-family:'Oswald';font-weight:700;color:var(--amber);font-size:56px;line-height:.9}
+.plus li b{color:var(--cream)}
+.price{display:inline-flex;margin-top:54px;align-self:flex-start;background:var(--amber);color:var(--ink);font-family:'Oswald';font-weight:700;text-transform:uppercase;letter-spacing:.06em;font-size:46px;padding:26px 44px}
+</style></head>
+<body><div id="stage">
+<div class="brand"><i></i>Be The Man</div>
+
+<!-- 0 title -->
+<div class="slide"><div class="label">A free training from Be The Man</div>
+  <div class="h xl" data-b="0">You meant it<br><em>every time.</em></div>
+  <div data-b="1"><div class="rule"></div><div class="body">Why good men keep breaking the same promise, and <b>the first step that makes it hold.</b></div></div></div>
+<!-- 1 moments -->
+<div class="slide"><div class="lines">
+  <div class="h" data-b="0">New Year's Day.</div>
+  <div class="h" data-b="1">Sunday morning.</div>
+  <div class="h" data-b="2">The car, after the argument.</div></div>
+  <div class="after" data-b="3">You meant it every time. <b>By Wednesday, it was gone.</b></div></div>
+<!-- 2 statement -->
+<div class="slide"><div class="label" data-b="0">What most men never get told</div>
+  <div class="h l" data-b="1">You don't have a<br><em>conviction</em> problem.</div>
+  <div class="body" data-b="2">Conviction is a feeling. Feelings don't show up on <b>Tuesday at 6:15</b>, when you walk in tired and the house is loud.</div>
+  <div class="h m" data-b="3" style="margin-top:50px">You have a <em>Tuesday</em> problem.</div></div>
+<!-- 3 three -->
+<div class="slide"><div class="h m" data-b="0" style="margin-bottom:50px">Where promises <em>die.</em></div>
+  <div class="cards">
+    <div class="card" data-b="1"><div class="n">01</div><div class="t">No when</div><p>&ldquo;This week&rdquo; is not a time. It's a feeling with a deadline you never set.</p></div>
+    <div class="card" data-b="2"><div class="n">02</div><div class="t">No defined miss</div><p>Every bad week becomes a negotiation with yourself. You'll win it every time.</p></div>
+    <div class="card" data-b="3"><div class="n">03</div><div class="t">Graded from memory</div><p>Sunday-night memory is a story, not evidence.</p></div></div></div>
+<!-- 4 statement -->
+<div class="slide"><div class="label" data-b="0">The whole idea</div>
+  <div class="h l" data-b="1">A goal says <em>what.</em></div>
+  <div data-b="2"><div class="h l" style="margin-top:20px">A system says <em>when.</em></div>
+    <div class="body">What counts as a miss. And how you'd know it held.</div></div></div>
+<!-- 5 question -->
+<div class="slide"><div class="label" data-b="0">The honest test</div>
+  <div class="h xl" data-b="1">Would your wife<br>be able to <em>tell?</em></div>
+  <div class="body" data-b="2">Not because you announced it. <b>At dinner. At bedtime. On an ordinary Tuesday.</b></div></div>
+<!-- 6 statement -->
+<div class="slide"><div class="label" data-b="0">The step most men skip</div>
+  <div class="h l" data-b="1">You can't build a system for a man you haven't <em>described.</em></div>
+  <div class="body" data-b="2">Goals with nothing underneath them don't fail loudly. <b>They quietly go.</b></div></div>
+<!-- 7 question -->
+<div class="slide"><div class="label" data-b="0">Step 1</div>
+  <div class="h xl" data-b="1">What type of man do you want to <em>be?</em></div>
+  <div class="body" data-b="2">Not what you want to do. Who you want to be. <b>On an ordinary Tuesday.</b></div></div>
+<!-- 8 four -->
+<div class="slide"><div class="h m" data-b="0" style="margin-bottom:56px">Four <em>moves.</em></div>
+  <div class="grid4">
+    <div class="item" data-b="1"><div class="n">1</div><div><div class="t">Name the attributes</div><p>Patient. Present. Faithful. Your words.</p></div></div>
+    <div class="item" data-b="2"><div class="n">2</div><div><div class="t">Make each one ordinary</div><p>&ldquo;I don't raise my voice when homework runs late.&rdquo;</p></div></div>
+    <div class="item" data-b="3"><div class="n">3</div><div><div class="t">Run the house test</div><p>Would they know without being told?</p></div></div>
+    <div class="item" data-b="4"><div class="n">4</div><div><div class="t">Write the sentence</div><p>One sentence that says who he is.</p></div></div></div></div>
+<!-- 9 compare -->
+<div class="slide"><div class="label" data-b="0">Aim for this</div>
+  <div class="quote" data-b="1">&ldquo;I am a man who is home when he is home, keeps his word to his wife, and lets his kids see him pray.&rdquo;</div>
+  <div class="tag" data-b="2">&#10003; Checkable on a given day. Visible to someone else.</div>
+  <div class="weak" data-b="3"><s>&ldquo;I want to be a better husband and father.&rdquo;</s><span>True. Untestable.</span></div></div>
+<!-- 10 steps -->
+<div class="slide"><div class="h m" data-b="0" style="margin-bottom:46px">The framework: <em>seven steps.</em></div>
+  <ol class="steps" data-b="1">
+    <li class="hi"><span class="n">1</span>What type of man do you want to be?</li>
+    <li><span class="n">5</span>The four pillars</li>
+    <li id="st2"><span class="n">2</span>What are your goals?<i class="hl" data-b="2"></i></li>
+    <li><span class="n">6</span>Why you need a system</li>
+    <li><span class="n">3</span>What has stopped you so far?</li>
+    <li id="st7"><span class="n">7</span>God at the center<i class="hl" data-b="3"></i></li>
+    <li><span class="n">4</span>The laws of a system that holds</li>
+  </ol></div>
+<!-- 11 tonight -->
+<div class="slide"><div class="h m" data-b="0" style="margin-bottom:56px">Your assignment: <em>tonight.</em></div>
+  <div class="boxes">
+    <div class="box" data-b="1"><h4>THE TIME</h4><p>Tonight, after the house goes down. Twenty minutes.</p></div>
+    <div class="box" data-b="2"><h4>THE TRIGGER</h4><p>The last light off. Pen and paper. Phone in another room.</p></div>
+    <div class="box" data-b="3"><h4>THE TEST</h4><p>Could someone in your house notice each part without being told?</p></div></div></div>
+<!-- 12 cta free -->
+<div class="slide"><div class="label" data-b="0">Free</div>
+  <div class="h l" data-b="0">Get the Step 1 <em>worksheet.</em></div>
+  <div data-b="1"><div class="url">go.bethemansystem.com/framework</div>
+    <div class="body">Plus one email every Thursday: <b>a time, a trigger, and a way to tell if it held.</b></div></div></div>
+<!-- 13 cta club -->
+<div class="slide"><div class="label" data-b="0">When you want the whole thing</div>
+  <div class="h l" data-b="0">The Be The Man <em>Club.</em></div>
+  <ul class="plus" data-b="1">
+    <li><span><b>All seven steps,</b> in order</span></li>
+    <li><span><b>Every tool in the store,</b> free</span></li>
+    <li><span><b>A Club-only tool</b> every month</span></li>
+    <li><span><b>The brotherhood:</b> men running the same system</span></li></ul>
+  <div class="price" data-b="2">Founding members: $12 a month &middot; cancel any time</div></div>
+<!-- 14 close -->
+<div class="slide"><div class="h m" data-b="0" style="color:var(--stone)">You meant it every time.</div>
+  <div class="h l" data-b="1" style="margin-top:30px">A mechanism, <em>not a mood.</em></div>
+  <div class="body" data-b="2">Start with the sentence. <b>Tonight, if you can.</b></div>
+  <div data-b="3"><div class="rule"></div><div class="label" style="margin:0">Break the cycle. Build the system. Be the man.</div></div></div>
+
+<div class="foot"><span>A free training from <b>Be The Man</b></span><span><b>go.bethemansystem.com</b></span></div>
+<div class="bar" id="bar"></div>
+</div>
+<script>
+const slides = [...document.querySelectorAll('.slide')];
+const ease = x => x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
+// si: slide, bi: newest visible beat, p: 0..1 progress of that beat's reveal,
+// fade: opacity of the whole slide, prev: {si, opacity} slide fading out, prog: 0..1 video progress
+function render(si, bi, p, fade, prev, prog) {
+  slides.forEach((s, i) => { s.style.opacity = 0; });
+  const show = (idx, upto, pp, op) => {
+    const s = slides[idx]; s.style.opacity = op;
+    s.querySelectorAll('[data-b]').forEach(el => {
+      const b = +el.dataset.b; const e = ease(pp);
+      if (b < upto) { el.style.opacity = 1; el.style.transform = 'none'; }
+      else if (b === upto) { el.style.opacity = e; el.style.transform = el.classList.contains('hl') ? 'none' : `translateY(${(1 - e) * 26}px)`; }
+      else { el.style.opacity = 0; }
+    });
+  };
+  if (prev) show(prev.si, 99, 1, prev.opacity);
+  show(si, bi, p, fade);
+  document.getElementById('bar').style.width = (prog * 100) + '%';
+}
+window.ready = document.fonts.ready.then(() => true);
+</script>
+</body></html>
