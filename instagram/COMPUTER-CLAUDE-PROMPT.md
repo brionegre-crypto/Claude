@@ -6,7 +6,7 @@ Ground rules:
 - If a screen looks different from what I describe here, work out the equivalent; if you're unsure, ask me.
 - At the end, give me a checklist of what's done and anything I still need to do on my phone.
 
-The files are in the folder where I unzipped pack-1-of-2.zip and pack-2-of-2.zip (both into the same folder). It contains POSTING-GUIDE.md, SCHEDULE.md, one folder per post (named DATE_DAY_TIME_TYPE_name) holding the media and caption.txt, and a highlight-covers folder. Read POSTING-GUIDE.md first.
+The files are in the folder where I unzipped pack-1-of-2.zip and pack-2-of-2.zip (both into the same folder). It contains POSTING-GUIDE.md, SCHEDULE.md, one folder per post (named DATE_DAY_TIME_TYPE_name) holding the media and caption.txt, and a highlight-covers folder. Read POSTING-GUIDE.md first. Week 2 is in a separate folder (unzipped from week2-pack.zip) with its own POSTING-GUIDE-WEEK2.md and the same folder layout.
 
 == TASK 1: Profile (instagram.com → profile → Edit profile) ==
 Name:      Be The Man | Discipline for Husbands & Dads
@@ -41,21 +41,29 @@ Create a second automation:
 - Name it "STEP1 – DM keyword"
 If ManyChat lets one automation hold both triggers, that's fine too, as long as both triggers work.
 
-== Message C (used by both automations) ==
-Text:
-Here's Step 1.
+== Message C (used by both automations): two messages ==
+Message 1 (the opening DM, sent immediately):
+Hey brother, glad you asked for it.
 
-One question: what type of man do you want to be?
+Step 1 is one question: what type of man do you want to be?
+
+Tap below and I'll send it over 👇
+
+   Button on Message 1: "Send me Step 1" → when tapped, send Message 2
+
+Message 2:
+Here it is.
 
 Print it tonight. Twenty minutes, a pen — not your phone.
 
-Button label: Get Step 1 (free)
-Button link:  https://go.bethemansystem.com/framework
+Every Thursday after that, you'll get one email: one decision with a time attached.
+
+   Button on Message 2: "Get Step 1 (free)" → opens https://go.bethemansystem.com/framework
 
 Show me both automations, then set them Live once I say OK.
 
 == TASK 5: Schedule the posts (business.facebook.com → Planner) ==
-For each dated folder, in date order, EXCEPT the STORY folder:
+For each dated folder in BOTH packs (week 1 and week 2), in date order, EXCEPT the STORY folder:
 - Posts and carousels: Create post. Reels: Create reel.
 - Select ONLY my Instagram account (untick Facebook).
 - Upload the media. For the carousel, upload the 6 images in file-number order, 01 → 06.
@@ -66,5 +74,5 @@ If a date is already in the past, tell me and suggest the next open day instead 
 Show me each post before you click Schedule.
 
 == TASK 6: Final check ==
-- In Planner, list every scheduled item with its date and time, and confirm there are 10.
+- In Planner, list every scheduled item with its date and time, and confirm there are 17 (10 from week 1, 7 from week 2).
 - Remind me to do these on my phone: post the Story (in the STORY folder) with a Link sticker to https://go.bethemansystem.com/framework; set up the highlight covers from highlight-covers/; pin the posts marked "(pin)" in SCHEDULE.md once they go live; and test the automations by commenting and DMing "STEP1" from a different Instagram account.

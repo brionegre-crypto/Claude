@@ -61,6 +61,39 @@ const reels = {
       <div class="serif a" data-t="12" style="font-size:64px;margin-top:40px">— without you announcing it?</div>`],
     [14, 17, endCard(14.1)],
   ]},
+  'reel-4-promise': { dur: 17, scenes: [
+    [0, 2.8, `<div class="h a" data-t="0" style="font-size:150px">You’ve made this <em>promise</em> before.</div>`],
+    [2.8, 6.4, `<div class="serif a" data-t="2.9" style="font-size:84px">New Year’s.</div>
+      <div class="serif a" data-t="3.8" style="font-size:84px;margin-top:10px">Sunday morning.</div>
+      <div class="serif a" data-t="4.7" style="font-size:84px;margin-top:10px">The car after the argument.</div>`],
+    [6.4, 8.8, `<div class="h a" data-t="6.5" style="font-size:160px">You meant it <em>every time.</em></div>`],
+    [8.8, 14, `<div class="serif a" data-t="8.9" style="font-size:66px">What you never had was</div>
+      <div class="h a" data-t="9.8" style="font-size:118px;margin-top:30px">a first step that comes <em>before the promise.</em></div>
+      <div class="label a" data-t="11.8" style="margin-top:60px">Step 1 · What type of man do you want to be?</div>`],
+    [14, 17, endCard(14.1)],
+  ]},
+  'reel-5-pray': { dur: 17, scenes: [
+    [0, 3, `<div class="h a" data-t="0" style="font-size:150px">Most men pray when they <em>remember.</em></div>`],
+    [3, 6, `<div class="serif a" data-t="3.1" style="font-size:80px">That’s not a prayer life.</div>
+      <div class="h a" data-t="4.1" style="font-size:170px;margin-top:30px">It’s a <em>mood.</em></div>`],
+    [6, 11.6, `<div class="label a" data-t="6.1">Pick three things</div>
+      <ol class="list">
+        <li class="a" data-t="6.4"><b>01</b><span>A time. Not “morning.” <em>6:10.</em></span></li>
+        <li class="a" data-t="7.6"><b>02</b><span>A place. The same chair.</span></li>
+        <li class="a" data-t="8.8"><b>03</b><span>A trigger. Coffee poured → <em>before the first sip.</em></span></li>
+      </ol>`],
+    [11.6, 14, `<div class="h a" data-t="11.7" style="font-size:150px">A mechanism, <em>not a mood.</em></div>`],
+    [14, 17, endCard(14.1)],
+  ]},
+  'reel-6-bad-day': { dur: 17, scenes: [
+    [0, 2.6, `<div class="h a" data-t="0" style="font-size:180px">You missed <em>one day.</em></div>`],
+    [2.6, 5.4, `<div class="h a" data-t="2.7" style="font-size:150px;color:#5c5954">So you quit the whole <em style="color:#8C877E">month.</em></div>`],
+    [5.4, 8.6, `<div class="h a" data-t="5.5" style="font-size:140px">One bad day shouldn’t cost you <em>a month.</em></div>`],
+    [8.6, 14, `<div class="serif a" data-t="8.7" style="font-size:70px">Before the week starts, write down</div>
+      <div class="h a" data-t="9.7" style="font-size:130px;margin-top:30px">what counts as a <em>miss.</em></div>
+      <div class="serif a" data-t="11.4" style="font-size:62px;margin-top:50px">Missing once isn’t failure. Now you know exactly what is.</div>`],
+    [14, 17, endCard(14.1)],
+  ]},
 };
 
 const page = (r) => `<!doctype html><html><head><meta charset="utf-8">
