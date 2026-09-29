@@ -46,3 +46,26 @@ On 2026-09-28 the checkout page ("Join the Club - Membership Checkout") was upda
 
 See `instagram/posts/README.md`: `out/reel-club-portal.mp4` (9:16) and `out/youtube-club-portal.mp4` (16:9).
 - Framework lesson pages describe how to work each step. They do not reproduce the worksheet contents. If a lesson's framing does not match its PDF, edit it in the course editor.
+
+## Growth features (added 2026-09-29)
+
+- **Founding price:** the Club product now uses a $12/month plan ("BTM Club Founding Monthly $12"). The $17 plan still exists, so reattach it to the product when founding pricing ends. Existing members stay on the plan they joined on. The checkout headline, button, "What this is not" line, welcome email and Thursday emails 2 and 6 now say $12 for founding members.
+- **Scorecard order bump:** the Scorecard checkout has a checkbox add-on, "Yes, add the Club for $12 a month". It sells the same Club product, so buyers get the portal, community, files and Framework tag.
+- **Affiliate commission:** 30% on the Club checkout offer and on the Scorecard add-on (payout delay 30 days). **You still have to switch on the affiliate program in systeme.io** (Settings → Affiliate program) and choose whether members join automatically or need approval.
+- **Welcome sequence:** emails 2–7 (the six framework lessons, reworded to say "the next email" instead of "next week") are saved **inactive** in the "Framework" campaign. They're activated on Nov 6, the day after the last Thursday broadcast, each 7 days after the previous one, so October subscribers don't get every lesson twice. A reminder is scheduled in the Claude session.
+
+### Blocked by the plan's 15-page limit
+
+The account is at 15 funnel pages, the plan maximum across all funnels, so no new pages can be added. That blocks the upsell page (replaced by the order bump above), the link-in-bio page, the exit popup and the training sign-up/watch pages. An empty funnel called "Links, popups and training" was created while testing the limit; delete it or use it after upgrading. To unblock these, upgrade the plan or delete some of the 11 separate store checkout pages.
+
+### Invite for members (affiliate program)
+
+Post this in the brotherhood or email it to members once the affiliate program is on. Replace the link with your affiliate sign-up link from systeme.io.
+
+> **Bring a brother, and the Club pays you for it.**
+>
+> If the Club has helped you, you already know a man who needs it. Share your link with him. For every month he stays, you get 30% of his membership: $3.60 a month, every month.
+>
+> Sign up for your link here: [YOUR AFFILIATE SIGN-UP LINK]
+>
+> Don't send it to everyone you know. Send it to the one man you'd want next to you in the brotherhood.
