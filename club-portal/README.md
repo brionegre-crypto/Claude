@@ -61,7 +61,7 @@ See `instagram/posts/README.md`: `out/reel-club-portal.mp4` (9:16) and `out/yout
 Funnel: **"Links, popups and training"** (https://systeme.io/dashboard/funnels/7653422)
 
 - **Link in bio** (currently https://5e95-brian.systeme.io/28016a3c): a dark page with Step 1 free, the free training, the Club, the Scorecard, a free call and "Email Brian". The template's buttons were swapped for text links, because this connection can't set button links; every link is live.
-- **Free training, watch page** (currently https://5e95-brian.systeme.io/782480a3): headline, video block, links to Step 1, the Club and a call. **The video block is empty.** Upload `video/out/be-the-man-training.mp4` to YouTube (unlisted is fine) and paste the link into the video element.
+- **Free training, watch page** (currently https://5e95-brian.systeme.io/782480a3): headline, video block, links to Step 1, the Club and a call. The video is on YouTube at https://youtu.be/5qzgGScYIw4, and the page links to it under the headline. **The video block itself is still empty.** Paste that link into it in the page editor so the video plays on the page.
 - **Exit popup, "Before you go: Step 1 is free"**: an email opt-in. Its sign-ups trigger the existing automation rule (Framework tag, then the welcome sequence), the same as /framework. **It isn't shown anywhere until it's attached to pages** in each page's settings (popup, exit intent).
 - **"Club member" tag** (new): added on purchase, alongside Framework. Use it to email members separately.
 - **Cancel rule** (https://systeme.io/dashboard/automation-rules/2438621): when a sale on "Join the Club - Membership Checkout" is canceled, it revokes portal access and removes the Club member tag.

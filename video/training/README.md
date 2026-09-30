@@ -1,5 +1,7 @@
 # Free training video: "You meant it every time"
 
+YouTube: https://youtu.be/5qzgGScYIw4
+
 `../out/be-the-man-training.mp4` is 1920×1080, 5 min 50 s, narrated. It has 15 slides that build line by line as the narrator speaks.
 
 - **Narration:** a stock text-to-speech voice (Piper "en-us-ryan-high"). The narrator speaks for Be The Man and never claims to be Brian.
