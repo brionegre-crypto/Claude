@@ -6,7 +6,7 @@ Sender: Brian Greene <brian@bethemansystem.com>. Dashboard: https://systeme.io/d
 
 | Send | Subject | Step | Button |
 |---|---|---|---|
-| Thu Oct 1, 8:00 AM CT | Did you write the sentence? | 1: what type of man do you want to be? | Open Step 1 (free PDF) |
+| Thu Oct 1, 8:00 AM CT | Did you write the sentence? | 1: what type of man do you want to be? | Open Step 1 (free PDF); also links the training video |
 | Thu Oct 8, 8:00 AM CT | Fewer goals than you think | 2: goals filtered by the sentence | See what's in the Club |
 | Thu Oct 15, 8:00 AM CT | What stopped you last time | 3: pattern, not excuse | See what's in the Club |
 | Thu Oct 22, 8:00 AM CT | "This week" is not a time | 4: the four Scorecard rules (when, miss, log it that day, wife test) | Get the Weekly Scorecard ($7) |

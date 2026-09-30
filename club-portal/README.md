@@ -20,7 +20,7 @@ Buying the membership enrolls the man in the portal and the community automatica
 
 | Module | Lessons | Comments |
 |---|---|---|
-| Start here | Welcome to the club · Your first week in the club | On |
+| Start here | Welcome to the club · Your first week in the club · The 6-minute training (YouTube link) | On |
 | The 7-step framework | Steps 1–7, one lesson each, each linking its worksheet PDF | On |
 | The member library | The Weekly Scorecard · Marriage · Fatherhood · Faith (all 11 tools, PDF and Excel links) | Off |
 | The brotherhood | Join the brotherhood: link to https://go.bethemansystem.com/community/be-the-man-club, a first-post template and community norms | Off |
