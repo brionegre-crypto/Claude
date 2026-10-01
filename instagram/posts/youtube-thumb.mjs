@@ -1,5 +1,5 @@
-// Renders the YouTube thumbnail for Step 2 (1280x720) in the same style as the Instagram posts.
-// Usage: node youtube-thumb.mjs   (outputs to ./out/youtube-step-2-thumbnail.png)
+// Renders the YouTube thumbnail for the goals video (1280x720) in the same style as the Instagram posts.
+// Usage: node youtube-thumb.mjs   (outputs to ./out/youtube-goals-thumbnail.png)
 import { createRequire } from 'module';
 import { execSync } from 'child_process';
 import { writeFileSync, mkdirSync } from 'fs';
@@ -29,9 +29,8 @@ html,body{width:${W}px;height:${H}px;background:${C.ink};color:${C.cream};font-f
 .brand{display:flex;align-items:center;gap:14px;font-family:'Oswald';font-weight:500;letter-spacing:.3em;font-size:22px;text-transform:uppercase}
 .brand i{display:block;width:40px;height:3px;background:${C.amber}}
 .row{display:flex;align-items:center;gap:22px;margin-top:34px}
-.pill{font-family:'Oswald';font-weight:700;letter-spacing:.14em;font-size:38px;background:${C.amber};color:${C.ink};padding:6px 20px;text-transform:uppercase}
 .h{font-family:'Oswald';font-weight:700;text-transform:uppercase;line-height:.9;text-shadow:0 6px 28px rgba(0,0,0,.6)}
-.why{font-size:130px;color:${C.cream}}
+.why{font-size:150px;color:${C.cream}}
 .big{font-size:240px;color:${C.cream}}
 .fail{font-size:240px;color:${C.amber}}
 </style>
@@ -41,7 +40,7 @@ html,body{width:${W}px;height:${H}px;background:${C.ink};color:${C.cream};font-f
   <div class="fade"></div>
   <div class="pad">
     <div class="brand"><i></i>Be The Man</div>
-    <div class="row"><div class="h why">Why</div><div class="pill">Step 2</div></div>
+    <div class="row"><div class="h why">Why</div></div>
     <div class="h big" style="margin-top:6px">Goals</div>
     <div class="h fail">Fail</div>
   </div>
@@ -53,7 +52,7 @@ const browser = await chromium.launch();
 const page = await browser.newPage({ viewport: { width: W, height: H } });
 await page.goto('file://' + file);
 await page.evaluate(() => document.fonts.ready);
-await page.screenshot({ path: join(OUT, 'youtube-step-2-thumbnail.png') });
+await page.screenshot({ path: join(OUT, 'youtube-goals-thumbnail.png') });
 await browser.close();
 import('fs').then(fs => fs.unlinkSync(file));
-console.log('wrote out/youtube-step-2-thumbnail.png');
+console.log('wrote out/youtube-goals-thumbnail.png');
