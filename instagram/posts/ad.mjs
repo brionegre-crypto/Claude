@@ -40,8 +40,9 @@ const content = (hSize) => `
   <div class="serif" style="font-size:54px;line-height:1.35">New Year’s. Sunday morning.<br>The car after the argument.</div>
   <div class="h" style="font-size:${hSize}px;margin-top:44px">You meant it<br><em>every time.</em></div>
   <div class="rule" style="margin:44px 0 36px"></div>
-  <div class="body">Discipline for husbands &amp; dads who’ve broken the promise before. <b>Follow for the system that holds.</b></div>
-  <div style="margin-top:48px;display:flex;align-items:center;gap:28px"><span class="cta">Follow →</span><span class="handle">@bethemansystem</span></div>
+  <div class="body">Step 1 is one question: <b>what type of man do you want to be?</b> Free worksheet. Twenty minutes and a pen.</div>
+  <div style="margin-top:48px;display:flex;align-items:center;gap:28px"><span class="cta">Get the free worksheet →</span></div>
+  <div class="handle" style="margin-top:36px;color:${C.mute};font-size:28px">@bethemansystem</div>
   <div class="grow"></div>`;
 
 const jobs = {
