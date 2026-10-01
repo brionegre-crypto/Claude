@@ -1,6 +1,6 @@
 # YouTube: Step 2 video
 
-**Thumbnail:** `posts/out/youtube-step-2-thumbnail.png` (1280×720). Edit and re-render with `node posts/youtube-thumb.mjs`.
+**Thumbnail:** `posts/out/youtube-step-2-thumbnail.png` (1280×720). Your photo is cut out at `posts/photos/cut-thinking.png` (original: `portrait-thinking.jpg`; the laughing shot is saved as `portrait-laughing.jpg`). Edit and re-render with `node posts/youtube-thumb.mjs`.
 
 ## Title options
 

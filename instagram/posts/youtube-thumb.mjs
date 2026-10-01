@@ -22,28 +22,32 @@ const html = `
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{width:${W}px;height:${H}px;background:${C.ink};color:${C.cream};font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased}
 .frame{position:relative;width:${W}px;height:${H}px;overflow:hidden;background:radial-gradient(120% 90% at 50% 0%, #1b1a19 0%, ${C.ink} 60%)}
-.pad{position:absolute;inset:56px 80px 48px 80px;display:flex;flex-direction:column}
+.glow{position:absolute;right:-40px;top:40px;width:820px;height:820px;border-radius:50%;background:radial-gradient(closest-side, rgba(225,139,31,.7) 0%, rgba(225,139,31,.18) 55%, rgba(225,139,31,0) 100%)}
+.man{position:absolute;right:-30px;bottom:-30px;height:760px;filter:drop-shadow(0 0 28px rgba(0,0,0,.55))}
+.fade{position:absolute;inset:0;background:linear-gradient(90deg, rgba(11,11,12,.55) 0%, rgba(11,11,12,0) 48%)}
+.pad{position:absolute;inset:56px 0 48px 80px;display:flex;flex-direction:column}
 .brand{display:flex;align-items:center;gap:16px;font-family:'Oswald';font-weight:500;letter-spacing:.32em;font-size:24px;text-transform:uppercase}
 .brand i{display:block;width:44px;height:3px;background:${C.amber}}
 .label{font-family:'Oswald';font-weight:500;letter-spacing:.24em;font-size:34px;color:${C.amber};text-transform:uppercase}
-.h{font-family:'Oswald';font-weight:700;text-transform:uppercase;line-height:.98;color:${C.cream};font-size:150px}
+.h{font-family:'Oswald';font-weight:700;text-transform:uppercase;line-height:.98;color:${C.cream};font-size:152px;text-shadow:0 4px 24px rgba(0,0,0,.5)}
 .h em{font-style:normal;color:${C.amber}}
-.rule{width:96px;height:4px;background:${C.amber};margin:34px 0 26px}
-.serif{font-family:'Lora';font-style:italic;font-weight:500;color:${C.stone};font-size:36px}
+.rule{width:120px;height:6px;background:${C.amber};margin:34px 0 0}
+.serif{font-family:'Lora';font-style:italic;font-weight:500;color:${C.stone};font-size:34px;line-height:1.25}
 .grow{flex:1}
-.foot{display:flex;justify-content:space-between;font-size:22px;color:${C.mute}}
-.foot b{color:${C.cream};font-weight:600}
 </style>
-<div class="frame"><div class="pad">
-  <div class="brand"><i></i>Be The Man</div>
-  <div class="grow"></div>
-  <div class="label" style="margin-top:0">Step 2 of 7</div>
-  <div class="h" style="margin-top:18px">What are<br>your <em>goals?</em></div>
-  <div class="rule"></div>
-  <div class="serif">A goal says what. A system says when.</div>
-  <div class="grow"></div>
-  <div class="foot"><span>Break the cycle. Build the system. Be the man.</span><b>@bethemansystem</b></div>
-</div></div>`;
+<div class="frame">
+  <div class="glow"></div>
+  <img class="man" src="photos/cut-thinking.png">
+  <div class="fade"></div>
+  <div class="pad">
+    <div class="brand"><i></i>Be The Man</div>
+    <div class="grow"></div>
+    <div class="label">Step 2 of 7</div>
+    <div class="h" style="margin-top:14px">What are<br>your<br><em>goals?</em></div>
+    <div class="rule"></div>
+    <div style="height:24px"></div>
+  </div>
+</div>`;
 
 const file = join(here, '_yt-thumb.html');
 writeFileSync(file, html);
