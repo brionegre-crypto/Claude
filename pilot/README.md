@@ -1,6 +1,21 @@
 # 12-week rebuild (Oct 5 – Dec 27): drafts for review
 
-**Status: nothing is published or changed in systeme.io.** This file holds the drafts: page copy and a pricing proposal. Review them in one sitting (about 25 minutes). After Sunday's sign-off, the approved pages can be built in systeme.io.
+**Status (updated 2026-10-02):** Brian approved publishing the pilot without waiting for Sunday's review.
+
+**Live in systeme.io:**
+- Funnel **"6-week group (pilot)"** (https://systeme.io/dashboard/funnels/7664857).
+  - Checkout: https://5e95-brian.systeme.io/b1c774c0. It uses the section 2 copy, priced at $147 with $297 struck through.
+  - Confirmation page: https://5e95-brian.systeme.io/d1271f91.
+- **What's behind it:** product "Be The Man 6-Week Group (Founding)" with a $147 one-time price plan. Each buyer gets the new **"Pilot group"** tag. The offer stops selling after 4 sales, there's no affiliate commission, and payment is Stripe.
+- **Link in bio:** a "Reserve my seat" line now sits at the top.
+
+**Not changed:** existing prices, existing products, and the couples page (held until church leadership is told).
+
+**To do in the dashboard:**
+- Set the funnel's domain to go.bethemansystem.com.
+- Check that the checkout's two fields are first name and email, so they aren't both email fields.
+- Remove the systeme.io badge in page settings.
+- Run a 100% coupon test purchase.
 
 One systeme.io note: there is no true "draft" state for funnel pages. A new page is reachable by anyone who has its URL, even if nothing links to it. That's why the drafts live here until they're approved, and the couples page stays out of systeme.io until it's approved at the Board Meeting and you've decided where it lives and told church leadership. No paid offer goes on the church's website.
 
