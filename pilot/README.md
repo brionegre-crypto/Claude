@@ -8,6 +8,7 @@
   - Confirmation page: https://5e95-brian.systeme.io/d1271f91.
 - **What's behind it:** product "Be The Man 6-Week Group (Founding)" with a $147 one-time price plan. Each buyer gets the new **"Pilot group"** tag. The offer stops selling after 4 sales, there's no affiliate commission, and payment is Stripe.
 - **Link in bio:** a "Reserve my seat" line now sits at the top.
+- **Home page** (funnel "Home", https://systeme.io/dashboard/funnels/7664869; currently https://5e95-brian.systeme.io/7ccfe2c8). In order: hero, the 6-week group, start free (Step 1 and the training), go further (the Club, the Scorecard, a call), then a footer. To make it the home page, set the Home funnel's domain to go.bethemansystem.com, then set this page as the domain's home page in the domain settings.
 
 **Not changed:** existing prices, existing products, and the couples page (held until church leadership is told).
 
@@ -60,7 +61,7 @@ Current prices were pulled from the live systeme.io price plans on 2026-10-02.
 **Subhead:** A live group for husbands and fathers who mean it every time and lose it by Wednesday. Four men. Sundays at 3:00 PM. November 15 to December 20.
 
 **Who it's for**
-- Men from our church who are husbands, fathers, or both.
+- You're a husband, a father, or both, and you want to lead your home better than you have been. (Changed on Oct 2: the group is open to any man, not only men from the church.)
 - You've made the same promise more than once: less phone, more patience, real prayer, home when you're home.
 - You'll show up six Sundays in a row and do one small thing each week.
 
