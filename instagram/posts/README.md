@@ -31,6 +31,10 @@ Missing once is not failure. One bad day shouldn't cost you a month.
 
 To change any text, edit `build.mjs` and run `node build.mjs`. It needs Node and Playwright.
 
+## 6-week group ad
+
+`out/ad-6-week-group-feed.png` (1080×1350) and `out/ad-6-week-group-story.png` (1080×1920). Copy and setup notes are in `ad-6-week-group.md`. Rebuild with `node ad.mjs`.
+
 ## Club portal promo video
 
 Two 43-second, silent walkthroughs of the members' portal. A finger taps through Start here → the framework (Step 1 download) → the member library (marriage tools) → the brotherhood (writing a first post). Captions sell each benefit, and it ends on a $17/month call to action.
