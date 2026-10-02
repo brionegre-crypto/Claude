@@ -58,7 +58,7 @@ Current prices were pulled from the live systeme.io price plans on 2026-10-02.
 
 **Headline:** You keep making the promise. Six Sundays to build what keeps it.
 
-**Subhead:** A live group for husbands and fathers who mean it every time and lose it by Wednesday. Four men. Sundays at 7:00 PM Central. November 15 to December 20.
+**Subhead:** A live group for husbands and fathers who mean it every time and lose it by Wednesday. Four men. Sundays at 7:00 PM Central on Google Meet. November 15 to December 20.
 
 **Who it's for**
 - You're a husband, a father, or both, and you want to lead your home better than you have been. (Changed on Oct 2: the group is open to any man, not only men from the church.)
@@ -76,7 +76,7 @@ Current prices were pulled from the live systeme.io price plans on 2026-10-02.
 Every week runs on the Be The Man Steps and the Weekly Scorecard. Nothing new to buy.
 
 **What you get**
-- Six live 75-minute sessions with four men.
+- Six live 75-minute sessions with four men on Google Meet.
 - The worksheets and the Weekly Scorecard.
 - One check-in text each week between sessions.
 
