@@ -35,11 +35,11 @@ Current prices were pulled from the live systeme.io price plans on 2026-10-02.
 | Christian Couples Conversation Cards | $9 | $9 | — | Already on the card price. |
 | The Husband's Devotional - 30 Mornings | $9 | $9 | — | A short devotional sits right at $9. |
 | The Prayer Strategy for Men | $9 | $9 | — | Same as above. |
-| The Godly Husband Field Guide | $12 | $19 | After pilot | At $12, one guide costs the same as a full month of the Club, so neither looks like a step up. |
-| The Christian Marriage Workbook for Men | $12 | $19 | After pilot | Same as above. |
-| The Men's Discipleship Workbook | $12 | $19 | After pilot | Same as above. |
-| The Father's Field Guide | $12 | $19 | After pilot | Same as above. |
-| The Men's Bible Study - Eight Weeks | $12 | $19 | After pilot | Eight weeks of material. $12 undersells it. |
+| The Godly Husband Field Guide | ~~$12~~ $19 | $19 | **Applied 2026-10-02** | At $12, one guide costs the same as a full month of the Club, so neither looks like a step up. |
+| The Christian Marriage Workbook for Men | ~~$12~~ $19 | $19 | **Applied 2026-10-02** | Same as above. |
+| The Men's Discipleship Workbook | ~~$12~~ $19 | $19 | **Applied 2026-10-02** | Same as above. |
+| The Father's Field Guide | ~~$12~~ $19 | $19 | **Applied 2026-10-02** | Same as above. |
+| The Men's Bible Study - Eight Weeks | ~~$12~~ $19 | $19 | **Applied 2026-10-02** | Eight weeks of material. $12 undersells it. |
 | The Be The Man Club | **$12/month (founding, live now)**; the $17 plan exists but isn't attached | $12 founding until Dec 27, then $17 for new members | After pilot | Founding men keep $12. The $17 plan is already set up, so the switch is a single change in systeme.io. |
 | 6-week pilot group (new) | — | $147 founding (regular $297 shown) | With the pilot page, after Sunday's approval | A new offer, not a change to anything live. The price is a placeholder until approved. |
 | Prepare/Enrich, 3 sessions (new) | — | $300, plus the $35 assessment the couple pays to the platform | After Board Meeting approval and church leadership is told | A new offer on the Be The Man site only, not the church site. |
@@ -136,3 +136,7 @@ The design "Be The Man — a system for Black Christian men" was edited and save
 - **Home page:** an amber line above the headline: "NEW · 6-week live group on Google Meet · Sundays 7:00 PM Central · 4 seats · Reserve a seat →", linking to the pilot checkout.
 - **Club price:** every "$17" Club mention now says "$12" (2 on Home, 6 on The Club, 3 on The Store). Store product prices were not changed.
 - **Not live yet:** Brian must click Publish/Update in Canva for the live site to change.
+
+## Workbook price change, applied 2026-10-02
+
+Brian approved moving the five $12 workbooks to $19 now. systeme.io price plans can't be edited, so each product got a new $19 plan in place of the old one (the old $12 plans still exist but aren't attached). Downloads are unchanged. The checkout pages show the price from the product, so they updated automatically. On the Canva Store page, the five prices and the headline ("Eleven tools. $7 to $19.") are saved; they go live on the next Publish.
