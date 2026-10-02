@@ -2,7 +2,7 @@
 
 **Status: nothing is published or changed in systeme.io.** This file holds the drafts: page copy and a pricing proposal. Review them in one sitting (about 25 minutes). After Sunday's sign-off, the approved pages can be built in systeme.io.
 
-One systeme.io note: there is no true "draft" state for funnel pages. A new page is reachable by anyone who has its URL, even if nothing links to it. That's why the drafts live here until they're approved, and the couples page stays out of systeme.io until the pastor signs off.
+One systeme.io note: there is no true "draft" state for funnel pages. A new page is reachable by anyone who has its URL, even if nothing links to it. That's why the drafts live here until they're approved, and the couples page stays out of systeme.io until it's approved at the Board Meeting and you've decided where it lives and told church leadership. No paid offer goes on the church's website.
 
 ---
 
@@ -26,7 +26,7 @@ Current prices were pulled from the live systeme.io price plans on 2026-10-02.
 | The Men's Bible Study - Eight Weeks | $12 | $19 | After pilot | Eight weeks of material. $12 undersells it. |
 | The Be The Man Club | **$12/month (founding, live now)**; the $17 plan exists but isn't attached | $12 founding until Dec 27, then $17 for new members | After pilot | Founding men keep $12. The $17 plan is already set up, so the switch is a single change in systeme.io. |
 | 6-week pilot group (new) | — | $147 founding (regular $297 shown) | With the pilot page, after Sunday's approval | A new offer, not a change to anything live. The price is a placeholder until approved. |
-| Prepare/Enrich, 3 sessions (new) | — | $300, plus the $35 assessment the couple pays to the platform | After the pastor approves | A new offer. It stays off the site until then. |
+| Prepare/Enrich, 3 sessions (new) | — | $300, plus the $35 assessment the couple pays to the platform | After Board Meeting approval and church leadership is told | A new offer on the Be The Man site only, not the church site. |
 
 **Correction to the brief:** the brief lists the Club at $17/month. It's **$12/month on the live checkout** (the founding price set on Sept 29). The table uses the live price.
 
@@ -92,13 +92,16 @@ Everything else comes off the home page, but nothing is deleted. The store and t
 
 ---
 
-## 4. Couples page (on hold until the pastor approves; not in systeme.io)
+## 4. "For Couples" page (on hold; not in systeme.io)
+
+On hold until (a) it's approved at the Board Meeting and (b) you've decided where it lives and told church leadership. It goes on the Be The Man site, never the church website.
 
 **Headline:** Prepare/Enrich for engaged and married couples
 
 **Body:** A structured look at how the two of you communicate, handle conflict and make decisions. You each take the Prepare/Enrich assessment online. Then we meet for three sessions to go through your results together and choose what to work on.
 
-- **Facilitator:** Brian, a Prepare/Enrich facilitator. This isn't counseling or therapy.
+- **Facilitator:** Brian, a Prepare/Enrich facilitator. This is a private facilitator service, not counseling or therapy.
+- **Disclosure:** Brian is also a pastor. This service is separate from the church and its ministry, and taking part is entirely voluntary.
 - **Cost:** $300 for three sessions. The $35 assessment is paid directly to Prepare/Enrich.
 
 **Inquiry form** (nothing sensitive is collected):
