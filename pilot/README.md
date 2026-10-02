@@ -129,3 +129,10 @@ On hold until (a) it's approved at the Board Meeting and (b) you've decided wher
 **Button:** Send my inquiry
 
 Before this goes live, confirm that your Prepare/Enrich facilitator certification is current. Pages and ads that use the "Prepare/Enrich" name should follow their facilitator guidelines.
+
+## Canva website (bethemansystem.com), saved 2026-10-02
+
+The design "Be The Man — a system for Black Christian men" was edited and saved, but not republished:
+- **Home page:** an amber line above the headline: "NEW · 6-week live group on Google Meet · Sundays 7:00 PM Central · 4 seats · Reserve a seat →", linking to the pilot checkout.
+- **Club price:** every "$17" Club mention now says "$12" (2 on Home, 6 on The Club, 3 on The Store). Store product prices were not changed.
+- **Not live yet:** Brian must click Publish/Update in Canva for the live site to change.
