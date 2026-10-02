@@ -1,13 +1,13 @@
 import { chromium } from '/opt/node22/lib/node_modules/playwright/index.mjs';
 import fs from 'fs';
 const A='#C97A12', INK='#141416', MUTE='#6f6a62';
-const lines=(n,h=30)=>Array.from({length:n},()=>`<div class="ln" style="height:${h}px"></div>`).join('');
+const lines=(n,h=30)=>Array.from({length:n},()=>`<div class="ln fld" style="height:${h}px"></div>`).join('');
 const box=(label,n,h)=>`<div class="lab">${label}</div>${lines(n,h)}`;
 const page=(inner,foot='')=>`<section class="pg">${inner}<div class="ft"><span>12-Week Goal Planner</span><span>${foot}</span></div></section>`;
 const head=(k,t)=>`<div class="k">${k}</div><h2>${t}</h2><div class="rule"></div>`;
 
 let pages=[];
-pages.push(`<section class="pg cover"><div class="cb"><div class="k">Plan it. Run it. Review it.</div><h1>12-Week<br>Goal Planner</h1><div class="rule w"></div><p>Twelve weeks is long enough to change something and short enough to stay serious. Pick a few goals, define the weekly actions that drive them, and review every week.</p><div class="nm">Name: ____________________</div><div class="nm">Start date: ____ / ____ / ______ &nbsp;&nbsp; End date: ____ / ____ / ______</div></div></section>`);
+pages.push(`<section class="pg cover"><div class="cb"><div class="k">Plan it. Run it. Review it.</div><h1>12-Week<br>Goal Planner</h1><div class="rule w"></div><p>Twelve weeks is long enough to change something and short enough to stay serious. Pick a few goals, define the weekly actions that drive them, and review every week.</p><div class="nm">Name: <span class="fld di" style="width:300px"></span></div><div class="nm">Start: <span class="fld di" style="width:30px"></span> / <span class="fld di" style="width:30px"></span> / <span class="fld di" style="width:46px"></span> &nbsp;&nbsp; End: <span class="fld di" style="width:30px"></span> / <span class="fld di" style="width:30px"></span> / <span class="fld di" style="width:46px"></span></div></div></section>`);
 
 pages.push(page(`${head('Start here','How to use this planner')}
 <ol class="how">
@@ -25,10 +25,10 @@ ${box('Why does this matter? What does it cost me if I don\'t do it?',5,34)}
 ${box('What could get in the way, and what will I do about it?',4,34)}`));
 
 const goal=n=>`<div class="goal"><div class="gh">Goal ${n}</div>
-<div class="row"><div class="lab">Goal (specific and measurable)</div><div class="ln"></div></div>
-<div class="row two"><div><div class="lab">Starting point</div><div class="ln"></div></div><div><div class="lab">Target by week 12</div><div class="ln"></div></div></div>
+<div class="row"><div class="lab">Goal (specific and measurable)</div><div class="ln fld"></div></div>
+<div class="row two"><div><div class="lab">Starting point</div><div class="ln fld"></div></div><div><div class="lab">Target by week 12</div><div class="ln fld"></div></div></div>
 <div class="lab">Weekly actions that drive it</div>
-<div class="acts"><span>▢</span><div class="ln"></div></div><div class="acts"><span>▢</span><div class="ln"></div></div><div class="acts"><span>▢</span><div class="ln"></div></div></div>`;
+<div class="acts"><span class="fld chk box">▢</span><div class="ln fld"></div></div><div class="acts"><span class="fld chk box">▢</span><div class="ln fld"></div></div><div class="acts"><span class="fld chk box">▢</span><div class="ln fld"></div></div></div>`;
 pages.push(page(`${head('Step 2','My 12-week goals')}${goal(1)}${goal(2)}${goal(3)}`));
 
 // milestone map
@@ -38,12 +38,12 @@ pages.push(page(`${head('Step 3','Milestones')}${ms}`));
 // weekly
 for(let w=1;w<=12;w++){
   const days=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
-  const rows=Array.from({length:6},(_,i)=>`<tr><td class="n">${i+1}</td><td class="act"></td>${days.map(()=>'<td class="c"></td>').join('')}</tr>`).join('');
-  pages.push(page(`<div class="wk"><div><div class="k">Week</div><div class="big">${String(w).padStart(2,'0')}</div></div><div class="wd">Week of ____ / ____ / ______</div></div><div class="rule"></div>
-<div class="lab">Top 3 priorities this week</div><div class="acts"><span>1</span><div class="ln"></div></div><div class="acts"><span>2</span><div class="ln"></div></div><div class="acts"><span>3</span><div class="ln"></div></div>
+  const rows=Array.from({length:6},(_,i)=>`<tr><td class="n">${i+1}</td><td class="act fld"></td>${days.map(()=>'<td class="c fld chk"></td>').join('')}</tr>`).join('');
+  pages.push(page(`<div class="wk"><div><div class="k">Week</div><div class="big">${String(w).padStart(2,'0')}</div></div><div class="wd">Week of <span class="fld di" style="width:34px"></span> / <span class="fld di" style="width:34px"></span> / <span class="fld di" style="width:50px"></span></div></div><div class="rule"></div>
+<div class="lab">Top 3 priorities this week</div><div class="acts"><span>1</span><div class="ln fld"></div></div><div class="acts"><span>2</span><div class="ln fld"></div></div><div class="acts"><span>3</span><div class="ln fld"></div></div>
 <div class="lab" style="margin-top:14px">Weekly actions — mark each day done</div>
 <table><thead><tr><th></th><th class="al">Action (with day &amp; time)</th>${days.map(d=>`<th>${d}</th>`).join('')}</tr></thead><tbody>${rows}</tbody></table>
-<div class="score"><div>Actions planned <i></i></div><div>Completed <i></i></div><div>Score % <i></i></div></div>
+<div class="score"><div>Actions planned <i class="fld"></i></div><div>Completed <i class="fld"></i></div><div>Score % <i class="fld"></i></div></div>
 <div class="two2"><div>${box('What went well',3,26)}</div><div>${box('What got in the way',3,26)}</div></div>
 ${box('One adjustment for next week',2,26)}`,`Week ${w}`));
   if(w===6) pages.push(page(`${head('Midpoint check','Week 6 review')}
@@ -53,7 +53,7 @@ ${box('What needs to change for the second half?',4,30)}`));
 }
 
 // scorecard
-const sc=Array.from({length:12},(_,i)=>`<tr><td class="n">Week ${i+1}</td><td></td><td></td><td></td><td></td></tr>`).join('');
+const sc=Array.from({length:12},(_,i)=>`<tr><td class="n">Week ${i+1}</td><td class="fld"></td><td class="fld"></td><td class="fld"></td><td class="fld"></td></tr>`).join('');
 pages.push(page(`${head('Track','Weekly scorecard')}<table class="sct"><thead><tr><th class="al">Week</th><th>Planned</th><th>Done</th><th>Score %</th><th class="al">Note</th></tr></thead><tbody>${sc}</tbody></table>
 <div class="callout" style="margin-top:18px"><b>Target:</b> 85%+ each week. A miss is data, not a verdict. Fix the plan and keep going.</div>`));
 
@@ -62,7 +62,7 @@ ${box('Results: where did I land on each goal?',4,30)}
 ${box('Biggest wins',3,30)}
 ${box('Biggest lessons',3,30)}
 ${box('What I\'ll carry into the next 12 weeks',3,30)}
-<div class="lab" style="margin-top:12px">Next 12 weeks starts: ____ / ____ / ______</div>`));
+<div class="lab" style="margin-top:12px">Next 12 weeks starts: <span class="fld di" style="width:34px"></span> / <span class="fld di" style="width:34px"></span> / <span class="fld di" style="width:50px"></span></div>`));
 
 const css=`@page{size:Letter;margin:0}*{box-sizing:border-box}body{margin:0;font-family:Inter,sans-serif;color:${INK}}
 .pg{width:8.5in;height:11in;padding:.7in .75in .6in;position:relative;page-break-after:always;overflow:hidden}
@@ -84,6 +84,7 @@ td{border:1px solid #bdb8ae;height:34px}td.n{width:24px;text-align:center;font-s
 .score{display:flex;gap:24px;margin:14px 0 4px;font:600 10.5px 'IBM Plex Mono',monospace;text-transform:uppercase;color:${MUTE}}.score i{display:inline-block;width:60px;border-bottom:1px solid ${INK};margin-left:6px;height:14px}
 .two2{display:grid;grid-template-columns:1fr 1fr;gap:24px}
 .sct td{height:36px}.sct td.n{width:70px;text-align:left;padding-left:8px;font-size:12px}
+.di{display:inline-block;border-bottom:1px solid currentColor;height:14px;vertical-align:bottom}.box{font-size:14px}
 .ft{position:absolute;left:.75in;right:.75in;bottom:.35in;display:flex;justify-content:space-between;font:500 9px 'IBM Plex Mono',monospace;color:${MUTE};letter-spacing:.08em;text-transform:uppercase}`;
 const ff=(n,f,w,s='normal')=>`@font-face{font-family:'${n}';src:url(data:font/woff2;base64,${fs.readFileSync('../posts/fonts/'+f).toString('base64')});font-weight:${w};font-style:${s}}`;
 const fonts=[ff('Inter','Inter-400-normal.woff2',400),ff('Inter','Inter-600-normal.woff2',600),ff('Inter','Inter-500-normal.woff2',500),ff('Oswald','Oswald-700-normal.woff2',700),ff('IBM Plex Mono','IBMPlexMono-400-normal.woff2',500),ff('IBM Plex Mono','IBMPlexMono-600-normal.woff2',600),ff('Lora','Lora-500-italic.woff2',500,'italic')].join('');
@@ -91,4 +92,6 @@ const html=`<!doctype html><meta charset=utf8><style>${fonts}${css}</style>${pag
 fs.writeFileSync('planner.html',html);
 const b=await chromium.launch({executablePath:'/opt/pw-browsers/chromium'});const p=await b.newPage();
 await p.setContent(html);await p.evaluate(()=>document.fonts.ready);
+const rects=await p.evaluate(()=>[...document.querySelectorAll('.pg')].map((pg,i)=>{const o=pg.getBoundingClientRect();return [...pg.querySelectorAll('.fld')].map(e=>{const r=e.getBoundingClientRect();return {cb:e.classList.contains("chk"),x:r.x-o.x,y:r.y-o.y,w:r.width,h:r.height,cover:i===0}})}));
+fs.writeFileSync('fields.json',JSON.stringify(rects));
 await p.pdf({path:'12-week-goal-planner.pdf',width:'8.5in',height:'11in',printBackground:true});await b.close();
