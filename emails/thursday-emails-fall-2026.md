@@ -44,3 +44,11 @@ The Dec 24 email makes no promise about the next one. The next batch should star
 - **8:00 AM Central covers most US readers at the right hour.** It's 9 AM Eastern and 8 AM Central, and those two time zones hold roughly three-quarters of the US population. The old 6:00 AM Eastern send landed at 5 AM Central, under everything else that arrives before a man opens his inbox.
 - **Evenings were ruled out on purpose.** Some studies show click peaks at 8–9 PM, but that's family time, and the emails tell men to keep their phone in the drawer then. Sending at that hour would work against the message.
 - **Revisit with real data.** At about 500 subscribers, compare open and click rates by send hour (for example, alternate 8 AM and 12 PM Central for a month) and move to the winner. Open rates are inflated by Apple Mail privacy features, so judge by clicks.
+
+## Announcement: the 6-week group (draft, not scheduled)
+
+- **Subject:** "Four seats. Six Sundays." **Preview:** "A live group for men who keep making the same promise. Google Meet, Sundays at 7:00 PM Central."
+- **Audience:** contacts tagged Framework. **Button:** Reserve my seat (the pilot checkout).
+- **Body:** the six Sundays and their topics; a when / where / price box (7:00 PM Central, Google Meet, $147 founding instead of $297); the house test; "reply and tell me where you're stuck."
+- **Suggested send:** Tuesday Oct 6, 8:00 AM CT. Sending on a Tuesday keeps it separate from the Thursday lesson. Send a follow-up only to non-buyers about a week before Nov 15.
+- Saved as a draft in systeme.io (newsletter 5384058). Brian schedules or sends it.
