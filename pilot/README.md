@@ -116,7 +116,7 @@ On hold until (a) it's approved at the Board Meeting and (b) you've decided wher
 
 **Body:** A structured look at how the two of you communicate, handle conflict and make decisions. You each take the Prepare/Enrich assessment online. Then we meet for three sessions to go through your results together and choose what to work on.
 
-- **Facilitator:** Brian, a Prepare/Enrich facilitator. This is a private facilitator service, not counseling or therapy.
+- **Provider:** certified marriage counseling with Brian Greene, Prepare/Enrich facilitator and pastor. (Changed 2026-10-03 at Brian's direction; it replaces "not counseling or therapy.")
 - **Disclosure:** Brian is also a pastor. This service is separate from the church and its ministry, and taking part is entirely voluntary.
 - **Cost:** $300 for three sessions. The $35 assessment is paid directly to Prepare/Enrich.
 

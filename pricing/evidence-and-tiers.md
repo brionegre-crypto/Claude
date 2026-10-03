@@ -128,25 +128,22 @@ Each entry has the result the product aims for, the evidence behind its method, 
 - **Evidence:**
   - Fowers & Olson (1986) and Larsen & Olson (1989): PREPARE scores taken before the wedding identified which couples later divorced and which were happily married with **about 80–85% accuracy**. *(Studies published by the assessment's own developers.)*
   - Stanley, Amato, Johnson & Markman (2006), *Journal of Family Psychology*: premarital education was linked to **about 30% lower odds of divorce**, plus higher satisfaction and less conflict. *(Observational, large random household survey.)*
-- **Site copy:** "Before the wedding, the PREPARE assessment has picked out which couples later thrived and which divorced with about 80–85% accuracy. Couples who did premarital education were about 30% less likely to divorce. Three sessions, built on your own results."
+- **Site copy:** "Certified marriage counseling, built on a validated assessment. Before the wedding, the PREPARE assessment has picked out which couples later thrived and which divorced with about 80–85% accuracy. Couples who did premarital education were about 30% less likely to divorce. Three sessions, built on your own results."
 
 ---
 
-## Credential wording: decide before anything about couples goes live
+## Credential wording (decided 2026-10-03)
 
-You asked me to add "certified marriage counselor." **I haven't, and I recommend against it unless you hold a state license.**
+**Brian's decision:** the couples service is described as **"certified marriage counseling."**
 
-- **The law:** under Alabama's marriage and family therapy licensing law (Ala. Code §34-17A), only licensed marriage and family therapists may call themselves a "marriage counselor," "marriage therapist," "marriage advisor" or similar. Clergy may counsel as part of their ministry, but that exemption doesn't let them use the licensed titles. I found this through legal summaries and couldn't open the statute itself, so confirm it with a lawyer or the Alabama Board of Examiners in Marriage and Family Therapy.
-- **The Evidence Law:** the credential has to be a fact a reader can check.
+**Couples page wording:**
+- **Headline:** "Certified marriage counseling for engaged and married couples"
+- **Byline:** "With Brian Greene, PREPARE/ENRICH facilitator and pastor"
+- **Disclosure (kept from the earlier draft):** Brian is also a pastor. This service is separate from the church and its ministry, and taking part is voluntary.
 
-**Wording that works, depending on what's true. Pick one:**
-1. **If you're certified with PREPARE/ENRICH:** "Brian Greene, Certified PREPARE/ENRICH Facilitator and pastor."
-2. **If you hold a state license:** "Brian Greene, Licensed Marriage and Family Therapist (Alabama license #___)." Only then may the page say "counseling."
-3. **If you're a pastor only, for now:** "Pastoral marriage sessions with Brian Greene, pastor. PREPARE/ENRICH certification in progress."
-
-**What's your exact credential?** If it's option 1, the couples page can go out exactly as drafted, with option 1's wording.
-
----
+**Two things to settle before the page goes live:**
+1. **Name the certifying organization next to the claim.** For example: "Certified through [organization]." A named certification is something a reader can check, which is what the Evidence Law asks for. It's also the strongest proof the page can offer. Send me the organization's name and I'll add it.
+2. **Confirm the Alabama rules once.** Alabama's licensing law (Ala. Code §34-17A) restricts titles like "marriage counselor" to licensed therapists, and clergy have an exemption for counseling done as part of ministry. The wording above describes the *service* rather than giving you a licensed *title*. Since the couples service runs separately from the church, a quick check with the Alabama Board of Examiners in Marriage and Family Therapy before launch is worth the five minutes.
 
 ## Building your own evidence (starts with the 6-week group)
 
