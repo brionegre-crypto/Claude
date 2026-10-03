@@ -115,7 +115,14 @@ Everything else comes off the home page, but nothing is deleted. The store and t
 - **Inquiry page:** https://5e95-brian.systeme.io/0d29fa39. **Confirmation page:** https://5e95-brian.systeme.io/3b13de1e.
 - **Form fields:** names (first-name field), email, and an optional phone, plus the systeme.io consent checkbox. There are no custom fields, so "engaged or married" and "best days" are asked in Brian's reply email. Nothing sensitive is collected.
 - **Tag:** an automation rule tags every inquiry **"Couples inquiry"**.
-- **Not linked** from the home page, link in bio or Canva. It's only reachable by URL until Brian says to link it.
+- **Email alert:** each inquiry emails brionegre@gmail.com ("New couples inquiry") through the same automation rule that adds the tag.
+- **Linked from Canva (saved 2026-10-03, live on next Publish):** the Home page footer, on the © line, says "For couples: certified marriage counseling →" and links to the inquiry page. It is not on the link in bio or the systeme.io home page.
+- **Payment page (built 2026-10-03):** funnel "Couples payment (certified marriage counseling)" (https://systeme.io/dashboard/funnels/7667284).
+  - Checkout: https://5e95-brian.systeme.io/9daca0e0. Confirmation: https://5e95-brian.systeme.io/de960b4f.
+  - Product "Certified Marriage Counseling (3 sessions)" with a $300 one-time plan. It tags buyers **"Couples paid"**. There's no sale limit and no affiliate commission. Payment is Stripe (card, Klarna, Apple Pay).
+  - Each sale emails Brian ("Paid: couples counseling").
+  - The page isn't linked anywhere. Brian sends the link by email once a couple is a fit. The page has a "Send an inquiry first" link back to the inquiry page.
+  - No refund policy is stated on the page yet.
 - **Not verified visually:** this environment can't load systeme.io pages. Check desktop and mobile in the editor.
 
 **Headline:** Certified marriage counseling for engaged and married couples
