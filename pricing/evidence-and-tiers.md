@@ -27,7 +27,7 @@ So the site copy always says **"built on"** or **"designed around"** a method, a
 | **2. One workbook** | Self-guided. A structured program over several weeks | Godly Husband Field Guide; Marriage Workbook; Father's Field Guide; Discipleship Workbook; Men's Bible Study | $19 (live now) |
 | **3. The Club** | Everything in tiers 1 and 2, plus other men and a new tool each month | The Be The Man Club | $12/month founding, $17/month regular |
 | **4. Live group** | Brian live, plus four men, over six weeks | 6-week group (Google Meet) | $147 founding (regular $297) |
-| **5. Couples** | Brian with both spouses, plus a validated assessment | PREPARE/ENRICH, 3 sessions | $300 + $35 assessment |
+| **5. Couples** | Brian with both spouses, plus a validated assessment | Certified marriage counseling, 3 sessions | $300 + $35 assessment |
 
 ### Price changes I recommend (nothing applied)
 
@@ -122,13 +122,15 @@ Each entry has the result the product aims for, the evidence behind its method, 
 - **Evidence:** Hawkins (2008) found longer, structured programs did better than short ones. Harkin (2016) found reporting progress to others strengthens the effect of tracking. Gollwitzer & Sheeran (2006) support written when-and-where plans.
 - **Site copy:** "Three things the research keeps finding: written plans with a time attached, progress you track on paper, and progress reported to other people. Six Sundays, four men, all three."
 
-### Tier 5: Couples (PREPARE/ENRICH)
+### Tier 5: Couples (certified marriage counseling)
+
+> **Rule:** the certifying organization and its assessment are never named on the site or in ads. The copy says "a validated relationship assessment" and uses only the results.
 
 - **Method:** a validated couples assessment, followed by feedback sessions.
 - **Evidence:**
-  - Fowers & Olson (1986) and Larsen & Olson (1989): PREPARE scores taken before the wedding identified which couples later divorced and which were happily married with **about 80–85% accuracy**. *(Studies published by the assessment's own developers.)*
+  - Fowers & Olson (1986) and Larsen & Olson (1989): Scores on the assessment Brian is certified to use, taken before the wedding, identified which couples later divorced and which were happily married with **about 80–85% accuracy**. *(Studies published by the assessment's own developers.)*
   - Stanley, Amato, Johnson & Markman (2006), *Journal of Family Psychology*: premarital education was linked to **about 30% lower odds of divorce**, plus higher satisfaction and less conflict. *(Observational, large random household survey.)*
-- **Site copy:** "Certified marriage counseling, built on a validated assessment. Before the wedding, the PREPARE assessment has picked out which couples later thrived and which divorced with about 80–85% accuracy. Couples who did premarital education were about 30% less likely to divorce. Three sessions, built on your own results."
+- **Site copy:** "Certified marriage counseling, built on a validated assessment. Before the wedding, the validated assessment we use has picked out which couples later thrived and which divorced with about 80–85% accuracy. Couples who did premarital education were about 30% less likely to divorce. Three sessions, built on your own results."
 
 ---
 
@@ -138,11 +140,11 @@ Each entry has the result the product aims for, the evidence behind its method, 
 
 **Couples page wording:**
 - **Headline:** "Certified marriage counseling for engaged and married couples"
-- **Byline:** "With Brian Greene, PREPARE/ENRICH facilitator and pastor"
+- **Byline:** "With Brian Greene, certified in marriage counseling and pastor"
 - **Disclosure (kept from the earlier draft):** Brian is also a pastor. This service is separate from the church and its ministry, and taking part is voluntary.
 
 **Two things to settle before the page goes live:**
-1. **Name the certifying organization next to the claim.** For example: "Certified through [organization]." A named certification is something a reader can check, which is what the Evidence Law asks for. It's also the strongest proof the page can offer. Send me the organization's name and I'll add it.
+1. **Don't name the certifying organization.** Brian's rule: the copy says "certified" and gives the results, but never the organization's or the assessment's name.
 2. **Confirm the Alabama rules once.** Alabama's licensing law (Ala. Code §34-17A) restricts titles like "marriage counselor" to licensed therapists, and clergy have an exemption for counseling done as part of ministry. The wording above describes the *service* rather than giving you a licensed *title*. Since the couples service runs separately from the church, a quick check with the Alabama Board of Examiners in Marriage and Family Therapy before launch is worth the five minutes.
 
 ## Building your own evidence (starts with the 6-week group)
@@ -170,7 +172,7 @@ After two or three groups, the site can say **"Results from our groups"** next t
 - Wilcox & Dew (2012), Date Night Opportunity: [Wheatley Institute](https://wheatley.byu.edu/date-night-report)
 - Sarkadi et al. (2008), father involvement review: [PDF](https://www.apfn.com.pt/Noticias/Mar2008/Fathers_involvement_and_children_developmental_2007.pdf)
 - Li, Kubzansky & VanderWeele (2018), religious attendance and divorce: [DOAJ](https://doaj.org/article/f0668f6a31384fba831af553bd2dfa7a)
-- Fowers & Olson (1986), PREPARE prediction: [PREPARE/ENRICH](https://www.prepare-enrich.com/wp-content/uploads/2020/12/Fowers-Olson-1986-Predicting-Marital-Success-With-PREPARE.pdf)
-- Larsen & Olson (1989), replication: [PREPARE/ENRICH](https://www.prepare-enrich.com/wp-content/uploads/2020/12/Larsen-Olson-1989-Predicting-marital-satisfaction-using-PREPARE-A-replication-study.pdf)
+- Fowers & Olson (1986), assessment accuracy (internal reference only; don't link on the site): [study PDF](https://www.prepare-enrich.com/wp-content/uploads/2020/12/Fowers-Olson-1986-Predicting-Marital-Success-With-PREPARE.pdf)
+- Larsen & Olson (1989), replication (internal reference only; don't link on the site): [study PDF](https://www.prepare-enrich.com/wp-content/uploads/2020/12/Larsen-Olson-1989-Predicting-marital-satisfaction-using-PREPARE-A-replication-study.pdf)
 - Stanley et al. (2006), premarital education and divorce: [Phys.org summary](https://phys.org/news/2006-06-premarital-divorce.html)
 - Alabama title restriction (Ala. Code §34-17A), via legal summaries; confirm before relying on it.

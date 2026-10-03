@@ -42,7 +42,7 @@ Current prices were pulled from the live systeme.io price plans on 2026-10-02.
 | The Men's Bible Study - Eight Weeks | ~~$12~~ $19 | $19 | **Applied 2026-10-02** | Eight weeks of material. $12 undersells it. |
 | The Be The Man Club | **$12/month (founding, live now)**; the $17 plan exists but isn't attached | $12 founding until Dec 27, then $17 for new members | After pilot | Founding men keep $12. The $17 plan is already set up, so the switch is a single change in systeme.io. |
 | 6-week pilot group (new) | — | $147 founding (regular $297 shown) | With the pilot page, after Sunday's approval | A new offer, not a change to anything live. The price is a placeholder until approved. |
-| Prepare/Enrich, 3 sessions (new) | — | $300, plus the $35 assessment the couple pays to the platform | After Board Meeting approval and church leadership is told | A new offer on the Be The Man site only, not the church site. |
+| Certified marriage counseling, 3 sessions (new) | — | $300, plus the $35 assessment the couple pays to the platform | After Board Meeting approval and church leadership is told | A new offer on the Be The Man site only, not the church site. |
 
 **Correction to the brief:** the brief lists the Club at $17/month. It's **$12/month on the live checkout** (the founding price set on Sept 29). The table uses the live price.
 
@@ -112,13 +112,13 @@ Everything else comes off the home page, but nothing is deleted. The store and t
 
 On hold until (a) it's approved at the Board Meeting and (b) you've decided where it lives and told church leadership. It goes on the Be The Man site, never the church website.
 
-**Headline:** Prepare/Enrich for engaged and married couples
+**Headline:** Certified marriage counseling for engaged and married couples
 
-**Body:** A structured look at how the two of you communicate, handle conflict and make decisions. You each take the Prepare/Enrich assessment online. Then we meet for three sessions to go through your results together and choose what to work on.
+**Body:** A structured look at how the two of you communicate, handle conflict and make decisions. You each take a validated relationship assessment online. Before the wedding, it has picked out which couples later thrived and which divorced with about 80–85% accuracy, and couples who do premarital education are about 30% less likely to divorce. Then we meet for three sessions to go through your results together and choose what to work on.
 
-- **Provider:** certified marriage counseling with Brian Greene, Prepare/Enrich facilitator and pastor. (Changed 2026-10-03 at Brian's direction; it replaces "not counseling or therapy.")
+- **Provider:** certified marriage counseling with Brian Greene, pastor. (Changed 2026-10-03 at Brian's direction; it replaces "not counseling or therapy.")
 - **Disclosure:** Brian is also a pastor. This service is separate from the church and its ministry, and taking part is entirely voluntary.
-- **Cost:** $300 for three sessions. The $35 assessment is paid directly to Prepare/Enrich.
+- **Cost:** $300 for three sessions. The $35 assessment fee is paid directly to the assessment provider.
 
 **Inquiry form** (nothing sensitive is collected):
 - Your names
@@ -128,7 +128,7 @@ On hold until (a) it's approved at the Board Meeting and (b) you've decided wher
 
 **Button:** Send my inquiry
 
-Before this goes live, confirm that your Prepare/Enrich facilitator certification is current. Pages and ads that use the "Prepare/Enrich" name should follow their facilitator guidelines.
+Before this goes live, confirm your certification is current. Brian's rule: never name the certifying organization or its assessment on the site or in ads.
 
 ## Canva website (bethemansystem.com), saved 2026-10-02
 
