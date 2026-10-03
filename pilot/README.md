@@ -108,14 +108,21 @@ Everything else comes off the home page, but nothing is deleted. The store and t
 
 ---
 
-## 4. "For Couples" page (on hold; not in systeme.io)
+## 4. "For Couples" page (built 2026-10-03, not linked anywhere)
 
-On hold until (a) it's approved at the Board Meeting and (b) you've decided where it lives and told church leadership. It goes on the Be The Man site, never the church website.
+**Built at Brian's request on 2026-10-03.** It's on the Be The Man systeme.io account, never the church website.
+- **Funnel:** "Couples (certified marriage counseling)" (https://systeme.io/dashboard/funnels/7667253).
+- **Inquiry page:** https://5e95-brian.systeme.io/0d29fa39. **Confirmation page:** https://5e95-brian.systeme.io/3b13de1e.
+- **Form fields:** names (first-name field), email, and an optional phone, plus the systeme.io consent checkbox. There are no custom fields, so "engaged or married" and "best days" are asked in Brian's reply email. Nothing sensitive is collected.
+- **Tag:** an automation rule tags every inquiry **"Couples inquiry"**.
+- **Not linked** from the home page, link in bio or Canva. It's only reachable by URL until Brian says to link it.
+- **Not verified visually:** this environment can't load systeme.io pages. Check desktop and mobile in the editor.
 
 **Headline:** Certified marriage counseling for engaged and married couples
 
 **Body:** A structured look at how the two of you communicate, handle conflict and make decisions. You each take a validated relationship assessment online. Before the wedding, it has picked out which couples later thrived and which divorced with about 80–85% accuracy, and couples who do premarital education are about 30% less likely to divorce. Then we meet for three sessions to go through your results together and choose what to work on.
 
+- **Byline (as built):** "With Brian Greene, certified in marriage counseling and pastor".
 - **Provider:** certified marriage counseling with Brian Greene, pastor. (Changed 2026-10-03 at Brian's direction; it replaces "not counseling or therapy.")
 - **Disclosure:** Brian is also a pastor. This service is separate from the church and its ministry, and taking part is entirely voluntary.
 - **Cost:** $300 for three sessions. The $35 assessment fee is paid directly to the assessment provider.

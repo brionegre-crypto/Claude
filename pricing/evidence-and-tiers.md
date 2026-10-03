@@ -1,6 +1,6 @@
 # Be The Man: tiered pricing and evidence-based copy (draft for review)
 
-**Status (updated 2026-10-03):** Applied. The workbooks are at $19 (Oct 2) and the card decks at $9 (Oct 3) in systeme.io. The store descriptions, the home-page correction and the Club line are saved in Canva and go live when Brian clicks Publish/Update. The couples page isn't built.
+**Status (updated 2026-10-03):** Applied. The workbooks are at $19 (Oct 2) and the card decks at $9 (Oct 3) in systeme.io. The store descriptions, the home-page correction and the Club line are saved in Canva and go live when Brian clicks Publish/Update. The couples inquiry page was built Oct 3 in systeme.io; it isn't linked anywhere yet.
 
 ## How to read this
 
