@@ -121,7 +121,7 @@ Everything else comes off the home page, but nothing is deleted. The store and t
   - Checkout: https://5e95-brian.systeme.io/9daca0e0. Confirmation: https://5e95-brian.systeme.io/de960b4f.
   - Product "Certified Marriage Counseling (3 sessions)" with a $300 one-time plan. It tags buyers **"Couples paid"**. There's no sale limit and no affiliate commission. Payment is Stripe (card, Klarna, Apple Pay).
   - Each sale emails Brian ("Paid: couples counseling").
-  - The page isn't linked anywhere. Brian sends the link by email once a couple is a fit. The page has a "Send an inquiry first" link back to the inquiry page.
+  - **Linked from the inquiry page (2026-10-03):** under the cost and disclosure, a line reads "Already know you're ready?", followed by an amber linked line, "Pay $300 for three sessions →". It's a styled text link, because this tool can't set a link on a real systeme.io Button block. Brian can swap in a real Button in the editor if he wants. The page has a "Send an inquiry first" link back to the inquiry page.
   - No refund policy is stated on the page yet.
 - **Not verified visually:** this environment can't load systeme.io pages. Check desktop and mobile in the editor.
 
