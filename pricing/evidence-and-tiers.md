@@ -1,6 +1,6 @@
 # Be The Man: tiered pricing and evidence-based copy (draft for review)
 
-**Status:** draft. No prices or live pages have changed. The only live change today was the $19 workbook price, which Brian approved separately.
+**Status (updated 2026-10-03):** Applied. The workbooks are at $19 (Oct 2) and the card decks at $9 (Oct 3) in systeme.io. The store descriptions, the home-page correction and the Club line are saved in Canva and go live when Brian clicks Publish/Update. The couples page isn't built.
 
 ## How to read this
 
@@ -56,7 +56,7 @@ Each entry has the result the product aims for, the evidence behind its method, 
   - In one of those experiments, **91%** of people who wrote down the day, time and place they'd exercise did it that week, against **35–38%** of people who didn't plan (Milne, Orbell & Sheeran, 2002). *(Experiment.)*
 - **Site copy:** "A goal says what. A plan says when. In one study, 91% of people who wrote down the day, time and place followed through, against 38% who didn't. Step 1 is where you write yours."
 
-> **Correction needed on the live Canva home page:** it says *"Across 94 studies, people who wrote down when and where they would act were roughly three times more likely to follow through."* The 94-study review didn't find "three times"; it found a medium-to-large effect. The roughly-three-times number comes from the single 2002 exercise study (91% vs 35–38%). Replace it with: *"Across 94 studies, writing down when and where you'll act made people measurably more likely to follow through. In one, 91% of planners did it, against 38% of non-planners."*
+> **Applied 2026-10-03 (saved in Canva, live on next Publish):** it says *"Across 94 studies, people who wrote down when and where they would act were roughly three times more likely to follow through."* The 94-study review didn't find "three times"; it found a medium-to-large effect. The roughly-three-times number comes from the single 2002 exercise study (91% vs 35–38%). Replace it with: *"Across 94 studies, writing down when and where you'll act made people measurably more likely to follow through. In one, 91% of planners did it, against 38% of non-planners."*
 
 ### Weekly Scorecard ($7)
 

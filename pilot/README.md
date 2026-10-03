@@ -30,8 +30,8 @@ Current prices were pulled from the live systeme.io price plans on 2026-10-02.
 |---|---|---|---|---|
 | Step 1 worksheet | Free | Free | — | The front door. It stays free. |
 | The Weekly Scorecard | $7 | $7 | — | The pilot runs on it. Keep it as the easy first purchase. |
-| Forty Cards for Men | $7 | $9 | After pilot | Puts every card deck on one price. |
-| Father and Son Conversation Cards | $7 | $9 | After pilot | Same as above. |
+| Forty Cards for Men | ~~$7~~ $9 | $9 | **Applied 2026-10-03** | Puts every card deck on one price. |
+| Father and Son Conversation Cards | ~~$7~~ $9 | $9 | **Applied 2026-10-03** | Same as above. |
 | Christian Couples Conversation Cards | $9 | $9 | — | Already on the card price. |
 | The Husband's Devotional - 30 Mornings | $9 | $9 | — | A short devotional sits right at $9. |
 | The Prayer Strategy for Men | $9 | $9 | — | Same as above. |
@@ -140,3 +140,11 @@ The design "Be The Man — a system for Black Christian men" was edited and save
 ## Workbook price change, applied 2026-10-02
 
 Brian approved moving the five $12 workbooks to $19 now. systeme.io price plans can't be edited, so each product got a new $19 plan in place of the old one (the old $12 plans still exist but aren't attached). Downloads are unchanged. The checkout pages show the price from the product, so they updated automatically. On the Canva Store page, the five prices and the headline ("Eleven tools. $7 to $19.") are saved; they go live on the next Publish.
+
+## Card decks and evidence copy, applied 2026-10-03
+
+- **systeme.io:** Forty Cards and Father & Son Cards moved from $7 to $9, using new price plans 3467225 and 3467226. The old $7 plans are detached but not deleted.
+- **Canva Store page:** both card prices now read $9, and the 11 product descriptions were replaced with the evidence lines from `pricing/evidence-and-tiers.md`.
+- **Canva Home page:** the "roughly three times more likely" claim is corrected to "measurably more likely ... In one, 91% of planners did it, against 38% of non-planners." The Step 6 label "3× follow-through" now reads "91% vs 38%".
+- **Canva Club page:** "Most lists ask you to trust..." is replaced with "A new habit takes about 66 days to stick, and some men need far longer. Here is what keeps you going past month one." (Lally 2010.)
+- **Not live yet:** all of this is saved in the design. It goes live when Brian clicks Publish/Update in Canva.
