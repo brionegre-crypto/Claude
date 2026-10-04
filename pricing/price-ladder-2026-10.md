@@ -1,6 +1,6 @@
-# Be The Man price ladder (proposal, 2026-10-04)
+# Be The Man price ladder (2026-10-04)
 
-**Status:** proposal for Brian's approval. Nothing below is live yet.
+**Status:** approved by Brian on 2026-10-04 and built in systeme.io and Canva the same day. The Club unlocks over **6 months**, not the 10 first proposed (see below). Live IDs and links are in `pilot/README.md`, under "Price ladder build".
 
 ## The rule behind every price
 
@@ -45,22 +45,33 @@ Low-ticket prices don't change: $7, $9 and $19 already form a clean ladder. The 
 
 | | Monthly, $19 | Yearly, $149 |
 |---|---|---|
-| Day one | All 7 step worksheets + the Weekly Scorecard | **Everything:** all 11 tools + all 7 step worksheets |
-| Each month | One more store tool unlocks, plus that month's Club-only tool | That month's Club-only tool |
-| To own the whole library | Stay 10 months = **$190 paid** | Paid up front, **$149** |
+| Day one (month 1) | All 7 step worksheets, the Weekly Scorecard and Forty Cards | **Everything:** all 11 tools + all 7 step worksheets |
+| Month 2 | The Husband's Devotional + Couples Cards | |
+| Month 3 | The Godly Husband Field Guide | |
+| Month 4 | The Father's Field Guide + Father and Son Cards | |
+| Month 5 | The Marriage Workbook + Prayer Strategy | |
+| Month 6 | The Men's Bible Study + Discipleship Workbook | |
+| Every month | That month's Club-only tool | That month's Club-only tool |
+| To own the whole library | Stay 6 months = **$114 paid** | Paid up front, **$149** |
 | Live groups | $50 off every later group ($247 instead of $297) | $50 off every later group |
 
-**Why it can't lose money:**
-- **Monthly:** a member only has the full library once he has paid at least $190. That's more than its $147 store price.
+**What a man who leaves early takes with him:**
+- **After month 1 ($19 paid):** the framework, the Scorecard and Forty Cards: $16 of store tools.
+- **After month 3 ($57 paid):** about $53 of store tools.
+- **After month 6 ($114 paid):** the whole $147 library. That's $33 under the store price, the same discount as the $97 Library, earned by staying six months.
+
+**Why this works:**
+- **Monthly:** through month 3, he has paid more than the store value of what he has unlocked ($57 paid for $53 of tools). From month 4 the value runs a little ahead ($76 paid for $81, then $95 for $109, then $114 for $147). That gap is the reward for staying, and it is never bigger than the discount the $97 Library already gives anyone. Nobody can join for $19 and leave with $147 of tools.
 - **Yearly:** $149 is paid before anything unlocks, which is more than the $147 store price.
 - **Complete Library, $97:** this is the one-time "just the tools" option. The yearly Club costs $52 more and adds 12 tools nobody else can buy. That's the reason to choose the Club.
+- **Six months is the goal:** the release order puts the deepest tools (the workbooks and the Bible study) last, so the reason to stay is always one month away.
 
 **Why it's still good value:** at $19 a month, the Club still costs **less than one workbook** each month, and members still get every tool eventually.
 
 **Founding members at $12:** keep them at $12 with what they already have. Close the $12 offer to new members once the new prices go live.
 
 **Club blurb:**
-> **The Club: $19 a month, or $149 a year.** A new habit takes a median of 66 days to become automatic, and for some men up to 254 (Lally, 2010). A one-time download is usually finished long before that. The Club is built for month three. Join and you get all seven step worksheets and the Weekly Scorecard today, then a new tool every month, plus one tool built only for members. Tracking works best when someone else sees it: across 138 experiments, progress reported to others did better than progress kept private (Harkin, 2016). Pay yearly and the whole library unlocks on day one. That's $147 of tools, plus a year of new ones, for $149.
+> **The Club: $19 a month, or $149 a year.** A new habit takes a median of 66 days to become automatic, and for some men up to 254 (Lally, 2010). A one-time download is usually finished long before that. The Club is built for month three. Join and you get all seven step worksheets, the Weekly Scorecard and Forty Cards today, then a new set of tools every month until you have all eleven by month six, plus one tool built only for members. Tracking works best when someone else sees it: across 138 experiments, progress reported to others did better than progress kept private (Harkin, 2016). Pay yearly and the whole library unlocks on day one. That's $147 of tools, plus a year of new ones, for $149.
 
 ---
 
@@ -131,9 +142,9 @@ Low-ticket prices don't change: $7, $9 and $19 already form a clean ladder. The 
 
 ---
 
-## What it takes to make this live (systeme.io and Canva)
+## What it took to make this live (done 2026-10-04)
 
-1. **Club:** add new $19/month and $149/year price plans to the Club checkout. Move the library into a members' course that unlocks one tool every 30 days for monthly members and everything at once for yearly members. Keep the $12 founding members as they are.
+1. **Club:** add new $19/month and $149/year price plans to the Club checkout. Move the library into a members' course that unlocks a set every 30 days over six months for monthly members and everything at once for yearly members. Keep the $12 founding members as they are.
 2. **Kits and library:** create 4 new products (each delivers files that already exist), each with a price plan and a checkout page.
 3. **6-week group:** replace the crossed-out $297 with the "later groups" line, and add the Complete Library to what's included and to the confirmation page.
 4. **Couples:** add the two included tools to the checkout copy and the confirmation page.

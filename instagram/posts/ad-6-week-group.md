@@ -12,7 +12,7 @@
 >
 > This is a 6-week live group for husbands and fathers. Four men, one step a week, and a weekly scorecard that shows what actually held.
 >
-> Sundays, 7:00 to 8:00 PM Central, on Google Meet, Nov 15 to Dec 20. Founding group: $147 (regular $297). Four seats.
+> Sundays, 7:00 to 8:00 PM Central, on Google Meet, Nov 15 to Dec 20. Founding price: $147, for these four seats only. Later groups will be $297. Includes all eleven tools in the store.
 
 **Headline:** Six Sundays. Four seats.
 **Description:** Live on Google Meet · Starts Nov 15

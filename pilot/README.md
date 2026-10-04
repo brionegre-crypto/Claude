@@ -175,3 +175,49 @@ Brian approved moving the five $12 workbooks to $19 now. systeme.io price plans 
 - **Canva Home page:** the "roughly three times more likely" claim is corrected to "measurably more likely ... In one, 91% of planners did it, against 38% of non-planners." The Step 6 label "3× follow-through" now reads "91% vs 38%".
 - **Canva Club page:** "Most lists ask you to trust..." is replaced with "A new habit takes about 66 days to stick, and some men need far longer. Here is what keeps you going past month one." (Lally 2010.)
 - **Not live yet:** all of this is saved in the design. It goes live when Brian clicks Publish/Update in Canva.
+
+## Price ladder build, applied 2026-10-04
+
+Brian approved the ladder in `pricing/price-ladder-2026-10.md`. Club staging is **6 months**.
+
+**The Club (systeme.io)**
+- Course 680886, module "Your monthly tools". The monthly lessons unlock 30 days apart:
+  - Month 1: Scorecard and Forty Cards
+  - Month 2: Devotional and Couples Cards
+  - Month 3: Godly Husband Field Guide
+  - Month 4: Father's Field Guide and Father and Son Cards
+  - Month 5: Marriage Workbook and Prayer Strategy
+  - Month 6: Bible Study and Discipleship Workbook
+- The old all-at-once library lectures are deactivated, not deleted.
+- **Monthly, $19:** product 3443630 (plan 3468508), with dripping access. Checkout https://go.bethemansystem.com/d6dd7931 (the same link every site button already uses).
+  - After paying, a monthly buyer lands on the welcome page at https://go.bethemansystem.com/c24bf36b.
+  - That step's internal name still reads "Join the Club - Yearly Checkout". It is the monthly welcome page; rename it in systeme.io.
+- **Yearly, $149:** product 3443631 (plan 3468509), with full access on day one. Checkout https://5e95-brian.systeme.io/f05699c8; welcome page https://5e95-brian.systeme.io/578804e4.
+- **Founding $12 members:** product 3420914 is unchanged, and they keep everything they have. Close the $12 offer to new buyers once Brian confirms.
+
+**Kits and the Complete Library.** Each one delivers its files and has its own confirmation page with download links.
+
+| Kit | Product | Checkout |
+|---|---|---|
+| Husband Kit, $39 | 3443636 | https://5e95-brian.systeme.io/d1d8c97d |
+| Father Kit, $29 | 3443637 | https://5e95-brian.systeme.io/5cbc7892 |
+| Faith Kit, $29 | 3443638 | https://5e95-brian.systeme.io/d616652a |
+| Complete Library, $97 | 3443639 | https://5e95-brian.systeme.io/593d3b68 |
+
+The Complete Library's pages sit inside the Faith Kit funnel, because the plan's funnel limit is reached.
+
+**High ticket**
+- **6-week group:** product 3442221 now includes all eleven tools. The crossed-out $297 is gone. The checkout, the confirmation page, the newsletter draft 5384058 and the IG ad all say "$147, founding price, for these four seats only. Later groups will be $297."
+- **Couples:** product 3442928 now includes the Couples Cards and the Marriage Workbook. The checkout, inquiry and confirmation copy say so.
+
+**Pages updated**
+- **systeme.io:** the home funnel page and the link-in-bio page.
+- **Canva, saved (goes live on Publish):**
+  - Home: the Club is $19, and the $97 Library is offered.
+  - The Club: $19 a month or $149 a year, staged over six months.
+  - The Store: the intro, a kits row (Library, Husband, Father, Faith), and the Club band. The shirt image is removed.
+
+**Still open**
+- Test every new checkout with a 100% coupon. The single email field on the new checkouts has not been checked in a live purchase.
+- The Framework funnel checkouts are chained one after another, so a buyer can land on the next product's checkout. This was there before this build.
+- The Club page says "There's no room yet." Change it if a group room or call is added (see the Club value ideas).
