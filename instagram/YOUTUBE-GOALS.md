@@ -34,7 +34,7 @@ Grab a pen. Not your phone.
 🆓 Free worksheet: what type of man do you want to be? It ends in a one-sentence vision statement your goals can build on.
 👉 https://go.bethemansystem.com/framework
 
-🛠 The full 7-part framework, every tool in the store and the weekly review are inside The Be The Man Club ($17/month):
+🛠 The full 7-part framework, the Weekly Scorecard and a new set of tools every month are inside The Be The Man Club ($19/month, or $149/year with everything unlocked on day one):
 👉 https://go.bethemansystem.com/club
 
 You'll also get the weekly email every Thursday when you sign up for the free worksheet.

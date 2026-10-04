@@ -331,7 +331,7 @@ Three of the four decisions on the Weekly Scorecard are things she can see witho
 
 **Caption:**
 ```
-The Be The Man Club. $17 a month.
+The Be The Man Club. $19 a month.
 
 → All 11 tools in the store, free the day you join
 → Steps 1–7, every worksheet, in order

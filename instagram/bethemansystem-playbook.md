@@ -13,7 +13,7 @@ The **Name** field is searchable, but the bio is not. Put your main keyword in t
 > **Updated from a review of go.bethemansystem.com.** What the site actually offers:
 > - **Free:** *Step 1 of 7*, a worksheet built on one question, "What type of man do you want to be?", which ends in a one-sentence vision statement. Signing up also adds the man to the weekly Thursday email. URL: `go.bethemansystem.com/framework`
 > - **Low-ticket store:** The Weekly Scorecard, The Father's Field Guide, The Godly Husband Field Guide, Christian Marriage Workbook for Men, The Husband's Devotional (30 Mornings), Men's Discipleship Workbook, Men's Bible Study (8 Weeks), The Prayer Strategy for Men, and the Father & Son, Christian Couples, and Forty Cards for Men conversation card sets
-> - **Membership:** The Be The Man Club, $17/month. It includes all 11 tools, Steps 1–7, a monthly Club-only tool, and the weekly email.
+> - **Membership:** The Be The Man Club, $19/month. It includes all 11 tools, Steps 1–7, a monthly Club-only tool, and the weekly email.
 > - **Voice:** calm, specific, anti-hype. "A mechanism, not a mood." "On an ordinary Tuesday." "Would your wife be able to tell?" Christian, but practical rather than preachy.
 > - **Tagline:** *Break the cycle. Build the system. Be the man.*
 > - **Brand colors:** near-black `#0B0B0C`, amber `#E18B1F`, cream `#F2EEE6`, charcoal `#141416`
@@ -56,7 +56,7 @@ every time. Break the cycle.
 
 ### Other profile settings
 
-- **Link:** `go.bethemansystem.com/framework`, the free Step 1 page. Send cold traffic here, not to the Club checkout. If you use a multi-link page, order the links: 1) Free Step 1, 2) The Be The Man Club ($17/mo), 3) The Weekly Scorecard.
+- **Link:** `go.bethemansystem.com/framework`, the free Step 1 page. Send cold traffic here, not to the Club checkout. If you use a multi-link page, order the links: 1) Free Step 1, 2) The Be The Man Club ($19/mo), 3) The Weekly Scorecard.
 - **Comment-to-DM keyword:** `STEP1`. Auto-DM the `/framework` link.
 - **Profile photo:** A clear face shot or a bold monogram logo on a high-contrast background. It has to be readable at 40px.
 - **Category:** "Coach" or "Education".
@@ -257,7 +257,7 @@ Open each design, check it, then download it as a PNG. Suggested order and capti
 | 2 | "You meant it every time." | https://www.canva.com/d/4Xux2DZfbcIQNsE | Day 2 |
 | 3 | "A goal says what. A system says when." | https://www.canva.com/d/9CkPaj8SzKnBl12 | Day 3; pin it |
 | 4 | "Would your wife be able to tell?" | https://www.canva.com/d/W9V9L6R_nT9qUPN | Day 5 |
-| 5 | The Be The Man Club, $17/mo | https://www.canva.com/d/Ey9e-Sv8wuiD3Pl | Day 7; pin it |
+| 5 | The Be The Man Club, $19/mo | https://www.canva.com/d/Ey9e-Sv8wuiD3Pl | Day 7; pin it |
 | 6 | Story: Step 1 (add a link sticker to `/framework`) | https://www.canva.com/d/9P05DGd8HjV3obF | Any day; save it to the START HERE highlight |
 
 ### Captions
@@ -331,7 +331,7 @@ Three of the four decisions on the Weekly Scorecard are things she can see witho
 
 **5. The Be The Man Club**
 ```
-The Be The Man Club. $17 a month.
+The Be The Man Club. $19 a month.
 
 → All 11 tools in the store, free the day you join
 → Steps 1–7, every worksheet, in order

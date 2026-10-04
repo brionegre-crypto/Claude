@@ -7,7 +7,7 @@
 
 Square brackets are for you: `[YOUR STORY]` means put a real one in your own words (marked below with what it should do). `[ON SCREEN]` is a text overlay or b-roll cue. I can't invent your stories, so I've left the slots.
 
-Facts to keep exact (from your group page): four men, Sundays 7:00 to 8:00 PM Central on Google Meet, November 15 to December 20, founding price $147 for these four seats only, includes the Complete Library (all 11 tools, including the Weekly Scorecard), one check-in text each week. Later groups $297, or $247 for Club members.
+Facts to keep exact (from your group page): four men, Sundays 7:00 to 8:00 PM Central on Google Meet, November 15 to December 20, founding price $147 for these four seats only, includes the Complete Library (all 11 tools, including the Weekly Scorecard; $97 on its own per your Home page), one check-in text each week. Later groups $297, or $247 for Club members. Club is $19/month or $149/year.
 
 ---
 
@@ -97,7 +97,7 @@ One of the six Sundays, November 29, is *this exact question*: what has stopped 
 
 The other five Sundays build the rest: who you're building, goals with a when, the laws of a system that holds, the four pillars, and God at the center. You leave with a plan for January.
 
-Here's what comes with it. You get the Complete Library, yours to keep: all 11 Be The Man tools, including the Weekly Scorecard. Bought one at a time that's $147. And you get one check-in text each week between sessions, so the week doesn't disappear on you.
+Here's what comes with it. You get the Complete Library, yours to keep: all 11 Be The Man tools, including the Weekly Scorecard. The Complete Library is $97 on its own. And you get one check-in text each week between sessions, so the week doesn't disappear on you.
 
 [ON SCREEN: Nov 15 to Dec 20, Sundays 7:00 to 8:00 PM CT, Google Meet, 4 men]
 

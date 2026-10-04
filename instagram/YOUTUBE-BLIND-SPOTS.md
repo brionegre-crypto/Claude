@@ -35,7 +35,7 @@ Most men think they know why they keep stalling. The real reason is usually the 
 👉 Reserve a seat in the Be The Man 6-Week Group (founding price $147, four men, Sundays 7 to 8 PM Central on Google Meet, starting November 15):
 https://go.bethemansystem.com/b1c774c0
 
-The founding seats include the Complete Library (all 11 Be The Man tools, including the Weekly Scorecard). Later groups will be $297, or $247 for Club members. The session on November 29 is built around this exact question: what has stopped you so far, looked at honestly and without guilt.
+The founding seats include the Complete Library (all 11 Be The Man tools, including the Weekly Scorecard, $97 on its own). Later groups will be $297, or $247 for Club members. The session on November 29 is built around this exact question: what has stopped you so far, looked at honestly and without guilt.
 
 Not ready for a group? Start with the free worksheet: what type of man do you want to be? It takes twenty minutes and ends in a one-sentence vision statement.
 👉 https://go.bethemansystem.com/framework
