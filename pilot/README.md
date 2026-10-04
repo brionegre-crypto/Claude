@@ -142,7 +142,7 @@ Everything else comes off the home page, but nothing is deleted. The store and t
 
 **Body:** A structured look at how the two of you communicate, handle conflict and make decisions. You each take a validated relationship assessment online. Before the wedding, it has picked out which couples later thrived and which divorced with about 80–85% accuracy, and couples who do premarital education are about 30% less likely to divorce. Then we meet for three sessions to go through your results together and choose what to work on.
 
-- **Byline (as built):** "With Brian Greene, certified in marriage counseling and pastor".
+- **Byline (as built):** "With Brian Greene, pastor and certified marriage counselor" (changed 2026-10-04 at Brian's direction; was "certified in marriage counseling and pastor").
 - **Provider:** certified marriage counseling with Brian Greene, pastor. (Changed 2026-10-03 at Brian's direction; it replaces "not counseling or therapy.")
 - **Disclosure:** removed 2026-10-04 at Brian's direction from the Canva Couples page, the inquiry page, the checkout and the announcement email. The byline still says "pastor".
 - **Cost:** $300 for three sessions. The $35 assessment fee is paid directly to the assessment provider.
@@ -272,3 +272,12 @@ Brian approved the first two Club value ideas: a monthly live call and accountab
 Each page's own menu now marks the page you're on in amber and bold, and every other item is grey: Home on Home, The Club on The Club, The Store on The Store, About on About, Couples on Couples. Before this, Couples was amber on every page. Saved in Canva; it goes live on Publish.
 
 The second menu bar across the top ("Home, The Club, Products, About, Couples") is Canva's automatic website navigation. It can't be turned off from here. Brian turns it off in Canva under Publish, then Settings, then Navigation menu, and then publishes again.
+
+## Bio: certified marriage counselor, 2026-10-04
+
+At Brian's direction, his bio now includes "certified marriage counselor" on the basis of his clergy credentials:
+- Home ("Who's teaching this"): "I'm Brian Greene: pastor, certified marriage counselor, husband, father of three, raised without a father."
+- About: "I'm Brian Greene — a pastor, certified marriage counselor, husband and father of three, raised without a father."
+- Couples byline: "With Brian Greene, pastor and certified marriage counselor."
+
+Saved in Canva; it goes live on Publish.

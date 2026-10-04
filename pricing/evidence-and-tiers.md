@@ -140,7 +140,7 @@ Each entry has the result the product aims for, the evidence behind its method, 
 
 **Couples page wording:**
 - **Headline:** "Certified marriage counseling for engaged and married couples"
-- **Byline:** "With Brian Greene, certified in marriage counseling and pastor"
+- **Byline:** "With Brian Greene, pastor and certified marriage counselor" (Brian, 2026-10-04)
 - **Disclosure:** removed 2026-10-04 at Brian's direction.
 
 **Two things to settle before the page goes live:**
