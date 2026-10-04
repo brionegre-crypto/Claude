@@ -266,3 +266,9 @@ Brian approved the first two Club value ideas: a monthly live call and accountab
 **Not checked:**
 - The opt-in page's single field uses the default field type, and the button's submit action hasn't been verified. Test it once with your own email.
 - The course module "The brotherhood" also has a "Join the brotherhood" lesson linked to systeme.io community 76257. Check whether that community is set up; if it isn't, hide that lesson.
+
+## Menu: current page highlighted, 2026-10-04
+
+Each page's own menu now marks the page you're on in amber and bold, and every other item is grey: Home on Home, The Club on The Club, The Store on The Store, About on About, Couples on Couples. Before this, Couples was amber on every page. Saved in Canva; it goes live on Publish.
+
+The second menu bar across the top ("Home, The Club, Products, About, Couples") is Canva's automatic website navigation. It can't be turned off from here. Brian turns it off in Canva under Publish, then Settings, then Navigation menu, and then publishes again.
