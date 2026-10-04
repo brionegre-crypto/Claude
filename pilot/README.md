@@ -108,7 +108,7 @@ Everything else comes off the home page, but nothing is deleted. The store and t
 
 ---
 
-## 4. "For Couples" page (built 2026-10-03, not linked anywhere)
+## 4. "For Couples" page (built 2026-10-03, featured on the site 2026-10-04)
 
 **Built at Brian's request on 2026-10-03.** It's on the Be The Man systeme.io account, never the church website.
 - **Funnel:** "Couples (certified marriage counseling)" (https://systeme.io/dashboard/funnels/7667253).
@@ -116,13 +116,24 @@ Everything else comes off the home page, but nothing is deleted. The store and t
 - **Form fields:** names (first-name field), email, and an optional phone, plus the systeme.io consent checkbox. There are no custom fields, so "engaged or married" and "best days" are asked in Brian's reply email. Nothing sensitive is collected.
 - **Tag:** an automation rule tags every inquiry **"Couples inquiry"**.
 - **Email alert:** each inquiry emails brionegre@gmail.com ("New couples inquiry") through the same automation rule that adds the tag.
-- **Linked from Canva (saved 2026-10-03, live on next Publish):** the Home page footer, on the © line, says "For couples: certified marriage counseling →" and links to the inquiry page. It is not on the link in bio or the systeme.io home page.
+- **Canva website (saved 2026-10-04; it goes live when Brian clicks Publish):**
+  - **Menu:** "Couples" is now its own menu item, in amber and bold, on every page (Home · The Club · The Store · Couples · About). It links to https://bethemansystem.com/couples.
+  - **Couples page:** a new page 5, titled "Couples", has the same header and menu. Its sections are:
+    - Hero: headline, byline, "Send an inquiry" button, and "Ready now? Pay $300 for three sessions →".
+    - How it works, in 3 cards.
+    - What the research shows (80–85% and 30%).
+    - Cost and the pastor disclosure.
+    - An amber "Ready to start?" band with inquiry and pay buttons.
+    - Canva builds the URL from the page title, so **check that the page is at /couples after publishing.** If it isn't, update the menu links on all five pages.
+  - **Home announcement:** a line under the menu reads "NEW · Certified marriage counseling for engaged and married couples · Three sessions · See how it works →", linking to /couples.
+  - **Home footer:** "For couples: certified marriage counseling →" now goes to /couples. It used to go to the inquiry page.
+- **Announcement email (draft only, not scheduled):** "New: certified marriage counseling for couples" (https://systeme.io/dashboard/newsletters/5388559/edit), sent from Brian Greene. Pick the recipients and send only after the Publish and /couples check.
 - **Payment page (built 2026-10-03):** funnel "Couples payment (certified marriage counseling)" (https://systeme.io/dashboard/funnels/7667284).
   - Checkout: https://5e95-brian.systeme.io/9daca0e0. Confirmation: https://5e95-brian.systeme.io/de960b4f.
   - Product "Certified Marriage Counseling (3 sessions)" with a $300 one-time plan. It tags buyers **"Couples paid"**. There's no sale limit and no affiliate commission. Payment is Stripe (card, Klarna, Apple Pay).
   - Each sale emails Brian ("Paid: couples counseling").
   - **Linked from the inquiry page (2026-10-03):** under the cost and disclosure, a line reads "Already know you're ready?", followed by an amber linked line, "Pay $300 for three sessions →". It's a styled text link, because this tool can't set a link on a real systeme.io Button block. Brian can swap in a real Button in the editor if he wants.
-  - **Link in bio (2026-10-03):** the "Everything else" list now includes "Certified marriage counseling: pay $300", which goes to the checkout, with "Ask a question first", which goes to the inquiry page. It sits between the Scorecard and the 15-minute call. The page has a "Send an inquiry first" link back to the inquiry page.
+  - **Link in bio (moved to the top 2026-10-04):** the top block now holds the 6-week group and, under it, "New: certified marriage counseling for couples." It links "Pay $300 for three sessions →" to the checkout and "ask a question first" to the inquiry page. It was removed from the "Everything else" list.
   - No refund policy is stated on the page yet.
 - **Not verified visually:** this environment can't load systeme.io pages. Check desktop and mobile in the editor.
 
