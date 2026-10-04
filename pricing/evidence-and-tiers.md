@@ -141,7 +141,7 @@ Each entry has the result the product aims for, the evidence behind its method, 
 **Couples page wording:**
 - **Headline:** "Certified marriage counseling for engaged and married couples"
 - **Byline:** "With Brian Greene, certified in marriage counseling and pastor"
-- **Disclosure (kept from the earlier draft):** Brian is also a pastor. This service is separate from the church and its ministry, and taking part is voluntary.
+- **Disclosure:** removed 2026-10-04 at Brian's direction.
 
 **Two things to settle before the page goes live:**
 1. **Don't name the certifying organization.** Brian's rule: the copy says "certified" and gives the results, but never the organization's or the assessment's name.

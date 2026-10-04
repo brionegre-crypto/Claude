@@ -122,10 +122,11 @@ Everything else comes off the home page, but nothing is deleted. The store and t
     - Hero: headline, byline, "Send an inquiry" button, and "Ready now? Pay $300 for three sessions →".
     - How it works, in 3 cards.
     - What the research shows (80–85% and 30%).
-    - Cost and the pastor disclosure.
+    - Cost.
     - An amber "Ready to start?" band with inquiry and pay buttons.
     - Canva builds the URL from the page title, so **check that the page is at /couples after publishing.** If it isn't, update the menu links on all five pages.
   - **Home announcement:** a line under the menu reads "NEW · Certified marriage counseling for engaged and married couples · Three sessions · See how it works →", linking to /couples.
+  - **Two menus on the live site:** the design has one menu per page. The second one is Canva's automatic website menu, which it builds from the page titles. To turn it off, click the dropdown next to Publish, open Settings, switch off "Navigation menu", then publish again.
   - **Home footer:** "For couples: certified marriage counseling →" now goes to /couples. It used to go to the inquiry page.
 - **Announcement email (draft only, not scheduled):** "New: certified marriage counseling for couples" (https://systeme.io/dashboard/newsletters/5388559/edit), sent from Brian Greene. Pick the recipients and send only after the Publish and /couples check.
 - **Payment page (built 2026-10-03):** funnel "Couples payment (certified marriage counseling)" (https://systeme.io/dashboard/funnels/7667284).
@@ -143,7 +144,7 @@ Everything else comes off the home page, but nothing is deleted. The store and t
 
 - **Byline (as built):** "With Brian Greene, certified in marriage counseling and pastor".
 - **Provider:** certified marriage counseling with Brian Greene, pastor. (Changed 2026-10-03 at Brian's direction; it replaces "not counseling or therapy.")
-- **Disclosure:** Brian is also a pastor. This service is separate from the church and its ministry, and taking part is entirely voluntary.
+- **Disclosure:** removed 2026-10-04 at Brian's direction from the Canva Couples page, the inquiry page, the checkout and the announcement email. The byline still says "pastor".
 - **Cost:** $300 for three sessions. The $35 assessment fee is paid directly to the assessment provider.
 
 **Inquiry form** (nothing sensitive is collected):
