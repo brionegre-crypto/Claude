@@ -40,7 +40,8 @@ The founding seats include the Complete Library (all 11 Be The Man tools, includ
 Not ready for a group? Start with the free worksheet: what type of man do you want to be? It takes twenty minutes and ends in a one-sentence vision statement.
 👉 https://go.bethemansystem.com/framework
 
-Want to talk first? Email Brian: brian@bethemansystem.com
+Want to talk first? Book a free 15-minute call with Brian:
+https://go.bethemansystem.com/085b95e4
 
 CHAPTERS
 0:00 The thing you can't see
@@ -76,6 +77,6 @@ blind spots, how to find your blind spots, self awareness for men, self awarenes
 - Add an info card to the group link at the "how to see yours" chapter and an end screen: one card to the group, one to the goals video.
 - Add the video to the "Be The Man" playlist after the goals video.
 - Add the real chapter timestamps once the video is cut.
-- Check before publishing: the group page says "Book a 15-minute call" but that link currently points to `go.bethemansystem.com/check-your-email` (the Step 1 thank-you page), not a booking page. That's why the description uses Brian's email instead. Fix the page link or swap in a real booking link.
+- The call link (`https://go.bethemansystem.com/085b95e4`) is the Systeme.io booking page for the free 15-minute call. Do one test booking before posting to confirm the time slots show and the confirmation email arrives. Calls are phone calls to Brian's number.
 - The page says four seats: don't say how many are left unless you check. Founding price is "for these four seats only", so the scarcity is real, but only say "seats left" if it's true on the day.
 - Re-check dates and price against the page before posting: Nov 15 to Dec 20, Sundays 7:00 to 8:00 PM Central, $147.
