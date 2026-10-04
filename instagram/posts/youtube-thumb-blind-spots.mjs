@@ -1,0 +1,57 @@
+// Renders the YouTube thumbnail for the blind spots video (1280x720) in the same style as the Instagram posts.
+// Usage: node youtube-thumb.mjs   (outputs to ./out/youtube-blind-spots-thumbnail.png)
+import { createRequire } from 'module';
+import { execSync } from 'child_process';
+import { writeFileSync, mkdirSync } from 'fs';
+import { dirname, join } from 'path';
+import { fileURLToPath } from 'url';
+
+const require = createRequire(import.meta.url);
+const { chromium } = require(join(execSync('npm root -g').toString().trim(), 'playwright'));
+
+const here = dirname(fileURLToPath(import.meta.url));
+const OUT = join(here, 'out');
+mkdirSync(OUT, { recursive: true });
+
+const C = { ink: '#0B0B0C', amber: '#E18B1F', cream: '#F2EEE6', stone: '#BFBCB6', mute: '#8C877E' };
+const W = 1280, H = 720;
+
+const html = `
+<link rel="stylesheet" href="fonts.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:${W}px;height:${H}px;background:${C.ink};color:${C.cream};font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased}
+.frame{position:relative;width:${W}px;height:${H}px;overflow:hidden;background:radial-gradient(120% 90% at 50% 0%, #1b1a19 0%, ${C.ink} 60%)}
+.glow{position:absolute;right:-20px;top:-60px;width:860px;height:860px;border-radius:50%;background:radial-gradient(closest-side, rgba(225,139,31,.85) 0%, rgba(225,139,31,.30) 55%, rgba(225,139,31,0) 100%)}
+.man{position:absolute;right:-70px;top:-60px;height:1010px;filter:brightness(1.1) contrast(1.08) saturate(1.1) drop-shadow(0 0 3px rgba(225,139,31,.9)) drop-shadow(0 0 30px rgba(0,0,0,.6))}
+.fade{position:absolute;inset:0;background:linear-gradient(90deg, rgba(11,11,12,.7) 0%, rgba(11,11,12,0) 52%)}
+.pad{position:absolute;left:64px;top:44px;bottom:36px;display:flex;flex-direction:column}
+.brand{display:flex;align-items:center;gap:14px;font-family:'Oswald';font-weight:500;letter-spacing:.3em;font-size:22px;text-transform:uppercase}
+.brand i{display:block;width:40px;height:3px;background:${C.amber}}
+.h{font-family:'Oswald';font-weight:700;text-transform:uppercase;line-height:.9;text-shadow:0 6px 28px rgba(0,0,0,.6)}
+.your{font-size:120px;color:${C.cream};margin-top:46px}
+.big{font-size:250px;color:${C.cream}}
+.spot{font-size:250px;color:${C.amber}}
+</style>
+<div class="frame">
+  <div class="glow"></div>
+  <img class="man" src="photos/cut-laughing.png">
+  <div class="fade"></div>
+  <div class="pad">
+    <div class="brand"><i></i>Be The Man</div>
+    <div class="h your">Your</div>
+    <div class="h big" style="margin-top:4px">Blind</div>
+    <div class="h spot">Spot</div>
+  </div>
+</div>`;
+
+const file = join(here, '_yt-thumb.html');
+writeFileSync(file, html);
+const browser = await chromium.launch();
+const page = await browser.newPage({ viewport: { width: W, height: H } });
+await page.goto('file://' + file);
+await page.evaluate(() => document.fonts.ready);
+await page.screenshot({ path: join(OUT, 'youtube-blind-spots-thumbnail.png') });
+await browser.close();
+import('fs').then(fs => fs.unlinkSync(file));
+console.log('wrote out/youtube-blind-spots-thumbnail.png');
