@@ -1,8 +1,8 @@
 import { chromium } from '/opt/node22/lib/node_modules/playwright/index.mjs';
 import fs from 'fs';
 const A='#C97A12', INK='#141416', MUTE='#6f6a62';
-const lines=(n,h=30)=>Array.from({length:n},()=>`<div class="ln fld" style="height:${h}px"></div>`).join('');
-const box=(label,n,h)=>`<div class="lab">${label}</div>${lines(n,h)}`;
+const lines=(n,h=30,f=' fld')=>Array.from({length:n},()=>`<div class="ln${f}" style="height:${h}px"></div>`).join('');
+const box=(label,n,h)=>`<div class="lab">${label}</div><div class="fld ml nbx" style="height:${n*h}px"></div>`;
 const page=(inner,foot='')=>`<section class="pg">${inner}<div class="ft"><span>12-Week Goal Planner</span><span>${foot}</span></div></section>`;
 const head=(k,t)=>`<div class="k">${k}</div><h2>${t}</h2><div class="rule"></div>`;
 
@@ -44,8 +44,8 @@ for(let w=1;w<=12;w++){
 <div class="lab" style="margin-top:14px">Weekly actions — mark each day done</div>
 <table><thead><tr><th></th><th class="al">Action (with day &amp; time)</th>${days.map(d=>`<th>${d}</th>`).join('')}</tr></thead><tbody>${rows}</tbody></table>
 <div class="score"><div>Actions planned <i class="fld"></i></div><div>Completed <i class="fld"></i></div><div>Score % <i class="fld"></i></div></div>
-<div class="two2"><div>${box('What went well',3,26)}</div><div>${box('What got in the way',3,26)}</div></div>
-${box('One adjustment for next week',2,26)}`,`Week ${w}`));
+<div class="two2"><div>${box('What went well',3,44)}</div><div>${box('What got in the way',3,44)}</div></div>
+${box('One adjustment for next week',2,44)}`,`Week ${w}`));
   if(w===6) pages.push(page(`${head('Midpoint check','Week 6 review')}
 ${box('Am I on track for each goal? Where am I vs. target?',5,30)}
 ${box('What\'s working that I should do more of?',3,30)}
@@ -84,7 +84,7 @@ td{border:1px solid #bdb8ae;height:34px}td.n{width:24px;text-align:center;font-s
 .score{display:flex;gap:24px;margin:14px 0 4px;font:600 10.5px 'IBM Plex Mono',monospace;text-transform:uppercase;color:${MUTE}}.score i{display:inline-block;width:60px;border-bottom:1px solid ${INK};margin-left:6px;height:14px}
 .two2{display:grid;grid-template-columns:1fr 1fr;gap:24px}
 .sct td{height:36px}.sct td.n{width:70px;text-align:left;padding-left:8px;font-size:12px}
-.di{display:inline-block;border-bottom:1px solid currentColor;height:14px;vertical-align:bottom}.box{font-size:14px}
+.nbx{border:1px solid #bdb8ae;background:#fbfaf7;margin-top:4px}.di{display:inline-block;border-bottom:1px solid currentColor;height:14px;vertical-align:bottom}.box{font-size:14px}
 .ft{position:absolute;left:.75in;right:.75in;bottom:.35in;display:flex;justify-content:space-between;font:500 9px 'IBM Plex Mono',monospace;color:${MUTE};letter-spacing:.08em;text-transform:uppercase}`;
 const ff=(n,f,w,s='normal')=>`@font-face{font-family:'${n}';src:url(data:font/woff2;base64,${fs.readFileSync('../posts/fonts/'+f).toString('base64')});font-weight:${w};font-style:${s}}`;
 const fonts=[ff('Inter','Inter-400-normal.woff2',400),ff('Inter','Inter-600-normal.woff2',600),ff('Inter','Inter-500-normal.woff2',500),ff('Oswald','Oswald-700-normal.woff2',700),ff('IBM Plex Mono','IBMPlexMono-400-normal.woff2',500),ff('IBM Plex Mono','IBMPlexMono-600-normal.woff2',600),ff('Lora','Lora-500-italic.woff2',500,'italic')].join('');
@@ -92,6 +92,6 @@ const html=`<!doctype html><meta charset=utf8><style>${fonts}${css}</style>${pag
 fs.writeFileSync('planner.html',html);
 const b=await chromium.launch({executablePath:'/opt/pw-browsers/chromium'});const p=await b.newPage();
 await p.setContent(html);await p.evaluate(()=>document.fonts.ready);
-const rects=await p.evaluate(()=>[...document.querySelectorAll('.pg')].map((pg,i)=>{const o=pg.getBoundingClientRect();return [...pg.querySelectorAll('.fld')].map(e=>{const r=e.getBoundingClientRect();return {cb:e.classList.contains("chk"),x:r.x-o.x,y:r.y-o.y,w:r.width,h:r.height,cover:i===0}})}));
+const rects=await p.evaluate(()=>[...document.querySelectorAll('.pg')].map((pg,i)=>{const o=pg.getBoundingClientRect();return [...pg.querySelectorAll('.fld')].map(e=>{const r=e.getBoundingClientRect();return {cb:e.classList.contains("chk"),ml:e.classList.contains('ml'),x:r.x-o.x,y:r.y-o.y,w:r.width,h:r.height,cover:i===0}})}));
 fs.writeFileSync('fields.json',JSON.stringify(rects));
 await p.pdf({path:'12-week-goal-planner.pdf',width:'8.5in',height:'11in',printBackground:true});await b.close();

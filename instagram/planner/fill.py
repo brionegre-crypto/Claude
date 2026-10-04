@@ -12,9 +12,11 @@ for pi,page in enumerate(doc):
             wd.border_color=(0.4,0.4,0.4); wd.fill_color=(1,1,1); wd.border_width=0.8
         else:
             wd.field_type=pymupdf.PDF_WIDGET_TYPE_TEXT
+            if f.get('ml'): wd.field_flags|=pymupdf.PDF_TX_FIELD_IS_MULTILINE
             wd.text_fontsize=11; wd.text_font='helv'
             wd.text_color=(1,1,1) if f['cover'] else (0.05,0.05,0.2)
             wd.border_width=0; wd.fill_color=None
+            if f.get('ml'): x,y,w,h=x+3,y+3,w-6,h-4
         wd.field_name=f'p{pi+1}_f{k}'
         wd.rect=pymupdf.Rect(x,y,x+w,y+h-1)
         page.add_widget(wd)
