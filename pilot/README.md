@@ -221,3 +221,48 @@ The Complete Library's pages sit inside the Faith Kit funnel, because the plan's
 - Test every new checkout with a 100% coupon. The single email field on the new checkouts has not been checked in a live purchase.
 - The Framework funnel checkouts are chained one after another, so a buyer can land on the next product's checkout. This was there before this build.
 - The Club page says "There's no room yet." Change it if a group room or call is added (see the Club value ideas).
+
+## Club call and pairs, built 2026-10-04
+
+Brian approved the first two Club value ideas: a monthly live call and accountability partners.
+
+**Monthly live call**
+- **When:** second Tuesday of each month, 7:00 to 8:00 PM Central. The first call is Nov 10. Nov 3 was skipped because it's Election Day.
+- **Where:** a recurring Google Calendar event with Meet on Brian's calendar. Link: https://meet.google.com/pzg-pjvw-yvu (the same link every month).
+  - Free Google accounts cap group calls at 60 minutes, which matches the one-hour slot.
+- **Where members find it:** a new lesson in Club course 680886, module "The brotherhood", called "The monthly live call and your accountability partner". It unlocks on day one for monthly and yearly members.
+- **Reminders:** newsletters 5391013, 5391014, 5391016 and 5391017 go to the "Club member" tag at 9 AM Central on each call day:
+  - Nov 10
+  - Dec 8
+  - Jan 12
+  - Feb 9
+- **After February:** copy a reminder and schedule it for the next call.
+
+**Accountability partners**
+- **Opt-in page:** https://5e95-brian.systeme.io/b35977a2. It confirms at https://5e95-brian.systeme.io/3f34ea8c. Both pages are in the yearly Club funnel 7669973.
+- **What happens on opt-in (rule 2445785):**
+  - The contact gets the "Club pairs" tag (2211424).
+  - The member gets a confirmation email.
+  - Brian gets an alert at his own address.
+- **Anyone can open the page.** Only pair contacts that also have the "Club member" tag.
+- **Pairing is manual, once a month.** On the 1st, filter contacts by both tags, pair them two by two (one group of three if the count is odd), and send each pair this:
+
+  > Subject: Your accountability partner for [MONTH]
+  >
+  > [NAME 1] ([EMAIL 1]), meet [NAME 2] ([EMAIL 2]).
+  >
+  > You're partners for [MONTH]. Every Sunday night, send each other a photo of your Weekly Scorecard. One line back is enough: "Got it. What's the plan for the misses?" If his hasn't arrived by Monday morning, ask for it.
+  >
+  > Bring your number to the call on [CALL DATE].
+  >
+  > Brian
+
+**Cancellations**
+- A yearly cancellation now removes course access, the "Club member" tag and the "Club pairs" tag (rule 2445783). Before this, a yearly cancellation removed nothing.
+- A monthly or founding cancellation now also removes "Club pairs" (rule 2445784). The existing rule 2438621 already removes access and "Club member".
+
+**Canva Club page (saved, goes live on Publish):** "There's no room yet. I'm not going to pretend there is." is now "Once a month, the room opens.", with the call and partner details underneath.
+
+**Not checked:**
+- The opt-in page's single field uses the default field type, and the button's submit action hasn't been verified. Test it once with your own email.
+- The course module "The brotherhood" also has a "Join the brotherhood" lesson linked to systeme.io community 76257. Check whether that community is set up; if it isn't, hide that lesson.
