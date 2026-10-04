@@ -58,7 +58,7 @@ Current prices were pulled from the live systeme.io price plans on 2026-10-02.
 
 **Headline:** You keep making the promise. Six Sundays to build what keeps it.
 
-**Subhead:** A live group for husbands and fathers who mean it every time and lose it by Wednesday. Four men. Sundays at 7:00 PM Central on Google Meet. November 15 to December 20.
+**Subhead:** A live group for husbands and fathers who mean it every time and lose it by Wednesday. Four men. Sundays, 7:00 to 8:00 PM Central, on Google Meet. November 15 to December 20.
 
 **Who it's for**
 - You're a husband, a father, or both, and you want to lead your home better than you have been. (Changed on Oct 2: the group is open to any man, not only men from the church.)
@@ -76,7 +76,7 @@ Current prices were pulled from the live systeme.io price plans on 2026-10-02.
 Every week runs on the Be The Man Steps and the Weekly Scorecard. Nothing new to buy.
 
 **What you get**
-- Six live 75-minute sessions with four men on Google Meet.
+- Six live one-hour sessions with four men on Google Meet.
 - The worksheets and the Weekly Scorecard.
 - One check-in text each week between sessions.
 
@@ -90,7 +90,7 @@ Every week runs on the Be The Man Steps and the Weekly Scorecard. Nothing new to
 **Closing line:** Break the cycle. Build the system. Be the man.
 
 Notes for review:
-- **Session length:** 75 minutes is my default. Change it if you prefer.
+- **Session length:** one hour, 7:00 to 8:00 PM Central (set by Brian 2026-10-04; was 75 minutes).
 - **Check-in texts:** these are an offer of your time. Cut them if you'd rather not.
 - **Thanksgiving:** Nov 29 is Thanksgiving weekend. Keep it, or move that session and end on Dec 27.
 - **To build after approval:** a pilot product and a $147 one-time price plan, plus the checkout page. Nothing existing is touched.
@@ -99,7 +99,7 @@ Notes for review:
 
 ## 3. Home page, draft order
 
-1. **Hero:** the pilot headline, "Four seats. Sundays at 7:00 PM Central, starting Nov 15," and a **Reserve my seat** button.
+1. **Hero:** the pilot headline, "Four seats. Sundays 7:00 to 8:00 PM Central, starting Nov 15," and a **Reserve my seat** button.
 2. **Start free:** the Step 1 worksheet (the existing /framework opt-in).
 3. **The Club:** everything in one place, $12/month for founding members (the current live price).
 4. **Footer:** the store and a link to book a call.
@@ -160,7 +160,7 @@ Before this goes live, confirm your certification is current. Brian's rule: neve
 ## Canva website (bethemansystem.com), saved 2026-10-02
 
 The design "Be The Man — a system for Black Christian men" was edited and saved, but not republished:
-- **Home page:** an amber line above the headline: "NEW · 6-week live group on Google Meet · Sundays 7:00 PM Central · 4 seats · Reserve a seat →", linking to the pilot checkout.
+- **Home page:** an amber line above the headline: "NEW · 6-week live group on Google Meet · Sundays 7–8 PM Central · 4 seats · Reserve a seat →", linking to the pilot checkout.
 - **Club price:** every "$17" Club mention now says "$12" (2 on Home, 6 on The Club, 3 on The Store). Store product prices were not changed.
 - **Not live yet:** Brian must click Publish/Update in Canva for the live site to change.
 

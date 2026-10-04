@@ -47,8 +47,8 @@ The Dec 24 email makes no promise about the next one. The next batch should star
 
 ## Announcement: the 6-week group (draft, not scheduled)
 
-- **Subject:** "Four seats. Six Sundays." **Preview:** "A live group for men who keep making the same promise. Google Meet, Sundays at 7:00 PM Central."
+- **Subject:** "Four seats. Six Sundays." **Preview:** "A live group for men who keep making the same promise. Google Meet, Sundays 7:00 to 8:00 PM Central."
 - **Audience:** contacts tagged Framework. **Button:** Reserve my seat (the pilot checkout).
-- **Body:** the six Sundays and their topics; a when / where / price box (7:00 PM Central, Google Meet, $147 founding instead of $297); the house test; "reply and tell me where you're stuck."
+- **Body:** the six Sundays and their topics; a when / where / price box (7:00 to 8:00 PM Central, one hour, Google Meet, $147 founding instead of $297); the house test; "reply and tell me where you're stuck."
 - **Suggested send:** Tuesday Oct 6, 8:00 AM CT. Sending on a Tuesday keeps it separate from the Thursday lesson. Send a follow-up only to non-buyers about a week before Nov 15.
 - Saved as a draft in systeme.io (newsletter 5384058). Brian schedules or sends it.
