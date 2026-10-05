@@ -316,3 +316,25 @@ Can't be done from here (Brian):
 5. Google Business Profile for the couples counseling.
 6. Optional: move the 5e95 funnels to go.bethemansystem.com.
 7. Clean up the Club checkout fields (phone, street address, company, tax number) in the editor and test with a 100% coupon.
+
+## Free challenge and church kit, built 2026-10-05
+
+**7 Tuesdays challenge (free)**
+- Sign-up: https://go.bethemansystem.com/42f82c9e. Confirmation: https://go.bethemansystem.com/a27908db. Both are in the "Links, popups and training" funnel.
+- On sign-up (rule 2447895): tag "7 Tuesdays challenge" (2213752) and the welcome email (13048889), which includes the Step 1 worksheet so late joiners can start right away.
+- Seven newsletters go to that tag at 6 AM Central: Oct 20 (5397168), Oct 27 (5397169), Nov 3 (5397171), Nov 10 (5397173), Nov 17 (5397174), Nov 24 (5397175), Dec 1 (5397176).
+  - Week 3 mentions the 6-week group. Week 4 and Week 7 invite to the Club. Week 6 offers the Scorecard.
+  - Men who join late only get the emails from that point on.
+- Added to the top of the link-in-bio page.
+- Not checked: the form shows its own success screen; whether it also redirects to the confirmation page isn't verified. Test it once with your own email.
+
+**Men's ministry kit, $199**
+- Product 3444803 (price plan 3470830). Delivers the leader-guide course plus the seven step worksheets and the Scorecard PDF and spreadsheet.
+- Leader-guide course 684833, "Lead your men through seven steps": https://go.bethemansystem.com/school/course/ministry-kit. It has a setup lesson, seven 75-minute session plans and a lesson on what comes after week seven. It's active.
+- Checkout https://go.bethemansystem.com/6aa4411c (offer 5398928), confirmation https://go.bethemansystem.com/5d2dbb3f with every download link.
+  - The checkout came from a template with testimonials; both testimonial blocks were removed. Nothing invented is on the page.
+  - An unused offer, 5398927, was created first and is attached to nothing; it can be ignored.
+- Pastor outreach messages: `guides/pastor-outreach.md`.
+- Still to do (Brian): test the checkout with a 100% coupon; add the kit to the Canva Store page; decide whether to remove the "tax number" field.
+
+**Facebook group:** set-up guide in `guides/facebook-group.md`.
