@@ -281,3 +281,10 @@ At Brian's direction, his bio now includes "certified marriage counselor" on the
 - Couples byline: "With Brian Greene, pastor and certified marriage counselor."
 
 Saved in Canva; it goes live on Publish.
+
+## One homepage: Canva, 2026-10-05
+
+The Canva site (bethemansystem.com) is the homepage. The systeme.io "Home" funnel (https://systeme.io/dashboard/funnels/7664869, page 5e95-brian.systeme.io/7ccfe2c8) was an early pilot fallback that was never switched on. Nothing links to it: the link in bio and the site pages were checked.
+
+- **Added to the Canva Home, under the hero's Step 1 button:** "Free 6-minute training →" (https://5e95-brian.systeme.io/782480a3) and "Book a free 15-minute call →" (https://go.bethemansystem.com/085b95e4). These were the only two things the systeme.io page had that the Canva Home lacked. Saved; goes live on Publish.
+- **To do (Brian, in systeme.io):** delete the "Home" funnel. The connector here has no delete-funnel action. Deleting it frees one funnel slot on the plan.
