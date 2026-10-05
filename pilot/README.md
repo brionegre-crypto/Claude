@@ -287,4 +287,32 @@ Saved in Canva; it goes live on Publish.
 The Canva site (bethemansystem.com) is the homepage. The systeme.io "Home" funnel (https://systeme.io/dashboard/funnels/7664869, page 5e95-brian.systeme.io/7ccfe2c8) was an early pilot fallback that was never switched on. Nothing links to it: the link in bio and the site pages were checked.
 
 - **Added to the Canva Home, under the hero's Step 1 button:** "Free 6-minute training →" (https://5e95-brian.systeme.io/782480a3) and "Book a free 15-minute call →" (https://go.bethemansystem.com/085b95e4). These were the only two things the systeme.io page had that the Canva Home lacked. Saved; goes live on Publish.
-- **To do (Brian, in systeme.io):** delete the "Home" funnel. The connector here has no delete-funnel action. Deleting it frees one funnel slot on the plan.
+- **Correction, 2026-10-05:** do NOT delete the whole "Home" funnel. The free-call booking page (go.bethemansystem.com/085b95e4) lives inside it, and the Canva Home, the link in bio, the training page and the 6-week group page all link to it. Delete only the "Home" step (7ccfe2c8), or leave the funnel as is.
+
+## Copy and discoverability pass, 2026-10-05
+
+Fixed in systeme.io (live now, no publish step):
+- **Step 1 opt-in** (go.bethemansystem.com/framework): "$17 a month" → "$19 a month or $149 a year".
+- **Free training page** (782480a3): dropped "Founding members pay $12 a month"; now "$19 a month, or $149 a year with everything open on day one", plus the monthly call. Its "book a free 15-minute call" link pointed at the check-your-email page; it now goes to the booking page (085b95e4).
+- **Weekly Scorecard checkout** (3b3e5ba2): removed the order bump "Yes, add the Club for $12 a month". The bump charges whatever plan it is wired to, so changing only its wording risked showing $19 and charging $12. Replaced with a plain line linking to the $19 Club checkout. Re-add a bump in the editor if wanted, wired to the $19 plan.
+- **Couples checkout and inquiry**: byline "certified in marriage counseling and pastor" → "pastor and certified marriage counselor".
+- **Club checkouts, monthly and yearly**: added the monthly members' call (second Tuesday, 7–8 PM Central) and the accountability partner to "what you get".
+- **Link in bio**: subtitle now "For Black Christian men · Husbands · Fathers · Faith"; group and training links switched to go.bethemansystem.com.
+
+Fixed in Canva (saved; live on Publish):
+- Home: added "A system for Black Christian men: husbands, fathers, men of faith." under the hero paragraph.
+- Home: group banner and training links switched to go.bethemansystem.com.
+- Pages 2–5 checked: no stale prices or links.
+
+Checked and already clean: the other product checkouts (Field Guide, Marriage Workbook, Devotional, Discipleship Workbook and the rest share one template with no prices in the copy), the 6-week group page, the Club yearly checkout headline, check-your-email.
+
+Left on 5e95-brian.systeme.io on purpose: the couples, kits, Library and Club-yearly funnels are attached to that domain, so their links only work there. Moving a funnel to go.bethemansystem.com is a funnel setting Brian changes in systeme.io (Funnel → Settings → Domain); the connector cannot.
+
+Can't be done from here (Brian):
+1. Publish the Canva site.
+2. Canva → Publish → Settings: turn off the automatic Navigation menu; set the site title and description (suggested: "Be The Man: a system for Black Christian men" / "Seven steps for husbands and fathers who keep making the same promise. Free Step 1 worksheet, the Club, and certified marriage counseling for couples.").
+3. Rename the Canva page "Products" to "The Store" (page title isn't editable through the connector).
+4. Google Search Console: add bethemansystem.com and go.bethemansystem.com, submit the sitemap.
+5. Google Business Profile for the couples counseling.
+6. Optional: move the 5e95 funnels to go.bethemansystem.com.
+7. Clean up the Club checkout fields (phone, street address, company, tax number) in the editor and test with a 100% coupon.
