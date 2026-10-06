@@ -417,3 +417,8 @@ Approved by Brian: all new products, the three Inner Circle decisions, "certifie
 - About and Couples: unchanged.
 - Brian, before publishing: drag the bottom edge of the Home page up to about 3,700 px, the Club page to about 2,600 px and the Store page to about 2,170 px (Canva's tools here cannot change page height). Then check each page on your phone and publish. After Oct 25, change the top line on Home from the workshop to the Inner Circle.
 - Page height: Canva's API cannot change a page's height, and there is no publish tool. To make it a quick job, the full-page background blocks on Store and Club were trimmed to the content (2,156 and 2,587 px). Brian: on each of Home, Club and Store, press Ctrl+A (Cmd+A on Mac), then More (...) > "Resize canvas to selection", then Publish.
+
+**New bio (2026-10-06, Brian approved, Canva saved not published)**
+- About: the "Both halves of this" block (What I bring list and "Why the second list is the point") is replaced by "I'm Brian Greene." and the new four-paragraph bio. The hero line no longer repeats the self-introduction.
+- Home: the short bio under "Built by a man still working it out loud." is a two-sentence version of the same bio.
+- Church not named, per the no-affiliation rule.
