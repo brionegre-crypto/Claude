@@ -116,7 +116,7 @@ const posts = {
     ${brand}
     <div class="grow"></div>
     <div class="h" style="font-size:112px">The Be The Man Club.</div>
-    <div class="h" style="font-size:112px;color:${C.amber};margin-top:6px">$17 a month.</div>
+    <div class="h" style="font-size:112px;color:${C.amber};margin-top:6px">$19 a month.</div>
     <div class="rule" style="margin:48px 0 48px"></div>
     <ul class="list">
       <li><span><b>All 11 tools in the store</b> — free the day you join</span></li>
@@ -194,7 +194,7 @@ const highlights = {
   'highlight-free': hl('Free', '→'),
   'highlight-system': hl('System', '■'),
   'highlight-home': hl('Home', '⌂'),
-  'highlight-club': hl('Club', '$17'),
+  'highlight-club': hl('Club', '$19'),
   'highlight-faith': hl('Faith', '✝'),
 };
 

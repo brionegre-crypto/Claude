@@ -2,3 +2,7 @@ instagram/posts/*.zip
 instagram/*.zip
 instagram/schedule-pack/
 instagram/schedule-pack-week2/
+social-12wk/posts/
+social-12wk/packs/
+social-12wk/*.log
+social-12wk/.tmp-*
