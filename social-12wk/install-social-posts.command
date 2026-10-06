@@ -25,23 +25,26 @@ fi
 DEST="$TARGET/Social Media - Oct to Dec 2026"
 mkdir -p "$DEST"
 
-zips=("$DL"/pack-*.zip)
-if [ ${#zips[@]} -eq 0 ]; then
-  echo "No pack-XX zip files found in $DL. Download them first, then run this again."
+# Packs can be .zip files, or folders if Safari unzipped them automatically.
+packs=("$DL"/pack-*.zip)
+for d in "$DL"/pack-*/; do packs+=("${d%/}"); done
+if [ ${#packs[@]} -eq 0 ]; then
+  echo "No pack-XX files or folders found in $DL. Download them first, then run this again."
   exit 1
 fi
 
 TMP="$(mktemp -d)"
 trap 'rm -rf "$TMP"' EXIT
 count=0
-for z in "${zips[@]}"; do
+for z in "${packs[@]}"; do
   base="$(basename "$z" .zip)"
+  base="${base% (*)}"                          # "pack-02 (1)" -> "pack-02"
   pack="${base%_part*}"                       # part1/part2 go into the same folder
   part=""; [[ "$base" == *_part* ]] && part="-${base##*_}"
   pretty="$(echo "$pack" | sed -E 's/^pack-([0-9]+)_([0-9-]+)_to_([0-9-]+)$/Pack \1 (\2 to \3)/')"
   mkdir -p "$DEST/$pretty"
   rm -rf "$TMP/x"; mkdir -p "$TMP/x"
-  unzip -q "$z" -d "$TMP/x"
+  if [ -d "$z" ]; then cp -R "$z"/. "$TMP/x/"; else unzip -q "$z" -d "$TMP/x"; fi
   [ -f "$TMP/x/POSTING-GUIDE.md" ] && mv "$TMP/x/POSTING-GUIDE.md" "$DEST/$pretty/POSTING-GUIDE$part.md"
   for f in "$TMP/x"/*/; do
     rm -rf "$DEST/$pretty/$(basename "$f")"
