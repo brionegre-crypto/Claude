@@ -426,3 +426,4 @@ Approved by Brian: all new products, the three Inner Circle decisions, "certifie
 **Homepage cut to six sections (2026-10-06, Brian approved, Canva saved not published)**
 - Removed: the "Step 1 is free... Join the Club" bar, the four pillars section, and "God at the center" as its own section. One line on God at the center now ends the 91% vs 38% paragraph. The four pillars stay in the step row (Step 5) and on the Club page.
 - Order now: hero, 1 to 7 step row, Why you need a system (with the stat), bio, final Step 1 button, footer. About 400 words. Content ends at about 3,150 px; Brian needs to repeat "Resize canvas to selection" on Home before publishing.
+- 2026-10-06: Brian resized Home to 3,160 px. The homepage photo was cropped from its top-left corner (face off-center); re-centered it in its frame. The About page background block hung 70 px below the page; moved it to the top. About fits its page as is and needs no resize.
