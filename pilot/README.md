@@ -355,7 +355,7 @@ Approved by Brian: all new products, the three Inner Circle decisions, "certifie
 
 **Offer chains**
 - Scorecard: checkout https://go.bethemansystem.com/7d78815c ($7, bump Club $19/mo) → upsell System $97 → downsell recording $19 → confirmation https://go.bethemansystem.com/60edb131 (downloads).
-- Workshop: checkout https://go.bethemansystem.com/f0217426 ($27, bump Library $49) → upsell 6-week group $147 → downsell Club $19/mo (https://go.bethemansystem.com/19a83007). No confirmation step yet: the plan's funnel-step limit is reached.
+- Workshop: checkout https://go.bethemansystem.com/f0217426 ($27, bump Library $49) → upsell 6-week group $147 → downsell Club $19/mo (https://go.bethemansystem.com/19a83007). → confirmation https://go.bethemansystem.com/04e81fbc (Meet link, Step 1 and Scorecard downloads, notes for each add-on). Built 2026-10-06 after Brian deleted the single Couples Cards checkout (f1ac2c57) to free a step; the Canva Store row for the Couples Cards now points to the Husband Kit.
 - Kits and Library: each thank-you page now ends with a Club offer.
 
 **Inner Circle**
@@ -384,7 +384,7 @@ Approved by Brian: all new products, the three Inner Circle decisions, "certifie
 **Brian's manual steps**
 1. Open the two downsell pages (9ffe8144 recording $19; 19a83007 Club $19/mo) once in a browser to check they look right. Both were built 2026-10-06 through the older page-content tool; the save was accepted but rendering could not be checked from here.
 2. Order bump boxes were added 2026-10-06 to the Scorecard checkout (Club $19/mo) and the workshop checkout (Library $49). Check the tick box shows the right price in a test order.
-3. Free a funnel step (or upgrade) for the workshop confirmation page.
+3. Done: workshop confirmation page built.
 4. Publish Canva yourself. Then the old Scorecard checkout 3b3e5ba2 can become the Inner Circle founding checkout.
 5. Test each checkout with a 100% coupon.
 6. Still open: trademark consult, the Alabama §34-17A question in writing, legal pages, email domain check.
