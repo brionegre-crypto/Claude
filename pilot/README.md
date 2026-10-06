@@ -383,7 +383,7 @@ Approved by Brian: all new products, the three Inner Circle decisions, "certifie
 
 **Brian's manual steps**
 1. Open the two downsell pages (9ffe8144 recording $19; 19a83007 Club $19/mo) once in a browser to check they look right. Both were built 2026-10-06 through the older page-content tool; the save was accepted but rendering could not be checked from here.
-2. Drag an "Order bump" element onto the Scorecard checkout (7d78815c) and the workshop checkout (f0217426). The bumps are already set in the offers.
+2. Order bump boxes were added 2026-10-06 to the Scorecard checkout (Club $19/mo) and the workshop checkout (Library $49). Check the tick box shows the right price in a test order.
 3. Free a funnel step (or upgrade) for the workshop confirmation page.
 4. Publish Canva yourself. Then the old Scorecard checkout 3b3e5ba2 can become the Inner Circle founding checkout.
 5. Test each checkout with a 100% coupon.
