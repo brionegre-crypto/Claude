@@ -9,7 +9,7 @@ Written 2026-10-05. Facebook moves its menus around, so if a button below has mo
 | What it is | Your public storefront. Like a billboard. | A room where men talk to each other. Like a men's breakfast. |
 | Who talks | Mostly you, to everyone | Members, to each other. You lead. |
 | Who sees posts | Anyone, including people who don't follow you | Members only, if you make it private |
-| What it's for | Reaching new men: videos, ads, reviews, your Google-able business presence | Keeping men: accountability, questions, the Tuesday number |
+| What it's for | Reaching new men: videos, ads, reviews, your Google-able business presence | Keeping men: accountability, questions, the weekly number |
 | Can run ads? | Yes. Ads always run from a Page. | No |
 
 You need the Page to be found and to run ads. You need the group because men don't change by watching you; they change by talking to each other and being asked about their number. The Page brings them in. The group keeps them.
@@ -29,19 +29,19 @@ Not automatically. You link them yourself, and once linked:
 4. **Membership questions** (Settings → Membership questions). Ask three:
    - "What promise have you made more than twice?" (filters out spam and sets the tone)
    - "Are you a husband, a father, or both?"
-   - "Want the free Step 1 worksheet? Leave your email." Turn on the email-consent option Facebook offers with this question. Each week, export new emails and add them to systeme.io with the 7 Tuesdays tag or the weekly email, only for men who said yes.
+   - "Want the free Step 1 worksheet? Leave your email." Turn on the email-consent option Facebook offers with this question. Each week, export new emails and add them to systeme.io with the 7-week challenge tag or the weekly email, only for men who said yes.
 5. **Rules** (Settings → Rules). Keep them short:
    - What's said here stays here.
    - No selling, no recruiting, no links to other groups.
    - Disagree about ideas, never attack a man.
    - This is a brotherhood, not counseling. If you're in crisis, call 988 or someone you trust today.
 6. **Cover image:** use the "Highlight: Home" or carousel cover images in `instagram/posts/out/`, cropped to 1640 × 856.
-7. **Pin a welcome post:** who it's for, the weekly rhythm below, and the link to the 7 Tuesdays challenge (go.bethemansystem.com/42f82c9e).
+7. **Pin a welcome post:** who it's for, the weekly rhythm below, and the link to the 7-week challenge (go.bethemansystem.com/42f82c9e).
 8. **Add the group link** to your Instagram bio, your Page's "About", and the footer of your Thursday email.
 
 ## Weekly rhythm (post as the Page)
 
-- **Tuesday, 7 AM:** "Tuesday number." Each man comments his kept days, like 3 out of 4. You go first.
+- **Tuesday, 7 AM:** "This week's number." Each man comments his kept days, like 3 out of 4. You go first.
 - **Thursday:** share that week's video or email with one question.
 - **Sunday night:** "Scorecard check. What's your plan for the misses?"
 

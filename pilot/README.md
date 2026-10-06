@@ -319,9 +319,9 @@ Can't be done from here (Brian):
 
 ## Free challenge and church kit, built 2026-10-05
 
-**7 Tuesdays challenge (free)**
+**7-week challenge (free; renamed from "7 Tuesdays" on 2026-10-06, emails still send Tuesday mornings)**
 - Sign-up: https://go.bethemansystem.com/42f82c9e. Confirmation: https://go.bethemansystem.com/a27908db. Both are in the "Links, popups and training" funnel.
-- On sign-up (rule 2447895): tag "7 Tuesdays challenge" (2213752) and the welcome email (13048889), which includes the Step 1 worksheet so late joiners can start right away.
+- On sign-up (rule 2447895): tag "7-week challenge" (2213752) and the welcome email (13048889), which includes the Step 1 worksheet so late joiners can start right away.
 - Seven newsletters go to that tag at 6 AM Central: Oct 20 (5397168), Oct 27 (5397169), Nov 3 (5397171), Nov 10 (5397173), Nov 17 (5397174), Nov 24 (5397175), Dec 1 (5397176).
   - Week 3 mentions the 6-week group. Week 4 and Week 7 invite to the Club. Week 6 offers the Scorecard.
   - Men who join late only get the emails from that point on.
@@ -338,3 +338,53 @@ Can't be done from here (Brian):
 - Still to do (Brian): test the checkout with a 100% coupon; add the kit to the Canva Store page; decide whether to remove the "tax number" field.
 
 **Facebook group:** set-up guide in `guides/facebook-group.md`.
+
+## Redesign, new offers and Inner Circle, built 2026-10-06
+
+Approved by Brian: all new products, the three Inner Circle decisions, "certified marriage counseling", all research statistics, the other session's redesign, and folding in the challenge and church kit.
+
+**New products** (all in systeme.io)
+| Product | Price | Product ID | Where it's sold |
+|---|---|---|---|
+| Fix Your Wednesday, live workshop, Sun Oct 25, 7 to 8 PM CT | $27 | 3445161 | https://go.bethemansystem.com/f0217426 (bump: Complete Library add-on $49) |
+| The Be The Man System, self-paced | $97 | 3445163 | Upsell after the Scorecard: https://go.bethemansystem.com/1745f8e9 |
+| Fix Your Wednesday recording | $19 | 3445162 | Downsell: https://go.bethemansystem.com/9ffe8144 (page empty, Brian builds) |
+| Complete Library add-on | $49 | 3445164 | Order bump on the workshop checkout |
+| Inner Circle, founding (first 8 men) | $197/mo | 3445171 | Application page https://go.bethemansystem.com/7ccfe2c8, checkout to come |
+| Inner Circle | $297/mo or $2,970/yr | 3445172 | After the founding 8 |
+
+**Offer chains**
+- Scorecard: checkout https://go.bethemansystem.com/7d78815c ($7, bump Club $19/mo) → upsell System $97 → downsell recording $19 → confirmation https://go.bethemansystem.com/60edb131 (downloads).
+- Workshop: checkout https://go.bethemansystem.com/f0217426 ($27, bump Library $49) → upsell 6-week group $147 → downsell Club $19/mo (https://go.bethemansystem.com/19a83007, page empty, Brian builds). No confirmation step yet: the plan's funnel-step limit is reached.
+- Kits and Library: each thank-you page now ends with a Club offer.
+
+**Inner Circle**
+- Course 685035 "The Inner Circle" with "How the Inner Circle works" and "Your first 30 days".
+- Weekly class: Thursdays 7 to 8 PM CT from Nov 5, Google Meet https://meet.google.com/tcg-zspn-cco (recurring calendar event).
+- Tag 2214668 "Inner Circle" sends the welcome email (13053555, rule 2448752).
+- Application: the old Home step (7ccfe2c8) was reworked into the application page; it books the 15-minute call at 085b95e4.
+
+**Automations**
+- Workshop purchase sends the Meet link (email 13053554, rule 2448751).
+- Reminder newsletter 5399563 to workshop buyers, scheduled Oct 25, 2 PM CT.
+
+**Pages rewritten**
+- Step 1 opt-in (/framework) and its thank-you page, to the new design. The thank-you page offers the Scorecard (new checkout) and the workshop.
+- Club checkout: phone, street, company, tax, customer type and zip removed. Country stays (sales tax), with a note.
+- Link-in-bio: workshop at the top, challenge renamed, Inner Circle added, Scorecard link moved to 7d78815c.
+- Challenge sign-up, confirmation, welcome email and all seven emails: "7-week challenge", "Week N" subjects, "once a week" partner texts.
+- Church kit leader guide: partner texts are "once a week, on the night we pick" instead of Tuesday night.
+
+**Canva (saved, not published)**
+- Design title: "Be The Man: A Consistency System for Black Christian Men".
+- Home: new hero ("Do what you said. Every week."), the design's subhead, eyebrow and small print, "Get Step 1, free" buttons, workshop and Inner Circle announcement bars, "Built by a man still working it out loud", final CTA "Stop starting over. Finish what you start." with a workshop link. Tuesday lines removed. The seven-step layout, laws, pillars and statistics are kept.
+- Club, About: Tuesday lines removed (the monthly call stays on the second Tuesday). Couples: "within 24 hours".
+- Not rebuilt in Canva: the design's "Start with the result you want" table, FAQ block and video slots. The page has no free space for them; they need a manual layout pass or a page-height change in the editor.
+
+**Brian's manual steps**
+1. Build the two downsell pages in the editor (9ffe8144 recording $19; 19a83007 Club $19/mo).
+2. Drag an "Order bump" element onto the Scorecard checkout (7d78815c) and the workshop checkout (f0217426). The bumps are already set in the offers.
+3. Free a funnel step (or upgrade) for the workshop confirmation page.
+4. Publish Canva yourself. Then the old Scorecard checkout 3b3e5ba2 can become the Inner Circle founding checkout.
+5. Test each checkout with a 100% coupon.
+6. Still open: trademark consult, the Alabama §34-17A question in writing, legal pages, email domain check.

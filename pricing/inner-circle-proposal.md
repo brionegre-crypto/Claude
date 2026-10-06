@@ -1,6 +1,6 @@
 # Proposal: a premium tier at about $300 a month (2026-10-05)
 
-Status: proposal, waiting on Brian's decisions. Nothing built yet.
+Status: approved 2026-10-06 (tier above the Club; Thursdays 7 to 8 PM CT; founding $197/mo for the first 8, then $297/mo or $2,970/yr). Built: see pilot/README.md, "Redesign, new offers and Inner Circle".
 
 ## What exists today
 
