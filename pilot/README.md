@@ -115,7 +115,7 @@ Everything else comes off the home page, but nothing is deleted. The store and t
 - **Inquiry page:** https://5e95-brian.systeme.io/0d29fa39. **Confirmation page:** https://5e95-brian.systeme.io/3b13de1e.
 - **Form fields:** names (first-name field), email, and an optional phone, plus the systeme.io consent checkbox. There are no custom fields, so "engaged or married" and "best days" are asked in Brian's reply email. Nothing sensitive is collected.
 - **Tag:** an automation rule tags every inquiry **"Couples inquiry"**.
-- **Email alert:** each inquiry emails brionegre@gmail.com ("New couples inquiry") through the same automation rule that adds the tag.
+- **Email alert:** each inquiry emails brian@bethemansystem.com ("New couples inquiry") through the same automation rule that adds the tag.
 - **Canva website (saved 2026-10-04; it goes live when Brian clicks Publish):**
   - **Menu:** "Couples" is now its own menu item, in amber and bold, on every page (Home · The Club · The Store · Couples · About). It links to https://bethemansystem.com/couples.
   - **Couples page:** a new page 5, titled "Couples", has the same header and menu. Its sections are:
@@ -402,3 +402,8 @@ Approved by Brian: all new products, the three Inner Circle decisions, "certifie
 - Welcome page 9dd8db8c rewritten: Thursday Meet link (tcg-zspn-cco), book the first one-on-one (085b95e4), sign in at /school, Scorecard photo every Sunday night, the 30-day promise, 988/911. The old "Download the Scorecard" button was removed.
 - The product itself grants the Inner Circle course, the Club course, the community and both tags; no automation fires on this step.
 - Send this link to men after their application call: go.bethemansystem.com/3b3e5ba2. Run one 100% coupon test order.
+
+**Email alerts moved to brian@bethemansystem.com (2026-10-06, Brian's request)**
+- All three alert emails now go to brian@bethemansystem.com: new couples inquiry, paid couples counseling ($300), and new accountability partner opt-in.
+- New alert "New Inner Circle member: {first_name}" goes to the same address. The plan's automation rule limit is reached, so it was added as a second action on the existing rule that sends the Inner Circle welcome email when the Inner Circle tag is added. It fires on founding and regular purchases, and if the tag is added by hand.
+- systeme.io's own account notifications (for example, its built-in sale emails) follow the account email in systeme.io Settings, which can't be changed from here.
