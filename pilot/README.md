@@ -388,3 +388,9 @@ Approved by Brian: all new products, the three Inner Circle decisions, "certifie
 4. Publish Canva yourself. Then the old Scorecard checkout 3b3e5ba2 can become the Inner Circle founding checkout.
 5. Test each checkout with a 100% coupon.
 6. Still open: trademark consult, the Alabama §34-17A question in writing, legal pages, email domain check.
+
+**Store page product covers (2026-10-06, Canva, saved not published)**
+- Every product row on the Store page now shows the first page of the actual PDF beside the title, and three covers (Scorecard, Godly Husband Field Guide, Father's Field Guide) sit beside the headline.
+- How they were made: each product PDF was imported into Canva ("Store cover source - ..." designs), page 1 was captured as an image, saved in `store-covers/`, and uploaded to Canva as "Cover - ..." images. The "Store cover source" designs can be deleted.
+- Canva's PDF import squeezed a few words together on some first pages (for example the Bible Study and Prayer Strategy subtitles). At the small size on the page this is hard to see, and it is only in the preview images, not the real PDFs.
+- The Store page's Scorecard links now point to the new checkout (7d78815c).
