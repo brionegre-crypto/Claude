@@ -9,6 +9,8 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 POSTS = os.path.join(HERE, 'posts')
 PACKS = os.path.join(HERE, 'packs')
 rows = list(csv.DictReader(open(os.path.join(HERE, 'calendar.csv'))))
+HOURS = {'9am': 9, '12pm': 12, '4pm': 16, '7pm': 19}
+rows.sort(key=lambda r: (r['date'], HOURS[r['time']]))
 
 def read(folder, name):
     p = os.path.join(POSTS, folder, name)

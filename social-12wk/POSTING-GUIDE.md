@@ -8,131 +8,179 @@ Each post has its own folder (same name as below) holding the media plus `instag
 
 | Date | Time | Brand | Type | Title |
 |---|---|---|---|---|
-| Tue 10-06 | 7:00 PM | Be The Man | Post | A goal says what. A system says when. |
 | Tue 10-06 | 12:00 PM | Couples | Reel | Reel: You’re not talking, you’re updating |
-| Wed 10-07 | 7:00 PM | Be The Man | Post | Receipt: what the weekly email costs |
+| Tue 10-06 | 7:00 PM | Be The Man | Post | A goal says what. A system says when. |
 | Wed 10-07 | 12:00 PM | Couples | Post | Ten minutes, no screens |
+| Wed 10-07 | 7:00 PM | Be The Man | Post | Receipt: what the weekly email costs |
 | Thu 10-08 | 7:00 PM | Be The Man | Post | Would your wife be able to tell? |
 | Fri 10-09 | 12:00 PM | Couples | Carousel | Carousel: 5 better questions than “How was your day?” |
-| Sat 10-10 | 7:00 PM | Couples | Reel | Reel: Listening to reply vs. listening to understand |
 | Sat 10-10 | 9:00 AM | Be The Man | Post | The Be The Man Club, $19 a month |
+| Sat 10-10 | 7:00 PM | Couples | Reel | Reel: Listening to reply vs. listening to understand |
 | Sun 10-11 | 4:00 PM | Couples | Post | Married, not roommates |
 | Mon 10-12 | 7:00 PM | Be The Man | Reel | Reel: You've made this promise before |
-| Tue 10-13 | 7:00 PM | Be The Man | Post | Who you're becoming in one sentence |
 | Tue 10-13 | 12:00 PM | Couples | Reel | Reel: It’s you two vs. the problem |
-| Wed 10-14 | 7:00 PM | Be The Man | Reel | Reel: One bad day shouldn't cost you a month |
+| Tue 10-13 | 7:00 PM | Be The Man | Post | Who you're becoming in one sentence |
 | Wed 10-14 | 12:00 PM | Couples | Post | Delete “always” and “never” |
+| Wed 10-14 | 7:00 PM | Be The Man | Reel | Reel: One bad day shouldn't cost you a month |
 | Thu 10-15 | 7:00 PM | Be The Man | Carousel | Carousel: Write your vision statement in 20 minutes |
-| Fri 10-16 | 7:00 PM | Be The Man | Post | Most men pray when they remember |
 | Fri 10-16 | 12:00 PM | Couples | Carousel | Carousel: 5 rules for fighting fair |
-| Sat 10-17 | 7:00 PM | Couples | Reel | Reel: The 20-minute timeout |
+| Fri 10-16 | 7:00 PM | Be The Man | Post | Most men pray when they remember |
 | Sat 10-17 | 9:00 AM | Be The Man | Post | You don't need more conviction |
+| Sat 10-17 | 7:00 PM | Couples | Reel | Reel: The 20-minute timeout |
 | Sun 10-18 | 4:00 PM | Couples | Post | Don’t let the sun go down on your anger |
 | Sun 10-18 | 7:00 PM | Be The Man | Reel | Reel: Pray with a time attached |
 | Mon 10-19 | 7:00 PM | Be The Man | Reel | Reel: Seven weeks starts tomorrow |
-| Tue 10-20 | 7:00 PM | Be The Man | Post | Challenge week 1: one sentence |
 | Tue 10-20 | 12:00 PM | Couples | Reel | Reel: Who decides? |
+| Tue 10-20 | 7:00 PM | Be The Man | Post | Challenge week 1: one sentence |
 | Wed 10-21 | 12:00 PM | Couples | Post | Pick your number |
 | Thu 10-22 | 7:00 PM | Be The Man | Carousel | Carousel: Why you lose the week by Wednesday |
 | Fri 10-23 | 12:00 PM | Couples | Carousel | Carousel: A 30-minute money date |
-| Sat 10-24 | 7:00 PM | Couples | Reel | Reel: “My money” vs “our money” |
 | Sat 10-24 | 9:00 AM | Be The Man | Post | Workshop tomorrow: leave with three things |
-| Sun 10-25 | 4:00 PM | Couples | Post | No money secrets |
+| Sat 10-24 | 7:00 PM | Couples | Reel | Reel: “My money” vs “our money” |
 | Sun 10-25 | 12:00 PM | Be The Man | Reel | Reel: Tonight, 7 PM — Fix Your Wednesday |
+| Sun 10-25 | 4:00 PM | Couples | Post | No money secrets |
 | Mon 10-26 | 7:00 PM | Be The Man | Reel | Reel: Twelve goals is zero goals |
-| Tue 10-27 | 7:00 PM | Be The Man | Post | Three goals: one for each place you lead |
 | Tue 10-27 | 12:00 PM | Couples | Reel | Reel: You planned the wedding. Plan the marriage. |
+| Tue 10-27 | 7:00 PM | Be The Man | Post | Three goals: one for each place you lead |
 | Wed 10-28 | 12:00 PM | Couples | Post | Premarital counseling: what the research shows |
 | Thu 10-29 | 7:00 PM | Be The Man | Carousel | Carousel: How to cut your goals to three |
 | Fri 10-30 | 12:00 PM | Couples | Carousel | Carousel: 5 conversations before “I do” |
-| Sat 10-31 | 7:00 PM | Couples | Reel | Reel: Already married? It’s not too late |
 | Sat 10-31 | 9:00 AM | Be The Man | Post | 6-week group: four seats |
+| Sat 10-31 | 7:00 PM | Couples | Reel | Reel: Already married? It’s not too late |
 | Sun 11-01 | 4:00 PM | Couples | Post | How counseling works |
 | Sun 11-01 | 7:00 PM | Be The Man | Reel | Reel: Not forever. For now. |
 | Mon 11-02 | 7:00 PM | Be The Man | Reel | Reel: It’s not ten things stopping you |
-| Tue 11-03 | 7:00 PM | Be The Man | Post | If ___ happens, then I will ___ |
 | Tue 11-03 | 12:00 PM | Couples | Reel | Reel: When did you stop dating? |
+| Tue 11-03 | 7:00 PM | Be The Man | Post | If ___ happens, then I will ___ |
 | Wed 11-04 | 12:00 PM | Couples | Post | Date night doesn’t need a budget |
 | Thu 11-05 | 7:00 PM | Be The Man | Carousel | Carousel: The two minutes before you walk in the door |
 | Fri 11-06 | 12:00 PM | Couples | Carousel | Carousel: 5 date-night questions |
-| Sat 11-07 | 7:00 PM | Couples | Reel | Reel: The third person in your bed |
 | Sat 11-07 | 9:00 AM | Be The Man | Post | The group: what happens on a Sunday |
+| Sat 11-07 | 7:00 PM | Couples | Reel | Reel: The third person in your bed |
 | Sun 11-08 | 4:00 PM | Couples | Post | Are you still friends? |
 | Sun 11-08 | 7:00 PM | Be The Man | Reel | Reel: You’re not lazy |
 | Mon 11-09 | 7:00 PM | Be The Man | Reel | Reel: “This week” is not a time |
-| Tue 11-10 | 7:00 PM | Be The Man | Post | A goal with no time is a wish |
 | Tue 11-10 | 12:00 PM | Couples | Reel | Reel: Pray together for 2 minutes |
+| Tue 11-10 | 7:00 PM | Be The Man | Post | A goal with no time is a wish |
 | Wed 11-11 | 12:00 PM | Couples | Post | A cord of three strands |
 | Thu 11-12 | 7:00 PM | Be The Man | Carousel | Carousel: Put it on the calendar like a meeting |
 | Fri 11-13 | 12:00 PM | Couples | Carousel | Carousel: How to pray together when it feels awkward |
-| Sat 11-14 | 7:00 PM | Couples | Reel | Reel: Don’t preach at your spouse in prayer |
 | Sat 11-14 | 9:00 AM | Be The Man | Post | Group starts tomorrow |
+| Sat 11-14 | 7:00 PM | Couples | Reel | Reel: Don’t preach at your spouse in prayer |
 | Sun 11-15 | 4:00 PM | Couples | Post | Sitting together in church isn’t the same as praying together |
 | Sun 11-15 | 7:00 PM | Be The Man | Reel | Reel: Smaller than you think |
 | Mon 11-16 | 7:00 PM | Be The Man | Reel | Reel: Define the miss before it happens |
-| Tue 11-17 | 7:00 PM | Be The Man | Post | The Club: $19 a month |
 | Tue 11-17 | 12:00 PM | Couples | Reel | Reel: Leave and cleave — before Thanksgiving |
+| Tue 11-17 | 7:00 PM | Be The Man | Post | The Club: $19 a month |
 | Wed 11-18 | 12:00 PM | Couples | Post | Your mama, your call |
 | Thu 11-19 | 7:00 PM | Be The Man | Carousel | Carousel: Your miss plan |
 | Fri 11-20 | 12:00 PM | Couples | Carousel | Carousel: Your holiday game plan as a couple |
-| Sat 11-21 | 7:00 PM | Couples | Reel | Reel: Never choose your mother over your wife in public |
 | Sat 11-21 | 9:00 AM | Be The Man | Post | Name the miss before she has to |
+| Sat 11-21 | 7:00 PM | Couples | Reel | Reel: Never choose your mother over your wife in public |
 | Sun 11-22 | 4:00 PM | Couples | Post | Boundaries aren’t disrespect |
 | Sun 11-22 | 7:00 PM | Be The Man | Reel | Reel: Information, not a verdict |
 | Mon 11-23 | 7:00 PM | Be The Man | Reel | Reel: Count it honestly |
-| Tue 11-24 | 7:00 PM | Be The Man | Post | Husband Kit: before the holidays |
 | Tue 11-24 | 12:00 PM | Couples | Reel | Reel: Notice it out loud |
+| Tue 11-24 | 7:00 PM | Be The Man | Post | Husband Kit: before the holidays |
 | Wed 11-25 | 12:00 PM | Couples | Post | Ten things I’m thankful for about you |
 | Thu 11-26 | 7:00 PM | Be The Man | Carousel | Carousel: Thanksgiving: say it out loud |
 | Fri 11-27 | 12:00 PM | Couples | Carousel | Carousel: Gratitude habits for married couples |
-| Sat 11-28 | 7:00 PM | Couples | Reel | Reel: Thankful in a hard season |
 | Sat 11-28 | 9:00 AM | Be The Man | Post | Father Kit: they’re home for the holidays |
+| Sat 11-28 | 7:00 PM | Couples | Reel | Reel: Thankful in a hard season |
 | Sun 11-29 | 4:00 PM | Couples | Post | Your kids are learning marriage from you |
 | Sun 11-29 | 7:00 PM | Be The Man | Reel | Reel: More than “I think I’m doing better” |
 | Mon 11-30 | 7:00 PM | Be The Man | Reel | Reel: God isn’t goal number four |
-| Tue 12-01 | 7:00 PM | Be The Man | Post | Seek first — with a time attached |
 | Tue 12-01 | 12:00 PM | Couples | Reel | Reel: Don’t start January in debt and in a fight |
+| Tue 12-01 | 7:00 PM | Be The Man | Post | Seek first — with a time attached |
 | Wed 12-02 | 12:00 PM | Couples | Post | One number for Christmas |
 | Thu 12-03 | 7:00 PM | Be The Man | Carousel | Carousel: A 15-minute morning with God |
 | Fri 12-04 | 12:00 PM | Couples | Carousel | Carousel: When you spend differently |
-| Sat 12-05 | 7:00 PM | Couples | Reel | Reel: The gift they actually want |
 | Sat 12-05 | 9:00 AM | Be The Man | Post | Pray for her by name |
+| Sat 12-05 | 7:00 PM | Couples | Reel | Reel: The gift they actually want |
 | Sun 12-06 | 4:00 PM | Couples | Post | Give together |
 | Sun 12-06 | 7:00 PM | Be The Man | Reel | Reel: Your kids learn God from your Tuesday |
 | Mon 12-07 | 7:00 PM | Be The Man | Reel | Reel: They want you, not the gift |
-| Tue 12-08 | 7:00 PM | Be The Man | Post | Legacy is a Tuesday |
 | Tue 12-08 | 12:00 PM | Couples | Reel | Reel: The six-second kiss |
+| Tue 12-08 | 7:00 PM | Be The Man | Post | Legacy is a Tuesday |
 | Wed 12-09 | 12:00 PM | Couples | Post | Be as kind at home as you are at work |
 | Thu 12-10 | 7:00 PM | Be The Man | Carousel | Carousel: 5 questions to ask your kids this month |
 | Fri 12-11 | 12:00 PM | Couples | Carousel | Carousel: 5 ways to say “I love you” without saying it |
-| Sat 12-12 | 7:00 PM | Couples | Reel | Reel: It’s not what you said, it’s how |
 | Sat 12-12 | 9:00 AM | Be The Man | Post | A gift that’s still working in March |
+| Sat 12-12 | 7:00 PM | Couples | Reel | Reel: It’s not what you said, it’s how |
 | Sun 12-13 | 4:00 PM | Couples | Post | A real apology has three parts |
 | Sun 12-13 | 7:00 PM | Be The Man | Reel | Reel: The cycle stops with you |
 | Mon 12-14 | 7:00 PM | Be The Man | Reel | Reel: Present, not just there |
-| Tue 12-15 | 7:00 PM | Be The Man | Post | Who’s carrying Christmas? |
 | Tue 12-15 | 12:00 PM | Couples | Reel | Reel: The house they’ll remember |
+| Tue 12-15 | 7:00 PM | Be The Man | Post | Who’s carrying Christmas? |
 | Wed 12-16 | 12:00 PM | Couples | Post | December tired is real |
 | Thu 12-17 | 7:00 PM | Be The Man | Carousel | Carousel: A Christmas week plan for fathers |
 | Fri 12-18 | 12:00 PM | Couples | Carousel | Carousel: 5 Christmas traditions for couples |
-| Sat 12-19 | 7:00 PM | Couples | Reel | Reel: If Christmas is hard this year |
 | Sat 12-19 | 9:00 AM | Be The Man | Post | Stuck? 15 minutes |
+| Sat 12-19 | 7:00 PM | Couples | Reel | Reel: If Christmas is hard this year |
 | Sun 12-20 | 4:00 PM | Couples | Post | Emmanuel: God with us |
 | Sun 12-20 | 7:00 PM | Be The Man | Reel | Reel: The best gift is a calm father |
 | Mon 12-21 | 7:00 PM | Be The Man | Reel | Reel: Before you make the New Year’s promise |
-| Tue 12-22 | 7:00 PM | Be The Man | Post | Start January with one page |
 | Tue 12-22 | 12:00 PM | Couples | Reel | Reel: Look back together before you look ahead |
+| Tue 12-22 | 7:00 PM | Be The Man | Post | Start January with one page |
 | Wed 12-23 | 12:00 PM | Couples | Post | One marriage goal for 2027 |
 | Thu 12-24 | 7:00 PM | Be The Man | Carousel | Carousel: Your year-end review in 30 minutes |
 | Fri 12-25 | 12:00 PM | Couples | Carousel | Carousel: Christmas Day — 5 blessings to say out loud |
-| Sat 12-26 | 7:00 PM | Couples | Reel | Reel: Start the new year with a check-up |
 | Sat 12-26 | 9:00 AM | Be The Man | Post | Don’t start 2027 alone |
+| Sat 12-26 | 7:00 PM | Couples | Reel | Reel: Start the new year with a check-up |
 | Sun 12-27 | 4:00 PM | Couples | Post | Choose each other again |
 | Sun 12-27 | 7:00 PM | Be The Man | Reel | Reel: Next year, same man? |
 
 ---
 
-## 1. Tue 2026-10-06 · 7:00 PM · Be The Man · Post
+## 1. Tue 2026-10-06 · 12:00 PM · Couples · Reel
+
+**Reel: You’re not talking, you’re updating**  
+- [ ] Instagram  - [ ] Facebook  - [ ] Threads  
+**Folder:** `2026-10-06_Tue_12pm_COUPLES_REEL_c1-updates/`  
+**Files:** `c1-updates-cover.jpg`, `c1-updates.mp4`
+
+**Instagram:**
+```
+"Did you pay the light bill?" "Who's picking up Jordan?" "We're out of milk."
+
+That's not talking. That's updating. Roommates update. Married people talk.
+
+Tonight, ask one real question: "What was the best ten minutes of your day?" Then put the phone down and actually listen to the answer.
+
+📤 Send this to your spouse. Then talk about it tonight.
+💬 Want help? Comment "COUPLES."
+
+#blackmarriage #blacklove #marriagecounseling #christianmarriage #bethemansystem
+```
+
+**Facebook:**
+```
+"Did you pay the light bill?" "Who's picking up Jordan?" "We're out of milk."
+
+That's not talking. That's updating. Roommates update. Married people talk.
+
+Tonight, ask one real question: "What was the best ten minutes of your day?" Then put the phone down and actually listen to the answer.
+
+📤 Share this with your spouse, then talk about it tonight.
+Certified marriage counseling: https://5e95-brian.systeme.io/0d29fa39
+
+#blackmarriage #blacklove
+```
+
+**Threads:**
+```
+"Did you pay the light bill?" "Who's picking up the kids?" "We're out of milk."
+
+That's not talking. That's updating. Roommates update. Married people talk.
+
+Tonight ask: "What was the best ten minutes of your day?"
+
+Send this to your spouse. Talk about it tonight.
+```
+
+---
+
+## 2. Tue 2026-10-06 · 7:00 PM · Be The Man · Post
 
 **A goal says what. A system says when.**  
 - [ ] Instagram  - [ ] Facebook  - [ ] Threads  
@@ -190,55 +238,53 @@ Free 7-week challenge, starts Oct 20 → go.bethemansystem.com/42f82c9e
 
 ---
 
-## 2. Tue 2026-10-06 · 12:00 PM · Couples · Reel
+## 3. Wed 2026-10-07 · 12:00 PM · Couples · Post
 
-**Reel: You’re not talking, you’re updating**  
+**Ten minutes, no screens**  
 - [ ] Instagram  - [ ] Facebook  - [ ] Threads  
-**Folder:** `2026-10-06_Tue_12pm_COUPLES_REEL_c1-updates/`  
-**Files:** `c1-updates-cover.jpg`, `c1-updates.mp4`
+**Folder:** `2026-10-07_Wed_12pm_COUPLES_POST_c1-ten-minutes/`  
+**Files:** `c1-ten-minutes.jpg`
 
 **Instagram:**
 ```
-"Did you pay the light bill?" "Who's picking up Jordan?" "We're out of milk."
+Ten minutes. No screens. Just us.
 
-That's not talking. That's updating. Roommates update. Married people talk.
+After the kids are down. Same time every night. The porch, the kitchen table, the edge of the bed.
 
-Tonight, ask one real question: "What was the best ten minutes of your day?" Then put the phone down and actually listen to the answer.
+It's not a date night. It's smaller than that, and that's why it works: you'll actually do it.
 
-📤 Send this to your spouse. Then talk about it tonight.
-💬 Want help? Comment "COUPLES."
+💾 Save this for your next date night.
+💬 Want help as a couple? Comment "COUPLES."
 
-#blackmarriage #blacklove #marriagecounseling #christianmarriage #bethemansystem
+#premaritalcounseling #blackmarriage #blacklove #marriagecounseling #bethemansystem
 ```
 
 **Facebook:**
 ```
-"Did you pay the light bill?" "Who's picking up Jordan?" "We're out of milk."
+Ten minutes. No screens. Just us.
 
-That's not talking. That's updating. Roommates update. Married people talk.
+After the kids are down. Same time every night. The porch, the kitchen table, the edge of the bed.
 
-Tonight, ask one real question: "What was the best ten minutes of your day?" Then put the phone down and actually listen to the answer.
+It's not a date night. It's smaller than that, and that's why it works: you'll actually do it.
 
-📤 Share this with your spouse, then talk about it tonight.
+Save this for your next date night.
 Certified marriage counseling: https://5e95-brian.systeme.io/0d29fa39
 
-#blackmarriage #blacklove
+#premaritalcounseling #blackmarriage
 ```
 
 **Threads:**
 ```
-"Did you pay the light bill?" "Who's picking up the kids?" "We're out of milk."
+Ten minutes. No screens. Just us.
 
-That's not talking. That's updating. Roommates update. Married people talk.
+After the kids are down, same time every night. It's smaller than a date night, and that's why it works: you'll actually do it.
 
-Tonight ask: "What was the best ten minutes of your day?"
-
-Send this to your spouse. Talk about it tonight.
+Save this for your next date night.
 ```
 
 ---
 
-## 3. Wed 2026-10-07 · 7:00 PM · Be The Man · Post
+## 4. Wed 2026-10-07 · 7:00 PM · Be The Man · Post
 
 **Receipt: what the weekly email costs**  
 - [ ] Instagram  - [ ] Facebook  - [ ] Threads  
@@ -296,52 +342,6 @@ Hype, guilt trips, group chats: not included
 One decision with a time attached. No card. Leave in one click. The only thing it costs is the excuse.
 
 Free 7-week challenge, starts Oct 20 → go.bethemansystem.com/42f82c9e
-```
-
----
-
-## 4. Wed 2026-10-07 · 12:00 PM · Couples · Post
-
-**Ten minutes, no screens**  
-- [ ] Instagram  - [ ] Facebook  - [ ] Threads  
-**Folder:** `2026-10-07_Wed_12pm_COUPLES_POST_c1-ten-minutes/`  
-**Files:** `c1-ten-minutes.jpg`
-
-**Instagram:**
-```
-Ten minutes. No screens. Just us.
-
-After the kids are down. Same time every night. The porch, the kitchen table, the edge of the bed.
-
-It's not a date night. It's smaller than that, and that's why it works: you'll actually do it.
-
-💾 Save this for your next date night.
-💬 Want help as a couple? Comment "COUPLES."
-
-#premaritalcounseling #blackmarriage #blacklove #marriagecounseling #bethemansystem
-```
-
-**Facebook:**
-```
-Ten minutes. No screens. Just us.
-
-After the kids are down. Same time every night. The porch, the kitchen table, the edge of the bed.
-
-It's not a date night. It's smaller than that, and that's why it works: you'll actually do it.
-
-Save this for your next date night.
-Certified marriage counseling: https://5e95-brian.systeme.io/0d29fa39
-
-#premaritalcounseling #blackmarriage
-```
-
-**Threads:**
-```
-Ten minutes. No screens. Just us.
-
-After the kids are down, same time every night. It's smaller than a date night, and that's why it works: you'll actually do it.
-
-Save this for your next date night.
 ```
 
 ---
@@ -448,57 +448,7 @@ Save this for your next date night.
 
 ---
 
-## 7. Sat 2026-10-10 · 7:00 PM · Couples · Reel
-
-**Reel: Listening to reply vs. listening to understand**  
-- [ ] Instagram  - [ ] Facebook  - [ ] Threads  
-**Folder:** `2026-10-10_Sat_7pm_COUPLES_REEL_c1-listen/`  
-**Files:** `c1-listen-cover.jpg`, `c1-listen.mp4`
-
-**Instagram:**
-```
-Most couples don't have a talking problem. They have a listening problem.
-
-Listening to reply sounds like: "Yeah, but…"
-Listening to understand sounds like: "So what you're saying is…"
-
-Try the second one tonight. Say back what you heard before you say anything of your own. Watch how fast the temperature drops.
-
-💬 Engaged or married? Comment "COUPLES" and I'll send you how certified marriage counseling works: a validated assessment, then three sessions built on your results.
-
-#premaritalcounseling #blackmarriage #blacklove #marriagecounseling #bethemansystem
-```
-
-**Facebook:**
-```
-Most couples don't have a talking problem. They have a listening problem.
-
-Listening to reply sounds like: "Yeah, but…"
-Listening to understand sounds like: "So what you're saying is…"
-
-Try the second one tonight. Say back what you heard before you say anything of your own. Watch how fast the temperature drops.
-
-Certified marriage counseling for engaged and married couples, with Brian Greene, pastor and certified marriage counselor. A validated assessment, then three sessions built on your results.
-https://5e95-brian.systeme.io/0d29fa39
-
-#premaritalcounseling #blackmarriage
-```
-
-**Threads:**
-```
-Most couples don't have a talking problem. They have a listening problem.
-
-Listening to reply: "Yeah, but…"
-Listening to understand: "So what you're saying is…"
-
-Say back what you heard before you answer.
-
-Engaged or married? Certified marriage counseling → 5e95-brian.systeme.io/0d29fa39
-```
-
----
-
-## 8. Sat 2026-10-10 · 9:00 AM · Be The Man · Post
+## 7. Sat 2026-10-10 · 9:00 AM · Be The Man · Post
 
 **The Be The Man Club, $19 a month**  
 - [ ] Instagram  - [ ] Facebook  - [ ] Threads  
@@ -550,6 +500,56 @@ The tools, a new one every month, and one email a week with a time and a trigger
 No group chat. No badges. Cancel anytime, keep the files.
 
 The Be The Man Club, $19 a month → go.bethemansystem.com/d6dd7931
+```
+
+---
+
+## 8. Sat 2026-10-10 · 7:00 PM · Couples · Reel
+
+**Reel: Listening to reply vs. listening to understand**  
+- [ ] Instagram  - [ ] Facebook  - [ ] Threads  
+**Folder:** `2026-10-10_Sat_7pm_COUPLES_REEL_c1-listen/`  
+**Files:** `c1-listen-cover.jpg`, `c1-listen.mp4`
+
+**Instagram:**
+```
+Most couples don't have a talking problem. They have a listening problem.
+
+Listening to reply sounds like: "Yeah, but…"
+Listening to understand sounds like: "So what you're saying is…"
+
+Try the second one tonight. Say back what you heard before you say anything of your own. Watch how fast the temperature drops.
+
+💬 Engaged or married? Comment "COUPLES" and I'll send you how certified marriage counseling works: a validated assessment, then three sessions built on your results.
+
+#premaritalcounseling #blackmarriage #blacklove #marriagecounseling #bethemansystem
+```
+
+**Facebook:**
+```
+Most couples don't have a talking problem. They have a listening problem.
+
+Listening to reply sounds like: "Yeah, but…"
+Listening to understand sounds like: "So what you're saying is…"
+
+Try the second one tonight. Say back what you heard before you say anything of your own. Watch how fast the temperature drops.
+
+Certified marriage counseling for engaged and married couples, with Brian Greene, pastor and certified marriage counselor. A validated assessment, then three sessions built on your results.
+https://5e95-brian.systeme.io/0d29fa39
+
+#premaritalcounseling #blackmarriage
+```
+
+**Threads:**
+```
+Most couples don't have a talking problem. They have a listening problem.
+
+Listening to reply: "Yeah, but…"
+Listening to understand: "So what you're saying is…"
+
+Say back what you heard before you answer.
+
+Engaged or married? Certified marriage counseling → 5e95-brian.systeme.io/0d29fa39
 ```
 
 ---
@@ -651,7 +651,53 @@ Free 7-week challenge, starts Oct 20 → go.bethemansystem.com/42f82c9e
 
 ---
 
-## 11. Tue 2026-10-13 · 7:00 PM · Be The Man · Post
+## 11. Tue 2026-10-13 · 12:00 PM · Couples · Reel
+
+**Reel: It’s you two vs. the problem**  
+- [ ] Instagram  - [ ] Facebook  - [ ] Threads  
+**Folder:** `2026-10-13_Tue_12pm_COUPLES_REEL_c2-problem/`  
+**Files:** `c2-problem-cover.jpg`, `c2-problem.mp4`
+
+**Instagram:**
+```
+It's not you vs. me. It's us vs. the problem.
+
+Here's a strange one that works: when you need to have a hard conversation, sit next to each other, not across from each other. Same side of the table, the problem written on paper in front of you both.
+
+Your body will remember you're on the same team even when your mouth forgets.
+
+📤 Send this to your spouse. Then talk about it tonight.
+💬 Want help? Comment "COUPLES."
+
+#marriagecounseling #christianmarriage #marriagetips #husbandandwife #bethemansystem
+```
+
+**Facebook:**
+```
+It's not you vs. me. It's us vs. the problem.
+
+Here's a strange one that works: when you need to have a hard conversation, sit next to each other, not across from each other. Same side of the table, the problem written on paper in front of you both.
+
+Your body will remember you're on the same team even when your mouth forgets.
+
+📤 Share this with your spouse, then talk about it tonight.
+Certified marriage counseling: https://5e95-brian.systeme.io/0d29fa39
+
+#marriagecounseling #christianmarriage
+```
+
+**Threads:**
+```
+It's not you vs. me. It's us vs. the problem.
+
+Try this: when you argue, sit next to each other, not across. Same side of the table. Your body remembers you're on the same team even when your mouth forgets.
+
+Send this to your spouse. Talk about it tonight.
+```
+
+---
+
+## 12. Tue 2026-10-13 · 7:00 PM · Be The Man · Post
 
 **Who you're becoming in one sentence**  
 - [ ] Instagram  - [ ] Facebook  - [ ] Threads  
@@ -701,103 +747,7 @@ Free 7-week challenge, starts Oct 20 → go.bethemansystem.com/42f82c9e
 
 ---
 
-## 12. Tue 2026-10-13 · 12:00 PM · Couples · Reel
-
-**Reel: It’s you two vs. the problem**  
-- [ ] Instagram  - [ ] Facebook  - [ ] Threads  
-**Folder:** `2026-10-13_Tue_12pm_COUPLES_REEL_c2-problem/`  
-**Files:** `c2-problem-cover.jpg`, `c2-problem.mp4`
-
-**Instagram:**
-```
-It's not you vs. me. It's us vs. the problem.
-
-Here's a strange one that works: when you need to have a hard conversation, sit next to each other, not across from each other. Same side of the table, the problem written on paper in front of you both.
-
-Your body will remember you're on the same team even when your mouth forgets.
-
-📤 Send this to your spouse. Then talk about it tonight.
-💬 Want help? Comment "COUPLES."
-
-#marriagecounseling #christianmarriage #marriagetips #husbandandwife #bethemansystem
-```
-
-**Facebook:**
-```
-It's not you vs. me. It's us vs. the problem.
-
-Here's a strange one that works: when you need to have a hard conversation, sit next to each other, not across from each other. Same side of the table, the problem written on paper in front of you both.
-
-Your body will remember you're on the same team even when your mouth forgets.
-
-📤 Share this with your spouse, then talk about it tonight.
-Certified marriage counseling: https://5e95-brian.systeme.io/0d29fa39
-
-#marriagecounseling #christianmarriage
-```
-
-**Threads:**
-```
-It's not you vs. me. It's us vs. the problem.
-
-Try this: when you argue, sit next to each other, not across. Same side of the table. Your body remembers you're on the same team even when your mouth forgets.
-
-Send this to your spouse. Talk about it tonight.
-```
-
----
-
-## 13. Wed 2026-10-14 · 7:00 PM · Be The Man · Reel
-
-**Reel: One bad day shouldn't cost you a month**  
-- [ ] Instagram  - [ ] Facebook  - [ ] Threads  
-**Folder:** `2026-10-14_Wed_7pm_BTM_REEL_bad-day/`  
-**Files:** `reel-6-bad-day-cover.png`, `reel-6-bad-day.mp4`
-
-**Instagram:**
-```
-You missed one day. So you quit the whole month.
-
-One bad day shouldn't cost you a month.
-
-Before the week starts, write down what counts as a miss. Then missing once isn't failure, and you know exactly what is.
-
-💾 Save this for Sunday.
-
-🗓 The free 7-week challenge starts Oct 20. One email a week, one action with a time on it. Do it with a brother.
-🔗 Link in bio → "Count me in."
-
-#selfdisciplineformen #blackchristianmen #mensdiscipline #christianhusband #bethemansystem
-```
-
-**Facebook:**
-```
-You missed one day. So you quit the whole month.
-
-One bad day shouldn't cost you a month.
-
-Before the week starts, write down what counts as a miss. Then missing once isn't failure, and you know exactly what is.
-
-💾 Save this for Sunday.
-
-The free 7-week challenge starts Oct 20. One email a week, one action with a time on it. Forward it to one man you trust.
-Join free: https://go.bethemansystem.com/42f82c9e
-
-#selfdisciplineformen #blackchristianmen
-```
-
-**Threads:**
-```
-You missed one day. So you quit the whole month.
-
-One bad day shouldn't cost you a month. Write down what counts as a miss before the week starts. Then missing once isn't failure.
-
-Free 7-week challenge, starts Oct 20 → go.bethemansystem.com/42f82c9e
-```
-
----
-
-## 14. Wed 2026-10-14 · 12:00 PM · Couples · Post
+## 13. Wed 2026-10-14 · 12:00 PM · Couples · Post
 
 **Delete “always” and “never”**  
 - [ ] Instagram  - [ ] Facebook  - [ ] Threads  
@@ -847,6 +797,56 @@ Nobody always or never does anything, so your spouse spends the fight proving th
 Say what happened, when, and how it felt.
 
 Send this to your spouse. Talk about it tonight.
+```
+
+---
+
+## 14. Wed 2026-10-14 · 7:00 PM · Be The Man · Reel
+
+**Reel: One bad day shouldn't cost you a month**  
+- [ ] Instagram  - [ ] Facebook  - [ ] Threads  
+**Folder:** `2026-10-14_Wed_7pm_BTM_REEL_bad-day/`  
+**Files:** `reel-6-bad-day-cover.png`, `reel-6-bad-day.mp4`
+
+**Instagram:**
+```
+You missed one day. So you quit the whole month.
+
+One bad day shouldn't cost you a month.
+
+Before the week starts, write down what counts as a miss. Then missing once isn't failure, and you know exactly what is.
+
+💾 Save this for Sunday.
+
+🗓 The free 7-week challenge starts Oct 20. One email a week, one action with a time on it. Do it with a brother.
+🔗 Link in bio → "Count me in."
+
+#selfdisciplineformen #blackchristianmen #mensdiscipline #christianhusband #bethemansystem
+```
+
+**Facebook:**
+```
+You missed one day. So you quit the whole month.
+
+One bad day shouldn't cost you a month.
+
+Before the week starts, write down what counts as a miss. Then missing once isn't failure, and you know exactly what is.
+
+💾 Save this for Sunday.
+
+The free 7-week challenge starts Oct 20. One email a week, one action with a time on it. Forward it to one man you trust.
+Join free: https://go.bethemansystem.com/42f82c9e
+
+#selfdisciplineformen #blackchristianmen
+```
+
+**Threads:**
+```
+You missed one day. So you quit the whole month.
+
+One bad day shouldn't cost you a month. Write down what counts as a miss before the week starts. Then missing once isn't failure.
+
+Free 7-week challenge, starts Oct 20 → go.bethemansystem.com/42f82c9e
 ```
 
 ---
@@ -903,7 +903,56 @@ Step 1 is free → go.bethemansystem.com/framework
 
 ---
 
-## 16. Fri 2026-10-16 · 7:00 PM · Be The Man · Post
+## 16. Fri 2026-10-16 · 12:00 PM · Couples · Carousel
+
+**Carousel: 5 rules for fighting fair**  
+- [ ] Instagram  - [ ] Facebook  - [ ] Threads  
+**Folder:** `2026-10-16_Fri_12pm_COUPLES_CAROUSEL_c2-fight-fair/`  
+**Files:** `01-c2-fight-fair.jpg`, `02-c2-fight-fair.jpg`, `03-c2-fight-fair.jpg`, `04-c2-fight-fair.jpg`, `05-c2-fight-fair.jpg`, `06-c2-fight-fair.jpg`, `07-c2-fight-fair.jpg`
+
+**Instagram:**
+```
+5 rules for fighting fair. Agree on them while you're calm:
+
+1. One topic at a time. Not 2019.
+2. No names, no "always." Talk about the action, not the person.
+3. Either of you can call a 20-minute timeout, and the one who calls it sets the time to come back.
+4. Not in front of the kids.
+5. End with "we": "What are we going to do differently?" Then pray, even if it's short.
+
+💬 Engaged or married? Comment "COUPLES" and I'll send you how certified marriage counseling works: a validated assessment, then three sessions built on your results.
+
+#marriagecounseling #christianmarriage #marriagetips #husbandandwife #bethemansystem
+```
+
+**Facebook:**
+```
+5 rules for fighting fair. Agree on them while you're calm:
+
+1. One topic at a time. Not 2019.
+2. No names, no "always." Talk about the action, not the person.
+3. Either of you can call a 20-minute timeout, and the one who calls it sets the time to come back.
+4. Not in front of the kids.
+5. End with "we": "What are we going to do differently?" Then pray, even if it's short.
+
+Certified marriage counseling for engaged and married couples, with Brian Greene, pastor and certified marriage counselor. A validated assessment, then three sessions built on your results.
+https://5e95-brian.systeme.io/0d29fa39
+
+#marriagecounseling #christianmarriage
+```
+
+**Threads:**
+```
+5 rules for fighting fair:
+
+One topic at a time. No names, no "always." Either of you can call a 20-minute timeout, and whoever calls it sets the time to come back. Not in front of the kids. End with "we," then pray.
+
+Engaged or married? Certified marriage counseling → 5e95-brian.systeme.io/0d29fa39
+```
+
+---
+
+## 17. Fri 2026-10-16 · 7:00 PM · Be The Man · Post
 
 **Most men pray when they remember**  
 - [ ] Instagram  - [ ] Facebook  - [ ] Threads  
@@ -963,56 +1012,57 @@ Free 7-week challenge, starts Oct 20 → go.bethemansystem.com/42f82c9e
 
 ---
 
-## 17. Fri 2026-10-16 · 12:00 PM · Couples · Carousel
+## 18. Sat 2026-10-17 · 9:00 AM · Be The Man · Post
 
-**Carousel: 5 rules for fighting fair**  
+**You don't need more conviction**  
 - [ ] Instagram  - [ ] Facebook  - [ ] Threads  
-**Folder:** `2026-10-16_Fri_12pm_COUPLES_CAROUSEL_c2-fight-fair/`  
-**Files:** `01-c2-fight-fair.jpg`, `02-c2-fight-fair.jpg`, `03-c2-fight-fair.jpg`, `04-c2-fight-fair.jpg`, `05-c2-fight-fair.jpg`, `06-c2-fight-fair.jpg`, `07-c2-fight-fair.jpg`
+**Folder:** `2026-10-17_Sat_9am_BTM_POST_conviction/`  
+**Files:** `w2-08-conviction.png`
 
 **Instagram:**
 ```
-5 rules for fighting fair. Agree on them while you're calm:
+You don't need more conviction. You've had plenty.
 
-1. One topic at a time. Not 2019.
-2. No names, no "always." Talk about the action, not the person.
-3. Either of you can call a 20-minute timeout, and the one who calls it sets the time to come back.
-4. Not in front of the kids.
-5. End with "we": "What are we going to do differently?" Then pray, even if it's short.
+You need a starting point.
 
-💬 Engaged or married? Comment "COUPLES" and I'll send you how certified marriage counseling works: a validated assessment, then three sessions built on your results.
+Not a bigger goal. Not another promise. A first step that everything after it gets built on.
 
-#marriagecounseling #christianmarriage #marriagetips #husbandandwife #bethemansystem
+The free 7-week challenge starts Tuesday. Bring a brother.
+
+🗓 The free 7-week challenge starts Oct 20. One email a week, one action with a time on it. Do it with a brother.
+🔗 Link in bio → "Count me in."
+
+#mensdiscipline #christianhusband #christianmen #christianfather #bethemansystem
 ```
 
 **Facebook:**
 ```
-5 rules for fighting fair. Agree on them while you're calm:
+You don't need more conviction. You've had plenty.
 
-1. One topic at a time. Not 2019.
-2. No names, no "always." Talk about the action, not the person.
-3. Either of you can call a 20-minute timeout, and the one who calls it sets the time to come back.
-4. Not in front of the kids.
-5. End with "we": "What are we going to do differently?" Then pray, even if it's short.
+You need a starting point.
 
-Certified marriage counseling for engaged and married couples, with Brian Greene, pastor and certified marriage counselor. A validated assessment, then three sessions built on your results.
-https://5e95-brian.systeme.io/0d29fa39
+Not a bigger goal. Not another promise. A first step that everything after it gets built on.
 
-#marriagecounseling #christianmarriage
+The free 7-week challenge starts Tuesday. Bring a brother.
+
+The free 7-week challenge starts Oct 20. One email a week, one action with a time on it. Forward it to one man you trust.
+Join free: https://go.bethemansystem.com/42f82c9e
+
+#mensdiscipline #christianhusband
 ```
 
 **Threads:**
 ```
-5 rules for fighting fair:
+You don't need more conviction. You've had plenty.
 
-One topic at a time. No names, no "always." Either of you can call a 20-minute timeout, and whoever calls it sets the time to come back. Not in front of the kids. End with "we," then pray.
+You need a starting point. Not a bigger goal. Not another promise. A first step everything after it gets built on.
 
-Engaged or married? Certified marriage counseling → 5e95-brian.systeme.io/0d29fa39
+Free 7-week challenge, starts Oct 20 → go.bethemansystem.com/42f82c9e
 ```
 
 ---
 
-## 18. Sat 2026-10-17 · 7:00 PM · Couples · Reel
+## 19. Sat 2026-10-17 · 7:00 PM · Couples · Reel
 
 **Reel: The 20-minute timeout**  
 - [ ] Instagram  - [ ] Facebook  - [ ] Threads  
@@ -1060,56 +1110,6 @@ Either one can call it. Say when you'll be back. Then come back, every time.
 A timeout isn't walking out. It's coming back calmer.
 
 Send this to your spouse. Talk about it tonight.
-```
-
----
-
-## 19. Sat 2026-10-17 · 9:00 AM · Be The Man · Post
-
-**You don't need more conviction**  
-- [ ] Instagram  - [ ] Facebook  - [ ] Threads  
-**Folder:** `2026-10-17_Sat_9am_BTM_POST_conviction/`  
-**Files:** `w2-08-conviction.png`
-
-**Instagram:**
-```
-You don't need more conviction. You've had plenty.
-
-You need a starting point.
-
-Not a bigger goal. Not another promise. A first step that everything after it gets built on.
-
-The free 7-week challenge starts Tuesday. Bring a brother.
-
-🗓 The free 7-week challenge starts Oct 20. One email a week, one action with a time on it. Do it with a brother.
-🔗 Link in bio → "Count me in."
-
-#mensdiscipline #christianhusband #christianmen #christianfather #bethemansystem
-```
-
-**Facebook:**
-```
-You don't need more conviction. You've had plenty.
-
-You need a starting point.
-
-Not a bigger goal. Not another promise. A first step that everything after it gets built on.
-
-The free 7-week challenge starts Tuesday. Bring a brother.
-
-The free 7-week challenge starts Oct 20. One email a week, one action with a time on it. Forward it to one man you trust.
-Join free: https://go.bethemansystem.com/42f82c9e
-
-#mensdiscipline #christianhusband
-```
-
-**Threads:**
-```
-You don't need more conviction. You've had plenty.
-
-You need a starting point. Not a bigger goal. Not another promise. A first step everything after it gets built on.
-
-Free 7-week challenge, starts Oct 20 → go.bethemansystem.com/42f82c9e
 ```
 
 ---
@@ -1255,58 +1255,7 @@ Free 7-week challenge, starts Oct 20 → go.bethemansystem.com/42f82c9e
 
 ---
 
-## 23. Tue 2026-10-20 · 7:00 PM · Be The Man · Post
-
-**Challenge week 1: one sentence**  
-- [ ] Instagram  - [ ] Facebook  - [ ] Threads  
-**Folder:** `2026-10-20_Tue_7pm_BTM_POST_w3-week-one/`  
-**Files:** `w3-week-one.jpg`
-
-**Instagram:**
-```
-The free 7-week challenge starts today. Week 1 is one sentence.
-
-Write one sentence about the man you're becoming. Not a goal. Not a list. One sentence your wife could read and say, "Yes. That's him."
-
-Mine started as three paragraphs. The cutting is the work.
-
-Joining late is fine. You'll start with this week's email, and the first step comes in your welcome email.
-
-🗓 The free 7-week challenge is running now. Join any week, and the first step comes in your welcome email.
-🔗 Link in bio → "Count me in."
-
-#christianmen #christianfather #faithandfamily #blackmenwholead #bethemansystem
-```
-
-**Facebook:**
-```
-The free 7-week challenge starts today. Week 1 is one sentence.
-
-Write one sentence about the man you're becoming. Not a goal. Not a list. One sentence your wife could read and say, "Yes. That's him."
-
-Mine started as three paragraphs. The cutting is the work.
-
-Joining late is fine. You'll start with this week's email, and the first step comes in your welcome email.
-
-The free 7-week challenge is running now. Join any week: https://go.bethemansystem.com/42f82c9e
-
-#christianmen #christianfather
-```
-
-**Threads:**
-```
-The free 7-week challenge starts today.
-
-Week 1: write one sentence about the man you're becoming. Not a goal. Not a list. One sentence your wife could read and say, "That's him."
-
-The cutting is the work.
-
-The free 7-week challenge is running. Join any week → go.bethemansystem.com/42f82c9e
-```
-
----
-
-## 24. Tue 2026-10-20 · 12:00 PM · Couples · Reel
+## 23. Tue 2026-10-20 · 12:00 PM · Couples · Reel
 
 **Reel: Who decides?**  
 - [ ] Instagram  - [ ] Facebook  - [ ] Threads  
@@ -1353,6 +1302,57 @@ Who decides in your house? If the answer is "whoever's louder," that's not leade
 Decide how you'll decide before the next decision: big money together, always; ties wait 24 hours and get prayed over.
 
 Engaged or married? Certified marriage counseling → 5e95-brian.systeme.io/0d29fa39
+```
+
+---
+
+## 24. Tue 2026-10-20 · 7:00 PM · Be The Man · Post
+
+**Challenge week 1: one sentence**  
+- [ ] Instagram  - [ ] Facebook  - [ ] Threads  
+**Folder:** `2026-10-20_Tue_7pm_BTM_POST_w3-week-one/`  
+**Files:** `w3-week-one.jpg`
+
+**Instagram:**
+```
+The free 7-week challenge starts today. Week 1 is one sentence.
+
+Write one sentence about the man you're becoming. Not a goal. Not a list. One sentence your wife could read and say, "Yes. That's him."
+
+Mine started as three paragraphs. The cutting is the work.
+
+Joining late is fine. You'll start with this week's email, and the first step comes in your welcome email.
+
+🗓 The free 7-week challenge is running now. Join any week, and the first step comes in your welcome email.
+🔗 Link in bio → "Count me in."
+
+#christianmen #christianfather #faithandfamily #blackmenwholead #bethemansystem
+```
+
+**Facebook:**
+```
+The free 7-week challenge starts today. Week 1 is one sentence.
+
+Write one sentence about the man you're becoming. Not a goal. Not a list. One sentence your wife could read and say, "Yes. That's him."
+
+Mine started as three paragraphs. The cutting is the work.
+
+Joining late is fine. You'll start with this week's email, and the first step comes in your welcome email.
+
+The free 7-week challenge is running now. Join any week: https://go.bethemansystem.com/42f82c9e
+
+#christianmen #christianfather
+```
+
+**Threads:**
+```
+The free 7-week challenge starts today.
+
+Week 1: write one sentence about the man you're becoming. Not a goal. Not a list. One sentence your wife could read and say, "That's him."
+
+The cutting is the work.
+
+The free 7-week challenge is running. Join any week → go.bethemansystem.com/42f82c9e
 ```
 
 ---
@@ -1515,53 +1515,7 @@ Save this for your next date night.
 
 ---
 
-## 28. Sat 2026-10-24 · 7:00 PM · Couples · Reel
-
-**Reel: “My money” vs “our money”**  
-- [ ] Instagram  - [ ] Facebook  - [ ] Threads  
-**Folder:** `2026-10-24_Sat_7pm_COUPLES_REEL_c3-mine/`  
-**Files:** `c3-mine-cover.jpg`, `c3-mine.mp4`
-
-**Instagram:**
-```
-"My money." "Your debt." "My account."
-
-Listen to your pronouns. They tell you how married your money is.
-
-It doesn't have to be one bank account. Plenty of healthy couples keep separate ones. But it has to be one team and one plan, with no secrets.
-
-📤 Send this to your spouse. Then talk about it tonight.
-💬 Want help? Comment "COUPLES."
-
-#christianmarriage #marriagetips #husbandandwife #blackcouples #bethemansystem
-```
-
-**Facebook:**
-```
-"My money." "Your debt." "My account."
-
-Listen to your pronouns. They tell you how married your money is.
-
-It doesn't have to be one bank account. Plenty of healthy couples keep separate ones. But it has to be one team and one plan, with no secrets.
-
-📤 Share this with your spouse, then talk about it tonight.
-Certified marriage counseling: https://5e95-brian.systeme.io/0d29fa39
-
-#christianmarriage #marriagetips
-```
-
-**Threads:**
-```
-"My money." "Your debt." "My account."
-
-Listen to your pronouns. It doesn't have to be one bank account. It has to be one team and one plan, with no secrets.
-
-Send this to your spouse. Talk about it tonight.
-```
-
----
-
-## 29. Sat 2026-10-24 · 9:00 AM · Be The Man · Post
+## 28. Sat 2026-10-24 · 9:00 AM · Be The Man · Post
 
 **Workshop tomorrow: leave with three things**  
 - [ ] Instagram  - [ ] Facebook  - [ ] Threads  
@@ -1613,52 +1567,53 @@ Fix Your Wednesday: live, Sun Oct 25, 7 PM CT. $27, recording included → go.be
 
 ---
 
-## 30. Sun 2026-10-25 · 4:00 PM · Couples · Post
+## 29. Sat 2026-10-24 · 7:00 PM · Couples · Reel
 
-**No money secrets**  
+**Reel: “My money” vs “our money”**  
 - [ ] Instagram  - [ ] Facebook  - [ ] Threads  
-**Folder:** `2026-10-25_Sun_4pm_COUPLES_POST_c3-secrets/`  
-**Files:** `c3-secrets.jpg`
+**Folder:** `2026-10-24_Sat_7pm_COUPLES_REEL_c3-mine/`  
+**Files:** `c3-mine-cover.jpg`, `c3-mine.mp4`
 
 **Instagram:**
 ```
-The card she doesn't know about. The account he doesn't mention. The "it was on sale" that wasn't.
+"My money." "Your debt." "My account."
 
-Money secrets are trust secrets. And they almost always come out.
+Listen to your pronouns. They tell you how married your money is.
 
-If there's something, tell it this week, calmly, before it's found. A confession hurts. A discovery breaks something.
+It doesn't have to be one bank account. Plenty of healthy couples keep separate ones. But it has to be one team and one plan, with no secrets.
 
-💬 Engaged or married? Comment "COUPLES" and I'll send you how certified marriage counseling works: a validated assessment, then three sessions built on your results.
+📤 Send this to your spouse. Then talk about it tonight.
+💬 Want help? Comment "COUPLES."
 
-#husbandandwife #blackcouples #christiancouples #godlymarriage #bethemansystem
+#christianmarriage #marriagetips #husbandandwife #blackcouples #bethemansystem
 ```
 
 **Facebook:**
 ```
-The card she doesn't know about. The account he doesn't mention. The "it was on sale" that wasn't.
+"My money." "Your debt." "My account."
 
-Money secrets are trust secrets. And they almost always come out.
+Listen to your pronouns. They tell you how married your money is.
 
-If there's something, tell it this week, calmly, before it's found. A confession hurts. A discovery breaks something.
+It doesn't have to be one bank account. Plenty of healthy couples keep separate ones. But it has to be one team and one plan, with no secrets.
 
-Certified marriage counseling for engaged and married couples, with Brian Greene, pastor and certified marriage counselor. A validated assessment, then three sessions built on your results.
-https://5e95-brian.systeme.io/0d29fa39
+📤 Share this with your spouse, then talk about it tonight.
+Certified marriage counseling: https://5e95-brian.systeme.io/0d29fa39
 
-#husbandandwife #blackcouples
+#christianmarriage #marriagetips
 ```
 
 **Threads:**
 ```
-The card she doesn't know about. The account he doesn't mention.
+"My money." "Your debt." "My account."
 
-Money secrets are trust secrets. If there's something, tell it this week, before it's found. A confession hurts. A discovery breaks something.
+Listen to your pronouns. It doesn't have to be one bank account. It has to be one team and one plan, with no secrets.
 
-Engaged or married? Certified marriage counseling → 5e95-brian.systeme.io/0d29fa39
+Send this to your spouse. Talk about it tonight.
 ```
 
 ---
 
-## 31. Sun 2026-10-25 · 12:00 PM · Be The Man · Reel
+## 30. Sun 2026-10-25 · 12:00 PM · Be The Man · Reel
 
 **Reel: Tonight, 7 PM — Fix Your Wednesday**  
 - [ ] Instagram  - [ ] Facebook  - [ ] Threads  
@@ -1708,6 +1663,51 @@ Fix Your Wednesday: live, Sun Oct 25, 7 PM CT. $27, recording included → go.be
 
 ---
 
+## 31. Sun 2026-10-25 · 4:00 PM · Couples · Post
+
+**No money secrets**  
+- [ ] Instagram  - [ ] Facebook  - [ ] Threads  
+**Folder:** `2026-10-25_Sun_4pm_COUPLES_POST_c3-secrets/`  
+**Files:** `c3-secrets.jpg`
+
+**Instagram:**
+```
+The card she doesn't know about. The account he doesn't mention. The "it was on sale" that wasn't.
+
+Money secrets are trust secrets. And they almost always come out.
+
+If there's something, tell it this week, calmly, before it's found. A confession hurts. A discovery breaks something.
+
+💬 Engaged or married? Comment "COUPLES" and I'll send you how certified marriage counseling works: a validated assessment, then three sessions built on your results.
+
+#husbandandwife #blackcouples #christiancouples #godlymarriage #bethemansystem
+```
+
+**Facebook:**
+```
+The card she doesn't know about. The account he doesn't mention. The "it was on sale" that wasn't.
+
+Money secrets are trust secrets. And they almost always come out.
+
+If there's something, tell it this week, calmly, before it's found. A confession hurts. A discovery breaks something.
+
+Certified marriage counseling for engaged and married couples, with Brian Greene, pastor and certified marriage counselor. A validated assessment, then three sessions built on your results.
+https://5e95-brian.systeme.io/0d29fa39
+
+#husbandandwife #blackcouples
+```
+
+**Threads:**
+```
+The card she doesn't know about. The account he doesn't mention.
+
+Money secrets are trust secrets. If there's something, tell it this week, before it's found. A confession hurts. A discovery breaks something.
+
+Engaged or married? Certified marriage counseling → 5e95-brian.systeme.io/0d29fa39
+```
+
+---
+
 ## 32. Mon 2026-10-26 · 7:00 PM · Be The Man · Reel
 
 **Reel: Twelve goals is zero goals**  
@@ -1753,7 +1753,52 @@ The free 7-week challenge is running. Join any week → go.bethemansystem.com/42
 
 ---
 
-## 33. Tue 2026-10-27 · 7:00 PM · Be The Man · Post
+## 33. Tue 2026-10-27 · 12:00 PM · Couples · Reel
+
+**Reel: You planned the wedding. Plan the marriage.**  
+- [ ] Instagram  - [ ] Facebook  - [ ] Threads  
+**Folder:** `2026-10-27_Tue_12pm_COUPLES_REEL_c4-engaged/`  
+**Files:** `c4-engaged-cover.jpg`, `c4-engaged.mp4`
+
+**Instagram:**
+```
+Engaged? You've planned the venue, the colors, the food and the playlist.
+
+Who's planning the marriage?
+
+The wedding is one day. The marriage is the next fifty years of Tuesdays. Spend at least as much time on that as on the seating chart.
+
+💬 Engaged or married? Comment "COUPLES" and I'll send you how certified marriage counseling works: a validated assessment, then three sessions built on your results.
+
+#blackmarriage #blacklove #marriagecounseling #christianmarriage #bethemansystem
+```
+
+**Facebook:**
+```
+Engaged? You've planned the venue, the colors, the food and the playlist.
+
+Who's planning the marriage?
+
+The wedding is one day. The marriage is the next fifty years of Tuesdays. Spend at least as much time on that as on the seating chart.
+
+Certified marriage counseling for engaged and married couples, with Brian Greene, pastor and certified marriage counselor. A validated assessment, then three sessions built on your results.
+https://5e95-brian.systeme.io/0d29fa39
+
+#blackmarriage #blacklove
+```
+
+**Threads:**
+```
+Engaged? You've planned the venue, the colors and the playlist.
+
+Who's planning the marriage? The wedding is one day. The marriage is the next fifty years of Tuesdays.
+
+Engaged or married? Certified marriage counseling → 5e95-brian.systeme.io/0d29fa39
+```
+
+---
+
+## 34. Tue 2026-10-27 · 7:00 PM · Be The Man · Post
 
 **Three goals: one for each place you lead**  
 - [ ] Instagram  - [ ] Facebook  - [ ] Threads  
@@ -1807,51 +1852,6 @@ One for your work.
 Everything else waits. Not forever. For now.
 
 6-week live group for husbands and fathers. Sundays Nov 15 – Dec 20, 7 PM CT. Four seats → go.bethemansystem.com/b1c774c0
-```
-
----
-
-## 34. Tue 2026-10-27 · 12:00 PM · Couples · Reel
-
-**Reel: You planned the wedding. Plan the marriage.**  
-- [ ] Instagram  - [ ] Facebook  - [ ] Threads  
-**Folder:** `2026-10-27_Tue_12pm_COUPLES_REEL_c4-engaged/`  
-**Files:** `c4-engaged-cover.jpg`, `c4-engaged.mp4`
-
-**Instagram:**
-```
-Engaged? You've planned the venue, the colors, the food and the playlist.
-
-Who's planning the marriage?
-
-The wedding is one day. The marriage is the next fifty years of Tuesdays. Spend at least as much time on that as on the seating chart.
-
-💬 Engaged or married? Comment "COUPLES" and I'll send you how certified marriage counseling works: a validated assessment, then three sessions built on your results.
-
-#blackmarriage #blacklove #marriagecounseling #christianmarriage #bethemansystem
-```
-
-**Facebook:**
-```
-Engaged? You've planned the venue, the colors, the food and the playlist.
-
-Who's planning the marriage?
-
-The wedding is one day. The marriage is the next fifty years of Tuesdays. Spend at least as much time on that as on the seating chart.
-
-Certified marriage counseling for engaged and married couples, with Brian Greene, pastor and certified marriage counselor. A validated assessment, then three sessions built on your results.
-https://5e95-brian.systeme.io/0d29fa39
-
-#blackmarriage #blacklove
-```
-
-**Threads:**
-```
-Engaged? You've planned the venue, the colors and the playlist.
-
-Who's planning the marriage? The wedding is one day. The marriage is the next fifty years of Tuesdays.
-
-Engaged or married? Certified marriage counseling → 5e95-brian.systeme.io/0d29fa39
 ```
 
 ---
@@ -2011,52 +2011,7 @@ Engaged or married? Certified marriage counseling → 5e95-brian.systeme.io/0d29
 
 ---
 
-## 38. Sat 2026-10-31 · 7:00 PM · Couples · Reel
-
-**Reel: Already married? It’s not too late**  
-- [ ] Instagram  - [ ] Facebook  - [ ] Threads  
-**Folder:** `2026-10-31_Sat_7pm_COUPLES_REEL_c4-already/`  
-**Files:** `c4-already-cover.jpg`, `c4-already.mp4`
-
-**Instagram:**
-```
-Already married and never had premarital counseling?
-
-It's not too late. You don't need a crisis to get a check-up. Healthy couples get coached too, and they stay healthy partly because they do.
-
-Engaged and married couples both take the same assessment. Your results show where you're strong, where you're stretched, and what to work on first.
-
-💬 Engaged or married? Comment "COUPLES" and I'll send you how certified marriage counseling works: a validated assessment, then three sessions built on your results.
-
-#blacklove #marriagecounseling #christianmarriage #marriagetips #bethemansystem
-```
-
-**Facebook:**
-```
-Already married and never had premarital counseling?
-
-It's not too late. You don't need a crisis to get a check-up. Healthy couples get coached too, and they stay healthy partly because they do.
-
-Engaged and married couples both take the same assessment. Your results show where you're strong, where you're stretched, and what to work on first.
-
-Certified marriage counseling for engaged and married couples, with Brian Greene, pastor and certified marriage counselor. A validated assessment, then three sessions built on your results.
-https://5e95-brian.systeme.io/0d29fa39
-
-#blacklove #marriagecounseling
-```
-
-**Threads:**
-```
-Already married and never had premarital counseling? It's not too late.
-
-You don't need a crisis to get a check-up. Healthy couples get coached too, and they stay healthy partly because they do.
-
-Engaged or married? Certified marriage counseling → 5e95-brian.systeme.io/0d29fa39
-```
-
----
-
-## 39. Sat 2026-10-31 · 9:00 AM · Be The Man · Post
+## 38. Sat 2026-10-31 · 9:00 AM · Be The Man · Post
 
 **6-week group: four seats**  
 - [ ] Instagram  - [ ] Facebook  - [ ] Threads  
@@ -2098,6 +2053,51 @@ A 6-week live group for husbands and fathers. Sundays, 7–8 PM Central, Nov 15 
 The same men every week, so the miss has somewhere to go.
 
 6-week live group for husbands and fathers. Sundays Nov 15 – Dec 20, 7 PM CT. Four seats → go.bethemansystem.com/b1c774c0
+```
+
+---
+
+## 39. Sat 2026-10-31 · 7:00 PM · Couples · Reel
+
+**Reel: Already married? It’s not too late**  
+- [ ] Instagram  - [ ] Facebook  - [ ] Threads  
+**Folder:** `2026-10-31_Sat_7pm_COUPLES_REEL_c4-already/`  
+**Files:** `c4-already-cover.jpg`, `c4-already.mp4`
+
+**Instagram:**
+```
+Already married and never had premarital counseling?
+
+It's not too late. You don't need a crisis to get a check-up. Healthy couples get coached too, and they stay healthy partly because they do.
+
+Engaged and married couples both take the same assessment. Your results show where you're strong, where you're stretched, and what to work on first.
+
+💬 Engaged or married? Comment "COUPLES" and I'll send you how certified marriage counseling works: a validated assessment, then three sessions built on your results.
+
+#blacklove #marriagecounseling #christianmarriage #marriagetips #bethemansystem
+```
+
+**Facebook:**
+```
+Already married and never had premarital counseling?
+
+It's not too late. You don't need a crisis to get a check-up. Healthy couples get coached too, and they stay healthy partly because they do.
+
+Engaged and married couples both take the same assessment. Your results show where you're strong, where you're stretched, and what to work on first.
+
+Certified marriage counseling for engaged and married couples, with Brian Greene, pastor and certified marriage counselor. A validated assessment, then three sessions built on your results.
+https://5e95-brian.systeme.io/0d29fa39
+
+#blacklove #marriagecounseling
+```
+
+**Threads:**
+```
+Already married and never had premarital counseling? It's not too late.
+
+You don't need a crisis to get a check-up. Healthy couples get coached too, and they stay healthy partly because they do.
+
+Engaged or married? Certified marriage counseling → 5e95-brian.systeme.io/0d29fa39
 ```
 
 ---
@@ -2245,7 +2245,53 @@ Name it. Then give it a plan, not a promise.
 
 ---
 
-## 43. Tue 2026-11-03 · 7:00 PM · Be The Man · Post
+## 43. Tue 2026-11-03 · 12:00 PM · Couples · Reel
+
+**Reel: When did you stop dating?**  
+- [ ] Instagram  - [ ] Facebook  - [ ] Threads  
+**Folder:** `2026-11-03_Tue_12pm_COUPLES_REEL_c5-dating/`  
+**Files:** `c5-dating-cover.jpg`, `c5-dating.mp4`
+
+**Instagram:**
+```
+When did you stop dating each other?
+
+Nobody decides to. It just drifts: a baby, a new job, a busy season that never ended.
+
+And drift always goes downstream. Put it back on the calendar. Not someday. Pick the night this week.
+
+💾 Save this for your next date night.
+💬 Want help as a couple? Comment "COUPLES."
+
+#premaritalcounseling #blackmarriage #blacklove #marriagecounseling #bethemansystem
+```
+
+**Facebook:**
+```
+When did you stop dating each other?
+
+Nobody decides to. It just drifts: a baby, a new job, a busy season that never ended.
+
+And drift always goes downstream. Put it back on the calendar. Not someday. Pick the night this week.
+
+Save this for your next date night.
+Certified marriage counseling: https://5e95-brian.systeme.io/0d29fa39
+
+#premaritalcounseling #blackmarriage
+```
+
+**Threads:**
+```
+When did you stop dating each other? Nobody decides to. It just drifts.
+
+And drift always goes downstream. Put it back on the calendar. Pick the night this week.
+
+Save this for your next date night.
+```
+
+---
+
+## 44. Tue 2026-11-03 · 7:00 PM · Be The Man · Post
 
 **If ___ happens, then I will ___**  
 - [ ] Instagram  - [ ] Facebook  - [ ] Threads  
@@ -2294,52 +2340,6 @@ Fill this in tonight: "If ___ happens, then I will ___."
 Decide it while you're calm, not in the moment.
 
 The free 7-week challenge is running. Join any week → go.bethemansystem.com/42f82c9e
-```
-
----
-
-## 44. Tue 2026-11-03 · 12:00 PM · Couples · Reel
-
-**Reel: When did you stop dating?**  
-- [ ] Instagram  - [ ] Facebook  - [ ] Threads  
-**Folder:** `2026-11-03_Tue_12pm_COUPLES_REEL_c5-dating/`  
-**Files:** `c5-dating-cover.jpg`, `c5-dating.mp4`
-
-**Instagram:**
-```
-When did you stop dating each other?
-
-Nobody decides to. It just drifts: a baby, a new job, a busy season that never ended.
-
-And drift always goes downstream. Put it back on the calendar. Not someday. Pick the night this week.
-
-💾 Save this for your next date night.
-💬 Want help as a couple? Comment "COUPLES."
-
-#premaritalcounseling #blackmarriage #blacklove #marriagecounseling #bethemansystem
-```
-
-**Facebook:**
-```
-When did you stop dating each other?
-
-Nobody decides to. It just drifts: a baby, a new job, a busy season that never ended.
-
-And drift always goes downstream. Put it back on the calendar. Not someday. Pick the night this week.
-
-Save this for your next date night.
-Certified marriage counseling: https://5e95-brian.systeme.io/0d29fa39
-
-#premaritalcounseling #blackmarriage
-```
-
-**Threads:**
-```
-When did you stop dating each other? Nobody decides to. It just drifts.
-
-And drift always goes downstream. Put it back on the calendar. Pick the night this week.
-
-Save this for your next date night.
 ```
 
 ---
@@ -2506,53 +2506,7 @@ Save this for your next date night.
 
 ---
 
-## 48. Sat 2026-11-07 · 7:00 PM · Couples · Reel
-
-**Reel: The third person in your bed**  
-- [ ] Instagram  - [ ] Facebook  - [ ] Threads  
-**Folder:** `2026-11-07_Sat_7pm_COUPLES_REEL_c5-phones/`  
-**Files:** `c5-phones-cover.jpg`, `c5-phones.mp4`
-
-**Instagram:**
-```
-There's a third person in a lot of marriage beds tonight. It glows.
-
-Try this for one week: phones charge in the kitchen. Both of them. Buy a $10 alarm clock if you need one.
-
-The bedroom is for the two of you. Watch what comes back when the scrolling leaves.
-
-📤 Send this to your spouse. Then talk about it tonight.
-💬 Want help? Comment "COUPLES."
-
-#christianmarriage #marriagetips #husbandandwife #blackcouples #bethemansystem
-```
-
-**Facebook:**
-```
-There's a third person in a lot of marriage beds tonight. It glows.
-
-Try this for one week: phones charge in the kitchen. Both of them. Buy a $10 alarm clock if you need one.
-
-The bedroom is for the two of you. Watch what comes back when the scrolling leaves.
-
-📤 Share this with your spouse, then talk about it tonight.
-Certified marriage counseling: https://5e95-brian.systeme.io/0d29fa39
-
-#christianmarriage #marriagetips
-```
-
-**Threads:**
-```
-There's a third person in a lot of marriage beds tonight. It glows.
-
-One week: both phones charge in the kitchen. The bedroom is for the two of you. Watch what comes back when the scrolling leaves.
-
-Send this to your spouse. Talk about it tonight.
-```
-
----
-
-## 49. Sat 2026-11-07 · 9:00 AM · Be The Man · Post
+## 48. Sat 2026-11-07 · 9:00 AM · Be The Man · Post
 
 **The group: what happens on a Sunday**  
 - [ ] Instagram  - [ ] Facebook  - [ ] Threads  
@@ -2605,6 +2559,52 @@ What a Sunday in the 6-week group looks like:
 Four seats. Starts Nov 15.
 
 6-week live group for husbands and fathers. Sundays Nov 15 – Dec 20, 7 PM CT. Four seats → go.bethemansystem.com/b1c774c0
+```
+
+---
+
+## 49. Sat 2026-11-07 · 7:00 PM · Couples · Reel
+
+**Reel: The third person in your bed**  
+- [ ] Instagram  - [ ] Facebook  - [ ] Threads  
+**Folder:** `2026-11-07_Sat_7pm_COUPLES_REEL_c5-phones/`  
+**Files:** `c5-phones-cover.jpg`, `c5-phones.mp4`
+
+**Instagram:**
+```
+There's a third person in a lot of marriage beds tonight. It glows.
+
+Try this for one week: phones charge in the kitchen. Both of them. Buy a $10 alarm clock if you need one.
+
+The bedroom is for the two of you. Watch what comes back when the scrolling leaves.
+
+📤 Send this to your spouse. Then talk about it tonight.
+💬 Want help? Comment "COUPLES."
+
+#christianmarriage #marriagetips #husbandandwife #blackcouples #bethemansystem
+```
+
+**Facebook:**
+```
+There's a third person in a lot of marriage beds tonight. It glows.
+
+Try this for one week: phones charge in the kitchen. Both of them. Buy a $10 alarm clock if you need one.
+
+The bedroom is for the two of you. Watch what comes back when the scrolling leaves.
+
+📤 Share this with your spouse, then talk about it tonight.
+Certified marriage counseling: https://5e95-brian.systeme.io/0d29fa39
+
+#christianmarriage #marriagetips
+```
+
+**Threads:**
+```
+There's a third person in a lot of marriage beds tonight. It glows.
+
+One week: both phones charge in the kitchen. The bedroom is for the two of you. Watch what comes back when the scrolling leaves.
+
+Send this to your spouse. Talk about it tonight.
 ```
 
 ---
@@ -2755,7 +2755,53 @@ The free 7-week challenge is running. Join any week → go.bethemansystem.com/42
 
 ---
 
-## 53. Tue 2026-11-10 · 7:00 PM · Be The Man · Post
+## 53. Tue 2026-11-10 · 12:00 PM · Couples · Reel
+
+**Reel: Pray together for 2 minutes**  
+- [ ] Instagram  - [ ] Facebook  - [ ] Threads  
+**Folder:** `2026-11-10_Tue_12pm_COUPLES_REEL_c6-pray/`  
+**Files:** `c6-pray-cover.jpg`, `c6-pray.mp4`
+
+**Instagram:**
+```
+Most Christian couples don't pray together. Not because they don't believe, but because it feels awkward.
+
+Start smaller than you think: hold hands, one sentence each, "Amen." Done.
+
+Two minutes, every night, before you sleep. The awkward wears off in about a week. What it builds doesn't.
+
+📤 Send this to your spouse. Then talk about it tonight.
+💬 Want help? Comment "COUPLES."
+
+#christiancouples #godlymarriage #premaritalcounseling #blackmarriage #bethemansystem
+```
+
+**Facebook:**
+```
+Most Christian couples don't pray together. Not because they don't believe, but because it feels awkward.
+
+Start smaller than you think: hold hands, one sentence each, "Amen." Done.
+
+Two minutes, every night, before you sleep. The awkward wears off in about a week. What it builds doesn't.
+
+📤 Share this with your spouse, then talk about it tonight.
+Certified marriage counseling: https://5e95-brian.systeme.io/0d29fa39
+
+#christiancouples #godlymarriage
+```
+
+**Threads:**
+```
+Most Christian couples don't pray together. Not because they don't believe, but because it's awkward.
+
+Start small: hold hands, one sentence each, amen. Two minutes every night. The awkward wears off in a week.
+
+Send this to your spouse. Talk about it tonight.
+```
+
+---
+
+## 54. Tue 2026-11-10 · 7:00 PM · Be The Man · Post
 
 **A goal with no time is a wish**  
 - [ ] Instagram  - [ ] Facebook  - [ ] Threads  
@@ -2805,52 +2851,6 @@ A goal with no time is a wish.
 Give one goal a day (Tue/Thu), a time (6:10), a place (the garage) and a miss (two in a row). Write it where you'll see it.
 
 Your week on one page, $7 → go.bethemansystem.com/7d78815c
-```
-
----
-
-## 54. Tue 2026-11-10 · 12:00 PM · Couples · Reel
-
-**Reel: Pray together for 2 minutes**  
-- [ ] Instagram  - [ ] Facebook  - [ ] Threads  
-**Folder:** `2026-11-10_Tue_12pm_COUPLES_REEL_c6-pray/`  
-**Files:** `c6-pray-cover.jpg`, `c6-pray.mp4`
-
-**Instagram:**
-```
-Most Christian couples don't pray together. Not because they don't believe, but because it feels awkward.
-
-Start smaller than you think: hold hands, one sentence each, "Amen." Done.
-
-Two minutes, every night, before you sleep. The awkward wears off in about a week. What it builds doesn't.
-
-📤 Send this to your spouse. Then talk about it tonight.
-💬 Want help? Comment "COUPLES."
-
-#christiancouples #godlymarriage #premaritalcounseling #blackmarriage #bethemansystem
-```
-
-**Facebook:**
-```
-Most Christian couples don't pray together. Not because they don't believe, but because it feels awkward.
-
-Start smaller than you think: hold hands, one sentence each, "Amen." Done.
-
-Two minutes, every night, before you sleep. The awkward wears off in about a week. What it builds doesn't.
-
-📤 Share this with your spouse, then talk about it tonight.
-Certified marriage counseling: https://5e95-brian.systeme.io/0d29fa39
-
-#christiancouples #godlymarriage
-```
-
-**Threads:**
-```
-Most Christian couples don't pray together. Not because they don't believe, but because it's awkward.
-
-Start small: hold hands, one sentence each, amen. Two minutes every night. The awkward wears off in a week.
-
-Send this to your spouse. Talk about it tonight.
 ```
 
 ---
@@ -2999,55 +2999,7 @@ Save this for your next date night.
 
 ---
 
-## 58. Sat 2026-11-14 · 7:00 PM · Couples · Reel
-
-**Reel: Don’t preach at your spouse in prayer**  
-- [ ] Instagram  - [ ] Facebook  - [ ] Threads  
-**Folder:** `2026-11-14_Sat_7pm_COUPLES_REEL_c6-at/`  
-**Files:** `c6-at-cover.jpg`, `c6-at.mp4`
-
-**Instagram:**
-```
-"Lord, help my husband to finally listen…"
-
-That's not a prayer. That's a sermon with your eyes closed.
-
-Pray for them, not at them. "Lord, give her rest." "Lord, give him wisdom at work tomorrow." Your spouse should feel covered when you pray, not corrected.
-
-📤 Send this to your spouse. Then talk about it tonight.
-💬 Want help? Comment "COUPLES."
-
-#blackmarriage #blacklove #marriagecounseling #christianmarriage #bethemansystem
-```
-
-**Facebook:**
-```
-"Lord, help my husband to finally listen…"
-
-That's not a prayer. That's a sermon with your eyes closed.
-
-Pray for them, not at them. "Lord, give her rest." "Lord, give him wisdom at work tomorrow." Your spouse should feel covered when you pray, not corrected.
-
-📤 Share this with your spouse, then talk about it tonight.
-Certified marriage counseling: https://5e95-brian.systeme.io/0d29fa39
-
-#blackmarriage #blacklove
-```
-
-**Threads:**
-```
-"Lord, help my husband to finally listen…"
-
-That's not a prayer. That's a sermon with your eyes closed.
-
-Pray for them, not at them. Your spouse should feel covered when you pray, not corrected.
-
-Send this to your spouse. Talk about it tonight.
-```
-
----
-
-## 59. Sat 2026-11-14 · 9:00 AM · Be The Man · Post
+## 58. Sat 2026-11-14 · 9:00 AM · Be The Man · Post
 
 **Group starts tomorrow**  
 - [ ] Instagram  - [ ] Facebook  - [ ] Threads  
@@ -3093,6 +3045,54 @@ The holidays are where systems go to die.
 The 6-week group runs right through them, Sundays Nov 15 to Dec 20. Come out of December with your system still standing. Starts tomorrow.
 
 6-week live group for husbands and fathers. Sundays Nov 15 – Dec 20, 7 PM CT. Four seats → go.bethemansystem.com/b1c774c0
+```
+
+---
+
+## 59. Sat 2026-11-14 · 7:00 PM · Couples · Reel
+
+**Reel: Don’t preach at your spouse in prayer**  
+- [ ] Instagram  - [ ] Facebook  - [ ] Threads  
+**Folder:** `2026-11-14_Sat_7pm_COUPLES_REEL_c6-at/`  
+**Files:** `c6-at-cover.jpg`, `c6-at.mp4`
+
+**Instagram:**
+```
+"Lord, help my husband to finally listen…"
+
+That's not a prayer. That's a sermon with your eyes closed.
+
+Pray for them, not at them. "Lord, give her rest." "Lord, give him wisdom at work tomorrow." Your spouse should feel covered when you pray, not corrected.
+
+📤 Send this to your spouse. Then talk about it tonight.
+💬 Want help? Comment "COUPLES."
+
+#blackmarriage #blacklove #marriagecounseling #christianmarriage #bethemansystem
+```
+
+**Facebook:**
+```
+"Lord, help my husband to finally listen…"
+
+That's not a prayer. That's a sermon with your eyes closed.
+
+Pray for them, not at them. "Lord, give her rest." "Lord, give him wisdom at work tomorrow." Your spouse should feel covered when you pray, not corrected.
+
+📤 Share this with your spouse, then talk about it tonight.
+Certified marriage counseling: https://5e95-brian.systeme.io/0d29fa39
+
+#blackmarriage #blacklove
+```
+
+**Threads:**
+```
+"Lord, help my husband to finally listen…"
+
+That's not a prayer. That's a sermon with your eyes closed.
+
+Pray for them, not at them. Your spouse should feel covered when you pray, not corrected.
+
+Send this to your spouse. Talk about it tonight.
 ```
 
 ---
@@ -3247,7 +3247,52 @@ The free 7-week challenge is running. Join any week → go.bethemansystem.com/42
 
 ---
 
-## 63. Tue 2026-11-17 · 7:00 PM · Be The Man · Post
+## 63. Tue 2026-11-17 · 12:00 PM · Couples · Reel
+
+**Reel: Leave and cleave — before Thanksgiving**  
+- [ ] Instagram  - [ ] Facebook  - [ ] Threads  
+**Folder:** `2026-11-17_Tue_12pm_COUPLES_REEL_c7-leave/`  
+**Files:** `c7-leave-cover.jpg`, `c7-leave.mp4`
+
+**Instagram:**
+```
+"A man shall leave his father and mother and be united to his wife." Genesis 2:24
+
+Leave doesn't mean love your parents less. It means your spouse comes first, and both families can tell.
+
+Before Thanksgiving: decide the plan together, as a couple. Then tell the family, together. Don't let either family negotiate with just one of you.
+
+💬 Engaged or married? Comment "COUPLES" and I'll send you how certified marriage counseling works: a validated assessment, then three sessions built on your results.
+
+#blacklove #marriagecounseling #christianmarriage #marriagetips #bethemansystem
+```
+
+**Facebook:**
+```
+"A man shall leave his father and mother and be united to his wife." Genesis 2:24
+
+Leave doesn't mean love your parents less. It means your spouse comes first, and both families can tell.
+
+Before Thanksgiving: decide the plan together, as a couple. Then tell the family, together. Don't let either family negotiate with just one of you.
+
+Certified marriage counseling for engaged and married couples, with Brian Greene, pastor and certified marriage counselor. A validated assessment, then three sessions built on your results.
+https://5e95-brian.systeme.io/0d29fa39
+
+#blacklove #marriagecounseling
+```
+
+**Threads:**
+```
+"A man shall leave his father and mother and be united to his wife."
+
+Leave doesn't mean love your parents less. It means your spouse is first. Before Thanksgiving: decide the plan together, then tell the family together.
+
+Engaged or married? Certified marriage counseling → 5e95-brian.systeme.io/0d29fa39
+```
+
+---
+
+## 64. Tue 2026-11-17 · 7:00 PM · Be The Man · Post
 
 **The Club: $19 a month**  
 - [ ] Instagram  - [ ] Facebook  - [ ] Threads  
@@ -3291,51 +3336,6 @@ Join: https://go.bethemansystem.com/d6dd7931
 The Be The Man Club: every tool in the store, a new one each month, and one email a week with a time and a trigger. $19 a month. Cancel anytime, keep the files.
 
 The Be The Man Club, $19 a month → go.bethemansystem.com/d6dd7931
-```
-
----
-
-## 64. Tue 2026-11-17 · 12:00 PM · Couples · Reel
-
-**Reel: Leave and cleave — before Thanksgiving**  
-- [ ] Instagram  - [ ] Facebook  - [ ] Threads  
-**Folder:** `2026-11-17_Tue_12pm_COUPLES_REEL_c7-leave/`  
-**Files:** `c7-leave-cover.jpg`, `c7-leave.mp4`
-
-**Instagram:**
-```
-"A man shall leave his father and mother and be united to his wife." Genesis 2:24
-
-Leave doesn't mean love your parents less. It means your spouse comes first, and both families can tell.
-
-Before Thanksgiving: decide the plan together, as a couple. Then tell the family, together. Don't let either family negotiate with just one of you.
-
-💬 Engaged or married? Comment "COUPLES" and I'll send you how certified marriage counseling works: a validated assessment, then three sessions built on your results.
-
-#blacklove #marriagecounseling #christianmarriage #marriagetips #bethemansystem
-```
-
-**Facebook:**
-```
-"A man shall leave his father and mother and be united to his wife." Genesis 2:24
-
-Leave doesn't mean love your parents less. It means your spouse comes first, and both families can tell.
-
-Before Thanksgiving: decide the plan together, as a couple. Then tell the family, together. Don't let either family negotiate with just one of you.
-
-Certified marriage counseling for engaged and married couples, with Brian Greene, pastor and certified marriage counselor. A validated assessment, then three sessions built on your results.
-https://5e95-brian.systeme.io/0d29fa39
-
-#blacklove #marriagecounseling
-```
-
-**Threads:**
-```
-"A man shall leave his father and mother and be united to his wife."
-
-Leave doesn't mean love your parents less. It means your spouse is first. Before Thanksgiving: decide the plan together, then tell the family together.
-
-Engaged or married? Certified marriage counseling → 5e95-brian.systeme.io/0d29fa39
 ```
 
 ---
@@ -3486,53 +3486,7 @@ Save this for your next date night.
 
 ---
 
-## 68. Sat 2026-11-21 · 7:00 PM · Couples · Reel
-
-**Reel: Never choose your mother over your wife in public**  
-- [ ] Instagram  - [ ] Facebook  - [ ] Threads  
-**Folder:** `2026-11-21_Sat_7pm_COUPLES_REEL_c7-side/`  
-**Files:** `c7-side-cover.jpg`, `c7-side.mp4`
-
-**Instagram:**
-```
-If your mother criticizes your wife in front of everyone and you say nothing, silence is a side.
-
-You don't have to be rude. You don't have to make a scene. You do have to be clear.
-
-"Mom, we're good. She's with me." Then talk to your mother privately, later. Your wife needs to know, in that moment, whose team you're on.
-
-📤 Send this to your spouse. Then talk about it tonight.
-💬 Want help? Comment "COUPLES."
-
-#christianmarriage #marriagetips #husbandandwife #blackcouples #bethemansystem
-```
-
-**Facebook:**
-```
-If your mother criticizes your wife in front of everyone and you say nothing, silence is a side.
-
-You don't have to be rude. You don't have to make a scene. You do have to be clear.
-
-"Mom, we're good. She's with me." Then talk to your mother privately, later. Your wife needs to know, in that moment, whose team you're on.
-
-📤 Share this with your spouse, then talk about it tonight.
-Certified marriage counseling: https://5e95-brian.systeme.io/0d29fa39
-
-#christianmarriage #marriagetips
-```
-
-**Threads:**
-```
-If your mother criticizes your wife in front of everyone and you say nothing, silence is a side.
-
-You don't have to be rude. You do have to be clear: "Mom, we're good. She's with me."
-
-Send this to your spouse. Talk about it tonight.
-```
-
----
-
-## 69. Sat 2026-11-21 · 9:00 AM · Be The Man · Post
+## 68. Sat 2026-11-21 · 9:00 AM · Be The Man · Post
 
 **Name the miss before she has to**  
 - [ ] Instagram  - [ ] Facebook  - [ ] Threads  
@@ -3580,6 +3534,52 @@ The fastest way to rebuild trust at home: name the miss before she has to.
 No speech. No excuses.
 
 The Be The Man Club, $19 a month → go.bethemansystem.com/d6dd7931
+```
+
+---
+
+## 69. Sat 2026-11-21 · 7:00 PM · Couples · Reel
+
+**Reel: Never choose your mother over your wife in public**  
+- [ ] Instagram  - [ ] Facebook  - [ ] Threads  
+**Folder:** `2026-11-21_Sat_7pm_COUPLES_REEL_c7-side/`  
+**Files:** `c7-side-cover.jpg`, `c7-side.mp4`
+
+**Instagram:**
+```
+If your mother criticizes your wife in front of everyone and you say nothing, silence is a side.
+
+You don't have to be rude. You don't have to make a scene. You do have to be clear.
+
+"Mom, we're good. She's with me." Then talk to your mother privately, later. Your wife needs to know, in that moment, whose team you're on.
+
+📤 Send this to your spouse. Then talk about it tonight.
+💬 Want help? Comment "COUPLES."
+
+#christianmarriage #marriagetips #husbandandwife #blackcouples #bethemansystem
+```
+
+**Facebook:**
+```
+If your mother criticizes your wife in front of everyone and you say nothing, silence is a side.
+
+You don't have to be rude. You don't have to make a scene. You do have to be clear.
+
+"Mom, we're good. She's with me." Then talk to your mother privately, later. Your wife needs to know, in that moment, whose team you're on.
+
+📤 Share this with your spouse, then talk about it tonight.
+Certified marriage counseling: https://5e95-brian.systeme.io/0d29fa39
+
+#christianmarriage #marriagetips
+```
+
+**Threads:**
+```
+If your mother criticizes your wife in front of everyone and you say nothing, silence is a side.
+
+You don't have to be rude. You do have to be clear: "Mom, we're good. She's with me."
+
+Send this to your spouse. Talk about it tonight.
 ```
 
 ---
@@ -3733,49 +3733,7 @@ The free 7-week challenge is running. Join any week → go.bethemansystem.com/42
 
 ---
 
-## 73. Tue 2026-11-24 · 7:00 PM · Be The Man · Post
-
-**Husband Kit: before the holidays**  
-- [ ] Instagram  - [ ] Facebook  - [ ] Threads  
-**Folder:** `2026-11-24_Tue_7pm_BTM_POST_w8-husband-kit/`  
-**Files:** `w8-husband-kit.jpg`
-
-**Instagram:**
-```
-December is loud. Travel, family, money, schedules. Marriages don't usually break in December. They drift.
-
-Lead yours on purpose this year. The Husband Kit puts the tools for leading your marriage in one download.
-
-🧰 The Husband Kit, $39. The tools for leading your marriage, in one download.
-🔗 Link in bio.
-
-#mensdiscipline #christianhusband #christianmen #christianfather #bethemansystem
-```
-
-**Facebook:**
-```
-December is loud. Travel, family, money, schedules. Marriages don't usually break in December. They drift.
-
-Lead yours on purpose this year. The Husband Kit puts the tools for leading your marriage in one download.
-
-The Husband Kit, $39. The tools for leading your marriage, in one download.
-https://5e95-brian.systeme.io/d1d8c97d
-
-#mensdiscipline #christianhusband
-```
-
-**Threads:**
-```
-Marriages don't usually break in December. They drift.
-
-Travel, family, money, schedules. Lead yours on purpose this year.
-
-The Husband Kit, $39 → 5e95-brian.systeme.io/d1d8c97d
-```
-
----
-
-## 74. Tue 2026-11-24 · 12:00 PM · Couples · Reel
+## 73. Tue 2026-11-24 · 12:00 PM · Couples · Reel
 
 **Reel: Notice it out loud**  
 - [ ] Instagram  - [ ] Facebook  - [ ] Threads  
@@ -3817,6 +3775,48 @@ You notice when they forget. Do you notice, out loud, when they remember?
 Thanksgiving week: three specific thank-yous to your spouse every day. "Thank you for getting up with the baby so I could sleep."
 
 Send this to your spouse. Talk about it tonight.
+```
+
+---
+
+## 74. Tue 2026-11-24 · 7:00 PM · Be The Man · Post
+
+**Husband Kit: before the holidays**  
+- [ ] Instagram  - [ ] Facebook  - [ ] Threads  
+**Folder:** `2026-11-24_Tue_7pm_BTM_POST_w8-husband-kit/`  
+**Files:** `w8-husband-kit.jpg`
+
+**Instagram:**
+```
+December is loud. Travel, family, money, schedules. Marriages don't usually break in December. They drift.
+
+Lead yours on purpose this year. The Husband Kit puts the tools for leading your marriage in one download.
+
+🧰 The Husband Kit, $39. The tools for leading your marriage, in one download.
+🔗 Link in bio.
+
+#mensdiscipline #christianhusband #christianmen #christianfather #bethemansystem
+```
+
+**Facebook:**
+```
+December is loud. Travel, family, money, schedules. Marriages don't usually break in December. They drift.
+
+Lead yours on purpose this year. The Husband Kit puts the tools for leading your marriage in one download.
+
+The Husband Kit, $39. The tools for leading your marriage, in one download.
+https://5e95-brian.systeme.io/d1d8c97d
+
+#mensdiscipline #christianhusband
+```
+
+**Threads:**
+```
+Marriages don't usually break in December. They drift.
+
+Travel, family, money, schedules. Lead yours on purpose this year.
+
+The Husband Kit, $39 → 5e95-brian.systeme.io/d1d8c97d
 ```
 
 ---
@@ -3968,7 +3968,49 @@ Engaged or married? Certified marriage counseling → 5e95-brian.systeme.io/0d29
 
 ---
 
-## 78. Sat 2026-11-28 · 7:00 PM · Couples · Reel
+## 78. Sat 2026-11-28 · 9:00 AM · Be The Man · Post
+
+**Father Kit: they’re home for the holidays**  
+- [ ] Instagram  - [ ] Facebook  - [ ] Threads  
+**Folder:** `2026-11-28_Sat_9am_BTM_POST_w8-father-kit/`  
+**Files:** `w8-father-kit.jpg`
+
+**Instagram:**
+```
+The kids are home all month. They won't remember most of the gifts. They'll remember whether you were in the room, and whether the room felt safe when you were.
+
+The Father Kit gives you the tools for leading them on purpose: the conversations, the plan, the questions.
+
+🧰 The Father Kit, $29. The tools for leading your kids, in one download.
+🔗 Link in bio.
+
+#christianhusband #christianmen #christianfather #faithandfamily #bethemansystem
+```
+
+**Facebook:**
+```
+The kids are home all month. They won't remember most of the gifts. They'll remember whether you were in the room, and whether the room felt safe when you were.
+
+The Father Kit gives you the tools for leading them on purpose: the conversations, the plan, the questions.
+
+The Father Kit, $29. The tools for leading your kids, in one download.
+https://5e95-brian.systeme.io/5cbc7892
+
+#christianhusband #christianmen
+```
+
+**Threads:**
+```
+Your kids won't remember most of the gifts.
+
+They'll remember whether you were in the room, and whether the room felt safe when you were in it.
+
+The Father Kit, $29 → 5e95-brian.systeme.io/5cbc7892
+```
+
+---
+
+## 79. Sat 2026-11-28 · 7:00 PM · Couples · Reel
 
 **Reel: Thankful in a hard season**  
 - [ ] Instagram  - [ ] Facebook  - [ ] Threads  
@@ -4010,48 +4052,6 @@ Maybe this wasn't your best year together. Be thankful anyway.
 Not for the hard parts. For the one who stayed in them with you. You're still here. That counts.
 
 Send this to your spouse. Talk about it tonight.
-```
-
----
-
-## 79. Sat 2026-11-28 · 9:00 AM · Be The Man · Post
-
-**Father Kit: they’re home for the holidays**  
-- [ ] Instagram  - [ ] Facebook  - [ ] Threads  
-**Folder:** `2026-11-28_Sat_9am_BTM_POST_w8-father-kit/`  
-**Files:** `w8-father-kit.jpg`
-
-**Instagram:**
-```
-The kids are home all month. They won't remember most of the gifts. They'll remember whether you were in the room, and whether the room felt safe when you were.
-
-The Father Kit gives you the tools for leading them on purpose: the conversations, the plan, the questions.
-
-🧰 The Father Kit, $29. The tools for leading your kids, in one download.
-🔗 Link in bio.
-
-#christianhusband #christianmen #christianfather #faithandfamily #bethemansystem
-```
-
-**Facebook:**
-```
-The kids are home all month. They won't remember most of the gifts. They'll remember whether you were in the room, and whether the room felt safe when you were.
-
-The Father Kit gives you the tools for leading them on purpose: the conversations, the plan, the questions.
-
-The Father Kit, $29. The tools for leading your kids, in one download.
-https://5e95-brian.systeme.io/5cbc7892
-
-#christianhusband #christianmen
-```
-
-**Threads:**
-```
-Your kids won't remember most of the gifts.
-
-They'll remember whether you were in the room, and whether the room felt safe when you were in it.
-
-The Father Kit, $29 → 5e95-brian.systeme.io/5cbc7892
 ```
 
 ---
@@ -4200,57 +4200,7 @@ The Faith Kit, $29 → 5e95-brian.systeme.io/d616652a
 
 ---
 
-## 83. Tue 2026-12-01 · 7:00 PM · Be The Man · Post
-
-**Seek first — with a time attached**  
-- [ ] Instagram  - [ ] Facebook  - [ ] Threads  
-**Folder:** `2026-12-01_Tue_7pm_BTM_POST_w9-seek/`  
-**Files:** `w9-seek.jpg`
-
-**Instagram:**
-```
-"But seek first his kingdom and his righteousness, and all these things will be given to you as well." Matthew 6:33
-
-Seek first. Then schedule.
-
-If He's first, He gets the first slot of the day, not the one left over after the phone, the news and the email.
-
-What's the first thing you touch tomorrow morning?
-
-👇 Comment "STEP1" and I'll send you the free worksheet.
-
-#blackfathers #selfdisciplineformen #blackchristianmen #mensdiscipline #bethemansystem
-```
-
-**Facebook:**
-```
-"But seek first his kingdom and his righteousness, and all these things will be given to you as well." Matthew 6:33
-
-Seek first. Then schedule.
-
-If He's first, He gets the first slot of the day, not the one left over after the phone, the news and the email.
-
-What's the first thing you touch tomorrow morning?
-
-Get Step 1 free (20 minutes and a pen): https://go.bethemansystem.com/framework
-
-#blackfathers #selfdisciplineformen
-```
-
-**Threads:**
-```
-"Seek first his kingdom." Matthew 6:33
-
-If He's first, He gets the first slot of the day, not the one left over after the phone, the news and the email.
-
-What's the first thing you touch tomorrow?
-
-Step 1 is free → go.bethemansystem.com/framework
-```
-
----
-
-## 84. Tue 2026-12-01 · 12:00 PM · Couples · Reel
+## 83. Tue 2026-12-01 · 12:00 PM · Couples · Reel
 
 **Reel: Don’t start January in debt and in a fight**  
 - [ ] Instagram  - [ ] Facebook  - [ ] Threads  
@@ -4298,6 +4248,56 @@ A lot of couples start January in debt, and in a fight about the debt.
 Decide now: one Christmas number, together. Who you're buying for. Cash or card, not both. The best gift is peace in February.
 
 Send this to your spouse. Talk about it tonight.
+```
+
+---
+
+## 84. Tue 2026-12-01 · 7:00 PM · Be The Man · Post
+
+**Seek first — with a time attached**  
+- [ ] Instagram  - [ ] Facebook  - [ ] Threads  
+**Folder:** `2026-12-01_Tue_7pm_BTM_POST_w9-seek/`  
+**Files:** `w9-seek.jpg`
+
+**Instagram:**
+```
+"But seek first his kingdom and his righteousness, and all these things will be given to you as well." Matthew 6:33
+
+Seek first. Then schedule.
+
+If He's first, He gets the first slot of the day, not the one left over after the phone, the news and the email.
+
+What's the first thing you touch tomorrow morning?
+
+👇 Comment "STEP1" and I'll send you the free worksheet.
+
+#blackfathers #selfdisciplineformen #blackchristianmen #mensdiscipline #bethemansystem
+```
+
+**Facebook:**
+```
+"But seek first his kingdom and his righteousness, and all these things will be given to you as well." Matthew 6:33
+
+Seek first. Then schedule.
+
+If He's first, He gets the first slot of the day, not the one left over after the phone, the news and the email.
+
+What's the first thing you touch tomorrow morning?
+
+Get Step 1 free (20 minutes and a pen): https://go.bethemansystem.com/framework
+
+#blackfathers #selfdisciplineformen
+```
+
+**Threads:**
+```
+"Seek first his kingdom." Matthew 6:33
+
+If He's first, He gets the first slot of the day, not the one left over after the phone, the news and the email.
+
+What's the first thing you touch tomorrow?
+
+Step 1 is free → go.bethemansystem.com/framework
 ```
 
 ---
@@ -4457,7 +4457,52 @@ Engaged or married? Certified marriage counseling → 5e95-brian.systeme.io/0d29
 
 ---
 
-## 88. Sat 2026-12-05 · 7:00 PM · Couples · Reel
+## 88. Sat 2026-12-05 · 9:00 AM · Be The Man · Post
+
+**Pray for her by name**  
+- [ ] Instagram  - [ ] Facebook  - [ ] Threads  
+**Folder:** `2026-12-05_Sat_9am_BTM_POST_w9-pray-for-her/`  
+**Files:** `w9-pray-for-her.jpg`
+
+**Instagram:**
+```
+When was the last time your wife heard you pray for her, by name?
+
+Not over dinner. Not "bless this family." Her name, her day, the thing she's worried about, out loud, with your hand on her shoulder.
+
+Thirty seconds. Tonight.
+
+🗓 The free 7-week challenge is running now. Join any week, and the first step comes in your welcome email.
+🔗 Link in bio → "Count me in."
+
+#blackchristianmen #mensdiscipline #christianhusband #christianmen #bethemansystem
+```
+
+**Facebook:**
+```
+When was the last time your wife heard you pray for her, by name?
+
+Not over dinner. Not "bless this family." Her name, her day, the thing she's worried about, out loud, with your hand on her shoulder.
+
+Thirty seconds. Tonight.
+
+The free 7-week challenge is running now. Join any week: https://go.bethemansystem.com/42f82c9e
+
+#blackchristianmen #mensdiscipline
+```
+
+**Threads:**
+```
+When was the last time your wife heard you pray for her, by name?
+
+Not "bless this family." Her name, her day, the thing she's worried about. Out loud. Thirty seconds. Tonight.
+
+The free 7-week challenge is running. Join any week → go.bethemansystem.com/42f82c9e
+```
+
+---
+
+## 89. Sat 2026-12-05 · 7:00 PM · Couples · Reel
 
 **Reel: The gift they actually want**  
 - [ ] Instagram  - [ ] Facebook  - [ ] Threads  
@@ -4499,51 +4544,6 @@ She doesn't want another candle. He doesn't want another gadget.
 They want to feel known. Give a planned day: sitter booked, phone off, everything their pick. Cheaper than most gifts, remembered longer.
 
 Save this for your next date night.
-```
-
----
-
-## 89. Sat 2026-12-05 · 9:00 AM · Be The Man · Post
-
-**Pray for her by name**  
-- [ ] Instagram  - [ ] Facebook  - [ ] Threads  
-**Folder:** `2026-12-05_Sat_9am_BTM_POST_w9-pray-for-her/`  
-**Files:** `w9-pray-for-her.jpg`
-
-**Instagram:**
-```
-When was the last time your wife heard you pray for her, by name?
-
-Not over dinner. Not "bless this family." Her name, her day, the thing she's worried about, out loud, with your hand on her shoulder.
-
-Thirty seconds. Tonight.
-
-🗓 The free 7-week challenge is running now. Join any week, and the first step comes in your welcome email.
-🔗 Link in bio → "Count me in."
-
-#blackchristianmen #mensdiscipline #christianhusband #christianmen #bethemansystem
-```
-
-**Facebook:**
-```
-When was the last time your wife heard you pray for her, by name?
-
-Not over dinner. Not "bless this family." Her name, her day, the thing she's worried about, out loud, with your hand on her shoulder.
-
-Thirty seconds. Tonight.
-
-The free 7-week challenge is running now. Join any week: https://go.bethemansystem.com/42f82c9e
-
-#blackchristianmen #mensdiscipline
-```
-
-**Threads:**
-```
-When was the last time your wife heard you pray for her, by name?
-
-Not "bless this family." Her name, her day, the thing she's worried about. Out loud. Thirty seconds. Tonight.
-
-The free 7-week challenge is running. Join any week → go.bethemansystem.com/42f82c9e
 ```
 
 ---
@@ -4685,51 +4685,7 @@ The Father Kit, $29 → 5e95-brian.systeme.io/5cbc7892
 
 ---
 
-## 93. Tue 2026-12-08 · 7:00 PM · Be The Man · Post
-
-**Legacy is a Tuesday**  
-- [ ] Instagram  - [ ] Facebook  - [ ] Threads  
-**Folder:** `2026-12-08_Tue_7pm_BTM_POST_w10-legacy/`  
-**Files:** `w10-legacy.jpg`
-
-**Instagram:**
-```
-Legacy isn't a speech at your funeral. It's a Tuesday.
-
-It's what your kids watched you do when nobody was clapping. How you answered the phone when it was their mother. Whether you came home when you said you would.
-
-You're writing it this week whether you mean to or not.
-
-👇 Comment "STEP1" and I'll send you the free worksheet.
-
-#christianmen #christianfather #faithandfamily #blackmenwholead #bethemansystem
-```
-
-**Facebook:**
-```
-Legacy isn't a speech at your funeral. It's a Tuesday.
-
-It's what your kids watched you do when nobody was clapping. How you answered the phone when it was their mother. Whether you came home when you said you would.
-
-You're writing it this week whether you mean to or not.
-
-Get Step 1 free (20 minutes and a pen): https://go.bethemansystem.com/framework
-
-#christianmen #christianfather
-```
-
-**Threads:**
-```
-Legacy isn't a speech at your funeral. It's a Tuesday.
-
-It's what your kids watched you do when nobody was clapping. You're writing it this week whether you mean to or not.
-
-Step 1 is free → go.bethemansystem.com/framework
-```
-
----
-
-## 94. Tue 2026-12-08 · 12:00 PM · Couples · Reel
+## 93. Tue 2026-12-08 · 12:00 PM · Couples · Reel
 
 **Reel: The six-second kiss**  
 - [ ] Instagram  - [ ] Facebook  - [ ] Threads  
@@ -4771,6 +4727,50 @@ When did you last kiss for longer than a peck?
 The goodbye peck is a habit. Six seconds is a choice. This week, leaving and coming home: six seconds. Count if you have to.
 
 Send this to your spouse. Talk about it tonight.
+```
+
+---
+
+## 94. Tue 2026-12-08 · 7:00 PM · Be The Man · Post
+
+**Legacy is a Tuesday**  
+- [ ] Instagram  - [ ] Facebook  - [ ] Threads  
+**Folder:** `2026-12-08_Tue_7pm_BTM_POST_w10-legacy/`  
+**Files:** `w10-legacy.jpg`
+
+**Instagram:**
+```
+Legacy isn't a speech at your funeral. It's a Tuesday.
+
+It's what your kids watched you do when nobody was clapping. How you answered the phone when it was their mother. Whether you came home when you said you would.
+
+You're writing it this week whether you mean to or not.
+
+👇 Comment "STEP1" and I'll send you the free worksheet.
+
+#christianmen #christianfather #faithandfamily #blackmenwholead #bethemansystem
+```
+
+**Facebook:**
+```
+Legacy isn't a speech at your funeral. It's a Tuesday.
+
+It's what your kids watched you do when nobody was clapping. How you answered the phone when it was their mother. Whether you came home when you said you would.
+
+You're writing it this week whether you mean to or not.
+
+Get Step 1 free (20 minutes and a pen): https://go.bethemansystem.com/framework
+
+#christianmen #christianfather
+```
+
+**Threads:**
+```
+Legacy isn't a speech at your funeral. It's a Tuesday.
+
+It's what your kids watched you do when nobody was clapping. You're writing it this week whether you mean to or not.
+
+Step 1 is free → go.bethemansystem.com/framework
 ```
 
 ---
@@ -4929,7 +4929,49 @@ Save this for your next date night.
 
 ---
 
-## 98. Sat 2026-12-12 · 7:00 PM · Couples · Reel
+## 98. Sat 2026-12-12 · 9:00 AM · Be The Man · Post
+
+**A gift that’s still working in March**  
+- [ ] Instagram  - [ ] Facebook  - [ ] Threads  
+**Folder:** `2026-12-12_Sat_9am_BTM_POST_w10-gift/`  
+**Files:** `w10-gift.jpg`
+
+**Instagram:**
+```
+For the man in your life who says he doesn't need anything:
+
+Give him a gift that's still working in March. The Be The Man Club, yearly: twelve months of tools, a new one every month, and one email a week with a time and a trigger.
+
+🎁 The Be The Man Club, yearly: $149 for twelve months of tools. A gift that's still working in March.
+🔗 Link in bio → "Join the Club."
+
+#christianhusband #christianmen #christianfather #faithandfamily #bethemansystem
+```
+
+**Facebook:**
+```
+For the man in your life who says he doesn't need anything:
+
+Give him a gift that's still working in March. The Be The Man Club, yearly: twelve months of tools, a new one every month, and one email a week with a time and a trigger.
+
+The Be The Man Club, yearly: $149 for twelve months of tools. A gift that's still working in March.
+https://go.bethemansystem.com/c24bf36b
+
+#christianhusband #christianmen
+```
+
+**Threads:**
+```
+For the man who says he doesn't need anything: give him a gift that's still working in March.
+
+Twelve months of tools, one email a week with a time and a trigger.
+
+The Club, yearly: $149. A gift that's still working in March → go.bethemansystem.com/c24bf36b
+```
+
+---
+
+## 99. Sat 2026-12-12 · 7:00 PM · Couples · Reel
 
 **Reel: It’s not what you said, it’s how**  
 - [ ] Instagram  - [ ] Facebook  - [ ] Threads  
@@ -4972,48 +5014,6 @@ It wasn't what you said. It was how: the sigh, the eye roll, the tone that said 
 Same words, softer voice, different marriage.
 
 Engaged or married? Certified marriage counseling → 5e95-brian.systeme.io/0d29fa39
-```
-
----
-
-## 99. Sat 2026-12-12 · 9:00 AM · Be The Man · Post
-
-**A gift that’s still working in March**  
-- [ ] Instagram  - [ ] Facebook  - [ ] Threads  
-**Folder:** `2026-12-12_Sat_9am_BTM_POST_w10-gift/`  
-**Files:** `w10-gift.jpg`
-
-**Instagram:**
-```
-For the man in your life who says he doesn't need anything:
-
-Give him a gift that's still working in March. The Be The Man Club, yearly: twelve months of tools, a new one every month, and one email a week with a time and a trigger.
-
-🎁 The Be The Man Club, yearly: $149 for twelve months of tools. A gift that's still working in March.
-🔗 Link in bio → "Join the Club."
-
-#christianhusband #christianmen #christianfather #faithandfamily #bethemansystem
-```
-
-**Facebook:**
-```
-For the man in your life who says he doesn't need anything:
-
-Give him a gift that's still working in March. The Be The Man Club, yearly: twelve months of tools, a new one every month, and one email a week with a time and a trigger.
-
-The Be The Man Club, yearly: $149 for twelve months of tools. A gift that's still working in March.
-https://go.bethemansystem.com/c24bf36b
-
-#christianhusband #christianmen
-```
-
-**Threads:**
-```
-For the man who says he doesn't need anything: give him a gift that's still working in March.
-
-Twelve months of tools, one email a week with a time and a trigger.
-
-The Club, yearly: $149. A gift that's still working in March → go.bethemansystem.com/c24bf36b
 ```
 
 ---
@@ -5165,53 +5165,7 @@ Step 1 is free → go.bethemansystem.com/framework
 
 ---
 
-## 103. Tue 2026-12-15 · 7:00 PM · Be The Man · Post
-
-**Who’s carrying Christmas?**  
-- [ ] Instagram  - [ ] Facebook  - [ ] Threads  
-**Folder:** `2026-12-15_Tue_7pm_BTM_POST_w11-husband/`  
-**Files:** `w11-husband.jpg`
-
-**Instagram:**
-```
-Honest question: who's carrying Christmas in your house?
-
-The list. The gifts. The cooking. The family calls. The teacher gifts. The schedule.
-
-Pick up three things off her list tonight, without being asked, and don't announce it. That's leadership.
-
-🧰 The Husband Kit, $39. The tools for leading your marriage, in one download.
-🔗 Link in bio.
-
-#christianfather #faithandfamily #blackmenwholead #godlyhusband #bethemansystem
-```
-
-**Facebook:**
-```
-Honest question: who's carrying Christmas in your house?
-
-The list. The gifts. The cooking. The family calls. The teacher gifts. The schedule.
-
-Pick up three things off her list tonight, without being asked, and don't announce it. That's leadership.
-
-The Husband Kit, $39. The tools for leading your marriage, in one download.
-https://5e95-brian.systeme.io/d1d8c97d
-
-#christianfather #faithandfamily
-```
-
-**Threads:**
-```
-Honest question: who's carrying Christmas in your house?
-
-Pick up three things off her list tonight. Without being asked. Without announcing it. That's leadership.
-
-The Husband Kit, $39 → 5e95-brian.systeme.io/d1d8c97d
-```
-
----
-
-## 104. Tue 2026-12-15 · 12:00 PM · Couples · Reel
+## 103. Tue 2026-12-15 · 12:00 PM · Couples · Reel
 
 **Reel: The house they’ll remember**  
 - [ ] Instagram  - [ ] Facebook  - [ ] Threads  
@@ -5253,6 +5207,52 @@ Your kids won't remember what was under the tree. They'll remember what it felt 
 Peace or tension. A team or keeping score. Give them peace.
 
 Send this to your spouse. Talk about it tonight.
+```
+
+---
+
+## 104. Tue 2026-12-15 · 7:00 PM · Be The Man · Post
+
+**Who’s carrying Christmas?**  
+- [ ] Instagram  - [ ] Facebook  - [ ] Threads  
+**Folder:** `2026-12-15_Tue_7pm_BTM_POST_w11-husband/`  
+**Files:** `w11-husband.jpg`
+
+**Instagram:**
+```
+Honest question: who's carrying Christmas in your house?
+
+The list. The gifts. The cooking. The family calls. The teacher gifts. The schedule.
+
+Pick up three things off her list tonight, without being asked, and don't announce it. That's leadership.
+
+🧰 The Husband Kit, $39. The tools for leading your marriage, in one download.
+🔗 Link in bio.
+
+#christianfather #faithandfamily #blackmenwholead #godlyhusband #bethemansystem
+```
+
+**Facebook:**
+```
+Honest question: who's carrying Christmas in your house?
+
+The list. The gifts. The cooking. The family calls. The teacher gifts. The schedule.
+
+Pick up three things off her list tonight, without being asked, and don't announce it. That's leadership.
+
+The Husband Kit, $39. The tools for leading your marriage, in one download.
+https://5e95-brian.systeme.io/d1d8c97d
+
+#christianfather #faithandfamily
+```
+
+**Threads:**
+```
+Honest question: who's carrying Christmas in your house?
+
+Pick up three things off her list tonight. Without being asked. Without announcing it. That's leadership.
+
+The Husband Kit, $39 → 5e95-brian.systeme.io/d1d8c97d
 ```
 
 ---
@@ -5411,7 +5411,52 @@ Save this for your next date night.
 
 ---
 
-## 108. Sat 2026-12-19 · 7:00 PM · Couples · Reel
+## 108. Sat 2026-12-19 · 9:00 AM · Be The Man · Post
+
+**Stuck? 15 minutes**  
+- [ ] Instagram  - [ ] Facebook  - [ ] Threads  
+**Folder:** `2026-12-19_Sat_9am_BTM_POST_w11-call/`  
+**Files:** `w11-call.jpg`
+
+**Instagram:**
+```
+Before the year ends: where are you stuck?
+
+Your marriage. Your temper. Your faith. The same promise you've made every January.
+
+Book a free 15-minute call with me. No pitch. We'll name where you are and one next step, and you'll leave with a time on it.
+
+📞 Stuck somewhere? Book a free 15-minute call with me.
+🔗 Link in bio → "Book a free call."
+
+#mensdiscipline #christianhusband #christianmen #christianfather #bethemansystem
+```
+
+**Facebook:**
+```
+Before the year ends: where are you stuck?
+
+Your marriage. Your temper. Your faith. The same promise you've made every January.
+
+Book a free 15-minute call with me. No pitch. We'll name where you are and one next step, and you'll leave with a time on it.
+
+Stuck somewhere? Book a free 15-minute call: https://go.bethemansystem.com/085b95e4
+
+#mensdiscipline #christianhusband
+```
+
+**Threads:**
+```
+Before the year ends: where are you stuck? Your marriage, your temper, your faith, the same January promise.
+
+15 minutes, free. We'll name one next step with a time on it.
+
+Free 15-minute call: where are you stuck? → go.bethemansystem.com/085b95e4
+```
+
+---
+
+## 109. Sat 2026-12-19 · 7:00 PM · Couples · Reel
 
 **Reel: If Christmas is hard this year**  
 - [ ] Instagram  - [ ] Facebook  - [ ] Threads  
@@ -5456,51 +5501,6 @@ If Christmas is hard in your marriage this year, remember the first one: a tired
 And God showed up right in the middle of it. He still does. Asking for help isn't giving up.
 
 Engaged or married? Certified marriage counseling → 5e95-brian.systeme.io/0d29fa39
-```
-
----
-
-## 109. Sat 2026-12-19 · 9:00 AM · Be The Man · Post
-
-**Stuck? 15 minutes**  
-- [ ] Instagram  - [ ] Facebook  - [ ] Threads  
-**Folder:** `2026-12-19_Sat_9am_BTM_POST_w11-call/`  
-**Files:** `w11-call.jpg`
-
-**Instagram:**
-```
-Before the year ends: where are you stuck?
-
-Your marriage. Your temper. Your faith. The same promise you've made every January.
-
-Book a free 15-minute call with me. No pitch. We'll name where you are and one next step, and you'll leave with a time on it.
-
-📞 Stuck somewhere? Book a free 15-minute call with me.
-🔗 Link in bio → "Book a free call."
-
-#mensdiscipline #christianhusband #christianmen #christianfather #bethemansystem
-```
-
-**Facebook:**
-```
-Before the year ends: where are you stuck?
-
-Your marriage. Your temper. Your faith. The same promise you've made every January.
-
-Book a free 15-minute call with me. No pitch. We'll name where you are and one next step, and you'll leave with a time on it.
-
-Stuck somewhere? Book a free 15-minute call: https://go.bethemansystem.com/085b95e4
-
-#mensdiscipline #christianhusband
-```
-
-**Threads:**
-```
-Before the year ends: where are you stuck? Your marriage, your temper, your faith, the same January promise.
-
-15 minutes, free. We'll name one next step with a time on it.
-
-Free 15-minute call: where are you stuck? → go.bethemansystem.com/085b95e4
 ```
 
 ---
@@ -5647,53 +5647,7 @@ Step 1 is free → go.bethemansystem.com/framework
 
 ---
 
-## 113. Tue 2026-12-22 · 7:00 PM · Be The Man · Post
-
-**Start January with one page**  
-- [ ] Instagram  - [ ] Facebook  - [ ] Threads  
-**Folder:** `2026-12-22_Tue_7pm_BTM_POST_w12-scorecard/`  
-**Files:** `w12-scorecard.jpg`
-
-**Instagram:**
-```
-Start January with one page, not a new personality.
-
-Four decisions. Each with a time. Each with a miss written down before the week starts. Filled in the day it happens, not from memory on Sunday night.
-
-The Weekly Scorecard: $7. Print it before the 1st.
-
-📋 The Weekly Scorecard: your week on one page, $7. Four decisions, each with a time and a written miss.
-🔗 Link in bio.
-
-#christianfather #faithandfamily #blackmenwholead #godlyhusband #bethemansystem
-```
-
-**Facebook:**
-```
-Start January with one page, not a new personality.
-
-Four decisions. Each with a time. Each with a miss written down before the week starts. Filled in the day it happens, not from memory on Sunday night.
-
-The Weekly Scorecard: $7. Print it before the 1st.
-
-The Weekly Scorecard: your week on one page, $7. Four decisions, each with a time and a written miss.
-https://go.bethemansystem.com/7d78815c
-
-#christianfather #faithandfamily
-```
-
-**Threads:**
-```
-Start January with one page, not a new personality.
-
-Four decisions, each with a time and a written miss. Filled in the day it happens.
-
-Your week on one page, $7 → go.bethemansystem.com/7d78815c
-```
-
----
-
-## 114. Tue 2026-12-22 · 12:00 PM · Couples · Reel
+## 113. Tue 2026-12-22 · 12:00 PM · Couples · Reel
 
 **Reel: Look back together before you look ahead**  
 - [ ] Instagram  - [ ] Facebook  - [ ] Threads  
@@ -5743,6 +5697,52 @@ What was our best moment this year? When did we feel far apart? What do we want 
 Then plan 2027 as a team.
 
 Save this for your next date night.
+```
+
+---
+
+## 114. Tue 2026-12-22 · 7:00 PM · Be The Man · Post
+
+**Start January with one page**  
+- [ ] Instagram  - [ ] Facebook  - [ ] Threads  
+**Folder:** `2026-12-22_Tue_7pm_BTM_POST_w12-scorecard/`  
+**Files:** `w12-scorecard.jpg`
+
+**Instagram:**
+```
+Start January with one page, not a new personality.
+
+Four decisions. Each with a time. Each with a miss written down before the week starts. Filled in the day it happens, not from memory on Sunday night.
+
+The Weekly Scorecard: $7. Print it before the 1st.
+
+📋 The Weekly Scorecard: your week on one page, $7. Four decisions, each with a time and a written miss.
+🔗 Link in bio.
+
+#christianfather #faithandfamily #blackmenwholead #godlyhusband #bethemansystem
+```
+
+**Facebook:**
+```
+Start January with one page, not a new personality.
+
+Four decisions. Each with a time. Each with a miss written down before the week starts. Filled in the day it happens, not from memory on Sunday night.
+
+The Weekly Scorecard: $7. Print it before the 1st.
+
+The Weekly Scorecard: your week on one page, $7. Four decisions, each with a time and a written miss.
+https://go.bethemansystem.com/7d78815c
+
+#christianfather #faithandfamily
+```
+
+**Threads:**
+```
+Start January with one page, not a new personality.
+
+Four decisions, each with a time and a written miss. Filled in the day it happens.
+
+Your week on one page, $7 → go.bethemansystem.com/7d78815c
 ```
 
 ---
@@ -5900,7 +5900,48 @@ Send this to your spouse. Talk about it tonight.
 
 ---
 
-## 118. Sat 2026-12-26 · 7:00 PM · Couples · Reel
+## 118. Sat 2026-12-26 · 9:00 AM · Be The Man · Post
+
+**Don’t start 2027 alone**  
+- [ ] Instagram  - [ ] Facebook  - [ ] Threads  
+**Folder:** `2026-12-26_Sat_9am_BTM_POST_w12-call/`  
+**Files:** `w12-call.jpg`
+
+**Instagram:**
+```
+Every January you start over, and you start alone.
+
+Not this year. Book a free 15-minute call with me before the 1st. We'll name where you are, what keeps stopping you, and one decision with a time on it.
+
+📞 Stuck somewhere? Book a free 15-minute call with me.
+🔗 Link in bio → "Book a free call."
+
+#blackfathers #selfdisciplineformen #blackchristianmen #mensdiscipline #bethemansystem
+```
+
+**Facebook:**
+```
+Every January you start over, and you start alone.
+
+Not this year. Book a free 15-minute call with me before the 1st. We'll name where you are, what keeps stopping you, and one decision with a time on it.
+
+Stuck somewhere? Book a free 15-minute call: https://go.bethemansystem.com/085b95e4
+
+#blackfathers #selfdisciplineformen
+```
+
+**Threads:**
+```
+Every January you start over, and you start alone.
+
+Not this year. 15 minutes, free, before the 1st. One decision with a time on it.
+
+Free 15-minute call: where are you stuck? → go.bethemansystem.com/085b95e4
+```
+
+---
+
+## 119. Sat 2026-12-26 · 7:00 PM · Couples · Reel
 
 **Reel: Start the new year with a check-up**  
 - [ ] Instagram  - [ ] Facebook  - [ ] Threads  
@@ -5945,47 +5986,6 @@ You get a physical. You get the car checked. When did your marriage get a check-
 Not because it's broken. Because it matters. Start 2027 knowing where you stand.
 
 Engaged or married? Certified marriage counseling → 5e95-brian.systeme.io/0d29fa39
-```
-
----
-
-## 119. Sat 2026-12-26 · 9:00 AM · Be The Man · Post
-
-**Don’t start 2027 alone**  
-- [ ] Instagram  - [ ] Facebook  - [ ] Threads  
-**Folder:** `2026-12-26_Sat_9am_BTM_POST_w12-call/`  
-**Files:** `w12-call.jpg`
-
-**Instagram:**
-```
-Every January you start over, and you start alone.
-
-Not this year. Book a free 15-minute call with me before the 1st. We'll name where you are, what keeps stopping you, and one decision with a time on it.
-
-📞 Stuck somewhere? Book a free 15-minute call with me.
-🔗 Link in bio → "Book a free call."
-
-#blackfathers #selfdisciplineformen #blackchristianmen #mensdiscipline #bethemansystem
-```
-
-**Facebook:**
-```
-Every January you start over, and you start alone.
-
-Not this year. Book a free 15-minute call with me before the 1st. We'll name where you are, what keeps stopping you, and one decision with a time on it.
-
-Stuck somewhere? Book a free 15-minute call: https://go.bethemansystem.com/085b95e4
-
-#blackfathers #selfdisciplineformen
-```
-
-**Threads:**
-```
-Every January you start over, and you start alone.
-
-Not this year. 15 minutes, free, before the 1st. One decision with a time on it.
-
-Free 15-minute call: where are you stuck? → go.bethemansystem.com/085b95e4
 ```
 
 ---
