@@ -422,3 +422,7 @@ Approved by Brian: all new products, the three Inner Circle decisions, "certifie
 - About: the "Both halves of this" block (What I bring list and "Why the second list is the point") is replaced by "I'm Brian Greene." and the new four-paragraph bio. The hero line no longer repeats the self-introduction.
 - Home: the short bio under "Built by a man still working it out loud." is a two-sentence version of the same bio.
 - Church not named, per the no-affiliation rule.
+
+**Homepage cut to six sections (2026-10-06, Brian approved, Canva saved not published)**
+- Removed: the "Step 1 is free... Join the Club" bar, the four pillars section, and "God at the center" as its own section. One line on God at the center now ends the 91% vs 38% paragraph. The four pillars stay in the step row (Step 5) and on the Club page.
+- Order now: hero, 1 to 7 step row, Why you need a system (with the stat), bio, final Step 1 button, footer. About 400 words. Content ends at about 3,150 px; Brian needs to repeat "Resize canvas to selection" on Home before publishing.
