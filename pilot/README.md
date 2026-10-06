@@ -385,7 +385,7 @@ Approved by Brian: all new products, the three Inner Circle decisions, "certifie
 1. Open the two downsell pages (9ffe8144 recording $19; 19a83007 Club $19/mo) once in a browser to check they look right. Both were built 2026-10-06 through the older page-content tool; the save was accepted but rendering could not be checked from here.
 2. Order bump boxes were added 2026-10-06 to the Scorecard checkout (Club $19/mo) and the workshop checkout (Library $49). Check the tick box shows the right price in a test order.
 3. Done: workshop confirmation page built.
-4. Publish Canva yourself. Then the old Scorecard checkout 3b3e5ba2 can become the Inner Circle founding checkout.
+4. Done: Canva published; the old Scorecard checkout 3b3e5ba2 is now the Inner Circle founding checkout (see below).
 5. Test each checkout with a 100% coupon.
 6. Still open: trademark consult, the Alabama §34-17A question in writing, legal pages, email domain check.
 
@@ -394,3 +394,11 @@ Approved by Brian: all new products, the three Inner Circle decisions, "certifie
 - How they were made: each product PDF was imported into Canva ("Store cover source - ..." designs), page 1 was captured as an image, saved in `store-covers/`, and uploaded to Canva as "Cover - ..." images. The "Store cover source" designs can be deleted.
 - Canva's PDF import squeezed a few words together on some first pages (for example the Bible Study and Prayer Strategy subtitles). At the small size on the page this is hard to see, and it is only in the preview images, not the real PDFs.
 - The Store page's Scorecard links now point to the new checkout (7d78815c).
+
+**Inner Circle founding checkout (2026-10-06, after Canva was published)**
+- Checkout go.bethemansystem.com/3b3e5ba2 (Framework funnel, was the old Scorecard checkout). Offer now sells "The Inner Circle (founding)", $197 a month, no order bump. Sale limit 8: after the 8th sale the page sends people to the Inner Circle application (7ccfe2c8).
+- Page rewritten: "The Inner Circle. Founding seats.", what is included (Thursday class 7 to 8 PM CT from Nov 5, monthly 45-minute one-on-one, weekly Scorecard review, weekday direct line, quarterly intensive and live groups, quarterly certified marriage counseling session, everything in the Club), founding rate locked while they stay, then $297/mo or $2,970/yr. FAQ: who it is for, the 30-day promise, cancelling, not crisis care (988/911). Button "Join the Inner Circle, $197 a month". A line sends Scorecard buyers to 7d78815c.
+- Removed phone, street, zip, customer type, company and tax fields. Kept name, email and country.
+- Welcome page 9dd8db8c rewritten: Thursday Meet link (tcg-zspn-cco), book the first one-on-one (085b95e4), sign in at /school, Scorecard photo every Sunday night, the 30-day promise, 988/911. The old "Download the Scorecard" button was removed.
+- The product itself grants the Inner Circle course, the Club course, the community and both tags; no automation fires on this step.
+- Send this link to men after their application call: go.bethemansystem.com/3b3e5ba2. Run one 100% coupon test order.
