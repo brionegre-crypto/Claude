@@ -407,3 +407,12 @@ Approved by Brian: all new products, the three Inner Circle decisions, "certifie
 - All three alert emails now go to brian@bethemansystem.com: new couples inquiry, paid couples counseling ($300), and new accountability partner opt-in.
 - New alert "New Inner Circle member: {first_name}" goes to the same address. The plan's automation rule limit is reached, so it was added as a second action on the existing rule that sends the Inner Circle welcome email when the Inner Circle tag is added. It fires on founding and regular purchases, and if the tag is added by hand.
 - systeme.io's own account notifications (for example, its built-in sale emails) follow the account email in systeme.io Settings, which can't be changed from here.
+
+**Site declutter (2026-10-06, Canva, saved not published)**
+- Why: the homepage asked for 9 different things in ~1,300 words over 6,400 px. Unbounce data: one-CTA pages convert 13.5% vs 10.5% for 3+, and pages over 800 words convert about 33% worse than pages under 200.
+- Backup of the site before these changes: Canva design DAHXQLaxD8o, "BACKUP before declutter 2026-10-06 (do not publish)".
+- Home: one job, "Get Step 1, free". Kept the hero, the 7-step overview row, goal vs system cards, a big "91% vs 38%" stat, the four pillars (one row of four), a short "God at the center", the bio with photo, and the final Step 1 button. Removed the long step-by-step write-ups (Steps 1 to 7), the four Laws (still on About), the Inner Circle announcement line, the free training and free call links, and the workshop link in the final band. The workshop line stays at the top until Oct 25. The footer couples link (Couples is in the nav) is now "The Inner Circle, by application". About 500 words; content ends at about 3,670 px.
+- Store: removed the three "Tested before built / Deliberately cheap / Used, not read" boxes. The Complete Library ($97) and the three kits now sit right under the headline as "Best value", then the product list, then the Club band.
+- Club: removed the free video and free email boxes and the "$19 is the easy part" section; closed the gaps.
+- About and Couples: unchanged.
+- Brian, before publishing: drag the bottom edge of the Home page up to about 3,700 px, the Club page to about 2,600 px and the Store page to about 2,170 px (Canva's tools here cannot change page height). Then check each page on your phone and publish. After Oct 25, change the top line on Home from the workshop to the Inner Circle.
