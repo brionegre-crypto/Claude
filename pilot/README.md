@@ -348,14 +348,14 @@ Approved by Brian: all new products, the three Inner Circle decisions, "certifie
 |---|---|---|---|
 | Fix Your Wednesday, live workshop, Sun Oct 25, 7 to 8 PM CT | $27 | 3445161 | https://go.bethemansystem.com/f0217426 (bump: Complete Library add-on $49) |
 | The Be The Man System, self-paced | $97 | 3445163 | Upsell after the Scorecard: https://go.bethemansystem.com/1745f8e9 |
-| Fix Your Wednesday recording | $19 | 3445162 | Downsell: https://go.bethemansystem.com/9ffe8144 (page empty, Brian builds) |
+| Fix Your Wednesday recording | $19 | 3445162 | Downsell: https://go.bethemansystem.com/9ffe8144 |
 | Complete Library add-on | $49 | 3445164 | Order bump on the workshop checkout |
 | Inner Circle, founding (first 8 men) | $197/mo | 3445171 | Application page https://go.bethemansystem.com/7ccfe2c8, checkout to come |
 | Inner Circle | $297/mo or $2,970/yr | 3445172 | After the founding 8 |
 
 **Offer chains**
 - Scorecard: checkout https://go.bethemansystem.com/7d78815c ($7, bump Club $19/mo) → upsell System $97 → downsell recording $19 → confirmation https://go.bethemansystem.com/60edb131 (downloads).
-- Workshop: checkout https://go.bethemansystem.com/f0217426 ($27, bump Library $49) → upsell 6-week group $147 → downsell Club $19/mo (https://go.bethemansystem.com/19a83007, page empty, Brian builds). No confirmation step yet: the plan's funnel-step limit is reached.
+- Workshop: checkout https://go.bethemansystem.com/f0217426 ($27, bump Library $49) → upsell 6-week group $147 → downsell Club $19/mo (https://go.bethemansystem.com/19a83007). No confirmation step yet: the plan's funnel-step limit is reached.
 - Kits and Library: each thank-you page now ends with a Club offer.
 
 **Inner Circle**
@@ -382,7 +382,7 @@ Approved by Brian: all new products, the three Inner Circle decisions, "certifie
 - Not rebuilt in Canva: the design's "Start with the result you want" table, FAQ block and video slots. The page has no free space for them; they need a manual layout pass or a page-height change in the editor.
 
 **Brian's manual steps**
-1. Build the two downsell pages in the editor (9ffe8144 recording $19; 19a83007 Club $19/mo).
+1. Open the two downsell pages (9ffe8144 recording $19; 19a83007 Club $19/mo) once in a browser to check they look right. Both were built 2026-10-06 through the older page-content tool; the save was accepted but rendering could not be checked from here.
 2. Drag an "Order bump" element onto the Scorecard checkout (7d78815c) and the workshop checkout (f0217426). The bumps are already set in the offers.
 3. Free a funnel step (or upgrade) for the workshop confirmation page.
 4. Publish Canva yourself. Then the old Scorecard checkout 3b3e5ba2 can become the Inner Circle founding checkout.
