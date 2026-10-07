@@ -15,3 +15,16 @@ Goal: sign-ups on bethemansystem.com/step-1/ go straight into MailerLite. Mailer
 - Point the Step 1 page's button at a form on bethemansystem.com that sends straight to MailerLite. The email box is on our own page, so there's no extra click.
 - Write the MailerLite automation: Step 1 email immediately (same copy as the current systeme.io email, which now links to bethemansystem.com/step-1/worksheet/), then the weekly emails. Paste-ready copy for each email will be in `emails/`.
 - Test with Brian's own email, then switch the site over and turn off the systeme.io campaign.
+
+## Progress 2026-10-07 (Claude, via the MailerLite connector)
+
+- The account is connected (login bogreenejr@gmail.com, account 2693662).
+- Groups: "Step 1" (200695507810518732) for website sign-ups, and "Moved from systeme.io" (200695508514112659), which holds the 2 existing subscribers. They were imported with autoresponders off, so they didn't get the welcome email again.
+- Automation "Step 1 welcome" (200695557413406570): when someone joins the Step 1 group, it sends the "Step 1." email straight away. The HTML body is set. It's still INACTIVE and waits on sender domain verification.
+- Embedded form "Step 1 (website)" (200695528382530600). It isn't used; the website talks to MailerLite through its API instead.
+- `functions/api/subscribe.js` (a Cloudflare Pages Function) posts sign-ups to the MailerLite API. If the `MAILERLITE_API_KEY` secret is missing or MailerLite fails, it falls back to the systeme.io opt-in. It's tested with a fake MailerLite.
+- `/step-1/thanks/` page is built.
+- Waiting on Brian:
+  1. Add bethemansystem.com in MailerLite → Settings → Domains, then send Claude the DNS records.
+  2. Create an API token and save it in Cloudflare as the secret `MAILERLITE_API_KEY`.
+- Then Claude: help add the DNS records in Cloudflare, activate the automation, test, switch the Step 1 page and the "Get Step 1" buttons to the on-site form, and turn off the systeme.io Framework campaign.
