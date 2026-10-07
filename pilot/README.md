@@ -456,3 +456,32 @@ Approved by Brian: all new products, the three Inner Circle decisions, "certifie
   - Netlify's free plan allows commercial use, but has a monthly credit cap.
   - Vercel's free Hobby plan is non-commercial only, so don't use it.
 - Going live would mean coding Club, Store, About and Couples too, then pointing bethemansystem.com at the new host. go.bethemansystem.com (systeme.io) stays where it is.
+
+## Full coded site (2026-10-07)
+
+- Source lives in `web/`:
+  - `pages/` holds one file per page (JSON settings, then the HTML).
+  - `partials/` holds the shared nav and footer.
+  - `static/` holds the CSS, JS, images, robots.txt, llms.txt, _redirects and _headers.
+- `python3 web/build.py` writes the finished site into `site/`. Cloudflare Pages serves `site/` with no build step.
+- Pages:
+  - Home `/`
+  - The Club `/the-club/`
+  - The Store `/products/` (11 products grouped by system, marriage, fatherhood and faith, plus kits)
+  - About `/about/`
+  - Couples `/couples/`
+  - Step 1 `/step-1/`: a focused sign-up page with a links list, modeled on the Calum Johnson Show "links" page Brian sent. The main image is a drawn preview of the worksheet, as Brian asked, instead of his photo.
+  - 404 page
+- The URLs match the Canva site, so old links keep working.
+- Discovery:
+  - Titles and descriptions per page.
+  - schema.org graph: Organization, Person, Product/Offer for the Club and every store item, couples Service, FAQPage on each page, BreadcrumbList.
+  - llms.txt, a robots.txt that allows AI crawlers, sitemap.xml, a 1200x630 share image, and rel=me links to YouTube, Substack and Facebook.
+- Short links in `_redirects`: /free, /start, /links, /framework, /join, /club, /store, /shop, /youtube, /workshop, /inner-circle.
+- Plans written:
+  - `pilot/cloudflare-setup.md`: Brian's steps, including keeping the email MX records and the systeme.io `go` CNAME.
+  - `brand/discovery-keywords.md`: keyword map, YouTube setup and video template.
+- Preview for Brian (all pages, private artifact): https://claude.ai/artifact/RMvvSWpVytsS1ZixkGKTQN
+- Still needed:
+  - The full-resolution photo of Brian (the site uses the 200px Canva thumbnail).
+  - Links to his best YouTube videos, to add video schema.
