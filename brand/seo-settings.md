@@ -13,7 +13,7 @@ Where: Canva editor → Publish → Review settings (the same screen where the f
 | Page | URL | SEO title | SEO description |
 |---|---|---|---|
 | Home | / | Be The Man: A Consistency System for Christian Men | Seven steps that help Christian men do what they said, every week. One sentence on who you are becoming, goals with dates, and a weekly scorecard. Step 1 is free. |
-| Club | /the-club | The Be The Man Club: Weekly Accountability for Men | A monthly membership for Christian men who want to keep their word. Weekly lessons, a monthly live call, and accountability pairs. $19 a month or $149 a year. |
+| Club | /the-club | The Be The Man Club: Accountability for Christian Men | A monthly membership for Christian men who want to keep their word. A lesson library, a monthly live call, and accountability pairs. $19 a month or $149 a year. |
 | Store | /products | Be The Man Store: Worksheets, Kits and the Library | Printable worksheets, kits and the complete Be The Man library for Christian men who want a system that holds, not another fresh start. |
 | About | /about | About Brian Greene: Pastor, Husband, Father of Three | Brian Greene is a pastor, a certified marriage counselor and the father of three. He built Be The Man to help Christian men keep their word when nobody is watching. |
 | Couples | /couples | Christian Couples Coaching and Marriage Counseling | Certified marriage counseling for Christian couples, built on a validated relationship assessment. Find where you are strong and what to work on next. |
