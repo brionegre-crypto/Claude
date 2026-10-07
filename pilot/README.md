@@ -485,3 +485,9 @@ Approved by Brian: all new products, the three Inner Circle decisions, "certifie
 - Still needed:
   - The full-resolution photo of Brian (the site uses the 200px Canva thumbnail).
   - Links to his best YouTube videos, to add video schema.
+
+## YouTube videos on the home page (2026-10-07)
+
+- Added a "Watch" section to the home page with Brian's 5 videos: Rsy-4dIy5oc (featured), S4W-WXHKao4, MYWjpTJMspM, IV2zSIZtZAE, tToBsTxYiS4.
+- Click-to-play: each shows its YouTube thumbnail and loads the youtube-nocookie player only when tapped, so the page stays fast.
+- YouTube is blocked from the build environment, so the titles and upload dates aren't known yet. Once Brian sends them, add titles under each video and VideoObject schema (name, description, thumbnailUrl, uploadDate, embedUrl).
