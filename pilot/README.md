@@ -444,3 +444,15 @@ Approved by Brian: all new products, the three Inner Circle decisions, "certifie
   - The final call to action is a rounded orange card.
 - Club, Store, About and Couples are still the old look. They get the same treatment once Brian approves the Home direction.
 - To go live: in the draft, Publish → choose bethemansystem.com (this replaces the old design on the domain). Brian publishes.
+
+## Sample coded homepage (2026-10-07)
+
+- Built `site/index.html`: a hand-coded, Apple-style version of the homepage. It has a glass nav, a big headline, a weekly scorecard "product shot", a steps carousel, goal vs system cards, the 91% vs 38% bars, a founder card and a closing call to action.
+  - It uses the real copy and links. The search tags (title, description, social preview, Organization schema) are built in.
+  - `site/brian.jpg` is only the 200px Canva thumbnail, because the proxy blocked the full-size download. Swap in the full-res photo before going live.
+- Preview for Brian (private artifact): https://claude.ai/artifact/RMvvSWpVytsS1ZixkGKTQN
+- Hosting:
+  - Cloudflare Pages is free and allows commercial use.
+  - Netlify's free plan allows commercial use, but has a monthly credit cap.
+  - Vercel's free Hobby plan is non-commercial only, so don't use it.
+- Going live would mean coding Club, Store, About and Couples too, then pointing bethemansystem.com at the new host. go.bethemansystem.com (systeme.io) stays where it is.
