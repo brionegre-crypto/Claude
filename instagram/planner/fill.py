@@ -1,5 +1,8 @@
-import json, pymupdf
+import json, sys, pymupdf
 rects=json.load(open('fields.json'))
+FILLED = len(sys.argv)>1 and sys.argv[1]=='filled'
+VALS=json.load(open('values.json')) if FILLED else {}
+OUT='12-week-goal-planner-filled.pdf' if FILLED else '12-week-goal-planner-fillable.pdf'
 doc=pymupdf.open('12-week-goal-planner.pdf'); k=0; used=set()
 
 def loops(W,D):
@@ -16,6 +19,12 @@ def calc_js(calc,W,D):
     if calc=='done':    return count(W,D,'c')+"event.value=n;"
     return ("var p=0,d=0;"+count(W,D,'a')+"p=n;"+count(W,D,'c')+"d=n;"
             "event.value=(p>0)?Math.round(100*d/p)+'%':'';")
+
+def initial(f):
+    if not FILLED: return '0' if f['calc']!='score' else ''
+    ws=[f['w0']] if f['w0'] else range(1,13); ds=[f['d0']] if f['d0'] else range(1,8)
+    p=sum(1 for w in ws for d in ds for i in range(1,6) if VALS.get(f'w{w}_d{d}_a{i}'))
+    return str(p) if f['calc']=='planned' else ('0' if f['calc']=='done' else ('0%' if p else ''))
 
 for pi,page in enumerate(doc):
     for f in rects[pi]:
@@ -38,15 +47,16 @@ for pi,page in enumerate(doc):
                 wd.field_flags|=pymupdf.PDF_FIELD_IS_READ_ONLY
                 wd.text_fontsize=16 if h>30 else 11
                 wd.text_color=(0.79,0.48,0.07)
-                wd.field_value='0' if f['calc']!='score' else ''
+                wd.field_value=initial(f)
                 wd.script_calc=calc_js(f['calc'],f['w0'],f['d0'])
         name=f.get('n') or f'p{pi+1}_f{k}'
         assert name not in used,name
         used.add(name); wd.field_name=name
+        if name in VALS and not f.get('calc'): wd.field_value=VALS[name]
         wd.rect=pymupdf.Rect(x,y,x+w,y+h-1)
         page.add_widget(wd)
 for page in doc:
     for w in page.widgets():
         if w.script_calc: doc.xref_set_key(w.xref,'Q','1')
-doc.save('12-week-goal-planner-fillable.pdf',garbage=3,deflate=True)
+doc.save(OUT,garbage=3,deflate=True)
 print(k,'fields,',len(doc),'pages')

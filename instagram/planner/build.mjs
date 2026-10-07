@@ -2,8 +2,8 @@ import { chromium } from '/opt/node22/lib/node_modules/playwright/index.mjs';
 import fs from 'fs';
 const A='#C97A12', INK='#141416', MUTE='#6f6a62';
 const lines=(n,h=30,f=' fld')=>Array.from({length:n},()=>`<div class="ln${f}" style="height:${h}px"></div>`).join('');
-const box=(label,n,h)=>`<div class="lab">${label}</div><div class="fld ml nbx" style="height:${n*h}px"></div>`;
-const page=(inner,foot='')=>`<section class="pg">${inner}<div class="ft"><span>12-Week Goal Planner</span><span>${foot}</span></div></section>`;
+const box=(label,n,h,id='')=>`<div class="lab">${label}</div><div class="fld ml nbx" ${id?`data-n="${id}"`:''} style="height:${n*h}px"></div>`;
+const page=(inner,foot='',cls='')=>`<section class="pg ${cls}">${inner}<div class="ft"><span>12-Week Goal Planner</span><span>${foot}</span></div></section>`;
 const head=(k,t)=>`<div class="k">${k}</div><h2>${t}</h2><div class="rule"></div>`;
 
 let pages=[];
@@ -21,19 +21,19 @@ pages.push(page(`${head('Start here','How to use this planner')}
 <div class="callout"><b>Rule of thumb:</b> if the week didn't happen on the calendar, it didn't happen. Put every action on a specific day and time.</div>`));
 
 pages.push(page(`${head('Step 1','Vision & why')}
-${box('Where do I want to be in 12 weeks?',5,34)}
-${box('Why does this matter? What does it cost me if I don\'t do it?',5,34)}
-${box('What could get in the way, and what will I do about it?',4,34)}`));
+${box('Where do I want to be in 12 weeks?',5,34,'vis_where')}
+${box('Why does this matter? What does it cost me if I don\'t do it?',5,34,'vis_why')}
+${box('What could get in the way, and what will I do about it?',4,34,'vis_obs')}`));
 
 const goal=n=>`<div class="goal"><div class="gh">Goal ${n}</div>
-<div class="row"><div class="lab">Goal (specific and measurable)</div><div class="ln fld"></div></div>
-<div class="row two"><div><div class="lab">Starting point</div><div class="ln fld"></div></div><div><div class="lab">Target by week 12</div><div class="ln fld"></div></div></div>
+<div class="row"><div class="lab">Goal (specific and measurable)</div><div class="ln fld" data-n="g${n}_goal"></div></div>
+<div class="row two"><div><div class="lab">Starting point</div><div class="ln fld" data-n="g${n}_start"></div></div><div><div class="lab">Target by week 12</div><div class="ln fld" data-n="g${n}_target"></div></div></div>
 <div class="lab">Weekly actions that drive it</div>
-<div class="acts"><span class="fld chk box">▢</span><div class="ln fld"></div></div><div class="acts"><span class="fld chk box">▢</span><div class="ln fld"></div></div><div class="acts"><span class="fld chk box">▢</span><div class="ln fld"></div></div></div>`;
+${[1,2,3].map(i=>`<div class="acts"><span class="fld chk box" data-n="g${n}_c${i}">▢</span><div class="ln fld" data-n="g${n}_a${i}"></div></div>`).join('')}</div>`;
 pages.push(page(`${head('Step 2','My 12-week goals')}${goal(1)}${goal(2)}${goal(3)}`));
 
 // milestone map
-const ms=[[1,4],[5,8],[9,12]].map(([a,b])=>`<div class="ms"><div class="gh">Weeks ${a}–${b}</div><div class="lab">What must be true by the end of week ${b}?</div>${lines(3,28)}</div>`).join('');
+const ms=[[1,4],[5,8],[9,12]].map(([a,b])=>`<div class="ms"><div class="gh">Weeks ${a}–${b}</div><div class="lab">What must be true by the end of week ${b}?</div>${[1,2,3].map(j=>`<div class="ln fld" data-n="ms${a}_${j}" style="height:28px"></div>`).join('')}</div>`).join('');
 pages.push(page(`${head('Step 3','Milestones')}${ms}`));
 
 // weekly: plan page, 7 daily pages, review page
@@ -64,15 +64,18 @@ ${mlf('What could get in the way, and what is my plan for it?',3,36,`w${w}_obs`)
   DAYS.forEach((dn,di)=>{
     const d=di+1,[theme,mq,eq]=DQ[di];
     const rows=Array.from({length:5},(_,i)=>`<div class="acts"><span class="fld chk box" data-n="w${w}_d${d}_c${i+1}">▢</span>${fld(`w${w}_d${d}_a${i+1}`)}</div>`).join('');
-    pages.push(page(`<div class="wk"><div><div class="k">Week ${w} · Day ${di+1} · ${theme}</div><h2 style="margin-top:6px;font-size:40px">${dn}</h2></div><div class="wd">Date ${dtf()}</div></div><div class="rule"></div>
-<div class="lab">Today's top priority</div>${fld(`w${w}_d${d}_pri`)}
-<div class="lab" style="margin-top:14px">Today's actions — type each one, check it when done</div>${rows}
+    const gm=(label,id,fl)=>`<div class="grow" style="flex:${fl}"><div class="lab">${label}</div><div class="fld ml nbx" data-n="${id}" style="flex:1"></div></div>`;
+    pages.push(page(`<div class="wk"><div><div class="k">Week ${w} · Day ${di+1} · ${theme}</div><h2 style="margin-top:6px;font-size:40px">${dn}</h2></div><div class="wd">Date ${dtf()}</div></div><div class="rule" style="margin:10px 0 6px"></div>
+${gm("Today's vision — who am I being, and what does a great day look like?",`w${w}_d${d}_vis`,1)}
+${gm("Today's goal — the one outcome that makes today a win",`w${w}_d${d}_goal`,1)}
+<div class="lab" style="margin-top:8px">Today's top priority</div>${fld(`w${w}_d${d}_pri`)}
+<div class="lab" style="margin-top:8px">Today's actions — type each one, check it when done</div>${rows}
 <div class="mini"><div>Planned ${calcBox('','planned',w,d)}</div><div>Done ${calcBox('','done',w,d)}</div></div>
-${mlf('Morning — '+mq,2,34,`w${w}_d${d}_am`)}
-${mlf('Evening — '+eq,3,30,`w${w}_d${d}_pm1`)}
-${mlf('Biggest win today',2,26,`w${w}_d${d}_win`)}
-${mlf('What I would do differently',2,26,`w${w}_d${d}_diff`)}
-<div class="mini" style="margin-top:12px"><div><span class="fld chk box" data-n="w${w}_d${d}_word">▢</span> I kept my word today</div><div>Day rating (1–10) <span class="fld di" data-n="w${w}_d${d}_rate" style="width:40px"></span></div></div>`,`Week ${w} · ${dn}`));
+${gm('Morning — '+mq,`w${w}_d${d}_am`,1.2)}
+${gm('Evening — '+eq,`w${w}_d${d}_pm1`,1.8)}
+${gm('Biggest win today',`w${w}_d${d}_win`,1)}
+${gm('What I would do differently',`w${w}_d${d}_diff`,1)}
+<div class="mini" style="margin-top:10px"><div><span class="fld chk box" data-n="w${w}_d${d}_word">▢</span> I kept my word today</div><div>Day rating (1–10) <span class="fld di" data-n="w${w}_d${d}_rate" style="width:40px"></span></div></div>`,`Week ${w} · ${dn}`,'day'));
   });
   // review
   const rowsR=DAYS.map((dn,di)=>`<tr><td class="n" style="width:110px;text-align:left;padding-left:8px">${dn}</td><td><div class="fld calc" data-calc="planned" data-w="${w}" data-d="${di+1}" data-n="rv_p_w${w}_d${di+1}"></div></td><td><div class="fld calc" data-calc="done" data-w="${w}" data-d="${di+1}" data-n="rv_d_w${w}_d${di+1}"></div></td><td><div class="fld calc" data-calc="score" data-w="${w}" data-d="${di+1}" data-n="rv_s_w${w}_d${di+1}"></div></td></tr>`).join('');
@@ -125,13 +128,58 @@ td{border:1px solid #bdb8ae;height:34px}td.n{width:24px;text-align:center;font-s
 .nbx{border:1px solid #bdb8ae;background:#fbfaf7;margin-top:4px}.di{display:inline-block;border-bottom:1px solid currentColor;height:14px;vertical-align:bottom}.box{font-size:14px}
 .cbx{text-align:center}.cbx .cl{font:600 10.5px 'IBM Plex Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:${MUTE}}.calc{border:1.5px solid ${INK};height:40px;background:#fbfaf7}.sct .calc{border:0;height:30px;background:none}.big3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px}.big3 .calc{height:54px}
 .mini{display:flex;gap:30px;align-items:center;font:600 11px 'IBM Plex Mono',monospace;text-transform:uppercase;color:${MUTE};margin-top:8px}.mini .cbx{display:inline-block;width:70px;vertical-align:middle;margin-left:6px}.mini .calc{height:24px}
+.pg.day{display:flex;flex-direction:column}.grow{display:flex;flex-direction:column;min-height:46px;margin-top:2px}
 .ft{position:absolute;left:.75in;right:.75in;bottom:.35in;display:flex;justify-content:space-between;font:500 9px 'IBM Plex Mono',monospace;color:${MUTE};letter-spacing:.08em;text-transform:uppercase}`;
 const ff=(n,f,w,s='normal')=>`@font-face{font-family:'${n}';src:url(data:font/woff2;base64,${fs.readFileSync('../posts/fonts/'+f).toString('base64')});font-weight:${w};font-style:${s}}`;
 const fonts=[ff('Inter','Inter-400-normal.woff2',400),ff('Inter','Inter-600-normal.woff2',600),ff('Inter','Inter-500-normal.woff2',500),ff('Oswald','Oswald-700-normal.woff2',700),ff('IBM Plex Mono','IBMPlexMono-400-normal.woff2',500),ff('IBM Plex Mono','IBMPlexMono-600-normal.woff2',600),ff('Lora','Lora-500-italic.woff2',500,'italic')].join('');
+// ---- example values for the pre-filled version ----
+const V={};
+const TRAIN=['Learn the movements','Build the habit','Add load','Deload and review','Push volume','Push pace','Stay consistent','Deload and review','Peak week 1','Peak week 2','Race prep','5K test'];
+const MS=['Define the offer and who it is for','Outline the product','Draft the core content','Finish draft v1','Get 3 people to review it','Revise from feedback','Build the sales page','Set up payment and delivery','Soft launch to 10 people','Fix what broke','Public launch','Follow up and plan the next 12 weeks'];
+const WT=['Lay the foundation','Build the rhythm','Hold the line','Review and reset','Raise the bar','Midpoint push','Stay steady','Review and reset','Sharpen','Finish what is open','Launch focus','Finish and plan the next 12'];
+const DVIS=['I start the week on purpose: calm, prepared and moving before the world asks anything of me.','I do the hard thing first and I do not negotiate with myself.','I check my pace honestly and adjust without excuses.','I stay steady when the novelty is gone. Boring consistency wins.','I finish what I started, so the weekend is free and my word is kept.','I show up fully for my family and my body, with no phone in the way.','I rest, worship and reset so next week starts from a clear head.'];
+V.vis_where='In 12 weeks I train four days a week and can run a 5K in under 28 minutes. I pray and read Scripture every morning before my phone. My wife and I have had 12 real date nights. The project I have been putting off is launched and ten people are using it.';
+V.vis_why='This is who I told myself I would be. My family needs a man who keeps his word to himself first. If I do not do this, I will be having the same conversation with myself 12 weeks from now, with less energy and less trust in my own word.';
+V.vis_obs='Late nights and my phone in bed: phone charges outside the bedroom and lights are out by 10pm. Work interruptions: I block 90 minutes on the calendar and turn notifications off. Missing a day: never miss twice. I log it and do the next action.';
+V.g1_goal='Train 4 times a week for 12 weeks and run a 5K in under 28:00'; V.g1_start='Not training consistently'; V.g1_target='48 workouts logged; 5K in under 28:00';
+V.g1_a1='Train 4 days: strength Mon, Wed, Thu and a run Sat'; V.g1_a2='Hit 8,000 steps every day'; V.g1_a3='Log meals at least 6 days';
+V.g2_goal='Pray and read Scripture 15 minutes every morning and have a date night every week'; V.g2_start='Praying about 2 days a week'; V.g2_target='84 of 84 days; 12 date nights';
+V.g2_a1='Pray and read Scripture for 15 minutes before touching my phone'; V.g2_a2='10 minutes of undistracted time with my wife each night'; V.g2_a3='One planned date night every Saturday';
+V.g3_goal='Launch the one project that matters by the end of week 12'; V.g3_start='An idea and rough notes'; V.g3_target='Launched, with 10 people using it';
+V.g3_a1='One 90-minute deep work block Monday to Friday'; V.g3_a2='Ship the week\'s milestone every Friday'; V.g3_a3='Plan the next week every Sunday';
+V.ms1_1='Daily prayer and training habits are running without negotiating'; V.ms1_2='The offer is defined and the first draft of the product is done'; V.ms1_3='Date night and nightly check-ins are on the calendar and happening';
+V.ms5_1='Training is up to four days a week with added load and pace'; V.ms5_2='Feedback is in and the product is revised; sales page is built'; V.ms5_3='Payment and delivery work end to end';
+V.ms9_1='5K race prep is underway and the pace is on target'; V.ms9_2='Soft launch is done, fixes are made and the public launch is out'; V.ms9_3='84 days of prayer logged and next 12 weeks are planned';
+for(let w=1;w<=12;w++){
+  const ms=MS[w-1], tr=TRAIN[w-1], deload=(w===4||w===8);
+  V[`w${w}_pri1`]=`Finish: ${ms}`; V[`w${w}_pri2`]=`Train four times (${tr})`; V[`w${w}_pri3`]='Pray every morning and keep date night';
+  [`Strength: Monday, Wednesday, Thursday${deload?' (light, deload week)':''}`,'Cardio: Tuesday, Friday; long run or hike Saturday','90-minute work block, Monday to Friday',"Pray and read Scripture for 15 minutes daily","Date night on Saturday evening","Weekly review and plan: Sunday evening"].forEach((t,i)=>V[`w${w}_plan_a${i+1}`]=t);
+  V[`w${w}_cal`]='Prayer 6:00-6:15am daily. Training 6:30am Mon/Wed/Thu, cardio Tue/Fri. Deep work 9:00-10:30am Mon-Fri. Family time 8:00pm nightly. Date night Saturday 6:00pm. Review and plan Sunday 7:00pm.';
+  V[`w${w}_obs`]='Late nights and phone use in bed: phone charges outside the bedroom, lights out by 10pm. Work interruptions: notifications off during the block. If I miss an action, I do the next one on time and never miss twice.';
+  for(let d=1;d<=7;d++){
+    const k=`w${w}_d${d}_`;
+    V[k+'vis']=`${DVIS[d-1]} Week ${w} theme: ${WT[w-1]}.`;
+    const strength=deload?'Light workout (deload week)':`Strength workout (${tr})`;
+    const A=[
+     ['Pray and read Scripture, 15 minutes, before my phone',strength,`90-minute deep work: ${ms}`,'Plan the week: priorities on the calendar','10 minutes undistracted time with my wife'],
+     ['Pray and read Scripture, 15 minutes, before my phone','Cardio: 30 minutes, intervals or run',`90-minute deep work: ${ms}`,'Log all meals today','10 minutes undistracted time with my wife'],
+     ['Pray and read Scripture, 15 minutes, before my phone',strength,`90-minute deep work: be at 50% on ${ms}`,'Midweek check: compare to plan and adjust','10 minutes undistracted time with my wife'],
+     ['Pray and read Scripture, 15 minutes, before my phone',strength,`90-minute deep work: push ${ms} to 80%`,'Log all meals today','10 minutes undistracted time with my wife'],
+     ['Pray and read Scripture, 15 minutes, before my phone','Cardio or a 30-minute brisk walk',`Ship it: finish and send "${ms}"`,'Clear open loops: messages, email, errands','Plan the weekend with my wife'],
+     ['Pray and read Scripture, 15 minutes, before my phone',w===12?'5K time trial: goal under 28:00':'Long run or hike, building toward the 5K','Date night: phones away','Log meals and prep food for Sunday','One project at home: finish it'],
+     ['Worship and pray; rest with my family','20-minute easy walk and stretching','Weekly review: fill in this week\'s review page','Plan next week: priorities and calendar','Prep meals and gear for Monday']][d-1];
+    A.forEach((t,i)=>V[k+`a${i+1}`]=t);
+    const G=[`Train and start "${ms}" with a clean plan`,`Intervals done and 90 minutes on "${ms}"`,`Be halfway through "${ms}" and lift`,`Push "${ms}" to 80% and train`,`Ship "${ms}" and clear the open loops`,`Long run/hike and a real date night`,'Worship, weekly review and next week planned'][d-1];
+    V[k+'goal']=G;
+    V[k+'pri']=['Plan the week, then start the milestone','Do the workout and the work block before noon',`Honest midweek check on "${ms}"`,'Do not let today be ordinary: finish the block','Finish and send the milestone','Be fully present with my family','Review the week and plan the next'][d-1];
+  }
+}
+fs.writeFileSync('values.json',JSON.stringify(V,null,1));
 const html=`<!doctype html><meta charset=utf8><style>${fonts}${css}</style>${pages.join('')}`;
 fs.writeFileSync('planner.html',html);
 const b=await chromium.launch({executablePath:'/opt/pw-browsers/chromium'});const p=await b.newPage();
 await p.setContent(html);await p.evaluate(()=>document.fonts.ready);
 const rects=await p.evaluate(()=>[...document.querySelectorAll('.pg')].map((pg,i)=>{const o=pg.getBoundingClientRect();return [...pg.querySelectorAll('.fld')].map(e=>{const r=e.getBoundingClientRect();return {n:e.dataset.n||null,calc:e.dataset.calc||null,w0:+(e.dataset.w||0),d0:+(e.dataset.d||0),cb:e.classList.contains("chk"),ml:e.classList.contains('ml'),x:r.x-o.x,y:r.y-o.y,w:r.width,h:r.height,cover:i===0}})}));
+const over=await p.evaluate(()=>[...document.querySelectorAll('.pg')].map((e,i)=>e.scrollHeight>e.clientHeight+1?i+1:0).filter(Boolean));console.log('overflow pages:',over);
 fs.writeFileSync('fields.json',JSON.stringify(rects));
 await p.pdf({path:'12-week-goal-planner.pdf',width:'8.5in',height:'11in',printBackground:true});await b.close();
