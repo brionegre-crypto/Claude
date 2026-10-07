@@ -430,3 +430,17 @@ Approved by Brian: all new products, the three Inner Circle decisions, "certifie
 
 - 2026-10-07: Step 1 sign-up page (go.bethemansystem.com/framework): tagline changed to "THE BE THE MAN SYSTEM, FOR CHRISTIAN MEN" (was "BLACK CHRISTIAN MEN"), per Brian.
 - 2026-10-07: Canva homepage hero tagline (under the intro paragraph) changed to match: "THE BE THE MAN SYSTEM, FOR CHRISTIAN MEN". Saved, not published. Canva design title also changed to "Be The Man: A Consistency System for Christian Men".
+
+## Site redesign (2026-10-07), draft copy
+
+- Brian asked for a modern, upscale, Apple-style look. The redesign is happening in a COPY so the live site isn't touched:
+  - Draft: Canva DAHXVt2s2qk (same title as the live design). Live site: DAHT_cEMLxM, unchanged.
+- Home page in the draft is done:
+  - Everything centered, with sentence-case headlines ("Do what you said. / Every week.").
+  - Rounded cards (#1c1c1e, 28px corners) replace the hard boxes and divider lines.
+  - Pill-shaped buttons; the workshop line is now a pill banner.
+  - Quieter nav: grey links and a "Join the Club" pill.
+  - Apple-style greys for body text (#a1a1a6, #86868b) and #f5f5f7 for headlines. Orange is the only accent.
+  - The final call to action is a rounded orange card.
+- Club, Store, About and Couples are still the old look. They get the same treatment once Brian approves the Home direction.
+- To go live: in the draft, Publish → choose bethemansystem.com (this replaces the old design on the domain). Brian publishes.
