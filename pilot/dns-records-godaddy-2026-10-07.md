@@ -27,3 +27,7 @@ This is the checklist for the move to Cloudflare. Every record marked **Keep** m
 - Cloudflare nameservers: nadia.ns.cloudflare.com and otto.ns.cloudflare.com. They replace ns55/ns56.domaincontrol.com at GoDaddy.
 - Pages project: bethemansystem (bethemansystem.pages.dev). Production branch: claude/sharp-sagan-jrcxxn. Output directory: site.
 - Next: once the zone is active, add custom domains bethemansystem.com and www in the Pages project. That replaces the two Canva A records.
+- DONE 2026-10-07: the nameservers were switched at GoDaddy and the zone is active.
+  - Custom domains bethemansystem.com and www.bethemansystem.com are Active with SSL. Both are CNAMEs to bethemansystem.pages.dev (Proxied).
+  - The Canva A records were deleted. go.bethemansystem.com still resolves to systeme.io (CloudFront).
+- Still to do: AI Crawl Control (allow AI crawlers), Google Search Console and sitemap, Bing import. Optionally unpublish the Canva site.
