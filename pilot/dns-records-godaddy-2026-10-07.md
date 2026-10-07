@@ -31,3 +31,7 @@ This is the checklist for the move to Cloudflare. Every record marked **Keep** m
   - Custom domains bethemansystem.com and www.bethemansystem.com are Active with SSL. Both are CNAMEs to bethemansystem.pages.dev (Proxied).
   - The Canva A records were deleted. go.bethemansystem.com still resolves to systeme.io (CloudFront).
 - Still to do: AI Crawl Control (allow AI crawlers), Google Search Console and sitemap, Bing import. Optionally unpublish the Canva site.
+- DONE 2026-10-07:
+  - AI Crawl Control: Bot Preference Sync is turned OFF, so our own robots.txt is served. No crawler is blocked.
+  - Google Search Console: Domain property verified and sitemap submitted.
+  - Bing Webmaster Tools: imported from Search Console.
