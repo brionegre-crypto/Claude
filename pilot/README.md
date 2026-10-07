@@ -494,3 +494,8 @@ Approved by Brian: all new products, the three Inner Circle decisions, "certifie
 - Update: the video titles are now matched from Brian's YouTube Studio screenshot. The matching was done by importing each thumbnail into Canva (5 small "yt-thumb-*" images are now in his Canva uploads and can be deleted).
   - The featured video is "Why Your Goals Keep Failing". The other four are in a side list; tapping one plays it in the big player.
   - Added VideoObject schema for all 5 (title, description, upload date, duration), and added the videos to llms.txt.
+
+## New portrait (2026-10-07)
+
+- Brian sent his studio portrait (navy suit, white background). The original is saved at `brand/brian-greene-portrait.jpg` (1186x1500).
+- The site photo `assets/brian.jpg` is now a 600x600 head-and-shoulders crop. It replaces the 200px Canva thumbnail on Home, Club, About and the Step 1 page, and in the Person schema.
