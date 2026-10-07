@@ -59,5 +59,5 @@ Once the Stripe connector is connected, a new Claude session can do all of this:
 ## Status 2026-10-07: links created, publishing waits on Brian
 
 - Created in live Stripe, through the connector: 15 products, each with a one-time USD price and a Payment Link that redirects to its `/get/<slug>/` page. The couples link collects name, phone, partner's name and partner's email.
-- The links are saved in `web/stripe-links-pending.json`. They are not on the site yet, so the site still uses the systeme.io checkouts.
+- PUBLISHED 2026-10-07 after Brian said yes. The links are live in `web/products.json`; `web/stripe-links-pending.json` is a backup copy.
 - To publish once Brian says yes: copy the links into `web/products.json` (`stripe_link`), run `python3 web/build.py`, then commit and push.
