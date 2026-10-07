@@ -20,3 +20,10 @@ This is the checklist for the move to Cloudflare. Every record marked **Keep** m
 | TXT | @ | canva-domain-verify=83e50517... | Canva ownership check | Keep for now (harmless) |
 | CNAME | _domainconnect | _domainconnect.gd.domaincontrol.com | GoDaddy helper | Not needed |
 | NS / SOA | @ | ns55/ns56.domaincontrol.com | GoDaddy nameservers | Replaced by Cloudflare's two |
+
+## Cloudflare zone (set up 2026-10-07)
+
+- All 15 records were imported or added by hand and checked against the list above. All are DNS only.
+- Cloudflare nameservers: nadia.ns.cloudflare.com and otto.ns.cloudflare.com. They replace ns55/ns56.domaincontrol.com at GoDaddy.
+- Pages project: bethemansystem (bethemansystem.pages.dev). Production branch: claude/sharp-sagan-jrcxxn. Output directory: site.
+- Next: once the zone is active, add custom domains bethemansystem.com and www in the Pages project. That replaces the two Canva A records.
