@@ -7,7 +7,7 @@ const page=(inner,foot='',cls='')=>`<section class="pg ${cls}">${inner}<div clas
 const head=(k,t)=>`<div class="k">${k}</div><h2>${t}</h2><div class="rule"></div>`;
 
 let pages=[];
-pages.push(`<section class="pg cover"><div class="cb"><div class="k">Plan it. Run it. Review it.</div><h1>12-Week<br>Goal Planner</h1><div class="rule w"></div><p>Twelve weeks is long enough to change something and short enough to stay serious. Pick a few goals, define the weekly actions that drive them, and review every week.</p><div class="nm">Name: <span class="fld di" style="width:300px"></span></div><div class="nm">Start: <span class="fld di" style="width:30px"></span> / <span class="fld di" style="width:30px"></span> / <span class="fld di" style="width:46px"></span> &nbsp;&nbsp; End: <span class="fld di" style="width:30px"></span> / <span class="fld di" style="width:30px"></span> / <span class="fld di" style="width:46px"></span></div></div></section>`);
+pages.push(`<section class="pg cover"><div class="cb"><div class="k">Plan it. Run it. Review it.</div><h1>12-Week<br>Goal Planner</h1><div class="rule w"></div><p>Twelve weeks is long enough to change something and short enough to stay serious. Pick a few goals, define the weekly actions that drive them, and review every week.</p><div class="nm">Name: <span class="fld di" data-n="cover_name" style="width:300px"></span></div><div class="nm">Start: <span class="fld di" data-n="cover_s_m" style="width:30px"></span> / <span class="fld di" data-n="cover_s_d" style="width:30px"></span> / <span class="fld di" data-n="cover_s_y" style="width:46px"></span> &nbsp;&nbsp; End: <span class="fld di" data-n="cover_e_m" style="width:30px"></span> / <span class="fld di" data-n="cover_e_d" style="width:30px"></span> / <span class="fld di" data-n="cover_e_y" style="width:46px"></span></div></div></section>`);
 
 pages.push(page(`${head('Start here','How to use this planner')}
 <ol class="how">
@@ -48,13 +48,13 @@ const DQ=[ // [theme, morning question, evening question]
 ['Reset','What carried over this week, and what do I drop for good?','What am I grateful for this week? What do I want next week to look like?']];
 const nm=(n,tag)=>`data-n="${n}"`;
 const fld=(n,extra='')=>`<div class="ln fld" data-n="${n}" ${extra}></div>`;
-const dtf=()=>`<span class="fld di" style="width:34px"></span> / <span class="fld di" style="width:34px"></span> / <span class="fld di" style="width:50px"></span>`;
+const dtf=(id)=>`<span class="fld di" ${id?`data-n="${id}_m"`:''} style="width:34px"></span> / <span class="fld di" ${id?`data-n="${id}_d"`:''} style="width:34px"></span> / <span class="fld di" ${id?`data-n="${id}_y"`:''} style="width:50px"></span>`;
 const calcBox=(label,calc,W,D)=>`<div class="cbx"><div class="cl">${label}</div><div class="fld calc" data-calc="${calc}" data-w="${W}" data-d="${D}" data-n="calc_${calc}_w${W}_d${D}"></div></div>`;
 const mlf=(label,n,h,id)=>`<div class="lab">${label}</div><div class="fld ml nbx" data-n="${id}" style="height:${n*h}px"></div>`;
 for(let w=1;w<=12;w++){
   // plan
   const acts=Array.from({length:6},(_,i)=>`<div class="acts"><span>${i+1}</span>${fld(`w${w}_plan_a${i+1}`)}</div>`).join('');
-  pages.push(page(`<div class="wk"><div><div class="k">Week</div><div class="big">${String(w).padStart(2,'0')}</div></div><div class="wd">Week of ${dtf()}</div></div><div class="rule"></div>
+  pages.push(page(`<div class="wk"><div><div class="k">Week</div><div class="big">${String(w).padStart(2,'0')}</div></div><div class="wd">Week of ${dtf(`w${w}_wk`)}</div></div><div class="rule"></div>
 <div class="lab">Top 3 priorities this week</div>${[1,2,3].map(i=>`<div class="acts"><span>${i}</span>${fld(`w${w}_pri${i}`)}</div>`).join('')}
 <div class="lab" style="margin-top:14px">Weekly actions — what has to happen this week</div>${acts}
 ${mlf('Where does each action live on the calendar? (day and time)',4,36,`w${w}_cal`)}
@@ -65,7 +65,7 @@ ${mlf('What could get in the way, and what is my plan for it?',3,36,`w${w}_obs`)
     const d=di+1,[theme,mq,eq]=DQ[di];
     const rows=Array.from({length:5},(_,i)=>`<div class="acts"><span class="fld chk box" data-n="w${w}_d${d}_c${i+1}">▢</span>${fld(`w${w}_d${d}_a${i+1}`)}</div>`).join('');
     const gm=(label,id,fl)=>`<div class="grow" style="flex:${fl}"><div class="lab">${label}</div><div class="fld ml nbx" data-n="${id}" style="flex:1"></div></div>`;
-    pages.push(page(`<div class="wk"><div><div class="k">Week ${w} · Day ${di+1} · ${theme}</div><h2 style="margin-top:6px;font-size:40px">${dn}</h2></div><div class="wd">Date ${dtf()}</div></div><div class="rule" style="margin:10px 0 6px"></div>
+    pages.push(page(`<div class="wk"><div><div class="k">Week ${w} · Day ${di+1} · ${theme}</div><h2 style="margin-top:6px;font-size:40px">${dn}</h2></div><div class="wd">Date ${dtf(`w${w}_d${d}_dt`)}</div></div><div class="rule" style="margin:10px 0 6px"></div>
 ${gm("Today's vision — who am I being, and what does a great day look like?",`w${w}_d${d}_vis`,1)}
 ${gm("Today's goal — the one outcome that makes today a win",`w${w}_d${d}_goal`,1)}
 <div class="lab" style="margin-top:8px">Today's top priority</div>${fld(`w${w}_d${d}_pri`)}
@@ -103,7 +103,7 @@ ${box('Results: where did I land on each goal?',4,30)}
 ${box('Biggest wins',3,30)}
 ${box('Biggest lessons',3,30)}
 ${box('What I\'ll carry into the next 12 weeks',3,30)}
-<div class="lab" style="margin-top:12px">Next 12 weeks starts: <span class="fld di" style="width:34px"></span> / <span class="fld di" style="width:34px"></span> / <span class="fld di" style="width:50px"></span></div>`));
+<div class="lab" style="margin-top:12px">Next 12 weeks starts: <span class=\"fld di\" data-n=\"next_m\" style=\"width:34px\"></span> / <span class=\"fld di\" data-n=\"next_d\" style=\"width:34px\"></span> / <span class=\"fld di\" data-n=\"next_y\" style=\"width:50px\"></span></div>`));
 
 const css=`@page{size:Letter;margin:0}*{box-sizing:border-box}body{margin:0;font-family:Inter,sans-serif;color:${INK}}
 .pg{width:8.5in;height:11in;padding:.7in .75in .6in;position:relative;page-break-after:always;overflow:hidden}
@@ -132,46 +132,71 @@ td{border:1px solid #bdb8ae;height:34px}td.n{width:24px;text-align:center;font-s
 .ft{position:absolute;left:.75in;right:.75in;bottom:.35in;display:flex;justify-content:space-between;font:500 9px 'IBM Plex Mono',monospace;color:${MUTE};letter-spacing:.08em;text-transform:uppercase}`;
 const ff=(n,f,w,s='normal')=>`@font-face{font-family:'${n}';src:url(data:font/woff2;base64,${fs.readFileSync('../posts/fonts/'+f).toString('base64')});font-weight:${w};font-style:${s}}`;
 const fonts=[ff('Inter','Inter-400-normal.woff2',400),ff('Inter','Inter-600-normal.woff2',600),ff('Inter','Inter-500-normal.woff2',500),ff('Oswald','Oswald-700-normal.woff2',700),ff('IBM Plex Mono','IBMPlexMono-400-normal.woff2',500),ff('IBM Plex Mono','IBMPlexMono-600-normal.woff2',600),ff('Lora','Lora-500-italic.woff2',500,'italic')].join('');
-// ---- example values for the pre-filled version ----
+// ---- pre-filled values from the "Refining top 3 goals" session ----
 const V={};
-const TRAIN=['Learn the movements','Build the habit','Add load','Deload and review','Push volume','Push pace','Stay consistent','Deload and review','Peak week 1','Peak week 2','Race prep','5K test'];
-const MS=['Define the offer and who it is for','Outline the product','Draft the core content','Finish draft v1','Get 3 people to review it','Revise from feedback','Build the sales page','Set up payment and delivery','Soft launch to 10 people','Fix what broke','Public launch','Follow up and plan the next 12 weeks'];
-const WT=['Lay the foundation','Build the rhythm','Hold the line','Review and reset','Raise the bar','Midpoint push','Stay steady','Review and reset','Sharpen','Finish what is open','Launch focus','Finish and plan the next 12'];
-const DVIS=['I start the week on purpose: calm, prepared and moving before the world asks anything of me.','I do the hard thing first and I do not negotiate with myself.','I check my pace honestly and adjust without excuses.','I stay steady when the novelty is gone. Boring consistency wins.','I finish what I started, so the weekend is free and my word is kept.','I show up fully for my family and my body, with no phone in the way.','I rest, worship and reset so next week starts from a clear head.'];
-V.vis_where='In 12 weeks I train four days a week and can run a 5K in under 28 minutes. I pray and read Scripture every morning before my phone. My wife and I have had 12 real date nights. The project I have been putting off is launched and ten people are using it.';
-V.vis_why='This is who I told myself I would be. My family needs a man who keeps his word to himself first. If I do not do this, I will be having the same conversation with myself 12 weeks from now, with less energy and less trust in my own word.';
-V.vis_obs='Late nights and my phone in bed: phone charges outside the bedroom and lights are out by 10pm. Work interruptions: I block 90 minutes on the calendar and turn notifications off. Missing a day: never miss twice. I log it and do the next action.';
-V.g1_goal='Train 4 times a week for 12 weeks and run a 5K in under 28:00'; V.g1_start='Not training consistently'; V.g1_target='48 workouts logged; 5K in under 28:00';
-V.g1_a1='Train 4 days: strength Mon, Wed, Thu and a run Sat'; V.g1_a2='Hit 8,000 steps every day'; V.g1_a3='Log meals at least 6 days';
-V.g2_goal='Pray and read Scripture 15 minutes every morning and have a date night every week'; V.g2_start='Praying about 2 days a week'; V.g2_target='84 of 84 days; 12 date nights';
-V.g2_a1='Pray and read Scripture for 15 minutes before touching my phone'; V.g2_a2='10 minutes of undistracted time with my wife each night'; V.g2_a3='One planned date night every Saturday';
-V.g3_goal='Launch the one project that matters by the end of week 12'; V.g3_start='An idea and rough notes'; V.g3_target='Launched, with 10 people using it';
-V.g3_a1='One 90-minute deep work block Monday to Friday'; V.g3_a2='Ship the week\'s milestone every Friday'; V.g3_a3='Plan the next week every Sunday';
-V.ms1_1='Daily prayer and training habits are running without negotiating'; V.ms1_2='The offer is defined and the first draft of the product is done'; V.ms1_3='Date night and nightly check-ins are on the calendar and happening';
-V.ms5_1='Training is up to four days a week with added load and pace'; V.ms5_2='Feedback is in and the product is revised; sales page is built'; V.ms5_3='Payment and delivery work end to end';
-V.ms9_1='5K race prep is underway and the pace is on target'; V.ms9_2='Soft launch is done, fixes are made and the public launch is out'; V.ms9_3='84 days of prayer logged and next 12 weeks are planned';
+const start=new Date(2026,9,5);
+const dstr=(w,d)=>{const t=new Date(start);t.setDate(t.getDate()+(w-1)*7+(d-1));return [String(t.getMonth()+1),String(t.getDate()),'2026'];};
+const setDate=(id,w,d)=>{const [m,dd,y]=dstr(w,d);V[id+'_m']=m;V[id+'_d']=dd;V[id+'_y']=y;};
+V.cover_name='Brian';V.cover_s_m='10';V.cover_s_d='5';V.cover_s_y='2026';V.cover_e_m='12';V.cover_e_d='27';V.cover_e_y='2026';
+V.next_m='12';V.next_d='28';V.next_y='2026';
+V.vis_where='By December 27: the Be the Man pilot is full (4 men) and I have run all six live Sunday sessions. Two couples are booked. Our family money has a plan: savings moving every month, the birth fund started, and a decision made together on Brittney\'s school.';
+V.vis_why='Brittney expects a husband who is dependable, determined, driven, ambitious and wants to build wealth. We have a baby due in early May. I only move when a fire is lit, so I am building the fire into the calendar: a set evening block, reminders and this planner. The cost of not doing this is another year of the same promises.';
+V.vis_obs='Only moving under pressure: the evening block is fixed, calls and tasks are in my reminders, and Board Meetings with Brittney (Nov 1, Dec 6) keep me accountable. Self-doubt: I do the actions anyway and judge the results at the weekly review. No sales yet: I fix the message, not the goal. Never use household money or credit.';
+V.g1_goal='Fill the 4-seat Be the Man pilot ($147 each) and run all six live Sunday sessions';
+V.g1_start='Pilot is live; 0 seats sold'; V.g1_target='4 seats sold; 6 sessions run; about $570';
+V.g1_a1='Mon-Thu evening block: post check, groups, messages and calls'; V.g1_a2='Reply to every comment and DM within a day'; V.g1_a3='Sundays Nov 15 - Dec 20, 7:00 PM: run the live session (1 hour)';
+V.g2_goal='Book 2 couples at $300 each through couples posts and inquiries'; V.g2_start='No couple prospects yet'; V.g2_target='2 couples booked and paid; about $580';
+V.g2_a1='Post the couples content on Instagram and Facebook (never TikTok)'; V.g2_a2='Answer every couples inquiry and invite them to a call'; V.g2_a3='Comment in couples groups: 4 of my 10 daily comments';
+V.g3_goal='Build family security: savings moving, birth fund started, and the school decision made together'; V.g3_start='$139/mo freed up; no savings plan'; V.g3_target='Savings running; school decided';
+V.g3_a1='Move the freed $139 each month and 20-30% of DoorDash to savings'; V.g3_a2='Board Meeting with Brittney: Nov 1 and Dec 6'; V.g3_a3='Be dependable at home: keep my word on the small promises';
+V.ms1_1='Daily rhythm runs Mon-Fri without a fire under me'; V.ms1_2='Posts live every day; 6 Facebook groups joined; first calls done'; V.ms1_3='First seats sold; couples content live; Board Meeting Nov 1 held';
+V.ms5_1='All 4 pilot seats are sold by Nov 8'; V.ms5_2='Pilot sessions begin Nov 15 and I am running them well'; V.ms5_3='First couples inquiry answered; savings transfers are on time';
+V.ms9_1='Pilot sessions 4-6 delivered (Dec 6, 13, 20)'; V.ms9_2='2 couples booked; testimonials collected with permission'; V.ms9_3='Final review with Brittney Dec 27; the next 12 weeks planned';
+const WF=['Daily rhythm starts','Build momentum','Move to 10 comments a day','Hold steady; Board Meeting Nov 1','Fill the last seats','Pilot starts Sunday Nov 15','Run the pilot; couples calls','Run the pilot; keep selling couples','Board Meeting Dec 6; pilot session 4','Pilot session 5; follow up on couples','Pilot session 6 Dec 20; close couples','Final review and plan the next 12'];
+const PRI=[
+ ['Run the evening block every day','Posts live on IG, FB and TikTok daily','Join 3 Facebook groups; move the first savings'],
+ ['Get my first 5 calls booked','Join 3 more Facebook groups (6 total)','Keep every commitment to Brittney'],
+ ['Switch to 10 helpful comments a day','First pilot seat sold','Couples posts live; answer every inquiry'],
+ ['Pilot seat 2 sold','Prepare for the Nov 1 Board Meeting','Savings transfers on time'],
+ ['Pilot seat 3 sold','Send the pilot reminders and Meet link','First couples inquiry answered'],
+ ['Pilot seat 4 sold; the pilot is full','Run session 1 on Sunday, Nov 15','Set up the session routine: Meet room open at 6:45 PM'],
+ ['Run pilot session 2 on Sunday, Nov 22','Couples calls booked','Savings transfers on time'],
+ ['Run pilot session 3 on Sunday, Nov 29','Follow up on couples inquiries','Prepare for the Dec 6 Board Meeting'],
+ ['Run pilot session 4; Board Meeting with Brittney','Couples calls and follow-ups','Keep evening block on schedule'],
+ ['Run pilot session 5 on Sunday, Dec 13','Book the second couple','Collect pilot testimonials with permission'],
+ ['Run pilot session 6 on Sunday, Dec 20','Close the couples conversations','Celebrate with my family'],
+ ['Final review with Brittney on Sunday, Dec 27','Plan the next 12 weeks','Rest and be present with my family']];
+const sess={6:['Nov 15',1],7:['Nov 22',2],8:['Nov 29',3],9:['Dec 6',4],10:['Dec 13',5],11:['Dec 20',6]};
+const DVIS=['Dependable: I do what I said I would do before anyone has to ask.','Determined: I do the uncomfortable messages and calls, even when I do not feel like it.','Driven: I keep going when nobody is watching because my family is counting on it.','Ambitious: I am building something that gives Brittney and the kids security.','I finish the week strong, count my numbers honestly and protect the Sabbath.','Sabbath: I rest and I am fully present with my family. I trust the work I did.','I lead my home and plan next week with Brittney in mind.'];
+const lc=w=>w<3?'Weeks 1-2: join 3 Facebook groups':'10 helpful comments in Facebook groups';
 for(let w=1;w<=12;w++){
-  const ms=MS[w-1], tr=TRAIN[w-1], deload=(w===4||w===8);
-  V[`w${w}_pri1`]=`Finish: ${ms}`; V[`w${w}_pri2`]=`Train four times (${tr})`; V[`w${w}_pri3`]='Pray every morning and keep date night';
-  [`Strength: Monday, Wednesday, Thursday${deload?' (light, deload week)':''}`,'Cardio: Tuesday, Friday; long run or hike Saturday','90-minute work block, Monday to Friday',"Pray and read Scripture for 15 minutes daily","Date night on Saturday evening","Weekly review and plan: Sunday evening"].forEach((t,i)=>V[`w${w}_plan_a${i+1}`]=t);
-  V[`w${w}_cal`]='Prayer 6:00-6:15am daily. Training 6:30am Mon/Wed/Thu, cardio Tue/Fri. Deep work 9:00-10:30am Mon-Fri. Family time 8:00pm nightly. Date night Saturday 6:00pm. Review and plan Sunday 7:00pm.';
-  V[`w${w}_obs`]='Late nights and phone use in bed: phone charges outside the bedroom, lights out by 10pm. Work interruptions: notifications off during the block. If I miss an action, I do the next one on time and never miss twice.';
+  setDate(`w${w}_wk`,w,1);
+  V[`w${w}_pri1`]=PRI[w-1][0];V[`w${w}_pri2`]=PRI[w-1][1];V[`w${w}_pri3`]=PRI[w-1][2];
+  ['Evening block Mon-Thu, 5:15-7:30 PM: the daily actions','Friday lunch: 30-minute version of the daily actions','Sabbath (Fri sundown to Sat sundown): no work, selling or filming','Sunday 1:00 PM: reply to weekend comments and DMs','Sunday 7:00 PM: '+(sess[w]?`pilot session ${sess[w][1]} (Meet room opens 6:45)`:'family time and one-on-one with Brittney'),'Weekly review: fill in the review page and planner scorecard'].forEach((t,i)=>V[`w${w}_plan_a${i+1}`]=t);
+  V[`w${w}_cal`]='Mon-Thu 5:15-7:30 PM evening block. Friday 12:00 PM lunch version. Posts go out 12:15 PM weekdays and Saturday 8:30 PM (scheduled). Sunday 1:00 PM replies.'+(sess[w]?` Sunday 7:00 PM pilot session ${sess[w][1]}.`:'');
+  V[`w${w}_obs`]='Only moving under pressure: calls and tasks are in my reminders and the block is fixed. No answers from men yet: change the message, not the plan. Tired evenings: do the 30-minute version, never zero. 18-hour weekly cap; if I go over, drop to the 12 then 4 hour version. Never use household money.';
   for(let d=1;d<=7;d++){
-    const k=`w${w}_d${d}_`;
-    V[k+'vis']=`${DVIS[d-1]} Week ${w} theme: ${WT[w-1]}.`;
-    const strength=deload?'Light workout (deload week)':`Strength workout (${tr})`;
-    const A=[
-     ['Pray and read Scripture, 15 minutes, before my phone',strength,`90-minute deep work: ${ms}`,'Plan the week: priorities on the calendar','10 minutes undistracted time with my wife'],
-     ['Pray and read Scripture, 15 minutes, before my phone','Cardio: 30 minutes, intervals or run',`90-minute deep work: ${ms}`,'Log all meals today','10 minutes undistracted time with my wife'],
-     ['Pray and read Scripture, 15 minutes, before my phone',strength,`90-minute deep work: be at 50% on ${ms}`,'Midweek check: compare to plan and adjust','10 minutes undistracted time with my wife'],
-     ['Pray and read Scripture, 15 minutes, before my phone',strength,`90-minute deep work: push ${ms} to 80%`,'Log all meals today','10 minutes undistracted time with my wife'],
-     ['Pray and read Scripture, 15 minutes, before my phone','Cardio or a 30-minute brisk walk',`Ship it: finish and send "${ms}"`,'Clear open loops: messages, email, errands','Plan the weekend with my wife'],
-     ['Pray and read Scripture, 15 minutes, before my phone',w===12?'5K time trial: goal under 28:00':'Long run or hike, building toward the 5K','Date night: phones away','Log meals and prep food for Sunday','One project at home: finish it'],
-     ['Worship and pray; rest with my family','20-minute easy walk and stretching','Weekly review: fill in this week\'s review page','Plan next week: priorities and calendar','Prep meals and gear for Monday']][d-1];
-    A.forEach((t,i)=>V[k+`a${i+1}`]=t);
-    const G=[`Train and start "${ms}" with a clean plan`,`Intervals done and 90 minutes on "${ms}"`,`Be halfway through "${ms}" and lift`,`Push "${ms}" to 80% and train`,`Ship "${ms}" and clear the open loops`,`Long run/hike and a real date night`,'Worship, weekly review and next week planned'][d-1];
-    V[k+'goal']=G;
-    V[k+'pri']=['Plan the week, then start the milestone','Do the workout and the work block before noon',`Honest midweek check on "${ms}"`,'Do not let today be ordinary: finish the block','Finish and send the milestone','Be fully present with my family','Review the week and plan the next'][d-1];
+    const k=`w${w}_d${d}_`; setDate(k+'dt',w,d);
+    V[k+'vis']=DVIS[d-1]+` This week: ${WF[w-1]}.`;
+    let A,G,P;
+    const couples=w>=3?'Couples posts go on Instagram and Facebook only.':'';
+    if(d<=4){
+      A=['Check today\'s post is live; reply to every comment and DM (25 min)',`Facebook groups (40 min): ${lc(w)}`,'Send 5 personal messages to men who engaged; invite each to a 15-minute call (20 min)','Calls from my messages, in the evening block (30 min)','Check off this planner page and my reminders (5 min)'];
+      G=`Finish the evening block, 5:15 to 7:30 PM, with every action checked off. ${WF[w-1]}.`;
+      P=PRI[w-1][0];
+    } else if(d===5){
+      A=['Lunch version: check the post and reply to comments and DMs (10 min)','Facebook groups at lunch: 5 helpful comments (10 min)','Send 5 personal messages (10 min)','Set aside 20-30% of this week\'s DoorDash into the savings jar','Check off this planner page; Sabbath starts at sundown, no work or selling'];
+      G='Finish the lunch version, count this week\'s numbers honestly and be ready for the Sabbath.'; P='Do the lunch version and protect the Sabbath';
+    } else if(d===6){
+      A=['Sabbath: rest until sundown; no work, selling or filming','Be fully present with Brittney and the kids','Tonight\'s 8:30 PM post goes out on its own; do not reply until Sunday','One thing I am grateful for about my wife and my children','Plan nothing for the business today'];
+      G='Rest. Be dependable at home and trust the work I did this week.'; P='Be fully present with my family';
+    } else {
+      const sn=sess[w];
+      A=['1:00 PM: reply to weekend comments and DMs (30 min)',w===4||w===9?'Board Meeting with Brittney: numbers, wins, what I need to fix':'Family time and church','Weekly review: fill in this week\'s review page and the planner scorecard',sn?`7:00 PM: run pilot session ${sn[1]} (Meet room opens 6:45, one hour)`:(w===12?'Final 12-week review with Brittney: fill in the final review page':'7:00 PM: one-on-one time with Brittney'),'Set next week\'s priorities and set my reminders for Monday'];
+      G=sn?`Run pilot session ${sn[1]} well and finish the weekly review.`:(w===12?'Finish the 12-week review with Brittney and plan the next 12 weeks.':'Review the week honestly and plan next week.');
+      P=sn?`Pilot session ${sn[1]} at 7:00 PM`:'Review the week and plan the next one';
+    }
+    A.forEach((t,i)=>V[k+`a${i+1}`]=t); V[k+'goal']=G; V[k+'pri']=P;
   }
 }
 fs.writeFileSync('values.json',JSON.stringify(V,null,1));
