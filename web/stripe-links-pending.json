@@ -1,0 +1,20 @@
+{
+ "_note": "Live Stripe Payment Links created 2026-10-07. NOT yet used by the site: waiting for Brian's go-ahead. To publish, copy each into products.json stripe_link, rebuild, push.",
+ "links": {
+  "scorecard": "https://buy.stripe.com/3cIfZi17t31X0OPga06kg00",
+  "husband-guide": "https://buy.stripe.com/cNibJ29DZ0TPcxxf5W6kg01",
+  "marriage-workbook": "https://buy.stripe.com/aFa00k03pfOJapp5vm6kg02",
+  "devotional": "https://buy.stripe.com/9B69AUg2ngSN2WX5vm6kg03",
+  "father-guide": "https://buy.stripe.com/5kQcN67vR31XdBBcXO6kg04",
+  "father-son-cards": "https://buy.stripe.com/5kQeVe2bx461eFF6zq6kg05",
+  "bible-study": "https://buy.stripe.com/9B614o4jFdGB2WX4ri6kg06",
+  "discipleship-workbook": "https://buy.stripe.com/14AdRadUfaupapp8Hy6kg07",
+  "prayer-strategy": "https://buy.stripe.com/aFadRa3fB6e94113ne6kg08",
+  "forty-cards": "https://buy.stripe.com/eVq6oI3fB6e92WXga06kg09",
+  "husband-kit": "https://buy.stripe.com/eVq8wQ4jFeKFdBBe1S6kg0a",
+  "father-kit": "https://buy.stripe.com/eVq28s7vR5a52WXcXO6kg0b",
+  "faith-kit": "https://buy.stripe.com/7sY00kaI36e9gNN5vm6kg0c",
+  "library": "https://buy.stripe.com/aFa9AUeYjdGB2WX1f66kg0d",
+  "couples": "https://book.stripe.com/fZu8wQbM79ql1STbTK6kg0e"
+ }
+}

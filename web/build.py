@@ -198,7 +198,7 @@ def main():
         rel = "404.html" if meta["path"] == "/404" else (meta["path"].strip("/") + "/index.html").lstrip("/")
         out = OUT / rel
         out.parent.mkdir(parents=True, exist_ok=True)
-        out.write_text(render(meta, body))
+        out.write_text(swap_checkout_links(render(meta, body), products))
         if not meta.get("noindex"):
             urls.append((meta["path"], meta.get("priority", "0.8")))
     today = datetime.date.today().isoformat()

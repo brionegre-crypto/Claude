@@ -55,3 +55,9 @@ Once the Stripe connector is connected, a new Claude session can do all of this:
 2. Write each Payment Link URL into that offer's `stripe_link`. Run `python3 web/build.py`, then commit and push to `claude/sharp-sagan-jrcxxn`. Cloudflare publishes it.
 3. Ask Brian to buy the $7 Scorecard once as a test, then refund it.
 4. Don't create anything for the workshop, the 6-week group, the Inner Circle, the ministry kit or the Club yet.
+
+## Status 2026-10-07: links created, publishing waits on Brian
+
+- Created in live Stripe, through the connector: 15 products, each with a one-time USD price and a Payment Link that redirects to its `/get/<slug>/` page. The couples link collects name, phone, partner's name and partner's email.
+- The links are saved in `web/stripe-links-pending.json`. They are not on the site yet, so the site still uses the systeme.io checkouts.
+- To publish once Brian says yes: copy the links into `web/products.json` (`stripe_link`), run `python3 web/build.py`, then commit and push.
