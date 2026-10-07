@@ -45,3 +45,13 @@ For row 15 (couples), also turn on **Collect customers' names** and **Collect ph
 ## How the switch works
 
 `web/products.json` holds every offer. Once a row's `stripe_link` is filled in, `python3 web/build.py` replaces that offer's systeme.io checkout link everywhere on the site. If anything goes wrong, emptying the link switches that button back to systeme.io.
+
+## If Claude does it through the Stripe connector
+
+Once the Stripe connector is connected, a new Claude session can do all of this:
+
+1. Read `web/products.json`. For each offer, create a Product, then a one-time USD Price (`price` × 100 cents). Then create a Payment Link with `after_completion.type = redirect` and `after_completion.redirect.url = https://bethemansystem.com/get/<slug>/`.
+   - For `couples`, also collect the customer's name and phone number.
+2. Write each Payment Link URL into that offer's `stripe_link`. Run `python3 web/build.py`, then commit and push to `claude/sharp-sagan-jrcxxn`. Cloudflare publishes it.
+3. Ask Brian to buy the $7 Scorecard once as a test, then refund it.
+4. Don't create anything for the workshop, the 6-week group, the Inner Circle, the ministry kit or the Club yet.
