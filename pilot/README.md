@@ -429,3 +429,4 @@ Approved by Brian: all new products, the three Inner Circle decisions, "certifie
 - 2026-10-06: Brian resized Home to 3,160 px. The homepage photo was cropped from its top-left corner (face off-center); re-centered it in its frame. The About page background block hung 70 px below the page; moved it to the top. About fits its page as is and needs no resize.
 
 - 2026-10-07: Step 1 sign-up page (go.bethemansystem.com/framework): tagline changed to "THE BE THE MAN SYSTEM, FOR CHRISTIAN MEN" (was "BLACK CHRISTIAN MEN"), per Brian.
+- 2026-10-07: Canva homepage hero tagline (under the intro paragraph) changed to match: "THE BE THE MAN SYSTEM, FOR CHRISTIAN MEN". Saved, not published. The Canva design title still says "for Black Christian Men".
