@@ -129,13 +129,72 @@ def render(meta, body):
         '<script src="/assets/site.js" defer></script>\n</body>\n</html>\n'
 
 
+def delivery_pages(products):
+    """Thank-you and download pages Stripe redirects to after payment."""
+    pages = []
+    for o in products["offers"]:
+        meta = {"path": f"/get/{o['slug']}/", "noindex": True, "nav": "store",
+                "title": f"Thank you: {o['name']} | Be The Man",
+                "description": f"Your download for {o['name']}."}
+        if o["key"] == "couples":
+            body = f"""<div class="wrap hero narrow">
+  <p class="eyebrow">Payment received</p>
+  <h1 style="font-size:clamp(40px,6vw,64px)">Thank you. <span class="grad">You're booked in.</span></h1>
+  <p class="lead">Brian will email you both within 24 hours with your relationship assessment link and your first session date. Check your spam folder if you don't see it.</p>
+  <div class="tile stack" style="margin-top:32px">
+    <h3>What happens next</h3>
+    <ul class="check">
+      <li>Each of you takes the validated relationship assessment online, separately, on your own time. The $35 assessment fee is paid directly to the assessment provider.</li>
+      <li>Then you meet for three sessions to go through your results together and choose what to work on.</li>
+      <li>Questions before then? Reply to your receipt email and it reaches Brian.</li>
+    </ul>
+  </div>
+</div>
+<div style="height:clamp(80px,12vw,140px)"></div>"""
+        else:
+            links = "\n".join(
+                f'      <a class="kit" href="{products["files"][f]["url"]}" download><div class="stack" style="gap:2px"><b>{html.escape(products["files"][f]["label"])}</b><span>Download</span></div><span class="p">↓</span></a>'
+                for f in o["files"])
+            body = f"""<div class="wrap hero narrow">
+  <p class="eyebrow">Payment received</p>
+  <h1 style="font-size:clamp(40px,6vw,64px)">Thank you. <span class="grad">Here's {html.escape(o['name'])}.</span></h1>
+  <p class="lead">Download your files below. Bookmark this page so you can come back to it. A receipt is on its way to your email.</p>
+  <div class="kit-list" style="margin-top:32px">
+{links}
+  </div>
+  <div class="tile stack" style="margin-top:24px">
+    <p class="label">How to start</p>
+    <p style="color:var(--fg)">{html.escape(o['start'])}</p>
+  </div>
+  <div class="tile hi stack" style="margin-top:16px">
+    <p class="label">Keep going</p>
+    <h3>Get every tool, plus the monthly call.</h3>
+    <p>The Be The Man Club is $19 a month: all seven steps, a new set of tools every month, a Club-only tool, and a live call on the second Tuesday.</p>
+    <div class="actions"><a class="btn btn-primary" href="/the-club/">See the Club</a></div>
+  </div>
+  <p class="fine" style="margin-top:20px">Trouble downloading? Reply to your receipt email and it reaches Brian.</p>
+</div>
+<div style="height:clamp(80px,12vw,140px)"></div>"""
+        pages.append((meta, body))
+    return pages
+
+
+def swap_checkout_links(text, products):
+    for o in products["offers"]:
+        if o.get("stripe_link"):
+            text = text.replace(o["systeme_link"], o["stripe_link"])
+    return text
+
+
 def main():
     if OUT.exists():
         shutil.rmtree(OUT)
     shutil.copytree(ROOT / "static", OUT)
     urls = []
-    for page in sorted((ROOT / "pages").glob("*.html")):
-        meta, body = read_page(page)
+    products = json.loads((ROOT / "products.json").read_text())
+    entries = [read_page(p) for p in sorted((ROOT / "pages").glob("*.html"))] + delivery_pages(products)
+    for meta, body in entries:
+        body = swap_checkout_links(body, products)
         rel = "404.html" if meta["path"] == "/404" else (meta["path"].strip("/") + "/index.html").lstrip("/")
         out = OUT / rel
         out.parent.mkdir(parents=True, exist_ok=True)

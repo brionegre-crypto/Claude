@@ -1,0 +1,287 @@
+{
+ "_note": "Edit stripe_link once Brian creates each Stripe Payment Link. When set, build.py swaps every systeme_link on the site for it. Delivery pages live at /get/<slug>/.",
+ "files": {
+  "scorecard_pdf": {
+   "label": "The Weekly Scorecard (PDF, print it)",
+   "url": "https://d1yei2z3i6k35z.cloudfront.net/18912984/6a9ff102424c63.83360430_The_Weekly_Scorecard.pdf"
+  },
+  "scorecard_xlsx": {
+   "label": "The Weekly Scorecard (spreadsheet)",
+   "url": "https://d1yei2z3i6k35z.cloudfront.net/18912984/6a9ff10243fba9.35376520_The_Weekly_Scorecard.xlsx"
+  },
+  "husband_pdf": {
+   "label": "The Godly Husband Field Guide (PDF)",
+   "url": "https://d1yei2z3i6k35z.cloudfront.net/18912984/6aa1ab2b1aa886.36523591_The_Godly_Husband_Field_Guide.pdf"
+  },
+  "husband_xlsx": {
+   "label": "Godly Husband tracker (spreadsheet)",
+   "url": "https://d1yei2z3i6k35z.cloudfront.net/18912984/6aa1b0a62266d2.09773419_The_Godly_Husband_Field_Guide_Tracker.xlsx"
+  },
+  "marriage_pdf": {
+   "label": "The Christian Marriage Workbook for Men (PDF)",
+   "url": "https://d1yei2z3i6k35z.cloudfront.net/18912984/6aa1ab2b1dab38.01554037_The_Christian_Marriage_Workbook_for_Men.pdf"
+  },
+  "devotional_pdf": {
+   "label": "The Husband's Devotional: 30 Mornings (PDF)",
+   "url": "https://d1yei2z3i6k35z.cloudfront.net/18912984/6aa1ab2b1aacf6.37012758_The_Husbands_Devotional_30_Mornings.pdf"
+  },
+  "couples_pdf": {
+   "label": "Christian Couples Conversation Cards (PDF)",
+   "url": "https://d1yei2z3i6k35z.cloudfront.net/18912984/6aa1ab2b1f9a71.01645213_Christian_Couples_Conversation_Cards.pdf"
+  },
+  "father_pdf": {
+   "label": "The Father's Field Guide (PDF)",
+   "url": "https://d1yei2z3i6k35z.cloudfront.net/18912984/6aa1ab2b1e6f23.62597105_The_Fathers_Field_Guide.pdf"
+  },
+  "father_xlsx": {
+   "label": "Father's Field Guide tracker (spreadsheet)",
+   "url": "https://d1yei2z3i6k35z.cloudfront.net/18912984/6aa1b0a60dec52.94308288_The_Fathers_Field_Guide_Tracker.xlsx"
+  },
+  "fatherson_pdf": {
+   "label": "Father and Son Conversation Cards (PDF)",
+   "url": "https://d1yei2z3i6k35z.cloudfront.net/18912984/6aa1ab2b22c2a8.94257907_Father_and_Son_Conversation_Cards.pdf"
+  },
+  "bible_pdf": {
+   "label": "The Men's Bible Study: Eight Weeks (PDF)",
+   "url": "https://d1yei2z3i6k35z.cloudfront.net/18912984/6aa1ab2b1d9164.57364847_The_Mens_Bible_Study_Eight_Weeks.pdf"
+  },
+  "disc_pdf": {
+   "label": "The Men's Discipleship Workbook (PDF)",
+   "url": "https://d1yei2z3i6k35z.cloudfront.net/18912984/6aa1ab2b1cdc32.19410002_The_Mens_Discipleship_Workbook.pdf"
+  },
+  "disc_xlsx": {
+   "label": "Discipleship Workbook tracker (spreadsheet)",
+   "url": "https://d1yei2z3i6k35z.cloudfront.net/18912984/6aa1b0a623e867.40443129_The_Mens_Discipleship_Workbook_Tracker.xlsx"
+  },
+  "prayer_pdf": {
+   "label": "The Prayer Strategy for Men (PDF)",
+   "url": "https://d1yei2z3i6k35z.cloudfront.net/18912984/6aa1ab2b2117a7.43700137_The_Prayer_Strategy_for_Men.pdf"
+  },
+  "forty_pdf": {
+   "label": "Forty Cards for Men (PDF)",
+   "url": "https://d1yei2z3i6k35z.cloudfront.net/18912984/6aa1ab2b2a48c1.74351572_Forty_Cards_for_Men.pdf"
+  }
+ },
+ "offers": [
+  {
+   "key": "scorecard",
+   "name": "The Weekly Scorecard",
+   "price": 7,
+   "type": "one_time",
+   "systeme_link": "https://go.bethemansystem.com/7d78815c",
+   "stripe_link": "",
+   "slug": "scorecard-lnxtejvx",
+   "files": [
+    "scorecard_pdf",
+    "scorecard_xlsx"
+   ],
+   "start": "Print one sheet a week. Fill it in Sunday night: every commitment, every day, kept or missed. Share it with one other man."
+  },
+  {
+   "key": "husband-guide",
+   "name": "The Godly Husband Field Guide",
+   "price": 19,
+   "type": "one_time",
+   "systeme_link": "https://go.bethemansystem.com/4b9241c3",
+   "stripe_link": "",
+   "slug": "husband-guide-coaukruz",
+   "files": [
+    "husband_pdf",
+    "husband_xlsx"
+   ],
+   "start": "Pick your seven decisions, give each one a time, and track them for thirty days."
+  },
+  {
+   "key": "marriage-workbook",
+   "name": "The Christian Marriage Workbook for Men",
+   "price": 19,
+   "type": "one_time",
+   "systeme_link": "https://go.bethemansystem.com/1d991719",
+   "stripe_link": "",
+   "slug": "marriage-workbook-ojd7cel2",
+   "files": [
+    "marriage_pdf"
+   ],
+   "start": "Eight sessions. Do one a week, at the same time each week."
+  },
+  {
+   "key": "devotional",
+   "name": "The Husband's Devotional: 30 Mornings",
+   "price": 9,
+   "type": "one_time",
+   "systeme_link": "https://go.bethemansystem.com/e533d404",
+   "stripe_link": "",
+   "slug": "devotional-uwfdnzsj",
+   "files": [
+    "devotional_pdf"
+   ],
+   "start": "One page each morning for thirty days, before your phone."
+  },
+  {
+   "key": "father-guide",
+   "name": "The Father's Field Guide",
+   "price": 19,
+   "type": "one_time",
+   "systeme_link": "https://go.bethemansystem.com/96078b04",
+   "stripe_link": "",
+   "slug": "father-guide-jnrvfbvb",
+   "files": [
+    "father_pdf",
+    "father_xlsx"
+   ],
+   "start": "Start with the first decision this week and track it with the spreadsheet."
+  },
+  {
+   "key": "father-son-cards",
+   "name": "Father and Son Conversation Cards",
+   "price": 9,
+   "type": "one_time",
+   "systeme_link": "https://go.bethemansystem.com/0476a5cf",
+   "stripe_link": "",
+   "slug": "father-son-cards-f2gken5w",
+   "files": [
+    "fatherson_pdf"
+   ],
+   "start": "Print, cut, and pick one card a week. The questions are sorted by age."
+  },
+  {
+   "key": "bible-study",
+   "name": "The Men's Bible Study: Eight Weeks",
+   "price": 19,
+   "type": "one_time",
+   "systeme_link": "https://go.bethemansystem.com/fe06b4ca",
+   "stripe_link": "",
+   "slug": "bible-study-edzfbhfw",
+   "files": [
+    "bible_pdf"
+   ],
+   "start": "Eight weeks. Best done with at least one other man."
+  },
+  {
+   "key": "discipleship-workbook",
+   "name": "The Men's Discipleship Workbook",
+   "price": 19,
+   "type": "one_time",
+   "systeme_link": "https://go.bethemansystem.com/42ecffa1",
+   "stripe_link": "",
+   "slug": "discipleship-workbook-3mxy3iuy",
+   "files": [
+    "disc_pdf",
+    "disc_xlsx"
+   ],
+   "start": "Twelve sessions with a partner. Report your progress to him each week."
+  },
+  {
+   "key": "prayer-strategy",
+   "name": "The Prayer Strategy for Men",
+   "price": 9,
+   "type": "one_time",
+   "systeme_link": "https://go.bethemansystem.com/227a8255",
+   "stripe_link": "",
+   "slug": "prayer-strategy-fyrdnigm",
+   "files": [
+    "prayer_pdf"
+   ],
+   "start": "Write the names and the dated requests first, then pray through the list at the same time each day."
+  },
+  {
+   "key": "forty-cards",
+   "name": "Forty Cards for Men",
+   "price": 9,
+   "type": "one_time",
+   "systeme_link": "https://go.bethemansystem.com/47a09e06",
+   "stripe_link": "",
+   "slug": "forty-cards-geqjmizi",
+   "files": [
+    "forty_pdf"
+   ],
+   "start": "One card, one action, every day for forty days."
+  },
+  {
+   "key": "husband-kit",
+   "name": "The Husband Kit",
+   "price": 39,
+   "type": "one_time",
+   "systeme_link": "https://5e95-brian.systeme.io/d1d8c97d",
+   "stripe_link": "",
+   "slug": "husband-kit-soj4aqgs",
+   "files": [
+    "husband_pdf",
+    "husband_xlsx",
+    "marriage_pdf",
+    "devotional_pdf",
+    "couples_pdf"
+   ],
+   "start": "Start with the Godly Husband Field Guide. Use the Conversation Cards once a week with your wife."
+  },
+  {
+   "key": "father-kit",
+   "name": "The Father Kit",
+   "price": 29,
+   "type": "one_time",
+   "systeme_link": "https://5e95-brian.systeme.io/5cbc7892",
+   "stripe_link": "",
+   "slug": "father-kit-1klcffxh",
+   "files": [
+    "father_pdf",
+    "father_xlsx",
+    "fatherson_pdf"
+   ],
+   "start": "Start with the Father's Field Guide, then add one conversation card a week."
+  },
+  {
+   "key": "faith-kit",
+   "name": "The Faith Kit",
+   "price": 29,
+   "type": "one_time",
+   "systeme_link": "https://5e95-brian.systeme.io/d616652a",
+   "stripe_link": "",
+   "slug": "faith-kit-dz9xsaqw",
+   "files": [
+    "bible_pdf",
+    "disc_pdf",
+    "disc_xlsx",
+    "prayer_pdf"
+   ],
+   "start": "Start with the Prayer Strategy this week. Begin the Bible Study with another man next week."
+  },
+  {
+   "key": "library",
+   "name": "The Complete Be The Man Library",
+   "price": 97,
+   "type": "one_time",
+   "systeme_link": "https://5e95-brian.systeme.io/593d3b68",
+   "stripe_link": "",
+   "slug": "library-zjcdznwk",
+   "files": [
+    "scorecard_pdf",
+    "scorecard_xlsx",
+    "husband_pdf",
+    "husband_xlsx",
+    "marriage_pdf",
+    "devotional_pdf",
+    "couples_pdf",
+    "father_pdf",
+    "father_xlsx",
+    "fatherson_pdf",
+    "bible_pdf",
+    "disc_pdf",
+    "disc_xlsx",
+    "prayer_pdf",
+    "forty_pdf"
+   ],
+   "start": "Start with the Weekly Scorecard. Every other tool plugs into it."
+  },
+  {
+   "key": "couples",
+   "name": "Couples counseling: three sessions",
+   "price": 300,
+   "type": "one_time",
+   "systeme_link": "https://5e95-brian.systeme.io/9daca0e0",
+   "stripe_link": "",
+   "slug": "couples-m7pwwkaj",
+   "files": [],
+   "start": ""
+  }
+ ]
+}
