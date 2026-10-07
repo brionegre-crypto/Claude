@@ -491,3 +491,6 @@ Approved by Brian: all new products, the three Inner Circle decisions, "certifie
 - Added a "Watch" section to the home page with Brian's 5 videos: Rsy-4dIy5oc (featured), S4W-WXHKao4, MYWjpTJMspM, IV2zSIZtZAE, tToBsTxYiS4.
 - Click-to-play: each shows its YouTube thumbnail and loads the youtube-nocookie player only when tapped, so the page stays fast.
 - YouTube is blocked from the build environment, so the titles and upload dates aren't known yet. Once Brian sends them, add titles under each video and VideoObject schema (name, description, thumbnailUrl, uploadDate, embedUrl).
+- Update: the video titles are now matched from Brian's YouTube Studio screenshot. The matching was done by importing each thumbnail into Canva (5 small "yt-thumb-*" images are now in his Canva uploads and can be deleted).
+  - The featured video is "Why Your Goals Keep Failing". The other four are in a side list; tapping one plays it in the big player.
+  - Added VideoObject schema for all 5 (title, description, upload date, duration), and added the videos to llms.txt.
