@@ -4,50 +4,140 @@ date,day,time,brand,type,title,cta,folder
 2026-10-07,Wed,7pm,Be The Man,post,"Receipt: what the weekly email costs",challenge,2026-10-07_Wed_7pm_BTM_POST_email-receipt
 2026-10-07,Wed,12pm,Couples,post,"Ten minutes, no screens",save,2026-10-07_Wed_12pm_COUPLES_POST_c1-ten-minutes
 2026-10-08,Thu,7pm,Be The Man,post,"Would your wife be able to tell?",challenge,2026-10-08_Thu_7pm_BTM_POST_wife-test
+2026-10-09,Fri,2pm,Couples,carousel,"Carousel: 5 signs you’re drifting (not fighting)",couples,2026-10-09_Fri_2pm_COUPLES_CAROUSEL_b-signs-drifting
+2026-10-09,Fri,8am,Be The Man,reel,"Reel: Stop scrolling. This is for the man who…",challenge,2026-10-09_Fri_8am_BTM_REEL_b-stop-scrolling
+2026-10-09,Fri,9pm,Be The Man,post,"Rate your week 1–10",comment,2026-10-09_Fri_9pm_BTM_POST_b-rate-week
 2026-10-09,Fri,12pm,Couples,carousel,"Carousel: 5 better questions than “How was your day?”",save,2026-10-09_Fri_12pm_COUPLES_CAROUSEL_c1-questions
+2026-10-10,Sat,2pm,Be The Man,post,"Quote: a promise with no time",step1,2026-10-10_Sat_2pm_BTM_POST_b-quote-promise
 2026-10-10,Sat,7pm,Couples,reel,"Reel: Listening to reply vs. listening to understand",couples,2026-10-10_Sat_7pm_COUPLES_REEL_c1-listen
+2026-10-10,Sat,8am,Couples,reel,"Reel: Couples who last do this",share,2026-10-10_Sat_8am_COUPLES_REEL_b-couples-who-last
 2026-10-10,Sat,9am,Be The Man,post,"The Be The Man Club, $19 a month",club,2026-10-10_Sat_9am_BTM_POST_club
+2026-10-10,Sat,9pm,Couples,post,"Describe your marriage in one word",comment,2026-10-10_Sat_9pm_COUPLES_POST_b-one-word
+2026-10-11,Sun,2pm,Couples,carousel,"Carousel: The Sunday night couple check-in",save,2026-10-11_Sun_2pm_COUPLES_CAROUSEL_b-sunday-sync
 2026-10-11,Sun,4pm,Couples,post,"Married, not roommates",couples,2026-10-11_Sun_4pm_COUPLES_POST_c1-roommates
+2026-10-11,Sun,8am,Be The Man,reel,"Reel: The 15 minutes that run your week",challenge,2026-10-11_Sun_8am_BTM_REEL_b-sunday-15
+2026-10-11,Sun,9pm,Be The Man,post,"Comment STEP1: one question",step1,2026-10-11_Sun_9pm_BTM_POST_b-kw-step1-a
+2026-10-12,Mon,2pm,Be The Man,post,"Monday doesn’t need motivation",challenge,2026-10-12_Mon_2pm_BTM_POST_b-monday-truth
 2026-10-12,Mon,7pm,Be The Man,reel,"Reel: You've made this promise before",challenge,2026-10-12_Mon_7pm_BTM_REEL_promise
+2026-10-12,Mon,8am,Couples,reel,"Reel: When she says “I’m fine”",share,2026-10-12_Mon_8am_COUPLES_REEL_b-she-said-fine
+2026-10-12,Mon,9pm,Be The Man,post,"A or B: which man are you?",comment,2026-10-12_Mon_9pm_BTM_POST_b-a-or-b
+2026-10-13,Tue,2pm,Couples,carousel,"Carousel: 5 tiny things that say “I see you”",save,2026-10-13_Tue_2pm_COUPLES_CAROUSEL_b-love-languages-small
 2026-10-13,Tue,7pm,Be The Man,post,"Who you're becoming in one sentence",challenge,2026-10-13_Tue_7pm_BTM_POST_one-sentence
+2026-10-13,Tue,8am,Be The Man,reel,"Reel: One week from today",challenge,2026-10-13_Tue_8am_BTM_REEL_b-one-week
+2026-10-13,Tue,9pm,Couples,post,"Comment COUPLES: where are you strong?",couples,2026-10-13_Tue_9pm_COUPLES_POST_b-kw-couples-a
 2026-10-13,Tue,12pm,Couples,reel,"Reel: It’s you two vs. the problem",share,2026-10-13_Tue_12pm_COUPLES_REEL_c2-problem
+2026-10-14,Wed,2pm,Be The Man,post,"It’s Wednesday. Is it still standing?",challenge,2026-10-14_Wed_2pm_BTM_POST_b-midweek
 2026-10-14,Wed,7pm,Be The Man,reel,"Reel: One bad day shouldn't cost you a month",challenge,2026-10-14_Wed_7pm_BTM_REEL_bad-day
+2026-10-14,Wed,8am,Couples,reel,"Reel: The apology that actually works",share,2026-10-14_Wed_8am_COUPLES_REEL_b-apology
+2026-10-14,Wed,9pm,Be The Man,post,"Fill in the blank: I keep breaking…",comment,2026-10-14_Wed_9pm_BTM_POST_b-fill-blank
 2026-10-14,Wed,12pm,Couples,post,"Delete “always” and “never”",share,2026-10-14_Wed_12pm_COUPLES_POST_c2-always
+2026-10-15,Thu,2pm,Couples,carousel,"Carousel: 6 phrases that end a fight faster",save,2026-10-15_Thu_2pm_COUPLES_CAROUSEL_b-fight-phrases
 2026-10-15,Thu,7pm,Be The Man,carousel,"Carousel: Write your vision statement in 20 minutes",step1,2026-10-15_Thu_7pm_BTM_CAROUSEL_vision-carousel
+2026-10-15,Thu,8am,Be The Man,reel,"Reel: The 9 PM phone rule",challenge,2026-10-15_Thu_8am_BTM_REEL_b-phone-9pm
+2026-10-15,Thu,9pm,Be The Man,post,"Comment STEP1: before New Year’s",step1,2026-10-15_Thu_9pm_BTM_POST_b-kw-step1-b
+2026-10-16,Fri,2pm,Be The Man,post,"Quote: your house notices",challenge,2026-10-16_Fri_2pm_BTM_POST_b-quote-house
 2026-10-16,Fri,7pm,Be The Man,post,"Most men pray when they remember",challenge,2026-10-16_Fri_7pm_BTM_POST_pray-when
+2026-10-16,Fri,8am,Couples,reel,"Reel: Friday date night in 3 steps",save,2026-10-16_Fri_8am_COUPLES_REEL_b-date-friday
+2026-10-16,Fri,9pm,Couples,post,"This or that: couple edition",comment,2026-10-16_Fri_9pm_COUPLES_POST_b-this-that
 2026-10-16,Fri,12pm,Couples,carousel,"Carousel: 5 rules for fighting fair",couples,2026-10-16_Fri_12pm_COUPLES_CAROUSEL_c2-fight-fair
+2026-10-17,Sat,2pm,Be The Man,carousel,"Carousel: 5 things to do with your kids this weekend",step1,2026-10-17_Sat_2pm_BTM_CAROUSEL_b-saturday-dad
 2026-10-17,Sat,7pm,Couples,reel,"Reel: The 20-minute timeout",share,2026-10-17_Sat_7pm_COUPLES_REEL_c2-timeout
+2026-10-17,Sat,8am,Be The Man,reel,"Reel: Three days until the challenge",challenge,2026-10-17_Sat_8am_BTM_REEL_b-three-days
 2026-10-17,Sat,9am,Be The Man,post,"You don't need more conviction",challenge,2026-10-17_Sat_9am_BTM_POST_conviction
+2026-10-17,Sat,9pm,Be The Man,post,"Tag the brother",challenge,2026-10-17_Sat_9pm_BTM_POST_b-brother
+2026-10-18,Sun,2pm,Couples,post,"Quote: same team",share,2026-10-18_Sun_2pm_COUPLES_POST_b-quote-team
 2026-10-18,Sun,4pm,Couples,post,"Don’t let the sun go down on your anger",couples,2026-10-18_Sun_4pm_COUPLES_POST_c2-sun
 2026-10-18,Sun,7pm,Be The Man,reel,"Reel: Pray with a time attached",challenge,2026-10-18_Sun_7pm_BTM_REEL_pray-reel
+2026-10-18,Sun,8am,Couples,reel,"Reel: The fight in the church parking lot",share,2026-10-18_Sun_8am_COUPLES_REEL_b-church-car
+2026-10-18,Sun,9pm,Be The Man,post,"Challenge starts Tuesday",challenge,2026-10-18_Sun_9pm_BTM_POST_b-kw-challenge-b
+2026-10-19,Mon,2pm,Couples,carousel,"Carousel: Scripts for in-law boundaries",couples,2026-10-19_Mon_2pm_COUPLES_CAROUSEL_b-in-law-scripts
 2026-10-19,Mon,7pm,Be The Man,reel,"Reel: Seven weeks starts tomorrow",challenge,2026-10-19_Mon_7pm_BTM_REEL_w3-starts-tomorrow
+2026-10-19,Mon,8am,Be The Man,reel,"Reel: Tomorrow you write one sentence",challenge,2026-10-19_Mon_8am_BTM_REEL_b-tomorrow-sentence
+2026-10-19,Mon,9pm,Be The Man,post,"Workshop in 6 days",workshop,2026-10-19_Mon_9pm_BTM_POST_b-workshop-6
+2026-10-20,Tue,2pm,Be The Man,post,"Day one: write it now",challengeOn,2026-10-20_Tue_2pm_BTM_POST_b-day-one
 2026-10-20,Tue,7pm,Be The Man,post,"Challenge week 1: one sentence",challengeOn,2026-10-20_Tue_7pm_BTM_POST_w3-week-one
+2026-10-20,Tue,8am,Couples,reel,"Reel: The 6-second kiss (Tuesday edition)",share,2026-10-20_Tue_8am_COUPLES_REEL_b-tuesday-kiss
+2026-10-20,Tue,9pm,Be The Man,post,"Share your sentence",comment,2026-10-20_Tue_9pm_BTM_POST_b-share-sentence
 2026-10-20,Tue,12pm,Couples,reel,"Reel: Who decides?",couples,2026-10-20_Tue_12pm_COUPLES_REEL_c3-decide
+2026-10-21,Wed,2pm,Couples,carousel,"Carousel: How to talk money without a fight",save,2026-10-21_Wed_2pm_COUPLES_CAROUSEL_b-money-talk
+2026-10-21,Wed,8am,Be The Man,reel,"Reel: It’s Wednesday again",workshop,2026-10-21_Wed_8am_BTM_REEL_b-wednesday-again
+2026-10-21,Wed,9pm,Be The Man,post,"Four days: what you leave with",workshop,2026-10-21_Wed_9pm_BTM_POST_b-workshop-4
 2026-10-21,Wed,12pm,Couples,post,"Pick your number",share,2026-10-21_Wed_12pm_COUPLES_POST_c3-number
+2026-10-22,Thu,2pm,Be The Man,post,"Quote: break the cycle",step1,2026-10-22_Thu_2pm_BTM_POST_b-quote-legacy
 2026-10-22,Thu,7pm,Be The Man,carousel,"Carousel: Why you lose the week by Wednesday",workshop,2026-10-22_Thu_7pm_BTM_CAROUSEL_w3-wednesday
+2026-10-22,Thu,8am,Couples,reel,"Reel: Your kids are learning love from you",share,2026-10-22_Thu_8am_COUPLES_REEL_b-kids-watching-love
+2026-10-22,Thu,9pm,Couples,post,"Comment COUPLES: before the holidays",couples,2026-10-22_Thu_9pm_COUPLES_POST_b-kw-couples-b
+2026-10-23,Fri,2pm,Be The Man,carousel,"Carousel: 5 lies men believe about discipline",step1,2026-10-23_Fri_2pm_BTM_CAROUSEL_b-myths
+2026-10-23,Fri,8am,Be The Man,reel,"Reel: Two days: bring a pen",workshop,2026-10-23_Fri_8am_BTM_REEL_b-two-days
+2026-10-23,Fri,9pm,Couples,post,"Where was your first date?",comment,2026-10-23_Fri_9pm_COUPLES_POST_b-first-date
 2026-10-23,Fri,12pm,Couples,carousel,"Carousel: A 30-minute money date",save,2026-10-23_Fri_12pm_COUPLES_CAROUSEL_c3-money-date
+2026-10-24,Sat,2pm,Be The Man,post,"Tomorrow night",workshop,2026-10-24_Sat_2pm_BTM_POST_b-tomorrow-night
 2026-10-24,Sat,7pm,Couples,reel,"Reel: “My money” vs “our money”",share,2026-10-24_Sat_7pm_COUPLES_REEL_c3-mine
+2026-10-24,Sat,8am,Couples,reel,"Reel: Chores are a love language",share,2026-10-24_Sat_8am_COUPLES_REEL_b-saturday-chores
 2026-10-24,Sat,9am,Be The Man,post,"Workshop tomorrow: leave with three things",workshop,2026-10-24_Sat_9am_BTM_POST_w3-workshop-tomorrow
+2026-10-24,Sat,9pm,Be The Man,post,"What stops you on Wednesdays?",comment,2026-10-24_Sat_9pm_BTM_POST_b-what-stops
+2026-10-25,Sun,2pm,Couples,carousel,"Carousel: A Sunday blessing for your marriage",share,2026-10-25_Sun_2pm_COUPLES_CAROUSEL_b-sunday-blessing
 2026-10-25,Sun,4pm,Couples,post,"No money secrets",couples,2026-10-25_Sun_4pm_COUPLES_POST_c3-secrets
+2026-10-25,Sun,8am,Be The Man,reel,"Reel: Tonight, 7 PM: fix your Wednesday",workshop,2026-10-25_Sun_8am_BTM_REEL_b-tonight
+2026-10-25,Sun,9pm,Be The Man,post,"After the workshop: keep it going",group,2026-10-25_Sun_9pm_BTM_POST_b-workshop-done
 2026-10-25,Sun,12pm,Be The Man,reel,"Reel: Tonight, 7 PM — Fix Your Wednesday",workshop,2026-10-25_Sun_12pm_BTM_REEL_w3-tonight
+2026-10-26,Mon,2pm,Be The Man,post,"Week 2: cut to three",challengeOn,2026-10-26_Mon_2pm_BTM_POST_b-three-goals
 2026-10-26,Mon,7pm,Be The Man,reel,"Reel: Twelve goals is zero goals",challengeOn,2026-10-26_Mon_7pm_BTM_REEL_w4-twelve-goals
+2026-10-26,Mon,8am,Couples,reel,"Reel: Send this text before 10 AM",share,2026-10-26_Mon_8am_COUPLES_REEL_b-monday-text
+2026-10-26,Mon,9pm,Be The Man,post,"Why a group, not an app",group,2026-10-26_Mon_9pm_BTM_POST_b-group-why
+2026-10-27,Tue,2pm,Couples,carousel,"Carousel: Married vs. roommates",couples,2026-10-27_Tue_2pm_COUPLES_CAROUSEL_b-married-vs-roommates
 2026-10-27,Tue,7pm,Be The Man,post,"Three goals: one for each place you lead",group,2026-10-27_Tue_7pm_BTM_POST_w4-three
+2026-10-27,Tue,8am,Be The Man,reel,"Reel: Soul. House. Work.",challengeOn,2026-10-27_Tue_8am_BTM_REEL_b-soul-house-work
+2026-10-27,Tue,9pm,Couples,post,"Do you pray together?",comment,2026-10-27_Tue_9pm_COUPLES_POST_b-pray-poll
 2026-10-27,Tue,12pm,Couples,reel,"Reel: You planned the wedding. Plan the marriage.",couples,2026-10-27_Tue_12pm_COUPLES_REEL_c4-engaged
+2026-10-28,Wed,2pm,Be The Man,post,"Quote: small and kept",step1,2026-10-28_Wed_2pm_BTM_POST_b-quote-small
+2026-10-28,Wed,8am,Couples,reel,"Reel: Listen to understand",share,2026-10-28_Wed_8am_COUPLES_REEL_b-listen
+2026-10-28,Wed,9pm,Be The Man,post,"Comment STEP1: 20 minutes tonight",step1,2026-10-28_Wed_9pm_BTM_POST_b-kw-step1-c
 2026-10-28,Wed,12pm,Couples,post,"Premarital counseling: what the research shows",couples,2026-10-28_Wed_12pm_COUPLES_POST_c4-research
+2026-10-29,Thu,2pm,Couples,carousel,"Carousel: 10 things to thank your spouse for this week",save,2026-10-29_Thu_2pm_COUPLES_CAROUSEL_b-gratitude-list
 2026-10-29,Thu,7pm,Be The Man,carousel,"Carousel: How to cut your goals to three",challengeOn,2026-10-29_Thu_7pm_BTM_CAROUSEL_w4-cut-list
+2026-10-29,Thu,8am,Be The Man,reel,"Reel: The first 10 minutes home",challengeOn,2026-10-29_Thu_8am_BTM_REEL_b-first-ten
+2026-10-29,Thu,9pm,Be The Man,post,"What a Sunday in the group looks like",group,2026-10-29_Thu_9pm_BTM_POST_b-group-sunday
+2026-10-30,Fri,2pm,Be The Man,post,"Quote: a miss is information",challengeOn,2026-10-30_Fri_2pm_BTM_POST_b-quote-information
+2026-10-30,Fri,8am,Couples,reel,"Reel: Make Friday night yours",save,2026-10-30_Fri_8am_COUPLES_REEL_b-friday-plan
+2026-10-30,Fri,9pm,Couples,post,"Comment COUPLES: no crisis needed",couples,2026-10-30_Fri_9pm_COUPLES_POST_b-kw-couples-c
 2026-10-30,Fri,12pm,Couples,carousel,"Carousel: 5 conversations before “I do”",couples,2026-10-30_Fri_12pm_COUPLES_CAROUSEL_c4-before-yes
+2026-10-31,Sat,2pm,Be The Man,carousel,"Carousel: The 30-minute Saturday reset",step1,2026-10-31_Sat_2pm_BTM_CAROUSEL_b-saturday-reset
 2026-10-31,Sat,7pm,Couples,reel,"Reel: Already married? It’s not too late",couples,2026-10-31_Sat_7pm_COUPLES_REEL_c4-already
+2026-10-31,Sat,8am,Be The Man,reel,"Reel: The scariest thing a man can do",challengeOn,2026-10-31_Sat_8am_BTM_REEL_b-scary
 2026-10-31,Sat,9am,Be The Man,post,"6-week group: four seats",group,2026-10-31_Sat_9am_BTM_POST_w4-group-seats
+2026-10-31,Sat,9pm,Be The Man,post,"One word for the man you’re becoming",comment,2026-10-31_Sat_9pm_BTM_POST_b-one-word-man
+2026-11-01,Sun,2pm,Couples,post,"Quote: choose each other",share,2026-11-01_Sun_2pm_COUPLES_POST_b-quote-choose
 2026-11-01,Sun,4pm,Couples,post,"How counseling works",couples,2026-11-01_Sun_4pm_COUPLES_POST_c4-assessment
 2026-11-01,Sun,7pm,Be The Man,reel,"Reel: Not forever. For now.",step1,2026-11-01_Sun_7pm_BTM_REEL_w4-not-forever
+2026-11-01,Sun,8am,Couples,reel,"Reel: New month, one marriage goal",save,2026-11-01_Sun_8am_COUPLES_REEL_b-new-month
+2026-11-01,Sun,9pm,Be The Man,post,"November: two weeks until the group",group,2026-11-01_Sun_9pm_BTM_POST_b-november-promise
+2026-11-02,Mon,2pm,Couples,carousel,"Carousel: 5 questions for a deeper conversation",save,2026-11-02_Mon_2pm_COUPLES_CAROUSEL_b-questions-deep
 2026-11-02,Mon,7pm,Be The Man,reel,"Reel: It’s not ten things stopping you",group,2026-11-02_Mon_7pm_BTM_REEL_w5-one-thing
+2026-11-02,Mon,8am,Be The Man,reel,"Reel: Name the one thing",challengeOn,2026-11-02_Mon_8am_BTM_REEL_b-name-it
+2026-11-02,Mon,9pm,Be The Man,post,"What’s your #1 blocker?",comment,2026-11-02_Mon_9pm_BTM_POST_b-blocker-poll
+2026-11-03,Tue,2pm,Be The Man,post,"If this, then that",challengeOn,2026-11-03_Tue_2pm_BTM_POST_b-if-then
 2026-11-03,Tue,7pm,Be The Man,post,"If ___ happens, then I will ___",challengeOn,2026-11-03_Tue_7pm_BTM_POST_w5-if-then
+2026-11-03,Tue,8am,Couples,reel,"Reel: It’s not what you said",share,2026-11-03_Tue_8am_COUPLES_REEL_b-tone
+2026-11-03,Tue,9pm,Be The Man,post,"Comment STEP1: start before the promise",step1,2026-11-03_Tue_9pm_BTM_POST_b-kw-step1-d
 2026-11-03,Tue,12pm,Couples,reel,"Reel: When did you stop dating?",save,2026-11-03_Tue_12pm_COUPLES_REEL_c5-dating
+2026-11-04,Wed,2pm,Couples,carousel,"Carousel: How to stay a team through the holidays",couples,2026-11-04_Wed_2pm_COUPLES_CAROUSEL_b-holiday-team
+2026-11-04,Wed,8am,Be The Man,reel,"Reel: You said the phone",challengeOn,2026-11-04_Wed_8am_BTM_REEL_b-phone-blocker
+2026-11-04,Wed,9pm,Couples,post,"Small habit, big love",comment,2026-11-04_Wed_9pm_COUPLES_POST_b-pet-peeve
 2026-11-04,Wed,12pm,Couples,post,"Date night doesn’t need a budget",save,2026-11-04_Wed_12pm_COUPLES_POST_c5-cheap
+2026-11-05,Thu,2pm,Be The Man,post,"Quote: give it a time",challengeOn,2026-11-05_Thu_2pm_BTM_POST_b-quote-time
 2026-11-05,Thu,7pm,Be The Man,carousel,"Carousel: The two minutes before you walk in the door",training,2026-11-05_Thu_7pm_BTM_CAROUSEL_w5-doorway
+2026-11-05,Thu,8am,Couples,reel,"Reel: Don’t start January in debt",share,2026-11-05_Thu_8am_COUPLES_REEL_b-holiday-budget
+2026-11-05,Thu,9pm,Be The Man,post,"Group: 10 days",group,2026-11-05_Thu_9pm_BTM_POST_b-group-10
+2026-11-06,Fri,2pm,Couples,carousel,"Carousel: 5 weekend ideas for couples",save,2026-11-06_Fri_2pm_COUPLES_CAROUSEL_b-weekend-ideas
+2026-11-06,Fri,8am,Be The Man,reel,"Reel: Friday night, dad edition",step1,2026-11-06_Fri_8am_BTM_REEL_b-friday-dad
+2026-11-06,Fri,9pm,Be The Man,post,"Share one win from this week",comment,2026-11-06_Fri_9pm_BTM_POST_b-win-week
 2026-11-06,Fri,12pm,Couples,carousel,"Carousel: 5 date-night questions",save,2026-11-06_Fri_12pm_COUPLES_CAROUSEL_c5-date-questions
+2026-11-07,Sat,2pm,Be The Man,carousel,"Carousel: What we’ll build in 6 Sundays",group,2026-11-07_Sat_2pm_BTM_CAROUSEL_b-group-preview
 2026-11-07,Sat,7pm,Couples,reel,"Reel: The third person in your bed",share,2026-11-07_Sat_7pm_COUPLES_REEL_c5-phones
+2026-11-07,Sat,8am,Couples,reel,"Reel: Say yes to one thing today",share,2026-11-07_Sat_8am_COUPLES_REEL_b-saturday-yes
 2026-11-07,Sat,9am,Be The Man,post,"The group: what happens on a Sunday",group,2026-11-07_Sat_9am_BTM_POST_w5-group-week
+2026-11-07,Sat,9pm,Be The Man,post,"Comment STEP1: the weekend start",step1,2026-11-07_Sat_9pm_BTM_POST_b-kw-step1-e
 2026-11-08,Sun,4pm,Couples,post,"Are you still friends?",couples,2026-11-08_Sun_4pm_COUPLES_POST_c5-friend
 2026-11-08,Sun,7pm,Be The Man,reel,"Reel: You’re not lazy",step1,2026-11-08_Sun_7pm_BTM_REEL_w5-not-lazy
 2026-11-09,Mon,7pm,Be The Man,reel,"Reel: “This week” is not a time",challengeOn,2026-11-09_Mon_7pm_BTM_REEL_w6-this-week

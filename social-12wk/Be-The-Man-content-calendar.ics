@@ -23,7 +23,7 @@ END:STANDARD
 END:VTIMEZONE
 BEGIN:VEVENT
 UID:2026-10-06_Tue_7pm_BTM_POST_system-when@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261006T190000
 DTEND;TZID=America/Chicago:20261006T191500
 SUMMARY:📱 BTM Post: A goal says what. A system says when.
@@ -57,7 +57,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-10-06_Tue_12pm_COUPLES_REEL_c1-updates@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261006T120000
 DTEND;TZID=America/Chicago:20261006T121500
 SUMMARY:📱 Couples Reel: You’re not talking\, you’re updating
@@ -88,7 +88,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-10-07_Wed_7pm_BTM_POST_email-receipt@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261007T190000
 DTEND;TZID=America/Chicago:20261007T191500
 SUMMARY:📱 BTM Post: Receipt: what the weekly email costs
@@ -122,7 +122,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-10-07_Wed_12pm_COUPLES_POST_c1-ten-minutes@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261007T120000
 DTEND;TZID=America/Chicago:20261007T121500
 SUMMARY:📱 Couples Post: Ten minutes\, no screens
@@ -152,7 +152,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-10-08_Thu_7pm_BTM_POST_wife-test@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261008T190000
 DTEND;TZID=America/Chicago:20261008T191500
 SUMMARY:📱 BTM Post: Would your wife be able to tell?
@@ -183,8 +183,103 @@ DESCRIPTION:📱 BTM Post: Would your wife be able to tell?
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:2026-10-09_Fri_2pm_COUPLES_CAROUSEL_b-signs-drifting@bethemansystem
+DTSTAMP:20261008T143609Z
+DTSTART;TZID=America/Chicago:20261009T140000
+DTEND;TZID=America/Chicago:20261009T141500
+SUMMARY:📱 Couples Carousel: 5 signs you’re drifting (not fighting)
+DESCRIPTION:Post to Instagram\, Facebook and Threads.\nFolder: 2026-10-09_
+ 
+ Fri_2pm_COUPLES_CAROUSEL_b-signs-drifting\n(captions: instagram.txt\, f
+ ace
+ book.txt\, threads.txt)\n\nInstagram caption:\n5 signs you're drifti
+ ng\, n
+ ot fighting:\n\n1. You only talk logistics.\n2. Phones at dinner\
+ , every n
+ ight.\n3. You stopped asking "How are you\, really?"\n4. Touch
+  is rare. No
+ t just intimacy\, everyday touch.\n5. Fights feel pointless
+ .\n\nDrift is q
+ uiet\, and that's why it's dangerous. If you counted 3 o
+ r more\, it's time
+  to steer.\n\n💬 Engaged or married? Comment "COUPL
+ ES" and I'll send you
+  how certified marriage counseling works: a valida
+ ted assessment\, then th
+ ree sessions built on your results.\n\n#blackma
+ rriage #blacklove #marriage
+ counseling #christianmarriage #bethemansyste
+ m
+CATEGORIES:Couples
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:📱 Couples Carousel: 5 signs you’re drifting (not fighting
+ 
+ )
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:2026-10-09_Fri_8am_BTM_REEL_b-stop-scrolling@bethemansystem
+DTSTAMP:20261008T143609Z
+DTSTART;TZID=America/Chicago:20261009T080000
+DTEND;TZID=America/Chicago:20261009T081500
+SUMMARY:📱 BTM Reel: Stop scrolling. This is for the man who…
+DESCRIPTION:Post to Instagram\, Facebook and Threads.\nFolder: 2026-10-09_
+ 
+ Fri_8am_BTM_REEL_b-stop-scrolling\n(captions: instagram.txt\, facebook.
+ txt
+ \, threads.txt)\n\nInstagram caption:\nStop scrolling. This is for t
+ he man
+  who keeps making the same promise.\n\nIt's not a willpower probl
+ em. It's 
+ a missing first step. Nobody taught us to decide who we're bec
+ oming before
+  we decide what we're doing.\n\nSeven weeks\, free\, starti
+ ng Oct 20. Brin
+ g a brother.\n\n🗓 The free 7-week challenge starts Oc
+ t 20. One email a 
+ week\, one action with a time on it. Do it with a bro
+ ther.\n🔗 Link in b
+ io → "Count me in."\n\n#blackfathers #selfdiscip
+ lineformen #blackchristi
+ anmen #mensdiscipline #bethemansystem
+CATEGORIES:BTM
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:📱 BTM Reel: Stop scrolling. This is for the man who…
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:2026-10-09_Fri_9pm_BTM_POST_b-rate-week@bethemansystem
+DTSTAMP:20261008T143609Z
+DTSTART;TZID=America/Chicago:20261009T210000
+DTEND;TZID=America/Chicago:20261009T211500
+SUMMARY:📱 BTM Post: Rate your week 1–10
+DESCRIPTION:Post to Instagram\, Facebook and Threads.\nFolder: 2026-10-09_
+ 
+ Fri_9pm_BTM_POST_b-rate-week\n(captions: instagram.txt\, facebook.txt\,
+  th
+ reads.txt)\n\nInstagram caption:\nRate your week\, 1 to 10.\n\nNot h
+ ow bus
+ y it was. How close you lived to the man you said you'd be.\n\nDr
+ op your n
+ umber below. No explanation needed. I'll reply to every one.\n
+ \n💬 Answe
+ r in the comments. I read every one.\n\n#mensdiscipline #ch
+ ristianhusband 
+ #christianmen #christianfather #bethemansystem
+CATEGORIES:BTM
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:📱 BTM Post: Rate your week 1–10
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:2026-10-09_Fri_12pm_COUPLES_CAROUSEL_c1-questions@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261009T120000
 DTEND;TZID=America/Chicago:20261009T121500
 SUMMARY:📱 Couples Carousel: 5 better questions than “How was your day
@@ -219,8 +314,34 @@ DESCRIPTION:📱 Couples Carousel: 5 better questions than “How was your
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:2026-10-10_Sat_2pm_BTM_POST_b-quote-promise@bethemansystem
+DTSTAMP:20261008T143609Z
+DTSTART;TZID=America/Chicago:20261010T140000
+DTEND;TZID=America/Chicago:20261010T141500
+SUMMARY:📱 BTM Post: Quote: a promise with no time
+DESCRIPTION:Post to Instagram\, Facebook and Threads.\nFolder: 2026-10-10_
+ 
+ Sat_2pm_BTM_POST_b-quote-promise\n(captions: instagram.txt\, facebook.t
+ xt\
+ , threads.txt)\n\nInstagram caption:\nA promise with no time attache
+ d is a
+  feeling.\n\nGive it a day. Give it a time. Then it's a plan.\n\n
+ What's th
+ e promise you keep making? Give it a time tonight.\n\n👇 Com
+ ment "STEP1"
+  and I'll send you the free worksheet.\n\n#christianfather 
+ #faithandfamily
+  #blackmenwholead #godlyhusband #bethemansystem
+CATEGORIES:BTM
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:📱 BTM Post: Quote: a promise with no time
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:2026-10-10_Sat_7pm_COUPLES_REEL_c1-listen@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261010T190000
 DTEND;TZID=America/Chicago:20261010T191500
 SUMMARY:📱 Couples Reel: Listening to reply vs. listening to understand
@@ -255,8 +376,36 @@ DESCRIPTION:📱 Couples Reel: Listening to reply vs. listening to underst
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:2026-10-10_Sat_8am_COUPLES_REEL_b-couples-who-last@bethemansystem
+DTSTAMP:20261008T143609Z
+DTSTART;TZID=America/Chicago:20261010T080000
+DTEND;TZID=America/Chicago:20261010T081500
+SUMMARY:📱 Couples Reel: Couples who last do this
+DESCRIPTION:Post to Instagram\, Facebook and Threads.\nFolder: 2026-10-10_
+ 
+ Sat_8am_COUPLES_REEL_b-couples-who-last\n(captions: instagram.txt\, fac
+ ebo
+ ok.txt\, threads.txt)\n\nInstagram caption:\nCouples who last don't 
+ fight 
+ less. They repair faster.\n\n"I was wrong." "Can we start over?" 
+ "I love y
+ ou\, even right now."\n\nThe length of the cold war matters mo
+ re than the 
+ fight. Shorten it.\n\n📤 Send this to your spouse. Then t
+ alk about it to
+ night.\n💬 Want help? Comment "COUPLES."\n\n#husbandan
+ dwife #blackcouple
+ s #christiancouples #godlymarriage #bethemansystem
+CATEGORIES:Couples
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:📱 Couples Reel: Couples who last do this
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:2026-10-10_Sat_9am_BTM_POST_club@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261010T090000
 DTEND;TZID=America/Chicago:20261010T091500
 SUMMARY:📱 BTM Post: The Be The Man Club\, $19 a month
@@ -289,8 +438,64 @@ DESCRIPTION:📱 BTM Post: The Be The Man Club\, $19 a month
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:2026-10-10_Sat_9pm_COUPLES_POST_b-one-word@bethemansystem
+DTSTAMP:20261008T143609Z
+DTSTART;TZID=America/Chicago:20261010T210000
+DTEND;TZID=America/Chicago:20261010T211500
+SUMMARY:📱 Couples Post: Describe your marriage in one word
+DESCRIPTION:Post to Instagram\, Facebook and Threads.\nFolder: 2026-10-10_
+ 
+ Sat_9pm_COUPLES_POST_b-one-word\n(captions: instagram.txt\, facebook.tx
+ t\,
+  threads.txt)\n\nInstagram caption:\nDescribe your marriage in one w
+ ord. D
+ rop it below.\n\nThen ask your spouse to do the same\, without sh
+ owing the
+ m yours. Compare.\n\nBrave couples only. 😅\n\n💬 Answer i
+ n the commen
+ ts. I read every one.\n\n#blacklove #marriagecounseling #ch
+ ristianmarriage
+  #marriagetips #bethemansystem
+CATEGORIES:Couples
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:📱 Couples Post: Describe your marriage in one word
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:2026-10-11_Sun_2pm_COUPLES_CAROUSEL_b-sunday-sync@bethemansystem
+DTSTAMP:20261008T143609Z
+DTSTART;TZID=America/Chicago:20261011T140000
+DTEND;TZID=America/Chicago:20261011T141500
+SUMMARY:📱 Couples Carousel: The Sunday night couple check-in
+DESCRIPTION:Post to Instagram\, Facebook and Threads.\nFolder: 2026-10-11_
+ 
+ Sun_2pm_COUPLES_CAROUSEL_b-sunday-sync\n(captions: instagram.txt\, face
+ boo
+ k.txt\, threads.txt)\n\nInstagram caption:\nThe Sunday night couple 
+ check-
+ in. 20 minutes\, 5 questions:\n\n1. What went well for us?\n2. Wh
+ at was ha
+ rd?\n3. What's on the calendar this week?\n4. What do you need
+  from me?\n5
+ . How can I pray for you?\n\nThen pray together\, right the
+ re. Save this f
+ or tonight.\n\n💾 Save this for your next date night.\
+ n💬 Want help as
+  a couple? Comment "COUPLES."\n\n#marriagetips #husba
+ ndandwife #blackcoupl
+ es #christiancouples #bethemansystem
+CATEGORIES:Couples
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:📱 Couples Carousel: The Sunday night couple check-in
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:2026-10-11_Sun_4pm_COUPLES_POST_c1-roommates@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261011T160000
 DTEND;TZID=America/Chicago:20261011T161500
 SUMMARY:📱 Couples Post: Married\, not roommates
@@ -323,8 +528,96 @@ DESCRIPTION:📱 Couples Post: Married\, not roommates
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:2026-10-11_Sun_8am_BTM_REEL_b-sunday-15@bethemansystem
+DTSTAMP:20261008T143609Z
+DTSTART;TZID=America/Chicago:20261011T080000
+DTEND;TZID=America/Chicago:20261011T081500
+SUMMARY:📱 BTM Reel: The 15 minutes that run your week
+DESCRIPTION:Post to Instagram\, Facebook and Threads.\nFolder: 2026-10-11_
+ 
+ Sun_8am_BTM_REEL_b-sunday-15\n(captions: instagram.txt\, facebook.txt\,
+  th
+ reads.txt)\n\nInstagram caption:\n15 minutes on Sunday decides your 
+ Wednes
+ day.\n\nAsk: What did I say I'd do? What actually happened? What'
+ s the ONE
+  thing this week?\n\nPlan the week\, or the week plans you.\n\
+ n🗓 The fr
+ ee 7-week challenge starts Oct 20. One email a week\, one a
+ ction with a ti
+ me on it. Do it with a brother.\n🔗 Link in bio → "C
+ ount me in."\n\n#c
+ hristianmen #christianfather #faithandfamily #blackme
+ nwholead #bethemansys
+ tem
+CATEGORIES:BTM
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:📱 BTM Reel: The 15 minutes that run your week
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:2026-10-11_Sun_9pm_BTM_POST_b-kw-step1-a@bethemansystem
+DTSTAMP:20261008T143609Z
+DTSTART;TZID=America/Chicago:20261011T210000
+DTEND;TZID=America/Chicago:20261011T211500
+SUMMARY:📱 BTM Post: Comment STEP1: one question
+DESCRIPTION:Post to Instagram\, Facebook and Threads.\nFolder: 2026-10-11_
+ 
+ Sun_9pm_BTM_POST_b-kw-step1-a\n(captions: instagram.txt\, facebook.txt\
+ , t
+ hreads.txt)\n\nInstagram caption:\nOne question that changes every g
+ oal af
+ ter it: what type of man do you want to be?\n\nNot what you want 
+ to have. 
+ Not what you want to do. Who you want to be on an ordinary Tue
+ sday.\n\nThe
+  Step 1 worksheet walks you through it in 20 minutes.\n\n
+ 👇 Comment "STE
+ P1" and I'll send you the free worksheet.\n\n#blackmen
+ wholead #godlyhusban
+ d #blackfathers #selfdisciplineformen #bethemansyst
+ em
+CATEGORIES:BTM
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:📱 BTM Post: Comment STEP1: one question
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:2026-10-12_Mon_2pm_BTM_POST_b-monday-truth@bethemansystem
+DTSTAMP:20261008T143609Z
+DTSTART;TZID=America/Chicago:20261012T140000
+DTEND;TZID=America/Chicago:20261012T141500
+SUMMARY:📱 BTM Post: Monday doesn’t need motivation
+DESCRIPTION:Post to Instagram\, Facebook and Threads.\nFolder: 2026-10-12_
+ 
+ Mon_2pm_BTM_POST_b-monday-truth\n(captions: instagram.txt\, facebook.tx
+ t\,
+  threads.txt)\n\nInstagram caption:\nMonday doesn't need more motiva
+ tion. 
+ It needs one decision with a time on it.\n\nWhat's yours this wee
+ k? Write 
+ it in the comments: the decision\, the day and the time.\n\n
+ 🗓 The free 
+ 7-week challenge starts Oct 20. One email a week\, one ac
+ tion with a time 
+ on it. Do it with a brother.\n🔗 Link in bio → "Co
+ unt me in."\n\n#chri
+ stianfather #faithandfamily #blackmenwholead #godly
+ husband #bethemansystem
+CATEGORIES:BTM
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:📱 BTM Post: Monday doesn’t need motivation
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:2026-10-12_Mon_7pm_BTM_REEL_promise@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261012T190000
 DTEND;TZID=America/Chicago:20261012T191500
 SUMMARY:📱 BTM Reel: You've made this promise before
@@ -353,8 +646,97 @@ DESCRIPTION:📱 BTM Reel: You've made this promise before
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:2026-10-12_Mon_8am_COUPLES_REEL_b-she-said-fine@bethemansystem
+DTSTAMP:20261008T143609Z
+DTSTART;TZID=America/Chicago:20261012T080000
+DTEND;TZID=America/Chicago:20261012T081500
+SUMMARY:📱 Couples Reel: When she says “I’m fine”
+DESCRIPTION:Post to Instagram\, Facebook and Threads.\nFolder: 2026-10-12_
+ 
+ Mon_8am_COUPLES_REEL_b-she-said-fine\n(captions: instagram.txt\, facebo
+ ok.
+ txt\, threads.txt)\n\nInstagram caption:\nWhen she says "I'm fine\,"
+  don't
+  believe it\, and don't fight it.\n\nSit down. Put the phone face
+  down. Sa
+ y\, "I've got time."\n\nThen wait. Most of the time\, she'll t
+ ell you. She
+  just needed to know you'd stay for the answer.\n\n📤 Sen
+ d this to your 
+ spouse. Then talk about it tonight.\n💬 Want help? Com
+ ment "COUPLES."\n\
+ n#premaritalcounseling #blackmarriage #blacklove #mar
+ riagecounseling #beth
+ emansystem
+CATEGORIES:Couples
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:📱 Couples Reel: When she says “I’m fine”
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:2026-10-12_Mon_9pm_BTM_POST_b-a-or-b@bethemansystem
+DTSTAMP:20261008T143609Z
+DTSTART;TZID=America/Chicago:20261012T210000
+DTEND;TZID=America/Chicago:20261012T211500
+SUMMARY:📱 BTM Post: A or B: which man are you?
+DESCRIPTION:Post to Instagram\, Facebook and Threads.\nFolder: 2026-10-12_
+ 
+ Mon_9pm_BTM_POST_b-a-or-b\n(captions: instagram.txt\, facebook.txt\, th
+ rea
+ ds.txt)\n\nInstagram caption:\nBe honest. Which one are you right no
+ w?\n\n
+ A: I need motivation.\nB: I need a plan.\n\nComment A or B. (If y
+ ou said A
+ \, I'd bet money it's actually B.)\n\n💬 Answer in the comme
+ nts. I read 
+ every one.\n\n#christianfather #faithandfamily #blackmenwho
+ lead #godlyhusb
+ and #bethemansystem
+CATEGORIES:BTM
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:📱 BTM Post: A or B: which man are you?
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:2026-10-13_Tue_2pm_COUPLES_CAROUSEL_b-love-languages-small@bethemansys
+ tem
+DTSTAMP:20261008T143609Z
+DTSTART;TZID=America/Chicago:20261013T140000
+DTEND;TZID=America/Chicago:20261013T141500
+SUMMARY:📱 Couples Carousel: 5 tiny things that say “I see you”
+DESCRIPTION:Post to Instagram\, Facebook and Threads.\nFolder: 2026-10-13_
+ 
+ Tue_2pm_COUPLES_CAROUSEL_b-love-languages-small\n(captions: instagram.t
+ xt\
+ , facebook.txt\, threads.txt)\n\nInstagram caption:\n5 tiny things t
+ hat sa
+ y "I see you\," under 2 minutes each:\n\n1. Warm up the car or st
+ art the c
+ offee.\n2. Send a noon text: "Thinking about you."\n3. Take on
+ e thing off 
+ their list without asking.\n4. Notice the small change\, ou
+ t loud.\n5. Ask
+  a follow-up: "How did that meeting go?"\n\nPick one for
+  tomorrow.\n\n💾
+  Save this for your next date night.\n💬 Want help 
+ as a couple? Comment 
+ "COUPLES."\n\n#blackcouples #christiancouples #god
+ lymarriage #premaritalco
+ unseling #bethemansystem
+CATEGORIES:Couples
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:📱 Couples Carousel: 5 tiny things that say “I see you”
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:2026-10-13_Tue_7pm_BTM_POST_one-sentence@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261013T190000
 DTEND;TZID=America/Chicago:20261013T191500
 SUMMARY:📱 BTM Post: Who you're becoming in one sentence
@@ -387,8 +769,71 @@ DESCRIPTION:📱 BTM Post: Who you're becoming in one sentence
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:2026-10-13_Tue_8am_BTM_REEL_b-one-week@bethemansystem
+DTSTAMP:20261008T143609Z
+DTSTART;TZID=America/Chicago:20261013T080000
+DTEND;TZID=America/Chicago:20261013T081500
+SUMMARY:📱 BTM Reel: One week from today
+DESCRIPTION:Post to Instagram\, Facebook and Threads.\nFolder: 2026-10-13_
+ 
+ Tue_8am_BTM_REEL_b-one-week\n(captions: instagram.txt\, facebook.txt\, 
+ thr
+ eads.txt)\n\nInstagram caption:\nOne week from today\, you'll be exa
+ ctly w
+ ho you are now\, unless you decide one thing tonight.\n\nThe free
+  7-week c
+ hallenge starts Oct 20. One email a week\, one action with a t
+ ime on it. S
+ mall enough to actually do.\n\n🗓 The free 7-week challen
+ ge starts Oct 2
+ 0. One email a week\, one action with a time on it. Do i
+ t with a brother.\
+ n🔗 Link in bio → "Count me in."\n\n#selfdiscipli
+ neformen #blackchrist
+ ianmen #mensdiscipline #christianhusband #betheman
+ system
+CATEGORIES:BTM
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:📱 BTM Reel: One week from today
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:2026-10-13_Tue_9pm_COUPLES_POST_b-kw-couples-a@bethemansystem
+DTSTAMP:20261008T143609Z
+DTSTART;TZID=America/Chicago:20261013T210000
+DTEND;TZID=America/Chicago:20261013T211500
+SUMMARY:📱 Couples Post: Comment COUPLES: where are you strong?
+DESCRIPTION:Post to Instagram\, Facebook and Threads.\nFolder: 2026-10-13_
+ 
+ Tue_9pm_COUPLES_POST_b-kw-couples-a\n(captions: instagram.txt\, faceboo
+ k.t
+ xt\, threads.txt)\n\nInstagram caption:\nDo you actually know where 
+ your m
+ arriage is strong\, and where it's stretched?\n\nMost couples gue
+ ss. A val
+ idated relationship assessment shows you. Then we meet for thr
+ ee sessions 
+ built on your own results.\n\nFor engaged and married coupl
+ es.\n\n💬 Eng
+ aged or married? Comment "COUPLES" and I'll send you how
+  certified marriag
+ e counseling works: a validated assessment\, then thr
+ ee sessions built on 
+ your results.\n\n#blackcouples #christiancouples #
+ godlymarriage #premarita
+ lcounseling #bethemansystem
+CATEGORIES:Couples
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:📱 Couples Post: Comment COUPLES: where are you strong?
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:2026-10-13_Tue_12pm_COUPLES_REEL_c2-problem@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261013T120000
 DTEND;TZID=America/Chicago:20261013T121500
 SUMMARY:📱 Couples Reel: It’s you two vs. the problem
@@ -419,8 +864,36 @@ DESCRIPTION:📱 Couples Reel: It’s you two vs. the problem
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:2026-10-14_Wed_2pm_BTM_POST_b-midweek@bethemansystem
+DTSTAMP:20261008T143609Z
+DTSTART;TZID=America/Chicago:20261014T140000
+DTEND;TZID=America/Chicago:20261014T141500
+SUMMARY:📱 BTM Post: It’s Wednesday. Is it still standing?
+DESCRIPTION:Post to Instagram\, Facebook and Threads.\nFolder: 2026-10-14_
+ 
+ Wed_2pm_BTM_POST_b-midweek\n(captions: instagram.txt\, facebook.txt\, t
+ hre
+ ads.txt)\n\nInstagram caption:\nIt's Wednesday. Is Monday's promise 
+ still 
+ standing?\n\nIf not\, don't quit the week. Change the time. The p
+ romise wa
+ s fine. 6 AM wasn't.\n\n🗓 The free 7-week challenge starts 
+ Oct 20. One 
+ email a week\, one action with a time on it. Do it with a b
+ rother.\n🔗 L
+ ink in bio → "Count me in."\n\n#blackfathers #selfdisc
+ iplineformen #blac
+ kchristianmen #mensdiscipline #bethemansystem
+CATEGORIES:BTM
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:📱 BTM Post: It’s Wednesday. Is it still standing?
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:2026-10-14_Wed_7pm_BTM_REEL_bad-day@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261014T190000
 DTEND;TZID=America/Chicago:20261014T191500
 SUMMARY:📱 BTM Reel: One bad day shouldn't cost you a month
@@ -451,8 +924,62 @@ DESCRIPTION:📱 BTM Reel: One bad day shouldn't cost you a month
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:2026-10-14_Wed_8am_COUPLES_REEL_b-apology@bethemansystem
+DTSTAMP:20261008T143609Z
+DTSTART;TZID=America/Chicago:20261014T080000
+DTEND;TZID=America/Chicago:20261014T081500
+SUMMARY:📱 Couples Reel: The apology that actually works
+DESCRIPTION:Post to Instagram\, Facebook and Threads.\nFolder: 2026-10-14_
+ 
+ Wed_8am_COUPLES_REEL_b-apology\n(captions: instagram.txt\, facebook.txt
+ \, 
+ threads.txt)\n\nInstagram caption:\n"I'm sorry you feel that way" is
+ n't an
+  apology.\n\nTry: "I was wrong when I… I can see it hurt you. N
+ ext time 
+ I'll…"\n\nNo "but." The moment you add "but\," you've starte
+ d a defense.
+ \n\n📤 Send this to your spouse. Then talk about it tonig
+ ht.\n💬 Want 
+ help? Comment "COUPLES."\n\n#husbandandwife #blackcouple
+ s #christiancouple
+ s #godlymarriage #bethemansystem
+CATEGORIES:Couples
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:📱 Couples Reel: The apology that actually works
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:2026-10-14_Wed_9pm_BTM_POST_b-fill-blank@bethemansystem
+DTSTAMP:20261008T143609Z
+DTSTART;TZID=America/Chicago:20261014T210000
+DTEND;TZID=America/Chicago:20261014T211500
+SUMMARY:📱 BTM Post: Fill in the blank: I keep breaking…
+DESCRIPTION:Post to Instagram\, Facebook and Threads.\nFolder: 2026-10-14_
+ 
+ Wed_9pm_BTM_POST_b-fill-blank\n(captions: instagram.txt\, facebook.txt\
+ , t
+ hreads.txt)\n\nInstagram caption:\nFill in the blank: "I keep promis
+ ing to
+  _____."\n\nBe honest. Nobody here is judging. You're in a room f
+ ull of me
+ n who've broken the same promise.\n\nNaming it is step one.\n\
+ n💬 Answer
+  in the comments. I read every one.\n\n#blackchristianmen #
+ mensdiscipline 
+ #christianhusband #christianmen #bethemansystem
+CATEGORIES:BTM
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:📱 BTM Post: Fill in the blank: I keep breaking…
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:2026-10-14_Wed_12pm_COUPLES_POST_c2-always@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261014T120000
 DTEND;TZID=America/Chicago:20261014T121500
 SUMMARY:📱 Couples Post: Delete “always” and “never”
@@ -484,8 +1011,38 @@ DESCRIPTION:📱 Couples Post: Delete “always” and “never”
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:2026-10-15_Thu_2pm_COUPLES_CAROUSEL_b-fight-phrases@bethemansystem
+DTSTAMP:20261008T143609Z
+DTSTART;TZID=America/Chicago:20261015T140000
+DTEND;TZID=America/Chicago:20261015T141500
+SUMMARY:📱 Couples Carousel: 6 phrases that end a fight faster
+DESCRIPTION:Post to Instagram\, Facebook and Threads.\nFolder: 2026-10-15_
+ 
+ Thu_2pm_COUPLES_CAROUSEL_b-fight-phrases\n(captions: instagram.txt\, fa
+ ceb
+ ook.txt\, threads.txt)\n\nInstagram caption:\n6 phrases that end a f
+ ight f
+ aster:\n\n1. "You're right about that part."\n2. "Can we start ov
+ er?"\n3. 
+ "I'm on your side."\n4. "What do you need right now?"\n5. "I n
+ eed 20 minut
+ es." (Then come back.)\n6. "I love you. Even right now."\n\
+ nScreenshot thi
+ s.\n\n💾 Save this for your next date night.\n💬 Wan
+ t help as a couple
+ ? Comment "COUPLES."\n\n#husbandandwife #blackcouples
+  #christiancouples #g
+ odlymarriage #bethemansystem
+CATEGORIES:Couples
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:📱 Couples Carousel: 6 phrases that end a fight faster
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:2026-10-15_Thu_7pm_BTM_CAROUSEL_vision-carousel@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261015T190000
 DTEND;TZID=America/Chicago:20261015T191500
 SUMMARY:📱 BTM Carousel: Write your vision statement in 20 minutes
@@ -516,8 +1073,92 @@ DESCRIPTION:📱 BTM Carousel: Write your vision statement in 20 minutes
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:2026-10-15_Thu_8am_BTM_REEL_b-phone-9pm@bethemansystem
+DTSTAMP:20261008T143609Z
+DTSTART;TZID=America/Chicago:20261015T080000
+DTEND;TZID=America/Chicago:20261015T081500
+SUMMARY:📱 BTM Reel: The 9 PM phone rule
+DESCRIPTION:Post to Instagram\, Facebook and Threads.\nFolder: 2026-10-15_
+ 
+ Thu_8am_BTM_REEL_b-phone-9pm\n(captions: instagram.txt\, facebook.txt\,
+  th
+ reads.txt)\n\nInstagram caption:\nThe best thing I did for my marria
+ ge cos
+ t zero dollars.\n\nPhone in the kitchen at 9 PM. Every night. No 
+ exception
+ s for "just checking."\n\nTry it for one week and tell me what
+  changed.\n\
+ n🗓 The free 7-week challenge starts Oct 20. One email a 
+ week\, one acti
+ on with a time on it. Do it with a brother.\n🔗 Link i
+ n bio → "Count m
+ e in."\n\n#mensdiscipline #christianhusband #christia
+ nmen #christianfather
+  #bethemansystem
+CATEGORIES:BTM
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:📱 BTM Reel: The 9 PM phone rule
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:2026-10-15_Thu_9pm_BTM_POST_b-kw-step1-b@bethemansystem
+DTSTAMP:20261008T143609Z
+DTSTART;TZID=America/Chicago:20261015T210000
+DTEND;TZID=America/Chicago:20261015T211500
+SUMMARY:📱 BTM Post: Comment STEP1: before New Year’s
+DESCRIPTION:Post to Instagram\, Facebook and Threads.\nFolder: 2026-10-15_
+ 
+ Thu_9pm_BTM_POST_b-kw-step1-b\n(captions: instagram.txt\, facebook.txt\
+ , t
+ hreads.txt)\n\nInstagram caption:\nDon't wait for January to start o
+ ver. T
+ hat's 80 more days of the same man.\n\nStep 1 takes 20 minutes an
+ d a pen. 
+ One question: what type of man do you want to be?\n\n👇 Comm
+ ent "STEP1" 
+ and I'll send you the free worksheet.\n\n#christianmen #chr
+ istianfather #f
+ aithandfamily #blackmenwholead #bethemansystem
+CATEGORIES:BTM
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:📱 BTM Post: Comment STEP1: before New Year’s
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:2026-10-16_Fri_2pm_BTM_POST_b-quote-house@bethemansystem
+DTSTAMP:20261008T143609Z
+DTSTART;TZID=America/Chicago:20261016T140000
+DTEND;TZID=America/Chicago:20261016T141500
+SUMMARY:📱 BTM Post: Quote: your house notices
+DESCRIPTION:Post to Instagram\, Facebook and Threads.\nFolder: 2026-10-16_
+ 
+ Fri_2pm_BTM_POST_b-quote-house\n(captions: instagram.txt\, facebook.txt
+ \, 
+ threads.txt)\n\nInstagram caption:\nYour house notices the change be
+ fore y
+ ou announce it. That's how you know it's real.\n\nDon't tell them
+  you're c
+ hanging. Let them catch you.\n\n🗓 The free 7-week challenge
+  starts Oct 
+ 20. One email a week\, one action with a time on it. Do it 
+ with a brother.
+ \n🔗 Link in bio → "Count me in."\n\n#mensdiscipline
+  #christianhusband
+  #christianmen #christianfather #bethemansystem
+CATEGORIES:BTM
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:📱 BTM Post: Quote: your house notices
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:2026-10-16_Fri_7pm_BTM_POST_pray-when@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261016T190000
 DTEND;TZID=America/Chicago:20261016T191500
 SUMMARY:📱 BTM Post: Most men pray when they remember
@@ -550,8 +1191,63 @@ DESCRIPTION:📱 BTM Post: Most men pray when they remember
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:2026-10-16_Fri_8am_COUPLES_REEL_b-date-friday@bethemansystem
+DTSTAMP:20261008T143609Z
+DTSTART;TZID=America/Chicago:20261016T080000
+DTEND;TZID=America/Chicago:20261016T081500
+SUMMARY:📱 Couples Reel: Friday date night in 3 steps
+DESCRIPTION:Post to Instagram\, Facebook and Threads.\nFolder: 2026-10-16_
+ 
+ Fri_8am_COUPLES_REEL_b-date-friday\n(captions: instagram.txt\, facebook
+ .tx
+ t\, threads.txt)\n\nInstagram caption:\nFriday date night\, no sitte
+ r need
+ ed:\n\nKids down by 8. Candles at 8:15. Phones in a drawer. Your 
+ favorite 
+ takeout on the good plates.\n\nOn purpose\, just you two. Tag 
+ your spouse 
+ so it actually happens.\n\n💾 Save this for your next dat
+ e night.\n💬 
+ Want help as a couple? Comment "COUPLES."\n\n#blackmarri
+ age #blacklove #ma
+ rriagecounseling #christianmarriage #bethemansystem
+CATEGORIES:Couples
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:📱 Couples Reel: Friday date night in 3 steps
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:2026-10-16_Fri_9pm_COUPLES_POST_b-this-that@bethemansystem
+DTSTAMP:20261008T143609Z
+DTSTART;TZID=America/Chicago:20261016T210000
+DTEND;TZID=America/Chicago:20261016T211500
+SUMMARY:📱 Couples Post: This or that: couple edition
+DESCRIPTION:Post to Instagram\, Facebook and Threads.\nFolder: 2026-10-16_
+ 
+ Fri_9pm_COUPLES_POST_b-this-that\n(captions: instagram.txt\, facebook.t
+ xt\
+ , threads.txt)\n\nInstagram caption:\nThis or that\, couple edition:
+ \n\nNi
+ ght in or night out?\nTalk it out or sleep on it?\nPlan everythin
+ g or wing
+  it?\n\nAnswer for you AND your spouse in the comments. Then s
+ ee if they a
+ gree. 😄\n\n💬 Answer in the comments. I read every one
+ .\n\n#blackmarr
+ iage #blacklove #marriagecounseling #christianmarriage #
+ bethemansystem
+CATEGORIES:Couples
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:📱 Couples Post: This or that: couple edition
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:2026-10-16_Fri_12pm_COUPLES_CAROUSEL_c2-fight-fair@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261016T120000
 DTEND;TZID=America/Chicago:20261016T121500
 SUMMARY:📱 Couples Carousel: 5 rules for fighting fair
@@ -586,8 +1282,39 @@ DESCRIPTION:📱 Couples Carousel: 5 rules for fighting fair
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:2026-10-17_Sat_2pm_BTM_CAROUSEL_b-saturday-dad@bethemansystem
+DTSTAMP:20261008T143609Z
+DTSTART;TZID=America/Chicago:20261017T140000
+DTEND;TZID=America/Chicago:20261017T141500
+SUMMARY:📱 BTM Carousel: 5 things to do with your kids this weekend
+DESCRIPTION:Post to Instagram\, Facebook and Threads.\nFolder: 2026-10-17_
+ 
+ Sat_2pm_BTM_CAROUSEL_b-saturday-dad\n(captions: instagram.txt\, faceboo
+ k.t
+ xt\, threads.txt)\n\nInstagram caption:\n5 things to do with your ki
+ ds thi
+ s weekend that cost nothing:\n\n1. Make breakfast together. Let i
+ t be mess
+ y.\n2. Take a walk and ask a real question.\n3. Teach them one
+  skill.\n4. 
+ Let them win one game\, and let them see you lose well.\n5.
+  Pray over them
+  at bedtime\, by name.\n\nThey want you\, not a budget.\
+ n\n👇 Comment "S
+ TEP1" and I'll send you the free worksheet.\n\n#godly
+ husband #blackfathers
+  #selfdisciplineformen #blackchristianmen #bethema
+ nsystem
+CATEGORIES:BTM
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:📱 BTM Carousel: 5 things to do with your kids this weekend
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:2026-10-17_Sat_7pm_COUPLES_REEL_c2-timeout@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261017T190000
 DTEND;TZID=America/Chicago:20261017T191500
 SUMMARY:📱 Couples Reel: The 20-minute timeout
@@ -619,8 +1346,39 @@ DESCRIPTION:📱 Couples Reel: The 20-minute timeout
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:2026-10-17_Sat_8am_BTM_REEL_b-three-days@bethemansystem
+DTSTAMP:20261008T143609Z
+DTSTART;TZID=America/Chicago:20261017T080000
+DTEND;TZID=America/Chicago:20261017T081500
+SUMMARY:📱 BTM Reel: Three days until the challenge
+DESCRIPTION:Post to Instagram\, Facebook and Threads.\nFolder: 2026-10-17_
+ 
+ Sat_8am_BTM_REEL_b-three-days\n(captions: instagram.txt\, facebook.txt\
+ , t
+ hreads.txt)\n\nInstagram caption:\nThree days until the free 7-week 
+ challe
+ nge starts.\n\nOne email a week. One action with a time on it\, s
+ mall enou
+ gh to do that week. And one brother\, so you each text "done" 
+ or "missed."
+ \n\nWho are you bringing? Tag him.\n\n🗓 The free 7-week 
+ challenge start
+ s Oct 20. One email a week\, one action with a time on i
+ t. Do it with a br
+ other.\n🔗 Link in bio → "Count me in."\n\n#chris
+ tianhusband #christia
+ nmen #christianfather #faithandfamily #bethemansys
+ tem
+CATEGORIES:BTM
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:📱 BTM Reel: Three days until the challenge
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:2026-10-17_Sat_9am_BTM_POST_conviction@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261017T090000
 DTEND;TZID=America/Chicago:20261017T091500
 SUMMARY:📱 BTM Post: You don't need more conviction
@@ -650,8 +1408,64 @@ DESCRIPTION:📱 BTM Post: You don't need more conviction
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:2026-10-17_Sat_9pm_BTM_POST_b-brother@bethemansystem
+DTSTAMP:20261008T143609Z
+DTSTART;TZID=America/Chicago:20261017T210000
+DTEND;TZID=America/Chicago:20261017T211500
+SUMMARY:📱 BTM Post: Tag the brother
+DESCRIPTION:Post to Instagram\, Facebook and Threads.\nFolder: 2026-10-17_
+ 
+ Sat_9pm_BTM_POST_b-brother\n(captions: instagram.txt\, facebook.txt\, t
+ hre
+ ads.txt)\n\nInstagram caption:\nTag the man you'd want holding you a
+ ccount
+ able.\n\nThe challenge starts Tuesday. Seven weeks. Once a week\,
+  you text
+  each other one word: done\, or missed. That's the whole syste
+ m.\n\n🗓 T
+ he free 7-week challenge starts Oct 20. One email a week\, 
+ one action with
+  a time on it. Do it with a brother.\n🔗 Link in bio 
+ → "Count me in."\
+ n\n#blackchristianmen #mensdiscipline #christianhusb
+ and #christianmen #bet
+ hemansystem
+CATEGORIES:BTM
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:📱 BTM Post: Tag the brother
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:2026-10-18_Sun_2pm_COUPLES_POST_b-quote-team@bethemansystem
+DTSTAMP:20261008T143609Z
+DTSTART;TZID=America/Chicago:20261018T140000
+DTEND;TZID=America/Chicago:20261018T141500
+SUMMARY:📱 Couples Post: Quote: same team
+DESCRIPTION:Post to Instagram\, Facebook and Threads.\nFolder: 2026-10-18_
+ 
+ Sun_2pm_COUPLES_POST_b-quote-team\n(captions: instagram.txt\, facebook.
+ txt
+ \, threads.txt)\n\nInstagram caption:\nYou're not against each other
+ . You'
+ re for the same marriage.\n\nRemember that in the next argument. 
+ Then say 
+ it out loud.\n\n📤 Send this to your spouse. Then talk about
+  it tonight.
+ \n💬 Want help? Comment "COUPLES."\n\n#blackcouples #chri
+ stiancouples #g
+ odlymarriage #premaritalcounseling #bethemansystem
+CATEGORIES:Couples
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:📱 Couples Post: Quote: same team
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:2026-10-18_Sun_4pm_COUPLES_POST_c2-sun@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261018T160000
 DTEND;TZID=America/Chicago:20261018T161500
 SUMMARY:📱 Couples Post: Don’t let the sun go down on your anger
@@ -684,7 +1498,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-10-18_Sun_7pm_BTM_REEL_pray-reel@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261018T190000
 DTEND;TZID=America/Chicago:20261018T191500
 SUMMARY:📱 BTM Reel: Pray with a time attached
@@ -714,8 +1528,104 @@ DESCRIPTION:📱 BTM Reel: Pray with a time attached
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:2026-10-18_Sun_8am_COUPLES_REEL_b-church-car@bethemansystem
+DTSTAMP:20261008T143609Z
+DTSTART;TZID=America/Chicago:20261018T080000
+DTEND;TZID=America/Chicago:20261018T081500
+SUMMARY:📱 Couples Reel: The fight in the church parking lot
+DESCRIPTION:Post to Instagram\, Facebook and Threads.\nFolder: 2026-10-18_
+ 
+ Sun_8am_COUPLES_REEL_b-church-car\n(captions: instagram.txt\, facebook.
+ txt
+ \, threads.txt)\n\nInstagram caption:\nArguing all morning. Smiling 
+ in the
+  pew. Fighting again in the car.\n\nSound familiar? You're not th
+ e only on
+ es.\n\nTry this: hold hands and pray for 60 seconds before you
+  leave the h
+ ouse on Sunday. Not after. Before.\n\n📤 Send this to you
+ r spouse. Then 
+ talk about it tonight.\n💬 Want help? Comment "COUPLES
+ ."\n\n#godlymarria
+ ge #premaritalcounseling #blackmarriage #blacklove #b
+ ethemansystem
+CATEGORIES:Couples
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:📱 Couples Reel: The fight in the church parking lot
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:2026-10-18_Sun_9pm_BTM_POST_b-kw-challenge-b@bethemansystem
+DTSTAMP:20261008T143609Z
+DTSTART;TZID=America/Chicago:20261018T210000
+DTEND;TZID=America/Chicago:20261018T211500
+SUMMARY:📱 BTM Post: Challenge starts Tuesday
+DESCRIPTION:Post to Instagram\, Facebook and Threads.\nFolder: 2026-10-18_
+ 
+ Sun_9pm_BTM_POST_b-kw-challenge-b\n(captions: instagram.txt\, facebook.
+ txt
+ \, threads.txt)\n\nInstagram caption:\nThe free 7-week challenge sta
+ rts Tu
+ esday.\n\nWeek 1: one sentence about the man you're becoming.\nWe
+ ek 2: cut
+  your goals to three.\nThen: name what stops you\, give a goal
+  a time\, de
+ fine a miss\, count honestly\, and put God at the center.\n
+ \nOne email a w
+ eek. Join with a brother.\n\n🗓 The free 7-week challe
+ nge starts Oct 20.
+  One email a week\, one action with a time on it. Do 
+ it with a brother.\n
+ 🔗 Link in bio → "Count me in."\n\n#selfdiscipl
+ ineformen #blackchristi
+ anmen #mensdiscipline #christianhusband #bethema
+ nsystem
+CATEGORIES:BTM
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:📱 BTM Post: Challenge starts Tuesday
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:2026-10-19_Mon_2pm_COUPLES_CAROUSEL_b-in-law-scripts@bethemansystem
+DTSTAMP:20261008T143609Z
+DTSTART;TZID=America/Chicago:20261019T140000
+DTEND;TZID=America/Chicago:20261019T141500
+SUMMARY:📱 Couples Carousel: Scripts for in-law boundaries
+DESCRIPTION:Post to Instagram\, Facebook and Threads.\nFolder: 2026-10-19_
+ 
+ Mon_2pm_COUPLES_CAROUSEL_b-in-law-scripts\n(captions: instagram.txt\, f
+ ace
+ book.txt\, threads.txt)\n\nInstagram caption:\nWhat to say when in-l
+ aws cr
+ oss a line:\n\nOn advice: "Thanks\, Mom. We're going to try it ou
+ r way."\n
+ On visits: "Saturday from 2 to 5 works for us."\nOn the kids: 
+ "We've decid
+ ed on that one."\nOn criticism: "We're good. She's with me.
+ "\n\nAlways dec
+ ide at home\, together\, and present it as "we."\n\n💬
+  Engaged or marrie
+ d? Comment "COUPLES" and I'll send you how certified 
+ marriage counseling w
+ orks: a validated assessment\, then three sessions
+  built on your results.\
+ n\n#premaritalcounseling #blackmarriage #blackl
+ ove #marriagecounseling #be
+ themansystem
+CATEGORIES:Couples
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:📱 Couples Carousel: Scripts for in-law boundaries
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:2026-10-19_Mon_7pm_BTM_REEL_w3-starts-tomorrow@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261019T190000
 DTEND;TZID=America/Chicago:20261019T191500
 SUMMARY:📱 BTM Reel: Seven weeks starts tomorrow
@@ -750,8 +1660,100 @@ DESCRIPTION:📱 BTM Reel: Seven weeks starts tomorrow
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:2026-10-19_Mon_8am_BTM_REEL_b-tomorrow-sentence@bethemansystem
+DTSTAMP:20261008T143609Z
+DTSTART;TZID=America/Chicago:20261019T080000
+DTEND;TZID=America/Chicago:20261019T081500
+SUMMARY:📱 BTM Reel: Tomorrow you write one sentence
+DESCRIPTION:Post to Instagram\, Facebook and Threads.\nFolder: 2026-10-19_
+ 
+ Mon_8am_BTM_REEL_b-tomorrow-sentence\n(captions: instagram.txt\, facebo
+ ok.
+ txt\, threads.txt)\n\nInstagram caption:\nTomorrow you write one sen
+ tence:
+  who you're becoming. Not a goal. A man.\n\nThe free 7-week chall
+ enge star
+ ts tomorrow. It's not too late to join.\n\n🗓 The free 7-wee
+ k challenge 
+ starts Oct 20. One email a week\, one action with a time on
+  it. Do it with
+  a brother.\n🔗 Link in bio → "Count me in."\n\n#fai
+ thandfamily #black
+ menwholead #godlyhusband #blackfathers #bethemansyste
+ m
+CATEGORIES:BTM
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:📱 BTM Reel: Tomorrow you write one sentence
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:2026-10-19_Mon_9pm_BTM_POST_b-workshop-6@bethemansystem
+DTSTAMP:20261008T143609Z
+DTSTART;TZID=America/Chicago:20261019T210000
+DTEND;TZID=America/Chicago:20261019T211500
+SUMMARY:📱 BTM Post: Workshop in 6 days
+DESCRIPTION:Post to Instagram\, Facebook and Threads.\nFolder: 2026-10-19_
+ 
+ Mon_9pm_BTM_POST_b-workshop-6\n(captions: instagram.txt\, facebook.txt\
+ , t
+ hreads.txt)\n\nInstagram caption:\nSix days until Fix Your Wednesday
+ \, liv
+ e on Google Meet.\n\nOne hour. You leave with your one sentence\,
+  one goal
+  with a date\, and your first weekly Scorecard. Recording incl
+ uded.\n\n
+ 🎟 Live workshop: Fix Your Wednesday. Sunday\, Oct 25\, 7 PM
+  Central\, o
+ n Google Meet. One hour\, $27. You leave with your sentence
+ \, one goal wit
+ h a date\, and your first Scorecard. Can't make it live?
+  The recording is 
+ included.\n🔗 Link in bio → "Reserve my spot."\n\
+ n#blackfathers #selfd
+ isciplineformen #blackchristianmen #mensdiscipline
+  #bethemansystem
+CATEGORIES:BTM
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:📱 BTM Post: Workshop in 6 days
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:2026-10-20_Tue_2pm_BTM_POST_b-day-one@bethemansystem
+DTSTAMP:20261008T143609Z
+DTSTART;TZID=America/Chicago:20261020T140000
+DTEND;TZID=America/Chicago:20261020T141500
+SUMMARY:📱 BTM Post: Day one: write it now
+DESCRIPTION:Post to Instagram\, Facebook and Threads.\nFolder: 2026-10-20_
+ 
+ Tue_2pm_BTM_POST_b-day-one\n(captions: instagram.txt\, facebook.txt\, t
+ hre
+ ads.txt)\n\nInstagram caption:\nDay one of the challenge. Write it n
+ ow\, b
+ efore the day gets loud:\n\n"I am becoming a man who…"\n\nFinis
+ h the sen
+ tence. Then cut it in half. The shorter it is\, the more you'l
+ l remember i
+ t at 6 PM.\n\n🗓 The free 7-week challenge is running now
+ . Join any week
+ \, and the first step comes in your welcome email.\n🔗
+  Link in bio → "
+ Count me in."\n\n#selfdisciplineformen #blackchristia
+ nmen #mensdiscipline 
+ #christianhusband #bethemansystem
+CATEGORIES:BTM
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:📱 BTM Post: Day one: write it now
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:2026-10-20_Tue_7pm_BTM_POST_w3-week-one@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261020T190000
 DTEND;TZID=America/Chicago:20261020T191500
 SUMMARY:📱 BTM Post: Challenge week 1: one sentence
@@ -785,8 +1787,64 @@ DESCRIPTION:📱 BTM Post: Challenge week 1: one sentence
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:2026-10-20_Tue_8am_COUPLES_REEL_b-tuesday-kiss@bethemansystem
+DTSTAMP:20261008T143609Z
+DTSTART;TZID=America/Chicago:20261020T080000
+DTEND;TZID=America/Chicago:20261020T081500
+SUMMARY:📱 Couples Reel: The 6-second kiss (Tuesday edition)
+DESCRIPTION:Post to Instagram\, Facebook and Threads.\nFolder: 2026-10-20_
+ 
+ Tue_8am_COUPLES_REEL_b-tuesday-kiss\n(captions: instagram.txt\, faceboo
+ k.t
+ xt\, threads.txt)\n\nInstagram caption:\nSix seconds. Long enough to
+  actua
+ lly stop\, short enough to do every day.\n\nLeaving and coming ho
+ me\, star
+ ting today. Count if you have to. Laugh about counting. That's
+  part of it.
+ \n\n📤 Send this to your spouse. Then talk about it tonig
+ ht.\n💬 Want 
+ help? Comment "COUPLES."\n\n#marriagecounseling #christi
+ anmarriage #marria
+ getips #husbandandwife #bethemansystem
+CATEGORIES:Couples
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:📱 Couples Reel: The 6-second kiss (Tuesday edition)
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:2026-10-20_Tue_9pm_BTM_POST_b-share-sentence@bethemansystem
+DTSTAMP:20261008T143609Z
+DTSTART;TZID=America/Chicago:20261020T210000
+DTEND;TZID=America/Chicago:20261020T211500
+SUMMARY:📱 BTM Post: Share your sentence
+DESCRIPTION:Post to Instagram\, Facebook and Threads.\nFolder: 2026-10-20_
+ 
+ Tue_9pm_BTM_POST_b-share-sentence\n(captions: instagram.txt\, facebook.
+ txt
+ \, threads.txt)\n\nInstagram caption:\nWeek 1 of the challenge: shar
+ e your
+  sentence below.\n\n"I am becoming a man who…"\n\nSaying it out
+  loud in 
+ front of other men changes how seriously you take it. Go first
+ . Someone ne
+ eds to see it.\n\n💬 Answer in the comments. I read every
+  one.\n\n#godly
+ husband #blackfathers #selfdisciplineformen #blackchrist
+ ianmen #bethemansy
+ stem
+CATEGORIES:BTM
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:📱 BTM Post: Share your sentence
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:2026-10-20_Tue_12pm_COUPLES_REEL_c3-decide@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261020T120000
 DTEND;TZID=America/Chicago:20261020T121500
 SUMMARY:📱 Couples Reel: Who decides?
@@ -819,8 +1877,106 @@ DESCRIPTION:📱 Couples Reel: Who decides?
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:2026-10-21_Wed_2pm_COUPLES_CAROUSEL_b-money-talk@bethemansystem
+DTSTAMP:20261008T143609Z
+DTSTART;TZID=America/Chicago:20261021T140000
+DTEND;TZID=America/Chicago:20261021T141500
+SUMMARY:📱 Couples Carousel: How to talk money without a fight
+DESCRIPTION:Post to Instagram\, Facebook and Threads.\nFolder: 2026-10-21_
+ 
+ Wed_2pm_COUPLES_CAROUSEL_b-money-talk\n(captions: instagram.txt\, faceb
+ ook
+ .txt\, threads.txt)\n\nInstagram caption:\nHow to talk about money w
+ ithout
+  a fight:\n\n1. Pick a calm time\, never right after a surprise c
+ harge.\n2
+ . Start with the dream: where do we want to be in a year?\n3. 
+ Share your f
+ ear\, not your accusation.\n4. Agree on ONE change.\n5. End
+  with thanks.\n
+ \nIt's rarely about the money. It's about feeling safe.\
+ n\n💾 Save this 
+ for your next date night.\n💬 Want help as a couple
+ ? Comment "COUPLES."\
+ n\n#premaritalcounseling #blackmarriage #blacklove
+  #marriagecounseling #be
+ themansystem
+CATEGORIES:Couples
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:📱 Couples Carousel: How to talk money without a fight
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:2026-10-21_Wed_8am_BTM_REEL_b-wednesday-again@bethemansystem
+DTSTAMP:20261008T143609Z
+DTSTART;TZID=America/Chicago:20261021T080000
+DTEND;TZID=America/Chicago:20261021T081500
+SUMMARY:📱 BTM Reel: It’s Wednesday again
+DESCRIPTION:Post to Instagram\, Facebook and Threads.\nFolder: 2026-10-21_
+ 
+ Wed_8am_BTM_REEL_b-wednesday-again\n(captions: instagram.txt\, facebook
+ .tx
+ t\, threads.txt)\n\nInstagram caption:\nIt's Wednesday. Monday's pro
+ mise i
+ s already slipping. You know the feeling.\n\nSunday at 7 PM Centr
+ al\, we f
+ ix it. Live\, one hour\, $27. You leave with your sentence\, a
+  goal with a
+  date\, and your first Scorecard.\n\n🎟 Live workshop: Fi
+ x Your Wednesda
+ y. Sunday\, Oct 25\, 7 PM Central\, on Google Meet. One 
+ hour\, $27. You le
+ ave with your sentence\, one goal with a date\, and y
+ our first Scorecard. 
+ Can't make it live? The recording is included.\n
+ 🔗 Link in bio → "Rese
+ rve my spot."\n\n#mensdiscipline #christianhu
+ sband #christianmen #christia
+ nfather #bethemansystem
+CATEGORIES:BTM
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:📱 BTM Reel: It’s Wednesday again
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:2026-10-21_Wed_9pm_BTM_POST_b-workshop-4@bethemansystem
+DTSTAMP:20261008T143609Z
+DTSTART;TZID=America/Chicago:20261021T210000
+DTEND;TZID=America/Chicago:20261021T211500
+SUMMARY:📱 BTM Post: Four days: what you leave with
+DESCRIPTION:Post to Instagram\, Facebook and Threads.\nFolder: 2026-10-21_
+ 
+ Wed_9pm_BTM_POST_b-workshop-4\n(captions: instagram.txt\, facebook.txt\
+ , t
+ hreads.txt)\n\nInstagram caption:\nMost men start Monday strong and 
+ lose t
+ he week by Wednesday.\n\nSunday at 7 PM Central\, we fix that\, l
+ ive and t
+ ogether. One hour\, $27\, recording included. Bring a pen.\n\n
+ 🎟 Live wo
+ rkshop: Fix Your Wednesday. Sunday\, Oct 25\, 7 PM Central\
+ , on Google Mee
+ t. One hour\, $27. You leave with your sentence\, one go
+ al with a date\, a
+ nd your first Scorecard. Can't make it live? The reco
+ rding is included.\n
+ 🔗 Link in bio → "Reserve my spot."\n\n#christi
+ anfather #faithandfamil
+ y #blackmenwholead #godlyhusband #bethemansystem
+CATEGORIES:BTM
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:📱 BTM Post: Four days: what you leave with
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:2026-10-21_Wed_12pm_COUPLES_POST_c3-number@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261021T120000
 DTEND;TZID=America/Chicago:20261021T121500
 SUMMARY:📱 Couples Post: Pick your number
@@ -849,8 +2005,34 @@ DESCRIPTION:📱 Couples Post: Pick your number
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:2026-10-22_Thu_2pm_BTM_POST_b-quote-legacy@bethemansystem
+DTSTAMP:20261008T143609Z
+DTSTART;TZID=America/Chicago:20261022T140000
+DTEND;TZID=America/Chicago:20261022T141500
+SUMMARY:📱 BTM Post: Quote: break the cycle
+DESCRIPTION:Post to Instagram\, Facebook and Threads.\nFolder: 2026-10-22_
+ 
+ Thu_2pm_BTM_POST_b-quote-legacy\n(captions: instagram.txt\, facebook.tx
+ t\,
+  threads.txt)\n\nInstagram caption:\nThe cycle didn't start with you
+ . It c
+ an end with you.\n\nNot with a promise. With a system your kids c
+ an see wo
+ rking.\n\n👇 Comment "STEP1" and I'll send you the free work
+ sheet.\n\n#b
+ lackfathers #selfdisciplineformen #blackchristianmen #mensd
+ iscipline #beth
+ emansystem
+CATEGORIES:BTM
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:📱 BTM Post: Quote: break the cycle
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:2026-10-22_Thu_7pm_BTM_CAROUSEL_w3-wednesday@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261022T190000
 DTEND;TZID=America/Chicago:20261022T191500
 SUMMARY:📱 BTM Carousel: Why you lose the week by Wednesday
@@ -887,8 +2069,156 @@ DESCRIPTION:📱 BTM Carousel: Why you lose the week by Wednesday
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:2026-10-22_Thu_8am_COUPLES_REEL_b-kids-watching-love@bethemansystem
+DTSTAMP:20261008T143609Z
+DTSTART;TZID=America/Chicago:20261022T080000
+DTEND;TZID=America/Chicago:20261022T081500
+SUMMARY:📱 Couples Reel: Your kids are learning love from you
+DESCRIPTION:Post to Instagram\, Facebook and Threads.\nFolder: 2026-10-22_
+ 
+ Thu_8am_COUPLES_REEL_b-kids-watching-love\n(captions: instagram.txt\, f
+ ace
+ book.txt\, threads.txt)\n\nInstagram caption:\nYour kids are learnin
+ g what
+  love looks like from how you two talk in the kitchen.\n\nNot fro
+ m movies.
+  Not from sermons. From you\, on a tired Tuesday.\n\nGive them
+  a good one 
+ to copy.\n\n📤 Send this to your spouse. Then talk about 
+ it tonight.\n
+ 💬 Want help? Comment "COUPLES."\n\n#blackmarriage #blac
+ klove #marriagec
+ ounseling #christianmarriage #bethemansystem
+CATEGORIES:Couples
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:📱 Couples Reel: Your kids are learning love from you
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:2026-10-22_Thu_9pm_COUPLES_POST_b-kw-couples-b@bethemansystem
+DTSTAMP:20261008T143609Z
+DTSTART;TZID=America/Chicago:20261022T210000
+DTEND;TZID=America/Chicago:20261022T211500
+SUMMARY:📱 Couples Post: Comment COUPLES: before the holidays
+DESCRIPTION:Post to Instagram\, Facebook and Threads.\nFolder: 2026-10-22_
+ 
+ Thu_9pm_COUPLES_POST_b-kw-couples-b\n(captions: instagram.txt\, faceboo
+ k.t
+ xt\, threads.txt)\n\nInstagram caption:\nGo into the holidays on the
+  same 
+ page\, not on edge.\n\nCertified marriage counseling for engaged 
+ and marri
+ ed couples: a validated assessment you each take\, then three 
+ sessions bui
+ lt on your results.\n\n💬 Engaged or married? Comment "CO
+ UPLES" and I'll
+  send you how certified marriage counseling works: a val
+ idated assessment\
+ , then three sessions built on your results.\n\n#chri
+ stianmarriage #marria
+ getips #husbandandwife #blackcouples #bethemansyst
+ em
+CATEGORIES:Couples
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:📱 Couples Post: Comment COUPLES: before the holidays
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:2026-10-23_Fri_2pm_BTM_CAROUSEL_b-myths@bethemansystem
+DTSTAMP:20261008T143609Z
+DTSTART;TZID=America/Chicago:20261023T140000
+DTEND;TZID=America/Chicago:20261023T141500
+SUMMARY:📱 BTM Carousel: 5 lies men believe about discipline
+DESCRIPTION:Post to Instagram\, Facebook and Threads.\nFolder: 2026-10-23_
+ 
+ Fri_2pm_BTM_CAROUSEL_b-myths\n(captions: instagram.txt\, facebook.txt\,
+  th
+ reads.txt)\n\nInstagram caption:\n5 lies men believe about disciplin
+ e:\n\n
+ 1. "I just need to want it more."\n2. "Real men don't need help."
+ \n3. "I'l
+ l start Monday."\n4. "One miss means I failed."\n5. "It has to
+  be big to c
+ ount."\n\nYou don't need more motivation. You need a time\,
+  a brother\, an
+ d a plan for the miss.\n\n👇 Comment "STEP1" and I'll 
+ send you the free 
+ worksheet.\n\n#selfdisciplineformen #blackchristianme
+ n #mensdiscipline #ch
+ ristianhusband #bethemansystem
+CATEGORIES:BTM
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:📱 BTM Carousel: 5 lies men believe about discipline
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:2026-10-23_Fri_8am_BTM_REEL_b-two-days@bethemansystem
+DTSTAMP:20261008T143609Z
+DTSTART;TZID=America/Chicago:20261023T080000
+DTEND;TZID=America/Chicago:20261023T081500
+SUMMARY:📱 BTM Reel: Two days: bring a pen
+DESCRIPTION:Post to Instagram\, Facebook and Threads.\nFolder: 2026-10-23_
+ 
+ Fri_8am_BTM_REEL_b-two-days\n(captions: instagram.txt\, facebook.txt\, 
+ thr
+ eads.txt)\n\nInstagram caption:\nSunday at 7 PM Central. Bring a pen
+ .\n\nY
+ ou leave with one sentence\, one goal with a date\, and your firs
+ t Scoreca
+ rd. One hour\, live on Google Meet. Recording included.\n\n
+ 🎟 Live works
+ hop: Fix Your Wednesday. Sunday\, Oct 25\, 7 PM Central\
+ , on Google Meet. 
+ One hour\, $27. You leave with your sentence\, one go
+ al with a date\, and 
+ your first Scorecard. Can't make it live? The reco
+ rding is included.\n🔗
+  Link in bio → "Reserve my spot."\n\n#christi
+ anhusband #christianmen #ch
+ ristianfather #faithandfamily #bethemansyste
+ m
+CATEGORIES:BTM
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:📱 BTM Reel: Two days: bring a pen
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:2026-10-23_Fri_9pm_COUPLES_POST_b-first-date@bethemansystem
+DTSTAMP:20261008T143609Z
+DTSTART;TZID=America/Chicago:20261023T210000
+DTEND;TZID=America/Chicago:20261023T211500
+SUMMARY:📱 Couples Post: Where was your first date?
+DESCRIPTION:Post to Instagram\, Facebook and Threads.\nFolder: 2026-10-23_
+ 
+ Fri_9pm_COUPLES_POST_b-first-date\n(captions: instagram.txt\, facebook.
+ txt
+ \, threads.txt)\n\nInstagram caption:\nWhere was your first date? Te
+ ll us 
+ below.\n\nThen go back sometime this month. Same place\, same ord
+ er if you
+  can. Remember who you were when you chose each other.\n\n💬
+  Answer in t
+ he comments. I read every one.\n\n#blacklove #marriagecouns
+ eling #christia
+ nmarriage #marriagetips #bethemansystem
+CATEGORIES:Couples
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:📱 Couples Post: Where was your first date?
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:2026-10-23_Fri_12pm_COUPLES_CAROUSEL_c3-money-date@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261023T120000
 DTEND;TZID=America/Chicago:20261023T121500
 SUMMARY:📱 Couples Carousel: A 30-minute money date
@@ -919,8 +2249,41 @@ DESCRIPTION:📱 Couples Carousel: A 30-minute money date
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:2026-10-24_Sat_2pm_BTM_POST_b-tomorrow-night@bethemansystem
+DTSTAMP:20261008T143609Z
+DTSTART;TZID=America/Chicago:20261024T140000
+DTEND;TZID=America/Chicago:20261024T141500
+SUMMARY:📱 BTM Post: Tomorrow night
+DESCRIPTION:Post to Instagram\, Facebook and Threads.\nFolder: 2026-10-24_
+ 
+ Sat_2pm_BTM_POST_b-tomorrow-night\n(captions: instagram.txt\, facebook.
+ txt
+ \, threads.txt)\n\nInstagram caption:\nTomorrow night\, 7 PM Central
+ : Fix 
+ Your Wednesday\, live.\n\nOne hour. Leave with your sentence\, on
+ e goal wi
+ th a date and your first Scorecard. Today's the last full day 
+ to grab a sp
+ ot.\n\n🎟 Live workshop: Fix Your Wednesday. Sunday\, Oct
+  25\, 7 PM Cent
+ ral\, on Google Meet. One hour\, $27. You leave with you
+ r sentence\, one g
+ oal with a date\, and your first Scorecard. Can't mak
+ e it live? The record
+ ing is included.\n🔗 Link in bio → "Reserve my
+  spot."\n\n#blackchristi
+ anmen #mensdiscipline #christianhusband #christ
+ ianmen #bethemansystem
+CATEGORIES:BTM
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:📱 BTM Post: Tomorrow night
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:2026-10-24_Sat_7pm_COUPLES_REEL_c3-mine@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261024T190000
 DTEND;TZID=America/Chicago:20261024T191500
 SUMMARY:📱 Couples Reel: “My money” vs “our money”
@@ -949,8 +2312,37 @@ DESCRIPTION:📱 Couples Reel: “My money” vs “our money”
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:2026-10-24_Sat_8am_COUPLES_REEL_b-saturday-chores@bethemansystem
+DTSTAMP:20261008T143609Z
+DTSTART;TZID=America/Chicago:20261024T080000
+DTEND;TZID=America/Chicago:20261024T081500
+SUMMARY:📱 Couples Reel: Chores are a love language
+DESCRIPTION:Post to Instagram\, Facebook and Threads.\nFolder: 2026-10-24_
+ 
+ Sat_8am_COUPLES_REEL_b-saturday-chores\n(captions: instagram.txt\, face
+ boo
+ k.txt\, threads.txt)\n\nInstagram caption:\nNothing says "I love you
+ " in y
+ ear ten like doing the thing they hate\, without being asked and 
+ without a
+ nnouncing it.\n\nThe dishes. The insurance call. The gutter. T
+ hat's romanc
+ e with mileage on it.\n\n📤 Send this to your spouse. The
+ n talk about it
+  tonight.\n💬 Want help? Comment "COUPLES."\n\n#blackc
+ ouples #christianc
+ ouples #godlymarriage #premaritalcounseling #betheman
+ system
+CATEGORIES:Couples
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:📱 Couples Reel: Chores are a love language
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:2026-10-24_Sat_9am_BTM_POST_w3-workshop-tomorrow@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261024T090000
 DTEND;TZID=America/Chicago:20261024T091500
 SUMMARY:📱 BTM Post: Workshop tomorrow: leave with three things
@@ -988,8 +2380,64 @@ DESCRIPTION:📱 BTM Post: Workshop tomorrow: leave with three things
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:2026-10-24_Sat_9pm_BTM_POST_b-what-stops@bethemansystem
+DTSTAMP:20261008T143609Z
+DTSTART;TZID=America/Chicago:20261024T210000
+DTEND;TZID=America/Chicago:20261024T211500
+SUMMARY:📱 BTM Post: What stops you on Wednesdays?
+DESCRIPTION:Post to Instagram\, Facebook and Threads.\nFolder: 2026-10-24_
+ 
+ Sat_9pm_BTM_POST_b-what-stops\n(captions: instagram.txt\, facebook.txt\
+ , t
+ hreads.txt)\n\nInstagram caption:\nWhat usually kills your week by W
+ ednesd
+ ay?\n\nWork? The phone? Being tired? Family stuff? Name it below.
+  We'll ta
+ ckle the top answers live tomorrow night.\n\n💬 Answer in th
+ e comments. 
+ I read every one.\n\n#christianfather #faithandfamily #blac
+ kmenwholead #go
+ dlyhusband #bethemansystem
+CATEGORIES:BTM
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:📱 BTM Post: What stops you on Wednesdays?
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:2026-10-25_Sun_2pm_COUPLES_CAROUSEL_b-sunday-blessing@bethemansystem
+DTSTAMP:20261008T143609Z
+DTSTART;TZID=America/Chicago:20261025T140000
+DTEND;TZID=America/Chicago:20261025T141500
+SUMMARY:📱 Couples Carousel: A Sunday blessing for your marriage
+DESCRIPTION:Post to Instagram\, Facebook and Threads.\nFolder: 2026-10-25_
+ 
+ Sun_2pm_COUPLES_CAROUSEL_b-sunday-blessing\n(captions: instagram.txt\, 
+ fac
+ ebook.txt\, threads.txt)\n\nInstagram caption:\nA Sunday blessing fo
+ r your
+  marriage. Read it together\, out loud:\n\nPeace in our home. (Nu
+ mbers 6:2
+ 4)\nPatience with each other. (1 Cor 13:4)\nWisdom in our choi
+ ces. (James 
+ 1:5)\nStrength when it's hard. (Ecclesiastes 4:9)\nChrist a
+ t the center. (
+ Psalm 127:1)\n\n📤 Send this to your spouse. Then talk
+  about it tonight.
+ \n💬 Want help? Comment "COUPLES."\n\n#marriagetips
+  #husbandandwife #bla
+ ckcouples #christiancouples #bethemansystem
+CATEGORIES:Couples
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:📱 Couples Carousel: A Sunday blessing for your marriage
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:2026-10-25_Sun_4pm_COUPLES_POST_c3-secrets@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261025T160000
 DTEND;TZID=America/Chicago:20261025T161500
 SUMMARY:📱 Couples Post: No money secrets
@@ -1021,8 +2469,69 @@ DESCRIPTION:📱 Couples Post: No money secrets
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:2026-10-25_Sun_8am_BTM_REEL_b-tonight@bethemansystem
+DTSTAMP:20261008T143609Z
+DTSTART;TZID=America/Chicago:20261025T080000
+DTEND;TZID=America/Chicago:20261025T081500
+SUMMARY:📱 BTM Reel: Tonight\, 7 PM: fix your Wednesday
+DESCRIPTION:Post to Instagram\, Facebook and Threads.\nFolder: 2026-10-25_
+ 
+ Sun_8am_BTM_REEL_b-tonight\n(captions: instagram.txt\, facebook.txt\, t
+ hre
+ ads.txt)\n\nInstagram caption:\nTonight\, 7 PM Central. One hour tha
+ t fixe
+ s your week.\n\nBring a pen. Bring your honesty. Can't make it li
+ ve? The r
+ ecording comes with your ticket.\n\n🎟 Live workshop: Fix Yo
+ ur Wednesday
+ . Sunday\, Oct 25\, 7 PM Central\, on Google Meet. One hour
+ \, $27. You lea
+ ve with your sentence\, one goal with a date\, and your 
+ first Scorecard. C
+ an't make it live? The recording is included.\n🔗 L
+ ink in bio → "Reser
+ ve my spot."\n\n#selfdisciplineformen #blackchrist
+ ianmen #mensdiscipline #
+ christianhusband #bethemansystem
+CATEGORIES:BTM
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:📱 BTM Reel: Tonight\, 7 PM: fix your Wednesday
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:2026-10-25_Sun_9pm_BTM_POST_b-workshop-done@bethemansystem
+DTSTAMP:20261008T143609Z
+DTSTART;TZID=America/Chicago:20261025T210000
+DTEND;TZID=America/Chicago:20261025T211500
+SUMMARY:📱 BTM Post: After the workshop: keep it going
+DESCRIPTION:Post to Instagram\, Facebook and Threads.\nFolder: 2026-10-25_
+ 
+ Sun_9pm_BTM_POST_b-workshop-done\n(captions: instagram.txt\, facebook.t
+ xt\
+ , threads.txt)\n\nInstagram caption:\nDon't let tonight become anoth
+ er pro
+ mise.\n\nThe 6-week live group starts Nov 15: Sundays\, 7–8 PM 
+ Central\,
+  the same men every week. Four seats.\n\n🪑 A 6-week live gr
+ oup for husb
+ ands and fathers. Sundays\, 7–8 PM Central\, on Google Me
+ et\, Nov 15 –
+  Dec 20. Four seats.\n🔗 Link in bio → "Reserve my s
+ eat."\n\n#christia
+ nfather #faithandfamily #blackmenwholead #godlyhusban
+ d #bethemansystem
+CATEGORIES:BTM
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:📱 BTM Post: After the workshop: keep it going
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:2026-10-25_Sun_12pm_BTM_REEL_w3-tonight@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261025T120000
 DTEND;TZID=America/Chicago:20261025T121500
 SUMMARY:📱 BTM Reel: Tonight\, 7 PM — Fix Your Wednesday
@@ -1057,8 +2566,38 @@ DESCRIPTION:📱 BTM Reel: Tonight\, 7 PM — Fix Your Wednesday
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:2026-10-26_Mon_2pm_BTM_POST_b-three-goals@bethemansystem
+DTSTAMP:20261008T143609Z
+DTSTART;TZID=America/Chicago:20261026T140000
+DTEND;TZID=America/Chicago:20261026T141500
+SUMMARY:📱 BTM Post: Week 2: cut to three
+DESCRIPTION:Post to Instagram\, Facebook and Threads.\nFolder: 2026-10-26_
+ 
+ Mon_2pm_BTM_POST_b-three-goals\n(captions: instagram.txt\, facebook.txt
+ \, 
+ threads.txt)\n\nInstagram caption:\nWeek 2 of the challenge: you don
+ 't hav
+ e twelve goals. You have twelve wishes.\n\nCut it to three: one f
+ or your s
+ oul\, one for your house\, one for your work. Everything else 
+ waits.\n\n
+ 🗓 The free 7-week challenge is running now. Join any week\
+ , and the fir
+ st step comes in your welcome email.\n🔗 Link in bio →
+  "Count me in."\
+ n\n#selfdisciplineformen #blackchristianmen #mensdiscip
+ line #christianhusb
+ and #bethemansystem
+CATEGORIES:BTM
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:📱 BTM Post: Week 2: cut to three
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:2026-10-26_Mon_7pm_BTM_REEL_w4-twelve-goals@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261026T190000
 DTEND;TZID=America/Chicago:20261026T191500
 SUMMARY:📱 BTM Reel: Twelve goals is zero goals
@@ -1089,8 +2628,99 @@ DESCRIPTION:📱 BTM Reel: Twelve goals is zero goals
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:2026-10-26_Mon_8am_COUPLES_REEL_b-monday-text@bethemansystem
+DTSTAMP:20261008T143609Z
+DTSTART;TZID=America/Chicago:20261026T080000
+DTEND;TZID=America/Chicago:20261026T081500
+SUMMARY:📱 Couples Reel: Send this text before 10 AM
+DESCRIPTION:Post to Instagram\, Facebook and Threads.\nFolder: 2026-10-26_
+ 
+ Mon_8am_COUPLES_REEL_b-monday-text\n(captions: instagram.txt\, facebook
+ .tx
+ t\, threads.txt)\n\nInstagram caption:\nSend this text before 10 AM:
+  "I'm 
+ glad I married you."\n\nNo reason. No occasion. Just Monday.\n\nT
+ hen tell 
+ us below what they texted back. 😄\n\n📤 Send this to your
+  spouse. The
+ n talk about it tonight.\n💬 Want help? Comment "COUPLES.
+ "\n\n#blackcoup
+ les #christiancouples #godlymarriage #premaritalcounseli
+ ng #bethemansystem
+CATEGORIES:Couples
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:📱 Couples Reel: Send this text before 10 AM
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:2026-10-26_Mon_9pm_BTM_POST_b-group-why@bethemansystem
+DTSTAMP:20261008T143609Z
+DTSTART;TZID=America/Chicago:20261026T210000
+DTEND;TZID=America/Chicago:20261026T211500
+SUMMARY:📱 BTM Post: Why a group\, not an app
+DESCRIPTION:Post to Instagram\, Facebook and Threads.\nFolder: 2026-10-26_
+ 
+ Mon_9pm_BTM_POST_b-group-why\n(captions: instagram.txt\, facebook.txt\,
+  th
+ reads.txt)\n\nInstagram caption:\nApps don't notice when you go quie
+ t. Men
+  do.\n\nThe 6-week live group: Sundays\, 7–8 PM Central\, Nov 1
+ 5 to Dec 
+ 20\, on Google Meet. Four seats.\n\n🪑 A 6-week live group f
+ or husbands 
+ and fathers. Sundays\, 7–8 PM Central\, on Google Meet\, 
+ Nov 15 – Dec 
+ 20. Four seats.\n🔗 Link in bio → "Reserve my seat."
+ \n\n#blackmenwhole
+ ad #godlyhusband #blackfathers #selfdisciplineformen 
+ #bethemansystem
+CATEGORIES:BTM
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:📱 BTM Post: Why a group\, not an app
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:2026-10-27_Tue_2pm_COUPLES_CAROUSEL_b-married-vs-roommates@bethemansys
+ tem
+DTSTAMP:20261008T143609Z
+DTSTART;TZID=America/Chicago:20261027T140000
+DTEND;TZID=America/Chicago:20261027T141500
+SUMMARY:📱 Couples Carousel: Married vs. roommates
+DESCRIPTION:Post to Instagram\, Facebook and Threads.\nFolder: 2026-10-27_
+ 
+ Tue_2pm_COUPLES_CAROUSEL_b-married-vs-roommates\n(captions: instagram.t
+ xt\
+ , facebook.txt\, threads.txt)\n\nInstagram caption:\nMarried vs. roo
+ mmates
+ :\n\nRoommates update. Married people talk.\nRoommates split chor
+ es. Marri
+ ed people carry each other.\nRoommates avoid conflict. Married
+  people repa
+ ir.\nRoommates coexist. Married people pursue.\nRoommates d
+ rift. Married p
+ eople steer.\n\nWhich column are you living in this mont
+ h?\n\n💬 Engaged
+  or married? Comment "COUPLES" and I'll send you how 
+ certified marriage co
+ unseling works: a validated assessment\, then thre
+ e sessions built on your
+  results.\n\n#blackcouples #christiancouples #g
+ odlymarriage #premaritalcou
+ nseling #bethemansystem
+CATEGORIES:Couples
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:📱 Couples Carousel: Married vs. roommates
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:2026-10-27_Tue_7pm_BTM_POST_w4-three@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261027T190000
 DTEND;TZID=America/Chicago:20261027T191500
 SUMMARY:📱 BTM Post: Three goals: one for each place you lead
@@ -1122,8 +2752,63 @@ DESCRIPTION:📱 BTM Post: Three goals: one for each place you lead
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:2026-10-27_Tue_8am_BTM_REEL_b-soul-house-work@bethemansystem
+DTSTAMP:20261008T143609Z
+DTSTART;TZID=America/Chicago:20261027T080000
+DTEND;TZID=America/Chicago:20261027T081500
+SUMMARY:📱 BTM Reel: Soul. House. Work.
+DESCRIPTION:Post to Instagram\, Facebook and Threads.\nFolder: 2026-10-27_
+ 
+ Tue_8am_BTM_REEL_b-soul-house-work\n(captions: instagram.txt\, facebook
+ .tx
+ t\, threads.txt)\n\nInstagram caption:\nSoul. House. Work.\n\nOne go
+ al eac
+ h. Everything else waits. Not forever. For now.\n\nWhat are your 
+ three? Wr
+ ite them below.\n\n🗓 The free 7-week challenge is running n
+ ow. Join any
+  week\, and the first step comes in your welcome email.\n
+ 🔗 Link in bio 
+ → "Count me in."\n\n#christianfather #faithandfamily
+  #blackmenwholead #g
+ odlyhusband #bethemansystem
+CATEGORIES:BTM
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:📱 BTM Reel: Soul. House. Work.
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:2026-10-27_Tue_9pm_COUPLES_POST_b-pray-poll@bethemansystem
+DTSTAMP:20261008T143609Z
+DTSTART;TZID=America/Chicago:20261027T210000
+DTEND;TZID=America/Chicago:20261027T211500
+SUMMARY:📱 Couples Post: Do you pray together?
+DESCRIPTION:Post to Instagram\, Facebook and Threads.\nFolder: 2026-10-27_
+ 
+ Tue_9pm_COUPLES_POST_b-pray-poll\n(captions: instagram.txt\, facebook.t
+ xt\
+ , threads.txt)\n\nInstagram caption:\nHonest poll: do you and your s
+ pouse 
+ pray together?\n\nComment: Daily\, Sometimes\, or Not yet.\n\nNo 
+ shame in 
+ "not yet." It's just a starting point. Two minutes tonight cha
+ nges the ans
+ wer.\n\n💬 Answer in the comments. I read every one.\n\n#
+ blackmarriage #
+ blacklove #marriagecounseling #christianmarriage #bethem
+ ansystem
+CATEGORIES:Couples
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:📱 Couples Post: Do you pray together?
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:2026-10-27_Tue_12pm_COUPLES_REEL_c4-engaged@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261027T120000
 DTEND;TZID=America/Chicago:20261027T121500
 SUMMARY:📱 Couples Reel: You planned the wedding. Plan the marriage.
@@ -1154,8 +2839,87 @@ DESCRIPTION:📱 Couples Reel: You planned the wedding. Plan the marriage.
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:2026-10-28_Wed_2pm_BTM_POST_b-quote-small@bethemansystem
+DTSTAMP:20261008T143609Z
+DTSTART;TZID=America/Chicago:20261028T140000
+DTEND;TZID=America/Chicago:20261028T141500
+SUMMARY:📱 BTM Post: Quote: small and kept
+DESCRIPTION:Post to Instagram\, Facebook and Threads.\nFolder: 2026-10-28_
+ 
+ Wed_2pm_BTM_POST_b-quote-small\n(captions: instagram.txt\, facebook.txt
+ \, 
+ threads.txt)\n\nInstagram caption:\nSmall and kept beats big and bro
+ ken. E
+ very time.\n\nTwenty pushups you do beats an hour at the gym you 
+ don't.\n\
+ n👇 Comment "STEP1" and I'll send you the free worksheet.\n\
+ n#christianf
+ ather #faithandfamily #blackmenwholead #godlyhusband #bethe
+ mansystem
+CATEGORIES:BTM
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:📱 BTM Post: Quote: small and kept
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:2026-10-28_Wed_8am_COUPLES_REEL_b-listen@bethemansystem
+DTSTAMP:20261008T143609Z
+DTSTART;TZID=America/Chicago:20261028T080000
+DTEND;TZID=America/Chicago:20261028T081500
+SUMMARY:📱 Couples Reel: Listen to understand
+DESCRIPTION:Post to Instagram\, Facebook and Threads.\nFolder: 2026-10-28_
+ 
+ Wed_8am_COUPLES_REEL_b-listen\n(captions: instagram.txt\, facebook.txt\
+ , t
+ hreads.txt)\n\nInstagram caption:\n"Yeah\, but…" is listening to r
+ eply.\
+ n"So what you're saying is…" is listening to understand.\n\nTry
+  the seco
+ nd one tonight. Say back what you heard before you say anythin
+ g of your ow
+ n.\n\n📤 Send this to your spouse. Then talk about it ton
+ ight.\n💬 Wan
+ t help? Comment "COUPLES."\n\n#premaritalcounseling #bla
+ ckmarriage #blackl
+ ove #marriagecounseling #bethemansystem
+CATEGORIES:Couples
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:📱 Couples Reel: Listen to understand
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:2026-10-28_Wed_9pm_BTM_POST_b-kw-step1-c@bethemansystem
+DTSTAMP:20261008T143609Z
+DTSTART;TZID=America/Chicago:20261028T210000
+DTEND;TZID=America/Chicago:20261028T211500
+SUMMARY:📱 BTM Post: Comment STEP1: 20 minutes tonight
+DESCRIPTION:Post to Instagram\, Facebook and Threads.\nFolder: 2026-10-28_
+ 
+ Wed_9pm_BTM_POST_b-kw-step1-c\n(captions: instagram.txt\, facebook.txt\
+ , t
+ hreads.txt)\n\nInstagram caption:\nThe worksheet that comes before e
+ very g
+ oal. Twenty minutes\, a pen\, and you finish with one sentence th
+ at says w
+ ho you're becoming.\n\n👇 Comment "STEP1" and I'll send you 
+ the free wor
+ ksheet.\n\n#blackchristianmen #mensdiscipline #christianhus
+ band #christian
+ men #bethemansystem
+CATEGORIES:BTM
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:📱 BTM Post: Comment STEP1: 20 minutes tonight
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:2026-10-28_Wed_12pm_COUPLES_POST_c4-research@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261028T120000
 DTEND;TZID=America/Chicago:20261028T121500
 SUMMARY:📱 Couples Post: Premarital counseling: what the research shows
@@ -1193,8 +2957,44 @@ DESCRIPTION:📱 Couples Post: Premarital counseling: what the research sh
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:2026-10-29_Thu_2pm_COUPLES_CAROUSEL_b-gratitude-list@bethemansystem
+DTSTAMP:20261008T143609Z
+DTSTART;TZID=America/Chicago:20261029T140000
+DTEND;TZID=America/Chicago:20261029T141500
+SUMMARY:📱 Couples Carousel: 10 things to thank your spouse for this wee
+ 
+ k
+DESCRIPTION:Post to Instagram\, Facebook and Threads.\nFolder: 2026-10-29_
+ 
+ Thu_2pm_COUPLES_CAROUSEL_b-gratitude-list\n(captions: instagram.txt\, f
+ ace
+ book.txt\, threads.txt)\n\nInstagram caption:\nThings to thank your 
+ spouse
+  for this week:\n\nThe ordinary stuff: lunches\, laundry\, the co
+ mmute.\nT
+ he invisible stuff: remembering everything.\nThe hard stuff: t
+ he difficult
+  phone call.\nThe character stuff: honesty when it cost the
+ m.\nThe staying
+ : "Thank you for staying when it was hard."\n\nOne speci
+ fic thank-you a da
+ y.\n\n💾 Save this for your next date night.\n💬 
+ Want help as a couple
+ ? Comment "COUPLES."\n\n#blackmarriage #blacklove 
+ #marriagecounseling #chr
+ istianmarriage #bethemansystem
+CATEGORIES:Couples
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:📱 Couples Carousel: 10 things to thank your spouse for this
+ 
+  week
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:2026-10-29_Thu_7pm_BTM_CAROUSEL_w4-cut-list@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261029T190000
 DTEND;TZID=America/Chicago:20261029T191500
 SUMMARY:📱 BTM Carousel: How to cut your goals to three
@@ -1229,8 +3029,155 @@ DESCRIPTION:📱 BTM Carousel: How to cut your goals to three
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:2026-10-29_Thu_8am_BTM_REEL_b-first-ten@bethemansystem
+DTSTAMP:20261008T143609Z
+DTSTART;TZID=America/Chicago:20261029T080000
+DTEND;TZID=America/Chicago:20261029T081500
+SUMMARY:📱 BTM Reel: The first 10 minutes home
+DESCRIPTION:Post to Instagram\, Facebook and Threads.\nFolder: 2026-10-29_
+ 
+ Thu_8am_BTM_REEL_b-first-ten\n(captions: instagram.txt\, facebook.txt\,
+  th
+ reads.txt)\n\nInstagram caption:\nYour family meets the man who walk
+ s thro
+ ugh the door. Decide who that is in the car.\n\nThe first ten min
+ utes set 
+ the whole night. Phone in your pocket. Hug first. Ask one real
+  question.\n
+ \n🗓 The free 7-week challenge is running now. Join any w
+ eek\, and the f
+ irst step comes in your welcome email.\n🔗 Link in bio
+  → "Count me in.
+ "\n\n#christianhusband #christianmen #christianfather
+  #faithandfamily #bet
+ hemansystem
+CATEGORIES:BTM
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:📱 BTM Reel: The first 10 minutes home
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:2026-10-29_Thu_9pm_BTM_POST_b-group-sunday@bethemansystem
+DTSTAMP:20261008T143609Z
+DTSTART;TZID=America/Chicago:20261029T210000
+DTEND;TZID=America/Chicago:20261029T211500
+SUMMARY:📱 BTM Post: What a Sunday in the group looks like
+DESCRIPTION:Post to Instagram\, Facebook and Threads.\nFolder: 2026-10-29_
+ 
+ Thu_9pm_BTM_POST_b-group-sunday\n(captions: instagram.txt\, facebook.tx
+ t\,
+  threads.txt)\n\nInstagram caption:\nWhat a Sunday in the 6-week gro
+ up loo
+ ks like:\n\n7:00 Done or missed. No speeches.\n7:15 One tool\, wo
+ rked live
+ .\n7:40 Next week's one decision\, with a time.\n8:00 Home wit
+ h your famil
+ y.\n\nStarts Nov 15. Four seats.\n\n🪑 A 6-week live grou
+ p for husbands 
+ and fathers. Sundays\, 7–8 PM Central\, on Google Meet
+ \, Nov 15 – Dec 
+ 20. Four seats.\n🔗 Link in bio → "Reserve my sea
+ t."\n\n#blackfathers 
+ #selfdisciplineformen #blackchristianmen #mensdisc
+ ipline #bethemansystem
+CATEGORIES:BTM
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:📱 BTM Post: What a Sunday in the group looks like
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:2026-10-30_Fri_2pm_BTM_POST_b-quote-information@bethemansystem
+DTSTAMP:20261008T143609Z
+DTSTART;TZID=America/Chicago:20261030T140000
+DTEND;TZID=America/Chicago:20261030T141500
+SUMMARY:📱 BTM Post: Quote: a miss is information
+DESCRIPTION:Post to Instagram\, Facebook and Threads.\nFolder: 2026-10-30_
+ 
+ Fri_2pm_BTM_POST_b-quote-information\n(captions: instagram.txt\, facebo
+ ok.
+ txt\, threads.txt)\n\nInstagram caption:\nA miss is information\, no
+ t a ve
+ rdict.\n\nMissed Tuesday? Tuesday at 6 doesn't work. Try 9 PM. Ch
+ ange the 
+ time\, not the goal.\n\n🗓 The free 7-week challenge is runn
+ ing now. Joi
+ n any week\, and the first step comes in your welcome email
+ .\n🔗 Link in
+  bio → "Count me in."\n\n#faithandfamily #blackmenwhol
+ ead #godlyhusband 
+ #blackfathers #bethemansystem
+CATEGORIES:BTM
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:📱 BTM Post: Quote: a miss is information
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:2026-10-30_Fri_8am_COUPLES_REEL_b-friday-plan@bethemansystem
+DTSTAMP:20261008T143609Z
+DTSTART;TZID=America/Chicago:20261030T080000
+DTEND;TZID=America/Chicago:20261030T081500
+SUMMARY:📱 Couples Reel: Make Friday night yours
+DESCRIPTION:Post to Instagram\, Facebook and Threads.\nFolder: 2026-10-30_
+ 
+ Fri_8am_COUPLES_REEL_b-friday-plan\n(captions: instagram.txt\, facebook
+ .tx
+ t\, threads.txt)\n\nInstagram caption:\nFriday isn't for catching up
+  on ch
+ ores. It's for catching up on each other.\n\nPlan it by noon so i
+ t actuall
+ y happens. Text your spouse right now: "Tonight\, 8:30\, just 
+ us?"\n\n💾
+  Save this for your next date night.\n💬 Want help as a c
+ ouple? Comment 
+ "COUPLES."\n\n#blacklove #marriagecounseling #christianm
+ arriage #marriaget
+ ips #bethemansystem
+CATEGORIES:Couples
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:📱 Couples Reel: Make Friday night yours
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:2026-10-30_Fri_9pm_COUPLES_POST_b-kw-couples-c@bethemansystem
+DTSTAMP:20261008T143609Z
+DTSTART;TZID=America/Chicago:20261030T210000
+DTEND;TZID=America/Chicago:20261030T211500
+SUMMARY:📱 Couples Post: Comment COUPLES: no crisis needed
+DESCRIPTION:Post to Instagram\, Facebook and Threads.\nFolder: 2026-10-30_
+ 
+ Fri_9pm_COUPLES_POST_b-kw-couples-c\n(captions: instagram.txt\, faceboo
+ k.t
+ xt\, threads.txt)\n\nInstagram caption:\nYou don't need a crisis to 
+ get a 
+ check-up. Healthy couples get coached too\, and they stay healthy
+  partly b
+ ecause they do.\n\nA validated assessment\, then three session
+ s built on y
+ our results.\n\n💬 Engaged or married? Comment "COUPLES" 
+ and I'll send y
+ ou how certified marriage counseling works: a validated 
+ assessment\, then 
+ three sessions built on your results.\n\n#blackmarria
+ ge #blacklove #marria
+ gecounseling #christianmarriage #bethemansystem
+CATEGORIES:Couples
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:📱 Couples Post: Comment COUPLES: no crisis needed
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:2026-10-30_Fri_12pm_COUPLES_CAROUSEL_c4-before-yes@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261030T120000
 DTEND;TZID=America/Chicago:20261030T121500
 SUMMARY:📱 Couples Carousel: 5 conversations before “I do”
@@ -1266,8 +3213,38 @@ DESCRIPTION:📱 Couples Carousel: 5 conversations before “I do”
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:2026-10-31_Sat_2pm_BTM_CAROUSEL_b-saturday-reset@bethemansystem
+DTSTAMP:20261008T143609Z
+DTSTART;TZID=America/Chicago:20261031T140000
+DTEND;TZID=America/Chicago:20261031T141500
+SUMMARY:📱 BTM Carousel: The 30-minute Saturday reset
+DESCRIPTION:Post to Instagram\, Facebook and Threads.\nFolder: 2026-10-31_
+ 
+ Sat_2pm_BTM_CAROUSEL_b-saturday-reset\n(captions: instagram.txt\, faceb
+ ook
+ .txt\, threads.txt)\n\nInstagram caption:\nThe 30-minute Saturday re
+ set:\n
+ \n5 min: clear one surface.\n5 min: read one psalm\, slowly.\n10 
+ min: revi
+ ew the week. What did I keep? What slipped?\n5 min: plan one t
+ hing with th
+ e kids\, today.\n5 min: ask your wife\, "What would make to
+ day easier for 
+ you?"\n\n👇 Comment "STEP1" and I'll send you the free
+  worksheet.\n\n#go
+ dlyhusband #blackfathers #selfdisciplineformen #black
+ christianmen #bethema
+ nsystem
+CATEGORIES:BTM
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:📱 BTM Carousel: The 30-minute Saturday reset
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:2026-10-31_Sat_7pm_COUPLES_REEL_c4-already@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261031T190000
 DTEND;TZID=America/Chicago:20261031T191500
 SUMMARY:📱 Couples Reel: Already married? It’s not too late
@@ -1301,8 +3278,36 @@ DESCRIPTION:📱 Couples Reel: Already married? It’s not too late
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:2026-10-31_Sat_8am_BTM_REEL_b-scary@bethemansystem
+DTSTAMP:20261008T143609Z
+DTSTART;TZID=America/Chicago:20261031T080000
+DTEND;TZID=America/Chicago:20261031T081500
+SUMMARY:📱 BTM Reel: The scariest thing a man can do
+DESCRIPTION:Post to Instagram\, Facebook and Threads.\nFolder: 2026-10-31_
+ 
+ Sat_8am_BTM_REEL_b-scary\n(captions: instagram.txt\, facebook.txt\, thr
+ ead
+ s.txt)\n\nInstagram caption:\nThe scariest thing isn't failing. It's
+  being
+  the same man next year.\n\nSame temper. Same phone. Same promise
+ . Decide 
+ tonight who you're becoming.\n\n🗓 The free 7-week challenge
+  is running 
+ now. Join any week\, and the first step comes in your welco
+ me email.\n🔗
+  Link in bio → "Count me in."\n\n#blackmenwholead #god
+ lyhusband #blackfa
+ thers #selfdisciplineformen #bethemansystem
+CATEGORIES:BTM
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:📱 BTM Reel: The scariest thing a man can do
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:2026-10-31_Sat_9am_BTM_POST_w4-group-seats@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261031T090000
 DTEND;TZID=America/Chicago:20261031T091500
 SUMMARY:📱 BTM Post: 6-week group: four seats
@@ -1335,8 +3340,60 @@ DESCRIPTION:📱 BTM Post: 6-week group: four seats
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:2026-10-31_Sat_9pm_BTM_POST_b-one-word-man@bethemansystem
+DTSTAMP:20261008T143609Z
+DTSTART;TZID=America/Chicago:20261031T210000
+DTEND;TZID=America/Chicago:20261031T211500
+SUMMARY:📱 BTM Post: One word for the man you’re becoming
+DESCRIPTION:Post to Instagram\, Facebook and Threads.\nFolder: 2026-10-31_
+ 
+ Sat_9pm_BTM_POST_b-one-word-man\n(captions: instagram.txt\, facebook.tx
+ t\,
+  threads.txt)\n\nInstagram caption:\nThe man you're becoming\, in on
+ e word
+ . Patient? Present? Steady? Faithful?\n\nDrop it below. Then live
+  that wor
+ d for 24 hours.\n\n💬 Answer in the comments. I read every o
+ ne.\n\n#blac
+ kfathers #selfdisciplineformen #blackchristianmen #mensdisc
+ ipline #bethema
+ nsystem
+CATEGORIES:BTM
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:📱 BTM Post: One word for the man you’re becoming
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:2026-11-01_Sun_2pm_COUPLES_POST_b-quote-choose@bethemansystem
+DTSTAMP:20261008T143609Z
+DTSTART;TZID=America/Chicago:20261101T140000
+DTEND;TZID=America/Chicago:20261101T141500
+SUMMARY:📱 Couples Post: Quote: choose each other
+DESCRIPTION:Post to Instagram\, Facebook and Threads.\nFolder: 2026-11-01_
+ 
+ Sun_2pm_COUPLES_POST_b-quote-choose\n(captions: instagram.txt\, faceboo
+ k.t
+ xt\, threads.txt)\n\nInstagram caption:\nLove is a feeling sometimes
+ . It's
+  a choice every day.\n\nChoose each other again this month\, on p
+ urpose.\n
+ \n📤 Send this to your spouse. Then talk about it tonight.\n
+ 💬 Want he
+ lp? Comment "COUPLES."\n\n#marriagecounseling #christianmar
+ riage #marriage
+ tips #husbandandwife #bethemansystem
+CATEGORIES:Couples
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:📱 Couples Post: Quote: choose each other
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:2026-11-01_Sun_4pm_COUPLES_POST_c4-assessment@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261101T160000
 DTEND;TZID=America/Chicago:20261101T161500
 SUMMARY:📱 Couples Post: How counseling works
@@ -1373,7 +3430,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-11-01_Sun_7pm_BTM_REEL_w4-not-forever@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261101T190000
 DTEND;TZID=America/Chicago:20261101T191500
 SUMMARY:📱 BTM Reel: Not forever. For now.
@@ -1400,8 +3457,96 @@ DESCRIPTION:📱 BTM Reel: Not forever. For now.
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:2026-11-01_Sun_8am_COUPLES_REEL_b-new-month@bethemansystem
+DTSTAMP:20261008T143609Z
+DTSTART;TZID=America/Chicago:20261101T080000
+DTEND;TZID=America/Chicago:20261101T081500
+SUMMARY:📱 Couples Reel: New month\, one marriage goal
+DESCRIPTION:Post to Instagram\, Facebook and Threads.\nFolder: 2026-11-01_
+ 
+ Sun_8am_COUPLES_REEL_b-new-month\n(captions: instagram.txt\, facebook.t
+ xt\
+ , threads.txt)\n\nInstagram caption:\nNew month. One marriage goal\,
+  not t
+ en. With a day and a time.\n\n"Date night every other Friday at 7
+ " beats "
+ spend more time together." Put it on both calendars today.\n\n
+ 💾 Save th
+ is for your next date night.\n💬 Want help as a couple? C
+ omment "COUPLES
+ ."\n\n#premaritalcounseling #blackmarriage #blacklove #m
+ arriagecounseling 
+ #bethemansystem
+CATEGORIES:Couples
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:📱 Couples Reel: New month\, one marriage goal
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:2026-11-01_Sun_9pm_BTM_POST_b-november-promise@bethemansystem
+DTSTAMP:20261008T143609Z
+DTSTART;TZID=America/Chicago:20261101T210000
+DTEND;TZID=America/Chicago:20261101T211500
+SUMMARY:📱 BTM Post: November: two weeks until the group
+DESCRIPTION:Post to Instagram\, Facebook and Threads.\nFolder: 2026-11-01_
+ 
+ Sun_9pm_BTM_POST_b-november-promise\n(captions: instagram.txt\, faceboo
+ k.t
+ xt\, threads.txt)\n\nInstagram caption:\nDon't let the holidays eat 
+ your s
+ ystem.\n\nThe 6-week live group runs right through them: six Sund
+ ays\, Nov
+  15 to Dec 20\, 7–8 PM Central. Four seats.\n\n🪑 A 6-week
+  live group 
+ for husbands and fathers. Sundays\, 7–8 PM Central\, on G
+ oogle Meet\, No
+ v 15 – Dec 20. Four seats.\n🔗 Link in bio → "Rese
+ rve my seat."\n\n#
+ christianhusband #christianmen #christianfather #fait
+ handfamily #bethemans
+ ystem
+CATEGORIES:BTM
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:📱 BTM Post: November: two weeks until the group
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:2026-11-02_Mon_2pm_COUPLES_CAROUSEL_b-questions-deep@bethemansystem
+DTSTAMP:20261008T143609Z
+DTSTART;TZID=America/Chicago:20261102T140000
+DTEND;TZID=America/Chicago:20261102T141500
+SUMMARY:📱 Couples Carousel: 5 questions for a deeper conversation
+DESCRIPTION:Post to Instagram\, Facebook and Threads.\nFolder: 2026-11-02_
+ 
+ Mon_2pm_COUPLES_CAROUSEL_b-questions-deep\n(captions: instagram.txt\, f
+ ace
+ book.txt\, threads.txt)\n\nInstagram caption:\n5 questions for a dee
+ per co
+ nversation:\n\n1. "What are you afraid of lately?"\n2. "What do y
+ ou miss a
+ bout us?"\n3. "What dream did you put on hold?"\n4. "When do y
+ ou feel most
+  respected by me?"\n5. "What should we stop doing?"\n\nAsk 
+ one tonight. Th
+ en really listen.\n\n💾 Save this for your next date n
+ ight.\n💬 Want h
+ elp as a couple? Comment "COUPLES."\n\n#godlymarriage
+  #premaritalcounselin
+ g #blackmarriage #blacklove #bethemansystem
+CATEGORIES:Couples
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:📱 Couples Carousel: 5 questions for a deeper conversation
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:2026-11-02_Mon_7pm_BTM_REEL_w5-one-thing@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261102T190000
 DTEND;TZID=America/Chicago:20261102T191500
 SUMMARY:📱 BTM Reel: It’s not ten things stopping you
@@ -1434,8 +3579,94 @@ DESCRIPTION:📱 BTM Reel: It’s not ten things stopping you
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:2026-11-02_Mon_8am_BTM_REEL_b-name-it@bethemansystem
+DTSTAMP:20261008T143609Z
+DTSTART;TZID=America/Chicago:20261102T080000
+DTEND;TZID=America/Chicago:20261102T081500
+SUMMARY:📱 BTM Reel: Name the one thing
+DESCRIPTION:Post to Instagram\, Facebook and Threads.\nFolder: 2026-11-02_
+ 
+ Mon_8am_BTM_REEL_b-name-it\n(captions: instagram.txt\, facebook.txt\, t
+ hre
+ ads.txt)\n\nInstagram caption:\nIt's not ten things stopping you. It
+ 's one
+ \, and you already know its name.\n\nThis week's challenge step: 
+ name it\,
+  write it down\, and give it an "if this\, then that" plan.\n\
+ n🗓 The fr
+ ee 7-week challenge is running now. Join any week\, and the
+  first step com
+ es in your welcome email.\n🔗 Link in bio → "Count m
+ e in."\n\n#faithan
+ dfamily #blackmenwholead #godlyhusband #blackfathers 
+ #bethemansystem
+CATEGORIES:BTM
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:📱 BTM Reel: Name the one thing
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:2026-11-02_Mon_9pm_BTM_POST_b-blocker-poll@bethemansystem
+DTSTAMP:20261008T143609Z
+DTSTART;TZID=America/Chicago:20261102T210000
+DTEND;TZID=America/Chicago:20261102T211500
+SUMMARY:📱 BTM Post: What’s your #1 blocker?
+DESCRIPTION:Post to Instagram\, Facebook and Threads.\nFolder: 2026-11-02_
+ 
+ Mon_9pm_BTM_POST_b-blocker-poll\n(captions: instagram.txt\, facebook.tx
+ t\,
+  threads.txt)\n\nInstagram caption:\nWhat's your number one blocker 
+ right 
+ now?\n\nPhone. Tired. Temper. Time.\n\nComment yours. The most co
+ mmon answ
+ er gets its own post this week.\n\n💬 Answer in the comments
+ . I read eve
+ ry one.\n\n#blackfathers #selfdisciplineformen #blackchrist
+ ianmen #mensdis
+ cipline #bethemansystem
+CATEGORIES:BTM
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:📱 BTM Post: What’s your #1 blocker?
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:2026-11-03_Tue_2pm_BTM_POST_b-if-then@bethemansystem
+DTSTAMP:20261008T143609Z
+DTSTART;TZID=America/Chicago:20261103T140000
+DTEND;TZID=America/Chicago:20261103T141500
+SUMMARY:📱 BTM Post: If this\, then that
+DESCRIPTION:Post to Instagram\, Facebook and Threads.\nFolder: 2026-11-03_
+ 
+ Tue_2pm_BTM_POST_b-if-then\n(captions: instagram.txt\, facebook.txt\, t
+ hre
+ ads.txt)\n\nInstagram caption:\nPlan for the blocker before it shows
+  up:\n
+ \n"If I walk in tired\, then I pray in the car for two minutes fi
+ rst."\n"I
+ f I grab my phone after 9\, then I put it on the kitchen count
+ er."\n\nWrit
+ e yours below. Decide it while you're calm.\n\n🗓 The fre
+ e 7-week challe
+ nge is running now. Join any week\, and the first step c
+ omes in your welco
+ me email.\n🔗 Link in bio → "Count me in."\n\n#fa
+ ithandfamily #blackme
+ nwholead #godlyhusband #blackfathers #bethemansyst
+ em
+CATEGORIES:BTM
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:📱 BTM Post: If this\, then that
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:2026-11-03_Tue_7pm_BTM_POST_w5-if-then@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261103T190000
 DTEND;TZID=America/Chicago:20261103T191500
 SUMMARY:📱 BTM Post: If ___ happens\, then I will ___
@@ -1467,8 +3698,59 @@ DESCRIPTION:📱 BTM Post: If ___ happens\, then I will ___
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:2026-11-03_Tue_8am_COUPLES_REEL_b-tone@bethemansystem
+DTSTAMP:20261008T143609Z
+DTSTART;TZID=America/Chicago:20261103T080000
+DTEND;TZID=America/Chicago:20261103T081500
+SUMMARY:📱 Couples Reel: It’s not what you said
+DESCRIPTION:Post to Instagram\, Facebook and Threads.\nFolder: 2026-11-03_
+ 
+ Tue_8am_COUPLES_REEL_b-tone\n(captions: instagram.txt\, facebook.txt\, 
+ thr
+ eads.txt)\n\nInstagram caption:\n"I didn't say anything wrong!" It w
+ asn't 
+ what you said. It was how.\n\nSame words\, softer voice\, differe
+ nt marria
+ ge.\n\n📤 Send this to your spouse. Then talk about it tonig
+ ht.\n💬 Wa
+ nt help? Comment "COUPLES."\n\n#blackmarriage #blacklove #m
+ arriagecounseli
+ ng #christianmarriage #bethemansystem
+CATEGORIES:Couples
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:📱 Couples Reel: It’s not what you said
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:2026-11-03_Tue_9pm_BTM_POST_b-kw-step1-d@bethemansystem
+DTSTAMP:20261008T143609Z
+DTSTART;TZID=America/Chicago:20261103T210000
+DTEND;TZID=America/Chicago:20261103T211500
+SUMMARY:📱 BTM Post: Comment STEP1: start before the promise
+DESCRIPTION:Post to Instagram\, Facebook and Threads.\nFolder: 2026-11-03_
+ 
+ Tue_9pm_BTM_POST_b-kw-step1-d\n(captions: instagram.txt\, facebook.txt\
+ , t
+ hreads.txt)\n\nInstagram caption:\nStart before the promise. One que
+ stion\
+ , one sentence\, and every goal after it gets checked against it.
+ \n\n👇 
+ Comment "STEP1" and I'll send you the free worksheet.\n\n#godl
+ yhusband #bl
+ ackfathers #selfdisciplineformen #blackchristianmen #bethem
+ ansystem
+CATEGORIES:BTM
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:📱 BTM Post: Comment STEP1: start before the promise
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:2026-11-03_Tue_12pm_COUPLES_REEL_c5-dating@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261103T120000
 DTEND;TZID=America/Chicago:20261103T121500
 SUMMARY:📱 Couples Reel: When did you stop dating?
@@ -1497,8 +3779,96 @@ DESCRIPTION:📱 Couples Reel: When did you stop dating?
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:2026-11-04_Wed_2pm_COUPLES_CAROUSEL_b-holiday-team@bethemansystem
+DTSTAMP:20261008T143609Z
+DTSTART;TZID=America/Chicago:20261104T140000
+DTEND;TZID=America/Chicago:20261104T141500
+SUMMARY:📱 Couples Carousel: How to stay a team through the holidays
+DESCRIPTION:Post to Instagram\, Facebook and Threads.\nFolder: 2026-11-04_
+ 
+ Wed_2pm_COUPLES_CAROUSEL_b-holiday-team\n(captions: instagram.txt\, fac
+ ebo
+ ok.txt\, threads.txt)\n\nInstagram caption:\nHow to stay a team thro
+ ugh th
+ e holidays. Decide at home\, not in the car:\n\n1. Where and how 
+ long. The
+ n leave on time.\n2. A signal that means "I need you."\n3. Spl
+ it kid duty.
+ \n4. One budget number.\n5. Debrief kindly: one good thing 
+ on the drive ho
+ me.\n\n💬 Engaged or married? Comment "COUPLES" and I'
+ ll send you how ce
+ rtified marriage counseling works: a validated assess
+ ment\, then three ses
+ sions built on your results.\n\n#marriagecounselin
+ g #christianmarriage #ma
+ rriagetips #husbandandwife #bethemansystem
+CATEGORIES:Couples
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:📱 Couples Carousel: How to stay a team through the holidays
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:2026-11-04_Wed_8am_BTM_REEL_b-phone-blocker@bethemansystem
+DTSTAMP:20261008T143609Z
+DTSTART;TZID=America/Chicago:20261104T080000
+DTEND;TZID=America/Chicago:20261104T081500
+SUMMARY:📱 BTM Reel: You said the phone
+DESCRIPTION:Post to Instagram\, Facebook and Threads.\nFolder: 2026-11-04_
+ 
+ Wed_8am_BTM_REEL_b-phone-blocker\n(captions: instagram.txt\, facebook.t
+ xt\
+ , threads.txt)\n\nInstagram caption:\nYou voted\, and the phone won.
+ \n\nTh
+ ree fixes\, pick one: charge it in the kitchen\, turn the screen 
+ gray afte
+ r 8 PM\, or no scrolling in the first hour of the day.\n\nStar
+ t tonight.\n
+ \n🗓 The free 7-week challenge is running now. Join any w
+ eek\, and the f
+ irst step comes in your welcome email.\n🔗 Link in bio
+  → "Count me in.
+ "\n\n#mensdiscipline #christianhusband #christianmen 
+ #christianfather #bet
+ hemansystem
+CATEGORIES:BTM
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:📱 BTM Reel: You said the phone
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:2026-11-04_Wed_9pm_COUPLES_POST_b-pet-peeve@bethemansystem
+DTSTAMP:20261008T143609Z
+DTSTART;TZID=America/Chicago:20261104T210000
+DTEND;TZID=America/Chicago:20261104T211500
+SUMMARY:📱 Couples Post: Small habit\, big love
+DESCRIPTION:Post to Instagram\, Facebook and Threads.\nFolder: 2026-11-04_
+ 
+ Wed_9pm_COUPLES_POST_b-pet-peeve\n(captions: instagram.txt\, facebook.t
+ xt\
+ , threads.txt)\n\nInstagram caption:\nWhat small habit of your spous
+ e's do
+  you secretly love?\n\nThe way they hum while cooking. How they c
+ heck the 
+ locks twice. Tell us below. Then tell them.\n\n💬 Answer in 
+ the comments
+ . I read every one.\n\n#christianmarriage #marriagetips #hu
+ sbandandwife #b
+ lackcouples #bethemansystem
+CATEGORIES:Couples
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:📱 Couples Post: Small habit\, big love
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:2026-11-04_Wed_12pm_COUPLES_POST_c5-cheap@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261104T120000
 DTEND;TZID=America/Chicago:20261104T121500
 SUMMARY:📱 Couples Post: Date night doesn’t need a budget
@@ -1528,8 +3898,36 @@ DESCRIPTION:📱 Couples Post: Date night doesn’t need a budget
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:2026-11-05_Thu_2pm_BTM_POST_b-quote-time@bethemansystem
+DTSTAMP:20261008T143609Z
+DTSTART;TZID=America/Chicago:20261105T140000
+DTEND;TZID=America/Chicago:20261105T141500
+SUMMARY:📱 BTM Post: Quote: give it a time
+DESCRIPTION:Post to Instagram\, Facebook and Threads.\nFolder: 2026-11-05_
+ 
+ Thu_2pm_BTM_POST_b-quote-time\n(captions: instagram.txt\, facebook.txt\
+ , t
+ hreads.txt)\n\nInstagram caption:\nA goal with no time is a wish.\n\
+ nThis 
+ week's challenge step: give one goal a day and a time. "Tuesday\,
+  6:10\, g
+ arage." Done.\n\n🗓 The free 7-week challenge is running now
+ . Join any w
+ eek\, and the first step comes in your welcome email.\n🔗
+  Link in bio 
+ → "Count me in."\n\n#christianhusband #christianmen #chr
+ istianfather #fa
+ ithandfamily #bethemansystem
+CATEGORIES:BTM
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:📱 BTM Post: Quote: give it a time
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:2026-11-05_Thu_7pm_BTM_CAROUSEL_w5-doorway@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261105T190000
 DTEND;TZID=America/Chicago:20261105T191500
 SUMMARY:📱 BTM Carousel: The two minutes before you walk in the door
@@ -1563,8 +3961,149 @@ DESCRIPTION:📱 BTM Carousel: The two minutes before you walk in the door
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:2026-11-05_Thu_8am_COUPLES_REEL_b-holiday-budget@bethemansystem
+DTSTAMP:20261008T143609Z
+DTSTART;TZID=America/Chicago:20261105T080000
+DTEND;TZID=America/Chicago:20261105T081500
+SUMMARY:📱 Couples Reel: Don’t start January in debt
+DESCRIPTION:Post to Instagram\, Facebook and Threads.\nFolder: 2026-11-05_
+ 
+ Thu_8am_COUPLES_REEL_b-holiday-budget\n(captions: instagram.txt\, faceb
+ ook
+ .txt\, threads.txt)\n\nInstagram caption:\nA lot of couples start Ja
+ nuary 
+ in debt\, and in a fight about the debt.\n\nOne holiday number\, 
+ decided t
+ ogether\, written on the fridge. Surprise gifts are fun. Surpr
+ ise bills ar
+ en't.\n\n📤 Send this to your spouse. Then talk about it 
+ tonight.\n💬 
+ Want help? Comment "COUPLES."\n\n#blackcouples #christia
+ ncouples #godlymar
+ riage #premaritalcounseling #bethemansystem
+CATEGORIES:Couples
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:📱 Couples Reel: Don’t start January in debt
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:2026-11-05_Thu_9pm_BTM_POST_b-group-10@bethemansystem
+DTSTAMP:20261008T143609Z
+DTSTART;TZID=America/Chicago:20261105T210000
+DTEND;TZID=America/Chicago:20261105T211500
+SUMMARY:📱 BTM Post: Group: 10 days
+DESCRIPTION:Post to Instagram\, Facebook and Threads.\nFolder: 2026-11-05_
+ 
+ Thu_9pm_BTM_POST_b-group-10\n(captions: instagram.txt\, facebook.txt\, 
+ thr
+ eads.txt)\n\nInstagram caption:\nTen days until the 6-week live grou
+ p star
+ ts.\n\nSix Sundays\, the same men every week\, real accountabilit
+ y right t
+ hrough the holidays. Nov 15 to Dec 20\, 7–8 PM Central. Four
+  seats.\n\n
+ 🪑 A 6-week live group for husbands and fathers. Sundays\,
+  7–8 PM Cent
+ ral\, on Google Meet\, Nov 15 – Dec 20. Four seats.\n
+ 🔗 Link in bio 
+ → "Reserve my seat."\n\n#godlyhusband #blackfathers 
+ #selfdisciplineforme
+ n #blackchristianmen #bethemansystem
+CATEGORIES:BTM
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:📱 BTM Post: Group: 10 days
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:2026-11-06_Fri_2pm_COUPLES_CAROUSEL_b-weekend-ideas@bethemansystem
+DTSTAMP:20261008T143609Z
+DTSTART;TZID=America/Chicago:20261106T140000
+DTEND;TZID=America/Chicago:20261106T141500
+SUMMARY:📱 Couples Carousel: 5 weekend ideas for couples
+DESCRIPTION:Post to Instagram\, Facebook and Threads.\nFolder: 2026-11-06_
+ 
+ Fri_2pm_COUPLES_CAROUSEL_b-weekend-ideas\n(captions: instagram.txt\, fa
+ ceb
+ ook.txt\, threads.txt)\n\nInstagram caption:\n5 weekend ideas for co
+ uples\
+ , no sitter\, low budget:\n\n1. Sunrise coffee before the kids ar
+ e up.\n2.
+  Cook something neither of you has made.\n3. Old photos night 
+ with dessert
+ .\n4. A walk with one real question.\n5. Serve someone toge
+ ther.\n\nPick o
+ ne and put it on the calendar.\n\n💾 Save this for you
+ r next date night.
+ \n💬 Want help as a couple? Comment "COUPLES."\n\n#
+ godlymarriage #premar
+ italcounseling #blackmarriage #blacklove #betheman
+ system
+CATEGORIES:Couples
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:📱 Couples Carousel: 5 weekend ideas for couples
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:2026-11-06_Fri_8am_BTM_REEL_b-friday-dad@bethemansystem
+DTSTAMP:20261008T143609Z
+DTSTART;TZID=America/Chicago:20261106T080000
+DTEND;TZID=America/Chicago:20261106T081500
+SUMMARY:📱 BTM Reel: Friday night\, dad edition
+DESCRIPTION:Post to Instagram\, Facebook and Threads.\nFolder: 2026-11-06_
+ 
+ Fri_8am_BTM_REEL_b-friday-dad\n(captions: instagram.txt\, facebook.txt\
+ , t
+ hreads.txt)\n\nInstagram caption:\nFriday night. The kids don't need
+  a pla
+ n. They need you on the floor.\n\nPhone in a drawer. One game\, t
+ heir pick
+ . Let them see you lose well.\n\n👇 Comment "STEP1" and I'll
+  send you th
+ e free worksheet.\n\n#mensdiscipline #christianhusband #chr
+ istianmen #chri
+ stianfather #bethemansystem
+CATEGORIES:BTM
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:📱 BTM Reel: Friday night\, dad edition
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:2026-11-06_Fri_9pm_BTM_POST_b-win-week@bethemansystem
+DTSTAMP:20261008T143609Z
+DTSTART;TZID=America/Chicago:20261106T210000
+DTEND;TZID=America/Chicago:20261106T211500
+SUMMARY:📱 BTM Post: Share one win from this week
+DESCRIPTION:Post to Instagram\, Facebook and Threads.\nFolder: 2026-11-06_
+ 
+ Fri_9pm_BTM_POST_b-win-week\n(captions: instagram.txt\, facebook.txt\, 
+ thr
+ eads.txt)\n\nInstagram caption:\nShare one win from this week. Small
+  count
+ s. Especially small.\n\n"Prayed 4 of 5 mornings." "Phone in the k
+ itchen 3 
+ nights." "Apologized first."\n\nLet another man see it's possi
+ ble.\n\n💬
+  Answer in the comments. I read every one.\n\n#christianmen
+  #christianfath
+ er #faithandfamily #blackmenwholead #bethemansystem
+CATEGORIES:BTM
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:📱 BTM Post: Share one win from this week
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:2026-11-06_Fri_12pm_COUPLES_CAROUSEL_c5-date-questions@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261106T120000
 DTEND;TZID=America/Chicago:20261106T121500
 SUMMARY:📱 Couples Carousel: 5 date-night questions
@@ -1597,8 +4136,41 @@ DESCRIPTION:📱 Couples Carousel: 5 date-night questions
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:2026-11-07_Sat_2pm_BTM_CAROUSEL_b-group-preview@bethemansystem
+DTSTAMP:20261008T143609Z
+DTSTART;TZID=America/Chicago:20261107T140000
+DTEND;TZID=America/Chicago:20261107T141500
+SUMMARY:📱 BTM Carousel: What we’ll build in 6 Sundays
+DESCRIPTION:Post to Instagram\, Facebook and Threads.\nFolder: 2026-11-07_
+ 
+ Sat_2pm_BTM_CAROUSEL_b-group-preview\n(captions: instagram.txt\, facebo
+ ok.
+ txt\, threads.txt)\n\nInstagram caption:\nWhat we'll build in the 6-
+ week g
+ roup\, one step a week:\n\nWeek 1: your sentence.\nWeek 2: your t
+ hree goal
+ s.\nWeek 3: your blocker\, with a plan.\nWeek 4: your times\, 
+ on the calen
+ dar.\nWeeks 5–6: your misses\, counted honestly\, and God
+  at the center.
+ \n\nStarts Nov 15. Four seats.\n\n🪑 A 6-week live gro
+ up for husbands an
+ d fathers. Sundays\, 7–8 PM Central\, on Google Mee
+ t\, Nov 15 – Dec 20
+ . Four seats.\n🔗 Link in bio → "Reserve my se
+ at."\n\n#blackfathers #s
+ elfdisciplineformen #blackchristianmen #mensdis
+ cipline #bethemansystem
+CATEGORIES:BTM
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:📱 BTM Carousel: What we’ll build in 6 Sundays
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:2026-11-07_Sat_7pm_COUPLES_REEL_c5-phones@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261107T190000
 DTEND;TZID=America/Chicago:20261107T191500
 SUMMARY:📱 Couples Reel: The third person in your bed
@@ -1627,8 +4199,36 @@ DESCRIPTION:📱 Couples Reel: The third person in your bed
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:2026-11-07_Sat_8am_COUPLES_REEL_b-saturday-yes@bethemansystem
+DTSTAMP:20261008T143609Z
+DTSTART;TZID=America/Chicago:20261107T080000
+DTEND;TZID=America/Chicago:20261107T081500
+SUMMARY:📱 Couples Reel: Say yes to one thing today
+DESCRIPTION:Post to Instagram\, Facebook and Threads.\nFolder: 2026-11-07_
+ 
+ Sat_8am_COUPLES_REEL_b-saturday-yes\n(captions: instagram.txt\, faceboo
+ k.t
+ xt\, threads.txt)\n\nInstagram caption:\nShe asked for help three ti
+ mes th
+ is week. Today\, say yes before she asks.\n\nTake the kids. Handl
+ e the err
+ and. Let her rest. That's leadership.\n\n📤 Send this to you
+ r spouse. Th
+ en talk about it tonight.\n💬 Want help? Comment "COUPLES
+ ."\n\n#christia
+ ncouples #godlymarriage #premaritalcounseling #blackmarr
+ iage #bethemansyst
+ em
+CATEGORIES:Couples
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:📱 Couples Reel: Say yes to one thing today
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:2026-11-07_Sat_9am_BTM_POST_w5-group-week@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261107T090000
 DTEND;TZID=America/Chicago:20261107T091500
 SUMMARY:📱 BTM Post: The group: what happens on a Sunday
@@ -1659,8 +4259,32 @@ DESCRIPTION:📱 BTM Post: The group: what happens on a Sunday
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:2026-11-07_Sat_9pm_BTM_POST_b-kw-step1-e@bethemansystem
+DTSTAMP:20261008T143609Z
+DTSTART;TZID=America/Chicago:20261107T210000
+DTEND;TZID=America/Chicago:20261107T211500
+SUMMARY:📱 BTM Post: Comment STEP1: the weekend start
+DESCRIPTION:Post to Instagram\, Facebook and Threads.\nFolder: 2026-11-07_
+ 
+ Sat_9pm_BTM_POST_b-kw-step1-e\n(captions: instagram.txt\, facebook.txt\
+ , t
+ hreads.txt)\n\nInstagram caption:\nGive yourself 20 minutes this wee
+ kend. 
+ A pen\, one question\, and one sentence that changes Monday.\n\n
+ 👇 Comme
+ nt "STEP1" and I'll send you the free worksheet.\n\n#christia
+ nfather #fait
+ handfamily #blackmenwholead #godlyhusband #bethemansystem
+CATEGORIES:BTM
+BEGIN:VALARM
+ACTION:DISPLAY
+TRIGGER:-PT30M
+DESCRIPTION:📱 BTM Post: Comment STEP1: the weekend start
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:2026-11-08_Sun_4pm_COUPLES_POST_c5-friend@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261108T160000
 DTEND;TZID=America/Chicago:20261108T161500
 SUMMARY:📱 Couples Post: Are you still friends?
@@ -1693,7 +4317,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-11-08_Sun_7pm_BTM_REEL_w5-not-lazy@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261108T190000
 DTEND;TZID=America/Chicago:20261108T191500
 SUMMARY:📱 BTM Reel: You’re not lazy
@@ -1721,7 +4345,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-11-09_Mon_7pm_BTM_REEL_w6-this-week@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261109T190000
 DTEND;TZID=America/Chicago:20261109T191500
 SUMMARY:📱 BTM Reel: “This week” is not a time
@@ -1753,7 +4377,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-11-10_Tue_7pm_BTM_POST_w6-day-time@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261110T190000
 DTEND;TZID=America/Chicago:20261110T191500
 SUMMARY:📱 BTM Post: A goal with no time is a wish
@@ -1785,7 +4409,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-11-10_Tue_12pm_COUPLES_REEL_c6-pray@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261110T120000
 DTEND;TZID=America/Chicago:20261110T121500
 SUMMARY:📱 Couples Reel: Pray together for 2 minutes
@@ -1817,7 +4441,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-11-11_Wed_12pm_COUPLES_POST_c6-cord@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261111T120000
 DTEND;TZID=America/Chicago:20261111T121500
 SUMMARY:📱 Couples Post: A cord of three strands
@@ -1851,7 +4475,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-11-12_Thu_7pm_BTM_CAROUSEL_w6-calendar@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261112T190000
 DTEND;TZID=America/Chicago:20261112T191500
 SUMMARY:📱 BTM Carousel: Put it on the calendar like a meeting
@@ -1886,7 +4510,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-11-13_Fri_12pm_COUPLES_CAROUSEL_c6-pray-guide@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261113T120000
 DTEND;TZID=America/Chicago:20261113T121500
 SUMMARY:📱 Couples Carousel: How to pray together when it feels awkward
@@ -1921,7 +4545,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-11-14_Sat_7pm_COUPLES_REEL_c6-at@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261114T190000
 DTEND;TZID=America/Chicago:20261114T191500
 SUMMARY:📱 Couples Reel: Don’t preach at your spouse in prayer
@@ -1951,7 +4575,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-11-14_Sat_9am_BTM_POST_w6-last-call@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261114T090000
 DTEND;TZID=America/Chicago:20261114T091500
 SUMMARY:📱 BTM Post: Group starts tomorrow
@@ -1985,7 +4609,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-11-15_Sun_4pm_COUPLES_POST_c6-sunday@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261115T160000
 DTEND;TZID=America/Chicago:20261115T161500
 SUMMARY:📱 Couples Post: Sitting together in church isn’t the same as 
@@ -2021,7 +4645,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-11-15_Sun_7pm_BTM_REEL_w6-small@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261115T190000
 DTEND;TZID=America/Chicago:20261115T191500
 SUMMARY:📱 BTM Reel: Smaller than you think
@@ -2049,7 +4673,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-11-16_Mon_7pm_BTM_REEL_w7-miss@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261116T190000
 DTEND;TZID=America/Chicago:20261116T191500
 SUMMARY:📱 BTM Reel: Define the miss before it happens
@@ -2081,7 +4705,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-11-17_Tue_7pm_BTM_POST_w7-club@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261117T190000
 DTEND;TZID=America/Chicago:20261117T191500
 SUMMARY:📱 BTM Post: The Club: $19 a month
@@ -2113,7 +4737,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-11-17_Tue_12pm_COUPLES_REEL_c7-leave@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261117T120000
 DTEND;TZID=America/Chicago:20261117T121500
 SUMMARY:📱 Couples Reel: Leave and cleave — before Thanksgiving
@@ -2147,7 +4771,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-11-18_Wed_12pm_COUPLES_POST_c7-team@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261118T120000
 DTEND;TZID=America/Chicago:20261118T121500
 SUMMARY:📱 Couples Post: Your mama\, your call
@@ -2179,7 +4803,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-11-19_Thu_7pm_BTM_CAROUSEL_w7-miss-plan@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261119T190000
 DTEND;TZID=America/Chicago:20261119T191500
 SUMMARY:📱 BTM Carousel: Your miss plan
@@ -2213,7 +4837,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-11-20_Fri_12pm_COUPLES_CAROUSEL_c7-holiday-plan@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261120T120000
 DTEND;TZID=America/Chicago:20261120T121500
 SUMMARY:📱 Couples Carousel: Your holiday game plan as a couple
@@ -2247,7 +4871,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-11-21_Sat_7pm_COUPLES_REEL_c7-side@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261121T190000
 DTEND;TZID=America/Chicago:20261121T191500
 SUMMARY:📱 Couples Reel: Never choose your mother over your wife in publ
@@ -2283,7 +4907,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-11-21_Sat_9am_BTM_POST_w7-name-it@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261121T090000
 DTEND;TZID=America/Chicago:20261121T091500
 SUMMARY:📱 BTM Post: Name the miss before she has to
@@ -2317,7 +4941,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-11-22_Sun_4pm_COUPLES_POST_c7-boundary@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261122T160000
 DTEND;TZID=America/Chicago:20261122T161500
 SUMMARY:📱 Couples Post: Boundaries aren’t disrespect
@@ -2352,7 +4976,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-11-22_Sun_7pm_BTM_REEL_w7-verdict@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261122T190000
 DTEND;TZID=America/Chicago:20261122T191500
 SUMMARY:📱 BTM Reel: Information\, not a verdict
@@ -2380,7 +5004,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-11-23_Mon_7pm_BTM_REEL_w8-count@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261123T190000
 DTEND;TZID=America/Chicago:20261123T191500
 SUMMARY:📱 BTM Reel: Count it honestly
@@ -2412,7 +5036,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-11-24_Tue_7pm_BTM_POST_w8-husband-kit@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261124T190000
 DTEND;TZID=America/Chicago:20261124T191500
 SUMMARY:📱 BTM Post: Husband Kit: before the holidays
@@ -2442,7 +5066,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-11-24_Tue_12pm_COUPLES_REEL_c8-notice@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261124T120000
 DTEND;TZID=America/Chicago:20261124T121500
 SUMMARY:📱 Couples Reel: Notice it out loud
@@ -2475,7 +5099,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-11-25_Wed_12pm_COUPLES_POST_c8-list@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261125T120000
 DTEND;TZID=America/Chicago:20261125T121500
 SUMMARY:📱 Couples Post: Ten things I’m thankful for about you
@@ -2506,7 +5130,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-11-26_Thu_7pm_BTM_CAROUSEL_w8-thanks@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261126T190000
 DTEND;TZID=America/Chicago:20261126T191500
 SUMMARY:📱 BTM Carousel: Thanksgiving: say it out loud
@@ -2540,7 +5164,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-11-27_Fri_12pm_COUPLES_CAROUSEL_c8-gratitude@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261127T120000
 DTEND;TZID=America/Chicago:20261127T121500
 SUMMARY:📱 Couples Carousel: Gratitude habits for married couples
@@ -2576,7 +5200,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-11-28_Sat_7pm_COUPLES_REEL_c8-season@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261128T190000
 DTEND;TZID=America/Chicago:20261128T191500
 SUMMARY:📱 Couples Reel: Thankful in a hard season
@@ -2606,7 +5230,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-11-28_Sat_9am_BTM_POST_w8-father-kit@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261128T090000
 DTEND;TZID=America/Chicago:20261128T091500
 SUMMARY:📱 BTM Post: Father Kit: they’re home for the holidays
@@ -2636,7 +5260,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-11-29_Sun_4pm_COUPLES_POST_c8-kids-watch@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261129T160000
 DTEND;TZID=America/Chicago:20261129T161500
 SUMMARY:📱 Couples Post: Your kids are learning marriage from you
@@ -2669,7 +5293,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-11-29_Sun_7pm_BTM_REEL_w8-more-than@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261129T190000
 DTEND;TZID=America/Chicago:20261129T191500
 SUMMARY:📱 BTM Reel: More than “I think I’m doing better”
@@ -2699,7 +5323,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-11-30_Mon_7pm_BTM_REEL_w9-center@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261130T190000
 DTEND;TZID=America/Chicago:20261130T191500
 SUMMARY:📱 BTM Reel: God isn’t goal number four
@@ -2730,7 +5354,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-12-01_Tue_7pm_BTM_POST_w9-seek@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261201T190000
 DTEND;TZID=America/Chicago:20261201T191500
 SUMMARY:📱 BTM Post: Seek first — with a time attached
@@ -2761,7 +5385,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-12-01_Tue_12pm_COUPLES_REEL_c9-december@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261201T120000
 DTEND;TZID=America/Chicago:20261201T121500
 SUMMARY:📱 Couples Reel: Don’t start January in debt and in a fight
@@ -2794,7 +5418,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-12-02_Wed_12pm_COUPLES_POST_c9-number@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261202T120000
 DTEND;TZID=America/Chicago:20261202T121500
 SUMMARY:📱 Couples Post: One number for Christmas
@@ -2825,7 +5449,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-12-03_Thu_7pm_BTM_CAROUSEL_w9-faith-routine@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261203T190000
 DTEND;TZID=America/Chicago:20261203T191500
 SUMMARY:📱 BTM Carousel: A 15-minute morning with God
@@ -2859,7 +5483,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-12-04_Fri_12pm_COUPLES_CAROUSEL_c9-spending@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261204T120000
 DTEND;TZID=America/Chicago:20261204T121500
 SUMMARY:📱 Couples Carousel: When you spend differently
@@ -2896,7 +5520,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-12-05_Sat_7pm_COUPLES_REEL_c9-gift@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261205T190000
 DTEND;TZID=America/Chicago:20261205T191500
 SUMMARY:📱 Couples Reel: The gift they actually want
@@ -2927,7 +5551,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-12-05_Sat_9am_BTM_POST_w9-pray-for-her@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261205T090000
 DTEND;TZID=America/Chicago:20261205T091500
 SUMMARY:📱 BTM Post: Pray for her by name
@@ -2958,7 +5582,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-12-06_Sun_4pm_COUPLES_POST_c9-generous@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261206T160000
 DTEND;TZID=America/Chicago:20261206T161500
 SUMMARY:📱 Couples Post: Give together
@@ -2991,7 +5615,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-12-06_Sun_7pm_BTM_REEL_w9-priest@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261206T190000
 DTEND;TZID=America/Chicago:20261206T191500
 SUMMARY:📱 BTM Reel: Your kids learn God from your Tuesday
@@ -3020,7 +5644,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-12-07_Mon_7pm_BTM_REEL_w10-presence@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261207T190000
 DTEND;TZID=America/Chicago:20261207T191500
 SUMMARY:📱 BTM Reel: They want you\, not the gift
@@ -3050,7 +5674,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-12-08_Tue_7pm_BTM_POST_w10-legacy@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261208T190000
 DTEND;TZID=America/Chicago:20261208T191500
 SUMMARY:📱 BTM Post: Legacy is a Tuesday
@@ -3080,7 +5704,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-12-08_Tue_12pm_COUPLES_REEL_c10-kiss@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261208T120000
 DTEND;TZID=America/Chicago:20261208T121500
 SUMMARY:📱 Couples Reel: The six-second kiss
@@ -3111,7 +5735,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-12-09_Wed_12pm_COUPLES_POST_c10-kind@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261209T120000
 DTEND;TZID=America/Chicago:20261209T121500
 SUMMARY:📱 Couples Post: Be as kind at home as you are at work
@@ -3142,7 +5766,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-12-10_Thu_7pm_BTM_CAROUSEL_w10-questions@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261210T190000
 DTEND;TZID=America/Chicago:20261210T191500
 SUMMARY:📱 BTM Carousel: 5 questions to ask your kids this month
@@ -3178,7 +5802,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-12-11_Fri_12pm_COUPLES_CAROUSEL_c10-love-ways@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261211T120000
 DTEND;TZID=America/Chicago:20261211T121500
 SUMMARY:📱 Couples Carousel: 5 ways to say “I love you” without sayi
@@ -3215,7 +5839,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-12-12_Sat_7pm_COUPLES_REEL_c10-tone@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261212T190000
 DTEND;TZID=America/Chicago:20261212T191500
 SUMMARY:📱 Couples Reel: It’s not what you said\, it’s how
@@ -3248,7 +5872,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-12-12_Sat_9am_BTM_POST_w10-gift@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261212T090000
 DTEND;TZID=America/Chicago:20261212T091500
 SUMMARY:📱 BTM Post: A gift that’s still working in March
@@ -3279,7 +5903,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-12-13_Sun_4pm_COUPLES_POST_c10-repair@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261213T160000
 DTEND;TZID=America/Chicago:20261213T161500
 SUMMARY:📱 Couples Post: A real apology has three parts
@@ -3311,7 +5935,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-12-13_Sun_7pm_BTM_REEL_w10-cycle@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261213T190000
 DTEND;TZID=America/Chicago:20261213T191500
 SUMMARY:📱 BTM Reel: The cycle stops with you
@@ -3342,7 +5966,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-12-14_Mon_7pm_BTM_REEL_w11-presence@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261214T190000
 DTEND;TZID=America/Chicago:20261214T191500
 SUMMARY:📱 BTM Reel: Present\, not just there
@@ -3371,7 +5995,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-12-15_Tue_7pm_BTM_POST_w11-husband@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261215T190000
 DTEND;TZID=America/Chicago:20261215T191500
 SUMMARY:📱 BTM Post: Who’s carrying Christmas?
@@ -3401,7 +6025,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-12-15_Tue_12pm_COUPLES_REEL_c11-peace@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261215T120000
 DTEND;TZID=America/Chicago:20261215T121500
 SUMMARY:📱 Couples Reel: The house they’ll remember
@@ -3432,7 +6056,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-12-16_Wed_12pm_COUPLES_POST_c11-tired@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261216T120000
 DTEND;TZID=America/Chicago:20261216T121500
 SUMMARY:📱 Couples Post: December tired is real
@@ -3464,7 +6088,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-12-17_Thu_7pm_BTM_CAROUSEL_w11-christmas-plan@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261217T190000
 DTEND;TZID=America/Chicago:20261217T191500
 SUMMARY:📱 BTM Carousel: A Christmas week plan for fathers
@@ -3501,7 +6125,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-12-18_Fri_12pm_COUPLES_CAROUSEL_c11-traditions@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261218T120000
 DTEND;TZID=America/Chicago:20261218T121500
 SUMMARY:📱 Couples Carousel: 5 Christmas traditions for couples
@@ -3537,7 +6161,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-12-19_Sat_7pm_COUPLES_REEL_c11-hope@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261219T190000
 DTEND;TZID=America/Chicago:20261219T191500
 SUMMARY:📱 Couples Reel: If Christmas is hard this year
@@ -3571,7 +6195,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-12-19_Sat_9am_BTM_POST_w11-call@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261219T090000
 DTEND;TZID=America/Chicago:20261219T091500
 SUMMARY:📱 BTM Post: Stuck? 15 minutes
@@ -3601,7 +6225,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-12-20_Sun_4pm_COUPLES_POST_c11-emmanuel@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261220T160000
 DTEND;TZID=America/Chicago:20261220T161500
 SUMMARY:📱 Couples Post: Emmanuel: God with us
@@ -3631,7 +6255,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-12-20_Sun_7pm_BTM_REEL_w11-silent-night@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261220T190000
 DTEND;TZID=America/Chicago:20261220T191500
 SUMMARY:📱 BTM Reel: The best gift is a calm father
@@ -3659,7 +6283,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-12-21_Mon_7pm_BTM_REEL_w12-before@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261221T190000
 DTEND;TZID=America/Chicago:20261221T191500
 SUMMARY:📱 BTM Reel: Before you make the New Year’s promise
@@ -3689,7 +6313,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-12-22_Tue_7pm_BTM_POST_w12-scorecard@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261222T190000
 DTEND;TZID=America/Chicago:20261222T191500
 SUMMARY:📱 BTM Post: Start January with one page
@@ -3720,7 +6344,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-12-22_Tue_12pm_COUPLES_REEL_c12-review@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261222T120000
 DTEND;TZID=America/Chicago:20261222T121500
 SUMMARY:📱 Couples Reel: Look back together before you look ahead
@@ -3750,7 +6374,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-12-23_Wed_12pm_COUPLES_POST_c12-one-goal@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261223T120000
 DTEND;TZID=America/Chicago:20261223T121500
 SUMMARY:📱 Couples Post: One marriage goal for 2027
@@ -3783,7 +6407,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-12-24_Thu_7pm_BTM_CAROUSEL_w12-review@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261224T190000
 DTEND;TZID=America/Chicago:20261224T191500
 SUMMARY:📱 BTM Carousel: Your year-end review in 30 minutes
@@ -3816,7 +6440,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-12-25_Fri_12pm_COUPLES_CAROUSEL_c12-christmas@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261225T120000
 DTEND;TZID=America/Chicago:20261225T121500
 SUMMARY:📱 Couples Carousel: Christmas Day — 5 blessings to say out lo
@@ -3853,7 +6477,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-12-26_Sat_7pm_COUPLES_REEL_c12-start@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261226T190000
 DTEND;TZID=America/Chicago:20261226T191500
 SUMMARY:📱 Couples Reel: Start the new year with a check-up
@@ -3888,7 +6512,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-12-26_Sat_9am_BTM_POST_w12-call@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261226T090000
 DTEND;TZID=America/Chicago:20261226T091500
 SUMMARY:📱 BTM Post: Don’t start 2027 alone
@@ -3917,7 +6541,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-12-27_Sun_4pm_COUPLES_POST_c12-again@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261227T160000
 DTEND;TZID=America/Chicago:20261227T161500
 SUMMARY:📱 Couples Post: Choose each other again
@@ -3946,7 +6570,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-12-27_Sun_7pm_BTM_REEL_w12-year@bethemansystem
-DTSTAMP:20261006T165636Z
+DTSTAMP:20261008T143609Z
 DTSTART;TZID=America/Chicago:20261227T190000
 DTEND;TZID=America/Chicago:20261227T191500
 SUMMARY:📱 BTM Reel: Next year\, same man?
