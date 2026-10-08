@@ -20,7 +20,7 @@ Open each and set the email sender to brian@bethemansystem.com (Brian Greene):
 Then tell Claude, who loads the email designs (pilot/emails/). Then activate all three.
 
 ## 4. Claude then
-- redeploys, opens /api/files-check (every file "stored"),
+- redeploys, opens /api/files-check (every file "stored") ✅ 2026-10-08: binding true, purchase_check true, all 22 files stored,
 - switches the Club Join buttons from systeme to Stripe (`web/club/config.json` → `"live": true`).
 
 ## 5. Tests (real card, refund after)

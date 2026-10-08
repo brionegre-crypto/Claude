@@ -1,6 +1,6 @@
 # Product downloads on bethemansystem.com
 
-Status 2026-10-08: code is live. Two settings in Cloudflare are still needed from Brian (below).
+Status 2026-10-08: LIVE. FILES binding and STRIPE_KEY set; all 22 files (15 store + 7 step worksheets) copied into KV. Purchase check is on.
 
 ## How it works
 1. Someone pays on a Stripe Payment Link.
