@@ -306,3 +306,11 @@ footer{border-top:1px solid var(--line);padding-block:40px calc(40px + env(safe-
 @media (max-width:640px){#watch .sec-head{grid-template-columns:1fr!important}.vrow{grid-template-columns:120px minmax(0,1fr)}}
 
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}.card{transform:none}}
+
+/* Forms (Step 1 sign-up, couples inquiry) */
+.signup{display:grid;gap:10px}
+.signup input{width:100%;font:inherit;font-size:17px;color:var(--fg);background:var(--bg);border:1px solid var(--line-2);border-radius:14px;padding:15px 16px}
+.signup input:focus{outline:none;border-color:var(--accent)}
+.signup .hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+.signup-msg{color:#ff9f8a;font-size:15px;text-align:center}
+.signup button[disabled]{opacity:.7;cursor:wait}

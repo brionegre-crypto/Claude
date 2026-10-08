@@ -29,7 +29,7 @@
   <p class="lead" style="color:var(--fg);font-weight:500">With Brian Greene, pastor and certified marriage counselor</p>
   <p class="lead" style="margin-top:12px">A structured look at how the two of you communicate, handle conflict and make decisions. You each take a validated relationship assessment online. Then we meet for three sessions to go through your results together and choose what to work on.</p>
   <div class="actions">
-    <a class="btn btn-primary btn-lg" href="https://5e95-brian.systeme.io/0d29fa39">Send an inquiry</a>
+    <a class="btn btn-primary btn-lg" href="#inquire">Send an inquiry</a>
     <a class="textlink" href="https://5e95-brian.systeme.io/9daca0e0">Ready now? Pay $300 for three sessions ›</a>
   </div>
 </div>
@@ -65,11 +65,51 @@
       </div>
       <div class="actions" style="flex-direction:column;align-items:stretch">
         <a class="btn btn-primary" href="https://5e95-brian.systeme.io/9daca0e0">Pay $300 now</a>
-        <a class="btn btn-ghost" href="https://5e95-brian.systeme.io/0d29fa39">Send an inquiry</a>
+        <a class="btn btn-ghost" href="#inquire">Send an inquiry</a>
       </div>
     </div>
   </div>
 </section>
+
+<section class="section tight" id="inquire">
+  <div class="wrap narrow">
+    <div class="tile stack" style="gap:18px">
+      <h2 style="font-size:clamp(32px,4.6vw,48px);line-height:1.05;font-weight:700">Send an inquiry.</h2>
+      <p class="muted">Leave your names and the best way to reach you. Brian will reply within 24 hours to ask whether you're engaged or married and to find days that work for you. Please don't include anything private here.</p>
+      <form class="signup" id="inq" action="/api/inquiry" method="post" novalidate>
+        <label class="sr-only" for="iq-name">Your names</label>
+        <input id="iq-name" name="name" type="text" autocomplete="name" placeholder="Your names (both of you)" required>
+        <label class="sr-only" for="iq-email">Email</label>
+        <input id="iq-email" name="email" type="email" autocomplete="email" inputmode="email" placeholder="Best email to reach you" required>
+        <label class="sr-only" for="iq-phone">Phone (optional)</label>
+        <input id="iq-phone" name="phone" type="tel" autocomplete="tel" placeholder="Phone, if you'd rather talk (optional)">
+        <div class="hp" aria-hidden="true"><label for="iq-company">Company</label><input id="iq-company" name="company" tabindex="-1" autocomplete="off"></div>
+        <button class="btn btn-primary btn-lg btn-block" type="submit">Send my inquiry</button>
+        <p class="signup-msg" id="iq-msg" role="alert" hidden></p>
+      </form>
+    </div>
+  </div>
+</section>
+<script>
+(function(){
+  var f=document.getElementById('inq'); if(!f||!window.fetch) return;
+  var msg=document.getElementById('iq-msg'), btn=f.querySelector('button');
+  f.addEventListener('submit',function(e){
+    e.preventDefault();
+    var name=f.name.value.trim(), email=f.email.value.trim();
+    if(!name){msg.textContent='Please add your names.';msg.hidden=false;f.name.focus();return;}
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)){msg.textContent='Please enter a valid email address.';msg.hidden=false;f.email.focus();return;}
+    btn.disabled=true; btn.textContent='Sending…'; msg.hidden=true;
+    fetch('/api/inquiry',{method:'POST',headers:{'content-type':'application/json',accept:'application/json'},body:JSON.stringify({name:name,email:email,phone:f.phone.value.trim(),company:f.company.value})})
+      .then(function(r){return r.json().catch(function(){return {};});})
+      .then(function(d){
+        if(d.redirect){location.href=d.redirect;return;}
+        msg.textContent=d.error||'Something went wrong. Please try again.';msg.hidden=false;btn.disabled=false;btn.textContent='Send my inquiry';
+      })
+      .catch(function(){f.submit();});
+  });
+})();
+</script>
 
 <section class="section tight">
   <div class="wrap narrow">
@@ -84,7 +124,7 @@
       <h2>Ready to start?</h2>
       <p>Send an inquiry and Brian will reply within 24 hours. Or pay now, and he'll email your assessment link and first session date.</p>
       <div class="actions">
-        <a class="btn btn-dark" href="https://5e95-brian.systeme.io/0d29fa39">Send an inquiry</a>
+        <a class="btn btn-dark" href="#inquire">Send an inquiry</a>
         <a class="textlink" href="https://5e95-brian.systeme.io/9daca0e0">Or pay $300 now ›</a>
       </div>
     </div>
