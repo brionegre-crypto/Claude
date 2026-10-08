@@ -23,15 +23,20 @@ const html = (status, title, msg) =>
     { status, headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-store" } }
   );
 
-export async function verifySession(env, sessionId, plink) {
-  if (!env.STRIPE_KEY) return true;
-  if (!/^cs_(live|test)_[A-Za-z0-9]+$/.test(sessionId || "")) return false;
+// Returns the Checkout Session when it is a paid purchase from that Payment Link, else null.
+export async function paidSession(env, sessionId, plink) {
+  if (!/^cs_(live|test)_[A-Za-z0-9]+$/.test(sessionId || "")) return null;
   const r = await fetch(`https://api.stripe.com/v1/checkout/sessions/${sessionId}`, {
     headers: { authorization: `Bearer ${env.STRIPE_KEY}` },
   });
-  if (!r.ok) return false;
+  if (!r.ok) return null;
   const s = await r.json();
-  return s.payment_link === plink && ["paid", "no_payment_required"].includes(s.payment_status);
+  return s.payment_link === plink && ["paid", "no_payment_required"].includes(s.payment_status) ? s : null;
+}
+
+export async function verifySession(env, sessionId, plink) {
+  if (!env.STRIPE_KEY) return true;
+  return !!(await paidSession(env, sessionId, plink));
 }
 
 export async function getFile(env, key) {

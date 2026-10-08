@@ -67,64 +67,84 @@ export const OFFERS = {
   "files": [
    "scorecard_pdf",
    "scorecard_xlsx"
-  ]
+  ],
+  "slug": "scorecard-lnxtejvx",
+  "name": "The Weekly Scorecard"
  },
  "husband-guide": {
   "plink": "plink_1UNzYWIJyHMhQ40vXFIPyZpZ",
   "files": [
    "husband_pdf",
    "husband_xlsx"
-  ]
+  ],
+  "slug": "husband-guide-coaukruz",
+  "name": "The Godly Husband Field Guide"
  },
  "marriage-workbook": {
   "plink": "plink_1UNzYZIJyHMhQ40vqAW9bisH",
   "files": [
    "marriage_pdf"
-  ]
+  ],
+  "slug": "marriage-workbook-ojd7cel2",
+  "name": "The Christian Marriage Workbook for Men"
  },
  "devotional": {
   "plink": "plink_1UNzYbIJyHMhQ40vYTX9wQDd",
   "files": [
    "devotional_pdf"
-  ]
+  ],
+  "slug": "devotional-uwfdnzsj",
+  "name": "The Husband's Devotional: 30 Mornings"
  },
  "father-guide": {
   "plink": "plink_1UNzYdIJyHMhQ40vFdO92TJ5",
   "files": [
    "father_pdf",
    "father_xlsx"
-  ]
+  ],
+  "slug": "father-guide-jnrvfbvb",
+  "name": "The Father's Field Guide"
  },
  "father-son-cards": {
   "plink": "plink_1UNzYkIJyHMhQ40vfFvt2pwf",
   "files": [
    "fatherson_pdf"
-  ]
+  ],
+  "slug": "father-son-cards-f2gken5w",
+  "name": "Father and Son Conversation Cards"
  },
  "bible-study": {
   "plink": "plink_1UNzYsIJyHMhQ40vuXW1SFcZ",
   "files": [
    "bible_pdf"
-  ]
+  ],
+  "slug": "bible-study-edzfbhfw",
+  "name": "The Men's Bible Study: Eight Weeks"
  },
  "discipleship-workbook": {
   "plink": "plink_1UNzYuIJyHMhQ40v50j1mOnh",
   "files": [
    "disc_pdf",
    "disc_xlsx"
-  ]
+  ],
+  "slug": "discipleship-workbook-3mxy3iuy",
+  "name": "The Men's Discipleship Workbook"
  },
  "prayer-strategy": {
   "plink": "plink_1UNzYxIJyHMhQ40v1CmdNBu1",
   "files": [
    "prayer_pdf"
-  ]
+  ],
+  "slug": "prayer-strategy-fyrdnigm",
+  "name": "The Prayer Strategy for Men"
  },
  "forty-cards": {
   "plink": "plink_1UNzYzIJyHMhQ40vDfV43yT7",
   "files": [
    "forty_pdf"
-  ]
+  ],
+  "slug": "forty-cards-geqjmizi",
+  "name": "Forty Cards for Men"
  },
  "husband-kit": {
   "plink": "plink_1UNzZ7IJyHMhQ40v4R7xQq7M",
@@ -134,7 +154,9 @@ export const OFFERS = {
    "marriage_pdf",
    "devotional_pdf",
    "couples_pdf"
-  ]
+  ],
+  "slug": "husband-kit-soj4aqgs",
+  "name": "The Husband Kit"
  },
  "father-kit": {
   "plink": "plink_1UNzajIJyHMhQ40v1aO61gpY",
@@ -142,7 +164,9 @@ export const OFFERS = {
    "father_pdf",
    "father_xlsx",
    "fatherson_pdf"
-  ]
+  ],
+  "slug": "father-kit-1klcffxh",
+  "name": "The Father Kit"
  },
  "faith-kit": {
   "plink": "plink_1UNzapIJyHMhQ40v6iCVcCIV",
@@ -151,7 +175,9 @@ export const OFFERS = {
    "disc_pdf",
    "disc_xlsx",
    "prayer_pdf"
-  ]
+  ],
+  "slug": "faith-kit-dz9xsaqw",
+  "name": "The Faith Kit"
  },
  "library": {
   "plink": "plink_1UNzb9IJyHMhQ40veB5olTGF",
@@ -171,10 +197,14 @@ export const OFFERS = {
    "disc_xlsx",
    "prayer_pdf",
    "forty_pdf"
-  ]
+  ],
+  "slug": "library-zjcdznwk",
+  "name": "The Complete Be The Man Library"
  },
  "couples": {
   "plink": "plink_1UNzbHIJyHMhQ40vQv4YF1tj",
-  "files": []
+  "files": [],
+  "slug": "couples-m7pwwkaj",
+  "name": "Couples counseling: three sessions"
  }
 };

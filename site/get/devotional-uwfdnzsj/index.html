@@ -116,6 +116,7 @@
   <p class="eyebrow">Payment received</p>
   <h1 style="font-size:clamp(40px,6vw,64px)">Thank you. <span class="grad">Here's The Husband&#x27;s Devotional: 30 Mornings.</span></h1>
   <p class="lead">Download your files below. Bookmark this page so you can come back to it. A receipt is on its way to your email.</p>
+  <p class="muted" id="emailed" hidden></p>
   <div class="kit-list" style="margin-top:32px">
       <a class="kit dl" href="/api/download?o=devotional&amp;f=devotional_pdf" rel="nofollow"><div class="stack" style="gap:2px"><b>The Husband&#x27;s Devotional: 30 Mornings (PDF)</b><span>Download</span></div><span class="p">↓</span></a>
   </div>
@@ -136,6 +137,11 @@
   var s=new URLSearchParams(location.search).get('session_id');
   if(!s) return;
   document.querySelectorAll('a.dl').forEach(function(a){a.href+='&s='+encodeURIComponent(s);});
+  if(!window.fetch) return;
+  fetch('/api/purchase',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({o:'devotional',s:s})})
+    .then(function(r){return r.json();}).then(function(d){
+      if(d.emailed){var n=document.getElementById('emailed');n.textContent='We also emailed you a link to this page.';n.hidden=false;}
+    }).catch(function(){});
 })();
 </script>
 <div style="height:clamp(80px,12vw,140px)"></div>
