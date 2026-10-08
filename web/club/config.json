@@ -23,6 +23,6 @@
   "monthly": "https://go.bethemansystem.com/d6dd7931",
   "yearly": "https://go.bethemansystem.com/f05699c8"
  },
- "live": false,
- "_live_note": "false: Join buttons still use the old systeme checkout. Set true once STRIPE_KEY, MAILERLITE_API_KEY and the 'Club sign-in link' automation are live."
+ "live": true,
+ "_live_note": "true since 2026-10-08: Join buttons use the Stripe Payment Links. Set false to fall back to the systeme checkout."
 }

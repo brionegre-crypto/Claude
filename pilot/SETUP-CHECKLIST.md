@@ -12,7 +12,7 @@ Developers → API keys → Create restricted key, name "Website".
 Set to **Read**: Checkout Sessions, Customers, Subscriptions. Everything else None.
 Cloudflare → bethemansystem → Settings → Variables and Secrets → Add → Secret `STRIPE_KEY`.
 
-## 3. MailerLite: sender on three automations
+## 3. MailerLite: sender on three automations ✅ done 2026-10-08 (designs loaded; all four automations incl. Step 1 welcome active)
 Open each and set the email sender to brian@bethemansystem.com (Brian Greene):
 - Your downloads
 - New inquiry alert (to Brian)
@@ -21,7 +21,7 @@ Then tell Claude, who loads the email designs (pilot/emails/). Then activate all
 
 ## 4. Claude then
 - redeploys, opens /api/files-check (every file "stored") ✅ 2026-10-08: binding true, purchase_check true, all 22 files stored,
-- switches the Club Join buttons from systeme to Stripe (`web/club/config.json` → `"live": true`).
+- switches the Club Join buttons from systeme to Stripe (`web/club/config.json` → `"live": true`) ✅ 2026-10-08
 
 ## 5. Tests (real card, refund after)
 - Store: buy the $7 Scorecard → files download → "Your download" email arrives → refund.
