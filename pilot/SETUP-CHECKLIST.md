@@ -3,11 +3,11 @@
 Everything below was built on 2026-10-08. The code is live. These settings switch it on.
 Never paste keys into chat. Tell Claude "done" after each block.
 
-## 1. Cloudflare: file storage
+## 1. Cloudflare: file storage ✅ done 2026-10-08
 Storage & Databases → KV → Create namespace `btm-files`.
 Workers & Pages → bethemansystem → Settings → Bindings → Add → KV namespace: variable `FILES`, namespace `btm-files`.
 
-## 2. Stripe: one restricted key (covers store downloads, buyer emails and the Club)
+## 2. Stripe: one restricted key (covers store downloads, buyer emails and the Club) ✅ done 2026-10-08
 Developers → API keys → Create restricted key, name "Website".
 Set to **Read**: Checkout Sessions, Customers, Subscriptions. Everything else None.
 Cloudflare → bethemansystem → Settings → Variables and Secrets → Add → Secret `STRIPE_KEY`.
