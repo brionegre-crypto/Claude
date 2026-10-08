@@ -7,10 +7,13 @@ from collections import defaultdict
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 POSTS = os.path.join(HERE, 'posts')
-PACKS = os.path.join(HERE, 'packs')
+PACKS = os.path.join(HERE, 'packs-boost' if '--boost' in __import__('sys').argv else 'packs')
 rows = list(csv.DictReader(open(os.path.join(HERE, 'calendar.csv'))))
-HOURS = {'9am': 9, '12pm': 12, '4pm': 16, '7pm': 19}
+HOURS = {'8am': 8, '9am': 9, '12pm': 12, '2pm': 14, '4pm': 16, '7pm': 19, '9pm': 21}
 rows.sort(key=lambda r: (r['date'], HOURS[r['time']]))
+import sys
+BOOST = '--boost' in sys.argv
+rows = [r for r in rows if ('_b-' in r['folder']) == BOOST]
 
 def read(folder, name):
     p = os.path.join(POSTS, folder, name)
@@ -18,10 +21,10 @@ def read(folder, name):
 
 def block(d):
     """Two-week block index from Mon Oct 5."""
-    start = datetime.date(2026, 10, 5)
+    start = datetime.date(2026, 10, 9) if BOOST else datetime.date(2026, 10, 5)
     return (datetime.date.fromisoformat(d) - start).days // 14
 
-TIME = {'9am': '9:00 AM', '12pm': '12:00 PM', '4pm': '4:00 PM', '7pm': '7:00 PM'}
+TIME = {'8am': '8:00 AM', '9am': '9:00 AM', '12pm': '12:00 PM', '2pm': '2:00 PM', '4pm': '4:00 PM', '7pm': '7:00 PM', '9pm': '9:00 PM'}
 TYPE = {'post': 'Post', 'carousel': 'Carousel', 'reel': 'Reel'}
 
 def guide(rs, title):
@@ -46,14 +49,14 @@ def guide(rs, title):
     return '\n'.join(out)
 
 os.makedirs(PACKS, exist_ok=True)
-open(os.path.join(HERE, 'POSTING-GUIDE.md'), 'w').write(guide(rows, 'Be The Man + Couples: 12-week posting guide (Oct 6 – Dec 27, 2026)'))
+open(os.path.join(HERE, 'POSTING-GUIDE-BOOST.md' if BOOST else 'POSTING-GUIDE.md'), 'w').write(guide(rows, '30-day boost: 3 extra posts a day (Oct 9 – Nov 7, 2026)' if BOOST else 'Be The Man + Couples: 12-week posting guide (Oct 6 – Dec 27, 2026)'))
 
 groups = defaultdict(list)
 for r in rows:
     groups[block(r['date'])].append(r)
 for b, rs in sorted(groups.items()):
     first, last = rs[0]['date'], rs[-1]['date']
-    name = f'pack-{b + 1:02d}_{first}_to_{last}'
+    name = f'pack-B{b + 1}_{first}_to_{last}' if BOOST else f'pack-{b + 1:02d}_{first}_to_{last}'
     g = guide(rs, f'Posting guide: {first} to {last}')
     # split further if a block would exceed ~28 MB
     parts, cur, size = [], [], 0

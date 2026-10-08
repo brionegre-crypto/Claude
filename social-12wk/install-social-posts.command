@@ -41,7 +41,7 @@ for z in "${packs[@]}"; do
   base="${base% (*)}"                          # "pack-02 (1)" -> "pack-02"
   pack="${base%_part*}"                       # part1/part2 go into the same folder
   part=""; [[ "$base" == *_part* ]] && part="-${base##*_}"
-  pretty="$(echo "$pack" | sed -E 's/^pack-([0-9]+)_([0-9-]+)_to_([0-9-]+)$/Pack \1 (\2 to \3)/')"
+  pretty="$(echo "$pack" | sed -E 's/^pack-([0-9A-Z]+)_([0-9-]+)_to_([0-9-]+)$/Pack \1 (\2 to \3)/')"
   mkdir -p "$DEST/$pretty"
   rm -rf "$TMP/x"; mkdir -p "$TMP/x"
   if [ -d "$z" ]; then cp -R "$z"/. "$TMP/x/"; else unzip -q "$z" -d "$TMP/x"; fi
@@ -54,7 +54,7 @@ for z in "${packs[@]}"; do
   echo "✓ $pretty"
 done
 
-for extra in POSTING-GUIDE.md calendar.csv Be-The-Man-content-calendar.ics COMPUTER-CLAUDE-PROMPT.md; do
+for extra in POSTING-GUIDE.md POSTING-GUIDE-BOOST.md calendar.csv Be-The-Man-content-calendar.ics COMPUTER-CLAUDE-PROMPT.md; do
   [ -f "$DL/$extra" ] && cp "$DL/$extra" "$DEST/" && echo "✓ $extra"
 done
 

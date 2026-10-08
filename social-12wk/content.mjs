@@ -5,6 +5,7 @@
 import { btm } from './content-btm.mjs';
 import { cpl } from './content-cpl.mjs';
 import { existing } from './content-existing.mjs';
+import { boost } from './content-boost.mjs';
 
 const BIO = 'go.bethemansystem.com/28016a3c';
 export const CTA = {
@@ -104,6 +105,12 @@ export const CTA = {
     th: 'Send this to your spouse. Talk about it tonight.',
     foot: 'Send this to your spouse', btn: 'Send this to your spouse',
   },
+  comment: {
+    ig: '💬 Answer in the comments. I read every one.',
+    fb: '💬 Answer in the comments. I read every one.',
+    th: 'Reply below. I read every one.',
+    foot: 'Answer in the comments', btn: 'Answer below ↓',
+  },
   save: {
     ig: '💾 Save this for your next date night.\n💬 Want help as a couple? Comment "COUPLES."',
     fb: 'Save this for your next date night.\nCertified marriage counseling: https://5e95-brian.systeme.io/0d29fa39',
@@ -117,5 +124,5 @@ export const TAGS = {
   cpl: ['#christianmarriage', '#blackmarriage', '#christiancouples', '#marriagetips', '#blacklove', '#godlymarriage', '#husbandandwife', '#marriagecounseling', '#premaritalcounseling', '#blackcouples'],
 };
 
-export const items = [...btm, ...cpl];
+export const items = [...btm, ...cpl, ...boost];
 export { existing };

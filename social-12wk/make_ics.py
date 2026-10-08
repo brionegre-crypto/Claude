@@ -7,7 +7,7 @@ import csv, os, datetime
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 rows = list(csv.DictReader(open(os.path.join(HERE, 'calendar.csv'))))
-HOUR = {'9am': 9, '12pm': 12, '4pm': 16, '7pm': 19}
+HOUR = {'8am': 8, '9am': 9, '12pm': 12, '2pm': 14, '4pm': 16, '7pm': 19, '9pm': 21}
 TYPE = {'post': 'Post', 'carousel': 'Carousel', 'reel': 'Reel'}
 
 def esc(s):

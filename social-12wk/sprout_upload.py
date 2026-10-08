@@ -22,7 +22,7 @@ from zoneinfo import ZoneInfo
 
 API = os.environ.get('SPROUT_API_BASE', 'https://api.sproutsocial.com')
 TZ = ZoneInfo('America/Chicago')
-HOURS = {'9am': 9, '12pm': 12, '4pm': 16, '7pm': 19}
+HOURS = {'8am': 8, '9am': 9, '12pm': 12, '2pm': 14, '4pm': 16, '7pm': 19, '9pm': 21}
 NETWORKS = [('instagram', 'instagram.txt'), ('facebook', 'facebook.txt'), ('threads', 'threads.txt')]
 STATE = os.path.expanduser('~/.bethemansystem-sprout-uploaded.json')
 
