@@ -145,7 +145,15 @@
         <li>What each one looks like in real life, so you can tell it is happening</li>
         <li>One sentence that names him</li>
       </ul>
-      <a class="btn btn-primary btn-lg btn-block" href="https://go.bethemansystem.com/framework">Send me Step 1, free</a>
+      <form class="signup" id="get" action="/api/subscribe" method="post" novalidate>
+        <label class="sr-only" for="su-name">First name</label>
+        <input id="su-name" name="name" type="text" autocomplete="given-name" placeholder="First name" required>
+        <label class="sr-only" for="su-email">Email</label>
+        <input id="su-email" name="email" type="email" autocomplete="email" inputmode="email" placeholder="Email address" required>
+        <div class="hp" aria-hidden="true"><label for="su-company">Company</label><input id="su-company" name="company" tabindex="-1" autocomplete="off"></div>
+        <button class="btn btn-primary btn-lg btn-block" type="submit">Send me Step 1, free</button>
+        <p class="signup-msg" id="su-msg" role="alert" hidden></p>
+      </form>
       <p class="fine">Free. No card. In your inbox in about two minutes, then one short email a week. Leave in one click.</p>
     </div>
 
@@ -174,6 +182,34 @@
     <p class="fine center">© 2026 Be The Man · Faith should function.</p>
   </div>
 </div>
+
+<style>
+.signup{display:grid;gap:10px}
+.signup input{width:100%;font:inherit;font-size:17px;color:var(--fg);background:var(--bg);border:1px solid var(--line-2);border-radius:14px;padding:15px 16px}
+.signup input:focus{outline:none;border-color:var(--accent)}
+.signup .hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+.signup-msg{color:#ff9f8a;font-size:15px;text-align:center}
+.signup button[disabled]{opacity:.7;cursor:wait}
+</style>
+<script>
+(function(){
+  var f=document.getElementById('get'); if(!f||!window.fetch) return;
+  var msg=document.getElementById('su-msg'), btn=f.querySelector('button');
+  f.addEventListener('submit',function(e){
+    e.preventDefault();
+    var email=f.email.value.trim(), name=f.name.value.trim();
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)){msg.textContent='Please enter a valid email address.';msg.hidden=false;f.email.focus();return;}
+    btn.disabled=true; btn.textContent='Sending…'; msg.hidden=true;
+    fetch('/api/subscribe',{method:'POST',headers:{'content-type':'application/json',accept:'application/json'},body:JSON.stringify({name:name,email:email,company:f.company.value})})
+      .then(function(r){return r.json().catch(function(){return {};}).then(function(d){return {r:r,d:d};});})
+      .then(function(x){
+        if(x.d.redirect){location.href=x.d.redirect;return;}
+        msg.textContent=x.d.error||'Something went wrong. Please try again.';msg.hidden=false;btn.disabled=false;btn.textContent='Send me Step 1, free';
+      })
+      .catch(function(){f.submit();});
+  });
+})();
+</script>
 </main>
 <script src="/assets/site.js" defer></script>
 </body>

@@ -28,3 +28,10 @@ Goal: sign-ups on bethemansystem.com/step-1/ go straight into MailerLite. Mailer
   1. Add bethemansystem.com in MailerLite → Settings → Domains, then send Claude the DNS records.
   2. Create an API token and save it in Cloudflare as the secret `MAILERLITE_API_KEY`.
 - Then Claude: help add the DNS records in Cloudflare, activate the automation, test, switch the Step 1 page and the "Get Step 1" buttons to the on-site form, and turn off the systeme.io Framework campaign.
+
+## LIVE 2026-10-08
+
+- The domain is authenticated, the sender is brian@bethemansystem.com, and the "Step 1 welcome" automation is enabled (Brian activated it).
+- The Step 1 page now has an on-site form (first name, email, hidden honeypot). It posts to `/api/subscribe`, then MailerLite group "Step 1", then the welcome email. After that the visitor lands on `/step-1/thanks/`.
+- Every "Get Step 1, free" button points to `/step-1/#get`, and `/framework` redirects there too.
+- The systeme.io Framework campaign is left ON on purpose, so old links to go.bethemansystem.com/framework still deliver Step 1.
