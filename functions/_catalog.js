@@ -59,6 +59,34 @@ export const FILES = {
  "forty_pdf": {
   "url": "https://d1yei2z3i6k35z.cloudfront.net/18912984/6aa1ab2b2a48c1.74351572_Forty_Cards_for_Men.pdf",
   "name": "Forty_Cards_for_Men.pdf"
+ },
+ "step1_pdf": {
+  "url": "https://d1yei2z3i6k35z.cloudfront.net/18912984/6ab3bbee1bfe57.57860204_Step1-WhatTypeofManDoYouWanttoBe.pdf",
+  "name": "Step1-WhatTypeofManDoYouWanttoBe.pdf"
+ },
+ "step2_pdf": {
+  "url": "https://d1yei2z3i6k35z.cloudfront.net/18912984/6ab3bbee0e6046.99310542_Step2-WhatAreYourGoals.pdf",
+  "name": "Step2-WhatAreYourGoals.pdf"
+ },
+ "step3_pdf": {
+  "url": "https://d1yei2z3i6k35z.cloudfront.net/18912984/6ab3bbee186e72.20241185_Step3-WhatHasStoppedYouSoFar.pdf",
+  "name": "Step3-WhatHasStoppedYouSoFar.pdf"
+ },
+ "step4_pdf": {
+  "url": "https://d1yei2z3i6k35z.cloudfront.net/18912984/6ab3bbee13eb81.59869416_Step4-TheLawsofaSystemThatHolds.pdf",
+  "name": "Step4-TheLawsofaSystemThatHolds.pdf"
+ },
+ "step5_pdf": {
+  "url": "https://d1yei2z3i6k35z.cloudfront.net/18912984/6ab3bbee0cf5a6.77235838_Step5-TheFourPillars.pdf",
+  "name": "Step5-TheFourPillars.pdf"
+ },
+ "step6_pdf": {
+  "url": "https://d1yei2z3i6k35z.cloudfront.net/18912984/6ab3bbee0e97b3.19602691_Step6-WhyYouNeedaSystem.pdf",
+  "name": "Step6-WhyYouNeedaSystem.pdf"
+ },
+ "step7_pdf": {
+  "url": "https://d1yei2z3i6k35z.cloudfront.net/18912984/6ab3bbee13eb86.67921323_Step7-GodattheCenter.pdf",
+  "name": "Step7-GodattheCenter.pdf"
  }
 };
 export const OFFERS = {
@@ -206,5 +234,52 @@ export const OFFERS = {
   "files": [],
   "slug": "couples-m7pwwkaj",
   "name": "Couples counseling: three sessions"
+ }
+};
+export const CLUB = {
+ "plinks": [
+  "plink_1UOELMIJyHMhQ40viCMV3UFe",
+  "plink_1UOELQIJyHMhQ40vIRTFPTbD"
+ ],
+ "prices": {
+  "monthly": "price_1UOELDIJyHMhQ40vrMP26SAG",
+  "yearly": "price_1UOELGIJyHMhQ40v3ZjwH3Qn"
+ },
+ "portal": "https://billing.stripe.com/p/login/3cIfZi17t31X0OPga06kg00",
+ "mailerlite": {
+  "members": "200754586620789990",
+  "signin": "200754587357939123",
+  "pairs": "200754588278589338"
+ },
+ "files": {
+  "step1_pdf": 1,
+  "step2_pdf": 1,
+  "step3_pdf": 1,
+  "step4_pdf": 1,
+  "step5_pdf": 1,
+  "step6_pdf": 1,
+  "step7_pdf": 1,
+  "scorecard_pdf": 1,
+  "scorecard_xlsx": 1,
+  "forty_pdf": 1,
+  "devotional_pdf": 2,
+  "couples_pdf": 2,
+  "husband_pdf": 3,
+  "husband_xlsx": 3,
+  "father_pdf": 4,
+  "father_xlsx": 4,
+  "fatherson_pdf": 4,
+  "marriage_pdf": 5,
+  "prayer_pdf": 5,
+  "bible_pdf": 6,
+  "disc_pdf": 6,
+  "disc_xlsx": 6
+ },
+ "lessons": {
+  "month-2": 2,
+  "month-3": 3,
+  "month-4": 4,
+  "month-5": 5,
+  "month-6": 6
  }
 };

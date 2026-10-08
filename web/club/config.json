@@ -1,0 +1,28 @@
+{
+ "_note": "Club billing (Stripe, live) and email (MailerLite) settings used by the members area. Created 2026-10-08.",
+ "product": "prod_VP2P69gbKV3XiA",
+ "prices": {
+  "monthly": "price_1UOELDIJyHMhQ40vrMP26SAG",
+  "yearly": "price_1UOELGIJyHMhQ40v3ZjwH3Qn"
+ },
+ "plinks": {
+  "monthly": "plink_1UOELMIJyHMhQ40viCMV3UFe",
+  "yearly": "plink_1UOELQIJyHMhQ40vIRTFPTbD"
+ },
+ "links": {
+  "monthly": "https://buy.stripe.com/3cIaEY3fB6e9app6zq6kg0f",
+  "yearly": "https://buy.stripe.com/6oUcN6cQbdGB5556zq6kg0g"
+ },
+ "portal": "https://billing.stripe.com/p/login/3cIfZi17t31X0OPga06kg00",
+ "mailerlite": {
+  "members": "200754586620789990",
+  "signin": "200754587357939123",
+  "pairs": "200754588278589338"
+ },
+ "old_systeme_checkout": {
+  "monthly": "https://go.bethemansystem.com/d6dd7931",
+  "yearly": "https://go.bethemansystem.com/f05699c8"
+ },
+ "live": false,
+ "_live_note": "false: Join buttons still use the old systeme checkout. Set true once STRIPE_KEY, MAILERLITE_API_KEY and the 'Club sign-in link' automation are live."
+}

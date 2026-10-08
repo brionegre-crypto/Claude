@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Member sign in | The Be The Man Club</title>
+<meta name="description" content="Sign in to the Be The Man Club members area.">
+<meta name="robots" content="noindex, follow">
+<link rel="canonical" href="https://bethemansystem.com/club-login/">
+<link rel="icon" type="image/png" href="/assets/favicon.png">
+<link rel="apple-touch-icon" href="/assets/favicon.png">
+<meta name="theme-color" content="#000000">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Be The Man">
+<meta property="og:title" content="Member sign in | The Be The Man Club">
+<meta property="og:description" content="Sign in to the Be The Man Club members area.">
+<meta property="og:url" content="https://bethemansystem.com/club-login/">
+<meta property="og:image" content="https://bethemansystem.com/assets/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@500&family=Caveat:wght@500&display=swap">
+<link rel="stylesheet" href="/assets/site.css">
+<script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@graph": [
+  {
+   "@type": "Organization",
+   "@id": "https://bethemansystem.com/#org",
+   "name": "Be The Man",
+   "alternateName": "The Be The Man System",
+   "url": "https://bethemansystem.com/",
+   "logo": "https://bethemansystem.com/assets/favicon.png",
+   "slogan": "Faith should function.",
+   "description": "A seven-step consistency system for Christian men: one sentence on who you are becoming, goals with dates, and a weekly scorecard.",
+   "founder": {
+    "@id": "https://bethemansystem.com/about/#brian"
+   },
+   "sameAs": [
+    "https://www.youtube.com/@BeTheManSystem",
+    "https://bethemansystem.substack.com",
+    "https://www.facebook.com/profile.php?id=61593655779820"
+   ]
+  },
+  {
+   "@type": "WebPage",
+   "@id": "https://bethemansystem.com/club-login/#page",
+   "url": "https://bethemansystem.com/club-login/",
+   "name": "Member sign in | The Be The Man Club",
+   "description": "Sign in to the Be The Man Club members area.",
+   "isPartOf": {
+    "@id": "https://bethemansystem.com/#site"
+   },
+   "about": {
+    "@id": "https://bethemansystem.com/#org"
+   },
+   "inLanguage": "en-US"
+  },
+  {
+   "@type": "BreadcrumbList",
+   "itemListElement": [
+    {
+     "@type": "ListItem",
+     "position": 1,
+     "name": "Home",
+     "item": "https://bethemansystem.com/"
+    },
+    {
+     "@type": "ListItem",
+     "position": 2,
+     "name": "Member sign in | The Be The Man Club",
+     "item": "https://bethemansystem.com/club-login/"
+    }
+   ]
+  }
+ ]
+}
+</script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="nav">
+  <div class="wrap nav-in">
+    <a class="logo" href="/" aria-label="Be The Man home">BE <span>THE MAN</span></a>
+    <nav class="links" aria-label="Main">
+      <a href="/">Home</a>
+      <a href="/the-club/" aria-current="page">The Club</a>
+      <a href="/products/">The Store</a>
+      <a href="/couples/">Couples</a>
+      <a href="/about/">About</a>
+    </nav>
+    <div class="nav-cta">
+      <a class="btn btn-primary btn-sm" href="/the-club/#join">Join the Club</a>
+      <button class="menu-btn" id="menu-btn" type="button" aria-expanded="false" aria-controls="drawer" aria-label="Open menu">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M3 7h14M3 13h14"/></svg>
+      </button>
+    </div>
+  </div>
+  <div class="drawer" id="drawer" hidden>
+    <nav class="wrap" aria-label="Mobile">
+      <a href="/">Home</a>
+      <a href="/the-club/">The Club</a>
+      <a href="/products/">The Store</a>
+      <a href="/couples/">Couples</a>
+      <a href="/about/">About</a>
+      <a href="/step-1/">Get Step 1, free</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+<div class="wrap hero narrow">
+  <p class="eyebrow">The Be The Man Club</p>
+  <h1 style="font-size:clamp(40px,6vw,64px)">Member <span class="grad">sign in.</span></h1>
+  <p class="lead" id="login-lead">Enter the email you joined with. We'll send you a sign-in link. No password to remember.</p>
+  <div class="tile" style="margin-top:28px">
+    <form class="signup" id="login" novalidate>
+      <label class="sr-only" for="lg-email">Email</label>
+      <input id="lg-email" name="email" type="email" autocomplete="email" inputmode="email" placeholder="The email you joined with" required>
+      <button class="btn btn-primary btn-lg btn-block" type="submit">Email me a sign-in link</button>
+      <p class="signup-msg" id="lg-msg" role="alert" hidden></p>
+    </form>
+    <p class="muted" id="lg-done" role="status" hidden></p>
+  </div>
+  <p class="fine" style="margin-top:20px">Not a member yet? <a class="textlink" href="/the-club/">Join the Club</a>. Need help? Email <a class="textlink" href="mailto:brian@bethemansystem.com">brian@bethemansystem.com</a>.</p>
+</div>
+<div style="height:clamp(80px,12vw,140px)"></div>
+<script>
+(function(){
+  var q=new URLSearchParams(location.search), lead=document.getElementById('login-lead');
+  if(q.get('ended')) lead.textContent="Your membership isn't active anymore. Rejoin any time from the Club page, or sign in below if you've already rejoined.";
+  if(q.get('expired')) lead.textContent="That sign-in link has expired or was already replaced. Send yourself a new one below.";
+  if(q.get('out')) lead.textContent="You're signed out. Enter your email to sign back in.";
+  var f=document.getElementById('login'), msg=document.getElementById('lg-msg'), done=document.getElementById('lg-done'), btn=f.querySelector('button');
+  f.addEventListener('submit',function(e){
+    e.preventDefault();
+    var email=f.email.value.trim();
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)){msg.textContent='Please enter a valid email address.';msg.hidden=false;return;}
+    btn.disabled=true; btn.textContent='Sending…'; msg.hidden=true;
+    fetch('/api/club/login',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({email:email,next:q.get('next')||''})})
+      .then(function(r){return r.json();}).then(function(d){
+        if(d.ok){f.hidden=true;done.textContent=d.message+" Check Promotions or Spam if you don't see it.";done.hidden=false;}
+        else{msg.textContent=d.error||'Please try again.';msg.hidden=false;btn.disabled=false;btn.textContent='Email me a sign-in link';}
+      }).catch(function(){msg.textContent='Please try again.';msg.hidden=false;btn.disabled=false;btn.textContent='Email me a sign-in link';});
+  });
+})();
+</script>
+</main>
+<footer>
+  <div class="wrap">
+    <div class="foot">
+      <div class="foot-brand">
+        <a class="logo" href="/">BE <span>THE MAN</span></a>
+        <p>Faith should function.</p>
+      </div>
+      <nav class="foot-links" aria-label="Footer">
+        <a href="/step-1/">Step 1, free</a>
+        <a href="/the-club/">The Club</a>
+        <a href="/products/">The Store</a>
+        <a href="/couples/">Couples</a>
+        <a href="/about/">About</a>
+        <a href="/members/">Member sign in</a>
+        <a href="https://www.youtube.com/@BeTheManSystem" rel="me">YouTube</a>
+        <a href="https://bethemansystem.substack.com" rel="me">Substack</a>
+        <a href="https://www.facebook.com/profile.php?id=61593655779820" rel="me">Facebook</a>
+      </nav>
+    </div>
+    <div class="foot-base">
+      <p>© 2026 Be The Man</p>
+      <a href="/inner-circle/">The Inner Circle, by application ›</a>
+    </div>
+  </div>
+</footer>
+<script src="/assets/site.js" defer></script>
+</body>
+</html>

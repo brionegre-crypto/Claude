@@ -1,0 +1,45 @@
+---
+{
+ "path": "/club-login/",
+ "nav": "club",
+ "noindex": true,
+ "title": "Member sign in | The Be The Man Club",
+ "description": "Sign in to the Be The Man Club members area."
+}
+---
+<div class="wrap hero narrow">
+  <p class="eyebrow">The Be The Man Club</p>
+  <h1 style="font-size:clamp(40px,6vw,64px)">Member <span class="grad">sign in.</span></h1>
+  <p class="lead" id="login-lead">Enter the email you joined with. We'll send you a sign-in link. No password to remember.</p>
+  <div class="tile" style="margin-top:28px">
+    <form class="signup" id="login" novalidate>
+      <label class="sr-only" for="lg-email">Email</label>
+      <input id="lg-email" name="email" type="email" autocomplete="email" inputmode="email" placeholder="The email you joined with" required>
+      <button class="btn btn-primary btn-lg btn-block" type="submit">Email me a sign-in link</button>
+      <p class="signup-msg" id="lg-msg" role="alert" hidden></p>
+    </form>
+    <p class="muted" id="lg-done" role="status" hidden></p>
+  </div>
+  <p class="fine" style="margin-top:20px">Not a member yet? <a class="textlink" href="/the-club/">Join the Club</a>. Need help? Email <a class="textlink" href="mailto:brian@bethemansystem.com">brian@bethemansystem.com</a>.</p>
+</div>
+<div style="height:clamp(80px,12vw,140px)"></div>
+<script>
+(function(){
+  var q=new URLSearchParams(location.search), lead=document.getElementById('login-lead');
+  if(q.get('ended')) lead.textContent="Your membership isn't active anymore. Rejoin any time from the Club page, or sign in below if you've already rejoined.";
+  if(q.get('expired')) lead.textContent="That sign-in link has expired or was already replaced. Send yourself a new one below.";
+  if(q.get('out')) lead.textContent="You're signed out. Enter your email to sign back in.";
+  var f=document.getElementById('login'), msg=document.getElementById('lg-msg'), done=document.getElementById('lg-done'), btn=f.querySelector('button');
+  f.addEventListener('submit',function(e){
+    e.preventDefault();
+    var email=f.email.value.trim();
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)){msg.textContent='Please enter a valid email address.';msg.hidden=false;return;}
+    btn.disabled=true; btn.textContent='Sending…'; msg.hidden=true;
+    fetch('/api/club/login',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({email:email,next:q.get('next')||''})})
+      .then(function(r){return r.json();}).then(function(d){
+        if(d.ok){f.hidden=true;done.textContent=d.message+" Check Promotions or Spam if you don't see it.";done.hidden=false;}
+        else{msg.textContent=d.error||'Please try again.';msg.hidden=false;btn.disabled=false;btn.textContent='Email me a sign-in link';}
+      }).catch(function(){msg.textContent='Please try again.';msg.hidden=false;btn.disabled=false;btn.textContent='Email me a sign-in link';});
+  });
+})();
+</script>

@@ -4,7 +4,9 @@
 /start          /step-1/                                  302
 /links          /step-1/                                  302
 /club           /the-club/                                301
-/join           https://go.bethemansystem.com/d6dd7931    302
+/join           /the-club/#join                           302
+/members-login  /club-login/                              302
+/login          /club-login/                              302
 /store          /products/                                301
 /shop           /products/                                301
 /youtube        https://www.youtube.com/@BeTheManSystem   302

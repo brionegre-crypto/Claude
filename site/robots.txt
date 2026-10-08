@@ -3,6 +3,8 @@ User-agent: *
 Allow: /
 Disallow: /get/
 Disallow: /api/
+Disallow: /members/
+Disallow: /club-login/
 Disallow: /step-1/worksheet/
 
 # AI search and assistant crawlers (listed so it's explicit they're allowed)

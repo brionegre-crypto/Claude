@@ -68,7 +68,8 @@ export async function onRequestPost({ request, env }) {
     }
     await ml("/subscribers", {
       method: "POST",
-      body: JSON.stringify({ email: BRIAN, fields: { ...fields, inquiry_email: email }, groups: [ALERTS] }),
+      // status "active" so the alert reaches Brian even if his address was ever unsubscribed.
+      body: JSON.stringify({ email: BRIAN, fields: { ...fields, inquiry_email: email }, groups: [ALERTS], status: "active" }),
     });
     return done(request, true, THANKS);
   } catch (e) {

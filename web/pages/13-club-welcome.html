@@ -1,0 +1,32 @@
+---
+{
+ "path": "/the-club/welcome/",
+ "nav": "club",
+ "noindex": true,
+ "title": "Welcome to the Club | Be The Man",
+ "description": "Welcome to the Be The Man Club."
+}
+---
+<div class="wrap hero narrow">
+  <p class="eyebrow">Payment received</p>
+  <h1 style="font-size:clamp(40px,6vw,64px)">Welcome to <span class="grad">the Club.</span></h1>
+  <p class="lead" id="w-lead">Opening your members area…</p>
+  <div class="tile stack" style="margin-top:28px">
+    <h3>Coming back later?</h3>
+    <p>Go to <b>bethemansystem.com/members</b> and enter the email you joined with. We'll email you a sign-in link. There's no password to remember.</p>
+    <div class="actions"><a class="btn btn-primary" href="/members/">Open the members area</a></div>
+  </div>
+  <p class="fine" style="margin-top:20px">Your receipt is on its way from Stripe. Questions? Email <a class="textlink" href="mailto:brian@bethemansystem.com">brian@bethemansystem.com</a>.</p>
+</div>
+<div style="height:clamp(80px,12vw,140px)"></div>
+<script>
+(function(){
+  var s=new URLSearchParams(location.search).get('session_id'), lead=document.getElementById('w-lead');
+  if(!s||!window.fetch){lead.textContent='Open the members area below to get started.';return;}
+  fetch('/api/club/start',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({s:s})})
+    .then(function(r){return r.json();}).then(function(d){
+      if(d.ok&&d.redirect){location.replace(d.redirect);return;}
+      lead.textContent="You're all set. Open the members area below and sign in with the email you joined with.";
+    }).catch(function(){lead.textContent='Open the members area below to get started.';});
+})();
+</script>

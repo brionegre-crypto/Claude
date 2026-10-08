@@ -125,6 +125,8 @@ def render(meta, body):
     chrome = not meta.get("bare")
     top = header(meta.get("nav", "")) if chrome else ""
     foot = (ROOT / "partials" / "footer.html").read_text() if chrome else ""
+    if meta.get("members"):
+        top, foot = MEMBERS_TOP, MEMBERS_FOOT
     return head + top + "\n<main id=\"main\">\n" + body.strip() + "\n</main>\n" + foot + \
         '<script src="/assets/site.js" defer></script>\n</body>\n</html>\n'
 
@@ -192,22 +194,171 @@ def delivery_pages(products):
     return pages
 
 
+MEMBERS_TOP = """<a class="skip" href="#main">Skip to content</a>
+<header class="nav">
+  <div class="wrap nav-in">
+    <a class="logo" href="/members/" aria-label="Members home">BE <span>THE MAN</span> <small class="muted" style="font-weight:500">Club</small></a>
+    <nav class="links" aria-label="Members" style="display:flex">
+      <a href="/members/">Members home</a>
+      <a href="/api/club/logout">Sign out</a>
+    </nav>
+  </div>
+</header>"""
+MEMBERS_FOOT = """<footer>
+  <div class="wrap">
+    <div class="foot-base">
+      <p>© 2026 Be The Man · Questions? Reply to any Club email, or write to brian@bethemansystem.com.</p>
+      <a class="manage" href="{portal}">Manage membership ›</a>
+    </div>
+  </div>
+</footer>"""
+
+
+def club_data():
+    club = json.loads((ROOT / "club" / "lessons.json").read_text())
+    cfg = json.loads((ROOT / "club" / "config.json").read_text())
+    return club, cfg
+
+
+def member_pages(products):
+    """The members area (/members/...). Access is enforced by functions/members/_middleware.js."""
+    global MEMBERS_FOOT
+    club, cfg = club_data()
+    MEMBERS_FOOT = MEMBERS_FOOT.replace("{portal}", cfg["portal"])
+    labels = {**{k: v["label"] for k, v in products["files"].items()},
+              **{k: v["label"] for k, v in club["step_files"].items()}}
+    lessons = club["lessons"]
+    pages = []
+    modules = []
+    for l in lessons:
+        if not modules or modules[-1][0] != l["module"]:
+            modules.append((l["module"], []))
+        modules[-1][1].append(l)
+    # Members home
+    secs = []
+    for name, ls in modules:
+        cards = "\n".join(
+            f'      <a class="kit lesson" href="/members/{l["slug"]}/" data-month="{l["month"]}">'
+            f'<div class="stack" style="gap:2px"><b>{html.escape(l["title"])}</b>'
+            f'<span class="when">{"Open" if l["month"] == 1 else "Month " + str(l["month"])}</span></div><span class="p">›</span></a>'
+            for l in ls)
+        secs.append(f'<section class="section tight"><div class="wrap narrow"><h2 class="mod">{html.escape(name)}</h2>'
+                    f'<div class="kit-list">\n{cards}\n    </div></div></section>')
+    home = f"""<div class="wrap hero narrow">
+  <p class="eyebrow">The Be The Man Club</p>
+  <h1 style="font-size:clamp(40px,6vw,64px)">Welcome <span class="grad">back.</span></h1>
+  <p class="lead" id="who">Start with "Welcome to the club", then one step a week. Your monthly tools open every 30 days.</p>
+  <p class="signup-msg" id="locked" hidden>That one isn't open yet. It opens on the date shown below.</p>
+</div>
+{"".join(secs)}
+<section class="section tight"><div class="wrap narrow">
+  <div class="tile hi stack">
+    <p class="label">Monthly call</p>
+    <h3>Second Tuesday, 7:00 to 8:00 PM Central.</h3>
+    <p>Google Meet, same link every month. Details and your accountability partner are in <a class="textlink" href="/members/call/">the call lesson</a>.</p>
+  </div>
+</div></section>
+<div style="height:60px"></div>
+<script>
+(function(){{
+  var q=new URLSearchParams(location.search); if(q.get('locked')) document.getElementById('locked').hidden=false;
+  fetch('/api/club/me',{{credentials:'same-origin'}}).then(function(r){{return r.json();}}).then(function(d){{
+    if(!d.member) return;
+    var fmt=function(t){{return new Date(t*1000).toLocaleDateString(undefined,{{month:'long',day:'numeric'}});}};
+    document.querySelectorAll('a.lesson').forEach(function(a){{
+      var m=+a.dataset.month; if(m<2) return; var info=d.months[m], w=a.querySelector('.when');
+      if(info.open){{w.textContent='Open';}} else {{w.textContent='Opens '+fmt(info.opens);a.classList.add('locked');a.removeAttribute('href');}}
+    }});
+    var p=document.querySelector('a.manage'); if(p&&d.email) p.href=d.portal+'?prefilled_email='+encodeURIComponent(d.email);
+  }}).catch(function(){{}});
+}})();
+</script>
+<style>.mod{{font-size:clamp(24px,3vw,32px);font-weight:700;margin-bottom:14px}}.kit.locked{{opacity:.5;cursor:default}}.kit .when{{color:var(--muted);font-size:14px}}</style>"""
+    pages.append(({"path": "/members/", "noindex": True, "members": True, "title": "Members | The Be The Man Club",
+                   "description": "The Be The Man Club members area."}, home))
+    # Lesson pages
+    for i, l in enumerate(lessons):
+        prev_l = lessons[i - 1] if i else None
+        next_l = lessons[i + 1] if i + 1 < len(lessons) else None
+        files = ""
+        if l["files"]:
+            files = '<div class="kit-list" style="margin-top:28px">' + "".join(
+                f'<a class="kit" href="/api/club/file?f={f}" rel="nofollow"><div class="stack" style="gap:2px">'
+                f'<b>{html.escape(labels[f])}</b><span>Download</span></div><span class="p">↓</span></a>'
+                for f in l["files"]) + "</div>"
+        extra = ""
+        if l["slug"] == "call":
+            extra = """<div class="tile stack" id="partner" style="margin-top:28px">
+  <p class="label" style="color:var(--accent)">Accountability partner</p>
+  <p style="color:var(--fg)">Want a partner each month? Opt in once. On the first of each month you'll get an email introducing you to one other member.</p>
+  <div class="actions"><button class="btn btn-primary" id="pair-in" type="button">Pair me each month</button>
+  <button class="btn btn-ghost" id="pair-out" type="button">Stop pairing me</button></div>
+  <p class="muted" id="pair-msg" role="status"></p>
+</div>
+<script>
+(function(){
+  var m=document.getElementById('pair-msg');
+  function go(stop){
+    m.textContent='Saving…';
+    fetch('/api/club/pair',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({stop:stop})})
+      .then(function(r){return r.json();}).then(function(d){
+        m.textContent=d.ok?(d.paired?"You're in. Watch for your partner's introduction on the 1st.":"Done. You won't be paired from next month."):(d.error||'Please try again.');
+      }).catch(function(){m.textContent='Please try again.';});
+  }
+  document.getElementById('pair-in').onclick=function(){go(false);};
+  document.getElementById('pair-out').onclick=function(){go(true);};
+})();
+</script>"""
+        nav = '<div class="actions" style="justify-content:space-between;margin-top:40px">' + \
+            (f'<a class="textlink" href="/members/{prev_l["slug"]}/">‹ {html.escape(prev_l["title"])}</a>' if prev_l else "<span></span>") + \
+            (f'<a class="textlink" href="/members/{next_l["slug"]}/">{html.escape(next_l["title"])} ›</a>' if next_l else "") + "</div>"
+        body = f"""<div class="wrap hero narrow">
+  <p class="eyebrow"><a href="/members/">Members</a> · {html.escape(l["module"])}</p>
+  <h1 style="font-size:clamp(34px,5vw,54px)">{html.escape(l["title"])}</h1>
+  <article class="lesson-body">
+{l["html"]}
+  </article>
+  {files}
+  {extra}
+  {nav}
+</div>
+<div style="height:60px"></div>"""
+        pages.append(({"path": f"/members/{l['slug']}/", "noindex": True, "members": True,
+                       "title": f"{l['title']} | The Be The Man Club", "description": l["title"]}, body))
+    return pages
+
+
 def write_catalog(products):
     """Product and file list for the /api/download Pages Function."""
+    club, cfg = club_data()
+    all_files = {**products["files"], **club["step_files"]}
     files = {k: {"url": v["url"], "name": v["url"].rsplit("/", 1)[1].split("_", 1)[1]}
-             for k, v in products["files"].items()}
+             for k, v in all_files.items()}
+    club_files = {}
+    for l in club["lessons"]:
+        for f in l["files"]:
+            club_files.setdefault(f, l["month"])
+    club_js = {"plinks": list(cfg["plinks"].values()), "prices": cfg["prices"], "portal": cfg["portal"],
+               "mailerlite": cfg["mailerlite"], "files": club_files,
+               "lessons": {l["slug"]: l["month"] for l in club["lessons"] if l["month"] > 1}}
     offers = {o["key"]: {"plink": o["stripe_plink"], "files": o["files"], "slug": o["slug"], "name": o["name"]}
               for o in products["offers"]}
     (ROOT.parent / "functions" / "_catalog.js").write_text(
         "// Generated by web/build.py from web/products.json. Do not edit by hand.\n"
         f"export const FILES = {json.dumps(files, indent=1)};\n"
-        f"export const OFFERS = {json.dumps(offers, indent=1)};\n")
+        f"export const OFFERS = {json.dumps(offers, indent=1)};\n"
+        f"export const CLUB = {json.dumps(club_js, indent=1)};\n")
 
 
 def swap_checkout_links(text, products):
     for o in products["offers"]:
         if o.get("stripe_link"):
             text = text.replace(o["systeme_link"], o["stripe_link"])
+    # Club: until the members area is switched on, Join buttons keep using the systeme checkout.
+    _, cfg = club_data()
+    if not cfg.get("live"):
+        for plan, link in cfg["links"].items():
+            text = text.replace(link, cfg["old_systeme_checkout"][plan])
     return text
 
 
@@ -218,7 +369,7 @@ def main():
     urls = []
     products = json.loads((ROOT / "products.json").read_text())
     write_catalog(products)
-    entries = [read_page(p) for p in sorted((ROOT / "pages").glob("*.html"))] + delivery_pages(products)
+    entries = [read_page(p) for p in sorted((ROOT / "pages").glob("*.html"))] + delivery_pages(products) + member_pages(products)
     for meta, body in entries:
         body = swap_checkout_links(body, products)
         rel = "404.html" if meta["path"] == "/404" else (meta["path"].strip("/") + "/index.html").lstrip("/")
