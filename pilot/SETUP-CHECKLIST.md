@@ -12,7 +12,7 @@ Developers → API keys → Create restricted key, name "Website".
 Set to **Read**: Checkout Sessions, Customers, Subscriptions. Everything else None.
 Cloudflare → bethemansystem → Settings → Variables and Secrets → Add → Secret `STRIPE_KEY`.
 
-## 3. MailerLite: sender on four automations
+## 3. MailerLite: sender on three automations
 Open each and set the email sender to brian@bethemansystem.com (Brian Greene):
 - Your downloads
 - New inquiry alert (to Brian)
