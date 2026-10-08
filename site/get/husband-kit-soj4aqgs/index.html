@@ -117,11 +117,11 @@
   <h1 style="font-size:clamp(40px,6vw,64px)">Thank you. <span class="grad">Here's The Husband Kit.</span></h1>
   <p class="lead">Download your files below. Bookmark this page so you can come back to it. A receipt is on its way to your email.</p>
   <div class="kit-list" style="margin-top:32px">
-      <a class="kit" href="https://d1yei2z3i6k35z.cloudfront.net/18912984/6aa1ab2b1aa886.36523591_The_Godly_Husband_Field_Guide.pdf" download><div class="stack" style="gap:2px"><b>The Godly Husband Field Guide (PDF)</b><span>Download</span></div><span class="p">↓</span></a>
-      <a class="kit" href="https://d1yei2z3i6k35z.cloudfront.net/18912984/6aa1b0a62266d2.09773419_The_Godly_Husband_Field_Guide_Tracker.xlsx" download><div class="stack" style="gap:2px"><b>Godly Husband tracker (spreadsheet)</b><span>Download</span></div><span class="p">↓</span></a>
-      <a class="kit" href="https://d1yei2z3i6k35z.cloudfront.net/18912984/6aa1ab2b1dab38.01554037_The_Christian_Marriage_Workbook_for_Men.pdf" download><div class="stack" style="gap:2px"><b>The Christian Marriage Workbook for Men (PDF)</b><span>Download</span></div><span class="p">↓</span></a>
-      <a class="kit" href="https://d1yei2z3i6k35z.cloudfront.net/18912984/6aa1ab2b1aacf6.37012758_The_Husbands_Devotional_30_Mornings.pdf" download><div class="stack" style="gap:2px"><b>The Husband&#x27;s Devotional: 30 Mornings (PDF)</b><span>Download</span></div><span class="p">↓</span></a>
-      <a class="kit" href="https://d1yei2z3i6k35z.cloudfront.net/18912984/6aa1ab2b1f9a71.01645213_Christian_Couples_Conversation_Cards.pdf" download><div class="stack" style="gap:2px"><b>Christian Couples Conversation Cards (PDF)</b><span>Download</span></div><span class="p">↓</span></a>
+      <a class="kit dl" href="/api/download?o=husband-kit&amp;f=husband_pdf" rel="nofollow"><div class="stack" style="gap:2px"><b>The Godly Husband Field Guide (PDF)</b><span>Download</span></div><span class="p">↓</span></a>
+      <a class="kit dl" href="/api/download?o=husband-kit&amp;f=husband_xlsx" rel="nofollow"><div class="stack" style="gap:2px"><b>Godly Husband tracker (spreadsheet)</b><span>Download</span></div><span class="p">↓</span></a>
+      <a class="kit dl" href="/api/download?o=husband-kit&amp;f=marriage_pdf" rel="nofollow"><div class="stack" style="gap:2px"><b>The Christian Marriage Workbook for Men (PDF)</b><span>Download</span></div><span class="p">↓</span></a>
+      <a class="kit dl" href="/api/download?o=husband-kit&amp;f=devotional_pdf" rel="nofollow"><div class="stack" style="gap:2px"><b>The Husband&#x27;s Devotional: 30 Mornings (PDF)</b><span>Download</span></div><span class="p">↓</span></a>
+      <a class="kit dl" href="/api/download?o=husband-kit&amp;f=couples_pdf" rel="nofollow"><div class="stack" style="gap:2px"><b>Christian Couples Conversation Cards (PDF)</b><span>Download</span></div><span class="p">↓</span></a>
   </div>
   <div class="tile stack" style="margin-top:24px">
     <p class="label">How to start</p>
@@ -133,8 +133,15 @@
     <p>The Be The Man Club is $19 a month: all seven steps, a new set of tools every month, a Club-only tool, and a live call on the second Tuesday.</p>
     <div class="actions"><a class="btn btn-primary" href="/the-club/">See the Club</a></div>
   </div>
-  <p class="fine" style="margin-top:20px">Trouble downloading? Reply to your receipt email and it reaches Brian.</p>
+  <p class="fine" style="margin-top:20px">Trouble downloading? Email <a class="textlink" href="mailto:brian@bethemansystem.com">brian@bethemansystem.com</a> and you'll get your files the same day.</p>
 </div>
+<script>
+(function(){
+  var s=new URLSearchParams(location.search).get('session_id');
+  if(!s) return;
+  document.querySelectorAll('a.dl').forEach(function(a){a.href+='&s='+encodeURIComponent(s);});
+})();
+</script>
 <div style="height:clamp(80px,12vw,140px)"></div>
 </main>
 <footer>

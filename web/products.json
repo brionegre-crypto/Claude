@@ -75,7 +75,8 @@
     "scorecard_pdf",
     "scorecard_xlsx"
    ],
-   "start": "Print one sheet a week. Fill it in Sunday night: every commitment, every day, kept or missed. Share it with one other man."
+   "start": "Print one sheet a week. Fill it in Sunday night: every commitment, every day, kept or missed. Share it with one other man.",
+   "stripe_plink": "plink_1UNzYUIJyHMhQ40v5Zv5UDtG"
   },
   {
    "key": "husband-guide",
@@ -89,7 +90,8 @@
     "husband_pdf",
     "husband_xlsx"
    ],
-   "start": "Pick your seven decisions, give each one a time, and track them for thirty days."
+   "start": "Pick your seven decisions, give each one a time, and track them for thirty days.",
+   "stripe_plink": "plink_1UNzYWIJyHMhQ40vXFIPyZpZ"
   },
   {
    "key": "marriage-workbook",
@@ -102,7 +104,8 @@
    "files": [
     "marriage_pdf"
    ],
-   "start": "Eight sessions. Do one a week, at the same time each week."
+   "start": "Eight sessions. Do one a week, at the same time each week.",
+   "stripe_plink": "plink_1UNzYZIJyHMhQ40vqAW9bisH"
   },
   {
    "key": "devotional",
@@ -115,7 +118,8 @@
    "files": [
     "devotional_pdf"
    ],
-   "start": "One page each morning for thirty days, before your phone."
+   "start": "One page each morning for thirty days, before your phone.",
+   "stripe_plink": "plink_1UNzYbIJyHMhQ40vYTX9wQDd"
   },
   {
    "key": "father-guide",
@@ -129,7 +133,8 @@
     "father_pdf",
     "father_xlsx"
    ],
-   "start": "Start with the first decision this week and track it with the spreadsheet."
+   "start": "Start with the first decision this week and track it with the spreadsheet.",
+   "stripe_plink": "plink_1UNzYdIJyHMhQ40vFdO92TJ5"
   },
   {
    "key": "father-son-cards",
@@ -142,7 +147,8 @@
    "files": [
     "fatherson_pdf"
    ],
-   "start": "Print, cut, and pick one card a week. The questions are sorted by age."
+   "start": "Print, cut, and pick one card a week. The questions are sorted by age.",
+   "stripe_plink": "plink_1UNzYkIJyHMhQ40vfFvt2pwf"
   },
   {
    "key": "bible-study",
@@ -155,7 +161,8 @@
    "files": [
     "bible_pdf"
    ],
-   "start": "Eight weeks. Best done with at least one other man."
+   "start": "Eight weeks. Best done with at least one other man.",
+   "stripe_plink": "plink_1UNzYsIJyHMhQ40vuXW1SFcZ"
   },
   {
    "key": "discipleship-workbook",
@@ -169,7 +176,8 @@
     "disc_pdf",
     "disc_xlsx"
    ],
-   "start": "Twelve sessions with a partner. Report your progress to him each week."
+   "start": "Twelve sessions with a partner. Report your progress to him each week.",
+   "stripe_plink": "plink_1UNzYuIJyHMhQ40v50j1mOnh"
   },
   {
    "key": "prayer-strategy",
@@ -182,7 +190,8 @@
    "files": [
     "prayer_pdf"
    ],
-   "start": "Write the names and the dated requests first, then pray through the list at the same time each day."
+   "start": "Write the names and the dated requests first, then pray through the list at the same time each day.",
+   "stripe_plink": "plink_1UNzYxIJyHMhQ40v1CmdNBu1"
   },
   {
    "key": "forty-cards",
@@ -195,7 +204,8 @@
    "files": [
     "forty_pdf"
    ],
-   "start": "One card, one action, every day for forty days."
+   "start": "One card, one action, every day for forty days.",
+   "stripe_plink": "plink_1UNzYzIJyHMhQ40vDfV43yT7"
   },
   {
    "key": "husband-kit",
@@ -212,7 +222,8 @@
     "devotional_pdf",
     "couples_pdf"
    ],
-   "start": "Start with the Godly Husband Field Guide. Use the Conversation Cards once a week with your wife."
+   "start": "Start with the Godly Husband Field Guide. Use the Conversation Cards once a week with your wife.",
+   "stripe_plink": "plink_1UNzZ7IJyHMhQ40v4R7xQq7M"
   },
   {
    "key": "father-kit",
@@ -227,7 +238,8 @@
     "father_xlsx",
     "fatherson_pdf"
    ],
-   "start": "Start with the Father's Field Guide, then add one conversation card a week."
+   "start": "Start with the Father's Field Guide, then add one conversation card a week.",
+   "stripe_plink": "plink_1UNzajIJyHMhQ40v1aO61gpY"
   },
   {
    "key": "faith-kit",
@@ -243,7 +255,8 @@
     "disc_xlsx",
     "prayer_pdf"
    ],
-   "start": "Start with the Prayer Strategy this week. Begin the Bible Study with another man next week."
+   "start": "Start with the Prayer Strategy this week. Begin the Bible Study with another man next week.",
+   "stripe_plink": "plink_1UNzapIJyHMhQ40v6iCVcCIV"
   },
   {
    "key": "library",
@@ -270,7 +283,8 @@
     "prayer_pdf",
     "forty_pdf"
    ],
-   "start": "Start with the Weekly Scorecard. Every other tool plugs into it."
+   "start": "Start with the Weekly Scorecard. Every other tool plugs into it.",
+   "stripe_plink": "plink_1UNzb9IJyHMhQ40veB5olTGF"
   },
   {
    "key": "couples",
@@ -281,7 +295,8 @@
    "stripe_link": "https://book.stripe.com/fZu8wQbM79ql1STbTK6kg0e",
    "slug": "couples-m7pwwkaj",
    "files": [],
-   "start": ""
+   "start": "",
+   "stripe_plink": "plink_1UNzbHIJyHMhQ40vQv4YF1tj"
   }
  ]
 }
