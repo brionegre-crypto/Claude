@@ -24,9 +24,10 @@ const html = (status, title, msg) =>
   );
 
 // Returns the Checkout Session when it is a paid purchase from that Payment Link, else null.
+// The session includes line_items, so add-ons bought at checkout can be checked too.
 export async function paidSession(env, sessionId, plink) {
   if (!/^cs_(live|test)_[A-Za-z0-9]+$/.test(sessionId || "")) return null;
-  const r = await fetch(`https://api.stripe.com/v1/checkout/sessions/${sessionId}`, {
+  const r = await fetch(`https://api.stripe.com/v1/checkout/sessions/${sessionId}?expand[]=line_items`, {
     headers: { authorization: `Bearer ${env.STRIPE_KEY}` },
   });
   if (!r.ok) return null;
@@ -34,9 +35,15 @@ export async function paidSession(env, sessionId, plink) {
   return s.payment_link === plink && ["paid", "no_payment_required"].includes(s.payment_status) ? s : null;
 }
 
-export async function verifySession(env, sessionId, plink) {
-  if (!env.STRIPE_KEY) return true;
-  return !!(await paidSession(env, sessionId, plink));
+export async function verifySession(env, sessionId, plink, addonPrice) {
+  if (!env.STRIPE_KEY) return !addonPrice;
+  const s = await paidSession(env, sessionId, plink);
+  if (!s) return false;
+  return !addonPrice || boughtPrices(s).includes(addonPrice);
+}
+
+export function boughtPrices(session) {
+  return ((session.line_items && session.line_items.data) || []).map((li) => li.price && li.price.id).filter(Boolean);
 }
 
 export async function getFile(env, key) {
@@ -59,10 +66,11 @@ export async function onRequestGet({ request, env }) {
   const q = new URL(request.url).searchParams;
   const offer = OFFERS[q.get("o")];
   const key = q.get("f");
-  if (!offer || !offer.files.includes(key) || !FILES[key]) {
+  const addon = offer && !offer.files.includes(key) ? (offer.addons || []).find((a) => a.files.includes(key)) : null;
+  if (!offer || (!offer.files.includes(key) && !addon) || !FILES[key]) {
     return html(404, "That file isn't here.", "The download link looks incomplete.");
   }
-  if (!(await verifySession(env, q.get("s"), offer.plink))) {
+  if (!(await verifySession(env, q.get("s"), offer.plink, addon && addon.price))) {
     return html(403, "We couldn't confirm that purchase.", "Open the download page from the link you were sent to right after checkout.");
   }
   const file = FILES[key];

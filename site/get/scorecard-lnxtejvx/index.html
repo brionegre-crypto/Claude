@@ -117,14 +117,17 @@
   <h1 style="font-size:clamp(40px,6vw,64px)">Thank you. <span class="grad">Here's The Weekly Scorecard.</span></h1>
   <p class="lead">Download your files below. Bookmark this page so you can come back to it. A receipt is on its way to your email.</p>
   <p class="muted" id="emailed" hidden></p>
+  
   <div class="kit-list" style="margin-top:32px">
       <a class="kit dl" href="/api/download?o=scorecard&amp;f=scorecard_pdf" rel="nofollow"><div class="stack" style="gap:2px"><b>The Weekly Scorecard (PDF, print it)</b><span>Download</span></div><span class="p">↓</span></a>
       <a class="kit dl" href="/api/download?o=scorecard&amp;f=scorecard_xlsx" rel="nofollow"><div class="stack" style="gap:2px"><b>The Weekly Scorecard (spreadsheet)</b><span>Download</span></div><span class="p">↓</span></a>
   </div>
+  
   <div class="tile stack" style="margin-top:24px">
     <p class="label">How to start</p>
     <p style="color:var(--fg)">Print one sheet a week. Fill it in Sunday night: every commitment, every day, kept or missed. Share it with one other man.</p>
   </div>
+  <div class="tile stack" style="margin-top:16px"><p class="label">Want the whole framework?</p><h3>The Be The Man System, $97.</h3><p>All seven step worksheets in order, plus the Scorecard you just bought. One step a week, and by week seven you have a system that holds.</p><div class="actions"><a class="btn btn-ghost" href="https://buy.stripe.com/5kQ3cw7vR9ql2WXe1S6kg0k">Get the System, $97</a></div></div>
   <div class="tile hi stack" style="margin-top:16px">
     <p class="label">Keep going</p>
     <h3>Get every tool, plus the monthly call.</h3>
@@ -135,13 +138,15 @@
 </div>
 <script>
 (function(){
-  var s=new URLSearchParams(location.search).get('session_id');
+  var q=new URLSearchParams(location.search), s=q.get('session_id');
+  if(q.get('guide')==='locked'){var g=document.getElementById('emailed');g.textContent='To open the leader guide, use the link in your "Your download" email (or the page you reached right after checkout).';g.hidden=false;}
   if(!s) return;
   document.querySelectorAll('a.dl').forEach(function(a){a.href+='&s='+encodeURIComponent(s);});
   if(!window.fetch) return;
   fetch('/api/purchase',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({o:'scorecard',s:s})})
     .then(function(r){return r.json();}).then(function(d){
       if(d.emailed){var n=document.getElementById('emailed');n.textContent='We also emailed you a link to this page.';n.hidden=false;}
+      (d.addons||[]).forEach(function(p){document.querySelectorAll('.addon[data-price="'+p+'"]').forEach(function(el){el.hidden=false;});});
     }).catch(function(){});
 })();
 </script>

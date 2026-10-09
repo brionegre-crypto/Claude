@@ -18,11 +18,11 @@ export async function onRequestPost({ request, env }) {
   const sub = await clubSubscription(env, s.customer);
   if (!sub) return json({ ok: false, error: "We couldn't confirm that membership." }, 403);
   const email = (s.customer_details || {}).email;
-  const member = { email, customer: s.customer, start: sub.start, yearly: sub.yearly };
+  const member = { email, customer: s.customer, start: sub.start, yearly: sub.yearly, ic: sub.ic };
 
   if (env.MAILERLITE_API_KEY && email) {
     const name = ((s.customer_details || {}).name || "").split(" ")[0];
-    const body = { email, groups: [CLUB.mailerlite.members] };
+    const body = { email, groups: sub.ic ? [CLUB.mailerlite.members, CLUB.ic_group] : [CLUB.mailerlite.members] };
     if (name) body.fields = { name };
     try { await mailerlite(env)("/subscribers", { method: "POST", body: JSON.stringify(body) }); } catch (e) {}
   }

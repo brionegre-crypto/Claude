@@ -117,13 +117,16 @@
   <h1 style="font-size:clamp(40px,6vw,64px)">Thank you. <span class="grad">Here's The Prayer Strategy for Men.</span></h1>
   <p class="lead">Download your files below. Bookmark this page so you can come back to it. A receipt is on its way to your email.</p>
   <p class="muted" id="emailed" hidden></p>
+  
   <div class="kit-list" style="margin-top:32px">
       <a class="kit dl" href="/api/download?o=prayer-strategy&amp;f=prayer_pdf" rel="nofollow"><div class="stack" style="gap:2px"><b>The Prayer Strategy for Men (PDF)</b><span>Download</span></div><span class="p">↓</span></a>
   </div>
+  
   <div class="tile stack" style="margin-top:24px">
     <p class="label">How to start</p>
     <p style="color:var(--fg)">Write the names and the dated requests first, then pray through the list at the same time each day.</p>
   </div>
+  
   <div class="tile hi stack" style="margin-top:16px">
     <p class="label">Keep going</p>
     <h3>Get every tool, plus the monthly call.</h3>
@@ -134,13 +137,15 @@
 </div>
 <script>
 (function(){
-  var s=new URLSearchParams(location.search).get('session_id');
+  var q=new URLSearchParams(location.search), s=q.get('session_id');
+  if(q.get('guide')==='locked'){var g=document.getElementById('emailed');g.textContent='To open the leader guide, use the link in your "Your download" email (or the page you reached right after checkout).';g.hidden=false;}
   if(!s) return;
   document.querySelectorAll('a.dl').forEach(function(a){a.href+='&s='+encodeURIComponent(s);});
   if(!window.fetch) return;
   fetch('/api/purchase',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({o:'prayer-strategy',s:s})})
     .then(function(r){return r.json();}).then(function(d){
       if(d.emailed){var n=document.getElementById('emailed');n.textContent='We also emailed you a link to this page.';n.hidden=false;}
+      (d.addons||[]).forEach(function(p){document.querySelectorAll('.addon[data-price="'+p+'"]').forEach(function(el){el.hidden=false;});});
     }).catch(function(){});
 })();
 </script>

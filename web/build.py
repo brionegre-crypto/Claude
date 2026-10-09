@@ -131,6 +131,36 @@ def render(meta, body):
         '<script src="/assets/site.js" defer></script>\n</body>\n</html>\n'
 
 
+def all_file_labels(products):
+    club, _ = club_data()
+    return {**{k: v["label"] for k, v in products["files"].items()},
+            **{k: v["label"] for k, v in club["step_files"].items()}}
+
+
+def guide_pages(o):
+    """Leader guide for the ministry kit, at /get/<slug>/guide/. Access is checked by functions/get/_middleware.js."""
+    lessons = json.loads((ROOT / "club" / "more-lessons.json").read_text())["kit"]
+    base = f"/get/{o['slug']}/guide/"
+    pages = []
+    cards = "\n".join(f'<a class="kit" href="{base}{l["slug"]}/"><div class="stack" style="gap:2px"><b>{html.escape(l["title"])}</b></div><span class="p">›</span></a>' for l in lessons)
+    pages.append(({"path": base, "noindex": True, "bare": False, "nav": "store", "title": "Leader guide | Be The Man men's ministry kit", "description": "Leader guide"},
+                  f"""<div class="wrap hero narrow"><p class="eyebrow"><a href="/get/{o['slug']}/">Your ministry kit</a></p>
+<h1 style="font-size:clamp(36px,5.5vw,60px)">Lead your men through <span class="grad">seven steps.</span></h1>
+<p class="lead">Start with the setup lesson. Each session has a timed plan, what to say, discussion questions and the worksheet to hand out.</p>
+<div class="kit-list" style="margin-top:28px">{cards}</div></div><div style="height:80px"></div>"""))
+    for i, l in enumerate(lessons):
+        prev_l = lessons[i - 1] if i else None
+        next_l = lessons[i + 1] if i + 1 < len(lessons) else None
+        nav = '<div class="actions" style="justify-content:space-between;margin-top:40px">' + \
+            (f'<a class="textlink" href="{base}{prev_l["slug"]}/">‹ {html.escape(prev_l["title"])}</a>' if prev_l else f'<a class="textlink" href="{base}">‹ All sessions</a>') + \
+            (f'<a class="textlink" href="{base}{next_l["slug"]}/">{html.escape(next_l["title"])} ›</a>' if next_l else "") + "</div>"
+        pages.append(({"path": f"{base}{l['slug']}/", "noindex": True, "nav": "store", "title": f"{l['title']} | Leader guide", "description": l["title"]},
+                      f"""<div class="wrap hero narrow"><p class="eyebrow"><a href="{base}">Leader guide</a></p>
+<h1 style="font-size:clamp(34px,5vw,54px)">{html.escape(l['title'])}</h1>
+<article class="lesson-body">{l['html']}</article>{nav}</div><div style="height:60px"></div>"""))
+    return pages
+
+
 def delivery_pages(products):
     """Thank-you and download pages Stripe redirects to after payment."""
     pages = []
@@ -154,21 +184,33 @@ def delivery_pages(products):
 </div>
 <div style="height:clamp(80px,12vw,140px)"></div>"""
         else:
-            links = "\n".join(
-                f'      <a class="kit dl" href="/api/download?o={o["key"]}&amp;f={f}" rel="nofollow"><div class="stack" style="gap:2px"><b>{html.escape(products["files"][f]["label"])}</b><span>Download</span></div><span class="p">↓</span></a>'
-                for f in o["files"])
+            labels = all_file_labels(products)
+            def dl(f, cls="dl"):
+                return (f'      <a class="kit {cls}" href="/api/download?o={o["key"]}&amp;f={f}" rel="nofollow"><div class="stack" style="gap:2px">'
+                        f'<b>{html.escape(labels[f])}</b><span>Download</span></div><span class="p">↓</span></a>')
+            links = "\n".join(dl(f) for f in o["files"])
+            addons = "".join(
+                f'<div class="addon" data-price="{a["price"]}" hidden><p class="label" style="margin-top:28px">{html.escape(a["label"])} (your add-on)</p>'
+                f'<div class="kit-list" style="margin-top:12px">' + "\n".join(dl(f) for f in a["files"]) + "</div></div>"
+                for a in o.get("addons", []))
+            headline = html.escape(o.get("headline") or "")
+            h1 = (f'<h1 style="font-size:clamp(36px,5.5vw,60px)">{headline}</h1>' if headline else
+                  f'<h1 style="font-size:clamp(40px,6vw,64px)">Thank you. <span class="grad">Here\'s {html.escape(o["name"])}.</span></h1>')
             body = f"""<div class="wrap hero narrow">
   <p class="eyebrow">Payment received</p>
-  <h1 style="font-size:clamp(40px,6vw,64px)">Thank you. <span class="grad">Here's {html.escape(o['name'])}.</span></h1>
+  {h1}
   <p class="lead">Download your files below. Bookmark this page so you can come back to it. A receipt is on its way to your email.</p>
   <p class="muted" id="emailed" hidden></p>
+  {o.get("extra_html", "")}
   <div class="kit-list" style="margin-top:32px">
 {links}
   </div>
+  {addons}
   <div class="tile stack" style="margin-top:24px">
     <p class="label">How to start</p>
     <p style="color:var(--fg)">{html.escape(o['start'])}</p>
   </div>
+  {o.get("after_html", "")}
   <div class="tile hi stack" style="margin-top:16px">
     <p class="label">Keep going</p>
     <h3>Get every tool, plus the monthly call.</h3>
@@ -179,17 +221,21 @@ def delivery_pages(products):
 </div>
 <script>
 (function(){{
-  var s=new URLSearchParams(location.search).get('session_id');
+  var q=new URLSearchParams(location.search), s=q.get('session_id');
+  if(q.get('guide')==='locked'){{var g=document.getElementById('emailed');g.textContent='To open the leader guide, use the link in your "Your download" email (or the page you reached right after checkout).';g.hidden=false;}}
   if(!s) return;
   document.querySelectorAll('a.dl').forEach(function(a){{a.href+='&s='+encodeURIComponent(s);}});
   if(!window.fetch) return;
   fetch('/api/purchase',{{method:'POST',headers:{{'content-type':'application/json'}},body:JSON.stringify({{o:'{o["key"]}',s:s}})}})
     .then(function(r){{return r.json();}}).then(function(d){{
       if(d.emailed){{var n=document.getElementById('emailed');n.textContent='We also emailed you a link to this page.';n.hidden=false;}}
+      (d.addons||[]).forEach(function(p){{document.querySelectorAll('.addon[data-price="'+p+'"]').forEach(function(el){{el.hidden=false;}});}});
     }}).catch(function(){{}});
 }})();
 </script>
 <div style="height:clamp(80px,12vw,140px)"></div>"""
+            if o.get("guide"):
+                pages.extend(guide_pages(o))
         pages.append((meta, body))
     return pages
 
@@ -227,7 +273,9 @@ def member_pages(products):
     MEMBERS_FOOT = MEMBERS_FOOT.replace("{portal}", cfg["portal"])
     labels = {**{k: v["label"] for k, v in products["files"].items()},
               **{k: v["label"] for k, v in club["step_files"].items()}}
-    lessons = club["lessons"]
+    ic_lessons = [{**l, "module": "The Inner Circle", "month": 1, "ic": True}
+                  for l in json.loads((ROOT / "club" / "more-lessons.json").read_text())["ic"]]
+    lessons = club["lessons"] + ic_lessons
     pages = []
     modules = []
     for l in lessons:
@@ -242,7 +290,8 @@ def member_pages(products):
             f'<div class="stack" style="gap:2px"><b>{html.escape(l["title"])}</b>'
             f'<span class="when">{"Open" if l["month"] == 1 else "Month " + str(l["month"])}</span></div><span class="p">›</span></a>'
             for l in ls)
-        secs.append(f'<section class="section tight"><div class="wrap narrow"><h2 class="mod">{html.escape(name)}</h2>'
+        ic_attr = ' data-ic hidden' if name == "The Inner Circle" else ""
+        secs.append(f'<section class="section tight"{ic_attr}><div class="wrap narrow"><h2 class="mod">{html.escape(name)}</h2>'
                     f'<div class="kit-list">\n{cards}\n    </div></div></section>')
     home = f"""<div class="wrap hero narrow">
   <p class="eyebrow">The Be The Man Club</p>
@@ -270,6 +319,7 @@ def member_pages(products):
       if(info.open){{w.textContent='Open';}} else {{w.textContent='Opens '+fmt(info.opens);a.classList.add('locked');a.removeAttribute('href');}}
     }});
     var p=document.querySelector('a.manage'); if(p&&d.email) p.href=d.portal+'?prefilled_email='+encodeURIComponent(d.email);
+    if(d.ic) document.querySelectorAll('[data-ic]').forEach(function(el){{el.hidden=false;}});
   }}).catch(function(){{}});
 }})();
 </script>
@@ -280,6 +330,8 @@ def member_pages(products):
     for i, l in enumerate(lessons):
         prev_l = lessons[i - 1] if i else None
         next_l = lessons[i + 1] if i + 1 < len(lessons) else None
+        if next_l and next_l.get("ic") and not l.get("ic"):
+            next_l = None  # don't lead Club members into the Inner Circle lessons
         files = ""
         if l["files"]:
             files = '<div class="kit-list" style="margin-top:28px">' + "".join(
@@ -338,10 +390,14 @@ def write_catalog(products):
     for l in club["lessons"]:
         for f in l["files"]:
             club_files.setdefault(f, l["month"])
-    club_js = {"plinks": list(cfg["plinks"].values()), "prices": cfg["prices"], "portal": cfg["portal"],
+    ic = cfg["inner_circle"]
+    club_js = {"plinks": list(cfg["plinks"].values()) + list(ic["plinks"].values()), "prices": cfg["prices"],
+               "ic_prices": list(ic["prices"].values()), "ic_group": ic["mailerlite_group"], "portal": cfg["portal"],
                "mailerlite": cfg["mailerlite"], "files": club_files,
                "lessons": {l["slug"]: l["month"] for l in club["lessons"] if l["month"] > 1}}
-    offers = {o["key"]: {"plink": o["stripe_plink"], "files": o["files"], "slug": o["slug"], "name": o["name"]}
+    offers = {o["key"]: {"plink": o["stripe_plink"], "files": o["files"], "slug": o["slug"], "name": o["name"],
+                         "addons": [{"price": a["price"], "files": a["files"]} for a in o.get("addons", [])],
+                         "group": o.get("ml_group"), "guide": bool(o.get("guide"))}
               for o in products["offers"]}
     (ROOT.parent / "functions" / "_catalog.js").write_text(
         "// Generated by web/build.py from web/products.json. Do not edit by hand.\n"

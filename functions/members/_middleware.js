@@ -14,6 +14,9 @@ export async function onRequest(context) {
     return new Response(null, { status: 302, headers: { location: to.toString(), "set-cookie": clearCookie } });
   }
   const m = url.pathname.match(/^\/members\/([^/]+)\/?/);
+  if (m && m[1].startsWith("inner-circle") && !member.ic) {
+    return Response.redirect(new URL("/members/?locked=inner-circle", url).toString(), 302);
+  }
   const month = m && CLUB.lessons[m[1]];
   if (month && month > monthsOpen(member)) {
     return Response.redirect(new URL("/members/?locked=" + m[1], url).toString(), 302);

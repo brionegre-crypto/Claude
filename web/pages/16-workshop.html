@@ -1,0 +1,81 @@
+---
+{
+ "path": "/workshop/",
+ "crumb": "Fix Your Wednesday",
+ "person": true,
+ "priority": "0.7",
+ "title": "Fix Your Wednesday: Live Workshop for Christian Men, Oct 25 | Be The Man",
+ "description": "A one-hour live workshop on Google Meet, Sunday October 25, 7:00 PM Central. Leave with one sentence, one goal with a date, and your first weekly Scorecard. $27.",
+ "schema": [
+  {"@type": "Event", "name": "Fix Your Wednesday: live workshop", "startDate": "2026-10-25T19:00:00-05:00", "endDate": "2026-10-25T20:00:00-05:00",
+   "eventAttendanceMode": "https://schema.org/OnlineEventAttendanceMode", "eventStatus": "https://schema.org/EventScheduled",
+   "location": {"@type": "VirtualLocation", "url": "https://bethemansystem.com/workshop/"},
+   "organizer": {"@id": "https://bethemansystem.com/#org"}, "performer": {"@id": "https://bethemansystem.com/about/#brian"},
+   "description": "Most men start Monday strong and lose the week by Wednesday. In one hour we fix that together.",
+   "offers": {"@type": "Offer", "price": "27.00", "priceCurrency": "USD", "url": "https://bethemansystem.com/workshop/", "availability": "https://schema.org/InStock"}}
+ ]
+}
+---
+<div class="wrap hero">
+  <p class="eyebrow">$27 · Live on Google Meet</p>
+  <h1>Fix Your <span class="grad">Wednesday.</span></h1>
+  <p class="lead">Sunday, October 25, 7:00 to 8:00 PM Central. Most men start Monday strong and lose the week by Wednesday. In one hour we fix that together.</p>
+  <div class="actions" id="buy">
+    <a class="btn btn-primary btn-lg" href="https://buy.stripe.com/4gM3cw8zV1XT9ll2ja6kg0h">Reserve my spot, $27</a>
+    <span class="muted">Can't make it live? Every ticket includes the recording.</span>
+  </div>
+</div>
+
+<section class="section tight">
+  <div class="wrap">
+    <div class="grid-2">
+      <div class="tile stack">
+        <p class="label">You leave with</p>
+        <ul class="check">
+          <li>One sentence naming the man you are becoming</li>
+          <li>One goal with a date and a time</li>
+          <li>Your first weekly Scorecard</li>
+        </ul>
+      </div>
+      <div class="tile stack">
+        <p class="label">Included with your ticket</p>
+        <ul class="check">
+          <li>The Step 1 worksheet and the Weekly Scorecard, PDF and spreadsheet</li>
+          <li>The Meet link, emailed right away and again on the day</li>
+          <li>The recording, within 48 hours</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section tight">
+  <div class="wrap">
+    <div class="tile hi price-card">
+      <div class="stack">
+        <p class="label">Add at checkout</p>
+        <h3>The Complete Library, $49 with your ticket.</h3>
+        <p>Every tool in the store in one download: the Godly Husband and Father's Field Guides, the Marriage Workbook, the Husband's Devotional, the Bible Study, the Discipleship Workbook, the Prayer Strategy, all three card decks and the trackers. Tick the box on the checkout page.</p>
+      </div>
+      <div class="actions" style="flex-direction:column;align-items:stretch">
+        <a class="btn btn-primary" href="https://buy.stripe.com/4gM3cw8zV1XT9ll2ja6kg0h">Reserve my spot</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section tight">
+  <div class="wrap narrow">
+    <p class="muted center">Bring a pen and the Step 1 worksheet. Want to do this over six weeks with other men? See <a class="textlink" href="/group/">the 6-week group</a>.</p>
+  </div>
+</section>
+<div style="height:60px"></div>
+<script>
+(function(){
+  // After the workshop ends, point people to the 6-week group instead.
+  if(Date.now()>Date.UTC(2026,9,26,1)){
+    document.querySelectorAll('a[href*="buy.stripe.com/4gM3cw8zV1XT9ll2ja6kg0h"]').forEach(function(a){a.href='/group/';a.textContent='See the 6-week group';});
+    var l=document.querySelector('.hero .lead'); if(l) l.textContent='This workshop took place on October 25. The next step is the 6-week group, or start free with Step 1.';
+  }
+})();
+</script>

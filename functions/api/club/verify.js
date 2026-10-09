@@ -10,6 +10,6 @@ export async function onRequestGet({ request, env }) {
   const sub = await clubSubscription(env, t.c);
   if (!sub) return Response.redirect(new URL("/club-login/?ended=1", url).toString(), 302);
   const next = (url.searchParams.get("next") || "").startsWith("/members/") ? url.searchParams.get("next") : "/members/";
-  const cookie = await sessionCookie(env, { email: t.e, customer: t.c, start: sub.start, yearly: sub.yearly });
+  const cookie = await sessionCookie(env, { email: t.e, customer: t.c, start: sub.start, yearly: sub.yearly, ic: sub.ic });
   return new Response(null, { status: 302, headers: { location: new URL(next, url).toString(), "set-cookie": cookie, "cache-control": "no-store" } });
 }

@@ -24,5 +24,21 @@
   "yearly": "https://go.bethemansystem.com/f05699c8"
  },
  "live": true,
- "_live_note": "true since 2026-10-08: Join buttons use the Stripe Payment Links. Set false to fall back to the systeme checkout."
+ "_live_note": "true since 2026-10-08: Join buttons use the Stripe Payment Links. Set false to fall back to the systeme checkout.",
+ "inner_circle": {
+  "product": "prod_VPSyQfHE2A27KJ",
+  "prices": {
+   "founding": "price_1UOe3AIJyHMhQ40vb6xVW5jA",
+   "monthly": "price_1UOe3BIJyHMhQ40vjMfd5Mm0",
+   "yearly": "price_1UOe3BIJyHMhQ40vYUxLDnfr"
+  },
+  "plinks": {
+   "founding": "plink_1UOe3sIJyHMhQ40vMPTLFbur"
+  },
+  "links": {
+   "founding": "https://buy.stripe.com/fZudRa2bx7id8hh4ri6kg0l"
+  },
+  "mailerlite_group": "200858236120728686",
+  "_note": "Founding link is capped at 8 sales. Brian sends it after the application call. $297/mo and $2,970/yr prices exist; make Payment Links for them when founding closes."
+ }
 }

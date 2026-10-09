@@ -97,7 +97,10 @@ export const OFFERS = {
    "scorecard_xlsx"
   ],
   "slug": "scorecard-lnxtejvx",
-  "name": "The Weekly Scorecard"
+  "name": "The Weekly Scorecard",
+  "addons": [],
+  "group": null,
+  "guide": false
  },
  "husband-guide": {
   "plink": "plink_1UNzYWIJyHMhQ40vXFIPyZpZ",
@@ -106,7 +109,10 @@ export const OFFERS = {
    "husband_xlsx"
   ],
   "slug": "husband-guide-coaukruz",
-  "name": "The Godly Husband Field Guide"
+  "name": "The Godly Husband Field Guide",
+  "addons": [],
+  "group": null,
+  "guide": false
  },
  "marriage-workbook": {
   "plink": "plink_1UNzYZIJyHMhQ40vqAW9bisH",
@@ -114,7 +120,10 @@ export const OFFERS = {
    "marriage_pdf"
   ],
   "slug": "marriage-workbook-ojd7cel2",
-  "name": "The Christian Marriage Workbook for Men"
+  "name": "The Christian Marriage Workbook for Men",
+  "addons": [],
+  "group": null,
+  "guide": false
  },
  "devotional": {
   "plink": "plink_1UNzYbIJyHMhQ40vYTX9wQDd",
@@ -122,7 +131,10 @@ export const OFFERS = {
    "devotional_pdf"
   ],
   "slug": "devotional-uwfdnzsj",
-  "name": "The Husband's Devotional: 30 Mornings"
+  "name": "The Husband's Devotional: 30 Mornings",
+  "addons": [],
+  "group": null,
+  "guide": false
  },
  "father-guide": {
   "plink": "plink_1UNzYdIJyHMhQ40vFdO92TJ5",
@@ -131,7 +143,10 @@ export const OFFERS = {
    "father_xlsx"
   ],
   "slug": "father-guide-jnrvfbvb",
-  "name": "The Father's Field Guide"
+  "name": "The Father's Field Guide",
+  "addons": [],
+  "group": null,
+  "guide": false
  },
  "father-son-cards": {
   "plink": "plink_1UNzYkIJyHMhQ40vfFvt2pwf",
@@ -139,7 +154,10 @@ export const OFFERS = {
    "fatherson_pdf"
   ],
   "slug": "father-son-cards-f2gken5w",
-  "name": "Father and Son Conversation Cards"
+  "name": "Father and Son Conversation Cards",
+  "addons": [],
+  "group": null,
+  "guide": false
  },
  "bible-study": {
   "plink": "plink_1UNzYsIJyHMhQ40vuXW1SFcZ",
@@ -147,7 +165,10 @@ export const OFFERS = {
    "bible_pdf"
   ],
   "slug": "bible-study-edzfbhfw",
-  "name": "The Men's Bible Study: Eight Weeks"
+  "name": "The Men's Bible Study: Eight Weeks",
+  "addons": [],
+  "group": null,
+  "guide": false
  },
  "discipleship-workbook": {
   "plink": "plink_1UNzYuIJyHMhQ40v50j1mOnh",
@@ -156,7 +177,10 @@ export const OFFERS = {
    "disc_xlsx"
   ],
   "slug": "discipleship-workbook-3mxy3iuy",
-  "name": "The Men's Discipleship Workbook"
+  "name": "The Men's Discipleship Workbook",
+  "addons": [],
+  "group": null,
+  "guide": false
  },
  "prayer-strategy": {
   "plink": "plink_1UNzYxIJyHMhQ40v1CmdNBu1",
@@ -164,7 +188,10 @@ export const OFFERS = {
    "prayer_pdf"
   ],
   "slug": "prayer-strategy-fyrdnigm",
-  "name": "The Prayer Strategy for Men"
+  "name": "The Prayer Strategy for Men",
+  "addons": [],
+  "group": null,
+  "guide": false
  },
  "forty-cards": {
   "plink": "plink_1UNzYzIJyHMhQ40vDfV43yT7",
@@ -172,7 +199,10 @@ export const OFFERS = {
    "forty_pdf"
   ],
   "slug": "forty-cards-geqjmizi",
-  "name": "Forty Cards for Men"
+  "name": "Forty Cards for Men",
+  "addons": [],
+  "group": null,
+  "guide": false
  },
  "husband-kit": {
   "plink": "plink_1UNzZ7IJyHMhQ40v4R7xQq7M",
@@ -184,7 +214,10 @@ export const OFFERS = {
    "couples_pdf"
   ],
   "slug": "husband-kit-soj4aqgs",
-  "name": "The Husband Kit"
+  "name": "The Husband Kit",
+  "addons": [],
+  "group": null,
+  "guide": false
  },
  "father-kit": {
   "plink": "plink_1UNzajIJyHMhQ40v1aO61gpY",
@@ -194,7 +227,10 @@ export const OFFERS = {
    "fatherson_pdf"
   ],
   "slug": "father-kit-1klcffxh",
-  "name": "The Father Kit"
+  "name": "The Father Kit",
+  "addons": [],
+  "group": null,
+  "guide": false
  },
  "faith-kit": {
   "plink": "plink_1UNzapIJyHMhQ40v6iCVcCIV",
@@ -205,7 +241,10 @@ export const OFFERS = {
    "prayer_pdf"
   ],
   "slug": "faith-kit-dz9xsaqw",
-  "name": "The Faith Kit"
+  "name": "The Faith Kit",
+  "addons": [],
+  "group": null,
+  "guide": false
  },
  "library": {
   "plink": "plink_1UNzb9IJyHMhQ40veB5olTGF",
@@ -227,24 +266,134 @@ export const OFFERS = {
    "forty_pdf"
   ],
   "slug": "library-zjcdznwk",
-  "name": "The Complete Be The Man Library"
+  "name": "The Complete Be The Man Library",
+  "addons": [],
+  "group": null,
+  "guide": false
  },
  "couples": {
   "plink": "plink_1UNzbHIJyHMhQ40vQv4YF1tj",
   "files": [],
   "slug": "couples-m7pwwkaj",
-  "name": "Couples counseling: three sessions"
+  "name": "Couples counseling: three sessions",
+  "addons": [],
+  "group": null,
+  "guide": false
+ },
+ "workshop": {
+  "plink": "plink_1UOe3oIJyHMhQ40vMWWwfACO",
+  "files": [
+   "step1_pdf",
+   "scorecard_pdf",
+   "scorecard_xlsx"
+  ],
+  "slug": "workshop-kvg89016",
+  "name": "Fix Your Wednesday: live workshop",
+  "addons": [
+   {
+    "price": "price_1UOe2wIJyHMhQ40vNE93gDiC",
+    "files": [
+     "scorecard_pdf",
+     "scorecard_xlsx",
+     "husband_pdf",
+     "husband_xlsx",
+     "marriage_pdf",
+     "devotional_pdf",
+     "couples_pdf",
+     "father_pdf",
+     "father_xlsx",
+     "fatherson_pdf",
+     "bible_pdf",
+     "disc_pdf",
+     "disc_xlsx",
+     "prayer_pdf",
+     "forty_pdf"
+    ]
+   }
+  ],
+  "group": "200858233966953886",
+  "guide": false
+ },
+ "group": {
+  "plink": "plink_1UOe3pIJyHMhQ40vt2PgnYe3",
+  "files": [
+   "scorecard_pdf",
+   "scorecard_xlsx",
+   "husband_pdf",
+   "husband_xlsx",
+   "marriage_pdf",
+   "devotional_pdf",
+   "couples_pdf",
+   "father_pdf",
+   "father_xlsx",
+   "fatherson_pdf",
+   "bible_pdf",
+   "disc_pdf",
+   "disc_xlsx",
+   "prayer_pdf",
+   "forty_pdf"
+  ],
+  "slug": "group-2s871ok2",
+  "name": "The 6-week group",
+  "addons": [],
+  "group": "200858234702006225",
+  "guide": false
+ },
+ "ministry-kit": {
+  "plink": "plink_1UOe3qIJyHMhQ40v88VLEnFG",
+  "files": [
+   "step1_pdf",
+   "step2_pdf",
+   "step3_pdf",
+   "step4_pdf",
+   "step5_pdf",
+   "step6_pdf",
+   "step7_pdf",
+   "scorecard_pdf",
+   "scorecard_xlsx"
+  ],
+  "slug": "ministry-kit-bwiuh7ba",
+  "name": "The men's ministry kit",
+  "addons": [],
+  "group": "200858235440203345",
+  "guide": true
+ },
+ "system": {
+  "plink": "plink_1UOe3rIJyHMhQ40vEtq5ZL0O",
+  "files": [
+   "step1_pdf",
+   "step2_pdf",
+   "step3_pdf",
+   "step4_pdf",
+   "step5_pdf",
+   "step6_pdf",
+   "step7_pdf",
+   "scorecard_pdf",
+   "scorecard_xlsx"
+  ],
+  "slug": "system-uqn297ax",
+  "name": "The Be The Man System",
+  "addons": [],
+  "group": null,
+  "guide": false
  }
 };
 export const CLUB = {
  "plinks": [
   "plink_1UOELMIJyHMhQ40viCMV3UFe",
-  "plink_1UOELQIJyHMhQ40vIRTFPTbD"
+  "plink_1UOELQIJyHMhQ40vIRTFPTbD",
+  "plink_1UOe3sIJyHMhQ40vMPTLFbur"
  ],
  "prices": {
   "monthly": "price_1UOELDIJyHMhQ40vrMP26SAG",
   "yearly": "price_1UOELGIJyHMhQ40v3ZjwH3Qn"
  },
+ "ic_prices": [
+  "price_1UOe3AIJyHMhQ40vb6xVW5jA",
+  "price_1UOe3BIJyHMhQ40vjMfd5Mm0",
+  "price_1UOe3BIJyHMhQ40vYUxLDnfr"
+ ],
+ "ic_group": "200858236120728686",
  "portal": "https://billing.stripe.com/p/login/3cIfZi17t31X0OPga06kg00",
  "mailerlite": {
   "members": "200754586620789990",

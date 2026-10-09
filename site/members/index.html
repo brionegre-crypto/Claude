@@ -119,6 +119,9 @@
       <a class="kit lesson" href="/members/month-6/" data-month="6"><div class="stack" style="gap:2px"><b>Month 6: the Men&#x27;s Bible Study and the Discipleship Workbook</b><span class="when">Month 6</span></div><span class="p">›</span></a>
     </div></div></section><section class="section tight"><div class="wrap narrow"><h2 class="mod">The call and your partner</h2><div class="kit-list">
       <a class="kit lesson" href="/members/call/" data-month="1"><div class="stack" style="gap:2px"><b>The monthly live call and your accountability partner</b><span class="when">Open</span></div><span class="p">›</span></a>
+    </div></div></section><section class="section tight" data-ic hidden><div class="wrap narrow"><h2 class="mod">The Inner Circle</h2><div class="kit-list">
+      <a class="kit lesson" href="/members/inner-circle-how/" data-month="1"><div class="stack" style="gap:2px"><b>How the Inner Circle works</b><span class="when">Open</span></div><span class="p">›</span></a>
+      <a class="kit lesson" href="/members/inner-circle-30-days/" data-month="1"><div class="stack" style="gap:2px"><b>Your first 30 days</b><span class="when">Open</span></div><span class="p">›</span></a>
     </div></div></section>
 <section class="section tight"><div class="wrap narrow">
   <div class="tile hi stack">
@@ -139,6 +142,7 @@
       if(info.open){w.textContent='Open';} else {w.textContent='Opens '+fmt(info.opens);a.classList.add('locked');a.removeAttribute('href');}
     });
     var p=document.querySelector('a.manage'); if(p&&d.email) p.href=d.portal+'?prefilled_email='+encodeURIComponent(d.email);
+    if(d.ic) document.querySelectorAll('[data-ic]').forEach(function(el){el.hidden=false;});
   }).catch(function(){});
 })();
 </script>

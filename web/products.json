@@ -76,7 +76,8 @@
     "scorecard_xlsx"
    ],
    "start": "Print one sheet a week. Fill it in Sunday night: every commitment, every day, kept or missed. Share it with one other man.",
-   "stripe_plink": "plink_1UNzYUIJyHMhQ40v5Zv5UDtG"
+   "stripe_plink": "plink_1UNzYUIJyHMhQ40v5Zv5UDtG",
+   "after_html": "<div class=\"tile stack\" style=\"margin-top:16px\"><p class=\"label\">Want the whole framework?</p><h3>The Be The Man System, $97.</h3><p>All seven step worksheets in order, plus the Scorecard you just bought. One step a week, and by week seven you have a system that holds.</p><div class=\"actions\"><a class=\"btn btn-ghost\" href=\"https://buy.stripe.com/5kQ3cw7vR9ql2WXe1S6kg0k\">Get the System, $97</a></div></div>"
   },
   {
    "key": "husband-guide",
@@ -297,6 +298,123 @@
    "files": [],
    "start": "",
    "stripe_plink": "plink_1UNzbHIJyHMhQ40vQv4YF1tj"
+  },
+  {
+   "key": "workshop",
+   "name": "Fix Your Wednesday: live workshop",
+   "price": "27",
+   "systeme_link": "https://go.bethemansystem.com/f0217426",
+   "stripe_link": "https://buy.stripe.com/4gM3cw8zV1XT9ll2ja6kg0h",
+   "stripe_plink": "plink_1UOe3oIJyHMhQ40vMWWwfACO",
+   "slug": "workshop-kvg89016",
+   "files": [
+    "step1_pdf",
+    "scorecard_pdf",
+    "scorecard_xlsx"
+   ],
+   "start": "Print the Step 1 worksheet and bring a pen on Sunday, October 25. Pen, not phone.",
+   "ml_group": "200858233966953886",
+   "addons": [
+    {
+     "price": "price_1UOe2wIJyHMhQ40vNE93gDiC",
+     "label": "The Complete Library",
+     "files": [
+      "scorecard_pdf",
+      "scorecard_xlsx",
+      "husband_pdf",
+      "husband_xlsx",
+      "marriage_pdf",
+      "devotional_pdf",
+      "couples_pdf",
+      "father_pdf",
+      "father_xlsx",
+      "fatherson_pdf",
+      "bible_pdf",
+      "disc_pdf",
+      "disc_xlsx",
+      "prayer_pdf",
+      "forty_pdf"
+     ]
+    }
+   ],
+   "headline": "You're in. Sunday, October 25, 7:00 PM Central.",
+   "extra_html": "<div class=\"tile hi stack\" style=\"margin-top:24px\"><p class=\"label\">Where</p><p style=\"color:var(--fg)\">Google Meet, 7:00 to 8:00 PM Central: <a class=\"textlink\" href=\"https://meet.google.com/mdt-djbx-kfo\">meet.google.com/mdt-djbx-kfo</a>. Put it on your calendar now. A commitment without a time is just an intention.</p><p>We'll email the link again on the day. You leave with one sentence naming the man you are becoming, one goal with a date, and your first weekly Scorecard. Can't make it live? The recording is emailed to you within 48 hours.</p></div>"
+  },
+  {
+   "key": "group",
+   "name": "The 6-week group",
+   "price": "147",
+   "systeme_link": "https://go.bethemansystem.com/b1c774c0",
+   "stripe_link": "https://buy.stripe.com/6oUbJ2dUfgSN7dd1f66kg0i",
+   "stripe_plink": "plink_1UOe3pIJyHMhQ40vt2PgnYe3",
+   "slug": "group-2s871ok2",
+   "files": [
+    "scorecard_pdf",
+    "scorecard_xlsx",
+    "husband_pdf",
+    "husband_xlsx",
+    "marriage_pdf",
+    "devotional_pdf",
+    "couples_pdf",
+    "father_pdf",
+    "father_xlsx",
+    "fatherson_pdf",
+    "bible_pdf",
+    "disc_pdf",
+    "disc_xlsx",
+    "prayer_pdf",
+    "forty_pdf"
+   ],
+   "start": "Start with the Weekly Scorecard and Step 1 before November 15. Everything else is yours to keep.",
+   "ml_group": "200858234702006225",
+   "headline": "Your seat is held. Sundays from November 15.",
+   "extra_html": "<div class=\"tile hi stack\" style=\"margin-top:24px\"><p class=\"label\">When and where</p><p style=\"color:var(--fg)\">Google Meet, Sundays 7:00 to 8:00 PM Central, November 15 to December 20. Brian will email you the group's Meet link before the first Sunday.</p><p>Your Complete Library is below, yours to keep.</p></div>"
+  },
+  {
+   "key": "ministry-kit",
+   "name": "The men's ministry kit",
+   "price": "199",
+   "systeme_link": "https://go.bethemansystem.com/6aa4411c",
+   "stripe_link": "https://buy.stripe.com/14AdRa17tbyt6995vm6kg0j",
+   "stripe_plink": "plink_1UOe3qIJyHMhQ40v88VLEnFG",
+   "slug": "ministry-kit-bwiuh7ba",
+   "files": [
+    "step1_pdf",
+    "step2_pdf",
+    "step3_pdf",
+    "step4_pdf",
+    "step5_pdf",
+    "step6_pdf",
+    "step7_pdf",
+    "scorecard_pdf",
+    "scorecard_xlsx"
+   ],
+   "start": "Read the setup lesson in the leader guide first. Then print one worksheet per man for each night; men start the Scorecard at session 4, so print about eight per man.",
+   "ml_group": "200858235440203345",
+   "guide": true,
+   "headline": "Your men's ministry kit is ready.",
+   "extra_html": "<div class=\"tile hi stack\" style=\"margin-top:24px\"><p class=\"label\">Start with the leader guide</p><p style=\"color:var(--fg)\">Seven sessions with a timed plan, what to say, discussion questions and the worksheet for each night. Read the setup lesson first.</p><div class=\"actions\"><a class=\"btn btn-primary guide-link\" href=\"guide/\">Open the leader guide</a></div><p class=\"fine\">Your licence covers printing for every man in every group your ministry runs. Please keep these links inside your ministry.</p></div>"
+  },
+  {
+   "key": "system",
+   "name": "The Be The Man System",
+   "price": "97",
+   "systeme_link": "https://go.bethemansystem.com/1745f8e9",
+   "stripe_link": "https://buy.stripe.com/5kQ3cw7vR9ql2WXe1S6kg0k",
+   "stripe_plink": "plink_1UOe3rIJyHMhQ40vEtq5ZL0O",
+   "slug": "system-uqn297ax",
+   "files": [
+    "step1_pdf",
+    "step2_pdf",
+    "step3_pdf",
+    "step4_pdf",
+    "step5_pdf",
+    "step6_pdf",
+    "step7_pdf",
+    "scorecard_pdf",
+    "scorecard_xlsx"
+   ],
+   "start": "One step a week, in order, starting with Step 1. Put your Sunday review on the calendar before you begin."
   }
  ]
 }

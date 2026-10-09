@@ -66,8 +66,11 @@ export async function clubSubscription(env, customerId) {
   const list = await stripe(env, `/subscriptions?customer=${encodeURIComponent(customerId)}&status=all&limit=20`);
   for (const s of (list && list.data) || []) {
     if (!["active", "trialing", "past_due"].includes(s.status)) continue;
-    const item = ((s.items && s.items.data) || []).find((i) => i.price && Object.values(CLUB.prices).includes(i.price.id));
-    if (item) return { id: s.id, start: s.start_date, yearly: item.price.id === CLUB.prices.yearly };
+    const items = (s.items && s.items.data) || [];
+    const icItem = items.find((i) => i.price && (CLUB.ic_prices || []).includes(i.price.id));
+    if (icItem) return { id: s.id, start: s.start_date, yearly: true, ic: true };
+    const item = items.find((i) => i.price && Object.values(CLUB.prices).includes(i.price.id));
+    if (item) return { id: s.id, start: s.start_date, yearly: item.price.id === CLUB.prices.yearly, ic: false };
   }
   return null;
 }
@@ -77,7 +80,7 @@ export async function memberByEmail(env, email) {
   const list = await stripe(env, `/customers?email=${encodeURIComponent(email)}&limit=10`);
   for (const c of (list && list.data) || []) {
     const sub = await clubSubscription(env, c.id);
-    if (sub) return { customer: c.id, email: c.email || email, start: sub.start, yearly: sub.yearly };
+    if (sub) return { customer: c.id, email: c.email || email, start: sub.start, yearly: sub.yearly, ic: sub.ic };
   }
   return null;
 }
@@ -93,6 +96,7 @@ export async function sessionCookie(env, member) {
     c: member.customer,
     s: member.start,
     y: member.yearly ? 1 : 0,
+    i: member.ic ? 1 : 0,
     k: now(),
     x: now() + SESSION_DAYS * DAY,
   });
@@ -106,11 +110,11 @@ export const clearCookie = `${COOKIE}=; Path=/; Max-Age=0; HttpOnly; Secure; Sam
 export async function currentMember(request, env) {
   const data = await unsign(env, readCookie(request));
   if (!data) return { member: null };
-  let member = { email: data.e, customer: data.c, start: data.s, yearly: !!data.y };
+  let member = { email: data.e, customer: data.c, start: data.s, yearly: !!data.y, ic: !!data.i };
   if (now() - data.k < RECHECK) return { member };
   const sub = await clubSubscription(env, data.c);
   if (!sub) return { member: null, ended: true };
-  member = { ...member, start: sub.start, yearly: sub.yearly };
+  member = { ...member, start: sub.start, yearly: sub.yearly, ic: sub.ic };
   return { member, setCookie: await sessionCookie(env, member) };
 }
 

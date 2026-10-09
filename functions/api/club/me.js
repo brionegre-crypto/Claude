@@ -10,7 +10,7 @@ export async function onRequestGet({ request, env }) {
   const months = {};
   for (let m = 1; m <= 6; m++) months[m] = { open: m <= open, opens: opensAt(member, m) };
   return json(
-    { member: true, email: member.email, plan: member.yearly ? "yearly" : "monthly", months, portal: CLUB.portal },
+    { member: true, email: member.email, plan: member.ic ? "inner-circle" : member.yearly ? "yearly" : "monthly", ic: !!member.ic, months, portal: CLUB.portal },
     200,
     setCookie ? { "set-cookie": setCookie } : {}
   );

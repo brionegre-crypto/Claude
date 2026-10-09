@@ -27,6 +27,15 @@ Then tell Claude, who loads the email designs (pilot/emails/). Then activate all
 - Store: buy the $7 Scorecard → files download → "Your download" email arrives → refund.
 - Club: join monthly → you land in /members/ → sign out → sign in from /members with your email → refund and cancel in Stripe.
 - Couples: send an inquiry from /couples/ → alert email reaches brian@.
+- Free call: send a request from /call/ → alert email reaches brian@ (the note shows on the phone line).
+- Workshop: buy the $27 ticket → page shows the Meet link and files → "Your downloads" email arrives → refund.
+- Ministry kit: buy it → leader guide opens at /get/ministry-kit-bwiuh7ba/guide/ → refund.
+
+## 6. From the "move it all" (2026-10-09), see moved-everything.md
+- MailerLite → Automations → "7-week challenge welcome" → Activate.
+- Inner Circle: after an accepted call, send the founding link https://buy.stripe.com/fZudRa2bx7id8hh4ri6kg0l (8 seats, $197/mo).
+- After the workshop (Oct 25): deactivate its Stripe link, email the recording to the "Workshop" group.
+- When you cancel systeme: Cloudflare Pages → bethemansystem → Custom domains → add go.bethemansystem.com, so every old link redirects.
 
 ## Recommended
 - Make the GitHub repo private (GitHub → brionegre-crypto/Claude → Settings → Danger zone → Change visibility).

@@ -1,0 +1,50 @@
+---
+{
+ "path": "/call/",
+ "crumb": "Free call",
+ "person": true,
+ "noindex": true,
+ "title": "Book a Free 15-Minute Call With Brian Greene | Be The Man",
+ "description": "Tell Brian where you're stuck. He'll reply within one business day with a time for a free 15-minute call."
+}
+---
+<div class="wrap hero narrow">
+  <p class="eyebrow">Free · 15 minutes</p>
+  <h1 style="font-size:clamp(40px,6vw,64px)">Where are <span class="grad">you stuck?</span></h1>
+  <p class="lead">Leave your details and the best times to reach you. Brian replies within one business day to set a time, Monday to Thursday evenings, 7:00 to 9:00 PM Central. He calls you.</p>
+  <div class="tile" style="margin-top:28px">
+    <form class="signup" id="callf" action="/api/inquiry" method="post" novalidate>
+      <input type="hidden" name="type" value="call">
+      <label class="sr-only" for="cf-name">Your name</label>
+      <input id="cf-name" name="name" type="text" autocomplete="name" placeholder="Your name" required>
+      <label class="sr-only" for="cf-email">Email</label>
+      <input id="cf-email" name="email" type="email" autocomplete="email" inputmode="email" placeholder="Email" required>
+      <label class="sr-only" for="cf-phone">Phone</label>
+      <input id="cf-phone" name="phone" type="tel" autocomplete="tel" placeholder="Phone number">
+      <label class="sr-only" for="cf-note">What you want to talk about, and good times</label>
+      <input id="cf-note" name="note" type="text" placeholder="What's on your mind, and good times to call">
+      <div class="hp" aria-hidden="true"><label for="cf-company">Company</label><input id="cf-company" name="company" tabindex="-1" autocomplete="off"></div>
+      <button class="btn btn-primary btn-lg btn-block" type="submit">Request my call</button>
+      <p class="signup-msg" id="cf-msg" role="alert" hidden></p>
+    </form>
+  </div>
+  <p class="fine" style="margin-top:16px">Applying for the Inner Circle, or asking about the group or the ministry kit? Say so in the note.</p>
+</div>
+<div style="height:clamp(80px,12vw,140px)"></div>
+<script>
+(function(){
+  var f=document.getElementById('callf'); if(!f||!window.fetch) return;
+  var msg=document.getElementById('cf-msg'), btn=f.querySelector('button');
+  f.addEventListener('submit',function(e){
+    e.preventDefault();
+    var name=f.name.value.trim(), email=f.email.value.trim();
+    if(!name){msg.textContent='Please add your name.';msg.hidden=false;return;}
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)){msg.textContent='Please enter a valid email address.';msg.hidden=false;return;}
+    btn.disabled=true; btn.textContent='Sending…'; msg.hidden=true;
+    fetch('/api/inquiry',{method:'POST',headers:{'content-type':'application/json',accept:'application/json'},body:JSON.stringify({type:'call',name:name,email:email,phone:f.phone.value.trim(),note:f.note.value.trim(),company:f.company.value})})
+      .then(function(r){return r.json().catch(function(){return {};});})
+      .then(function(d){ if(d.redirect){location.href=d.redirect;return;} msg.textContent=d.error||'Something went wrong. Please try again.';msg.hidden=false;btn.disabled=false;btn.textContent='Request my call'; })
+      .catch(function(){f.submit();});
+  });
+})();
+</script>
