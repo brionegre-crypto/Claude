@@ -1,0 +1,33 @@
+---
+{
+ "path": "/7-week-challenge/thanks/",
+ "bare": true,
+ "noindex": true,
+ "title": "You're in: the 7-week challenge | Be The Man",
+ "description": "You're in the 7-week challenge."
+}
+---
+<div class="wrap">
+  <div class="lp" style="text-align:center">
+    <a class="logo" href="/" style="justify-self:center">BE <span>THE MAN</span></a>
+    <h1>You're in. <span class="grad">Week one starts October 20.</span></h1>
+    <p class="lead">Your welcome email is on its way from Brian Greene (brian@bethemansystem.com). It has your first step, so you can start before week one. If it isn't in your inbox in two minutes, check Promotions or Spam and drag it across.</p>
+    <div class="tile lp-card" style="text-align:left">
+      <p class="label" style="color:var(--accent)">Now pick your brother</p>
+      <p style="color:var(--fg)">Send this link to one man you trust and ask him to do it with you:</p>
+      <p><b style="color:var(--accent)">bethemansystem.com/7-week-challenge</b></p>
+      <button class="btn btn-primary btn-block" id="share" type="button">Share the link</button>
+      <p class="muted">Once a week, text each other one word: done, or missed. No speeches. Just the word.</p>
+    </div>
+    <p class="fine">Brian</p>
+  </div>
+</div>
+<script>
+(function(){
+  var b=document.getElementById('share'), url='https://bethemansystem.com/7-week-challenge/';
+  b.onclick=function(){
+    if(navigator.share){navigator.share({title:'The 7-week challenge',text:'Do this with me: one email, one action a week for seven weeks.',url:url}).catch(function(){});}
+    else if(navigator.clipboard){navigator.clipboard.writeText(url).then(function(){b.textContent='Link copied';});}
+  };
+})();
+</script>

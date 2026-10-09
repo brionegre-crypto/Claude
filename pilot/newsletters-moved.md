@@ -31,3 +31,15 @@ Framework campaign steps 2-7 stay inactive; step 1 stays active for anyone who s
 ## Watch
 MailerLite's free plan (after the trial) may not include the custom HTML editor. Already-built emails should still
 send; if MailerLite flags them after the trial, upgrade or rebuild in the drag-and-drop editor.
+
+## 7-week challenge (moved 2026-10-09)
+- Page: https://bethemansystem.com/7-week-challenge/ (short links /challenge, /7-weeks). Thank-you: /7-week-challenge/thanks/.
+  After Dec 1 the form switches itself to a "this round has finished, get Step 1" message.
+- Sign-ups: /api/subscribe with list "challenge" → MailerLite group "7-week challenge" (200854988516230789).
+  If MailerLite fails, visitors go to the old systeme page (42f82c9e).
+- Welcome email: automation "7-week challenge welcome" (200855011081586559). NEEDS BRIAN TO CLICK ACTIVATE.
+- Weekly emails: 7 campaigns to that group, Tuesdays 6:00 AM Central, Oct 20 to Dec 1 (scheduled, verified).
+  Fixes: Step 1 PDF and share link point to the site; Club and Scorecard links point to the site.
+  The 6-week group link in Week 3 still goes to its systeme checkout (b1c774c0), which is still live.
+- systeme: nobody had signed up there (0 contacts with the tag). Its 7 challenge emails stay scheduled only as a
+  safety net for anyone who finds the old systeme page; they reach nobody unless someone signs up there.

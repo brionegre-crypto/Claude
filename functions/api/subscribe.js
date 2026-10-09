@@ -1,13 +1,15 @@
 // Cloudflare Pages Function: POST /api/subscribe
-// Adds a Step 1 sign-up to MailerLite (group "Step 1"), which starts the
-// "Step 1 welcome" automation. Needs the MAILERLITE_API_KEY secret set in
+// Adds a sign-up to MailerLite. Default list is Step 1 (group "Step 1", which
+// starts the "Step 1 welcome" automation); list "challenge" is the free
+// 7-week challenge (group "7-week challenge", "7-week challenge welcome"). Needs the MAILERLITE_API_KEY secret set in
 // Cloudflare (Workers & Pages -> bethemansystem -> Settings -> Variables and Secrets).
 // If the key is missing or MailerLite fails, the visitor is sent to the old
 // systeme.io sign-up so no sign-up is ever lost.
 
-const GROUP_ID = "200695507810518732"; // MailerLite group "Step 1"
-const FALLBACK = "https://go.bethemansystem.com/framework";
-const THANKS = "/step-1/thanks/";
+const LISTS = {
+  step1: { group: "200695507810518732", thanks: "/step-1/thanks/", fallback: "https://go.bethemansystem.com/framework" },
+  challenge: { group: "200854988516230789", thanks: "/7-week-challenge/thanks/", fallback: "https://go.bethemansystem.com/42f82c9e" },
+};
 
 function done(request, ok, url) {
   const wantsJson = (request.headers.get("accept") || "").includes("application/json");
@@ -32,6 +34,7 @@ export async function onRequestPost({ request, env }) {
 }
 
 async function handle(request, env, data) {
+  const { group: GROUP_ID, thanks: THANKS, fallback: FALLBACK } = Object.hasOwn(LISTS, data.list) ? LISTS[data.list] : LISTS.step1;
   const email = String(data.email || "").trim().toLowerCase();
   const name = String(data.name || "").trim().slice(0, 80);
   // Honeypot: real people never fill this hidden field.

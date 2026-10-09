@@ -1,0 +1,91 @@
+---
+{
+ "path": "/7-week-challenge/",
+ "bare": true,
+ "crumb": "7-week challenge",
+ "priority": "0.7",
+ "title": "The Free 7-Week Challenge for Christian Men | Be The Man",
+ "og_title": "The 7-week challenge: one email, one action a week",
+ "description": "A free 7-week challenge for Christian men, husbands and fathers who keep making the same promise. One email a week, one action with a time attached. Starts October 20.",
+ "schema": [
+  {"@type": "Event", "name": "The 7-week challenge", "eventAttendanceMode": "https://schema.org/OnlineEventAttendanceMode", "eventStatus": "https://schema.org/EventScheduled",
+   "startDate": "2026-10-20", "endDate": "2026-12-01", "isAccessibleForFree": true,
+   "location": {"@type": "VirtualLocation", "url": "https://bethemansystem.com/7-week-challenge/"},
+   "organizer": {"@id": "https://bethemansystem.com/#org"}, "performer": {"@id": "https://bethemansystem.com/about/#brian"},
+   "description": "Seven weeks, one email a week, one action with a time attached.",
+   "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD", "url": "https://bethemansystem.com/7-week-challenge/", "availability": "https://schema.org/InStock"}}
+ ]
+}
+---
+<div class="wrap">
+  <div class="lp">
+    <div class="lp-top">
+      <img class="avatar" src="/assets/brian.jpg" alt="" width="44" height="44">
+      <p><b>Brian Greene</b>Pastor · certified marriage counselor · father of three</p>
+    </div>
+
+    <p class="eyebrow" style="color:var(--accent)">Free · Starts October 20</p>
+    <h1>The 7-week <span class="grad">challenge.</span></h1>
+    <p class="lead">Seven weeks. One email a week. One action with a time attached, small enough to do that week. For Black Christian men, husbands and fathers who keep making the same promise.</p>
+
+    <div class="tile lp-card">
+      <p class="label" style="color:var(--accent)">The seven weeks</p>
+      <ul class="check">
+        <li>Oct 20: write one sentence about the man you're becoming</li>
+        <li>Oct 27: cut your goals down to three</li>
+        <li>Nov 3: name the one thing that keeps stopping you</li>
+        <li>Nov 10: give one goal a day and a time</li>
+        <li>Nov 17: write down what counts as a miss</li>
+        <li>Nov 24 and Dec 1: count it honestly, then put God at the center of it</li>
+      </ul>
+      <form class="signup" id="get" action="/api/subscribe" method="post" novalidate>
+        <input type="hidden" name="list" value="challenge">
+        <label class="sr-only" for="su-name">First name</label>
+        <input id="su-name" name="name" type="text" autocomplete="given-name" placeholder="First name" required>
+        <label class="sr-only" for="su-email">Email</label>
+        <input id="su-email" name="email" type="email" autocomplete="email" inputmode="email" placeholder="Your email" required>
+        <div class="hp" aria-hidden="true"><label for="su-company">Company</label><input id="su-company" name="company" tabindex="-1" autocomplete="off"></div>
+        <button class="btn btn-primary btn-lg btn-block" type="submit">Count me in</button>
+        <p class="signup-msg" id="su-msg" role="alert" hidden></p>
+      </form>
+      <p class="fine" id="su-fine">Free. No card. Leave in one click. Joining after October 20? You'll start with that week's email, and the first step comes in your welcome email.</p>
+    </div>
+
+    <div class="tile stack" style="gap:12px;padding:26px 28px">
+      <p><b>Don't do it alone.</b><br><span class="muted">Forward this page to one man you trust. Once a week, text each other one word: done, or missed. That's the whole accountability.</span></p>
+    </div>
+
+    <nav class="lp-links" aria-label="More from Be The Man">
+      <a href="/step-1/">Step 1, free <span>The worksheet</span></a>
+      <a href="/the-club/">The Be The Man Club <span>$19 a month</span></a>
+      <a href="/">bethemansystem.com</a>
+    </nav>
+
+    <p class="fine center">© 2026 Be The Man · Faith should function.</p>
+  </div>
+</div>
+<script>
+(function(){
+  var f=document.getElementById('get'); if(!f) return;
+  // The challenge ends with the Dec 1 email; after that, point people to Step 1.
+  if(Date.now()>Date.UTC(2026,11,2,6)){
+    f.outerHTML='<p style="color:var(--fg)">This round of the challenge has finished. Start with Step 1, free, and you will get the next round when it opens.</p><a class="btn btn-primary btn-lg btn-block" href="/step-1/">Get Step 1, free</a>';
+    var fine=document.getElementById('su-fine'); if(fine) fine.hidden=true; return;
+  }
+  if(!window.fetch) return;
+  var msg=document.getElementById('su-msg'), btn=f.querySelector('button');
+  f.addEventListener('submit',function(e){
+    e.preventDefault();
+    var email=f.email.value.trim(), name=f.name.value.trim();
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)){msg.textContent='Please enter a valid email address.';msg.hidden=false;f.email.focus();return;}
+    btn.disabled=true; btn.textContent='Sending…'; msg.hidden=true;
+    fetch('/api/subscribe',{method:'POST',headers:{'content-type':'application/json',accept:'application/json'},body:JSON.stringify({list:'challenge',name:name,email:email,company:f.company.value})})
+      .then(function(r){return r.json().catch(function(){return {};});})
+      .then(function(d){
+        if(d.redirect){location.href=d.redirect;return;}
+        msg.textContent=d.error||'Something went wrong. Please try again.';msg.hidden=false;btn.disabled=false;btn.textContent='Count me in';
+      })
+      .catch(function(){f.submit();});
+  });
+})();
+</script>
