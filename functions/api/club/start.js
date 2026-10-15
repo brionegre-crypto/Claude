@@ -1,10 +1,11 @@
 // POST /api/club/start  {s: <checkout session id>}
 // Called by /the-club/welcome/ right after checkout. Confirms the new Club
-// subscription with Stripe, signs the member in and adds him to the
-// MailerLite group "Club members".
+// subscription with Stripe, signs the member in and tags him in Kit
+// ("Club member", plus "Inner Circle" for Inner Circle members).
 
 import { CLUB } from "../../_catalog.js";
-import { stripe, clubSubscription, sessionCookie, mailerlite, json } from "../../_club.js";
+import { stripe, clubSubscription, sessionCookie, json } from "../../_club.js";
+import { subscribe, TAGS, firstName } from "../../_mail.js";
 
 export async function onRequestPost({ request, env }) {
   if (!env.STRIPE_KEY) return json({ ok: false, error: "not configured" }, 503);
@@ -20,11 +21,9 @@ export async function onRequestPost({ request, env }) {
   const email = (s.customer_details || {}).email;
   const member = { email, customer: s.customer, start: sub.start, yearly: sub.yearly, ic: sub.ic };
 
-  if (env.MAILERLITE_API_KEY && email) {
-    const name = ((s.customer_details || {}).name || "").split(" ")[0];
-    const body = { email, groups: sub.ic ? [CLUB.mailerlite.members, CLUB.ic_group] : [CLUB.mailerlite.members] };
-    if (name) body.fields = { name };
-    try { await mailerlite(env)("/subscribers", { method: "POST", body: JSON.stringify(body) }); } catch (e) {}
+  if (email) {
+    const tags = sub.ic ? [TAGS.club, TAGS.innerCircle] : [TAGS.club];
+    try { await subscribe(env, email, { firstName: firstName((s.customer_details || {}).name), tags }); } catch (e) {}
   }
   return json({ ok: true, redirect: "/members/" }, 200, { "set-cookie": await sessionCookie(env, member) });
 }

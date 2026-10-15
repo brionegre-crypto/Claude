@@ -13,7 +13,6 @@ export const COOKIE = "btm_club";
 const DAY = 86400;
 const SESSION_DAYS = 30;
 const RECHECK = DAY;
-const ML = "https://connect.mailerlite.com/api";
 
 const enc = new TextEncoder();
 const b64u = (buf) =>
@@ -126,34 +125,6 @@ export function monthsOpen(member, at = now()) {
 
 export function opensAt(member, month) {
   return member.yearly ? member.start : member.start + (month - 1) * 30 * DAY;
-}
-
-export function mailerlite(env) {
-  return (path, init = {}) =>
-    fetch(ML + path, {
-      ...init,
-      headers: {
-        authorization: `Bearer ${env.MAILERLITE_API_KEY}`,
-        "content-type": "application/json",
-        accept: "application/json",
-      },
-    });
-}
-
-// Put a subscriber (back) into a group so a "joins group" automation runs again.
-export async function rejoinGroup(env, email, groupId, fields, extra = {}) {
-  const ml = mailerlite(env);
-  const found = await ml(`/subscribers/${encodeURIComponent(email)}`);
-  let sub = null;
-  if (found.ok) {
-    sub = (await found.json()).data || {};
-    if ((sub.groups || []).some((g) => g.id === groupId)) {
-      await ml(`/subscribers/${sub.id}/groups/${groupId}`, { method: "DELETE" });
-    }
-  }
-  const body = { email, fields, groups: [groupId], ...extra };
-  const r = await ml("/subscribers", { method: "POST", body: JSON.stringify(body) });
-  return { ok: r.ok, existing: sub };
 }
 
 export const json = (body, status = 200, headers = {}) =>

@@ -1,15 +1,15 @@
 // POST /api/club/login  {email}
-// Emails an active member a sign-in link (valid 30 minutes) through the
-// MailerLite automation "Club sign-in link". The reply is the same whether
-// or not the email belongs to a member.
+// Emails an active member a sign-in link (valid 30 minutes) through Resend.
+// The reply is the same whether or not the email belongs to a member.
 
-import { CLUB } from "../../_catalog.js";
-import { memberByEmail, sign, rejoinGroup, json } from "../../_club.js";
+import { memberByEmail, sign, json } from "../../_club.js";
+import { sendEmail } from "../../_mail.js";
+import { signInEmail } from "../../_emails.js";
 
 const SENT = { ok: true, message: "If that email has an active Club membership, a sign-in link is on its way. It works for 30 minutes." };
 
 export async function onRequestPost({ request, env }) {
-  if (!env.STRIPE_KEY || !env.MAILERLITE_API_KEY) return json({ ok: false, error: "Sign-in isn't switched on yet. Email brian@bethemansystem.com." }, 503);
+  if (!env.STRIPE_KEY || !env.RESEND_API_KEY) return json({ ok: false, error: "Sign-in isn't switched on yet. Email brian@bethemansystem.com." }, 503);
   let data = {};
   try { data = await request.json(); } catch (e) {}
   const email = String(data.email || "").trim().toLowerCase().slice(0, 200);
@@ -20,6 +20,6 @@ export async function onRequestPost({ request, env }) {
   const token = await sign(env, { e: member.email, c: member.customer, p: "login", x: Math.floor(Date.now() / 1000) + 1800 });
   const next = typeof data.next === "string" && data.next.startsWith("/members/") ? data.next : "/members/";
   const login_url = `https://bethemansystem.com/api/club/verify?t=${token}&next=${encodeURIComponent(next)}`;
-  await rejoinGroup(env, email, CLUB.mailerlite.signin, { login_url });
+  await sendEmail(env, { to: member.email, subject: "Your Be The Man Club sign-in link", html: signInEmail({ login_url }) });
   return json(SENT);
 }

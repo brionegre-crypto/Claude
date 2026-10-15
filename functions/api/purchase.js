@@ -1,17 +1,16 @@
 // Cloudflare Pages Function: POST /api/purchase  {o: <offer>, s: <checkout session>}
 // Called by the thank-you page right after a Stripe purchase. Confirms the
-// purchase with Stripe, then adds the buyer to the MailerLite group
-// "Customers" with their download page link. Joining that group starts the
-// "Your downloads" automation, which emails them the link.
-// Needs the STRIPE_KEY and MAILERLITE_API_KEY secrets. Sends at most one
-// email per purchase, however many times the page is reloaded.
+// purchase with Stripe, emails the buyer their download page link (Resend),
+// and adds them to Kit with the tag "Customer" plus the product's own tag
+// (workshop, 6-week group, ministry kit).
+// Needs STRIPE_KEY; the email needs RESEND_API_KEY and the tags KIT_API_KEY.
+// Sends at most one email per purchase, however many times the page is reloaded.
 
 import { OFFERS } from "../_catalog.js";
 import { paidSession, boughtPrices } from "./download.js";
 import { sign } from "../_club.js";
-
-const GROUP_ID = "200753890063288036"; // MailerLite group "Customers"
-const ML = "https://connect.mailerlite.com/api";
+import { subscribe, sendEmail, TAGS, firstName } from "../_mail.js";
+import { downloadsEmail } from "../_emails.js";
 
 const reply = (body, status = 200) =>
   new Response(JSON.stringify(body), { status, headers: { "content-type": "application/json", "cache-control": "no-store" } });
@@ -36,38 +35,26 @@ export async function onRequestPost({ request, env }) {
   }
   const replyWith = (body, status = 200) =>
     new Response(JSON.stringify({ addons, ...body }), { status, headers: { "content-type": "application/json", "cache-control": "no-store", ...headers } });
-  if (!env.MAILERLITE_API_KEY) return replyWith({ ok: true, emailed: false });
+
   const email = (session.customer_details || {}).email;
   if (!email) return reply({ ok: false, error: "no email on purchase" }, 422);
 
-  const ml = (path, init = {}) =>
-    fetch(ML + path, {
-      ...init,
-      headers: { authorization: `Bearer ${env.MAILERLITE_API_KEY}`, "content-type": "application/json", accept: "application/json", ...(init.headers || {}) },
-    });
+  // Already handled this purchase? Then do nothing.
+  const doneKey = `order:${session.id}`;
+  if (env.FILES && (await env.FILES.get(doneKey))) return replyWith({ ok: true, emailed: true });
 
-  // Already emailed for this purchase? Then do nothing.
-  const found = await ml(`/subscribers/${encodeURIComponent(email)}`);
-  if (found.ok) {
-    const sub = (await found.json()).data || {};
-    // Never resubscribe someone who unsubscribed; they still have the download page.
-    if (["unsubscribed", "bounced", "junk"].includes(sub.status)) return replyWith({ ok: true, emailed: false });
-    if ((sub.fields || {}).last_order === session.id) return replyWith({ ok: true, emailed: true });
-    // A returning customer must leave and rejoin the group to start the automation again.
-    if ((sub.groups || []).some((g) => g.id === GROUP_ID)) {
-      await ml(`/subscribers/${sub.id}/groups/${GROUP_ID}`, { method: "DELETE" });
-    }
-  }
+  const name = firstName((session.customer_details || {}).name);
+  const tags = offer.tag ? [TAGS.customer, offer.tag] : [TAGS.customer];
+  try { await subscribe(env, email, { firstName: name, tags }); } catch (e) {}
 
-  const name = ((session.customer_details || {}).name || "").split(" ")[0];
-  const fields = {
-    download_url: `https://bethemansystem.com/get/${offer.slug}/?session_id=${session.id}`,
-    product_name: offer.name,
-    last_order: session.id,
-  };
-  if (name) fields.name = name;
-  const body = { email, fields, groups: offer.group ? [GROUP_ID, offer.group] : [GROUP_ID] };
-  if (!found.ok) body.status = "active";
-  const r = await ml("/subscribers", { method: "POST", body: JSON.stringify(body) });
-  return r.ok ? replyWith({ ok: true, emailed: true }) : replyWith({ ok: false, error: "email service failed" }, 502);
+  const emailed = await sendEmail(env, {
+    to: email,
+    subject: `Your downloads: ${offer.name}`,
+    html: downloadsEmail({
+      product_name: offer.name,
+      download_url: `https://bethemansystem.com/get/${offer.slug}/?session_id=${session.id}`,
+    }),
+  });
+  if (emailed && env.FILES) await env.FILES.put(doneKey, "1", { expirationTtl: 400 * 86400 });
+  return replyWith({ ok: true, emailed });
 }

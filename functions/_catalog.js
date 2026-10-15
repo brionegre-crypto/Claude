@@ -99,7 +99,7 @@ export const OFFERS = {
   "slug": "scorecard-lnxtejvx",
   "name": "The Weekly Scorecard",
   "addons": [],
-  "group": null,
+  "tag": null,
   "guide": false
  },
  "husband-guide": {
@@ -111,7 +111,7 @@ export const OFFERS = {
   "slug": "husband-guide-coaukruz",
   "name": "The Godly Husband Field Guide",
   "addons": [],
-  "group": null,
+  "tag": null,
   "guide": false
  },
  "marriage-workbook": {
@@ -122,7 +122,7 @@ export const OFFERS = {
   "slug": "marriage-workbook-ojd7cel2",
   "name": "The Christian Marriage Workbook for Men",
   "addons": [],
-  "group": null,
+  "tag": null,
   "guide": false
  },
  "devotional": {
@@ -133,7 +133,7 @@ export const OFFERS = {
   "slug": "devotional-uwfdnzsj",
   "name": "The Husband's Devotional: 30 Mornings",
   "addons": [],
-  "group": null,
+  "tag": null,
   "guide": false
  },
  "father-guide": {
@@ -145,7 +145,7 @@ export const OFFERS = {
   "slug": "father-guide-jnrvfbvb",
   "name": "The Father's Field Guide",
   "addons": [],
-  "group": null,
+  "tag": null,
   "guide": false
  },
  "father-son-cards": {
@@ -156,7 +156,7 @@ export const OFFERS = {
   "slug": "father-son-cards-f2gken5w",
   "name": "Father and Son Conversation Cards",
   "addons": [],
-  "group": null,
+  "tag": null,
   "guide": false
  },
  "bible-study": {
@@ -167,7 +167,7 @@ export const OFFERS = {
   "slug": "bible-study-edzfbhfw",
   "name": "The Men's Bible Study: Eight Weeks",
   "addons": [],
-  "group": null,
+  "tag": null,
   "guide": false
  },
  "discipleship-workbook": {
@@ -179,7 +179,7 @@ export const OFFERS = {
   "slug": "discipleship-workbook-3mxy3iuy",
   "name": "The Men's Discipleship Workbook",
   "addons": [],
-  "group": null,
+  "tag": null,
   "guide": false
  },
  "prayer-strategy": {
@@ -190,7 +190,7 @@ export const OFFERS = {
   "slug": "prayer-strategy-fyrdnigm",
   "name": "The Prayer Strategy for Men",
   "addons": [],
-  "group": null,
+  "tag": null,
   "guide": false
  },
  "forty-cards": {
@@ -201,7 +201,7 @@ export const OFFERS = {
   "slug": "forty-cards-geqjmizi",
   "name": "Forty Cards for Men",
   "addons": [],
-  "group": null,
+  "tag": null,
   "guide": false
  },
  "husband-kit": {
@@ -216,7 +216,7 @@ export const OFFERS = {
   "slug": "husband-kit-soj4aqgs",
   "name": "The Husband Kit",
   "addons": [],
-  "group": null,
+  "tag": null,
   "guide": false
  },
  "father-kit": {
@@ -229,7 +229,7 @@ export const OFFERS = {
   "slug": "father-kit-1klcffxh",
   "name": "The Father Kit",
   "addons": [],
-  "group": null,
+  "tag": null,
   "guide": false
  },
  "faith-kit": {
@@ -243,7 +243,7 @@ export const OFFERS = {
   "slug": "faith-kit-dz9xsaqw",
   "name": "The Faith Kit",
   "addons": [],
-  "group": null,
+  "tag": null,
   "guide": false
  },
  "library": {
@@ -268,7 +268,7 @@ export const OFFERS = {
   "slug": "library-zjcdznwk",
   "name": "The Complete Be The Man Library",
   "addons": [],
-  "group": null,
+  "tag": null,
   "guide": false
  },
  "couples": {
@@ -277,7 +277,7 @@ export const OFFERS = {
   "slug": "couples-m7pwwkaj",
   "name": "Couples counseling: three sessions",
   "addons": [],
-  "group": null,
+  "tag": null,
   "guide": false
  },
  "workshop": {
@@ -311,7 +311,7 @@ export const OFFERS = {
     ]
    }
   ],
-  "group": "200858233966953886",
+  "tag": 24600595,
   "guide": false
  },
  "group": {
@@ -336,7 +336,7 @@ export const OFFERS = {
   "slug": "group-2s871ok2",
   "name": "The 6-week group",
   "addons": [],
-  "group": "200858234702006225",
+  "tag": 24600596,
   "guide": false
  },
  "ministry-kit": {
@@ -355,7 +355,7 @@ export const OFFERS = {
   "slug": "ministry-kit-bwiuh7ba",
   "name": "The men's ministry kit",
   "addons": [],
-  "group": "200858235440203345",
+  "tag": 24600597,
   "guide": true
  },
  "system": {
@@ -374,7 +374,7 @@ export const OFFERS = {
   "slug": "system-uqn297ax",
   "name": "The Be The Man System",
   "addons": [],
-  "group": null,
+  "tag": null,
   "guide": false
  }
 };

@@ -1,19 +1,18 @@
 // Cloudflare Pages Function: POST /api/inquiry
 // Inquiries from the site: couples counseling (/couples/) and free 15-minute
 // call requests (/call/), chosen by the "type" field.
-// 1. Saves the person in that type's MailerLite group.
-// 2. Alerts Brian: his own subscriber record (brian@bethemansystem.com) gets the
-//    inquiry details and rejoins group "Inquiry alerts (Brian only)", which
-//    starts the "New inquiry alert (to Brian)" automation.
-// Needs the MAILERLITE_API_KEY secret. If MailerLite fails, the visitor is sent
-// to a fallback (the old systeme form, or an email to Brian) so nothing is lost.
+// 1. Saves the person in Kit with that type's tag ("Couples inquiry" or "Call request").
+// 2. Emails Brian the details through Resend.
+// Needs RESEND_API_KEY (and KIT_API_KEY for the tag). If the alert can't be sent,
+// the visitor is sent to a fallback (the old systeme form, or an email to Brian)
+// so nothing is lost.
 
-const ML = "https://connect.mailerlite.com/api";
-const ALERTS = "200754210963195398"; // "Inquiry alerts (Brian only)"
-const BRIAN = "brian@bethemansystem.com";
+import { subscribe, sendEmail, TAGS, BRIAN, firstName } from "../_mail.js";
+import { inquiryAlertEmail } from "../_emails.js";
+
 const TYPES = {
-  couples: { group: "200754210229192006", thanks: "/couples/thanks/", fallback: "https://5e95-brian.systeme.io/0d29fa39" },
-  call: { group: "200858440125384132", thanks: "/call/thanks/", fallback: "mailto:brian@bethemansystem.com?subject=Free%2015-minute%20call" },
+  couples: { tag: TAGS.couples, thanks: "/couples/thanks/", fallback: "https://5e95-brian.systeme.io/0d29fa39" },
+  call: { tag: TAGS.call, thanks: "/call/thanks/", fallback: "mailto:brian@bethemansystem.com?subject=Free%2015-minute%20call" },
 };
 
 function done(request, ok, url) {
@@ -38,7 +37,7 @@ export async function onRequestPost({ request, env }) {
   } catch (e) {}
 
   const kind = Object.hasOwn(TYPES, data.type) ? data.type : "couples";
-  const { group: INQUIRIES, thanks: THANKS, fallback: FALLBACK } = TYPES[kind];
+  const { tag, thanks: THANKS, fallback: FALLBACK } = TYPES[kind];
   if (data.company) return done(request, true, THANKS); // honeypot: quietly drop bots
   const name = clean(data.name, 120);
   const email = clean(data.email, 200).toLowerCase();
@@ -50,35 +49,24 @@ export async function onRequestPost({ request, env }) {
       headers: { "content-type": "application/json" },
     });
   }
-  if (!env.MAILERLITE_API_KEY) return done(request, false, FALLBACK);
-
-  const ml = (path, init = {}) =>
-    fetch(ML + path, {
-      ...init,
-      headers: { authorization: `Bearer ${env.MAILERLITE_API_KEY}`, "content-type": "application/json", accept: "application/json" },
-    });
+  if (!env.RESEND_API_KEY) return done(request, false, FALLBACK);
 
   try {
-    // The note also rides on the phone line, so the live alert email shows it without a redesign.
-    const phoneLine = note ? `${phone || "none given"} · Note: ${note}` : phone;
-    const fields = { inquiry_name: name, inquiry_phone: phoneLine, inquiry_type: kind === "call" ? "free call" : "couples", inquiry_note: note };
-    const saved = await ml("/subscribers", { method: "POST", body: JSON.stringify({ email, fields, groups: [INQUIRIES] }) });
-    if (!saved.ok) return done(request, false, FALLBACK);
-
-    // Alert Brian. Leave and rejoin the alerts group so the automation runs every time.
-    const me = await ml(`/subscribers/${encodeURIComponent(BRIAN)}`);
-    if (me.ok) {
-      const sub = (await me.json()).data || {};
-      if ((sub.groups || []).some((g) => g.id === ALERTS)) {
-        await ml(`/subscribers/${sub.id}/groups/${ALERTS}`, { method: "DELETE" });
-      }
-    }
-    await ml("/subscribers", {
-      method: "POST",
-      // status "active" so the alert reaches Brian even if his address was ever unsubscribed.
-      body: JSON.stringify({ email: BRIAN, fields: { ...fields, inquiry_email: email }, groups: [ALERTS], status: "active" }),
+    // Saved for follow-up only; an inquiry is not a newsletter sign-up, so no sequence starts.
+    await subscribe(env, email, { firstName: firstName(name), tags: [tag] }).catch(() => false);
+    const typeLabel = kind === "call" ? "free call" : "couples";
+    const sent = await sendEmail(env, {
+      to: BRIAN,
+      replyTo: email,
+      subject: `New ${typeLabel} inquiry: ${name}`,
+      html: inquiryAlertEmail({
+        inquiry_name: name,
+        inquiry_type: typeLabel,
+        inquiry_email: email,
+        inquiry_phone: note ? `${phone || "none given"} · Note: ${note}` : phone || "none given",
+      }),
     });
-    return done(request, true, THANKS);
+    return done(request, sent, sent ? THANKS : FALLBACK);
   } catch (e) {
     return done(request, false, FALLBACK);
   }
