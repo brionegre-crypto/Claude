@@ -113,7 +113,7 @@ The link is in the description and pinned in the comments. It's the first link. 
 
 If you're not ready for a group, I get it. Do this instead: get Step 1 free, the one-page worksheet, "What type of man do you want to be?" It takes twenty minutes and a pen. That link's in the description too.
 
-And if you'd rather talk to a human first, book a free fifteen-minute call. That link is in the description too.
+And if you'd rather talk to a human first, request a free fifteen-minute call and I'll call you back. That link is in the description too.
 
 One last thing. Down in the comments, tell me one thing your wife or your kids have tried to tell you. Just one. You'll be surprised how many men write back.
 

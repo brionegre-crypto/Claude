@@ -41,19 +41,21 @@ How to pray with your wife, even if it feels awkward. Three simple steps you can
 
 Most Christian men love God and love their wives, and still have never really prayed together. It isn't a spiritual failure. It's a starting problem. In this 5-minute video: why it feels awkward, the one question to ask her first, a 30-second prayer you can say tonight, how to make it a habit, and what to do if she isn't ready.
 
-👉 The Prayer Strategy for Men ($9):
-https://go.bethemansystem.com/227a8255
+👉 Get The Prayer Strategy for Men ($9):
+https://bethemansystem.com/products/#your-faith
 
 Not ready yet? Start with the free worksheet: what type of man do you want to be? Twenty minutes, one sentence at the end.
-https://go.bethemansystem.com/framework
+https://bethemansystem.com/step-1/
 
-Want to talk first? Book a free 15-minute call with Brian:
-https://go.bethemansystem.com/085b95e4
+Want to talk first? Request a free 15-minute call (Brian calls you back):
+https://bethemansystem.com/call/
 
 WHO THIS IS FOR
 Christian husbands and fathers who want to lead their home with humility, not pressure. Calm, specific, no hype.
 
-Break the cycle. Build the system. Be the man.
+Be The Man is created by Brian Greene, a pastor and certified marriage counselor.
+
+Break the cycle. Build the system. Be the man. Faith should function.
 
 Instagram: @bethemansystem
 
@@ -71,9 +73,9 @@ how to pray with your wife, praying with your wife, pray with your wife, christi
 ## Upload checklist
 
 - Upload `youtube-pray-with-wife-thumbnail.png` as the custom thumbnail. File name idea: `how-to-pray-with-your-wife.png`.
-- **Pinned comment:** "Ask her one question tonight: 'How can I pray for you this week?' The Prayer Strategy for Men ($9): https://go.bethemansystem.com/227a8255 . Tell me below: has this been awkward for you?"
+- **Pinned comment:** "Ask her one question tonight: 'How can I pray for you this week?' The Prayer Strategy for Men ($9): https://bethemansystem.com/products/#your-faith . Tell me below: has this been awkward for you?"
 - Add an info card to the Prayer Strategy link near 4:35, and an end screen with your blind spots video.
 - Add the video to the "Be The Man" playlist.
-- Before posting: confirm the Prayer Strategy is $9 and the checkout link opens.
+- Before posting: open each link once. `https://bethemansystem.com/products/#your-faith` should land on the Prayer Strategy card ($9, "Get it" goes to checkout), and `https://bethemansystem.com/call/` is a request form (Brian calls back), so submit a test request.
 - I haven't seen what's inside The Prayer Strategy for Men, so say in the video what it really is. Don't promise anything it doesn't deliver.
 - I paraphrased the two Scripture references, so read 1 Peter 3:7 and Matthew 18:19 in your translation before you film.

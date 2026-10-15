@@ -33,15 +33,15 @@ Your blind spots are holding you back, and the reason is simple: you can't see t
 Most men think they know why they keep stalling. The real reason is usually the thing nobody has told them, and the thing they can't see from the inside. In this video: why blind spots have so much power over a man's marriage, fatherhood and faith, what Scripture says about them, and the only reliable way to find yours.
 
 👉 Reserve a seat in the Be The Man 6-Week Group (founding price $147, four men, Sundays 7 to 8 PM Central on Google Meet, starting November 15):
-https://go.bethemansystem.com/b1c774c0
+https://bethemansystem.com/group/
 
 The founding seats include the Complete Library (all 11 Be The Man tools, including the Weekly Scorecard, $97 on its own). Later groups will be $297, or $247 for Club members. The session on November 29 is built around this exact question: what has stopped you so far, looked at honestly and without guilt.
 
 Not ready for a group? Start with the free worksheet: what type of man do you want to be? It takes twenty minutes and ends in a one-sentence vision statement.
-👉 https://go.bethemansystem.com/framework
+👉 https://bethemansystem.com/step-1/
 
-Want to talk first? Book a free 15-minute call with Brian:
-https://go.bethemansystem.com/085b95e4
+Want to talk first? Request a free 15-minute call (Brian calls you back):
+https://bethemansystem.com/call/
 
 CHAPTERS
 0:00 The thing you can't see
@@ -73,10 +73,10 @@ blind spots, how to find your blind spots, self awareness for men, self awarenes
 ## Upload checklist
 
 - Upload the thumbnail as a custom thumbnail. File name idea: `blind-spots-christian-men.png`.
-- Put the **seat link as the first link** in the description (done above) and pin a comment with it. Pinned comment: "The fastest way I know to see a blind spot is to let four honest men look at it. Founding seats for the 6-Week Group start Nov 15: https://go.bethemansystem.com/b1c774c0 . And tell me below: what's one thing your wife or kids have tried to tell you?"
+- Put the **seat link as the first link** in the description (done above) and pin a comment with it. Pinned comment: "The fastest way I know to see a blind spot is to let four honest men look at it. Founding seats for the 6-Week Group start Nov 15: https://bethemansystem.com/group/ . And tell me below: what's one thing your wife or kids have tried to tell you?"
 - Add an info card to the group link at the "how to see yours" chapter and an end screen: one card to the group, one to the goals video.
 - Add the video to the "Be The Man" playlist after the goals video.
 - Add the real chapter timestamps once the video is cut.
-- The call link (`https://go.bethemansystem.com/085b95e4`) is the Systeme.io booking page for the free 15-minute call. Do one test booking before posting to confirm the time slots show and the confirmation email arrives. Calls are phone calls to Brian's number.
+- The call link (`https://bethemansystem.com/call/`) is a request form on your new site, not a self-scheduling calendar: viewers leave their details and Brian calls back within one business day (Monday to Thursday evenings, 7 to 9 PM Central). Submit one test request before posting to confirm the form works and the alert reaches you.
 - The page says four seats: don't say how many are left unless you check. Founding price is "for these four seats only", so the scarcity is real, but only say "seats left" if it's true on the day.
 - Re-check dates and price against the page before posting: Nov 15 to Dec 20, Sundays 7:00 to 8:00 PM Central, $147.

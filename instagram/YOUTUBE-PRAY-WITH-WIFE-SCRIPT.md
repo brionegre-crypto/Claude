@@ -8,7 +8,7 @@
 
 `[YOUR STORY]` is the one slot I can't fill for you. I can't invent your marriage, so use a real moment, or cut the slot and the script still works.
 
-Facts to keep exact (from your site): The Prayer Strategy for Men is $9, checkout `go.bethemansystem.com/227a8255`.
+Facts to keep exact (from your site): The Prayer Strategy for Men is $9, checkout `bethemansystem.com/products/#your-faith`.
 
 ---
 

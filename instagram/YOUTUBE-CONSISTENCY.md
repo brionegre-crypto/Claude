@@ -46,16 +46,16 @@ Why can't I stay consistent? You start strong on Sunday and lose it by Wednesday
 Consistency isn't a personality trait. It's a design problem. In this video: why willpower and motivation fail by midweek, the three parts of a plan that doesn't need you to feel like it, two rules that keep it alive (make it small, never miss twice), and what Scripture says about being faithful in the little.
 
 👉 Get the Weekly Scorecard, your week on one page ($7). Print it Sunday and check the box:
-https://go.bethemansystem.com/3b3e5ba2
+https://bethemansystem.com/products/
 
 Don't want to build it alone? Join the Be The Man 6-Week Group (founding price $147, four men, Sundays 7 to 8 PM Central on Google Meet, starting November 15). On December 6 we build this system together:
-https://go.bethemansystem.com/b1c774c0
+https://bethemansystem.com/group/
 
 Not ready for either? Start with the free worksheet: what type of man do you want to be? Twenty minutes, one sentence at the end.
-https://go.bethemansystem.com/framework
+https://bethemansystem.com/step-1/
 
-Want to talk first? Book a free 15-minute call with Brian:
-https://go.bethemansystem.com/085b95e4
+Want to talk first? Request a free 15-minute call (Brian calls you back):
+https://bethemansystem.com/call/
 
 WHO THIS IS FOR
 Christian husbands and fathers who have meant it every time and still lose it by Wednesday. Calm, specific, no hype. A mechanism, not a mood.
@@ -78,7 +78,7 @@ why can't i stay consistent, how to stay consistent, how to be consistent, consi
 ## Upload checklist
 
 - Upload `youtube-consistency-thumbnail.png` as the custom thumbnail. File name idea: `why-cant-i-stay-consistent-christian-men.png`.
-- **Pinned comment:** "Get the Weekly Scorecard ($7), print it Sunday: https://go.bethemansystem.com/3b3e5ba2 . And tell me below: what's the one thing you keep starting and dropping?"
+- **Pinned comment:** "Get the Weekly Scorecard ($7), print it Sunday: https://bethemansystem.com/products/ . And tell me below: what's the one thing you keep starting and dropping?"
 - Add an info card to the Scorecard link at the point you show it, and an end screen with the blind spots video and the group.
 - Add the video to the "Be The Man" playlist.
 - Before posting, confirm: Scorecard is $7, group is $147 founding, dates Nov 15 to Dec 20 with the Dec 6 session, and that the Scorecard checkout link opens.

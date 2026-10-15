@@ -8,7 +8,7 @@
 
 `[YOUR STORY]` and `[SHOW ON SCREEN]` are slots for you. I can't invent your life or know exactly what's on your Scorecard, so I've left those open.
 
-Facts to keep exact (from your site): Weekly Scorecard is $7 ("your week on one page", checkout `go.bethemansystem.com/3b3e5ba2`). 6-Week Group: four men, Sundays 7:00 to 8:00 PM Central on Google Meet, November 15 to December 20, founding price $147, and the December 6 session is "the laws of a system that holds. You set up your Weekly Scorecard". Later groups $297, or $247 for Club members.
+Facts to keep exact (from your site): Weekly Scorecard is $7 ("your week on one page", checkout `bethemansystem.com/products/`). 6-Week Group: four men, Sundays 7:00 to 8:00 PM Central on Google Meet, November 15 to December 20, founding price $147, and the December 6 session is "the laws of a system that holds. You set up your Weekly Scorecard". Later groups $297, or $247 for Club members.
 
 ---
 
