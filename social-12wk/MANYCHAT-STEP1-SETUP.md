@@ -41,4 +41,4 @@ ManyChat can't read Threads replies or send Threads DMs (Threads has no DMs). Th
 - [ ] Open each existing automation (Automation → Flows) and search for `systeme.io`; replace every STEP 1 hit with the new link
 - [ ] Also check Default Reply, Welcome message and Main Menu
 - [ ] Test STEP1 by comment and by DM from a second account, then tap the button
-- [ ] Couples automation: its link (`5e95-brian.systeme.io/0d29fa39`) is still the old site. Replace it with the new bethemansystem.com couples page once you have that URL.
+- [ ] Couples automation: replace `5e95-brian.systeme.io/0d29fa39` with `https://www.bethemansystem.com/couples/`

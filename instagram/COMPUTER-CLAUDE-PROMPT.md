@@ -15,7 +15,7 @@ Break the cycle. Build the system.
 Discipline • Marriage • Fatherhood
 A mechanism, not a mood.
 ⬇️ Free Step 1: what man do you want to be?
-Link:      https://go.bethemansystem.com/framework
+Link:      https://www.bethemansystem.com/step-1/#get
 Category:  Coach (or Education)
 If the name, link or category can only be changed in the mobile app, tell me and move on.
 
@@ -58,7 +58,7 @@ Print it tonight. Twenty minutes, a pen — not your phone.
 
 Every Thursday after that, you'll get one email: one decision with a time attached.
 
-   Button on Message 2: "Get Step 1 (free)" → opens https://go.bethemansystem.com/framework
+   Button on Message 2: "Get Step 1 (free)" → opens https://www.bethemansystem.com/step-1/#get
 
 Show me both automations, then set them Live once I say OK.
 
@@ -75,4 +75,4 @@ Show me each post before you click Schedule.
 
 == TASK 6: Final check ==
 - In Planner, list every scheduled item with its date and time, and confirm there are 17 (10 from week 1, 7 from week 2).
-- Remind me to do these on my phone: post the Story (in the STORY folder) with a Link sticker to https://go.bethemansystem.com/framework; set up the highlight covers from highlight-covers/; pin the posts marked "(pin)" in SCHEDULE.md once they go live; and test the automations by commenting and DMing "STEP1" from a different Instagram account.
+- Remind me to do these on my phone: post the Story (in the STORY folder) with a Link sticker to https://www.bethemansystem.com/step-1/#get; set up the highlight covers from highlight-covers/; pin the posts marked "(pin)" in SCHEDULE.md once they go live; and test the automations by commenting and DMing "STEP1" from a different Instagram account.
