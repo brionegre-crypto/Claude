@@ -1,7 +1,7 @@
 # ManyChat: STEP1 auto-reply setup (new website links only)
 
-**STEP 1 link (new site):** https://go.bethemansystem.com/framework
-Never use `5e95-brian.systeme.io/...` anywhere in ManyChat. That is the old site.
+**STEP 1 link (new site):** https://www.bethemansystem.com/step-1/#get
+Never use `go.bethemansystem.com/...` or `5e95-brian.systeme.io/...` anywhere in ManyChat. Those are the old site.
 
 ## Automation 1: "STEP1 – comment to DM"
 - Trigger: user comments on **any** post or reel (Instagram and Facebook Page, create one per channel if ManyChat asks)
@@ -32,13 +32,13 @@ Button: **Send me Step 1** → sends Message 2
 >
 > Every Thursday after that, you'll get one email: one decision with a time attached.
 
-Button: **Get Step 1** → URL `https://go.bethemansystem.com/framework`
+Button: **Get Step 1** → URL `https://www.bethemansystem.com/step-1/#get`
 
 ## Threads replies
-ManyChat can't read Threads replies or send Threads DMs (Threads has no DMs). Every Threads caption already points to `go.bethemansystem.com/framework`. For a Threads reply, answer by hand with that link, or point people to Instagram ("Comment STEP1 on our IG").
+ManyChat can't read Threads replies or send Threads DMs (Threads has no DMs). The existing Threads captions still use the old go.bethemansystem.com link and should be updated to the new one. For a Threads reply, answer by hand with that link, or point people to Instagram ("Comment STEP1 on our IG").
 
 ## Check-list
-- [ ] Open each existing automation (Automation → Flows) and search for `systeme.io`; replace every hit with the new link
+- [ ] Open each existing automation (Automation → Flows) and search for `systeme.io`; replace every STEP 1 hit with the new link
 - [ ] Also check Default Reply, Welcome message and Main Menu
 - [ ] Test STEP1 by comment and by DM from a second account, then tap the button
-- [ ] Couples automation: its link (`5e95-brian.systeme.io/0d29fa39`) is still the old site. Replace it with the new go.bethemansystem.com couples page once you have that URL.
+- [ ] Couples automation: its link (`5e95-brian.systeme.io/0d29fa39`) is still the old site. Replace it with the new bethemansystem.com couples page once you have that URL.
