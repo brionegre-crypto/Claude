@@ -1,98 +1,99 @@
-# Script: "How to Keep Your Word as a Christian Man"
+# Script: "How to Keep Your Word as a Christian Man (3 Steps)"
 
-**Length:** 5 minutes (~640 words spoken at a calm 140 words a minute, so about 4:30 of talking plus pauses and on-screen moments).
-**Question it answers:** "How do I keep my word when I keep breaking it?"
-**The one call to action:** **Join the free 7-week challenge. bethemansystem.com/challenge.** Nothing else is asked.
-**Tone:** calm, direct, no guilt. Talk to one man.
+**Length:** 5 minutes (~560 spoken words at a calm 140 words a minute, so about 4 minutes of talking, plus the pause in step one, the on-screen templates and the close).
+**What the viewer gets:** three steps he can do today, a fill-in-the-blank sentence, the exact text to send a friend, and the exact words to say to his wife or kids after he's broken a promise.
+**The one call to action:** **Join the free 7-week challenge. bethemansystem.com/challenge.**
+**Tone:** calm, direct, practical. No guilt, no theory. Talk to one man.
+**Shape:** the practical content is the video. The challenge is the follow-through at the end, and it's mentioned briefly at 0:25 so nobody leaves before hearing it.
 
-## The call to action, made clear
-
-- **One ask:** join the free 7-week challenge.
-- **One short link to say out loud:** `bethemansystem.com/challenge` (it redirects to the full page, `bethemansystem.com/7-week-challenge/`).
-- **Same words every time:** "Join the free 7-week challenge. bethemansystem.com/challenge."
-- **Three times in the video:** at 0:30 (so nobody leaves before hearing it), at 3:10 (when the challenge is explained), and at 4:10 (the close, with the three steps).
-- **On screen every time:** a text card with the link, shown for the full sentence.
-- **Written the same way** in the description (first line), the pinned comment and the thumbnail ("FREE 7-WEEK CHALLENGE").
-- **What the viewer does, in three steps:** 1) go to bethemansystem.com/challenge, 2) enter first name and email and tap "Count me in", 3) send the link to one man and text each other "done" or "missed" once a week.
-
-Facts to keep exact (from your site): the challenge is free, no card, one email a week, one action with a time attached, week one starts Oct 20, and "Joining after October 20? You'll start with that week's email, and the first step comes in your welcome email." Leave in one click. The weekly actions: Oct 20 write one sentence about the man you're becoming; Oct 27 cut your goals down to three; Nov 3 name the one thing that keeps stopping you; Nov 10 give one goal a day and a time; Nov 17 write down what counts as a miss; Nov 24 and Dec 1 count it honestly, then put God at the center of it.
-
-`[YOUR STORY]` is the one slot I can't fill for you. Use a real moment, or cut it and the script still works.
+`[YOUR STORY]` is an optional slot for one real moment. Cut it if you don't have one.
 
 ---
 
-## 0:00 HOOK (about 30 seconds)
+## 0:00 HOOK (about 20 seconds)
 
-[ON SCREEN: "HOW TO KEEP YOUR WORD" then cut to you]
+[ON SCREEN: "HOW TO KEEP YOUR WORD: 3 STEPS" then cut to you]
 
-You told someone you would. Your wife. Your kids. Yourself. God. And a few days later, it slipped, and you didn't bring it up again.
+You told your wife you'd do something. You told your kids. You told yourself. And it slipped.
 
-If that's you, I'm not going to shame you. I'm going to show you why it keeps happening and give you something you can start today.
+Here's the good news. Keeping your word isn't about being a better man tonight. It's three practical steps, and you can do all three in the next ten minutes. Grab a pen, or have your phone's notes open. I'll tell you when to pause.
 
-How to keep your word as a Christian man. Three reasons it breaks, and a free seven-week challenge that fixes them.
+## 0:20 THE ASK, FIRST TIME (about 10 seconds)
 
-## 0:30 THE ASK, FIRST TIME (about 15 seconds)
+And if you want help doing this every week, join the free 7-week challenge. bethemansystem.com/challenge. One email, one small action a week. Now, step one.
 
-And here's where to start, so you don't forget. Join the free 7-week challenge. bethemansystem.com/challenge. One email a week, one small action, no card. I'll explain how it works in a minute.
+[ON SCREEN, held: "Join the free 7-week challenge. bethemansystem.com/challenge"]
 
-[ON SCREEN, held for the whole sentence: "Join the free 7-week challenge. bethemansystem.com/challenge"]
+## 0:30 STEP ONE: PUT A TIME ON IT (about 1:10)
 
-## 0:45 WHY MEN BREAK THEIR WORD (about 1:45)
+Most broken promises weren't broken. They were never scheduled. "I'll pray more." "I'll be more patient." There's no day in that. No place. Nothing to do.
 
-Reason one: the promise has no time on it. "I'll pray more." "I'll be more patient." Which day? Where? After what? A promise with no when is a wish.
+So turn it into one sentence with a day, a time and a trigger:
 
-Here's what research says. In one study, 91% of the people who wrote down when and where they would act followed through. Of the people who only said they intended to, 38% did. Same intention. The only difference was a time and a place. [VERIFY before filming: this figure is on your site; confirm the original source (implementation intentions research, Milne, Orbell and Sheeran, 2002).]
+"On ___, at ___, after ___, I will ___."
 
-Reason two: there's no line for what counts as a miss. So one bad day turns into "I guess I'm just not that guy," and you quit. If you never said what a miss looks like, every miss feels like total failure.
+[ON SCREEN: "On ___, at ___, after ___, I will ___."]
 
-Reason three: you're doing it alone. Nobody knows. Nobody asks. Researchers who reviewed 138 experiments found that when people report their progress to someone else, they follow through more. [Source on your site: Harkin et al., 2016. Say "a review of 138 experiments" and don't add a number beyond that.]
+Here are real ones. "Every weeknight at 8:30, after the kids are in bed, I'll pray one minute with my wife." "Saturday at 9, before I open my phone, I'll call my dad." "Monday through Thursday, at 6:30, my phone goes in the kitchen drawer."
 
-[YOUR STORY: one or two sentences about a time you broke your word to your wife or kids, and what you told yourself. A real detail. Cut if you don't have one.]
+Notice they're small. One minute. One call. One drawer. Small is how you keep your word for weeks, not days.
 
-None of those are character flaws. They're design flaws. And design flaws can be fixed.
+Pause the video and write yours. One promise. Fill in the blanks. I'll wait.
 
-## 2:30 WHAT SCRIPTURE SAYS (about 30 seconds)
+## 1:40 STEP TWO: DECIDE WHAT COUNTS AS A MISS (about 1:10)
 
-God cares about this. Jesus said, "Let what you say be simply 'Yes' or 'No.'" Matthew 5:37. And Psalm 15 describes the man who can dwell with God as one who "swears to his own hurt and does not change." He keeps his word even when it costs him.
+Step two is the one men skip, and it's why one bad day ends in quitting.
 
-That's not a man who never struggles. That's a man who built a way to follow through.
+Decide now, before it happens, what a miss is. Here's mine for you. One missed day is a miss. Two in a row is a signal. And here's your comeback: next day, same time. No catching up. No big promise to make up for it. Just do the small thing again.
 
-## 3:00 THE FREE 7-WEEK CHALLENGE (about 1:10)
+If you miss twice in a row, the plan is too big. Shrink it. A five-minute prayer becomes a one-minute prayer. Don't drop it. Shrink it.
 
-So here's the challenge. It's built to fix those three things.
+[ON SCREEN: "1 miss = a miss. 2 in a row = shrink it. Comeback = next day, same time."]
 
-It's seven weeks. One email a week. One action, with a time attached, small enough to do that week. Week one: write one sentence about the man you're becoming. Then cut your goals down to three. Then name the one thing that keeps stopping you. Then give one goal a day and a time. Then write down what counts as a miss. And in the last two weeks, count it honestly, and put God at the center of it.
+[YOUR STORY (optional): one or two sentences about the first time you missed and what you told yourself. A real detail. Cut if you don't have one.]
 
-Time on the promise. A line for the miss. And the third thing: send the link to one man you trust, and once a week, text each other one word. Done. Or missed. That's the whole accountability.
+## 2:50 STEP THREE: TELL ONE MAN (about 1:00)
 
-It's free. No card. You can leave in one click. And if you're watching this after October 20th, you just start with whatever week it is. Your welcome email has your first step.
+Step three. Tell one man. Not a crowd. One.
 
-[ON SCREEN: the weekly list: write one sentence / cut to three / name what stops you / a day and a time / what counts as a miss / count it honestly]
+Pick a man who'll answer a text. Send him this: "I'm going to ___ at ___. Text me Sunday night. Say done or missed."
 
-## 4:10 THE ASK, CLOSE (about 50 seconds)
+[ON SCREEN: the text, word for word: "I'm going to ___ at ___. Text me Sunday night. Say done or missed."]
 
-So here's what I want you to do. Three steps. It takes two minutes.
+And then once a week, you text each other one word. Done. Or missed. No speeches. No excuses. That's the whole thing. Knowing he's going to ask changes what you do on Tuesday.
 
-One: go to bethemansystem.com/challenge.
+## 3:50 IF YOU'VE ALREADY BROKEN YOUR WORD (about 45 seconds)
 
-Two: put in your first name and email, and tap "Count me in."
+Now, what if you've already broken your word to your wife or your kids? Don't explain. Repair it. Four parts.
 
-Three: send that same link to one man, and ask him to do it with you.
+Say what you did, plainly. Don't make excuses. Say when you'll do it. And invite her to ask you.
 
-Join the free 7-week challenge. bethemansystem.com/challenge. The link is in the description, and it's the first thing you'll see.
+Here it is in a sentence: "I told you I'd ___. I didn't. That's on me. I'll do it ___. If I don't, ask me."
+
+[ON SCREEN: "I told you I'd ___. I didn't. That's on me. I'll do it ___. If I don't, ask me."]
+
+That's it. No long apology. A named failure, a time, and permission to hold you to it. Then do it.
+
+## 4:35 THE ASK, CLOSE (about 35 seconds)
+
+Jesus said, "Let what you say be simply 'Yes' or 'No.'" Matthew 5:37. A man who keeps his word has a plan for it.
+
+If you want that plan walked out with you for seven weeks, here's what to do. Go to bethemansystem.com/challenge. Put in your first name and email. Tap "Count me in." One email a week, one action, free, no card. Then send the link to one man, and text each other done or missed.
+
+Join the free 7-week challenge. bethemansystem.com/challenge. The link's in the description, first thing you see.
 
 [ON SCREEN, held: "Join the free 7-week challenge. bethemansystem.com/challenge. First link in the description."]
 
-You don't need to be perfect. You need a time, a line for the miss, and one brother. Start this week. Break the cycle. Build the system. Be the man.
+Break the cycle. Build the system. Be the man.
 
 ---
 
 ## Notes for filming
 
-- **The ask is word for word the same each time.** "Join the free 7-week challenge. bethemansystem.com/challenge." Don't vary it. Repetition is what makes it clear.
-- **Say the short link, `bethemansystem.com/challenge`,** not the long one. It's easier to remember, and your site redirects it to the right page.
-- **Put the text card on screen for the full sentence,** all three times.
-- **One ask only.** No store, no Club, no group, no couples counseling. Five minutes can carry one clear action. (The challenge's welcome email and thank-you page already lead to Step 1 and the Club.)
-- **Timing:** if you run over 5 minutes, cut the Scripture section to one verse. Don't cut any of the three asks.
-- **Don't promise a result.** "A time, a line for the miss and one brother" is honest. "You will never break your word again" is not.
-- **Verify before filming:** the 91% vs 38% figure (original source), the Harkin 2016 line, and the two Scripture quotes in your translation (I used ESV wording for Matthew 5:37 and Psalm 15:4).
+- **Show each template on screen as you say it,** and read the blanks out loud. Men will screenshot these, so keep each one on screen for a few seconds.
+- **Do the pause for real** in step one: stop talking for 5 to 10 seconds. It makes the video something he does, not something he watches.
+- **The ask stays word for word:** "Join the free 7-week challenge. bethemansystem.com/challenge." Say the short link, not the long one. It's on screen all three times.
+- **One ask only.** No store, no Club, no group.
+- **Don't promise a result.** "Small is how you keep your word for weeks" is honest. "You'll never break your word again" is not.
+- **Tone check:** keep step four warm, not heavy. The point is repair, not guilt.
+- **Verify before filming:** read Matthew 5:37 in your translation (I used the ESV wording). I removed the research statistics from this version so there's nothing else to verify.

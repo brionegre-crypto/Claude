@@ -41,7 +41,7 @@ html,body{width:${W}px;height:${H}px;background:#000;color:${C.cream};font-famil
     <div class="brand"><i></i>Be The Man</div>
     <div class="h l1">Keep your</div>
     <div class="h l2" style="margin-top:0">Word</div>
-    <div class="h l3">Free 7-week challenge</div>
+    <div class="h l3">3 practical steps</div>
   </div>
 </div>`;
 
