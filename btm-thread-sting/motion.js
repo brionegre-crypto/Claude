@@ -55,7 +55,7 @@
   /* Each glyph is ONE polyline the pen can trace without lifting; free   */
   /* ends sit on the outer edge, corners on the stroke centre line.       */
   /* ------------------------------------------------------------------ */
-  const BH = 200, BW = 36, BC = 26;          // cap height, stroke weight, chamfer
+  const BH = 200, BW = 44, BC = 22;          // cap height, stroke weight, chamfer
   const GAP = 46, WORDGAP = 120, DOTGAP = 54; // letter gap, word gap, gap before the full stop
   const h = BW / 2, tt = h, bb = BH - h, mm = BH / 2;
 
@@ -76,7 +76,7 @@
       return [[l, bb], [l, BH], [l, tt], [cx, vy], [r, tt], [r, BH], [r, bb]];
     },
     A: (gw) => {
-      const cx = gw / 2, ax1 = cx - 26, ax2 = cx + 26, yc = 146;
+      const cx = gw / 2, ax1 = cx - 22, ax2 = cx + 22, yc = 152;
       const ext = 24;                                   // legs run past the baseline; the glyph clip cuts them flat
       const xf = h * 1.09;                              // foot centre so the outer edge lands on the glyph edge
       const lx = (y) => lerp(xf, ax1, (BH - y) / (BH - tt));
@@ -88,9 +88,9 @@
     N: (gw) => { const l = h, r = gw - h; return [[l, bb], [l, BH], [l, tt], [r, bb], [r, 0], [r, tt]]; }
   };
   const WORD = [
-    { ch: 'B', gw: 124, gap: GAP }, { ch: 'E', gw: 104, gap: WORDGAP },
+    { ch: 'B', gw: 138, gap: GAP }, { ch: 'E', gw: 104, gap: WORDGAP },
     { ch: 'T', gw: 132, gap: GAP }, { ch: 'H', gw: 140, gap: GAP }, { ch: 'E', gw: 104, gap: WORDGAP },
-    { ch: 'M', gw: 172, gap: GAP }, { ch: 'A', gw: 156, gap: GAP }, { ch: 'N', gw: 144, gap: DOTGAP }
+    { ch: 'M', gw: 172, gap: GAP }, { ch: 'A', gw: 174, gap: GAP }, { ch: 'N', gw: 144, gap: DOTGAP }
   ];
 
   /* ------------------------------------------------------------------ */
@@ -119,7 +119,7 @@
   const JOURNEYS = {
     /* orbit: once round the whole frame, tightening inward, then the break and the drop */
     orbit: (p0, bx, top) => ({
-      pts: [p0, [p0[0], 970], [100, 970], [100, 110], [1820, 110], [1820, 300], [bx, 300], [bx, top]],
+      pts: [p0, [p0[0], 970], [80, 975], [80, 105], [1840, 105], [1840, 300], [bx, 300], [bx, top]],
       radii: [0, 150, 150, 150, 92, 92, 92, 0],
       keys: [[0.70, 0], [0.80, 0.05], [0.95, 0.30], [1.15, 0.80], [1.35, 1.0], [1.9, 0.86], [2.4, 0.92], [2.75, 0.9], [3.5, 0.9], [4.05, 0.81], [4.35, 0]]
     }),
@@ -161,7 +161,7 @@
 
   /* ------------------------------------------------------------------ */
   function create(name, opts) {
-    const o = Object.assign({ targetW: 1400, comp0: 0.05 }, opts || {});
+    const o = Object.assign({ targetW: 1580, comp0: 0.05 }, opts || {});
     const jr = JOURNEYS[name] || JOURNEYS.orbit;
 
     /* ---- layout: scale the base word so word + full stop is o.targetW wide, centred ---- */
