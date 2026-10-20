@@ -110,7 +110,7 @@
           </div>
         </div>
       </div>
-      <div id="dark" class="layer"><canvas id="glow" class="layer" width="1920" height="1080"></canvas></div>
+      <div id="dark" class="layer"><canvas id="glow" class="layer" width="1920" height="1080"></canvas><canvas id="grain" class="layer" width="1920" height="1080"></canvas></div>
       <canvas id="line" class="layer" width="1920" height="1080"></canvas>
       <canvas id="fin" class="layer" width="1920" height="1080"></canvas>
     </div>
@@ -336,7 +336,7 @@
         }
 
         /* ================= the tagline (hard-edged, character by character) ================= */
-        var TAG_FONT = "italic 500 46px Lora, Georgia, serif", MONO_FONT = '600 24px "IBM Plex Mono", monospace';
+        var TAG_FONT = "italic 500 46px Lora, Georgia, serif", MONO_FONT = '600 26px "IBM Plex Mono", monospace';
         var tagAdv = [], tagW = 0, labAdv = [], labW = 0;
         function measureText2() {
           measure.font = TAG_FONT; measure.letterSpacing = "0.8px"; tagW = measure.measureText(F.WORDS.tagline).width; tagAdv = [];
@@ -364,7 +364,7 @@
           S.drawScene(sc5, c, F.tsOf(t));
           var tb = sc5.bottom;
           typeWipe(c, F.WORDS.tagline, tagAdv, tagW, TAG_FONT, "0.8px", tb + 112, F.tfOf(S.T.tagA), F.tfOf(S.T.tagB), t, COL.stone);
-          typeWipe(c, F.WORDS.label, labAdv, labW, MONO_FONT, "3.5px", tb + 196, F.tfOf(S.T.tagB) + 0.05, F.tfOf(S.T.tagB) + 0.5, t, COL.mute);
+          typeWipe(c, F.WORDS.label, labAdv, labW, MONO_FONT, "3.5px", tb + 196, F.tfOf(S.T.tagB) + 0.05, F.tfOf(S.T.tagB) + 0.5, t, COL.stone);
           c.restore();
         }
 
@@ -432,7 +432,7 @@
             sq2.style.transform = "scale(" + (won && wd < 0.3 ? 1 + 0.16 * Math.sin(Math.PI * wd / 0.3) : 1).toFixed(3) + ")";
           }
           // dark flip: the window has closed to a line; the dark opens out of it, as the window opened at the start
-          var dk = F.eInOut((t - T.darkA) / (T.darkB - T.darkA)), yc = 652;
+          var dk = F.eOut((t - T.darkA) / (T.darkB - T.darkA)), yc = 652;
           $("dark").style.clipPath = "inset(" + (yc * (1 - dk)).toFixed(1) + "px 0 " + ((1080 - yc) * (1 - dk)).toFixed(1) + "px 0)";
           $("glow").style.opacity = (0.30 * F.sstep((t - 16.7) / 1.6)).toFixed(3);
         }
@@ -478,6 +478,11 @@
         ].map(function (f) { return document.fonts.load(f); }));
         fontsReady.then(function () {
           sc5 = S.create("orbit", { targetW: 1500, comp0: 0.05 });
+          (function () {                                   // a whisper of film grain on the dark, so the glow never bands
+            var g = $("grain").getContext("2d"), im = g.createImageData(1920, 1080), d = im.data, r = F.rng(77);
+            for (var k = 0; k < d.length; k += 4) { d[k] = 255; d[k + 1] = 250; d[k + 2] = 240; d[k + 3] = Math.floor(r() * 5); }
+            g.putImageData(im, 0, 0);
+          })();
           (function () {                                   // the soft amber glow behind the logo: a gaussian falloff with a little dither
             var g = $("glow").getContext("2d"), gr = g.createRadialGradient(960, 560, 0, 960, 560, 760);
             for (var i = 0; i <= 24; i++) { var u = i / 24; gr.addColorStop(u, S.rgba(COL.amber, 0.9 * Math.exp(-4.2 * u * u) * (1 - F.sstep((u - 0.82) / 0.18)))); }

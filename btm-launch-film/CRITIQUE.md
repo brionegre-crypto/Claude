@@ -7,3 +7,7 @@ Changed: a true crossing loop; the band lifts earlier; the line leaves its old s
 ## Round 2 (draft 2)
 Weak: the window's 3D turn was too fast for four blended frames, so it smeared into stepped copies at the edge-on moment; the glow behind the logo still showed a faint disc edge (CSS blur clipping); line blur had visible steps in the fast dark-opening morph.
 Changed: the turn is slower and eased (11.0 to 12.6 s, landing on beat 21); the glow is a painted gaussian with dither instead of a blurred div; the line canvas takes 10 sub-samples per frame. Checked with a probe that the renderer really delivers 240 distinct frames, and measured the mp4's audio against the generated audio: 0 ms offset.
+
+## Round 3 (draft 3)
+Weak: a one-pixel dark hairline ran across the email at 16.0 s where the dark opening began (it read as a strike-through); the dark scene's glow still banded in rings after compression; the end label was small and dim.
+Changed: the dark opens fast from the collapsed window and starts later (16.15 s); a faint static film grain on the dark layer breaks up the banding; the label is larger and in stone instead of the dim grey. Window turn confirmed clean.

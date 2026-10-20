@@ -75,7 +75,7 @@
     press2: snap(15.3),                // "Open this week's scorecard" is pressed
     weekFill: [snap(14.1), snap(14.5), snap(14.9)],   // 3 of 5 days, filled one by one
     collapseA: 15.8, collapseB: 16.4,
-    darkA: 15.95, darkB: 16.8,
+    darkA: 16.15, darkB: 16.8,
     morphA: 16.0, morphB: 16.8
   };
 
