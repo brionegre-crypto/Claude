@@ -1,8 +1,9 @@
-# Script: "How to Keep Your Word as a Christian Man (3 Steps)"
+# Script: "How to Keep Your Word as a Black Christian Man (3 Steps)"
 
 **Length:** 5 minutes (~560 spoken words at a calm 140 words a minute, so about 4 minutes of talking, plus the pause in step one, the on-screen templates and the close).
 **What the viewer gets:** three steps he can do today, a fill-in-the-blank sentence, the exact text to send a friend, and the exact words to say to his wife or kids after he's broken a promise.
 **The one call to action:** **Join the free 7-week challenge. bethemansystem.com/challenge.**
+**Audience:** Black Christian men, husbands and fathers who keep making the same promise (the wording your challenge page uses). Speak to one brother. Use "brother" naturally, the way you would talking to a man in your own church. Don't generalize about Black men or lean on stereotypes; speak to the man, his home and his faith.
 **Tone:** calm, direct, practical. No guilt, no theory. Talk to one man.
 **Shape:** the practical content is the video. The challenge is the follow-through at the end, and it's mentioned briefly at 0:25 so nobody leaves before hearing it.
 
@@ -12,7 +13,9 @@
 
 ## 0:00 HOOK (about 20 seconds)
 
-[ON SCREEN: "HOW TO KEEP YOUR WORD: 3 STEPS" then cut to you]
+[ON SCREEN: "HOW TO KEEP YOUR WORD: 3 STEPS, FOR BLACK CHRISTIAN MEN" then cut to you]
+
+This one is for Black Christian men, husbands and fathers who keep making the same promise.
 
 You told your wife you'd do something. You told your kids. You told yourself. And it slipped.
 
@@ -54,13 +57,13 @@ If you miss twice in a row, the plan is too big. Shrink it. A five-minute prayer
 
 ## 2:50 STEP THREE: TELL ONE MAN (about 1:00)
 
-Step three. Tell one man. Not a crowd. One.
+Step three. Tell one brother. Not a crowd. One.
 
-Pick a man who'll answer a text. Send him this: "I'm going to ___ at ___. Text me Sunday night. Say done or missed."
+Pick a brother who'll answer a text. Send him this: "I'm going to ___ at ___. Text me Sunday night. Say done or missed."
 
 [ON SCREEN: the text, word for word: "I'm going to ___ at ___. Text me Sunday night. Say done or missed."]
 
-And then once a week, you text each other one word. Done. Or missed. No speeches. No excuses. That's the whole thing. Knowing he's going to ask changes what you do on Tuesday.
+And then once a week, you and your brother text each other one word. Done. Or missed. No speeches. No excuses. That's the whole thing. Knowing he's going to ask changes what you do on Tuesday.
 
 ## 3:50 IF YOU'VE ALREADY BROKEN YOUR WORD (about 45 seconds)
 
@@ -95,5 +98,6 @@ Break the cycle. Build the system. Be the man.
 - **The ask stays word for word:** "Join the free 7-week challenge. bethemansystem.com/challenge." Say the short link, not the long one. It's on screen all three times.
 - **One ask only.** No store, no Club, no group.
 - **Don't promise a result.** "Small is how you keep your word for weeks" is honest. "You'll never break your word again" is not.
+- **Optional personal line:** if you want, one sentence about your own story (your site says you grew up without a father in the house) can make the "keep your word" point land harder. Only use it if you want to; it's your story to tell.
 - **Tone check:** keep step four warm, not heavy. The point is repair, not guilt.
 - **Verify before filming:** read Matthew 5:37 in your translation (I used the ESV wording). I removed the research statistics from this version so there's nothing else to verify.

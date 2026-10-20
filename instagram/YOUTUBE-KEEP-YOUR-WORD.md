@@ -1,4 +1,4 @@
-# YouTube: "How to Keep Your Word as a Christian Man (3 Steps)" (this week's 5-minute video)
+# YouTube: "How to Keep Your Word as a Black Christian Man (3 Steps)" (this week's 5-minute video)
 
 Script: `YOUTUBE-KEEP-YOUR-WORD-SCRIPT.md`
 **Thumbnail:** `posts/out/youtube-keep-your-word-thumbnail.png` (1280×720). Re-render with `node posts/youtube-thumb-keep-your-word.mjs`.
@@ -22,16 +22,17 @@ Script: `YOUTUBE-KEEP-YOUR-WORD-SCRIPT.md`
 
 ## Thumbnail
 
-"KEEP YOUR WORD" in huge cream type with **"3 PRACTICAL STEPS"** in amber, so the promise is a how-to, not a pitch. Your thinking-pose photo on black, amber glow, bottom-right clear for YouTube's duration badge.
+"KEEP YOUR WORD" in huge cream type with **"3 PRACTICAL STEPS"** in amber, so the promise is a how-to, not a pitch, and **"FOR BLACK CHRISTIAN MEN"** underneath so the right viewer knows it's for him. Your thinking-pose photo on black, amber glow, bottom-right clear for YouTube's duration badge.
 
 ## Title (pick one)
 
-**Recommended (50 characters):**
-`How to Keep Your Word as a Christian Man (3 Steps)`
+**Recommended (56 characters):**
+`How to Keep Your Word as a Black Christian Man (3 Steps)`
 
-- It keeps the exact phrase from your discovery plan and adds the "3 Steps" how-to promise.
+- It keeps the phrase from your discovery plan, adds the audience and the "3 Steps" how-to promise.
 - Alternatives:
-  - `How to Keep Your Word: A 3-Step Plan for Christian Men` (54)
+  - `How to Keep Your Word: 3 Steps for Black Christian Men` (54)
+  - `How to Keep Your Word as a Christian Man (3 Steps)` (50; the broader version if you want both audiences)
   - `How to Keep Your Word: 3 Practical Steps for Christian Men` (58; matches the thumbnail)
   - `How to Keep Your Word When You Keep Breaking It (3 Steps)` (57)
 
@@ -40,7 +41,7 @@ Script: `YOUTUBE-KEEP-YOUR-WORD-SCRIPT.md`
 ```
 ▶ Join the free 7-week challenge (one email and one small action a week): https://bethemansystem.com/7-week-challenge/
 
-How to keep your word as a Christian man, in 3 practical steps you can do today.
+How to keep your word as a Black Christian man, in 3 practical steps you can do today. For Black Christian men, husbands and fathers who keep making the same promise.
 
 STEP 1: PUT A TIME ON IT
 Fill in this sentence: "On ___, at ___, after ___, I will ___."
@@ -68,11 +69,11 @@ https://bethemansystem.com/step-1/
 ▶ The Be The Man Club (the whole system, $19 a month):
 https://bethemansystem.com/the-club/
 
-Be The Man is a seven-step consistency system for Christian men, created by Brian Greene, a pastor and father of three. Faith should function.
+Be The Man is a seven-step consistency system for Christian men, with a focus on Black Christian husbands and fathers, created by Brian Greene, a pastor and father of three. Faith should function.
 
 Break the cycle. Build the system. Be the man.
 
-#christianmen #keepyourword #bethemansystem
+#blackchristianmen #keepyourword #bethemansystem
 ```
 
 (Add real chapter timestamps once the video is cut, starting with `0:00`. Three hashtags only.)
@@ -80,12 +81,12 @@ Break the cycle. Build the system. Be the man.
 ## Tags (YouTube Studio > Show more > Tags)
 
 ```
-how to keep your word, keeping your word, how to keep promises, how to follow through, how to stop starting over, how to keep your promises to your wife, how to be a man of your word, christian men, christian discipline for men, godly man, godly husband, accountability for christian men, consistency system for christian men, 7 week challenge, be the man, bethemansystem
+how to keep your word, black christian men, black christian husband, black christian father, black men discipline, how to be a man of your word as a black man, keeping your word, how to keep promises, how to follow through, how to stop starting over, how to keep your promises to your wife, how to be a man of your word, christian men, christian discipline for men, godly man, godly husband, accountability for christian men, consistency system for christian men, 7 week challenge, be the man, bethemansystem
 ```
 
 ## Pinned comment
 
-> The 3 steps: 1) "On ___, at ___, after ___, I will ___." 2) One miss = a miss, two in a row = shrink it. 3) Text one man: "done" or "missed." Join the free 7-week challenge: bethemansystem.com/challenge . Tell me below: what's the one promise you're filling in the blanks for?
+> The 3 steps: 1) "On ___, at ___, after ___, I will ___." 2) One miss = a miss, two in a row = shrink it. 3) Text one man: "done" or "missed." Join the free 7-week challenge: bethemansystem.com/challenge . Brothers, tell me below: what's the one promise you're filling in the blanks for?
 
 ## Upload checklist
 
