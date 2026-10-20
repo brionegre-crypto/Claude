@@ -55,7 +55,7 @@
     question: 'What type of man do you want to be?',
     sentence: 'I’m a man who is home on time, and fully there when I am.',
     tagline: 'Break the cycle. Build the system. Be the man.',
-    label: 'FREE STEP 1  ·  GO.BETHEMANSYSTEM.COM/FRAMEWORK'
+    label: 'FREE STEP 1  ·  BETHEMANSYSTEM.COM'
   };
 
   /* scene landings, all on the beat */
