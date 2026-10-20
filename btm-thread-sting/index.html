@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en"
+  data-composition-variables='[
+    {"id":"variant","type":"string","label":"Journey: orbit | wrap | gantry","default":"orbit"},
+    {"id":"transparent","type":"boolean","label":"Transparent background","default":false}
+  ]'>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <title>be the man — the thread</title>
+    <script src="vendor/gsap.min.js"></script>
+    <script src="motion.js"></script>
+    <style>
+      @font-face {
+        font-family: "Lora";
+        font-style: italic;
+        font-weight: 500;
+        src: url("fonts/Lora-500-italic.woff2") format("woff2");
+      }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1920px; height: 1080px; overflow: hidden; background: transparent; }
+      #root { position: relative; width: 100%; height: 100%; overflow: hidden; }
+      .layer { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; display: block; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="6" data-width="1920" data-height="1080">
+      <canvas id="paper" class="clip layer" width="1920" height="1080" data-start="0" data-duration="6" data-track-index="0"></canvas>
+      <canvas id="stage" class="clip layer" width="1920" height="1080" data-start="0" data-duration="6" data-track-index="1"></canvas>
+      <audio id="sfx" src="assets/btm-sfx.wav" data-start="0" data-duration="6" data-track-index="2" data-volume="1"></audio>
+    </div>
+
+    <script>
+      (function () {
+        var vars = {};
+        try { vars = (window.__hyperframes && window.__hyperframes.getVariables()) || {}; } catch (e) {}
+        var q = new URLSearchParams(location.search);
+        var variant = q.get("variant") || vars.variant || "orbit";
+        var transparent = q.get("transparent") === "1" || vars.transparent === true || vars.transparent === "true";
+
+        var M = window.Motion, T = M.T, COL = M.COL;
+        var scene = M.create(variant);
+
+        var paper = document.getElementById("paper");
+        var stage = document.getElementById("stage");
+        var ctx = stage.getContext("2d");
+        var tmp = document.createElement("canvas"); tmp.width = 1920; tmp.height = 1080;
+        var tctx = tmp.getContext("2d");
+
+        /* ---------- ground: near-black, a faint charcoal lift behind the word (opaque cut only) ---------- */
+        function paintPaper() {
+          if (transparent) { paper.style.display = "none"; return; }
+          var p = paper.getContext("2d");
+          p.fillStyle = COL.bg; p.fillRect(0, 0, 1920, 1080);
+          var g = p.createRadialGradient(960, 520, 60, 960, 540, 1250);
+          g.addColorStop(0, "rgba(30,26,22,0.95)"); g.addColorStop(0.55, "rgba(20,20,22,0.6)"); g.addColorStop(1, "rgba(11,11,12,0)");
+          p.fillStyle = g; p.fillRect(0, 0, 1920, 1080);
+          var img = p.getImageData(0, 0, 1920, 1080), d = img.data, a = 77031;
+          for (var i = 0; i < d.length; i += 4) {      // 1-level dither so the gradient does not band
+            a = (a + 0x6d2b79f5) | 0;
+            var t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+            var n = (((t ^ (t >>> 14)) >>> 0) / 4294967296 - 0.5) * 2.4;
+            d[i] += n; d[i + 1] += n; d[i + 2] += n;
+          }
+          p.putImageData(img, 0, 0);
+        }
+
+        /* ---------- tagline: written out left to right, one hard-edged character at a time ---------- */
+        var TAG = "Break the cycle. Build the system. Be the man.";
+        var TAG_FONT = "italic 500 44px Lora, Georgia, serif";
+        var TRACK = 0.8, tagX = 0, tagY = 0, adv = [], tagW = 0;
+        function measureTag() {
+          tmp.getContext("2d").font = TAG_FONT; var c = tctx;
+          c.font = TAG_FONT; c.letterSpacing = TRACK + "px";
+          tagW = c.measureText(TAG).width;
+          tagX = 960 - tagW / 2;
+          adv = [];
+          for (var i = 0; i < TAG.length; i++) adv.push(c.measureText(TAG.slice(0, i)).width);
+          adv.push(tagW);
+          c.letterSpacing = "0px";
+          tagY = scene.bottom + 116;
+        }
+        function drawTagline(c, t) {
+          if (t < T.tagA) return;
+          var p = M.eInOutSine((t - T.tagA) / (T.tagB - T.tagA)), n = TAG.length;
+          c.save();
+          c.font = TAG_FONT; c.letterSpacing = TRACK + "px"; c.textBaseline = "alphabetic"; c.textAlign = "left";
+          c.fillStyle = COL.stone;
+          for (var i = 0; i < n; i++) {
+            var f = M.clamp(p * (n + 1.5) - i);             // each character is wiped in over ~1.5 characters of travel
+            if (f <= 0) break;
+            var x0 = tagX + adv[i], x1 = tagX + adv[i + 1];
+            c.save(); c.beginPath(); c.rect(x0 - 2, tagY - 70, (x1 - x0) * Math.min(1, f) + 4, 110); c.clip();
+            c.fillText(TAG[i], x0, tagY);
+            c.restore();
+          }
+          c.restore();
+        }
+
+        function frame(c, t) {
+          M.drawScene(scene, c, t);
+          drawTagline(c, t);
+        }
+
+        /* ---------- one frame = a short shutter of sub-frames averaged together (real motion blur) ---------- */
+        var SHUTTER = 1 / 60;           // 360 degrees
+        var acc = document.createElement("canvas"); acc.width = 1920; acc.height = 1080;
+        var actx = acc.getContext("2d");
+        function render(t) {
+          t = Math.max(0, Math.min(M.DUR, t));
+          var moving = t >= T.go - 0.03 && t < T.still;       // from 5.0 s the picture is one fixed frame
+          var N = moving ? 24 : 1;
+          var dst = transparent ? actx : ctx;                  // transparent cut: average first, then add a soft shadow once
+          dst.setTransform(1, 0, 0, 1, 0, 0);
+          dst.globalAlpha = 1; dst.clearRect(0, 0, 1920, 1080);
+          if (N === 1) { frame(dst, t); }
+          else {
+            for (var j = 0; j < N; j++) {
+              var tj = t + ((j + 0.5) / N - 0.5) * SHUTTER;
+              tctx.setTransform(1, 0, 0, 1, 0, 0);
+              tctx.clearRect(0, 0, 1920, 1080);
+              frame(tctx, Math.max(0, tj));
+              dst.globalAlpha = 1 / (j + 1);
+              dst.drawImage(tmp, 0, 0);
+            }
+            dst.globalAlpha = 1;
+          }
+          if (transparent) {
+            ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalAlpha = 1; ctx.clearRect(0, 0, 1920, 1080);
+            ctx.filter = "drop-shadow(0px 5px 16px rgba(0,0,0,0.34))";
+            ctx.drawImage(acc, 0, 0);
+            ctx.filter = "none";
+          }
+        }
+
+        var proxy = { t: 0 };
+        var tl = gsap.timeline({ paused: true });
+        tl.to(proxy, { t: M.DUR, duration: M.DUR, ease: "none", onUpdate: function () { render(proxy.t); } }, 0);
+        window.addEventListener("hf-seek", function (ev) { render(ev.detail.time); });
+
+        document.fonts.load(TAG_FONT).then(function () {
+          measureTag();
+          paintPaper();
+          render(0);
+          window.__timelines = window.__timelines || {};
+          window.__timelines["main"] = tl;
+          window.__render = render;
+          if (q.get("still") !== null) { render(parseFloat(q.get("still"))); document.title = "ready"; }
+        });
+      })();
+    </script>
+  </body>
+</html>
