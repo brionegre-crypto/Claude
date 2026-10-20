@@ -22,7 +22,7 @@ Script: `YOUTUBE-KEEP-YOUR-WORD-SCRIPT.md`
 
 ## Thumbnail
 
-"KEEP YOUR WORD" in huge cream type with **"3 PRACTICAL STEPS"** in amber, so the promise is a how-to, not a pitch, and **"FOR BLACK CHRISTIAN MEN"** underneath so the right viewer knows it's for him. Your thinking-pose photo on black, amber glow, bottom-right clear for YouTube's duration badge.
+"KEEP YOUR WORD" in huge cream type with **"3 PRACTICAL STEPS"** in amber, so the promise is a how-to, not a pitch. The audience ("Black Christian men") is in the title, description and script, not on the thumbnail. Your thinking-pose photo on black, amber glow, bottom-right clear for YouTube's duration badge.
 
 ## Title (pick one)
 

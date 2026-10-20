@@ -32,7 +32,6 @@ html,body{width:${W}px;height:${H}px;background:#000;color:${C.cream};font-famil
 .l1{font-size:128px;color:${C.cream};margin-top:46px}
 .l2{font-size:300px;color:${C.cream}}
 .l3{font-size:58px;color:${C.amber};margin-top:34px;letter-spacing:.02em}
-.l4{font-size:38px;color:${C.cream};margin-top:18px;letter-spacing:.14em;opacity:.92}
 </style>
 <div class="frame">
   <div class="glow"></div>
@@ -43,7 +42,6 @@ html,body{width:${W}px;height:${H}px;background:#000;color:${C.cream};font-famil
     <div class="h l1">Keep your</div>
     <div class="h l2" style="margin-top:0">Word</div>
     <div class="h l3">3 practical steps</div>
-    <div class="h l4">For Black Christian men</div>
   </div>
 </div>`;
 
