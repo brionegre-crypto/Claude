@@ -17,6 +17,11 @@
         font-weight: 500;
         src: url("fonts/Lora-500-italic.woff2") format("woff2");
       }
+      @font-face {
+        font-family: "IBM Plex Mono";
+        font-weight: 600;
+        src: url("fonts/IBMPlexMono-600-normal.woff2") format("woff2");
+      }
       * { margin: 0; padding: 0; box-sizing: border-box; }
       html, body { width: 1920px; height: 1080px; overflow: hidden; background: transparent; }
       #root { position: relative; width: 100%; height: 100%; overflow: hidden; }
@@ -69,6 +74,7 @@
         var TAG = "Break the cycle. Build the system. Be the man.";
         var TAG_FONT = "italic 500 44px Lora, Georgia, serif";
         var TRACK = 0.8, tagX = 0, tagY = 0, adv = [], tagW = 0;
+        var LABEL = "FREE STEP 1  \u00b7  BETHEMANSYSTEM.COM", LAB_FONT = '600 24px "IBM Plex Mono", monospace', labX = 0, labY = 0, labAdv = [], labW = 0;
         function measureTag() {
           tmp.getContext("2d").font = TAG_FONT; var c = tctx;
           c.font = TAG_FONT; c.letterSpacing = TRACK + "px";
@@ -77,8 +83,11 @@
           adv = [];
           for (var i = 0; i < TAG.length; i++) adv.push(c.measureText(TAG.slice(0, i)).width);
           adv.push(tagW);
+          c.font = LAB_FONT; c.letterSpacing = "3.5px"; labW = c.measureText(LABEL).width; labX = 960 - labW / 2; labAdv = [];
+          for (var j = 0; j < LABEL.length; j++) labAdv.push(c.measureText(LABEL.slice(0, j)).width);
+          labAdv.push(labW);
           c.letterSpacing = "0px";
-          tagY = scene.bottom + 116;
+          tagY = scene.bottom + 116; labY = tagY + 74;
         }
         function drawTagline(c, t) {
           if (t < T.tagA) return;
@@ -95,6 +104,17 @@
             c.restore();
           }
           c.restore();
+          // the address, written under the tagline; done on the same frame the tagline is
+          var q = M.eInOutSine((t - (T.tagA + 0.14)) / (T.tagB - T.tagA - 0.14)), m = LABEL.length;
+          if (t > T.tagA + 0.14) {
+            c.save(); c.font = LAB_FONT; c.letterSpacing = "3.5px"; c.textBaseline = "alphabetic"; c.textAlign = "left"; c.fillStyle = COL.stone;
+            for (var k = 0; k < m; k++) {
+              var g = M.clamp(q * (m + 1.5) - k); if (g <= 0) break;
+              var a0 = labX + labAdv[k], a1 = labX + labAdv[k + 1];
+              c.save(); c.beginPath(); c.rect(a0 - 2, labY - 40, (a1 - a0) * Math.min(1, g) + 4, 60); c.clip(); c.fillText(LABEL[k], a0, labY); c.restore();
+            }
+            c.restore();
+          }
         }
 
         function frame(c, t) {
@@ -138,7 +158,7 @@
         tl.to(proxy, { t: M.DUR, duration: M.DUR, ease: "none", onUpdate: function () { render(proxy.t); } }, 0);
         window.addEventListener("hf-seek", function (ev) { render(ev.detail.time); });
 
-        document.fonts.load(TAG_FONT).then(function () {
+        Promise.all([document.fonts.load(TAG_FONT), document.fonts.load(LAB_FONT)]).then(function () {
           measureTag();
           paintPaper();
           render(0);
