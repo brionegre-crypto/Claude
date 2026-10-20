@@ -15,3 +15,7 @@ Changed: the dark opens fast from the collapsed window and starts later (16.15 s
 ## Round 4 (draft 4, close-ups at full size)
 Weak: the amber thread ran straight across the habit checkboxes and hid their tick marks (a dark smudge on a box); the connection between thread and habit was implied, not shown.
 Changed: the thread now runs just left of the boxes, and a short amber link grows out to each box the moment the pulse reaches it, so the ticks are clean and the "connect" reads. (Also found and fixed a render collision: two jobs wrote the same files and corrupted one draft; renders now run one at a time.)
+
+## Round 5 (draft 5, the final cut)
+Full half-second pass (41 frames) plus mechanical checks: 1920x1080, 60 fps, 1200 frames, exactly 20.000 s, decodes with no errors, AAC stereo sound (mean -17.6 dB, peak -2.0 dB), mp4 audio sample-aligned with the generated audio (0 ms), scene landings on beats 7/14/21/28 (4.2 / 8.4 / 12.6 / 16.8 s), loop-close click on frame 1107 (18.45 s).
+Story, layout, spacing, type, timing, depth, readability and sound against picture: nothing left to fix.
