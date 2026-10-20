@@ -3,3 +3,7 @@
 ## Round 1 (draft 1)
 Weak: the cycle was a separate ring hanging off the line; the headline band overlapped the window as it opened; during the window turn the line's route swung with the window and smeared into ghost ribbons; small mono labels were too small and too pale (3.4:1 contrast); the glow behind the logo showed a disc edge; 15.0–15.8 s had nothing happening; a page error fired at t=0 before fonts loaded.
 Changed: a true crossing loop; the band lifts earlier; the line leaves its old shape as it was when the move began and the dark-opening morph is mapped left-to-left; labels larger and darker; softer, larger glow; a second button press at 15.3 s; guard before fonts are ready.
+
+## Round 2 (draft 2)
+Weak: the window's 3D turn was too fast for four blended frames, so it smeared into stepped copies at the edge-on moment; the glow behind the logo still showed a faint disc edge (CSS blur clipping); line blur had visible steps in the fast dark-opening morph.
+Changed: the turn is slower and eased (11.0 to 12.6 s, landing on beat 21); the glow is a painted gaussian with dither instead of a blurred div; the line canvas takes 10 sub-samples per frame. Checked with a probe that the renderer really delivers 240 distinct frames, and measured the mp4's audio against the generated audio: 0 ms offset.

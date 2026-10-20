@@ -53,7 +53,7 @@
       .strip em { position: absolute; top: 46px; width: 44px; text-align: center; font: normal 600 17px/18px "IBM Plex Mono", monospace; color: #68635A; letter-spacing: 0.04em; }
       .pull { will-change: filter, transform; }
       #dark { background: #0B0B0C; clip-path: inset(652px 0 428px 0); overflow: hidden; }
-      #glow { position: absolute; left: 960px; top: 540px; width: 1100px; height: 1100px; margin: -550px 0 0 -550px; border-radius: 50%; background: #E18B1F; filter: blur(240px); opacity: 0.0; }
+      #glow { opacity: 0; }
       canvas.layer { background: transparent; }
     </style>
   </head>
@@ -110,7 +110,7 @@
           </div>
         </div>
       </div>
-      <div id="dark" class="layer"><div id="glow"></div></div>
+      <div id="dark" class="layer"><canvas id="glow" class="layer" width="1920" height="1080"></canvas></div>
       <canvas id="line" class="layer" width="1920" height="1080"></canvas>
       <canvas id="fin" class="layer" width="1920" height="1080"></canvas>
     </div>
@@ -434,7 +434,7 @@
           // dark flip: the window has closed to a line; the dark opens out of it, as the window opened at the start
           var dk = F.eInOut((t - T.darkA) / (T.darkB - T.darkA)), yc = 652;
           $("dark").style.clipPath = "inset(" + (yc * (1 - dk)).toFixed(1) + "px 0 " + ((1080 - yc) * (1 - dk)).toFixed(1) + "px 0)";
-          $("glow").style.opacity = (0.22 * F.sstep((t - 16.7) / 1.6)).toFixed(3);
+          $("glow").style.opacity = (0.30 * F.sstep((t - 16.7) / 1.6)).toFixed(3);
         }
 
         var ready = false;
@@ -449,7 +449,7 @@
           lctx.setTransform(1, 0, 0, 1, 0, 0); lctx.clearRect(0, 0, 1920, 1080);
           // line canvas: a few sub-samples across the shutter (real blur on the fast parts)
           var fast = t > T.go - 0.02 && t < T.headDone + 0.1 || t > T.loopA && t < 4.6 || t > 7.6 && t < 8.8 || t > 11.5 && t < 12.9 || t > T.morphA - 0.1 && t < T.morphB + 0.1;
-          var N = fast ? 6 : 1, sh = 1 / 240;
+          var N = fast ? 10 : 1, sh = 1 / 240;
           for (var j = 0; j < N; j++) {
             var tj = N === 1 ? t : t + ((j + 0.5) / N - 0.5) * sh;
             lacx.setTransform(1, 0, 0, 1, 0, 0); lacx.clearRect(0, 0, 1920, 1080);
@@ -478,6 +478,14 @@
         ].map(function (f) { return document.fonts.load(f); }));
         fontsReady.then(function () {
           sc5 = S.create("orbit", { targetW: 1500, comp0: 0.05 });
+          (function () {                                   // the soft amber glow behind the logo: a gaussian falloff with a little dither
+            var g = $("glow").getContext("2d"), gr = g.createRadialGradient(960, 560, 0, 960, 560, 760);
+            for (var i = 0; i <= 24; i++) { var u = i / 24; gr.addColorStop(u, S.rgba(COL.amber, 0.9 * Math.exp(-4.2 * u * u) * (1 - F.sstep((u - 0.82) / 0.18)))); }
+            g.fillStyle = gr; g.fillRect(0, 0, 1920, 1080);
+            var im = g.getImageData(0, 0, 1920, 1080), d = im.data, r = F.rng(9);
+            for (var k = 0; k < d.length; k += 4) { if (d[k + 3] > 0) { d[k + 3] = Math.max(0, Math.min(255, d[k + 3] + (r() - 0.5) * 3)); } }
+            g.putImageData(im, 0, 0);
+          })();
           measureText2();
           (function () { var tmp = [], NSt = 1400, bb = sc5.headS(2.3); for (var i = 0; i < NSt; i++) { var pp = sc5.ptAt(bb * i / (NSt - 1), sc5.comp(2.3)); tmp.push([pp.x, pp.y]); } tmp.reverse(); stingTarget = tmp; })();
           bandRow = makeRow(band, {

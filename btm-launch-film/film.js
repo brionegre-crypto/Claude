@@ -70,7 +70,7 @@
     press: snap(7.3),                  // "Save my sentence" is pressed: the worksheet gives way to the scorecard
     scrollA: 7.5, scrollB: 8.4,        // the window scrolls from the worksheet to the scorecard (lands on beat 14)
     checks: [9.2, 10.0, 10.8],         // the thread reaches each habit
-    flipA: 11.55, flipB: 12.6,         // the window turns over: the email
+    flipA: 11.0, flipB: 12.6,         // the window turns over: the email
     emailA: 12.75,                     // the sentence comes back (focus pull)
     press2: snap(15.3),                // "Open this week's scorecard" is pressed
     weekFill: [snap(14.1), snap(14.5), snap(14.9)],   // 3 of 5 days, filled one by one
@@ -112,7 +112,7 @@
   const camera = (t) => ({ dz: camKeys.dz(t), ry: camKeys.ry(t), rx: camKeys.rx(t), px: camKeys.px(t), py: camKeys.py(t) });
 
   /* the window's own turn (degrees about Y) and tilt */
-  const winYaw = pchip([[3.3, -17], [8.4, -5], [11.55, 9], [12.6, 171], [15.8, 179], [16.4, 180]]);
+  const winYaw = pchip([[3.3, -17], [8.4, -5], [11.0, 9], [11.8, 60], [12.6, 171], [15.8, 179], [16.4, 180]]);
   const winPitch = pchip([[3.3, 6], [8.4, 3], [12.6, 5], [16.4, 0]]);
   const winOpen = (t) => eInOut((t - T.openA) / (T.openB - T.openA));
   const winCollapse = (t) => 1 - eInOut((t - T.collapseA) / (T.collapseB - T.collapseA));
