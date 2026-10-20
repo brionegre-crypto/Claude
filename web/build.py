@@ -20,7 +20,7 @@ ORG = {
     "url": BASE + "/",
     "logo": BASE + "/assets/favicon.png",
     "slogan": "Faith should function.",
-    "description": "A seven-step consistency system for Christian men: one sentence on who you are becoming, goals with dates, and a weekly scorecard.",
+    "description": "A seven-step consistency system for Black Christian men: one sentence on who you are becoming, goals with dates, and a weekly scorecard.",
     "founder": {"@id": BASE + "/about/#brian"},
     "sameAs": [
         "https://www.youtube.com/@BeTheManSystem",
