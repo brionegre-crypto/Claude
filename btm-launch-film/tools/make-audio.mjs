@@ -114,6 +114,7 @@ F.BAND.forEach((tr, k) => {
 for (let i = 0; i < F.WORDS.sub.length; i++) clack(F.snap(3.3 + i * F.FLIP_STAG + F.FLIP_DUR / 2), 0, 0.7);
 // "Save my sentence" is pressed
 { const i0 = idx(T.press); for (let n = 0; n < SR * 0.14; n++) { const tt = n / SR; add(i0 + n, Math.sin(2 * Math.PI * 190 * tt) * Math.exp(-tt / 0.03) * 0.22 + bpK(noise(), 3000, 1.3).bp * Math.exp(-tt / 0.005) * 0.12, -0.15); } }
+{ const i0 = idx(T.press2); for (let n = 0; n < SR * 0.14; n++) { const tt = n / SR; add(i0 + n, Math.sin(2 * Math.PI * 190 * tt) * Math.exp(-tt / 0.03) * 0.22 + bpK(noise(), 3000, 1.3).bp * Math.exp(-tt / 0.005) * 0.12, -0.15); } }
 // the thread reaches each habit: a soft bell
 function bell(t, f, amp = 0.12, p = 0) { const i0 = idx(t); for (let n = 0; n < SR * 1.4; n++) { const tt = n / SR; add(i0 + n, (Math.sin(2 * Math.PI * f * tt) + 0.35 * Math.sin(2 * Math.PI * f * 2.76 * tt) * Math.exp(-tt / 0.1)) * Math.exp(-tt / 0.4) * (1 - Math.exp(-tt / 0.002)) * amp, p); } }
 T.checks.forEach((t, i) => { bell(t, [784, 988, 1175][i], 0.11, -0.3 + 0.3 * i); key(t, 1.2, -0.3 + 0.3 * i); });

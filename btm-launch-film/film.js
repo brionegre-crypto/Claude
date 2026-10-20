@@ -72,6 +72,7 @@
     checks: [9.2, 10.0, 10.8],         // the thread reaches each habit
     flipA: 11.55, flipB: 12.6,         // the window turns over: the email
     emailA: 12.75,                     // the sentence comes back (focus pull)
+    press2: snap(15.3),                // "Open this week's scorecard" is pressed
     weekFill: [snap(14.1), snap(14.5), snap(14.9)],   // 3 of 5 days, filled one by one
     collapseA: 15.8, collapseB: 16.4,
     darkA: 15.95, darkB: 16.8,
@@ -121,7 +122,7 @@
     { t0: T.loopA, t1: T.loopB, from: 'line', to: 'loop' },
     { t0: 3.3, t1: 4.2, from: 'loop', to: 'r2' },
     { t0: 7.5, t1: 8.4, from: 'r2', to: 'r3' },
-    { t0: 11.6, t1: 12.6, from: 'r3', to: 'r4' },
+    { t0: 12.1, t1: 12.75, from: 'r3', to: 'r4' },
     { t0: T.morphA, t1: T.morphB, from: 'r4', to: 'sting' }
   ];
   const headX = (t) => eOut(clamp((t - T.go) / (T.headDone - T.go)));       // 0..1 across the frame
