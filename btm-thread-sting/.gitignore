@@ -2,3 +2,6 @@
 node_modules/
 renders/_*
 renders/*.mov
+renders/work-*
+renders/.*
+renders/*.mov
