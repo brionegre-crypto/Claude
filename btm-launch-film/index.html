@@ -88,7 +88,7 @@
                   <div class="abs" style="left:0;top:0;width:7px;height:76px;background:#E18B1F;border-radius:10px 0 0 10px"></div>
                   <div class="abs" id="chipText" style="left:34px;top:19px;font:500 32px/40px Inter,sans-serif;color:#0B0B0C;white-space:nowrap"></div>
                 </div>
-                <div class="anchor" id="achipL" style="left:56px;top:760px"></div>
+                <div class="anchor" id="achipL" style="left:28px;top:760px"></div>
                 <div id="rows"></div>
               </div>
             </div>
@@ -186,7 +186,7 @@
         ], rowEls = [], days = ["M", "T", "W", "T", "F", "S", "S"];
         rowsData.forEach(function (rd, i) {
           var r = document.createElement("div"); r.className = "row"; r.style.top = (842 + i * 108) + "px";
-          r.innerHTML = '<div class="chk"><b></b></div><div class="lab">' + rd.lab + '</div><div class="strip"></div><div class="anchor" style="left:78px;top:54px" id="achk' + i + '"></div>';
+          r.innerHTML = '<div class="chk"><b></b></div><div class="lab">' + rd.lab + '</div><div class="strip"></div><div class="anchor" style="left:28px;top:54px" id="achk' + i + '"></div><div class="anchor" style="left:50px;top:54px" id="achkE' + i + '"></div>';
           var st = r.querySelector(".strip");
           for (var d = 0; d < 7; d++) {
             var sq = document.createElement("i"); sq.style.left = (d * 66) + "px"; if (rd.fill[d]) { sq.style.background = COL.amber; sq.style.borderColor = COL.amber; } st.appendChild(sq);
@@ -325,6 +325,14 @@
 
         /* the pulse that runs the connected thread */
         function drawPulse(c, t, R, shape) {
+          if (shape.name === "r3" || shape.name === "r4" || shape.name === "morph") {
+            for (var cr = 0; cr < 3; cr++) {                           // a short link from the thread to each habit once the pulse has reached it
+              var g0 = t - T.checks[cr]; if (g0 < 0) continue;
+              var pa = A("achk" + cr), pb = A("achkE" + cr), gp = F.eOut(g0 / 0.18);
+              if (shape.name !== "r3" && t > 12.1) continue;
+              c.save(); c.strokeStyle = COL.amber; c.lineWidth = 12; c.lineCap = "butt"; c.beginPath(); c.moveTo(pa[0], pa[1]); c.lineTo(pa[0] + (pb[0] - pa[0]) * gp, pa[1] + (pb[1] - pa[1]) * gp); c.stroke(); c.restore();
+            }
+          }
           if (t < F.pulseTimes[0] || t > T.checks[2] + 0.5 || shape.name !== "r3") return;
           var fr = R.r3.fr; if (!fr) return;
           var pt = F.pulseTimes, u;
