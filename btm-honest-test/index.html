@@ -1,0 +1,390 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <title>be the man — the low seat check</title>
+    <script src="vendor/gsap.min.js"></script>
+    <script src="test.js"></script>
+    <script src="sting.js"></script>
+    <style>
+      @font-face { font-family: "Geist"; font-weight: 400; src: url("fonts/geist-latin-400-normal.woff2") format("woff2"); }
+      @font-face { font-family: "Geist"; font-weight: 500; src: url("fonts/geist-latin-500-normal.woff2") format("woff2"); }
+      @font-face { font-family: "Geist"; font-weight: 600; src: url("fonts/geist-latin-600-normal.woff2") format("woff2"); }
+      @font-face { font-family: "Geist"; font-weight: 700; src: url("fonts/geist-latin-700-normal.woff2") format("woff2"); }
+      @font-face { font-family: "Geist Mono"; font-weight: 500; src: url("fonts/geist-mono-latin-500-normal.woff2") format("woff2"); }
+      @font-face { font-family: "Lora"; font-style: italic; font-weight: 500; src: url("fonts/Lora-500-italic.woff2") format("woff2"); }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1920px; height: 1080px; overflow: hidden; background: #000; }
+      #root { position: relative; width: 1920px; height: 1080px; overflow: hidden; background: #0c0a08; }
+      .layer { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; }
+      #stage { perspective: 1700px; perspective-origin: 50% 50%; }
+      #world { position: absolute; left: 960px; top: 540px; width: 0; height: 0; transform-style: preserve-3d; }
+      .o { position: absolute; transform-style: preserve-3d; }
+      #wall { left: -4000px; top: -2200px; width: 8000px; height: 4400px; background: #120e0a; filter: blur(0px); }
+      .glowdisc { position: absolute; border-radius: 50%; background: #e18b1f; }
+      #desk { left: -3000px; top: 470px; width: 6000px; height: 1400px; background: #17120e; }
+      #deskTop { left: -3000px; top: 458px; width: 6000px; height: 16px; background: #2a2018; }
+      #bezel { left: -617px; top: -473px; width: 1514px; height: 886px; border-radius: 26px; background: #0a0a0b; box-shadow: 0 0 0 2px #1d1b19, 0 40px 120px rgba(0,0,0,0.6); }
+      #scrwrap { position: absolute; left: 40px; top: 40px; width: 1434px; height: 806px; overflow: hidden; border-radius: 10px; background: #000; }
+      #scr { position: absolute; left: 0; top: 0; width: 1280px; height: 720px; transform: scale(1.12); transform-origin: 0 0; background: #000; color: #f5f5f7; font-family: "Geist", sans-serif; overflow: hidden; }
+      #stand { left: -60px; top: 413px; width: 120px; height: 56px; background: #0d0c0b; transform: translateX(140px); }
+      #standBase { left: -190px; top: 462px; width: 380px; height: 14px; border-radius: 8px; background: #151210; transform: translateX(140px); }
+      #chrome { position: absolute; left: 0; top: 0; width: 1280px; height: 56px; background: #141415; border-bottom: 1px solid rgba(255,255,255,.09); }
+      #chrome i { position: absolute; top: 21px; width: 13px; height: 13px; border-radius: 50%; background: #2c2c2e; }
+      #urlpill { position: absolute; left: 190px; top: 12px; width: 560px; height: 32px; border-radius: 16px; background: #1f1f21; font: 500 15px/32px "Geist Mono", monospace; color: #8d8d93; padding-left: 18px; letter-spacing: 0.01em; }
+      #viewport { position: absolute; left: 0; top: 56px; width: 1280px; height: 664px; overflow: hidden; background: #000; }
+      .pg { position: absolute; left: 0; top: 0; width: 1280px; }
+      .abs { position: absolute; }
+      .mono { font-family: "Geist Mono", monospace; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; }
+      .acc { color: #e18b1f; }
+      .tile { position: absolute; background: #111113; border: 1px solid rgba(255,255,255,.09); border-radius: 22px; padding: 26px 28px; }
+      .tile .mono { font-size: 14px; color: #e18b1f; margin-bottom: 12px; }
+      .tile p { font-size: 20px; line-height: 1.45; color: #f5f5f7; }
+      .btn { position: absolute; height: 64px; border-radius: 32px; background: #e18b1f; color: #0b0b0c; font: 600 21px/64px "Geist", sans-serif; text-align: center; }
+      .opt { position: absolute; left: 200px; width: 880px; height: 56px; border-radius: 16px; border: 1px solid rgba(255,255,255,.16); background: #111113; font: 400 19px/54px "Geist", sans-serif; color: #f5f5f7; padding-left: 20px; }
+      .opt b { display: inline-grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: #1c1c1e; font: 500 14px/28px "Geist", sans-serif; margin-right: 14px; vertical-align: middle; position: relative; top: -1px; text-align: center; }
+      .row { position: absolute; left: 200px; width: 880px; height: 56px; }
+      .row .top { display: flex; justify-content: space-between; font-size: 17px; line-height: 22px; }
+      .row .top span:last-child { color: #a1a1a6; font-variant-numeric: tabular-nums; }
+      .trk { height: 10px; border-radius: 6px; background: #1c1c1e; overflow: hidden; margin-top: 7px; }
+      .trk i { display: block; height: 100%; width: 0; border-radius: 6px; background: #e18b1f; }
+      .trk i.w { background: #f5f5f7; opacity: .7; }
+      .sub { font-size: 13px; color: #9a9aa3; margin-top: 5px; }
+      #cursor { position: absolute; left: 0; top: 0; width: 30px; height: 30px; pointer-events: none; z-index: 20; }
+      #ring { position: absolute; width: 44px; height: 44px; margin: -22px 0 0 -22px; border-radius: 50%; border: 2px solid #e18b1f; opacity: 0; z-index: 19; }
+      #curtain { background: #000; clip-path: inset(50% 0 50% 0); }
+      #glow { opacity: 0; }
+      #bokeh .glowdisc { filter: blur(26px); }
+      #steam path { fill: none; stroke: rgba(255,230,200,.5); stroke-width: 7; stroke-linecap: round; }
+      canvas.layer { background: transparent; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="60" data-width="1920" data-height="1080">
+      <div id="stage" class="layer">
+        <div id="world">
+          <div id="wall" class="o" style="transform:translate3d(0,0,-1500px)"></div>
+          <div id="bokeh" class="o"></div>
+          <div id="lampglow" class="o"></div>
+          <div id="desk" class="o" style="transform:translate3d(0,0,-60px)"></div>
+          <div id="deskTop" class="o" style="transform:translate3d(0,0,-60px)"></div>
+          <div id="stand" class="o"></div><div id="standBase" class="o"></div>
+          <div id="mug" class="o" style="left:700px;top:330px;transform:translate3d(0,0,60px)">
+            <div style="position:absolute;left:0;top:0;width:118px;height:128px;border-radius:10px 10px 22px 22px;background:#241d17;box-shadow:inset -14px 0 0 rgba(0,0,0,.25)"></div>
+            <div style="position:absolute;left:104px;top:26px;width:42px;height:62px;border-radius:0 30px 30px 0;border:12px solid #241d17;border-left:0"></div>
+            <div style="position:absolute;left:8px;top:-4px;width:102px;height:14px;border-radius:50%;background:#3a2a1c"></div>
+            <svg id="steam" width="140" height="220" viewBox="0 0 140 220" style="position:absolute;left:-10px;top:-214px;overflow:visible"><g id="steamg"></g></svg>
+          </div>
+          <div id="bezel" class="o">
+            <div id="scrwrap">
+              <div id="scr">
+                <div id="chrome"><i style="left:22px"></i><i style="left:44px"></i><i style="left:66px"></i><div id="urlpill">bethemansystem.com/humility</div></div>
+                <div id="viewport">
+                  <!-- intro -->
+                  <div id="pIntro" class="pg">
+                    <div id="iKick" class="abs mono acc" style="left:200px;top:70px;font-size:16px;white-space:pre"></div>
+                    <div class="abs" style="left:200px;top:104px;width:900px">
+                      <div id="iH1a" style="font:700 68px/72px Geist,sans-serif;letter-spacing:-0.035em;white-space:nowrap"></div>
+                      <div id="iH1b" style="font:700 68px/72px Geist,sans-serif;letter-spacing:-0.035em;white-space:nowrap"></div>
+                    </div>
+                    <div id="iLede" class="abs" style="left:200px;top:272px;width:780px;font:400 22px/34px Geist,sans-serif;color:#a1a1a6"></div>
+                    <div id="iVerse" class="abs" style="left:200px;top:480px;width:820px;padding-left:20px;border-left:3px solid #e18b1f">
+                      <div style="font:400 27px/38px Geist,sans-serif;color:#f5f5f7" id="iVerseT"></div>
+                      <div style="font:400 16px/24px Geist,sans-serif;color:#9a9aa3;margin-top:6px" id="iCite"></div>
+                    </div>
+                    <div id="iHow" class="tile" style="left:200px;top:632px;width:428px;height:196px"><div class="mono">How it works</div><p></p></div>
+                    <div id="iGet" class="tile" style="left:652px;top:632px;width:428px;height:196px"><div class="mono">What you get</div><p></p></div>
+                    <div id="iBtn" class="btn" style="left:200px;top:860px;width:264px">Start the check</div>
+                    <div id="iFine" class="abs" style="left:488px;top:880px;font:400 17px/24px Geist,sans-serif;color:#9a9aa3"></div>
+                  </div>
+                  <!-- the check -->
+                  <div id="pQuiz" class="pg" style="height:664px">
+                    <div id="qPost" class="abs" style="left:200px;top:46px;font:600 16px/20px Geist,sans-serif;color:#e18b1f"></div>
+                    <div id="qCount" class="abs" style="right:200px;top:46px;font:600 16px/20px Geist,sans-serif;color:#9a9aa3"></div>
+                    <div class="abs" style="left:200px;top:82px;width:880px;height:6px;border-radius:6px;background:#1c1c1e;overflow:hidden"><div id="qBar" style="height:100%;width:0;background:#e18b1f"></div></div>
+                    <div id="qText" class="abs" style="left:200px;top:116px;width:880px;font:600 38px/46px Geist,sans-serif;letter-spacing:-0.015em"></div>
+                    <div id="qOpts"></div>
+                  </div>
+                  <!-- the result -->
+                  <div id="pRes" class="pg" style="height:1960px">
+                    <div id="rKick" class="abs" style="left:200px;top:62px;font:600 16px/20px Geist,sans-serif;color:#e18b1f">Your Low Seat score</div>
+                    <div class="abs" style="left:200px;top:86px;display:flex;align-items:baseline;gap:8px;font:700 128px/1 Geist,sans-serif;letter-spacing:-0.04em"><span id="rNum" class="acc">0</span><span style="font-size:28px;color:#9a9aa3;letter-spacing:0">/100</span></div>
+                    <div id="rBand" class="abs" style="left:200px;top:236px;font:700 44px/50px Geist,sans-serif;letter-spacing:-0.02em"></div>
+                    <div id="rText" class="abs" style="left:200px;top:300px;width:780px;font:400 22px/32px Geist,sans-serif;color:#a1a1a6"></div>
+                    <div class="abs mono acc" style="left:200px;top:438px;font-size:15px">Your five postures</div>
+                    <div id="rBars"></div>
+                    <div class="abs mono acc" style="left:200px;top:836px;font-size:15px" id="rThinLab">Your thinnest posture</div>
+                    <div id="rThin" class="abs" style="left:200px;top:864px;font:700 40px/46px Geist,sans-serif;letter-spacing:-0.02em"></div>
+                    <div id="rWhy" class="abs" style="left:200px;top:920px;width:800px;font:400 21px/31px Geist,sans-serif;color:#a1a1a6"></div>
+                    <div id="rTime" class="tile" style="left:200px;top:1030px;width:280px;height:250px"><div class="mono">The time</div><p></p></div>
+                    <div id="rAct" class="tile" style="left:500px;top:1030px;width:280px;height:250px"><div class="mono">The action</div><p></p></div>
+                    <div id="rTest" class="tile" style="left:800px;top:1030px;width:280px;height:250px"><div class="mono">The test</div><p></p></div>
+                    <div class="abs" style="left:200px;top:1480px;font:700 38px/44px Geist,sans-serif;letter-spacing:-0.02em" id="rWit1"></div>
+                    <div class="abs" id="rWit2" style="left:200px;top:1538px;width:760px;font:400 21px/31px Geist,sans-serif;color:#a1a1a6"></div>
+                    <div id="rWitBtn" class="btn" style="left:200px;top:1682px;width:290px;background:transparent;border:2px solid #f5f5f7;color:#f5f5f7;line-height:60px">Send to a witness</div>
+                    <div id="rCopied" class="abs" style="left:520px;top:1702px;font:500 19px/24px Geist,sans-serif;color:#e18b1f"></div>
+                  </div>
+                  <!-- the comparison -->
+                  <div id="pCmp" class="pg" style="height:1100px">
+                    <div class="abs" style="left:200px;top:56px;font:600 16px/20px Geist,sans-serif;color:#e18b1f">Your score, as your witness sees you</div>
+                    <div class="abs" style="left:200px;top:80px;display:flex;align-items:baseline;gap:8px;font:700 120px/1 Geist,sans-serif;letter-spacing:-0.04em"><span id="cNum" class="acc">0</span><span style="font-size:28px;color:#9a9aa3;letter-spacing:0">/100</span></div>
+                    <div id="cBand" class="abs" style="left:200px;top:226px;font:700 40px/46px Geist,sans-serif;letter-spacing:-0.02em"></div>
+                    <div id="cText" class="abs" style="left:200px;top:282px;width:800px;font:400 22px/32px Geist,sans-serif;color:#a1a1a6"></div>
+                    <div class="abs mono acc" style="left:200px;top:386px;font-size:15px">Your five postures</div>
+                    <div id="cBars"></div>
+                    <div class="abs" style="left:200px;top:760px;font:500 15px/20px Geist,sans-serif;display:flex;align-items:center;gap:8px"><span style="display:inline-block;width:14px;height:8px;border-radius:9px;background:#e18b1f"></span>Self<span style="display:inline-block;width:14px;height:8px;border-radius:9px;background:#f5f5f7;opacity:.7;margin-left:12px"></span>Witness</div>
+                  </div>
+                  <div id="ring"></div>
+                </div>
+                <svg id="cursor" viewBox="0 0 30 30"><path d="M4 2 L4 24 L10 18.5 L14.5 27 L18.5 25 L14 16.5 L22 16 Z" fill="#f5f5f7" stroke="#000" stroke-width="1.6" stroke-linejoin="round"/></svg>
+              </div>
+            </div>
+          </div>
+          <div id="man" class="o" style="left:-1120px;top:-300px;width:1500px;height:1000px;transform:translate3d(0,0,250px);filter:blur(2.5px)">
+            <svg id="manSvg" width="1500" height="1000" viewBox="0 0 1500 1000" style="overflow:visible">
+              <g id="manG">
+                <path id="mBody" d="M20 1040 C30 800 110 660 300 625 L540 625 C730 660 810 800 830 1040 Z" fill="#14100c"/>
+                <path d="M300 625 C250 640 160 690 120 800" fill="none" stroke="rgba(246,178,79,.16)" stroke-width="3"/>
+                <g id="mHead">
+                  <rect x="372" y="500" width="112" height="140" rx="40" fill="#0b0908"/>
+                  <ellipse cx="424" cy="400" rx="132" ry="152" fill="#0b0908"/>
+                  <path d="M300 340 C320 250 400 240 470 262 C530 285 552 340 548 380 C500 330 400 316 300 340 Z" fill="#050404"/>
+                  <ellipse cx="548" cy="428" rx="22" ry="40" fill="#0f0c0a"/>
+                  <path d="M526 300 C575 340 580 450 540 520" fill="none" stroke="rgba(246,178,79,.55)" stroke-width="4" stroke-linecap="round"/>
+                </g>
+                <g id="mArm"><path d="M760 690 C820 760 860 860 880 905 L1180 935" fill="none" stroke="#14100c" stroke-width="92" stroke-linecap="round" stroke-linejoin="round"/>
+                  <ellipse cx="1230" cy="948" rx="58" ry="36" fill="#0f0c0a"/></g>
+                <rect x="1190" y="958" width="120" height="58" rx="28" fill="#1d1812"/>
+              </g>
+            </svg>
+          </div>
+        </div>
+      </div>
+      <div id="curtain" class="layer"></div>
+      <canvas id="line" class="layer" width="1920" height="1080"></canvas>
+      <div id="glowwrap" class="layer"><canvas id="glow" class="layer" width="1920" height="1080"></canvas></div>
+      <canvas id="fin" class="layer" width="1920" height="1080"></canvas>
+    </div>
+
+    <script>
+      (function () {
+        var L = window.LS, S5 = window.Motion, COL = L.COL, T = L.T;
+        var q = new URLSearchParams(location.search);
+        var $ = function (id) { return document.getElementById(id); };
+        var world = $("world"), man = $("man"), mHead = $("mHead"), mArm = $("mArm"), manG = $("manG");
+        var lineC = $("line"), lctx = lineC.getContext("2d"), finC = $("fin"), fctx = finC.getContext("2d");
+        var lacc = document.createElement("canvas"); lacc.width = 1920; lacc.height = 1080; var lacx = lacc.getContext("2d");
+        var facc = document.createElement("canvas"); facc.width = 1920; facc.height = 1080; var facx = facc.getContext("2d");
+        var measure = document.createElement("canvas").getContext("2d");
+        var sc5 = null, stingTarget = null;
+
+        /* ---------- the room: bokeh, lamp, steam ---------- */
+        (function () {
+          var r = L.rng(5), bk = $("bokeh"), lg = $("lampglow"), d;
+          [[-1300, -300, 520], [-300, -700, 420], [900, -520, 560], [1500, 40, 420], [200, 200, 380], [-900, 500, 330], [1300, 420, 300]].forEach(function (s, i) {
+            d = document.createElement("div"); d.className = "glowdisc"; d.style.cssText = "left:" + (s[0] - s[2] / 2) + "px;top:" + (s[1] - s[2] / 2) + "px;width:" + s[2] + "px;height:" + s[2] + "px;opacity:" + (0.05 + r() * 0.05) + ";transform:translateZ(" + (-1100 - i * 60) + "px)";
+            bk.appendChild(d);
+          });
+          d = document.createElement("div"); d.className = "glowdisc"; d.style.cssText = "left:-1700px;top:-900px;width:1500px;height:1500px;opacity:.26;filter:blur(160px);transform:translateZ(-1400px)"; lg.appendChild(d);
+          var sg = $("steamg"), p; for (var i = 0; i < 3; i++) { p = document.createElementNS("http://www.w3.org/2000/svg", "path"); p.setAttribute("id", "st" + i); sg.appendChild(p); }
+        })();
+
+        /* ---------- the screen's contents, built from the page's own wording ---------- */
+        $("iKick").textContent = L.WORDS.kicker; $("iH1a").textContent = L.WORDS.h1a; $("iH1b").textContent = L.WORDS.h1b;
+        $("iLede").textContent = L.WORDS.lede; $("iVerseT").textContent = L.WORDS.verse; $("iCite").textContent = L.WORDS.cite;
+        $("iHow").querySelector("p").textContent = L.WORDS.how; $("iGet").querySelector("p").textContent = L.WORDS.get; $("iFine").textContent = L.WORDS.fine;
+        $("rWit1").textContent = L.WORDS.wit1; $("rWit2").textContent = L.WORDS.wit2;
+        var optEls = [];
+        for (var oi = 0; oi < 5; oi++) { var ob = document.createElement("div"); ob.className = "opt"; ob.style.top = (300 + oi * 66) + "px"; ob.innerHTML = "<b>" + (oi + 1) + "</b>" + L.SCALE[oi]; $("qOpts").appendChild(ob); optEls.push(ob); }
+        function makeBars(host, two) {
+          var els = [];
+          L.P.forEach(function (p, n) {
+            var r = document.createElement("div"); r.className = "row"; r.style.top = ((two ? 424 : 478) + n * 66) + "px";
+            r.innerHTML = '<div class="top"><span>' + p.name + '</span><span></span></div><div class="trk"><i></i></div>' + (two ? '<div class="trk" style="margin-top:4px"><i class="w"></i></div>' : "") + '<div class="sub">' + p.short + " · " + p.ref + "</div>";
+            host.appendChild(r); els.push({ el: r, val: r.querySelector(".top span:last-child"), fill: r.querySelectorAll("i")[0], wit: two ? r.querySelectorAll("i")[1] : null });
+          });
+          return els;
+        }
+        var rBars = makeBars($("rBars"), false), cBars = makeBars($("cBars"), true);
+        var th = L.P[L.thinnest];
+        $("rBand").textContent = L.band(L.SO)[1]; $("rText").textContent = L.band(L.SO)[2];
+        $("rThin").textContent = th.name + ": " + th.short.toLowerCase(); $("rWhy").textContent = th.why + " (" + th.ref + ")";
+        $("rTime").querySelector("p").textContent = th.time; $("rAct").querySelector("p").textContent = th.act; $("rTest").querySelector("p").textContent = th.test;
+        $("cBand").textContent = L.band(L.WO)[1]; $("cText").textContent = L.cmpText;
+
+        /* ---------- helpers ---------- */
+        function wipe(el, p) { el.style.clipPath = p >= 1 ? "none" : "inset(0 " + ((1 - L.clamp(p)) * 100).toFixed(2) + "% 0 0)"; el.style.visibility = p <= 0 ? "hidden" : "visible"; }
+        function down(el, p) { el.style.clipPath = p >= 1 ? "none" : "inset(0 0 " + ((1 - L.clamp(p)) * 100).toFixed(2) + "% 0)"; el.style.visibility = p <= 0 ? "hidden" : "visible"; }
+        function rise(el, p, dy) { var e = L.eOut(p); el.style.transform = "translateY(" + ((1 - e) * dy).toFixed(2) + "px)"; el.style.opacity = p <= 0 ? 0 : 1; el.style.visibility = p <= 0 ? "hidden" : "visible"; el.style.clipPath = p >= 1 ? "none" : "inset(0 0 " + ((1 - L.clamp(p * 1.4)) * 100).toFixed(2) + "% 0)"; }
+        function setText(el, s) { if (el._s !== s) { el.textContent = s; el._s = s; } }
+        var scrollIntro = L.pchip([[0, 0], [T.scrollA, 0], [T.scrollB, 300], [60, 300]]);
+        var scrollRes = L.pchip([[36.6, 0], [38.5, 0], [39.5, 330], [41.7, 330], [42.5, 740], [44.0, 740], [45.0, 940], [46.2, 940], [47.3, 1250], [60, 1250]]);
+        var scrollCmp = L.pchip([[50.4, 0], [51.0, 0], [52.2, 0], [54, 90], [60, 90]]);
+        var A = function (id) { var r = $(id).getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2]; };
+
+        /* ---------- one frame of the world ---------- */
+        function update(t) {
+          var cm = L.camera(t);
+          world.style.transform = "translate3d(" + (-cm.px).toFixed(2) + "px," + (-cm.py).toFixed(2) + "px," + cm.dz.toFixed(2) + "px) rotateX(" + cm.rx.toFixed(3) + "deg) rotateY(" + cm.ry.toFixed(3) + "deg)";
+          // the man: leans in, drops his head, breathes; his arm moves the mouse
+          var ln = L.lean(t), hd = L.headDrop(t), br = Math.sin(t * 1.5) * 3;
+          manG.style.transform = "translate(" + (ln * 70).toFixed(1) + "px," + (ln * 26 + br).toFixed(1) + "px) rotate(" + (ln * 3.2 - 1).toFixed(2) + "deg)";
+          mHead.style.transform = "rotate(" + (hd * 7).toFixed(2) + "deg) translate(" + (hd * 14).toFixed(1) + "px," + (hd * 20).toFixed(1) + "px)";
+          mHead.style.transformOrigin = "424px 600px";
+          var ck = 0; for (var i = 0; i < L.clicks.length; i++) { var d = t - L.clicks[i]; if (d >= 0 && d < 0.22) ck = Math.sin(Math.PI * d / 0.22); }
+          var cxm = (L.cursorX(t) - 640) * 0.06, cym = (L.cursorY(t) - 400) * 0.05;
+          mArm.style.transform = "translate(" + cxm.toFixed(1) + "px," + (cym + ck * 7).toFixed(1) + "px) rotate(" + (ck * -1.2).toFixed(2) + "deg)";
+          mArm.style.transformOrigin = "760px 690px";
+          // steam
+          for (var s = 0; s < 3; s++) { var ph = t * 0.9 + s * 2.1, pth = "M" + (40 + s * 28) + " 214 C" + (22 + s * 28 + Math.sin(ph) * 18) + " 170 " + (66 + s * 28 + Math.cos(ph * 1.2) * 20) + " 120 " + (40 + s * 28 + Math.sin(ph * 0.8) * 22) + " 60 S" + (50 + s * 28 + Math.cos(ph) * 18) + " 10 " + (46 + s * 28) + " -10"; $("st" + s).setAttribute("d", pth); $("st" + s).style.opacity = 0.55 - s * 0.12; }
+
+          // ---- the screen
+          var ptr = L.eInOut;
+          var intro = t < 12.4, quiz = t >= 11.5 && t < 36.8, res = t >= 36.0 && t < 51.2, cmp = t >= 50.4;
+          $("pIntro").style.display = intro ? "block" : "none"; $("pQuiz").style.display = quiz ? "block" : "none"; $("pRes").style.display = res ? "block" : "none"; $("pCmp").style.display = cmp ? "block" : "none";
+          // intro
+          if (intro) {
+            var h = t - T.h1;
+            wipe($("iKick"), (t - 0.5) / 0.9); wipe($("iH1a"), (t - T.h1) / 0.9); wipe($("iH1b"), (t - T.h1 - 0.7) / 0.9);
+            down($("iLede"), (t - T.lede) / 2.6); rise($("iVerse"), (t - T.verse) / 0.9, 24);
+            rise($("iHow"), (t - 7.0) / 0.8, 40); rise($("iGet"), (t - 7.3) / 0.8, 40); rise($("iBtn"), (t - 8.6) / 0.7, 30); wipe($("iFine"), (t - 9.4) / 0.9);
+            var sx = scrollIntro(t), shift = L.eInOut((t - 11.6) / 0.8) * -1280;
+            $("pIntro").style.transform = "translate(" + shift.toFixed(1) + "px," + (-sx).toFixed(2) + "px)";
+            var hov = t >= T.hover && t < T.click + 0.4, pr = t >= T.click && t < T.click + 0.3;
+            $("iBtn").style.background = hov ? COL.hi : COL.accent; $("iBtn").style.transform = "scale(" + (pr ? 0.96 : 1) + ")";
+          }
+          // the check
+          if (quiz) {
+            var qt = t, qi = -1; for (var k = 0; k < L.QSTART.length; k++) if (t >= L.QSTART[k]) qi = k;
+            var inMont = t >= T.montageA, qsl = L.eInOut((t - 11.5) / 0.8), qIdx, picked = 0, qp = 1;
+            var out = t >= T.montageB ? L.eInOut((t - T.montageB) / 0.6) : 0;
+            var base = 1280 * (1 - qsl);
+            if (inMont) {
+              var mi = 0; for (var m = 0; m < L.montageTimes.length; m++) if (t >= L.montageTimes[m]) mi = m;
+              qIdx = L.MONTAGE[mi]; var shown = 5 + mi + 1;
+              setText($("qText"), L.Q[qIdx][1]); setText($("qPost"), L.P[L.Q[qIdx][0]].name + " · " + L.P[L.Q[qIdx][0]].short);
+              setText($("qCount"), (qIdx + 1) + " of 20"); $("qBar").style.width = ((qIdx + 1) / 20 * 100).toFixed(1) + "%";
+              picked = L.HIS[qIdx]; qp = 1;
+            } else {
+              qIdx = L.SHOWN[Math.max(0, qi)]; var ls = t - L.QSTART[Math.max(0, qi)];
+              setText($("qText"), L.Q[qIdx][1]); setText($("qPost"), L.P[L.Q[qIdx][0]].name + " · " + L.P[L.Q[qIdx][0]].short);
+              setText($("qCount"), (qIdx + 1) + " of 20"); $("qBar").style.width = (qIdx / 20 * 100 + L.clamp((t - L.PICK[Math.max(0, qi)]) / 0.4) * 5).toFixed(1) + "%";
+              picked = t >= L.PICK[Math.max(0, qi)] ? L.HIS[qIdx] : 0; qp = L.clamp(ls / 0.5);
+            }
+            for (var o = 0; o < 5; o++) {
+              var on = picked === o + 1, hv = false;
+              if (!inMont && qi >= 0 && picked === 0) { var cyv = L.cursorY(t), cxv = L.cursorX(t); hv = Math.abs(cyv - L.optY(o)) < 30 && cxv > 200 && cxv < 1080 && qp >= 1; }
+              optEls[o].style.borderColor = on ? COL.accent : (hv ? COL.fg : "rgba(255,255,255,.16)"); optEls[o].style.background = on ? "rgba(225,139,31,.14)" : COL.tile;
+              optEls[o].style.opacity = 1;
+            }
+            var enter = L.eOut(qp), dx = inMont ? 0 : (1 - enter) * 120;
+            $("pQuiz").style.transform = "translate(" + (base + dx - (t < 12.6 ? 0 : 0)).toFixed(1) + "px," + (-out * 700).toFixed(1) + "px)";
+            $("qText").style.opacity = inMont ? 1 : (0.2 + 0.8 * enter).toFixed(3);
+          }
+          // the result
+          if (res) {
+            var rs = L.eInOut((t - T.result) / 0.8), cnt = L.eOut((t - T.count[0]) / (T.count[1] - T.count[0]));
+            setText($("rNum"), String(Math.round(L.SO * cnt)));
+            wipe($("rBand"), (t - T.bandT) / 0.6); down($("rText"), (t - T.bandT - 0.2) / 1.2);
+            $("pRes").style.transform = "translateY(" + ((1 - rs) * 664 - scrollRes(t)).toFixed(2) + "px) translateX(" + (L.eInOut((t - 50.4) / 0.7) * -1280).toFixed(1) + "px)";
+            for (var b = 0; b < 5; b++) { var bp = L.eOut((t - (T.bars[0] + b * 0.4)) / 0.9); rBars[b].fill.style.width = (L.S[b] * bp).toFixed(1) + "%"; setText(rBars[b].val, String(Math.round(L.S[b] * bp))); }
+            rise($("rTime"), (t - T.ttt[0]) / 0.7, 30); rise($("rAct"), (t - T.ttt[1]) / 0.7, 30); rise($("rTest"), (t - T.ttt[2]) / 0.7, 30);
+            wipe($("rThin"), (t - T.thin) / 0.7); down($("rWhy"), (t - T.thin - 0.3) / 1.2);
+            var hov2 = t >= T.witHover && t < T.witClick + 0.4, pr2 = t >= T.witClick && t < T.witClick + 0.3;
+            $("rWitBtn").style.background = hov2 ? COL.fg : "transparent"; $("rWitBtn").style.color = hov2 ? COL.onAccent : COL.fg; $("rWitBtn").style.transform = "scale(" + (pr2 ? 0.96 : 1) + ")";
+            wipe($("rCopied"), (t - T.copied) / 0.7); setText($("rCopied"), L.WORDS.copied);
+          }
+          if (cmp) {
+            var cs = L.eInOut((t - 50.4) / 0.7);
+            $("pCmp").style.transform = "translate(" + ((1 - cs) * 1280).toFixed(1) + "px," + (-scrollCmp(t)).toFixed(2) + "px)";
+            var cc = L.eOut((t - 50.9) / 1.4); setText($("cNum"), String(Math.round(L.WO * cc)));
+            for (var c = 0; c < 5; c++) { var cp = L.eOut((t - (T.cmpBars[0] + c * 0.3)) / 0.9); cBars[c].fill.style.width = (L.S[c] * cp).toFixed(1) + "%"; cBars[c].wit.style.width = (L.W[c] * L.eOut((t - (T.cmpBars[0] + 0.5 + c * 0.3)) / 0.9)).toFixed(1) + "%"; setText(cBars[c].val, L.S[c] + " · " + L.W[c]); }
+          }
+          // cursor
+          var cxx = L.cursorX(t), cyy = L.cursorY(t), cur = $("cursor");
+          cur.style.transform = "translate(" + cxx.toFixed(1) + "px," + (cyy + 0).toFixed(1) + "px)"; cur.style.opacity = t < 0.6 ? 0 : 1;
+          var rp = -1; for (var cl = 0; cl < L.clicks.length; cl++) { var dd = t - L.clicks[cl]; if (dd >= 0 && dd < 0.45) rp = dd / 0.45; }
+          var rg = $("ring"); if (rp >= 0) { rg.style.opacity = (1 - rp).toFixed(3); rg.style.transform = "translate(" + cxx.toFixed(1) + "px," + (cyy - 56).toFixed(1) + "px) scale(" + (0.5 + rp * 1.4).toFixed(3) + ")"; } else rg.style.opacity = 0;
+
+          // the dark opens out of the bar, as the camera pushes through the screen
+          var ce = L.eInOut((t - T.end) / 0.9), yc = 560;
+          $("curtain").style.clipPath = "inset(" + (yc * (1 - ce)).toFixed(1) + "px 0 " + ((1080 - yc) * (1 - ce)).toFixed(1) + "px 0)";
+          $("glow").style.opacity = (0.34 * L.sstep((t - 55.0) / 1.8)).toFixed(3);
+        }
+
+        /* ---------- the line: the first bar becomes the thread that writes the logo ---------- */
+        function octagon(c, cx, cy, s, col) { var a = s / 2, ch = s * 0.22; c.beginPath(); c.moveTo(cx - a + ch, cy - a); c.lineTo(cx + a - ch, cy - a); c.lineTo(cx + a, cy - a + ch); c.lineTo(cx + a, cy + a - ch); c.lineTo(cx + a - ch, cy + a); c.lineTo(cx - a + ch, cy + a); c.lineTo(cx - a, cy + a - ch); c.lineTo(cx - a, cy - a + ch); c.closePath(); c.fillStyle = col; c.fill(); }
+        function Route(poly) { var n = poly.length, cum = new Float64Array(n); for (var i = 1; i < n; i++) cum[i] = cum[i - 1] + Math.hypot(poly[i][0] - poly[i - 1][0], poly[i][1] - poly[i - 1][1]); return { len: cum[n - 1], at: function (u) { var s = L.clamp(u) * cum[n - 1], lo = 0, hi = n - 1; while (hi - lo > 1) { var m = (lo + hi) >> 1; if (cum[m] <= s) lo = m; else hi = m; } var f = (s - cum[lo]) / Math.max(1e-9, cum[hi] - cum[lo]); return [poly[lo][0] + (poly[hi][0] - poly[lo][0]) * f, poly[lo][1] + (poly[hi][1] - poly[lo][1]) * f]; } }; }
+        var fromRoute = null;
+        function barRoute() { var a = A("cBars").valueOf ? null : null; var r = cBars[0].fill.parentNode.getBoundingClientRect(); var y = r.top + r.height / 2, x0 = r.left, x1 = r.right; return Route([[-120, y], [x0, y], [x1, y], [2040, y]]); }
+        var TOUT = { a: 0 };
+        function drawMorph(c, t) {
+          var raw = L.clamp((t - T.morphA) / (T.morphB - T.morphA)), N = 900, a = fromRoute, tg = stingTarget, pts = [];
+          for (var i = 0; i < N; i++) {
+            var u = i / (N - 1), m = L.eInOut(L.clamp((raw - 0.4 * u) / 0.6)), pa = a.at(u), pb = tg[Math.round(u * (tg.length - 1))];
+            pts.push([L.lerp(pa[0], pb[0], m), L.lerp(pa[1], pb[1], m)]);
+          }
+          var w = L.lerp(10, sc5.w, L.sstep(raw));
+          c.save(); c.lineJoin = "round"; c.lineCap = "butt"; c.lineWidth = w; c.strokeStyle = COL.accent; c.beginPath(); c.moveTo(pts[0][0], pts[0][1]); for (var k = 1; k < N; k++) c.lineTo(pts[k][0], pts[k][1]); c.stroke(); c.restore();
+        }
+        var TAG_FONT = "italic 500 50px Lora, Georgia, serif", MONO_FONT = '500 25px "Geist Mono", monospace', tagAdv = [], tagW = 0, labAdv = [], labW = 0, exAdv = [], exW = 0, EX_FONT = '400 20px "Geist", sans-serif';
+        function measureAll() {
+          measure.font = TAG_FONT; measure.letterSpacing = "0.8px"; tagW = measure.measureText(L.WORDS.tagline).width; tagAdv = []; for (var i = 0; i <= L.WORDS.tagline.length; i++) tagAdv.push(measure.measureText(L.WORDS.tagline.slice(0, i)).width);
+          measure.font = MONO_FONT; measure.letterSpacing = "3.2px"; var lab = L.WORDS.label + "   " + L.WORDS.url; labW = measure.measureText(lab).width; labAdv = []; for (var j = 0; j <= lab.length; j++) labAdv.push(measure.measureText(lab.slice(0, j)).width);
+          measure.font = EX_FONT; measure.letterSpacing = "0.4px"; exW = measure.measureText(L.WORDS.example).width; exAdv = []; for (var e = 0; e <= L.WORDS.example.length; e++) exAdv.push(measure.measureText(L.WORDS.example.slice(0, e)).width);
+          measure.letterSpacing = "0px";
+        }
+        function typeWipe(c, text, adv, W, font, track, y, t0, t1, t, color) {
+          if (t < t0) return; var p = L.eInOutSine((t - t0) / (t1 - t0)), n = text.length;
+          c.save(); c.font = font; c.letterSpacing = track; c.textBaseline = "alphabetic"; c.textAlign = "left"; c.fillStyle = color;
+          for (var i = 0; i < n; i++) { var f = L.clamp(p * (n + 1.5) - i); if (f <= 0) break; var x0 = 960 - W / 2 + adv[i], x1 = 960 - W / 2 + adv[i + 1]; c.save(); c.beginPath(); c.rect(x0 - 2, y - 60, (x1 - x0) * Math.min(1, f) + 4, 90); c.clip(); c.fillText(text[i], x0, y); c.restore(); }
+          c.restore();
+        }
+        function drawFinal(c, t) {
+          c.save(); var k = L.clamp((t - T.morphB) / 5), sc = 1 + 0.026 * k; c.translate(960, 560); c.scale(sc, sc); c.translate(-960, -560);
+          S5.drawScene(sc5, c, L.tsOf(t)); var tb = sc5.bottom;
+          typeWipe(c, L.WORDS.tagline, tagAdv, tagW, TAG_FONT, "0.8px", tb + 118, L.tfOf(S5.T.tagA), L.tfOf(S5.T.tagB), t, COL.muted);
+          var lab = L.WORDS.label + "   " + L.WORDS.url, t0 = L.tfOf(S5.T.tagB) + 0.05;
+          typeWipe(c, lab, labAdv, labW, MONO_FONT, "3.2px", tb + 206, t0, t0 + 0.6, t, "#c9c9ce");
+          typeWipe(c, L.WORDS.example, exAdv, exW, EX_FONT, "0.4px", tb + 262, t0 + 0.7, t0 + 1.1, t, COL.dim);
+          c.restore();
+        }
+
+        var ready = false;
+        function render(t) {
+          if (!ready) return;
+          t = Math.max(0, Math.min(L.DUR, t)); update(t);
+          lctx.setTransform(1, 0, 0, 1, 0, 0); lctx.clearRect(0, 0, 1920, 1080);
+          if (t >= T.morphA - 0.001 && t < T.morphB) {
+            if (!fromRoute || fromRoute._t !== 1) { update(T.morphA); fromRoute = barRoute(); fromRoute._t = 1; update(t); }
+            var N = 8, sh = 1 / 240;
+            for (var j = 0; j < N; j++) { var tj = t + ((j + 0.5) / N - 0.5) * sh; lacx.setTransform(1, 0, 0, 1, 0, 0); lacx.clearRect(0, 0, 1920, 1080); drawMorph(lacx, tj); lctx.globalAlpha = 1 / (j + 1); lctx.drawImage(lacc, 0, 0); lctx.globalAlpha = 1; }
+          }
+          fctx.setTransform(1, 0, 0, 1, 0, 0); fctx.clearRect(0, 0, 1920, 1080);
+          if (t >= T.morphB && sc5) {
+            var NF = t < L.tfOf(S5.T.close + 0.45) ? 6 : 1, sh2 = 1 / 240;
+            for (var f = 0; f < NF; f++) { var tf = NF === 1 ? t : t + ((f + 0.5) / NF - 0.5) * sh2; facx.setTransform(1, 0, 0, 1, 0, 0); facx.clearRect(0, 0, 1920, 1080); drawFinal(facx, tf); if (NF === 1) fctx.drawImage(facc, 0, 0); else { fctx.globalAlpha = 1 / (f + 1); fctx.drawImage(facc, 0, 0); fctx.globalAlpha = 1; } }
+          }
+        }
+        var proxy = { t: 0 }, SUB = 0.5 / 120;
+        var tl = gsap.timeline({ paused: true });
+        tl.to(proxy, { t: L.DUR, duration: L.DUR, ease: "none", onUpdate: function () { render(proxy.t - (window.__still ? 0 : SUB)); } }, 0);
+        window.addEventListener("hf-seek", function (ev) { render(ev.detail.time - (window.__still ? 0 : SUB)); });
+
+        Promise.all(['700 68px Geist', '600 38px Geist', '400 22px Geist', '500 16px "Geist Mono"', 'italic 500 50px Lora'].map(function (f) { return document.fonts.load(f); })).then(function () {
+          sc5 = S5.create("orbit", { targetW: 1500, comp0: 0.05 });
+          (function () { var tmp = [], NSt = 1400, bb = sc5.headS(2.3); for (var i = 0; i < NSt; i++) { var pp = sc5.ptAt(bb * i / (NSt - 1), sc5.comp(2.3)); tmp.push([pp.x, pp.y]); } tmp.reverse(); stingTarget = tmp; })();
+          measureAll();
+          (function () {
+            var g = $("glow").getContext("2d"), gr = g.createRadialGradient(960, 560, 0, 960, 560, 780);
+            for (var i = 0; i <= 24; i++) { var u = i / 24; gr.addColorStop(u, S5.rgba(COL.accent, 0.9 * Math.exp(-4.2 * u * u) * (1 - L.sstep((u - 0.82) / 0.18)))); }
+            g.fillStyle = gr; g.fillRect(0, 0, 1920, 1080);
+          })();
+          ready = true; window.__timelines = window.__timelines || {}; window.__timelines["main"] = tl; window.__render = render;
+          if (q.get("still") !== null) { window.__still = true; render(parseFloat(q.get("still"))); document.title = "ready"; } else render(0);
+        });
+      })();
+    </script>
+  </body>
+</html>

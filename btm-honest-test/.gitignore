@@ -1,0 +1,6 @@
+.hyperframes/
+node_modules/
+renders/_*
+renders/work-*
+renders/.*
+renders/*.mov
