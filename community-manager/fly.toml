@@ -1,0 +1,23 @@
+app = "bethemansystem-community"   # change to something unique
+primary_region = "iad"
+
+[build]
+
+[env]
+  DRY_RUN = "true"
+  DB_PATH = "/data/community.db"
+
+[mounts]
+  source = "community_data"
+  destination = "/data"
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = "off"       # polling loop + delayed replies need it running
+  min_machines_running = 1
+  [http_service.checks]
+    [http_service.checks.health]
+      path = "/healthz"
+      interval = "30s"
+      timeout = "5s"
