@@ -458,23 +458,6 @@ def swap_checkout_links(text, products):
     return text
 
 
-def reels_html():
-    """YouTube Shorts listed in web/reels.json, as tap-to-play 9:16 tiles. Empty list, no section."""
-    f = ROOT / "reels.json"
-    reels = json.loads(f.read_text()) if f.exists() else []
-    if not reels:
-        return ""
-    tiles = "\n".join(
-        f'      <button class="video reel" type="button" data-yt="{html.escape(r["id"])}" aria-label="Play: {html.escape(r["title"])}">'
-        f'<img src="https://i.ytimg.com/vi/{html.escape(r["id"])}/oar2.jpg" onerror="this.onerror=null;this.src=\'https://i.ytimg.com/vi/{html.escape(r["id"])}/hqdefault.jpg\'" alt="" width="270" height="480" loading="lazy">'
-        f'<span class="play" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5.5v13l11-6.5z"/></svg></span>'
-        f'<span class="reel-t">{html.escape(r["title"])}</span></button>'
-        for r in reels)
-    return ('<div class="reels-head"><p class="eyebrow">Reels</p>'
-            '<a class="textlink" href="https://www.youtube.com/@BeTheManSystem/shorts" rel="me">All reels on YouTube ›</a></div>\n'
-            f'    <div class="reels">\n{tiles}\n    </div>')
-
-
 def main():
     if OUT.exists():
         shutil.rmtree(OUT)
@@ -483,9 +466,8 @@ def main():
     products = json.loads((ROOT / "products.json").read_text())
     write_catalog(products)
     entries = [read_page(p) for p in sorted((ROOT / "pages").glob("*.html"))] + delivery_pages(products) + member_pages(products)
-    reels = reels_html()
     for meta, body in entries:
-        body = swap_checkout_links(body.replace("{{reels}}", reels), products)
+        body = swap_checkout_links(body, products)
         rel = "404.html" if meta["path"] == "/404" else (meta["path"].strip("/") + "/index.html").lstrip("/")
         out = OUT / rel
         out.parent.mkdir(parents=True, exist_ok=True)

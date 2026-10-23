@@ -21,7 +21,3 @@ https://bethemansystem.com/yt
 
 Be The Man · Faith should function.
 ```
-
-## Reels on the site
-Add a Short to web/reels.json as {"id": "<the 11 characters after /shorts/>", "title": "<short title>"}.
-They show on the home page and /training/. An empty list shows nothing.
