@@ -72,13 +72,16 @@ export async function untag(env, email, tagId) {
 }
 
 // One-to-one email through Resend. Returns true when Resend accepted it.
-export async function sendEmail(env, { to, subject, html, replyTo = BRIAN }) {
+// attachments: [{ filename, content }] with content base64-encoded.
+export async function sendEmail(env, { to, subject, html, replyTo = BRIAN, attachments }) {
   if (!env.RESEND_API_KEY) return false;
   try {
+    const body = { from: FROM, to: [to], subject, html, reply_to: replyTo };
+    if (attachments) body.attachments = attachments;
     const r = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: { authorization: `Bearer ${env.RESEND_API_KEY}`, "content-type": "application/json" },
-      body: JSON.stringify({ from: FROM, to: [to], subject, html, reply_to: replyTo }),
+      body: JSON.stringify(body),
     });
     return r.ok;
   } catch (e) {

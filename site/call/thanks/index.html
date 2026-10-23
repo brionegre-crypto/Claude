@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Call requested | Be The Man</title>
-<meta name="description" content="Your call request has been received.">
+<title>Call booked | Be The Man</title>
+<meta name="description" content="Your free call is booked.">
 <meta name="robots" content="noindex, follow">
 <link rel="canonical" href="https://bethemansystem.com/call/thanks/">
 <link rel="icon" type="image/png" href="/assets/favicon.png">
@@ -12,8 +12,8 @@
 <meta name="theme-color" content="#000000">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Be The Man">
-<meta property="og:title" content="Call requested | Be The Man">
-<meta property="og:description" content="Your call request has been received.">
+<meta property="og:title" content="Call booked | Be The Man">
+<meta property="og:description" content="Your free call is booked.">
 <meta property="og:url" content="https://bethemansystem.com/call/thanks/">
 <meta property="og:image" content="https://bethemansystem.com/assets/og.png">
 <meta property="og:image:width" content="1200">
@@ -49,8 +49,8 @@
    "@type": "WebPage",
    "@id": "https://bethemansystem.com/call/thanks/#page",
    "url": "https://bethemansystem.com/call/thanks/",
-   "name": "Call requested | Be The Man",
-   "description": "Your call request has been received.",
+   "name": "Call booked | Be The Man",
+   "description": "Your free call is booked.",
    "isPartOf": {
     "@id": "https://bethemansystem.com/#site"
    },
@@ -71,7 +71,7 @@
     {
      "@type": "ListItem",
      "position": 2,
-     "name": "Call requested | Be The Man",
+     "name": "Call booked | Be The Man",
      "item": "https://bethemansystem.com/call/thanks/"
     }
    ]
@@ -146,9 +146,9 @@
 
 <main id="main">
 <div class="wrap hero narrow">
-  <p class="eyebrow">Request received</p>
-  <h1 style="font-size:clamp(40px,6vw,64px)">Thank you. <span class="grad">Brian will be in touch.</span></h1>
-  <p class="lead">Brian will reply within one business day with a time for your call. Watch for an email from brian@bethemansystem.com, and check your spam folder if you don't see it.</p>
+  <p class="eyebrow">You're booked</p>
+  <h1 style="font-size:clamp(40px,6vw,64px)">Thank you. <span class="grad">Brian will call you.</span></h1>
+  <p class="lead"><span id="ct-when"></span>A confirmation with a calendar invite is on its way from brian@bethemansystem.com. Check your spam folder if you don't see it. Need to change it? Use the cancel link in that email.</p>
   <div class="tile stack" style="margin-top:28px">
     <h3>While you wait</h3>
     <p>Do Step 1. It's free, takes twenty minutes, and gives the call somewhere to start.</p>
@@ -156,6 +156,12 @@
   </div>
 </div>
 <div style="height:clamp(80px,12vw,140px)"></div>
+<script>
+(function(){
+  var t=new URLSearchParams(location.search).get('t'); if(!t||isNaN(Date.parse(t))) return;
+  document.getElementById('ct-when').textContent=new Intl.DateTimeFormat('en-US',{timeZone:'America/Chicago',weekday:'long',month:'long',day:'numeric',hour:'numeric',minute:'2-digit'}).format(new Date(t))+' Central. ';
+})();
+</script>
 </main>
 <footer>
   <div class="wrap">

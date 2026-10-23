@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Book a Free 15-Minute Call With Brian Greene | Be The Man</title>
-<meta name="description" content="Tell Brian where you&#x27;re stuck. He&#x27;ll reply within one business day with a time for a free 15-minute call.">
+<meta name="description" content="Pick a time for a free 15-minute call with Brian Greene. Monday to Thursday evenings, Central time. He calls you.">
 <meta name="robots" content="noindex, follow">
 <link rel="canonical" href="https://bethemansystem.com/call/">
 <link rel="icon" type="image/png" href="/assets/favicon.png">
@@ -13,7 +13,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Be The Man">
 <meta property="og:title" content="Book a Free 15-Minute Call With Brian Greene | Be The Man">
-<meta property="og:description" content="Tell Brian where you&#x27;re stuck. He&#x27;ll reply within one business day with a time for a free 15-minute call.">
+<meta property="og:description" content="Pick a time for a free 15-minute call with Brian Greene. Monday to Thursday evenings, Central time. He calls you.">
 <meta property="og:url" content="https://bethemansystem.com/call/">
 <meta property="og:image" content="https://bethemansystem.com/assets/og.png">
 <meta property="og:image:width" content="1200">
@@ -66,7 +66,7 @@
    "@id": "https://bethemansystem.com/call/#page",
    "url": "https://bethemansystem.com/call/",
    "name": "Book a Free 15-Minute Call With Brian Greene | Be The Man",
-   "description": "Tell Brian where you're stuck. He'll reply within one business day with a time for a free 15-minute call.",
+   "description": "Pick a time for a free 15-minute call with Brian Greene. Monday to Thursday evenings, Central time. He calls you.",
    "isPartOf": {
     "@id": "https://bethemansystem.com/#site"
    },
@@ -164,40 +164,106 @@
 <div class="wrap hero narrow">
   <p class="eyebrow">Free · 15 minutes</p>
   <h1 style="font-size:clamp(40px,6vw,64px)">Where are <span class="grad">you stuck?</span></h1>
-  <p class="lead">Leave your details and the best times to reach you. Brian replies within one business day to set a time, Monday to Thursday evenings, 7:00 to 9:00 PM Central. He calls you.</p>
-  <div class="tile" style="margin-top:28px">
-    <form class="signup" id="callf" action="/api/inquiry" method="post" novalidate>
-      <input type="hidden" name="type" value="call">
+  <p class="lead">Pick a time. Brian calls you for fifteen minutes, Monday to Thursday evenings, Central time. No pitch you didn't ask for.</p>
+  <p class="bk-note" id="bk-cancelled" hidden>Your call is cancelled. Pick another time below whenever you're ready.</p>
+  <div class="tile stack" style="margin-top:28px" id="bk">
+    <p class="label">1 · Pick a day</p>
+    <div class="bk-days" id="bk-days"><p class="muted" id="bk-loading">Loading open times…</p></div>
+    <div id="bk-times-wrap" hidden>
+      <p class="label" style="margin-top:8px">2 · Pick a time <span class="muted" style="text-transform:none;letter-spacing:0">(Central)</span></p>
+      <div class="bk-times" id="bk-times"></div>
+      <p class="muted bk-local" id="bk-local" hidden></p>
+    </div>
+    <form class="signup" id="callf" novalidate hidden>
+      <p class="label" style="margin-top:8px">3 · Your details</p>
+      <p class="bk-picked" id="bk-picked"></p>
       <label class="sr-only" for="cf-name">Your name</label>
       <input id="cf-name" name="name" type="text" autocomplete="name" placeholder="Your name" required>
       <label class="sr-only" for="cf-email">Email</label>
       <input id="cf-email" name="email" type="email" autocomplete="email" inputmode="email" placeholder="Email" required>
-      <label class="sr-only" for="cf-phone">Phone</label>
-      <input id="cf-phone" name="phone" type="tel" autocomplete="tel" placeholder="Phone number">
-      <label class="sr-only" for="cf-note">What you want to talk about, and good times</label>
-      <input id="cf-note" name="note" type="text" placeholder="What's on your mind, and good times to call">
+      <label class="sr-only" for="cf-phone">Phone number Brian should call</label>
+      <input id="cf-phone" name="phone" type="tel" autocomplete="tel" placeholder="Phone number Brian should call" required>
+      <label class="sr-only" for="cf-note">What you want to talk about</label>
+      <input id="cf-note" name="note" type="text" placeholder="What's on your mind (optional)">
       <div class="hp" aria-hidden="true"><label for="cf-company">Company</label><input id="cf-company" name="company" tabindex="-1" autocomplete="off"></div>
-      <button class="btn btn-primary btn-lg btn-block" type="submit">Request my call</button>
+      <button class="btn btn-primary btn-lg btn-block" type="submit">Book my call</button>
       <p class="signup-msg" id="cf-msg" role="alert" hidden></p>
     </form>
+    <p class="muted" id="bk-none" hidden>No open times in the next two weeks. Email <a class="textlink" href="mailto:brian@bethemansystem.com?subject=Free%20call">brian@bethemansystem.com</a> and he'll find one.</p>
+    <noscript><p>Booking needs JavaScript. Email <a class="textlink" href="mailto:brian@bethemansystem.com?subject=Free%20call">brian@bethemansystem.com</a> with good times and he'll call you.</p></noscript>
   </div>
   <p class="fine" style="margin-top:16px">Applying for the Inner Circle, or asking about the group or the ministry kit? Say so in the note.</p>
 </div>
 <div style="height:clamp(80px,12vw,140px)"></div>
+<style>
+#bk [hidden]{display:none!important}
+.bk-days,.bk-times{display:flex;flex-wrap:wrap;gap:8px}
+.bk-days button,.bk-times button{font:inherit;font-size:15px;color:var(--fg);background:var(--bg);border:1px solid var(--line-2);border-radius:12px;padding:10px 14px;cursor:pointer;line-height:1.25;text-align:center}
+.bk-days button small{display:block;color:var(--muted,#9a958c);font-size:12px}
+.bk-days button[aria-pressed="true"],.bk-times button[aria-pressed="true"]{border-color:var(--accent);background:var(--accent);color:#0b0b0c}
+.bk-days button[aria-pressed="true"] small{color:#0b0b0c}
+.bk-picked{font-weight:600;color:var(--accent)}
+.bk-note{color:var(--accent);margin-top:16px}
+.bk-local{font-size:14px}
+.signup button[disabled]{opacity:.7;cursor:wait}
+</style>
 <script>
 (function(){
-  var f=document.getElementById('callf'); if(!f||!window.fetch) return;
-  var msg=document.getElementById('cf-msg'), btn=f.querySelector('button');
+  var $=function(id){return document.getElementById(id);};
+  if(/cancel=done/.test(location.search)) $('bk-cancelled').hidden=false;
+  if(!window.fetch) return;
+  var TZ='America/Chicago', slots=[], pick=null;
+  var dayKey=function(t){return new Intl.DateTimeFormat('en-CA',{timeZone:TZ}).format(new Date(t));};
+  var fmt=function(t,o){return new Intl.DateTimeFormat('en-US',Object.assign({timeZone:TZ},o)).format(new Date(t));};
+  var mine=Intl.DateTimeFormat().resolvedOptions().timeZone;
+  function press(box,btn){box.querySelectorAll('button').forEach(function(b){b.setAttribute('aria-pressed',b===btn?'true':'false');});}
+  function showDay(key,btn){
+    press($('bk-days'),btn); pick=null; $('callf').hidden=true;
+    var box=$('bk-times'); box.innerHTML='';
+    slots.filter(function(s){return dayKey(s.t)===key;}).forEach(function(s){
+      var b=document.createElement('button'); b.type='button'; b.textContent=fmt(s.t,{hour:'numeric',minute:'2-digit'});
+      b.addEventListener('click',function(){
+        press(box,b); pick=s; $('bk-picked').textContent=s.label; $('callf').hidden=false;
+        var l=$('bk-local');
+        if(mine&&mine!==TZ){l.textContent='That is '+new Intl.DateTimeFormat('en-US',{hour:'numeric',minute:'2-digit',timeZoneName:'short'}).format(new Date(s.t))+' where you are.';l.hidden=false;} else l.hidden=true;
+        $('cf-name').focus();
+      });
+      box.appendChild(b);
+    });
+    $('bk-times-wrap').hidden=false;
+  }
+  function load(){
+    fetch('/api/booking',{headers:{accept:'application/json'}}).then(function(r){return r.json();}).then(function(d){
+      var days=$('bk-days'); days.innerHTML=''; slots=(d&&d.slots)||[];
+      if(!slots.length){$('bk-none').hidden=false;return;}
+      var seen={};
+      slots.forEach(function(s){
+        var k=dayKey(s.t); if(seen[k]) return; seen[k]=1;
+        var b=document.createElement('button'); b.type='button';
+        b.innerHTML=fmt(s.t,{weekday:'short'})+'<small>'+fmt(s.t,{month:'short',day:'numeric'})+'</small>';
+        b.addEventListener('click',function(){showDay(k,b);});
+        days.appendChild(b);
+      });
+    }).catch(function(){$('bk-days').innerHTML='';$('bk-none').hidden=false;});
+  }
+  load();
+  var f=$('callf'), msg=$('cf-msg'), btn=f.querySelector('button');
   f.addEventListener('submit',function(e){
     e.preventDefault();
-    var name=f.name.value.trim(), email=f.email.value.trim();
+    var name=f.name.value.trim(), email=f.email.value.trim(), phone=f.phone.value.trim();
+    if(!pick){msg.textContent='Please pick a time.';msg.hidden=false;return;}
     if(!name){msg.textContent='Please add your name.';msg.hidden=false;return;}
     if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)){msg.textContent='Please enter a valid email address.';msg.hidden=false;return;}
-    btn.disabled=true; btn.textContent='Sending…'; msg.hidden=true;
-    fetch('/api/inquiry',{method:'POST',headers:{'content-type':'application/json',accept:'application/json'},body:JSON.stringify({type:'call',name:name,email:email,phone:f.phone.value.trim(),note:f.note.value.trim(),company:f.company.value})})
-      .then(function(r){return r.json().catch(function(){return {};});})
-      .then(function(d){ if(d.redirect){location.href=d.redirect;return;} msg.textContent=d.error||'Something went wrong. Please try again.';msg.hidden=false;btn.disabled=false;btn.textContent='Request my call'; })
-      .catch(function(){f.submit();});
+    if(phone.replace(/\D/g,'').length<7){msg.textContent='Please add the phone number Brian should call.';msg.hidden=false;return;}
+    btn.disabled=true; btn.textContent='Booking…'; msg.hidden=true;
+    fetch('/api/booking',{method:'POST',headers:{'content-type':'application/json',accept:'application/json'},body:JSON.stringify({t:pick.t,name:name,email:email,phone:phone,note:f.note.value.trim(),company:f.company.value})})
+      .then(function(r){return r.json().catch(function(){return {};}).then(function(d){return {s:r.status,d:d};});})
+      .then(function(x){
+        if(x.d.redirect){location.href=x.d.redirect;return;}
+        msg.textContent=x.d.error||'Something went wrong. Please try again.';msg.hidden=false;btn.disabled=false;btn.textContent='Book my call';
+        if(x.s===409){f.hidden=true;$('bk-times-wrap').hidden=true;load();}
+      })
+      .catch(function(){msg.textContent='Something went wrong. Please try again.';msg.hidden=false;btn.disabled=false;btn.textContent='Book my call';});
   });
 })();
 </script>
