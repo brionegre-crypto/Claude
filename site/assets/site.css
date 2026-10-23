@@ -47,16 +47,33 @@ p,ul,ol{margin:0}
 .nav-in{display:flex;align-items:center;justify-content:space-between;gap:16px;height:56px}
 .logo{font-family:var(--display);font-weight:700;font-size:17px;letter-spacing:.02em;white-space:nowrap}
 .logo span{color:var(--accent)}
-.links{display:flex;gap:28px;font-size:14px;color:var(--muted)}
+.links{display:flex;align-items:center;gap:26px;font-size:14px;color:var(--muted)}
 .links a{transition:color .2s}
 .links a:hover,.links a[aria-current="page"]{color:var(--fg)}
 .nav-cta{display:flex;align-items:center;gap:10px}
+.signin{font-size:14px;color:var(--muted);padding:0 6px;transition:color .2s}
+.signin:hover{color:var(--fg)}
+.dd{position:relative}
+.dd-btn{display:flex;align-items:center;gap:7px;background:none;border:0;padding:8px 0;color:inherit;font:inherit;cursor:pointer;transition:color .2s}
+.dd-btn:after{content:"";width:6px;height:6px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:translateY(-2px) rotate(45deg);transition:transform .2s}
+.dd-btn[aria-expanded="true"]:after{transform:translateY(1px) rotate(-135deg)}
+.dd-btn:hover,.dd-btn[aria-expanded="true"],.dd.here .dd-btn{color:var(--fg)}
+.dd-panel{position:absolute;top:calc(100% + 8px);left:-18px;min-width:290px;padding:8px;background:#141416;border:1px solid var(--line-2);border-radius:18px;box-shadow:0 30px 60px -20px rgba(0,0,0,.9);display:grid;z-index:30}
+.dd-panel[hidden]{display:none}
+.dd-panel:before{content:"";position:absolute;left:0;right:0;top:-12px;height:12px}
+.dd-panel a{display:grid;gap:2px;padding:10px 12px;border-radius:12px;color:var(--fg);transition:background .15s}
+.dd-panel a:hover,.dd-panel a:focus-visible,.dd-panel a[aria-current="page"]{background:rgba(255,255,255,.06)}
+.dd-panel b{font-weight:500;font-size:15px}
+.dd-panel span{font-size:13px;color:var(--dim)}
+@media (hover:hover) and (min-width:821px){.dd:not(.shut):hover .dd-panel[hidden]{display:grid}}
+.drawer-h{margin:14px 0 2px;font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
 .menu-btn{display:none;background:none;border:0;color:var(--fg);width:40px;height:40px;border-radius:999px;cursor:pointer}
 .menu-btn svg{width:20px;height:20px;margin:auto}
 .drawer{border-top:1px solid var(--line)}
 .drawer nav{display:grid;padding-block:8px 16px}
 .drawer a{padding:12px 0;font-size:20px;font-weight:500;border-bottom:1px solid var(--line)}
-@media (max-width:820px){.links{display:none}.menu-btn{display:grid}}
+.drawer nav{max-height:calc(100vh - 70px);overflow-y:auto}
+@media (max-width:820px){.links,.signin{display:none}.menu-btn{display:grid}}
 
 /* Buttons and links */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:0 26px;border-radius:999px;font-weight:600;font-size:17px;transition:transform .2s ease,background .2s ease,box-shadow .2s ease,border-color .2s ease;text-align:center;border:0;cursor:pointer;font-family:inherit}

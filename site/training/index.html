@@ -116,12 +116,32 @@
     <a class="logo" href="/" aria-label="Be The Man home">BE <span>THE MAN</span></a>
     <nav class="links" aria-label="Main">
       <a href="/">Home</a>
-      <a href="/the-club/">The Club</a>
-      <a href="/products/">The Store</a>
+      <div class="dd here">
+        <button class="dd-btn" type="button" aria-expanded="false" aria-controls="dd-free">Start free</button>
+        <div class="dd-panel" id="dd-free" hidden>
+          <a href="/step-1/"><b>Step 1 worksheet</b><span>20 minutes, one sentence</span></a>
+          <a href="/7-week-challenge/"><b>The 7-week challenge</b><span>One email every Tuesday</span></a>
+          <a href="/humility/"><b>The Low Seat Check</b><span>How humble are you?</span></a>
+          <a href="/training/" aria-current="page"><b>Free training</b><span>6-minute video</span></a>
+          <a href="/call/"><b>Book a free call</b><span>15 minutes with Brian</span></a>
+        </div>
+      </div>
+      <div class="dd">
+        <button class="dd-btn" type="button" aria-expanded="false" aria-controls="dd-programs">Programs</button>
+        <div class="dd-panel" id="dd-programs" hidden>
+          <a href="/the-club/"><b>The Be The Man Club</b><span>$19 a month</span></a>
+          <a href="/group/"><b>The 6-week group</b><span>Live on Google Meet, four seats</span></a>
+          <a href="/inner-circle/"><b>The Inner Circle</b><span>By application</span></a>
+          <a href="/ministry-kit/"><b>Men&#x27;s ministry kit</b><span>For churches</span></a>
+          <a href="/workshop/" data-until="2026-10-25"><b>Live workshop: Fix Your Wednesday</b><span>Sunday, Oct 25</span></a>
+        </div>
+      </div>
+      <a href="/products/">Store</a>
       <a href="/couples/">Couples</a>
       <a href="/about/">About</a>
     </nav>
     <div class="nav-cta">
+      <a class="signin" href="/members/">Sign in</a>
       <a class="btn btn-primary btn-sm" href="/the-club/#join">Join the Club</a>
       <button class="menu-btn" id="menu-btn" type="button" aria-expanded="false" aria-controls="drawer" aria-label="Open menu">
         <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M3 7h14M3 13h14"/></svg>
@@ -130,12 +150,23 @@
   </div>
   <div class="drawer" id="drawer" hidden>
     <nav class="wrap" aria-label="Mobile">
-      <a href="/">Home</a>
-      <a href="/the-club/">The Club</a>
-      <a href="/products/">The Store</a>
+      <p class="drawer-h">Start free</p>
+      <a href="/step-1/">Step 1 worksheet</a>
+      <a href="/7-week-challenge/">The 7-week challenge</a>
+      <a href="/humility/">The Low Seat Check</a>
+      <a href="/training/">Free training</a>
+      <a href="/call/">Book a free call</a>
+      <p class="drawer-h">Programs</p>
+      <a href="/the-club/">The Be The Man Club</a>
+      <a href="/group/">The 6-week group</a>
+      <a href="/inner-circle/">The Inner Circle</a>
+      <a href="/ministry-kit/">Men&#x27;s ministry kit</a>
+      <a href="/workshop/" data-until="2026-10-25">Live workshop: Fix Your Wednesday</a>
+      <p class="drawer-h">More</p>
+      <a href="/products/">Store</a>
       <a href="/couples/">Couples</a>
       <a href="/about/">About</a>
-      <a href="/step-1/">Get Step 1, free</a>
+      <a href="/members/">Member sign in</a>
     </nav>
   </div>
 </header>

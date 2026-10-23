@@ -40,8 +40,28 @@ PERSON = {
     "sameAs": ["https://www.youtube.com/@BeTheManSystem", "https://bethemansystem.substack.com"],
 }
 
-NAV = [("home", "/", "Home"), ("club", "/the-club/", "The Club"), ("store", "/products/", "The Store"),
-       ("couples", "/couples/", "Couples"), ("about", "/about/", "About")]
+# Main menu. A tuple with a list is a dropdown: (key, label, [(href, label, note, until), ...]).
+# "until" (YYYY-MM-DD) hides an item after that date, at build time and in the browser (site.js).
+NAV = [
+    ("home", "/", "Home"),
+    ("free", "Start free", [
+        ("/step-1/", "Step 1 worksheet", "20 minutes, one sentence", None),
+        ("/7-week-challenge/", "The 7-week challenge", "One email every Tuesday", None),
+        ("/humility/", "The Low Seat Check", "How humble are you?", None),
+        ("/training/", "Free training", "6-minute video", None),
+        ("/call/", "Book a free call", "15 minutes with Brian", None),
+    ]),
+    ("programs", "Programs", [
+        ("/the-club/", "The Be The Man Club", "$19 a month", None),
+        ("/group/", "The 6-week group", "Live on Google Meet, four seats", None),
+        ("/inner-circle/", "The Inner Circle", "By application", None),
+        ("/ministry-kit/", "Men's ministry kit", "For churches", None),
+        ("/workshop/", "Live workshop: Fix Your Wednesday", "Sunday, Oct 25", "2026-10-25"),
+    ]),
+    ("store", "/products/", "Store"),
+    ("couples", "/couples/", "Couples"),
+    ("about", "/about/", "About"),
+]
 
 
 def read_page(path):
@@ -50,13 +70,33 @@ def read_page(path):
     return json.loads(meta), body
 
 
-def header(current):
+def header(current, path=""):
     cur = ' aria-current="page"'
-    links = "\n".join(
-        f'      <a href="{href}"{cur if key == current else ""}>{label}</a>'
-        for key, href, label in NAV)
-    drawer = "\n".join(f'      <a href="{href}">{label}</a>' for _, href, label in NAV)
-    return (ROOT / "partials" / "header.html").read_text().replace("{{links}}", links).replace("{{drawer}}", drawer)
+    today = datetime.date.today().isoformat()
+    live = lambda items: [i for i in items if not i[3] or today <= i[3]]
+    until = lambda i: f' data-until="{i[3]}"' if i[3] else ""
+    links, drawer = [], []
+    for item in NAV:
+        if isinstance(item[2], list):
+            key, label, items = item
+            items = live(items)
+            here = any(path == href for href, *_ in items) or current == key
+            rows = "\n".join(
+                f'          <a href="{href}"{until(i)}{cur if path == href else ""}><b>{html.escape(name)}</b><span>{html.escape(note)}</span></a>'
+                for i in items for href, name, note, _ in [i])
+            links.append(
+                f'      <div class="dd{" here" if here else ""}">\n'
+                f'        <button class="dd-btn" type="button" aria-expanded="false" aria-controls="dd-{key}">{label}</button>\n'
+                f'        <div class="dd-panel" id="dd-{key}" hidden>\n{rows}\n        </div>\n      </div>')
+            drawer.append(f'      <p class="drawer-h">{label}</p>\n' + "\n".join(
+                f'      <a href="{href}"{until(i)}>{html.escape(name)}</a>' for i in items for href, name, _, _ in [i]))
+        else:
+            key, href, label = item
+            links.append(f'      <a href="{href}"{cur if key == current or path == href else ""}>{label}</a>')
+    more = [i for i in NAV if not isinstance(i[2], list) and i[0] != "home"]
+    drawer.append('      <p class="drawer-h">More</p>\n' + "\n".join(f'      <a href="{href}">{label}</a>' for _, href, label in more)
+                  + '\n      <a href="/members/">Member sign in</a>')
+    return (ROOT / "partials" / "header.html").read_text().replace("{{links}}", "\n".join(links)).replace("{{drawer}}", "\n".join(drawer))
 
 
 def render(meta, body):
@@ -123,7 +163,7 @@ def render(meta, body):
 <body>
 """
     chrome = not meta.get("bare")
-    top = header(meta.get("nav", "")) if chrome else ""
+    top = header(meta.get("nav", ""), meta.get("path", "")) if chrome else ""
     foot = (ROOT / "partials" / "footer.html").read_text() if chrome else ""
     if meta.get("members"):
         top, foot = MEMBERS_TOP, MEMBERS_FOOT
