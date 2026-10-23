@@ -37,3 +37,9 @@ Chapter lower-thirds ("Step 1: Put a time on it", "Step 2: Decide what counts as
 ## Open items for Brion
 - Confirm which audio track is the mic.
 - Confirm you want the audience line "Black Christian men" kept in the on-screen hook (the thumbnail dropped it; the script/title keep it). I kept it in the plan.
+
+## Logo animation: use the existing one (no rebuild)
+Copied from `btm-logo-sting/renders/` on `claude/pensive-euler-elkreg` into `video-edit/assets/`:
+- `be-the-man-logo-sting.mp4` (6 s, 1920x1080, with sound): the closing sting.
+- `be-the-man-logo-sting-transparent.webm` (alpha, with sound): the early logo bug (use the first ~2 s, mute it).
+The sting is 1080p, so scale 2x to fit the 4K timeline (flat shapes and type, so this holds up). If it looks soft, re-render it at 3840x2160 with `btm-logo-sting/tools/render-all.sh`.
