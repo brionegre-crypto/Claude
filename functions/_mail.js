@@ -31,6 +31,7 @@ export const SEQUENCES = {
   step1Welcome: 2931291, // "Step 1." straight away
   step1FollowUp: 2928502, // Steps 1 to 6, weekly
   challengeWelcome: 2928501, // "You're in: the 7-week challenge"
+  lowSeat: 2941421, // Low Seat Check results, then a 7-day plan
 };
 
 // The weekly Step 1 follow-up starts for sign-ups from this date. Before it, the

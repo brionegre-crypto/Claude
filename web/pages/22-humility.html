@@ -71,6 +71,24 @@
       </div>
     </div>
 
+    <div class="tile stack" style="margin-top:16px" id="ls-r-email">
+      <p class="label">Keep this result</p>
+      <h3>Email me my results + a 7-day plan.</h3>
+      <p>Your score and thinnest posture in your inbox, then one short email a day for six days: one posture a day, one decision with a time on it.</p>
+      <form class="signup" id="ls-mail" action="/api/subscribe" method="post" novalidate>
+        <input type="hidden" name="list" value="lowseat">
+        <label class="sr-only" for="ls-name">First name</label>
+        <input id="ls-name" name="name" type="text" autocomplete="given-name" placeholder="First name">
+        <label class="sr-only" for="ls-email">Email</label>
+        <input id="ls-email" name="email" type="email" autocomplete="email" inputmode="email" placeholder="Email address" required>
+        <div class="hp" aria-hidden="true"><label for="ls-company">Company</label><input id="ls-company" name="company" tabindex="-1" autocomplete="off"></div>
+        <button class="btn btn-primary btn-block" type="submit">Email me my results</button>
+        <p class="signup-msg" id="ls-mail-msg" role="alert" hidden></p>
+      </form>
+      <p class="ls-sent" id="ls-mail-ok" hidden>Sent. Check your inbox in about two minutes. Day 1 of the plan arrives tomorrow morning.</p>
+      <p class="muted ls-fine">7 short daily emails, then the Thursday email. Leave anytime in one click.</p>
+    </div>
+
     <div class="tile stack" style="margin-top:16px" id="ls-r-invite">
       <p class="label">Get a second witness</p>
       <h3>You can't see your own blind spot. Someone at your table can.</h3>
@@ -98,6 +116,7 @@
 
 <style>
 #ls [hidden]{display:none!important}
+.ls-sent{color:var(--accent);font-weight:600}
 .ls-verse{margin:28px 0 0;padding:0 0 0 18px;border-left:3px solid var(--accent);font-size:clamp(19px,2.2vw,23px);line-height:1.4;color:var(--fg)}
 .ls-verse cite{display:block;margin-top:6px;font-style:normal;font-size:15px;color:var(--dim)}
 .ls-how{margin-top:28px}
@@ -296,6 +315,8 @@
     $("ls-r-test").textContent = t.test;
 
     $("ls-r-invite").hidden = !!w;
+    $("ls-r-email").hidden = !!w || witnessMode;
+    window.__lsScore = total; window.__lsPosture = t.name;
     $("ls-r-back").hidden = !witnessMode;
     $("ls-again").hidden = witnessMode;
     window.__lsSelf = selfStr; window.__lsWit = witStr;
@@ -323,6 +344,25 @@
   $("ls-start").addEventListener("click", begin);
   $("ls-wstart").addEventListener("click", begin);
   $("ls-again").addEventListener("click", function () { history.replaceState(null, "", base); witnessMode = false; begin(); });
+
+  (function () {
+    var f = $("ls-mail"); if (!f || !window.fetch) return;
+    var msg = $("ls-mail-msg"), btn = f.querySelector("button");
+    f.addEventListener("submit", function (e) {
+      e.preventDefault();
+      var email = f.email.value.trim();
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) { msg.textContent = "Please enter a valid email address."; msg.hidden = false; f.email.focus(); return; }
+      btn.disabled = true; btn.textContent = "Sending…"; msg.hidden = true;
+      fetch("/api/subscribe", {method: "POST", headers: {"content-type": "application/json", accept: "application/json"},
+        body: JSON.stringify({list: "lowseat", name: f.name.value.trim(), email: email, company: f.company.value, score: window.__lsScore, posture: window.__lsPosture})})
+        .then(function (r) { return r.json().catch(function () { return {}; }); })
+        .then(function (d) {
+          if (d.ok) { f.hidden = true; $("ls-mail-ok").hidden = false; return; }
+          msg.textContent = d.error || "Something went wrong. Please try again."; msg.hidden = false; btn.disabled = false; btn.textContent = "Email me my results";
+        })
+        .catch(function () { msg.textContent = "Something went wrong. Please try again."; msg.hidden = false; btn.disabled = false; btn.textContent = "Email me my results"; });
+    });
+  })();
 
   if (mine && wit) results(mine, wit);
   else if (witnessMode) show("ls-witness-intro");

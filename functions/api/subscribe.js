@@ -2,7 +2,8 @@
 // Adds a sign-up to Kit. Default list is Step 1 (tag "Step 1", the "Step 1."
 // email straight away, and from Nov 6 the weekly Step 1 follow-up); list
 // "challenge" is the free 7-week challenge (tag "7-week challenge" and its
-// welcome email). Needs the KIT_API_KEY secret. If the key is missing or Kit
+// welcome email); list "lowseat" emails a Low Seat Check result (tag "Low Seat
+// Check", score and posture fields, and the 7-day plan). Needs the KIT_API_KEY secret. If the key is missing or Kit
 // fails, the visitor sees a "please try again" message on this site.
 
 import { subscribe, TAGS, SEQUENCES, FOLLOW_UP_FROM, firstName } from "../_mail.js";
@@ -10,7 +11,19 @@ import { subscribe, TAGS, SEQUENCES, FOLLOW_UP_FROM, firstName } from "../_mail.
 const LISTS = {
   step1: { tag: TAGS.step1, sequences: [SEQUENCES.step1Welcome], thanks: "/step-1/thanks/" },
   challenge: { tag: TAGS.challenge, sequences: [SEQUENCES.challengeWelcome], thanks: "/7-week-challenge/thanks/" },
+  lowseat: { tag: TAGS.lowSeat, sequences: [SEQUENCES.lowSeat], thanks: "/humility/#sent" },
 };
+
+const POSTURES = ["Teachable", "Owned", "Unseen", "Credit", "Dependent"];
+
+// Score and thinnest posture for the Low Seat Check emails. Bad values are dropped, not stored.
+function lowSeatFields(data) {
+  const fields = {};
+  const score = Number(data.score);
+  if (Number.isInteger(score) && score >= 0 && score <= 100) fields.low_seat_score = String(score);
+  if (POSTURES.includes(data.posture)) fields.low_seat_posture = data.posture;
+  return fields;
+}
 
 const FAIL_MSG = "We couldn't sign you up just now. Please try again in a minute, or email brian@bethemansystem.com and he'll send it to you.";
 
@@ -59,7 +72,8 @@ async function handle(request, env, data) {
   const sequences = [...list.sequences];
   if (list === LISTS.step1 && Date.now() >= FOLLOW_UP_FROM) sequences.push(SEQUENCES.step1FollowUp);
   try {
-    const ok = await subscribe(env, email, { firstName: firstName(name), tags: [list.tag], sequences });
+    const fields = list === LISTS.lowseat ? lowSeatFields(data) : undefined;
+    const ok = await subscribe(env, email, { firstName: firstName(name), tags: [list.tag], sequences, fields });
     return done(request, ok, THANKS);
   } catch (e) {
     return done(request, false);

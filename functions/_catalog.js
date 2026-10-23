@@ -249,6 +249,13 @@ export const OFFERS = {
  "library": {
   "plink": "plink_1UNzb9IJyHMhQ40veB5olTGF",
   "files": [
+   "step1_pdf",
+   "step2_pdf",
+   "step3_pdf",
+   "step4_pdf",
+   "step5_pdf",
+   "step6_pdf",
+   "step7_pdf",
    "scorecard_pdf",
    "scorecard_xlsx",
    "husband_pdf",
@@ -266,7 +273,7 @@ export const OFFERS = {
    "forty_pdf"
   ],
   "slug": "library-zjcdznwk",
-  "name": "The Complete Be The Man Library",
+  "name": "The Complete Be The Man System",
   "addons": [],
   "tag": null,
   "guide": false
