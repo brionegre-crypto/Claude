@@ -77,7 +77,7 @@
    ],
    "start": "Print one sheet a week. Fill it in Sunday night: every commitment, every day, kept or missed. Share it with one other man.",
    "stripe_plink": "plink_1UNzYUIJyHMhQ40v5Zv5UDtG",
-   "after_html": "<div class=\"tile stack\" style=\"margin-top:16px\"><p class=\"label\">Want the whole framework?</p><h3>The Be The Man System, $97.</h3><p>All seven step worksheets in order, plus the Scorecard you just bought. One step a week, and by week seven you have a system that holds.</p><div class=\"actions\"><a class=\"btn btn-ghost\" href=\"https://buy.stripe.com/5kQ3cw7vR9ql2WXe1S6kg0k\">Get the System, $97</a></div></div>"
+   "after_html": "<div class=\"tile stack\" style=\"margin-top:16px\"><p class=\"label\">Want everything?</p><h3>The Complete Be The Man System, $97.</h3><p>All seven step worksheets in order, plus all eleven tools in the store, the Scorecard included. One step a week, and by week seven you have a system that holds.</p><div class=\"actions\"><a class=\"btn btn-ghost\" href=\"https://buy.stripe.com/aFa9AUeYjdGB2WX1f66kg0d\">Get the Complete System, $97</a></div></div>"
   },
   {
    "key": "husband-guide",
@@ -261,13 +261,20 @@
   },
   {
    "key": "library",
-   "name": "The Complete Be The Man Library",
+   "name": "The Complete Be The Man System",
    "price": 97,
    "type": "one_time",
    "systeme_link": "https://5e95-brian.systeme.io/593d3b68",
    "stripe_link": "https://buy.stripe.com/aFa9AUeYjdGB2WX1f66kg0d",
    "slug": "library-zjcdznwk",
    "files": [
+    "step1_pdf",
+    "step2_pdf",
+    "step3_pdf",
+    "step4_pdf",
+    "step5_pdf",
+    "step6_pdf",
+    "step7_pdf",
     "scorecard_pdf",
     "scorecard_xlsx",
     "husband_pdf",
@@ -284,7 +291,7 @@
     "prayer_pdf",
     "forty_pdf"
    ],
-   "start": "Start with the Weekly Scorecard. Every other tool plugs into it.",
+   "start": "Start with Step 1, one step a week, and run the Weekly Scorecard alongside it. Every other tool plugs into the Scorecard.",
    "stripe_plink": "plink_1UNzb9IJyHMhQ40veB5olTGF"
   },
   {
@@ -414,7 +421,8 @@
     "scorecard_pdf",
     "scorecard_xlsx"
    ],
-   "start": "One step a week, in order, starting with Step 1. Put your Sunday review on the calendar before you begin."
+   "start": "One step a week, in order, starting with Step 1. Put your Sunday review on the calendar before you begin.",
+   "_note": "Retired 2026-10-23: merged into \"library\" (The Complete Be The Man System). Kept so earlier buyers' download page still works."
   }
  ]
 }
