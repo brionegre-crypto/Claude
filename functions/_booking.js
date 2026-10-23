@@ -33,7 +33,7 @@ function offsetMinutes(ms) {
 }
 
 // Central wall-clock time -> UTC milliseconds.
-function centralToUtc(y, m, d, hh, mm) {
+export function centralToUtc(y, m, d, hh, mm) {
   const guess = Date.UTC(y, m - 1, d, hh, mm);
   return guess - offsetMinutes(guess - offsetMinutes(guess) * 60000) * 60000;
 }
