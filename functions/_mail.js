@@ -25,6 +25,7 @@ export const TAGS = {
   call: 24600599,
   lowSeat: 24600600,
   pair: 24600601,
+  speaking: 24937582,
 };
 
 export const SEQUENCES = {

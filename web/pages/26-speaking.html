@@ -1,0 +1,85 @@
+---
+{
+ "path": "/speaking/",
+ "crumb": "Book Brian to speak",
+ "person": true,
+ "priority": "0.6",
+ "title": "Book Brian Greene to Speak: Men's Nights, Retreats and Conferences | Be The Man",
+ "description": "Brian Greene speaks to Black Christian men about turning faith into a system that holds at home. Men's nights, retreats, conference sessions and workshops. Tell him about your event."
+}
+---
+<div class="wrap hero narrow">
+  <p class="eyebrow">Speaking</p>
+  <h1 style="font-size:clamp(40px,6vw,64px)">Bring Brian to <span class="grad">your men.</span></h1>
+  <p class="lead">Brian Greene teaches Black Christian men to stop running their faith on good intentions and start running it on a system: a time, a trigger and a test for every decision that matters at home. Husband of eleven years, father of three, pastor of ten years, certified marriage counselor.</p>
+  <div class="actions" style="margin-top:20px"><a class="btn btn-primary" href="#ask">Tell Brian about your event</a></div>
+</div>
+<div style="height:clamp(24px,5vw,48px)"></div>
+
+<section class="section tight">
+  <div class="wrap">
+    <div class="sec-head"><h2>Talks men leave with something to do.</h2></div>
+    <div class="grid-3">
+      <div class="tile stack"><p class="label">The framework</p><h3>A goal says what. A system says when.</h3><p>The seven steps of the Be The Man System in one session. Every man leaves with his one sentence written down and one decision with a time on it.</p></div>
+      <div class="tile stack"><p class="label">Marriage and home</p><h3>The first ten minutes home.</h3><p>Why the evening is decided at the front door, and the small mechanisms that change what a wife and kids see: the door, the bedtime questions, the conversation you keep postponing.</p></div>
+      <div class="tile stack"><p class="label">Humility</p><h3>The low seat.</h3><p>Five postures of humility from Scripture, measured by what a man does, not how he feels. Built around The Low Seat Check, with a second witness from his own table.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="section tight">
+  <div class="wrap">
+    <div class="sec-head"><h2>Formats.</h2></div>
+    <div class="grid-2">
+      <div class="tile stack"><h3>Men's night or breakfast</h3><p>One talk, 30 to 45 minutes, with questions after. Printable worksheets for every man if you want them.</p></div>
+      <div class="tile stack"><h3>Retreat</h3><p>Two to four sessions across a weekend, built around the seven steps, with time for men to write and talk in small groups.</p></div>
+      <div class="tile stack"><h3>Conference session or breakout</h3><p>A keynote or a breakout on any of the talks above, fitted to your theme and time slot.</p></div>
+      <div class="tile stack"><h3>Workshop, in person or online</h3><p>A working session where men leave with their own plan on paper. Online sessions run on Google Meet.</p></div>
+    </div>
+    <p class="fine" style="margin-top:16px">Want something your men can keep running after the event? The <a class="textlink" href="/ministry-kit/">men's ministry kit</a> turns the seven steps into a seven-week small group.</p>
+  </div>
+</section>
+
+<section class="section tight" id="ask">
+  <div class="wrap narrow">
+    <div class="sec-head"><h2>Tell Brian about your event.</h2><p class="muted">He replies within two business days with availability and details.</p></div>
+    <div class="tile">
+      <form class="signup" id="spk" action="/api/inquiry" method="post" novalidate>
+        <input type="hidden" name="type" value="speaking">
+        <label class="sr-only" for="sp-name">Your name</label>
+        <input id="sp-name" name="name" type="text" autocomplete="name" placeholder="Your name" required>
+        <label class="sr-only" for="sp-email">Email</label>
+        <input id="sp-email" name="email" type="email" autocomplete="email" inputmode="email" placeholder="Email" required>
+        <label class="sr-only" for="sp-phone">Phone</label>
+        <input id="sp-phone" name="phone" type="tel" autocomplete="tel" placeholder="Phone number">
+        <label class="sr-only" for="sp-org">Church or organization</label>
+        <input id="sp-org" name="org" type="text" autocomplete="organization" placeholder="Church or organization">
+        <label class="sr-only" for="sp-date">Event date and city</label>
+        <input id="sp-date" name="event" type="text" placeholder="Event date and city (or online)">
+        <label class="sr-only" for="sp-note">The event, how many men, and the topic</label>
+        <input id="sp-note" name="note" type="text" placeholder="The event, about how many men, and the topic">
+        <div class="hp" aria-hidden="true"><label for="sp-company">Company</label><input id="sp-company" name="company" tabindex="-1" autocomplete="off"></div>
+        <button class="btn btn-primary btn-lg btn-block" type="submit">Send my request</button>
+        <p class="signup-msg" id="sp-msg" role="alert" hidden></p>
+      </form>
+    </div>
+  </div>
+</section>
+<div style="height:clamp(60px,10vw,120px)"></div>
+<script>
+(function(){
+  var f=document.getElementById('spk'); if(!f||!window.fetch) return;
+  var msg=document.getElementById('sp-msg'), btn=f.querySelector('button');
+  f.addEventListener('submit',function(e){
+    e.preventDefault();
+    var name=f.name.value.trim(), email=f.email.value.trim();
+    if(!name){msg.textContent='Please add your name.';msg.hidden=false;return;}
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)){msg.textContent='Please enter a valid email address.';msg.hidden=false;return;}
+    btn.disabled=true; btn.textContent='Sending…'; msg.hidden=true;
+    fetch('/api/inquiry',{method:'POST',headers:{'content-type':'application/json',accept:'application/json'},body:JSON.stringify({type:'speaking',name:name,email:email,phone:f.phone.value.trim(),org:f.org.value.trim(),event:f.event.value.trim(),note:f.note.value.trim(),company:f.company.value})})
+      .then(function(r){return r.json().catch(function(){return {};});})
+      .then(function(d){ if(d.redirect){location.href=d.redirect;return;} msg.textContent=d.error||'Something went wrong. Please try again.';msg.hidden=false;btn.disabled=false;btn.textContent='Send my request'; })
+      .catch(function(){f.submit();});
+  });
+})();
+</script>

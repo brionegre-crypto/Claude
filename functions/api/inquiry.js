@@ -1,7 +1,7 @@
 // Cloudflare Pages Function: POST /api/inquiry
-// Inquiries from the site: couples counseling (/couples/) and free 15-minute
-// call requests (/call/), chosen by the "type" field.
-// 1. Saves the person in Kit with that type's tag ("Couples inquiry" or "Call request").
+// Inquiries from the site: couples counseling (/couples/), free 15-minute
+// call requests (/call/) and speaking requests (/speaking/), chosen by the "type" field.
+// 1. Saves the person in Kit with that type's tag ("Couples inquiry", "Call request" or "Speaking inquiry").
 // 2. Emails Brian the details through Resend.
 // Needs RESEND_API_KEY (and KIT_API_KEY for the tag). If the alert can't be sent,
 // the visitor sees a "please try again, or email Brian" message on this site.
@@ -12,6 +12,7 @@ import { inquiryAlertEmail } from "../_emails.js";
 const TYPES = {
   couples: { tag: TAGS.couples, thanks: "/couples/thanks/" },
   call: { tag: TAGS.call, thanks: "/call/thanks/" },
+  speaking: { tag: TAGS.speaking, thanks: "/speaking/thanks/" },
 };
 
 const FAIL_MSG = "We couldn't send your message just now. Please try again in a minute, or email brian@bethemansystem.com directly.";
@@ -51,7 +52,11 @@ export async function onRequestPost({ request, env }) {
   const name = clean(data.name, 120);
   const email = clean(data.email, 200).toLowerCase();
   const phone = clean(data.phone, 40);
-  const note = clean(data.note, 500);
+  // Speaking requests also carry the organization and the event date and place.
+  const extra = kind === "speaking"
+    ? [["Organization", clean(data.org, 160)], ["Event", clean(data.event, 160)]].filter(([, v]) => v).map(([k, v]) => `${k}: ${v}`)
+    : [];
+  const note = [...extra, clean(data.note, 500)].filter(Boolean).join(" · ");
   if (!name || !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
     return new Response(JSON.stringify({ ok: false, error: kind === "couples" ? "Please add your names and a valid email." : "Please add your name and a valid email." }), {
       status: 400,
@@ -63,7 +68,7 @@ export async function onRequestPost({ request, env }) {
   try {
     // Saved for follow-up only; an inquiry is not a newsletter sign-up, so no sequence starts.
     await subscribe(env, email, { firstName: firstName(name), tags: [tag] }).catch(() => false);
-    const typeLabel = kind === "call" ? "free call" : "couples";
+    const typeLabel = { call: "free call", speaking: "speaking", couples: "couples" }[kind];
     const sent = await sendEmail(env, {
       to: BRIAN,
       replyTo: email,

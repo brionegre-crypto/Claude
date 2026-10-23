@@ -56,6 +56,7 @@ NAV = [
         ("/group/", "The 6-week group", "Live on Google Meet, four seats", None),
         ("/inner-circle/", "The Inner Circle", "By application", None),
         ("/ministry-kit/", "Men's ministry kit", "For churches", None),
+        ("/speaking/", "Book Brian to speak", "Men's nights, retreats, conferences", None),
         ("/workshop/", "Live workshop: Fix Your Wednesday", "Sunday, Oct 25", "2026-10-25"),
     ]),
     ("store", "/products/", "Store"),
