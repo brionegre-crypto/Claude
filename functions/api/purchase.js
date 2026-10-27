@@ -9,14 +9,15 @@
 import { OFFERS } from "../_catalog.js";
 import { paidSession, boughtPrices } from "./download.js";
 import { sign } from "../_club.js";
-import { subscribe, sendEmail, tagByName, TAGS, firstName } from "../_mail.js";
+import { subscribe, sendEmail, tagByName, notifyBrian, TAGS, firstName } from "../_mail.js";
 import { nextSession } from "../_workshop.js";
 import { downloadsEmail } from "../_emails.js";
 
 const reply = (body, status = 200) =>
   new Response(JSON.stringify(body), { status, headers: { "content-type": "application/json", "cache-control": "no-store" } });
 
-export async function onRequestPost({ request, env }) {
+export async function onRequestPost(context) {
+  const { request, env } = context;
   let data = {};
   try { data = await request.json(); } catch (e) {}
   const offer = OFFERS[data.o];
@@ -61,5 +62,15 @@ export async function onRequestPost({ request, env }) {
     }),
   });
   if (emailed && env.FILES) await env.FILES.put(doneKey, "1", { expirationTtl: 400 * 86400 });
+  // Alert Brian once per purchase (the done key above stops repeats on reload).
+  if (emailed || !env.FILES) {
+    const total = typeof session.amount_total === "number" ? `$${(session.amount_total / 100).toFixed(2)}` : undefined;
+    notifyBrian(env, context, {
+      subject: `New purchase: ${offer.name}${total ? ` (${total})` : ""}`,
+      replyTo: email,
+      rows: [["Bought", offer.name], ["Total paid", total], ["Add-on", (offer.addons || []).filter((x) => addons.includes(x.price)).map((x) => x.label).join(", ")],
+        ["Workshop session", when], ["Name", (session.customer_details || {}).name], ["Email", email]],
+    });
+  }
   return replyWith({ ok: true, emailed });
 }

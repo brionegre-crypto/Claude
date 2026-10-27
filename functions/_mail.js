@@ -100,4 +100,21 @@ export async function sendEmail(env, { to, subject, html, replyTo = BRIAN, attac
   }
 }
 
+const esc = (v) => String(v ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+
+// A short alert to Brian for every sign-up and purchase. rows: [[label, value], ...].
+// Pass the request context so the email goes out after the visitor's response
+// (ctx.waitUntil); never throws, so a failed alert can't break a sign-up.
+export function notifyBrian(env, ctx, { subject, rows, replyTo }) {
+  const html = `<div style="font:16px/1.5 -apple-system,Segoe UI,Helvetica,Arial,sans-serif;color:#1d1d1f;max-width:520px">` +
+    `<p style="margin:0 0 12px;font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:#b8730f">Be The Man · new activity</p>` +
+    `<table cellpadding="0" cellspacing="0" style="border-collapse:collapse">` +
+    rows.filter(([, v]) => v !== undefined && v !== null && v !== "")
+      .map(([k, v]) => `<tr><td style="padding:4px 14px 4px 0;color:#6e6e73;vertical-align:top">${esc(k)}</td><td style="padding:4px 0"><strong>${esc(v)}</strong></td></tr>`).join("") +
+    `</table></div>`;
+  const p = sendEmail(env, { to: BRIAN, subject, html, replyTo: replyTo || BRIAN }).catch(() => false);
+  if (ctx && ctx.waitUntil) ctx.waitUntil(p);
+  return p;
+}
+
 export const firstName = (name) => String(name || "").trim().split(/\s+/)[0].slice(0, 60);
