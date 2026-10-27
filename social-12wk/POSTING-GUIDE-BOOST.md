@@ -3192,7 +3192,7 @@ Don't let the holidays eat your system. 6-week live group, Nov 15 to Dec 20. Fou
 ```
 It's not ten things stopping you. It's one, and you already know its name.
 
-This week's challenge step: name it, write it down, and give it an "if this, then that" plan.
+Tomorrow's challenge step: name it, write it down, and give it an "if this, then that" plan.
 
 🗓 The free 7-week challenge is running now. Join any week, and the first step comes in your welcome email.
 🔗 Link in bio → "Count me in."
@@ -3204,7 +3204,7 @@ This week's challenge step: name it, write it down, and give it an "if this, the
 ```
 It's not ten things stopping you. It's one, and you already know its name.
 
-This week's challenge step: name it, write it down, and give it an "if this, then that" plan.
+Tomorrow's challenge step: name it, write it down, and give it an "if this, then that" plan.
 
 The free 7-week challenge is running now. Join any week: https://www.bethemansystem.com/7-week-challenge/
 
@@ -3612,7 +3612,7 @@ Send this to your spouse. Talk about it tonight.
 ```
 A goal with no time is a wish.
 
-This week's challenge step: give one goal a day and a time. "Tuesday, 6:10, garage." Done.
+Next week's challenge step: give one goal a day and a time. "Tuesday, 6:10, garage." Done.
 
 🗓 The free 7-week challenge is running now. Join any week, and the first step comes in your welcome email.
 🔗 Link in bio → "Count me in."
@@ -3624,7 +3624,7 @@ This week's challenge step: give one goal a day and a time. "Tuesday, 6:10, gara
 ```
 A goal with no time is a wish.
 
-This week's challenge step: give one goal a day and a time. "Tuesday, 6:10, garage." Done.
+Next week's challenge step: give one goal a day and a time. "Tuesday, 6:10, garage." Done.
 
 The free 7-week challenge is running now. Join any week: https://www.bethemansystem.com/7-week-challenge/
 

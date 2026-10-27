@@ -642,7 +642,7 @@ The 6-week live group runs right through them: six Sundays, Nov 15 to Dec 20, 7�
     [['B:It’s not ten things.'], ['B:It’s *one.*', 'S:And you already know its name.'], ['B:Name it. Then *plan for it.*']],
     `It's not ten things stopping you. It's one, and you already know its name.
 
-This week's challenge step: name it, write it down, and give it an "if this, then that" plan.`,
+Tomorrow's challenge step: name it, write it down, and give it an "if this, then that" plan.`,
     `It's not ten things stopping you. It's one, and you know its name. Name it. Then plan for it.`),
   K('2026-11-02', C, 'questions-deep', 'save', '5 questions for a deeper conversation',
     { label: 'Tonight', h: '5 questions for a *deeper* conversation.', body: 'Ask one. **Then really listen.**',
@@ -727,7 +727,7 @@ One holiday number, decided together, written on the fridge. Surprise gifts are 
     { h: 'A goal with no time is *a wish.*' },
     `A goal with no time is a wish.
 
-This week's challenge step: give one goal a day and a time. "Tuesday, 6:10, garage." Done.`,
+Next week's challenge step: give one goal a day and a time. "Tuesday, 6:10, garage." Done.`,
     `A goal with no time is a wish. Give one goal a day and a time.`),
   P('2026-11-05', '9pm', B, 'group-10', 'group', 'Group: 10 days',
     { label: '10 days · four seats', h: 'Six Sundays.\nSame men.\n*Real accountability.*', body: 'Nov 15 – Dec 20, **7–8 PM Central**, Google Meet.', btn: 'Reserve a seat → link in bio' },
