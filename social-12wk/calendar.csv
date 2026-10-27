@@ -210,3 +210,93 @@ date,day,time,brand,type,title,cta,folder
 2026-12-26,Sat,9am,Be The Man,post,"Don’t start 2027 alone",call,2026-12-26_Sat_9am_BTM_POST_w12-call
 2026-12-27,Sun,4pm,Couples,post,"Choose each other again",share,2026-12-27_Sun_4pm_COUPLES_POST_c12-again
 2026-12-27,Sun,7pm,Be The Man,reel,"Reel: Next year, same man?",step1,2026-12-27_Sun_7pm_BTM_REEL_w12-year
+2026-11-08,Sun,2pm,Couples,carousel,"Carousel: A 10-minute Sunday reset for couples",save,2026-11-08_Sun_2pm_COUPLES_CAROUSEL_b2-sunday-reset
+2026-11-08,Sun,8am,Be The Man,reel,"Reel: Seven days until six Sundays",group,2026-11-08_Sun_8am_BTM_REEL_b2-seven-days
+2026-11-08,Sun,9pm,Be The Man,post,"How humble are you on a Tuesday?",lowSeat,2026-11-08_Sun_9pm_BTM_POST_b2-humble-tuesday
+2026-11-09,Mon,2pm,Be The Man,post,"Quote: decide who first",step1,2026-11-09_Mon_2pm_BTM_POST_b2-quote-first
+2026-11-09,Mon,8am,Couples,reel,"Reel: The 2 PM text that changes the evening",share,2026-11-09_Mon_8am_COUPLES_REEL_b2-check-in-text
+2026-11-09,Mon,9pm,Be The Man,post,"Group: last seats this week",group,2026-11-09_Mon_9pm_BTM_POST_b2-last-seats
+2026-11-10,Tue,2pm,Couples,carousel,"Carousel: 5 ways to show respect at home",save,2026-11-10_Tue_2pm_COUPLES_CAROUSEL_b2-respect-ways
+2026-11-10,Tue,8am,Be The Man,reel,"Reel: Put it on the calendar like a meeting",challengeOn,2026-11-10_Tue_8am_BTM_REEL_b2-calendar-it
+2026-11-10,Tue,9pm,Be The Man,post,"What time is your goal?",comment,2026-11-10_Tue_9pm_BTM_POST_b2-time-poll
+2026-11-11,Wed,2pm,Be The Man,post,"Quote: Wednesday is where promises go",workshopWed,2026-11-11_Wed_2pm_BTM_POST_b2-quote-wednesday
+2026-11-11,Wed,8am,Couples,reel,"Reel: Service starts at home",share,2026-11-11_Wed_8am_COUPLES_REEL_b2-veterans
+2026-11-11,Wed,9pm,Couples,post,"One thing you’re grateful for about your spouse",comment,2026-11-11_Wed_9pm_COUPLES_POST_b2-gratitude-one
+2026-11-12,Thu,2pm,Be The Man,carousel,"Carousel: Attach the new habit to an old one",step1,2026-11-12_Thu_2pm_BTM_CAROUSEL_b2-habit-stack
+2026-11-12,Thu,8am,Be The Man,reel,"Reel: Show up six Sundays",group,2026-11-12_Thu_8am_BTM_REEL_b2-show-up
+2026-11-12,Thu,9pm,Be The Man,post,"Comment STEP1: the sentence first",step1,2026-11-12_Thu_9pm_BTM_POST_b2-kw-step1
+2026-11-13,Fri,2pm,Be The Man,post,"Quote: take the lowest seat",lowSeat,2026-11-13_Fri_2pm_BTM_POST_b2-quote-seat
+2026-11-13,Fri,8am,Couples,reel,"Reel: Friday night, no phones",save,2026-11-13_Fri_8am_COUPLES_REEL_b2-friday-no-phones
+2026-11-13,Fri,9pm,Couples,post,"Comment COUPLES: holidays ahead",couples,2026-11-13_Fri_9pm_COUPLES_POST_b2-kw-couples
+2026-11-14,Sat,2pm,Couples,carousel,"Carousel: Split Saturday, don’t fight about it",share,2026-11-14_Sat_2pm_COUPLES_CAROUSEL_b2-saturday-chores
+2026-11-14,Sat,8am,Be The Man,reel,"Reel: Tomorrow night: six Sundays begin",group,2026-11-14_Sat_8am_BTM_REEL_b2-tomorrow-group
+2026-11-14,Sat,9pm,Be The Man,post,"The promise you’re keeping this month",comment,2026-11-14_Sat_9pm_BTM_POST_b2-one-promise
+2026-11-15,Sun,2pm,Be The Man,post,"Quote: Sunday decides Wednesday",step1,2026-11-15_Sun_2pm_BTM_POST_b2-quote-sunday
+2026-11-15,Sun,8am,Couples,reel,"Reel: Pray before church, not after",share,2026-11-15_Sun_8am_COUPLES_REEL_b2-sunday-pray
+2026-11-15,Sun,9pm,Be The Man,post,"Fix Your Wednesday: Nov 18",workshopWed,2026-11-15_Sun_9pm_BTM_POST_b2-workshop-18
+2026-11-16,Mon,2pm,Couples,carousel,"Carousel: Your Thanksgiving game plan",couples,2026-11-16_Mon_2pm_COUPLES_CAROUSEL_b2-thanksgiving-plan
+2026-11-16,Mon,8am,Be The Man,reel,"Reel: Decide the miss before Monday ends",challengeOn,2026-11-16_Mon_8am_BTM_REEL_b2-miss-defined
+2026-11-16,Mon,9pm,Be The Man,post,"What’s your miss?",comment,2026-11-16_Mon_9pm_BTM_POST_b2-miss-poll
+2026-11-17,Tue,2pm,Be The Man,post,"Quote: information, not a verdict",challengeOn,2026-11-17_Tue_2pm_BTM_POST_b2-quote-verdict
+2026-11-17,Tue,8am,Couples,reel,"Reel: “Not tonight” is a full sentence",share,2026-11-17_Tue_8am_COUPLES_REEL_b2-not-tonight
+2026-11-17,Tue,9pm,Be The Man,post,"Tomorrow night: Fix Your Wednesday",workshopWed,2026-11-17_Tue_9pm_BTM_POST_b2-workshop-tomorrow
+2026-11-18,Wed,2pm,Couples,carousel,"Carousel: Thanksgiving table questions",save,2026-11-18_Wed_2pm_COUPLES_CAROUSEL_b2-grateful-prompts
+2026-11-18,Wed,8am,Be The Man,reel,"Reel: Tonight: fix your Wednesday",workshopWed,2026-11-18_Wed_8am_BTM_REEL_b2-tonight-wed
+2026-11-18,Wed,9pm,Be The Man,post,"The Inner Circle",innerCircle,2026-11-18_Wed_9pm_BTM_POST_b2-inner-circle
+2026-11-19,Thu,2pm,Be The Man,post,"Quote: the kitchen table knows",lowSeat,2026-11-19_Thu_2pm_BTM_POST_b2-quote-kitchen
+2026-11-19,Thu,8am,Couples,reel,"Reel: Phones off the dinner table",share,2026-11-19_Thu_8am_COUPLES_REEL_b2-phones-dinner
+2026-11-19,Thu,9pm,Couples,post,"How do you feel most loved?",comment,2026-11-19_Thu_9pm_COUPLES_POST_b2-love-language
+2026-11-20,Fri,2pm,Be The Man,carousel,"Carousel: What you actually need before Black Friday",step1,2026-11-20_Fri_2pm_BTM_CAROUSEL_b2-black-friday
+2026-11-20,Fri,8am,Be The Man,reel,"Reel: Count it honestly this weekend",challengeOn,2026-11-20_Fri_8am_BTM_REEL_b2-friday-count
+2026-11-20,Fri,9pm,Be The Man,post,"Tag a father who shows up",comment,2026-11-20_Fri_9pm_BTM_POST_b2-tag-dad
+2026-11-21,Sat,2pm,Couples,post,"Quote: gratitude out loud",share,2026-11-21_Sat_2pm_COUPLES_POST_b2-quote-thanks
+2026-11-21,Sat,8am,Couples,reel,"Reel: Saturday breakfast before the kids wake",save,2026-11-21_Sat_8am_COUPLES_REEL_b2-saturday-breakfast
+2026-11-21,Sat,9pm,Be The Man,post,"The Club: tools that keep you going",club,2026-11-21_Sat_9pm_BTM_POST_b2-club-week
+2026-11-22,Sun,2pm,Couples,carousel,"Carousel: Hosting Thanksgiving without the fight",couples,2026-11-22_Sun_2pm_COUPLES_CAROUSEL_b2-host-peace
+2026-11-22,Sun,8am,Be The Man,reel,"Reel: Thanksgiving week: count and thank",challengeOn,2026-11-22_Sun_8am_BTM_REEL_b2-thankful-week
+2026-11-22,Sun,9pm,Be The Man,post,"Ask your wife to be your witness",lowSeat,2026-11-22_Sun_9pm_BTM_POST_b2-humble-witness
+2026-11-23,Mon,2pm,Be The Man,post,"Quote: progress is grace",challengeOn,2026-11-23_Mon_2pm_BTM_POST_b2-quote-grace
+2026-11-23,Mon,8am,Couples,reel,"Reel: 10 things I love about you",save,2026-11-23_Mon_8am_COUPLES_REEL_b2-thank-list
+2026-11-23,Mon,9pm,Be The Man,post,"Name one man you’re thankful for",comment,2026-11-23_Mon_9pm_BTM_POST_b2-thanks-name
+2026-11-24,Tue,2pm,Couples,carousel,"Carousel: Family table boundaries, kindly",share,2026-11-24_Tue_2pm_COUPLES_CAROUSEL_b2-pie-not-politics
+2026-11-24,Tue,8am,Be The Man,reel,"Reel: Thank them out loud this week",step1,2026-11-24_Tue_8am_BTM_REEL_b2-gratitude-out-loud
+2026-11-24,Tue,9pm,Couples,post,"Comment COUPLES: start 2027 strong",couples,2026-11-24_Tue_9pm_COUPLES_POST_b2-kw-couples-2
+2026-11-25,Wed,2pm,Be The Man,post,"Quote: a calm father",step1,2026-11-25_Wed_2pm_BTM_POST_b2-quote-calm
+2026-11-25,Wed,8am,Couples,reel,"Reel: The holiday drive",share,2026-11-25_Wed_8am_COUPLES_REEL_b2-travel-calm
+2026-11-25,Wed,9pm,Be The Man,post,"What are you thankful for this year?",comment,2026-11-25_Wed_9pm_BTM_POST_b2-thanksgiving-eve
+2026-11-26,Thu,2pm,Couples,carousel,"Carousel: A Thanksgiving prayer for your family",share,2026-11-26_Thu_2pm_COUPLES_CAROUSEL_b2-thanks-prayer
+2026-11-26,Thu,8am,Be The Man,reel,"Reel: Happy Thanksgiving",share,2026-11-26_Thu_8am_BTM_REEL_b2-happy-thanksgiving
+2026-11-26,Thu,9pm,Be The Man,post,"Best moment of the day",comment,2026-11-26_Thu_9pm_BTM_POST_b2-thanksgiving-night
+2026-11-27,Fri,2pm,Be The Man,post,"A gift that’s still working in March",clubYear,2026-11-27_Fri_2pm_BTM_POST_b2-gift-year
+2026-11-27,Fri,8am,Couples,reel,"Reel: Black Friday: set one number",save,2026-11-27_Fri_8am_COUPLES_REEL_b2-black-friday-couples
+2026-11-27,Fri,9pm,Be The Man,post,"Leftovers or the gym?",comment,2026-11-27_Fri_9pm_BTM_POST_b2-leftovers
+2026-11-28,Sat,2pm,Couples,carousel,"Carousel: 4 Advent habits for couples",save,2026-11-28_Sat_2pm_COUPLES_CAROUSEL_b2-advent-couples
+2026-11-28,Sat,8am,Be The Man,reel,"Reel: Plan December before it plans you",challengeOn,2026-11-28_Sat_8am_BTM_REEL_b2-december-plan
+2026-11-28,Sat,9pm,Be The Man,post,"Fix Your Wednesday: Dec 2",workshopWed,2026-11-28_Sat_9pm_BTM_POST_b2-workshop-dec2
+2026-11-29,Sun,2pm,Be The Man,post,"Quote: Advent is waiting with purpose",step1,2026-11-29_Sun_2pm_BTM_POST_b2-quote-advent
+2026-11-29,Sun,8am,Couples,reel,"Reel: Advent: hope",share,2026-11-29_Sun_8am_COUPLES_REEL_b2-advent-hope
+2026-11-29,Sun,9pm,Be The Man,post,"Did your November promise hold?",comment,2026-11-29_Sun_9pm_BTM_POST_b2-promise-check
+2026-11-30,Mon,2pm,Be The Man,carousel,"Carousel: A 15-minute morning with God",faithKit,2026-11-30_Mon_2pm_BTM_CAROUSEL_b2-morning-15
+2026-11-30,Mon,8am,Be The Man,reel,"Reel: Put God at the center",challengeOn,2026-11-30_Mon_8am_BTM_REEL_b2-god-center
+2026-11-30,Mon,9pm,Be The Man,post,"Cyber Monday: all 11 tools",library,2026-11-30_Mon_9pm_BTM_POST_b2-cyber-monday
+2026-12-01,Tue,2pm,Be The Man,post,"Quote: the center holds",challengeOn,2026-12-01_Tue_2pm_BTM_POST_b2-quote-center
+2026-12-01,Tue,8am,Couples,reel,"Reel: December: one night a week for us",save,2026-12-01_Tue_8am_COUPLES_REEL_b2-december-us
+2026-12-01,Tue,9pm,Be The Man,post,"You finished seven weeks",comment,2026-12-01_Tue_9pm_BTM_POST_b2-challenge-done
+2026-12-02,Wed,2pm,Couples,carousel,"Carousel: Gifts your spouse will actually remember",save,2026-12-02_Wed_2pm_COUPLES_CAROUSEL_b2-gift-ideas
+2026-12-02,Wed,8am,Be The Man,reel,"Reel: Tonight: fix your Wednesday (December)",workshopWed,2026-12-02_Wed_8am_BTM_REEL_b2-tonight-dec2
+2026-12-02,Wed,9pm,Couples,post,"Merry or stressed?",comment,2026-12-02_Wed_9pm_COUPLES_POST_b2-merry-or-stressed
+2026-12-03,Thu,2pm,Be The Man,post,"Quote: presence over presents",step1,2026-12-03_Thu_2pm_BTM_POST_b2-quote-present
+2026-12-03,Thu,8am,Couples,reel,"Reel: Advent: peace (settle one argument)",share,2026-12-03_Thu_8am_COUPLES_REEL_b2-advent-peace
+2026-12-03,Thu,9pm,Be The Man,post,"Inner Circle: a private room",innerCircle,2026-12-03_Thu_9pm_BTM_POST_b2-inner-circle-2
+2026-12-04,Fri,2pm,Be The Man,carousel,"Carousel: 5 December traditions for dads",fatherKit,2026-12-04_Fri_2pm_BTM_CAROUSEL_b2-dad-december
+2026-12-04,Fri,8am,Be The Man,reel,"Reel: The calm father at Christmas",step1,2026-12-04_Fri_8am_BTM_REEL_b2-christmas-calm
+2026-12-04,Fri,9pm,Be The Man,post,"Your favorite family tradition",comment,2026-12-04_Fri_9pm_BTM_POST_b2-tradition-poll
+2026-12-05,Sat,2pm,Couples,post,"Quote: God with us",share,2026-12-05_Sat_2pm_COUPLES_POST_b2-quote-emmanuel
+2026-12-05,Sat,8am,Couples,reel,"Reel: Saturday night: the lights",save,2026-12-05_Sat_8am_COUPLES_REEL_b2-saturday-lights
+2026-12-05,Sat,9pm,Be The Man,post,"Your word for 2027",comment,2026-12-05_Sat_9pm_BTM_POST_b2-year-word
+2026-12-06,Sun,2pm,Couples,carousel,"Carousel: Your year in review, as a couple",couples,2026-12-06_Sun_2pm_COUPLES_CAROUSEL_b2-year-review
+2026-12-06,Sun,8am,Be The Man,reel,"Reel: Before the New Year’s promise",step1,2026-12-06_Sun_8am_BTM_REEL_b2-before-new-year
+2026-12-06,Sun,9pm,Be The Man,post,"Comment STEP1: start December 31 early",step1,2026-12-06_Sun_9pm_BTM_POST_b2-kw-step1-final
+2026-12-07,Mon,2pm,Be The Man,post,"Quote: be the man",step1,2026-12-07_Mon_2pm_BTM_POST_b2-quote-man
+2026-12-07,Mon,8am,Couples,reel,"Reel: Advent: joy",share,2026-12-07_Mon_8am_COUPLES_REEL_b2-advent-joy
+2026-12-07,Mon,9pm,Be The Man,post,"Stuck before the year ends?",call,2026-12-07_Mon_9pm_BTM_POST_b2-call-december
