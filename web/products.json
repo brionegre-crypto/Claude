@@ -319,7 +319,7 @@
     "scorecard_pdf",
     "scorecard_xlsx"
    ],
-   "start": "Print the Step 1 worksheet and bring a pen on Sunday, October 25. Pen, not phone.",
+   "start": "Print the Step 1 worksheet and bring a pen to the workshop. Pen, not phone.",
    "kit_tag": 24600595,
    "addons": [
     {
@@ -344,8 +344,8 @@
      ]
     }
    ],
-   "headline": "You're in. Sunday, October 25, 7:00 PM Central.",
-   "extra_html": "<div class=\"tile hi stack\" style=\"margin-top:24px\"><p class=\"label\">Where</p><p style=\"color:var(--fg)\">Google Meet, 7:00 to 8:00 PM Central: <a class=\"textlink\" href=\"https://meet.google.com/mdt-djbx-kfo\">meet.google.com/mdt-djbx-kfo</a>. Put it on your calendar now. A commitment without a time is just an intention.</p><p>We'll email the link again on the day. You leave with one sentence naming the man you are becoming, one goal with a date, and your first weekly Scorecard. Can't make it live? The recording is emailed to you within 48 hours.</p></div>"
+   "headline": "You're in.",
+   "extra_html": "<div class=\"tile hi stack\" style=\"margin-top:24px\"><p class=\"label\">Where</p><p style=\"color:var(--fg)\"><b data-when>The next Wednesday session, 7:00 PM Central</b>, one hour on Google Meet: <a class=\"textlink\" href=\"https://meet.google.com/mdt-djbx-kfo\">meet.google.com/mdt-djbx-kfo</a>. Put it on your calendar now. A commitment without a time is just an intention.</p><p>We'll email the link again on the day. You leave with one sentence naming the man you are becoming, one goal with a date, and your first weekly Scorecard. Can't make it live? The recording is emailed to you within 48 hours.</p></div>"
   },
   {
    "key": "group",

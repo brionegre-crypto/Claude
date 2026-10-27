@@ -65,6 +65,17 @@ export async function subscribe(env, email, { firstName, tags = [], sequences = 
   return true;
 }
 
+// Tag by name, creating the tag the first time (Kit returns the existing tag if
+// the name is taken). Used for per-session workshop tags like "Workshop 2026-11-04".
+export async function tagByName(env, email, name) {
+  if (!env.KIT_API_KEY) return false;
+  const r = await kit(env, "/tags", { name });
+  if (!r.ok) return false;
+  const id = ((await r.json().catch(() => ({}))).tag || {}).id;
+  if (!id) return false;
+  return (await kit(env, `/tags/${id}/subscribers`, { email_address: email })).ok;
+}
+
 export async function untag(env, email, tagId) {
   if (!env.KIT_API_KEY) return false;
   const r = await kit(env, `/tags/${tagId}/subscribers`, { email_address: email }, "DELETE");

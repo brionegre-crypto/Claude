@@ -105,6 +105,7 @@
           <a href="/inner-circle/"><b>The Inner Circle</b><span>By application</span></a>
           <a href="/ministry-kit/"><b>Men&#x27;s ministry kit</b><span>For churches</span></a>
           <a href="/speaking/"><b>Book Brian to speak</b><span>Men&#x27;s nights, retreats, conferences</span></a>
+          <a href="/workshop/"><b>Live workshop: Fix Your Wednesday</b><span>Every other Wednesday, $27</span></a>
         </div>
       </div>
       <a href="/products/" aria-current="page">Store</a>
@@ -133,6 +134,7 @@
       <a href="/inner-circle/">The Inner Circle</a>
       <a href="/ministry-kit/">Men&#x27;s ministry kit</a>
       <a href="/speaking/">Book Brian to speak</a>
+      <a href="/workshop/">Live workshop: Fix Your Wednesday</a>
       <p class="drawer-h">More</p>
       <a href="/products/">Store</a>
       <a href="/couples/">Couples</a>
@@ -145,10 +147,10 @@
 <main id="main">
 <div class="wrap hero narrow">
   <p class="eyebrow">Payment received</p>
-  <h1 style="font-size:clamp(36px,5.5vw,60px)">You&#x27;re in. Sunday, October 25, 7:00 PM Central.</h1>
+  <h1 style="font-size:clamp(36px,5.5vw,60px)">You&#x27;re in.</h1>
   <p class="lead">Download your files below. Bookmark this page so you can come back to it. A receipt is on its way to your email.</p>
   <p class="muted" id="emailed" hidden></p>
-  <div class="tile hi stack" style="margin-top:24px"><p class="label">Where</p><p style="color:var(--fg)">Google Meet, 7:00 to 8:00 PM Central: <a class="textlink" href="https://meet.google.com/mdt-djbx-kfo">meet.google.com/mdt-djbx-kfo</a>. Put it on your calendar now. A commitment without a time is just an intention.</p><p>We'll email the link again on the day. You leave with one sentence naming the man you are becoming, one goal with a date, and your first weekly Scorecard. Can't make it live? The recording is emailed to you within 48 hours.</p></div>
+  <div class="tile hi stack" style="margin-top:24px"><p class="label">Where</p><p style="color:var(--fg)"><b data-when>The next Wednesday session, 7:00 PM Central</b>, one hour on Google Meet: <a class="textlink" href="https://meet.google.com/mdt-djbx-kfo">meet.google.com/mdt-djbx-kfo</a>. Put it on your calendar now. A commitment without a time is just an intention.</p><p>We'll email the link again on the day. You leave with one sentence naming the man you are becoming, one goal with a date, and your first weekly Scorecard. Can't make it live? The recording is emailed to you within 48 hours.</p></div>
   <div class="kit-list" style="margin-top:32px">
       <a class="kit dl" href="/api/download?o=workshop&amp;f=step1_pdf" rel="nofollow"><div class="stack" style="gap:2px"><b>Step 1 worksheet (PDF)</b><span>Download</span></div><span class="p">↓</span></a>
       <a class="kit dl" href="/api/download?o=workshop&amp;f=scorecard_pdf" rel="nofollow"><div class="stack" style="gap:2px"><b>The Weekly Scorecard (PDF, print it)</b><span>Download</span></div><span class="p">↓</span></a>
@@ -171,7 +173,7 @@
       <a class="kit dl" href="/api/download?o=workshop&amp;f=forty_pdf" rel="nofollow"><div class="stack" style="gap:2px"><b>Forty Cards for Men (PDF)</b><span>Download</span></div><span class="p">↓</span></a></div></div>
   <div class="tile stack" style="margin-top:24px">
     <p class="label">How to start</p>
-    <p style="color:var(--fg)">Print the Step 1 worksheet and bring a pen on Sunday, October 25. Pen, not phone.</p>
+    <p style="color:var(--fg)">Print the Step 1 worksheet and bring a pen to the workshop. Pen, not phone.</p>
   </div>
   
   <div class="tile hi stack" style="margin-top:16px">
@@ -191,6 +193,7 @@
   if(!window.fetch) return;
   fetch('/api/purchase',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({o:'workshop',s:s})})
     .then(function(r){return r.json();}).then(function(d){
+      if(d.when){document.querySelectorAll('[data-when]').forEach(function(el){el.textContent=d.when;});}
       if(d.emailed){var n=document.getElementById('emailed');n.textContent='We also emailed you a link to this page.';n.hidden=false;}
       (d.addons||[]).forEach(function(p){document.querySelectorAll('.addon[data-price="'+p+'"]').forEach(function(el){el.hidden=false;});});
     }).catch(function(){});

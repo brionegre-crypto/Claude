@@ -105,6 +105,7 @@
           <a href="/inner-circle/"><b>The Inner Circle</b><span>By application</span></a>
           <a href="/ministry-kit/"><b>Men&#x27;s ministry kit</b><span>For churches</span></a>
           <a href="/speaking/"><b>Book Brian to speak</b><span>Men&#x27;s nights, retreats, conferences</span></a>
+          <a href="/workshop/"><b>Live workshop: Fix Your Wednesday</b><span>Every other Wednesday, $27</span></a>
         </div>
       </div>
       <a href="/products/" aria-current="page">Store</a>
@@ -133,6 +134,7 @@
       <a href="/inner-circle/">The Inner Circle</a>
       <a href="/ministry-kit/">Men&#x27;s ministry kit</a>
       <a href="/speaking/">Book Brian to speak</a>
+      <a href="/workshop/">Live workshop: Fix Your Wednesday</a>
       <p class="drawer-h">More</p>
       <a href="/products/">Store</a>
       <a href="/couples/">Couples</a>
@@ -175,6 +177,7 @@
   if(!window.fetch) return;
   fetch('/api/purchase',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({o:'bible-study',s:s})})
     .then(function(r){return r.json();}).then(function(d){
+      if(d.when){document.querySelectorAll('[data-when]').forEach(function(el){el.textContent=d.when;});}
       if(d.emailed){var n=document.getElementById('emailed');n.textContent='We also emailed you a link to this page.';n.hidden=false;}
       (d.addons||[]).forEach(function(p){document.querySelectorAll('.addon[data-price="'+p+'"]').forEach(function(el){el.hidden=false;});});
     }).catch(function(){});

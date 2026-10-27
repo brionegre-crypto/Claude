@@ -4,22 +4,16 @@
  "crumb": "Fix Your Wednesday",
  "person": true,
  "priority": "0.7",
- "title": "Fix Your Wednesday: Live Workshop for Black Christian Men, Oct 25 | Be The Man",
- "description": "A one-hour live workshop on Google Meet, Sunday October 25, 7:00 PM Central. Leave with one sentence, one goal with a date, and your first weekly Scorecard. $27.",
- "schema": [
-  {"@type": "Event", "name": "Fix Your Wednesday: live workshop", "startDate": "2026-10-25T19:00:00-05:00", "endDate": "2026-10-25T20:00:00-05:00",
-   "eventAttendanceMode": "https://schema.org/OnlineEventAttendanceMode", "eventStatus": "https://schema.org/EventScheduled",
-   "location": {"@type": "VirtualLocation", "url": "https://bethemansystem.com/workshop/"},
-   "organizer": {"@id": "https://bethemansystem.com/#org"}, "performer": {"@id": "https://bethemansystem.com/about/#brian"},
-   "description": "Most men start Monday strong and lose the week by Wednesday. In one hour we fix that together.",
-   "offers": {"@type": "Offer", "price": "27.00", "priceCurrency": "USD", "url": "https://bethemansystem.com/workshop/", "availability": "https://schema.org/InStock"}}
- ]
+ "workshop": true,
+ "title": "Fix Your Wednesday: Live Workshop for Black Christian Men, Every Other Wednesday | Be The Man",
+ "description": "A one-hour live workshop on Google Meet, every other Wednesday at 7:00 PM Central. Leave with one sentence, one goal with a date, and your first weekly Scorecard. $27."
 }
 ---
 <div class="wrap hero">
   <p class="eyebrow">$27 · Live on Google Meet</p>
   <h1>Fix Your <span class="grad">Wednesday.</span></h1>
-  <p class="lead">Sunday, October 25, 7:00 to 8:00 PM Central. Most men start Monday strong and lose the week by Wednesday. In one hour we fix that together.</p>
+  <p class="lead">Every other Wednesday, 7:00 to 8:00 PM Central. Most men start Monday strong and lose the week by Wednesday. In one hour, in the middle of the week, we fix that together.</p>
+  <p class="ws-next">Next session: <b id="ws-next">{{workshop_next}}</b> <span class="muted" id="ws-after">· then {{workshop_dates}}</span></p>
   <div class="actions" id="buy">
     <a class="btn btn-primary btn-lg" href="https://buy.stripe.com/4gM3cw8zV1XT9ll2ja6kg0h">Reserve my spot, $27</a>
     <span class="muted">Can't make it live? Every ticket includes the recording.</span>
@@ -41,7 +35,7 @@
         <p class="label">Included with your ticket</p>
         <ul class="check">
           <li>The Step 1 worksheet and the Weekly Scorecard, PDF and spreadsheet</li>
-          <li>The Meet link, emailed right away and again on the day</li>
+          <li>A seat at the next session, with the Meet link emailed right away and again on the day</li>
           <li>The recording, within 48 hours</li>
         </ul>
       </div>
@@ -70,12 +64,20 @@
   </div>
 </section>
 <div style="height:60px"></div>
+<style>.ws-next{margin-top:14px;font-size:17px}.ws-next b{color:var(--accent)}</style>
 <script>
 (function(){
-  // After the workshop ends, point people to the 6-week group instead.
-  if(Date.now()>Date.UTC(2026,9,26,1)){
-    document.querySelectorAll('a[href*="buy.stripe.com/4gM3cw8zV1XT9ll2ja6kg0h"]').forEach(function(a){a.href='/group/';a.textContent='See the 6-week group';});
-    var l=document.querySelector('.hero .lead'); if(l) l.textContent='This workshop took place on October 25. The next step is the 6-week group, or start free with Step 1.';
+  // Keep the next date right between site builds: the session rolls over at 7 PM Central.
+  var c={{workshop_cfg}}, DAY=864e5, first=Date.parse(c.first+'T00:00:00Z');
+  var nowCT=new Date(new Date().toLocaleString('en-US',{timeZone:'America/Chicago'}));
+  var today=Date.UTC(nowCT.getFullYear(),nowCT.getMonth(),nowCT.getDate()), out=[];
+  for(var d=first; out.length<4; d+=c.every*DAY){
+    var iso=new Date(d).toISOString().slice(0,10);
+    if(d<today||c.skip.indexOf(iso)>=0||(d===today&&nowCT.getHours()>=19)) continue;
+    out.push(new Date(d+12*36e5));
   }
+  var f=function(x,o){return x.toLocaleDateString('en-US',Object.assign({timeZone:'UTC'},o));};
+  document.getElementById('ws-next').textContent=f(out[0],{weekday:'long',month:'long',day:'numeric'});
+  document.getElementById('ws-after').textContent='· then '+out.slice(1).map(function(x){return f(x,{month:'short',day:'numeric'});}).join(', ');
 })();
 </script>

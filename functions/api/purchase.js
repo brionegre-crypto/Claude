@@ -9,7 +9,8 @@
 import { OFFERS } from "../_catalog.js";
 import { paidSession, boughtPrices } from "./download.js";
 import { sign } from "../_club.js";
-import { subscribe, sendEmail, TAGS, firstName } from "../_mail.js";
+import { subscribe, sendEmail, tagByName, TAGS, firstName } from "../_mail.js";
+import { nextSession } from "../_workshop.js";
 import { downloadsEmail } from "../_emails.js";
 
 const reply = (body, status = 200) =>
@@ -33,8 +34,11 @@ export async function onRequestPost({ request, env }) {
     const token = await sign(env, { o: data.o, x: Math.floor(Date.now() / 1000) + 400 * 86400 });
     headers["set-cookie"] = `btm_buy_${data.o.replace(/[^a-z0-9-]/g, "")}=${token}; Path=/get/; Max-Age=${400 * 86400}; HttpOnly; Secure; SameSite=Lax`;
   }
+  // Workshop tickets are for the next session after the time of purchase.
+  const ws = data.o === "workshop" ? nextSession((session.created || Date.now() / 1000) * 1000) : null;
+  const when = ws ? `${ws.label}, 7:00 PM Central` : undefined;
   const replyWith = (body, status = 200) =>
-    new Response(JSON.stringify({ addons, ...body }), { status, headers: { "content-type": "application/json", "cache-control": "no-store", ...headers } });
+    new Response(JSON.stringify({ addons, when, ...body }), { status, headers: { "content-type": "application/json", "cache-control": "no-store", ...headers } });
 
   const email = (session.customer_details || {}).email;
   if (!email) return reply({ ok: false, error: "no email on purchase" }, 422);
@@ -46,12 +50,13 @@ export async function onRequestPost({ request, env }) {
   const name = firstName((session.customer_details || {}).name);
   const tags = offer.tag ? [TAGS.customer, offer.tag] : [TAGS.customer];
   try { await subscribe(env, email, { firstName: name, tags }); } catch (e) {}
+  if (ws) { try { await tagByName(env, email, ws.tag); } catch (e) {} }
 
   const emailed = await sendEmail(env, {
     to: email,
     subject: `Your downloads: ${offer.name}`,
     html: downloadsEmail({
-      product_name: offer.name,
+      product_name: ws ? `${offer.name}, ${when}` : offer.name,
       download_url: `https://bethemansystem.com/get/${offer.slug}/?session_id=${session.id}`,
     }),
   });

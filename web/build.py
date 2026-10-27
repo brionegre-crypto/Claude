@@ -57,12 +57,41 @@ NAV = [
         ("/inner-circle/", "The Inner Circle", "By application", None),
         ("/ministry-kit/", "Men's ministry kit", "For churches", None),
         ("/speaking/", "Book Brian to speak", "Men's nights, retreats, conferences", None),
-        ("/workshop/", "Live workshop: Fix Your Wednesday", "Sunday, Oct 25", "2026-10-25"),
+        ("/workshop/", "Live workshop: Fix Your Wednesday", "Every other Wednesday, $27", None),
     ]),
     ("store", "/products/", "Store"),
     ("couples", "/couples/", "Couples"),
     ("about", "/about/", "About"),
 ]
+
+
+# Fix Your Wednesday workshop: every other Wednesday, 7 to 8 PM Central (keep in step
+# with functions/_workshop.js).
+WORKSHOP_FIRST = datetime.date(2026, 11, 4)
+WORKSHOP_EVERY = 14
+WORKSHOP_SKIP = []
+
+
+def workshop_dates(n=4, today=None):
+    """The next n session dates, counting today's session until it is over (8 PM Central)."""
+    today = today or datetime.date.today()
+    d, out = WORKSHOP_FIRST, []
+    while len(out) < n:
+        if d >= today and d.isoformat() not in WORKSHOP_SKIP:
+            out.append(d)
+        d += datetime.timedelta(days=WORKSHOP_EVERY)
+    return out
+
+
+def central_offset(d):
+    """-05:00 in daylight time (second Sunday of March to first Sunday of November), else -06:00."""
+    mar = datetime.date(d.year, 3, 8); mar += datetime.timedelta(days=(6 - mar.weekday()) % 7)
+    nov = datetime.date(d.year, 11, 1); nov += datetime.timedelta(days=(6 - nov.weekday()) % 7)
+    return "-05:00" if mar <= d < nov else "-06:00"
+
+
+def long_date(d):
+    return f"{d.strftime('%A, %B')} {d.day}"
 
 
 def read_page(path):
@@ -121,6 +150,22 @@ def render(meta, body):
                   {"@type": "ListItem", "position": 2, "name": meta.get("crumb", title), "item": url}]
         graph.append({"@type": "BreadcrumbList", "itemListElement": crumbs})
     graph.extend(meta.get("schema", []))
+    if meta.get("workshop"):
+        dates = workshop_dates()
+        for d in dates:
+            off = central_offset(d)
+            graph.append({"@type": "Event", "name": f"Fix Your Wednesday: live workshop, {long_date(d)}",
+                          "startDate": f"{d.isoformat()}T19:00:00{off}", "endDate": f"{d.isoformat()}T20:00:00{off}",
+                          "eventAttendanceMode": "https://schema.org/OnlineEventAttendanceMode",
+                          "eventStatus": "https://schema.org/EventScheduled",
+                          "location": {"@type": "VirtualLocation", "url": BASE + "/workshop/"},
+                          "organizer": {"@id": BASE + "/#org"}, "performer": {"@id": BASE + "/about/#brian"},
+                          "description": "Most men start Monday strong and lose the week by Wednesday. In one hour we fix that together.",
+                          "offers": {"@type": "Offer", "price": "27.00", "priceCurrency": "USD",
+                                     "url": BASE + "/workshop/", "availability": "https://schema.org/InStock"}})
+        body = (body.replace("{{workshop_next}}", long_date(dates[0]))
+                    .replace("{{workshop_dates}}", ", ".join(f"{d.strftime('%b')} {d.day}" for d in dates))
+                    .replace("{{workshop_cfg}}", json.dumps({"first": WORKSHOP_FIRST.isoformat(), "every": WORKSHOP_EVERY, "skip": WORKSHOP_SKIP})))
     if meta.get("faq"):
         graph.append({"@type": "FAQPage", "mainEntity": [
             {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}}
@@ -269,6 +314,7 @@ def delivery_pages(products):
   if(!window.fetch) return;
   fetch('/api/purchase',{{method:'POST',headers:{{'content-type':'application/json'}},body:JSON.stringify({{o:'{o["key"]}',s:s}})}})
     .then(function(r){{return r.json();}}).then(function(d){{
+      if(d.when){{document.querySelectorAll('[data-when]').forEach(function(el){{el.textContent=d.when;}});}}
       if(d.emailed){{var n=document.getElementById('emailed');n.textContent='We also emailed you a link to this page.';n.hidden=false;}}
       (d.addons||[]).forEach(function(p){{document.querySelectorAll('.addon[data-price="'+p+'"]').forEach(function(el){{el.hidden=false;}});}});
     }}).catch(function(){{}});
