@@ -177,10 +177,29 @@ function captions(it) {
 }
 
 // ---------- main ----------
-const ffmpeg = () => execSync(`python3 -c "import imageio_ffmpeg as i;print(i.get_ffmpeg_exe())"`).toString().trim();
+let FF;
+const ffmpeg = () => FF ??= process.env.FFMPEG || (() => {
+  for (const py of ['python3', 'python3.13', 'python3.12']) {
+    try { return execSync(`${py} -c "import imageio_ffmpeg as i;print(i.get_ffmpeg_exe())"`, { stdio: ['ignore', 'pipe', 'ignore'] }).toString().trim(); } catch {}
+  }
+  throw new Error('ffmpeg not found: pip install imageio-ffmpeg');
+})();
+// Background music (original, from make_music.py). Items can set music: 'name' or music: false.
+const MUSIC_DIR = join(here, 'music');
+const pickMusic = (it) => {
+  if (it.music === false) return null;
+  let name = it.music;
+  if (!name) {
+    if (['workshop', 'workshopWed', 'group', 'innerCircle', 'lowSeat', 'challenge', 'challengeOn'].includes(it.cta)) name = 'lift';
+    else if (it.theme === 'cpl') name = 'cpl-home';
+    else name = [...it.id].reduce((a, c) => a + c.charCodeAt(0), 0) % 2 ? 'btm-resolve' : 'btm-steady';
+  }
+  const f = join(MUSIC_DIR, name + '.wav');
+  return existsSync(f) ? f : null;
+};
 mkdirSync(OUT, { recursive: true });
 const browser = await chromium.launch();
-const rows = []; const problems = [];
+const rows = []; const problems = []; const musicUsed = [];
 
 async function shot(html, w, h, file, fit = true) {
   const tmp = join(here, `.tmp-${process.pid}.html`);
@@ -240,8 +259,14 @@ for (const it of all) {
     await page.screenshot({ path: join(dir, `${it.id}-cover.jpg`), type: 'jpeg', quality: 90 });
     if (!args['no-video']) {
       const outf = join(dir, `${it.id}.mp4`);
-      const ff = spawn(ffmpeg(), ['-y', '-loglevel', 'error', '-f', 'image2pipe', '-framerate', String(FPS), '-i', '-', '-f', 'lavfi', '-i', 'anullsrc=r=44100:cl=stereo', '-shortest',
-        '-c:v', 'libx264', '-pix_fmt', 'yuv420p', '-preset', 'medium', '-crf', '23', '-r', String(FPS), '-c:a', 'aac', '-b:a', '64k', '-movflags', '+faststart', outf], { stdio: ['pipe', 'inherit', 'inherit'] });
+      const music = args['no-music'] ? null : pickMusic(it);
+      const fadeAt = Math.max(0, plan.dur - 1.6).toFixed(2);
+      const audioIn = music
+        ? ['-stream_loop', '-1', '-i', music, '-filter_complex', `[1:a]atrim=0:${plan.dur.toFixed(2)},afade=t=in:d=0.3,afade=t=out:st=${fadeAt}:d=1.6,volume=1.15[a]`, '-map', '0:v', '-map', '[a]', '-b:a', '160k']
+        : ['-f', 'lavfi', '-i', 'anullsrc=r=44100:cl=stereo', '-shortest', '-b:a', '64k'];
+      if (music) musicUsed.push(`${it.id}: ${music.split('/').pop()}`);
+      const ff = spawn(ffmpeg(), ['-y', '-loglevel', 'error', '-f', 'image2pipe', '-framerate', String(FPS), '-i', '-', ...audioIn,
+        '-t', plan.dur.toFixed(2), '-c:v', 'libx264', '-pix_fmt', 'yuv420p', '-preset', 'medium', '-crf', '23', '-r', String(FPS), '-c:a', 'aac', '-movflags', '+faststart', outf], { stdio: ['pipe', 'inherit', 'inherit'] });
       for (let f = 0; f < Math.round(plan.dur * FPS); f++) {
         await page.evaluate((x) => window.render(x), f / FPS);
         const buf = await page.screenshot({ type: 'jpeg', quality: 88 });

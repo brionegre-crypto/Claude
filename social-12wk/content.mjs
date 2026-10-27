@@ -6,6 +6,7 @@ import { btm } from './content-btm.mjs';
 import { cpl } from './content-cpl.mjs';
 import { existing } from './content-existing.mjs';
 import { boost } from './content-boost.mjs';
+import { boost2 } from './content-boost2.mjs';
 
 const BIO = 'www.bethemansystem.com/step-1/#get';
 export const CTA = {
@@ -32,6 +33,24 @@ export const CTA = {
     fb: 'Live workshop: Fix Your Wednesday. Sunday, Oct 25, 7 PM Central, on Google Meet. One hour, $27, recording included. You leave with your sentence, one goal with a date, and your first Scorecard.\nReserve your spot: https://www.bethemansystem.com/workshop/',
     th: 'Fix Your Wednesday: live, Sun Oct 25, 7 PM CT. $27, recording included → www.bethemansystem.com/workshop/',
     foot: 'Sun Oct 25 · 7 PM CT · link in bio', btn: 'Oct 25 workshop → link in bio',
+  },
+  workshopWed: {
+    ig: '🎟 Fix Your Wednesday, live: every other Wednesday, 7–8 PM Central, on Google Meet. $27, recording included. Next sessions: Nov 18 and Dec 2. You leave with your sentence, one goal with a date and a time, and your first Scorecard.\n🔗 Link in bio → "Fix Your Wednesday."',
+    fb: 'Fix Your Wednesday, live: every other Wednesday, 7–8 PM Central, on Google Meet. $27, recording included. Next sessions: Nov 18 and Dec 2.\nReserve your spot: https://www.bethemansystem.com/workshop/',
+    th: 'Fix Your Wednesday, live every other Wed, 7 PM CT. $27 → www.bethemansystem.com/workshop/',
+    foot: 'Wed 7 PM CT · link in bio', btn: 'Fix Your Wednesday → link in bio',
+  },
+  lowSeat: {
+    ig: '🪑 The Low Seat Check: free, 5 minutes. Twenty statements about what you actually do when you\'re corrected, when you miss, and when someone else gets the credit. You get a score across five postures and one action for this week.\n🔗 Link in bio → "The Low Seat Check."',
+    fb: 'The Low Seat Check: free, 5 minutes. How humble are you on a Tuesday? You get a score across five postures and one action for this week. Nothing is saved or sent anywhere.\nhttps://www.bethemansystem.com/humility/',
+    th: 'How humble are you on a Tuesday? Free 5-minute check → www.bethemansystem.com/humility/',
+    foot: 'Free 5-min check · link in bio', btn: 'Take the check → link in bio',
+  },
+  innerCircle: {
+    ig: '🔒 The Inner Circle: ten men, a weekly class with me every Thursday, a monthly one-on-one, and someone checking your Scorecard. By application.\n🔗 Link in bio → "The Inner Circle."',
+    fb: 'The Inner Circle: ten men, a private weekly class with Brian every Thursday, a monthly one-on-one, and a weekly Scorecard review. By application; the first step is a free 15-minute call.\nhttps://www.bethemansystem.com/inner-circle/',
+    th: 'The Inner Circle: ten men, a weekly class with me. By application → www.bethemansystem.com/inner-circle/',
+    foot: 'By application · link in bio', btn: 'Apply → link in bio',
   },
   group: {
     ig: '🪑 A 6-week live group for husbands and fathers. Sundays, 7–8 PM Central, on Google Meet, Nov 15 – Dec 20. Four seats.\n🔗 Link in bio → "Reserve my seat."',
@@ -124,5 +143,5 @@ export const TAGS = {
   cpl: ['#christianmarriage', '#blackmarriage', '#christiancouples', '#marriagetips', '#blacklove', '#godlymarriage', '#husbandandwife', '#marriagecounseling', '#premaritalcounseling', '#blackcouples'],
 };
 
-export const items = [...btm, ...cpl, ...boost];
+export const items = [...btm, ...cpl, ...boost, ...boost2];
 export { existing };

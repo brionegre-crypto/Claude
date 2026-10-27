@@ -7,13 +7,16 @@ from collections import defaultdict
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 POSTS = os.path.join(HERE, 'posts')
-PACKS = os.path.join(HERE, 'packs-boost' if '--boost' in __import__('sys').argv else 'packs')
+_A = __import__('sys').argv
+MODE = 'boost2' if '--boost2' in _A else 'boost' if '--boost' in _A else 'main'
+PACKS = os.path.join(HERE, {'boost2': 'packs-boost2', 'boost': 'packs-boost', 'main': 'packs'}[MODE])
 rows = list(csv.DictReader(open(os.path.join(HERE, 'calendar.csv'))))
 HOURS = {'8am': 8, '9am': 9, '12pm': 12, '2pm': 14, '4pm': 16, '7pm': 19, '9pm': 21}
 rows.sort(key=lambda r: (r['date'], HOURS[r['time']]))
 import sys
-BOOST = '--boost' in sys.argv
-rows = [r for r in rows if ('_b-' in r['folder']) == BOOST]
+BOOST = MODE != 'main'
+TAG = {'boost2': '_b2-', 'boost': '_b-'}.get(MODE)
+rows = [r for r in rows if (TAG in r['folder'])] if TAG else [r for r in rows if '_b-' not in r['folder'] and '_b2-' not in r['folder']]
 
 def read(folder, name):
     p = os.path.join(POSTS, folder, name)
@@ -21,7 +24,7 @@ def read(folder, name):
 
 def block(d):
     """Two-week block index from Mon Oct 5."""
-    start = datetime.date(2026, 10, 9) if BOOST else datetime.date(2026, 10, 5)
+    start = {'boost2': datetime.date(2026, 11, 8), 'boost': datetime.date(2026, 10, 9)}.get(MODE, datetime.date(2026, 10, 5))
     return (datetime.date.fromisoformat(d) - start).days // 14
 
 TIME = {'8am': '8:00 AM', '9am': '9:00 AM', '12pm': '12:00 PM', '2pm': '2:00 PM', '4pm': '4:00 PM', '7pm': '7:00 PM', '9pm': '9:00 PM'}
@@ -49,14 +52,17 @@ def guide(rs, title):
     return '\n'.join(out)
 
 os.makedirs(PACKS, exist_ok=True)
-open(os.path.join(HERE, 'POSTING-GUIDE-BOOST.md' if BOOST else 'POSTING-GUIDE.md'), 'w').write(guide(rows, '30-day boost: 3 extra posts a day (Oct 9 – Nov 7, 2026)' if BOOST else 'Be The Man + Couples: 12-week posting guide (Oct 6 – Dec 27, 2026)'))
+GUIDE = {'boost2': ('POSTING-GUIDE-BOOST2.md', 'Boost 2: 3 extra posts a day, Reels with music (Nov 8 – Dec 7, 2026)'),
+         'boost': ('POSTING-GUIDE-BOOST.md', '30-day boost: 3 extra posts a day (Oct 9 – Nov 7, 2026)'),
+         'main': ('POSTING-GUIDE.md', 'Be The Man + Couples: 12-week posting guide (Oct 6 – Dec 27, 2026)')}[MODE]
+open(os.path.join(HERE, GUIDE[0]), 'w').write(guide(rows, GUIDE[1]))
 
 groups = defaultdict(list)
 for r in rows:
     groups[block(r['date'])].append(r)
 for b, rs in sorted(groups.items()):
     first, last = rs[0]['date'], rs[-1]['date']
-    name = f'pack-B{b + 1}_{first}_to_{last}' if BOOST else f'pack-{b + 1:02d}_{first}_to_{last}'
+    name = {'boost2': f'pack-C{b + 1}_{first}_to_{last}', 'boost': f'pack-B{b + 1}_{first}_to_{last}'}.get(MODE, f'pack-{b + 1:02d}_{first}_to_{last}')
     g = guide(rs, f'Posting guide: {first} to {last}')
     # split further if a block would exceed ~28 MB
     parts, cur, size = [], [], 0
