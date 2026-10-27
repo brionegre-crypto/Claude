@@ -7,7 +7,7 @@ import { cpl } from './content-cpl.mjs';
 import { existing } from './content-existing.mjs';
 import { boost } from './content-boost.mjs';
 
-const BIO = 'go.bethemansystem.com/28016a3c';
+const BIO = 'www.bethemansystem.com/step-1/#get';
 export const CTA = {
   step1: {
     ig: '👇 Comment "STEP1" and I\'ll send you the free worksheet.',
@@ -17,80 +17,80 @@ export const CTA = {
   },
   challenge: {
     ig: '🗓 The free 7-week challenge starts Oct 20. One email a week, one action with a time on it. Do it with a brother.\n🔗 Link in bio → "Count me in."',
-    fb: 'The free 7-week challenge starts Oct 20. One email a week, one action with a time on it. Forward it to one man you trust.\nJoin free: https://go.bethemansystem.com/42f82c9e',
-    th: 'Free 7-week challenge, starts Oct 20 → go.bethemansystem.com/42f82c9e',
+    fb: 'The free 7-week challenge starts Oct 20. One email a week, one action with a time on it. Forward it to one man you trust.\nJoin free: https://www.bethemansystem.com/7-week-challenge/',
+    th: 'Free 7-week challenge, starts Oct 20 → www.bethemansystem.com/7-week-challenge/',
     foot: 'Free 7-week challenge · link in bio', btn: 'Free challenge → link in bio',
   },
   challengeOn: {
     ig: '🗓 The free 7-week challenge is running now. Join any week, and the first step comes in your welcome email.\n🔗 Link in bio → "Count me in."',
-    fb: 'The free 7-week challenge is running now. Join any week: https://go.bethemansystem.com/42f82c9e',
-    th: 'The free 7-week challenge is running. Join any week → go.bethemansystem.com/42f82c9e',
+    fb: 'The free 7-week challenge is running now. Join any week: https://www.bethemansystem.com/7-week-challenge/',
+    th: 'The free 7-week challenge is running. Join any week → www.bethemansystem.com/7-week-challenge/',
     foot: 'Free 7-week challenge · link in bio', btn: 'Join the challenge →',
   },
   workshop: {
     ig: '🎟 Live workshop: Fix Your Wednesday. Sunday, Oct 25, 7 PM Central, on Google Meet. One hour, $27. You leave with your sentence, one goal with a date, and your first Scorecard. Can\'t make it live? The recording is included.\n🔗 Link in bio → "Reserve my spot."',
-    fb: 'Live workshop: Fix Your Wednesday. Sunday, Oct 25, 7 PM Central, on Google Meet. One hour, $27, recording included. You leave with your sentence, one goal with a date, and your first Scorecard.\nReserve your spot: https://go.bethemansystem.com/f0217426',
-    th: 'Fix Your Wednesday: live, Sun Oct 25, 7 PM CT. $27, recording included → go.bethemansystem.com/f0217426',
+    fb: 'Live workshop: Fix Your Wednesday. Sunday, Oct 25, 7 PM Central, on Google Meet. One hour, $27, recording included. You leave with your sentence, one goal with a date, and your first Scorecard.\nReserve your spot: https://www.bethemansystem.com/workshop/',
+    th: 'Fix Your Wednesday: live, Sun Oct 25, 7 PM CT. $27, recording included → www.bethemansystem.com/workshop/',
     foot: 'Sun Oct 25 · 7 PM CT · link in bio', btn: 'Oct 25 workshop → link in bio',
   },
   group: {
     ig: '🪑 A 6-week live group for husbands and fathers. Sundays, 7–8 PM Central, on Google Meet, Nov 15 – Dec 20. Four seats.\n🔗 Link in bio → "Reserve my seat."',
-    fb: 'A 6-week live group for husbands and fathers. Sundays, 7–8 PM Central, on Google Meet, Nov 15 – Dec 20. Four seats.\nReserve a seat: https://go.bethemansystem.com/b1c774c0',
-    th: '6-week live group for husbands and fathers. Sundays Nov 15 – Dec 20, 7 PM CT. Four seats → go.bethemansystem.com/b1c774c0',
+    fb: 'A 6-week live group for husbands and fathers. Sundays, 7–8 PM Central, on Google Meet, Nov 15 – Dec 20. Four seats.\nReserve a seat: https://www.bethemansystem.com/group/',
+    th: '6-week live group for husbands and fathers. Sundays Nov 15 – Dec 20, 7 PM CT. Four seats → www.bethemansystem.com/group/',
     foot: 'Four seats · link in bio', btn: 'Reserve a seat → link in bio',
   },
   club: {
     ig: '🔑 The Be The Man Club: the tools in the store plus a new one every month, $19 a month. Cancel anytime; the files are yours to keep.\n🔗 Link in bio → "Join the Club."',
-    fb: 'The Be The Man Club: the tools plus a new one every month, $19 a month. Cancel anytime; the files are yours to keep.\nJoin: https://go.bethemansystem.com/d6dd7931',
-    th: 'The Be The Man Club, $19 a month → go.bethemansystem.com/d6dd7931',
+    fb: 'The Be The Man Club: the tools plus a new one every month, $19 a month. Cancel anytime; the files are yours to keep.\nJoin: https://www.bethemansystem.com/the-club/',
+    th: 'The Be The Man Club, $19 a month → www.bethemansystem.com/the-club/',
     foot: 'The Club · link in bio', btn: 'Join the Club → link in bio',
   },
   clubYear: {
     ig: '🎁 The Be The Man Club, yearly: $149 for twelve months of tools. A gift that\'s still working in March.\n🔗 Link in bio → "Join the Club."',
-    fb: 'The Be The Man Club, yearly: $149 for twelve months of tools. A gift that\'s still working in March.\nhttps://go.bethemansystem.com/c24bf36b',
-    th: 'The Club, yearly: $149. A gift that\'s still working in March → go.bethemansystem.com/c24bf36b',
+    fb: 'The Be The Man Club, yearly: $149 for twelve months of tools. A gift that\'s still working in March.\nhttps://www.bethemansystem.com/the-club/',
+    th: 'The Club, yearly: $149. A gift that\'s still working in March → www.bethemansystem.com/the-club/',
     foot: 'Club yearly $149 · link in bio', btn: 'Club yearly → link in bio',
   },
   library: {
     ig: '📚 The Complete Library: all 11 tools in one download, $97. Field guides, workbooks, devotional, Bible study, prayer strategy, card decks and trackers.\n🔗 Link in bio.',
-    fb: 'The Complete Library: all 11 tools in one download, $97. Field guides, workbooks, devotional, Bible study, prayer strategy, card decks and trackers.\nhttps://5e95-brian.systeme.io/593d3b68',
-    th: 'All 11 tools in one download, $97 → 5e95-brian.systeme.io/593d3b68',
+    fb: 'The Complete Library: all 11 tools in one download, $97. Field guides, workbooks, devotional, Bible study, prayer strategy, card decks and trackers.\nhttps://www.bethemansystem.com/products/#the-system',
+    th: 'All 11 tools in one download, $97 → www.bethemansystem.com/products/#the-system',
     foot: 'Complete Library · link in bio', btn: 'All 11 tools → link in bio',
   },
   scorecard: {
     ig: '📋 The Weekly Scorecard: your week on one page, $7. Four decisions, each with a time and a written miss.\n🔗 Link in bio.',
-    fb: 'The Weekly Scorecard: your week on one page, $7. Four decisions, each with a time and a written miss.\nhttps://go.bethemansystem.com/7d78815c',
-    th: 'Your week on one page, $7 → go.bethemansystem.com/7d78815c',
+    fb: 'The Weekly Scorecard: your week on one page, $7. Four decisions, each with a time and a written miss.\nhttps://www.bethemansystem.com/products/#the-system',
+    th: 'Your week on one page, $7 → www.bethemansystem.com/products/#the-system',
     foot: 'The Scorecard $7 · link in bio', btn: 'The Scorecard → link in bio',
   },
   husbandKit: {
     ig: '🧰 The Husband Kit, $39. The tools for leading your marriage, in one download.\n🔗 Link in bio.',
-    fb: 'The Husband Kit, $39. The tools for leading your marriage, in one download.\nhttps://5e95-brian.systeme.io/d1d8c97d',
-    th: 'The Husband Kit, $39 → 5e95-brian.systeme.io/d1d8c97d',
+    fb: 'The Husband Kit, $39. The tools for leading your marriage, in one download.\nhttps://www.bethemansystem.com/products/#your-marriage',
+    th: 'The Husband Kit, $39 → www.bethemansystem.com/products/#your-marriage',
     foot: 'The Husband Kit · link in bio', btn: 'Husband Kit → link in bio',
   },
   fatherKit: {
     ig: '🧰 The Father Kit, $29. The tools for leading your kids, in one download.\n🔗 Link in bio.',
-    fb: 'The Father Kit, $29. The tools for leading your kids, in one download.\nhttps://5e95-brian.systeme.io/5cbc7892',
-    th: 'The Father Kit, $29 → 5e95-brian.systeme.io/5cbc7892',
+    fb: 'The Father Kit, $29. The tools for leading your kids, in one download.\nhttps://www.bethemansystem.com/products/#fatherhood',
+    th: 'The Father Kit, $29 → www.bethemansystem.com/products/#fatherhood',
     foot: 'The Father Kit · link in bio', btn: 'Father Kit → link in bio',
   },
   faithKit: {
     ig: '🧰 The Faith Kit, $29. Prayer, Scripture and discipleship tools with a time attached.\n🔗 Link in bio.',
-    fb: 'The Faith Kit, $29. Prayer, Scripture and discipleship tools with a time attached.\nhttps://5e95-brian.systeme.io/d616652a',
-    th: 'The Faith Kit, $29 → 5e95-brian.systeme.io/d616652a',
+    fb: 'The Faith Kit, $29. Prayer, Scripture and discipleship tools with a time attached.\nhttps://www.bethemansystem.com/products/#your-faith',
+    th: 'The Faith Kit, $29 → www.bethemansystem.com/products/#your-faith',
     foot: 'The Faith Kit · link in bio', btn: 'Faith Kit → link in bio',
   },
   call: {
     ig: '📞 Stuck somewhere? Book a free 15-minute call with me.\n🔗 Link in bio → "Book a free call."',
-    fb: 'Stuck somewhere? Book a free 15-minute call: https://go.bethemansystem.com/085b95e4',
-    th: 'Free 15-minute call: where are you stuck? → go.bethemansystem.com/085b95e4',
+    fb: 'Stuck somewhere? Book a free 15-minute call: https://www.bethemansystem.com/call/',
+    th: 'Free 15-minute call: where are you stuck? → www.bethemansystem.com/call/',
     foot: 'Free 15-min call · link in bio', btn: 'Free call → link in bio',
   },
   training: {
     ig: '▶️ Free 6-minute training: why you keep breaking the same promise.\n🔗 Link in bio → "Watch it free."',
-    fb: 'Free 6-minute training: why you keep breaking the same promise.\nhttps://go.bethemansystem.com/782480a3',
-    th: 'Free 6-min training: why you keep breaking the same promise → go.bethemansystem.com/782480a3',
+    fb: 'Free 6-minute training: why you keep breaking the same promise.\nhttps://www.bethemansystem.com/training/',
+    th: 'Free 6-min training: why you keep breaking the same promise → www.bethemansystem.com/training/',
     foot: 'Free training · link in bio', btn: 'Watch free → link in bio',
   },
   couples: {

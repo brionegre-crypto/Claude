@@ -227,7 +227,7 @@ Weeks 5–6: your misses, counted honestly, and God at the center.
 Starts Nov 15. Four seats.
 
 A 6-week live group for husbands and fathers. Sundays, 7–8 PM Central, on Google Meet, Nov 15 – Dec 20. Four seats.
-Reserve a seat: https://go.bethemansystem.com/b1c774c0
+Reserve a seat: https://www.bethemansystem.com/group/
 
 #blackfathers #selfdisciplineformen
 ```
@@ -236,7 +236,7 @@ Reserve a seat: https://go.bethemansystem.com/b1c774c0
 ```
 What we'll build in six Sundays: your sentence, your three goals, your blocker plan, your times, your misses, and God at the center. Starts Nov 15.
 
-6-week live group for husbands and fathers. Sundays Nov 15 – Dec 20, 7 PM CT. Four seats → go.bethemansystem.com/b1c774c0
+6-week live group for husbands and fathers. Sundays Nov 15 – Dec 20, 7 PM CT. Four seats → www.bethemansystem.com/group/
 ```
 
 ---

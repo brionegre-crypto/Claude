@@ -74,7 +74,7 @@ html,body{width:1080px;height:1350px;background:#0B0B0C;-webkit-font-smoothing:a
 
   <div class="wrap"><div class="r">
     <div class="c logo">Be The Man</div>
-    <div class="c small">Huntsville, AL · go.bethemansystem.com</div>
+    <div class="c small">Huntsville, AL · bethemansystem.com</div>
     <div class="c small">ORDER #0001 · THURSDAY</div>
     <div class="dash"></div>
     ${items.map(row).join('')}

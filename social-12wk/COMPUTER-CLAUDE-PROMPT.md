@@ -10,7 +10,7 @@ The files: I've unzipped the "pack-XX_…" zips into one folder. Each zip has a 
 
 == TASK 1: Bio link ==
 On Instagram (Edit profile → Links), Facebook (page details) and Threads (profile), set the website link to:
-https://go.bethemansystem.com/28016a3c
+https://www.bethemansystem.com/step-1/#get
 That's my link-in-bio page, which lists Step 1, the 7-week challenge, the workshop, the group, couples counseling and the Club, so every "link in bio" in the captions lands somewhere useful.
 
 == TASK 2: ManyChat: COUPLES automation ==

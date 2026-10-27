@@ -131,7 +131,7 @@ It's not a willpower problem. It's a missing first step. Nobody taught us to dec
 Seven weeks, free, starting Oct 20. Bring a brother.
 
 The free 7-week challenge starts Oct 20. One email a week, one action with a time on it. Forward it to one man you trust.
-Join free: https://go.bethemansystem.com/42f82c9e
+Join free: https://www.bethemansystem.com/7-week-challenge/
 
 #blackfathers #selfdisciplineformen
 ```
@@ -140,7 +140,7 @@ Join free: https://go.bethemansystem.com/42f82c9e
 ```
 This is for the man who keeps making the same promise. It's not willpower. It's a missing first step.
 
-Free 7-week challenge, starts Oct 20 → go.bethemansystem.com/42f82c9e
+Free 7-week challenge, starts Oct 20 → www.bethemansystem.com/7-week-challenge/
 ```
 
 ---
@@ -396,7 +396,7 @@ Ask: What did I say I'd do? What actually happened? What's the ONE thing this we
 Plan the week, or the week plans you.
 
 The free 7-week challenge starts Oct 20. One email a week, one action with a time on it. Forward it to one man you trust.
-Join free: https://go.bethemansystem.com/42f82c9e
+Join free: https://www.bethemansystem.com/7-week-challenge/
 
 #christianmen #christianfather
 ```
@@ -405,7 +405,7 @@ Join free: https://go.bethemansystem.com/42f82c9e
 ```
 15 minutes on Sunday decides your Wednesday. What did I say I'd do? What happened? What's the one thing this week?
 
-Free 7-week challenge, starts Oct 20 → go.bethemansystem.com/42f82c9e
+Free 7-week challenge, starts Oct 20 → www.bethemansystem.com/7-week-challenge/
 ```
 
 ---
@@ -574,7 +574,7 @@ Monday doesn't need more motivation. It needs one decision with a time on it.
 What's yours this week? Write it in the comments: the decision, the day and the time.
 
 The free 7-week challenge starts Oct 20. One email a week, one action with a time on it. Forward it to one man you trust.
-Join free: https://go.bethemansystem.com/42f82c9e
+Join free: https://www.bethemansystem.com/7-week-challenge/
 
 #christianfather #faithandfamily
 ```
@@ -583,7 +583,7 @@ Join free: https://go.bethemansystem.com/42f82c9e
 ```
 Monday doesn't need more motivation. It needs one decision with a time on it. What's yours this week?
 
-Free 7-week challenge, starts Oct 20 → go.bethemansystem.com/42f82c9e
+Free 7-week challenge, starts Oct 20 → www.bethemansystem.com/7-week-challenge/
 ```
 
 ---
@@ -658,7 +658,7 @@ One week from today, you'll be exactly who you are now, unless you decide one th
 The free 7-week challenge starts Oct 20. One email a week, one action with a time on it. Small enough to actually do.
 
 The free 7-week challenge starts Oct 20. One email a week, one action with a time on it. Forward it to one man you trust.
-Join free: https://go.bethemansystem.com/42f82c9e
+Join free: https://www.bethemansystem.com/7-week-challenge/
 
 #selfdisciplineformen #blackchristianmen
 ```
@@ -667,7 +667,7 @@ Join free: https://go.bethemansystem.com/42f82c9e
 ```
 One week from today you'll be exactly who you are now, unless you decide one thing tonight. Free 7-week challenge starts Oct 20.
 
-Free 7-week challenge, starts Oct 20 → go.bethemansystem.com/42f82c9e
+Free 7-week challenge, starts Oct 20 → www.bethemansystem.com/7-week-challenge/
 ```
 
 ---
@@ -837,7 +837,7 @@ It's Wednesday. Is Monday's promise still standing?
 If not, don't quit the week. Change the time. The promise was fine. 6 AM wasn't.
 
 The free 7-week challenge starts Oct 20. One email a week, one action with a time on it. Forward it to one man you trust.
-Join free: https://go.bethemansystem.com/42f82c9e
+Join free: https://www.bethemansystem.com/7-week-challenge/
 
 #blackfathers #selfdisciplineformen
 ```
@@ -846,7 +846,7 @@ Join free: https://go.bethemansystem.com/42f82c9e
 ```
 It's Wednesday. Is Monday's promise still standing? If not, don't quit the week. Change the time.
 
-Free 7-week challenge, starts Oct 20 → go.bethemansystem.com/42f82c9e
+Free 7-week challenge, starts Oct 20 → www.bethemansystem.com/7-week-challenge/
 ```
 
 ---
@@ -923,7 +923,7 @@ Phone in the kitchen at 9 PM. Every night. No exceptions for "just checking."
 Try it for one week and tell me what changed.
 
 The free 7-week challenge starts Oct 20. One email a week, one action with a time on it. Forward it to one man you trust.
-Join free: https://go.bethemansystem.com/42f82c9e
+Join free: https://www.bethemansystem.com/7-week-challenge/
 
 #mensdiscipline #christianhusband
 ```
@@ -932,7 +932,7 @@ Join free: https://go.bethemansystem.com/42f82c9e
 ```
 The best thing I did for my marriage cost zero dollars: phone in the kitchen at 9 PM, every night. Try it for one week.
 
-Free 7-week challenge, starts Oct 20 → go.bethemansystem.com/42f82c9e
+Free 7-week challenge, starts Oct 20 → www.bethemansystem.com/7-week-challenge/
 ```
 
 ---
@@ -1099,7 +1099,7 @@ Your house notices the change before you announce it. That's how you know it's r
 Don't tell them you're changing. Let them catch you.
 
 The free 7-week challenge starts Oct 20. One email a week, one action with a time on it. Forward it to one man you trust.
-Join free: https://go.bethemansystem.com/42f82c9e
+Join free: https://www.bethemansystem.com/7-week-challenge/
 
 #mensdiscipline #christianhusband
 ```
@@ -1108,7 +1108,7 @@ Join free: https://go.bethemansystem.com/42f82c9e
 ```
 Your house notices the change before you announce it. That's how you know it's real. Let them catch you.
 
-Free 7-week challenge, starts Oct 20 → go.bethemansystem.com/42f82c9e
+Free 7-week challenge, starts Oct 20 → www.bethemansystem.com/7-week-challenge/
 ```
 
 ---
@@ -1189,7 +1189,7 @@ One email a week. One action with a time on it, small enough to do that week. An
 Who are you bringing? Tag him.
 
 The free 7-week challenge starts Oct 20. One email a week, one action with a time on it. Forward it to one man you trust.
-Join free: https://go.bethemansystem.com/42f82c9e
+Join free: https://www.bethemansystem.com/7-week-challenge/
 
 #christianhusband #christianmen
 ```
@@ -1198,7 +1198,7 @@ Join free: https://go.bethemansystem.com/42f82c9e
 ```
 Three days until the free 7-week challenge. One email a week, one action with a time on it, one brother. Who are you bringing?
 
-Free 7-week challenge, starts Oct 20 → go.bethemansystem.com/42f82c9e
+Free 7-week challenge, starts Oct 20 → www.bethemansystem.com/7-week-challenge/
 ```
 
 ---
@@ -1279,7 +1279,7 @@ Tag the man you'd want holding you accountable.
 The challenge starts Tuesday. Seven weeks. Once a week, you text each other one word: done, or missed. That's the whole system.
 
 The free 7-week challenge starts Oct 20. One email a week, one action with a time on it. Forward it to one man you trust.
-Join free: https://go.bethemansystem.com/42f82c9e
+Join free: https://www.bethemansystem.com/7-week-challenge/
 
 #blackchristianmen #mensdiscipline
 ```
@@ -1288,7 +1288,7 @@ Join free: https://go.bethemansystem.com/42f82c9e
 ```
 Tag the man you'd want holding you accountable. Seven weeks, one text a week: done, or missed.
 
-Free 7-week challenge, starts Oct 20 → go.bethemansystem.com/42f82c9e
+Free 7-week challenge, starts Oct 20 → www.bethemansystem.com/7-week-challenge/
 ```
 
 ---
@@ -1411,7 +1411,7 @@ Then: name what stops you, give a goal a time, define a miss, count honestly, an
 One email a week. Join with a brother.
 
 The free 7-week challenge starts Oct 20. One email a week, one action with a time on it. Forward it to one man you trust.
-Join free: https://go.bethemansystem.com/42f82c9e
+Join free: https://www.bethemansystem.com/7-week-challenge/
 
 #selfdisciplineformen #blackchristianmen
 ```
@@ -1420,7 +1420,7 @@ Join free: https://go.bethemansystem.com/42f82c9e
 ```
 Free 7-week challenge starts Tuesday. One sentence, three goals, a day and a time, a written miss, counted honestly, God at the center.
 
-Free 7-week challenge, starts Oct 20 → go.bethemansystem.com/42f82c9e
+Free 7-week challenge, starts Oct 20 → www.bethemansystem.com/7-week-challenge/
 ```
 
 ---
@@ -1451,7 +1451,7 @@ Tomorrow you write one sentence: who you're becoming. Not a goal. A man.
 The free 7-week challenge starts tomorrow. It's not too late to join.
 
 The free 7-week challenge starts Oct 20. One email a week, one action with a time on it. Forward it to one man you trust.
-Join free: https://go.bethemansystem.com/42f82c9e
+Join free: https://www.bethemansystem.com/7-week-challenge/
 
 #faithandfamily #blackmenwholead
 ```
@@ -1460,7 +1460,7 @@ Join free: https://go.bethemansystem.com/42f82c9e
 ```
 Tomorrow you write one sentence: who you're becoming. Not a goal. A man. Free 7-week challenge starts tomorrow.
 
-Free 7-week challenge, starts Oct 20 → go.bethemansystem.com/42f82c9e
+Free 7-week challenge, starts Oct 20 → www.bethemansystem.com/7-week-challenge/
 ```
 
 ---
@@ -1540,7 +1540,7 @@ Six days until Fix Your Wednesday, live on Google Meet.
 One hour. You leave with your one sentence, one goal with a date, and your first weekly Scorecard. Recording included.
 
 Live workshop: Fix Your Wednesday. Sunday, Oct 25, 7 PM Central, on Google Meet. One hour, $27, recording included. You leave with your sentence, one goal with a date, and your first Scorecard.
-Reserve your spot: https://go.bethemansystem.com/f0217426
+Reserve your spot: https://www.bethemansystem.com/workshop/
 
 #blackfathers #selfdisciplineformen
 ```
@@ -1549,7 +1549,7 @@ Reserve your spot: https://go.bethemansystem.com/f0217426
 ```
 Six days until Fix Your Wednesday. One hour, live. Leave with your sentence, one goal with a date, and your first Scorecard.
 
-Fix Your Wednesday: live, Sun Oct 25, 7 PM CT. $27, recording included → go.bethemansystem.com/f0217426
+Fix Your Wednesday: live, Sun Oct 25, 7 PM CT. $27, recording included → www.bethemansystem.com/workshop/
 ```
 
 ---
@@ -1623,7 +1623,7 @@ Day one of the challenge. Write it now, before the day gets loud:
 
 Finish the sentence. Then cut it in half. The shorter it is, the more you'll remember it at 6 PM.
 
-The free 7-week challenge is running now. Join any week: https://go.bethemansystem.com/42f82c9e
+The free 7-week challenge is running now. Join any week: https://www.bethemansystem.com/7-week-challenge/
 
 #selfdisciplineformen #blackchristianmen
 ```
@@ -1632,7 +1632,7 @@ The free 7-week challenge is running now. Join any week: https://go.bethemansyst
 ```
 Challenge day one. Write it before the day gets loud: "I am becoming a man who…" Finish it. Then cut it in half.
 
-The free 7-week challenge is running. Join any week → go.bethemansystem.com/42f82c9e
+The free 7-week challenge is running. Join any week → www.bethemansystem.com/7-week-challenge/
 ```
 
 ---
@@ -1705,7 +1705,7 @@ It's Wednesday. Monday's promise is already slipping. You know the feeling.
 Sunday at 7 PM Central, we fix it. Live, one hour, $27. You leave with your sentence, a goal with a date, and your first Scorecard.
 
 Live workshop: Fix Your Wednesday. Sunday, Oct 25, 7 PM Central, on Google Meet. One hour, $27, recording included. You leave with your sentence, one goal with a date, and your first Scorecard.
-Reserve your spot: https://go.bethemansystem.com/f0217426
+Reserve your spot: https://www.bethemansystem.com/workshop/
 
 #mensdiscipline #christianhusband
 ```
@@ -1714,7 +1714,7 @@ Reserve your spot: https://go.bethemansystem.com/f0217426
 ```
 It's Wednesday. Monday's promise is already slipping. Sunday at 7 PM Central we fix it. Live, one hour.
 
-Fix Your Wednesday: live, Sun Oct 25, 7 PM CT. $27, recording included → go.bethemansystem.com/f0217426
+Fix Your Wednesday: live, Sun Oct 25, 7 PM CT. $27, recording included → www.bethemansystem.com/workshop/
 ```
 
 ---
@@ -1797,7 +1797,7 @@ Most men start Monday strong and lose the week by Wednesday.
 Sunday at 7 PM Central, we fix that, live and together. One hour, $27, recording included. Bring a pen.
 
 Live workshop: Fix Your Wednesday. Sunday, Oct 25, 7 PM Central, on Google Meet. One hour, $27, recording included. You leave with your sentence, one goal with a date, and your first Scorecard.
-Reserve your spot: https://go.bethemansystem.com/f0217426
+Reserve your spot: https://www.bethemansystem.com/workshop/
 
 #christianfather #faithandfamily
 ```
@@ -1806,7 +1806,7 @@ Reserve your spot: https://go.bethemansystem.com/f0217426
 ```
 Most men start Monday strong and lose the week by Wednesday. Sunday 7 PM CT, we fix it. One hour, $27.
 
-Fix Your Wednesday: live, Sun Oct 25, 7 PM CT. $27, recording included → go.bethemansystem.com/f0217426
+Fix Your Wednesday: live, Sun Oct 25, 7 PM CT. $27, recording included → www.bethemansystem.com/workshop/
 ```
 
 ---
@@ -1958,7 +1958,7 @@ Sunday at 7 PM Central. Bring a pen.
 You leave with one sentence, one goal with a date, and your first Scorecard. One hour, live on Google Meet. Recording included.
 
 Live workshop: Fix Your Wednesday. Sunday, Oct 25, 7 PM Central, on Google Meet. One hour, $27, recording included. You leave with your sentence, one goal with a date, and your first Scorecard.
-Reserve your spot: https://go.bethemansystem.com/f0217426
+Reserve your spot: https://www.bethemansystem.com/workshop/
 
 #christianhusband #christianmen
 ```
@@ -1967,7 +1967,7 @@ Reserve your spot: https://go.bethemansystem.com/f0217426
 ```
 Sunday 7 PM Central, bring a pen. Leave with one sentence, one goal with a date, and your first Scorecard.
 
-Fix Your Wednesday: live, Sun Oct 25, 7 PM CT. $27, recording included → go.bethemansystem.com/f0217426
+Fix Your Wednesday: live, Sun Oct 25, 7 PM CT. $27, recording included → www.bethemansystem.com/workshop/
 ```
 
 ---
@@ -2126,7 +2126,7 @@ Tomorrow night, 7 PM Central: Fix Your Wednesday, live.
 One hour. Leave with your sentence, one goal with a date and your first Scorecard. Today's the last full day to grab a spot.
 
 Live workshop: Fix Your Wednesday. Sunday, Oct 25, 7 PM Central, on Google Meet. One hour, $27, recording included. You leave with your sentence, one goal with a date, and your first Scorecard.
-Reserve your spot: https://go.bethemansystem.com/f0217426
+Reserve your spot: https://www.bethemansystem.com/workshop/
 
 #blackchristianmen #mensdiscipline
 ```
@@ -2135,7 +2135,7 @@ Reserve your spot: https://go.bethemansystem.com/f0217426
 ```
 Tomorrow 7 PM Central: Fix Your Wednesday, live. One hour. Last full day to grab a spot.
 
-Fix Your Wednesday: live, Sun Oct 25, 7 PM CT. $27, recording included → go.bethemansystem.com/f0217426
+Fix Your Wednesday: live, Sun Oct 25, 7 PM CT. $27, recording included → www.bethemansystem.com/workshop/
 ```
 
 ---
@@ -2204,7 +2204,7 @@ Tonight, 7 PM Central. One hour that fixes your week.
 Bring a pen. Bring your honesty. Can't make it live? The recording comes with your ticket.
 
 Live workshop: Fix Your Wednesday. Sunday, Oct 25, 7 PM Central, on Google Meet. One hour, $27, recording included. You leave with your sentence, one goal with a date, and your first Scorecard.
-Reserve your spot: https://go.bethemansystem.com/f0217426
+Reserve your spot: https://www.bethemansystem.com/workshop/
 
 #selfdisciplineformen #blackchristianmen
 ```
@@ -2213,7 +2213,7 @@ Reserve your spot: https://go.bethemansystem.com/f0217426
 ```
 Tonight 7 PM Central: one hour that fixes your week. Bring a pen. Recording included.
 
-Fix Your Wednesday: live, Sun Oct 25, 7 PM CT. $27, recording included → go.bethemansystem.com/f0217426
+Fix Your Wednesday: live, Sun Oct 25, 7 PM CT. $27, recording included → www.bethemansystem.com/workshop/
 ```
 
 ---
@@ -2292,7 +2292,7 @@ Don't let tonight become another promise.
 The 6-week live group starts Nov 15: Sundays, 7–8 PM Central, the same men every week. Four seats.
 
 A 6-week live group for husbands and fathers. Sundays, 7–8 PM Central, on Google Meet, Nov 15 – Dec 20. Four seats.
-Reserve a seat: https://go.bethemansystem.com/b1c774c0
+Reserve a seat: https://www.bethemansystem.com/group/
 
 #christianfather #faithandfamily
 ```
@@ -2301,7 +2301,7 @@ Reserve a seat: https://go.bethemansystem.com/b1c774c0
 ```
 Don't let tonight become another promise. 6-week live group, Sundays from Nov 15. Same men every week. Four seats.
 
-6-week live group for husbands and fathers. Sundays Nov 15 – Dec 20, 7 PM CT. Four seats → go.bethemansystem.com/b1c774c0
+6-week live group for husbands and fathers. Sundays Nov 15 – Dec 20, 7 PM CT. Four seats → www.bethemansystem.com/group/
 ```
 
 ---
@@ -2375,7 +2375,7 @@ Week 2 of the challenge: you don't have twelve goals. You have twelve wishes.
 
 Cut it to three: one for your soul, one for your house, one for your work. Everything else waits.
 
-The free 7-week challenge is running now. Join any week: https://go.bethemansystem.com/42f82c9e
+The free 7-week challenge is running now. Join any week: https://www.bethemansystem.com/7-week-challenge/
 
 #selfdisciplineformen #blackchristianmen
 ```
@@ -2384,7 +2384,7 @@ The free 7-week challenge is running now. Join any week: https://go.bethemansyst
 ```
 You don't have twelve goals. You have twelve wishes. Cut it to three: soul, house, work.
 
-The free 7-week challenge is running. Join any week → go.bethemansystem.com/42f82c9e
+The free 7-week challenge is running. Join any week → www.bethemansystem.com/7-week-challenge/
 ```
 
 ---
@@ -2415,7 +2415,7 @@ Apps don't notice when you go quiet. Men do.
 The 6-week live group: Sundays, 7–8 PM Central, Nov 15 to Dec 20, on Google Meet. Four seats.
 
 A 6-week live group for husbands and fathers. Sundays, 7–8 PM Central, on Google Meet, Nov 15 – Dec 20. Four seats.
-Reserve a seat: https://go.bethemansystem.com/b1c774c0
+Reserve a seat: https://www.bethemansystem.com/group/
 
 #blackmenwholead #godlyhusband
 ```
@@ -2424,7 +2424,7 @@ Reserve a seat: https://go.bethemansystem.com/b1c774c0
 ```
 Apps don't notice when you go quiet. Men do. 6-week live group, Sundays from Nov 15. Four seats.
 
-6-week live group for husbands and fathers. Sundays Nov 15 – Dec 20, 7 PM CT. Four seats → go.bethemansystem.com/b1c774c0
+6-week live group for husbands and fathers. Sundays Nov 15 – Dec 20, 7 PM CT. Four seats → www.bethemansystem.com/group/
 ```
 
 ---
@@ -2458,7 +2458,7 @@ One goal each. Everything else waits. Not forever. For now.
 
 What are your three? Write them below.
 
-The free 7-week challenge is running now. Join any week: https://go.bethemansystem.com/42f82c9e
+The free 7-week challenge is running now. Join any week: https://www.bethemansystem.com/7-week-challenge/
 
 #christianfather #faithandfamily
 ```
@@ -2467,7 +2467,7 @@ The free 7-week challenge is running now. Join any week: https://go.bethemansyst
 ```
 Soul. House. Work. One goal each. Everything else waits. Not forever. For now.
 
-The free 7-week challenge is running. Join any week → go.bethemansystem.com/42f82c9e
+The free 7-week challenge is running. Join any week → www.bethemansystem.com/7-week-challenge/
 ```
 
 ---
@@ -2704,7 +2704,7 @@ Your family meets the man who walks through the door. Decide who that is in the 
 
 The first ten minutes set the whole night. Phone in your pocket. Hug first. Ask one real question.
 
-The free 7-week challenge is running now. Join any week: https://go.bethemansystem.com/42f82c9e
+The free 7-week challenge is running now. Join any week: https://www.bethemansystem.com/7-week-challenge/
 
 #christianhusband #christianmen
 ```
@@ -2713,7 +2713,7 @@ The free 7-week challenge is running now. Join any week: https://go.bethemansyst
 ```
 Your family meets the man who walks through the door. Decide who that is in the car. The first 10 minutes set the night.
 
-The free 7-week challenge is running. Join any week → go.bethemansystem.com/42f82c9e
+The free 7-week challenge is running. Join any week → www.bethemansystem.com/7-week-challenge/
 ```
 
 ---
@@ -2806,7 +2806,7 @@ What a Sunday in the 6-week group looks like:
 Starts Nov 15. Four seats.
 
 A 6-week live group for husbands and fathers. Sundays, 7–8 PM Central, on Google Meet, Nov 15 – Dec 20. Four seats.
-Reserve a seat: https://go.bethemansystem.com/b1c774c0
+Reserve a seat: https://www.bethemansystem.com/group/
 
 #blackfathers #selfdisciplineformen
 ```
@@ -2815,7 +2815,7 @@ Reserve a seat: https://go.bethemansystem.com/b1c774c0
 ```
 A Sunday in the 6-week group: 7:00 done or missed, 7:15 one tool, 7:40 next week's decision, 8:00 home. Four seats.
 
-6-week live group for husbands and fathers. Sundays Nov 15 – Dec 20, 7 PM CT. Four seats → go.bethemansystem.com/b1c774c0
+6-week live group for husbands and fathers. Sundays Nov 15 – Dec 20, 7 PM CT. Four seats → www.bethemansystem.com/group/
 ```
 
 ---
@@ -2885,7 +2885,7 @@ A miss is information, not a verdict.
 
 Missed Tuesday? Tuesday at 6 doesn't work. Try 9 PM. Change the time, not the goal.
 
-The free 7-week challenge is running now. Join any week: https://go.bethemansystem.com/42f82c9e
+The free 7-week challenge is running now. Join any week: https://www.bethemansystem.com/7-week-challenge/
 
 #faithandfamily #blackmenwholead
 ```
@@ -2894,7 +2894,7 @@ The free 7-week challenge is running now. Join any week: https://go.bethemansyst
 ```
 A miss is information, not a verdict. Change the time, not the goal.
 
-The free 7-week challenge is running. Join any week → go.bethemansystem.com/42f82c9e
+The free 7-week challenge is running. Join any week → www.bethemansystem.com/7-week-challenge/
 ```
 
 ---
@@ -2963,7 +2963,7 @@ The scariest thing isn't failing. It's being the same man next year.
 
 Same temper. Same phone. Same promise. Decide tonight who you're becoming.
 
-The free 7-week challenge is running now. Join any week: https://go.bethemansystem.com/42f82c9e
+The free 7-week challenge is running now. Join any week: https://www.bethemansystem.com/7-week-challenge/
 
 #blackmenwholead #godlyhusband
 ```
@@ -2972,7 +2972,7 @@ The free 7-week challenge is running now. Join any week: https://go.bethemansyst
 ```
 The scariest thing isn't failing. It's being the same man next year. Decide tonight who you're becoming.
 
-The free 7-week challenge is running. Join any week → go.bethemansystem.com/42f82c9e
+The free 7-week challenge is running. Join any week → www.bethemansystem.com/7-week-challenge/
 ```
 
 ---
@@ -3167,7 +3167,7 @@ Don't let the holidays eat your system.
 The 6-week live group runs right through them: six Sundays, Nov 15 to Dec 20, 7–8 PM Central. Four seats.
 
 A 6-week live group for husbands and fathers. Sundays, 7–8 PM Central, on Google Meet, Nov 15 – Dec 20. Four seats.
-Reserve a seat: https://go.bethemansystem.com/b1c774c0
+Reserve a seat: https://www.bethemansystem.com/group/
 
 #christianhusband #christianmen
 ```
@@ -3176,7 +3176,7 @@ Reserve a seat: https://go.bethemansystem.com/b1c774c0
 ```
 Don't let the holidays eat your system. 6-week live group, Nov 15 to Dec 20. Four seats.
 
-6-week live group for husbands and fathers. Sundays Nov 15 – Dec 20, 7 PM CT. Four seats → go.bethemansystem.com/b1c774c0
+6-week live group for husbands and fathers. Sundays Nov 15 – Dec 20, 7 PM CT. Four seats → www.bethemansystem.com/group/
 ```
 
 ---
@@ -3206,7 +3206,7 @@ It's not ten things stopping you. It's one, and you already know its name.
 
 This week's challenge step: name it, write it down, and give it an "if this, then that" plan.
 
-The free 7-week challenge is running now. Join any week: https://go.bethemansystem.com/42f82c9e
+The free 7-week challenge is running now. Join any week: https://www.bethemansystem.com/7-week-challenge/
 
 #faithandfamily #blackmenwholead
 ```
@@ -3215,7 +3215,7 @@ The free 7-week challenge is running now. Join any week: https://go.bethemansyst
 ```
 It's not ten things stopping you. It's one, and you know its name. Name it. Then plan for it.
 
-The free 7-week challenge is running. Join any week → go.bethemansystem.com/42f82c9e
+The free 7-week challenge is running. Join any week → www.bethemansystem.com/7-week-challenge/
 ```
 
 ---
@@ -3385,7 +3385,7 @@ Plan for the blocker before it shows up:
 
 Write yours below. Decide it while you're calm.
 
-The free 7-week challenge is running now. Join any week: https://go.bethemansystem.com/42f82c9e
+The free 7-week challenge is running now. Join any week: https://www.bethemansystem.com/7-week-challenge/
 
 #faithandfamily #blackmenwholead
 ```
@@ -3394,7 +3394,7 @@ The free 7-week challenge is running now. Join any week: https://go.bethemansyst
 ```
 Plan for the blocker before it shows up: "If I walk in tired, then I pray in the car first." Decide it while you're calm.
 
-The free 7-week challenge is running. Join any week → go.bethemansystem.com/42f82c9e
+The free 7-week challenge is running. Join any week → www.bethemansystem.com/7-week-challenge/
 ```
 
 ---
@@ -3462,7 +3462,7 @@ Three fixes, pick one: charge it in the kitchen, turn the screen gray after 8 PM
 
 Start tonight.
 
-The free 7-week challenge is running now. Join any week: https://go.bethemansystem.com/42f82c9e
+The free 7-week challenge is running now. Join any week: https://www.bethemansystem.com/7-week-challenge/
 
 #mensdiscipline #christianhusband
 ```
@@ -3471,7 +3471,7 @@ The free 7-week challenge is running now. Join any week: https://go.bethemansyst
 ```
 You voted: the phone. Pick one fix: charge it in the kitchen, gray screen after 8, or no scrolling the first hour of the day.
 
-The free 7-week challenge is running. Join any week → go.bethemansystem.com/42f82c9e
+The free 7-week challenge is running. Join any week → www.bethemansystem.com/7-week-challenge/
 ```
 
 ---
@@ -3626,7 +3626,7 @@ A goal with no time is a wish.
 
 This week's challenge step: give one goal a day and a time. "Tuesday, 6:10, garage." Done.
 
-The free 7-week challenge is running now. Join any week: https://go.bethemansystem.com/42f82c9e
+The free 7-week challenge is running now. Join any week: https://www.bethemansystem.com/7-week-challenge/
 
 #christianhusband #christianmen
 ```
@@ -3635,7 +3635,7 @@ The free 7-week challenge is running now. Join any week: https://go.bethemansyst
 ```
 A goal with no time is a wish. Give one goal a day and a time.
 
-The free 7-week challenge is running. Join any week → go.bethemansystem.com/42f82c9e
+The free 7-week challenge is running. Join any week → www.bethemansystem.com/7-week-challenge/
 ```
 
 ---
@@ -3666,7 +3666,7 @@ Ten days until the 6-week live group starts.
 Six Sundays, the same men every week, real accountability right through the holidays. Nov 15 to Dec 20, 7–8 PM Central. Four seats.
 
 A 6-week live group for husbands and fathers. Sundays, 7–8 PM Central, on Google Meet, Nov 15 – Dec 20. Four seats.
-Reserve a seat: https://go.bethemansystem.com/b1c774c0
+Reserve a seat: https://www.bethemansystem.com/group/
 
 #godlyhusband #blackfathers
 ```
@@ -3675,7 +3675,7 @@ Reserve a seat: https://go.bethemansystem.com/b1c774c0
 ```
 10 days until the 6-week live group. Six Sundays, same men, real accountability through the holidays. Four seats.
 
-6-week live group for husbands and fathers. Sundays Nov 15 – Dec 20, 7 PM CT. Four seats → go.bethemansystem.com/b1c774c0
+6-week live group for husbands and fathers. Sundays Nov 15 – Dec 20, 7 PM CT. Four seats → www.bethemansystem.com/group/
 ```
 
 ---
@@ -3890,7 +3890,7 @@ Weeks 5–6: your misses, counted honestly, and God at the center.
 Starts Nov 15. Four seats.
 
 A 6-week live group for husbands and fathers. Sundays, 7–8 PM Central, on Google Meet, Nov 15 – Dec 20. Four seats.
-Reserve a seat: https://go.bethemansystem.com/b1c774c0
+Reserve a seat: https://www.bethemansystem.com/group/
 
 #blackfathers #selfdisciplineformen
 ```
@@ -3899,7 +3899,7 @@ Reserve a seat: https://go.bethemansystem.com/b1c774c0
 ```
 What we'll build in six Sundays: your sentence, your three goals, your blocker plan, your times, your misses, and God at the center. Starts Nov 15.
 
-6-week live group for husbands and fathers. Sundays Nov 15 – Dec 20, 7 PM CT. Four seats → go.bethemansystem.com/b1c774c0
+6-week live group for husbands and fathers. Sundays Nov 15 – Dec 20, 7 PM CT. Four seats → www.bethemansystem.com/group/
 ```
 
 ---
