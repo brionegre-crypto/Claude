@@ -11,8 +11,8 @@ const BIO = 'go.bethemansystem.com/28016a3c';
 export const CTA = {
   step1: {
     ig: '👇 Comment "STEP1" and I\'ll send you the free worksheet.',
-    fb: 'Get Step 1 free (20 minutes and a pen): https://go.bethemansystem.com/framework',
-    th: 'Step 1 is free → go.bethemansystem.com/framework',
+    fb: 'Get Step 1 free (20 minutes and a pen): https://www.bethemansystem.com/step-1/#get',
+    th: 'Step 1 is free → www.bethemansystem.com/step-1/#get',
     foot: 'Step 1 is free · link in bio', btn: 'Comment “STEP1” →',
   },
   challenge: {
@@ -95,13 +95,13 @@ export const CTA = {
   },
   couples: {
     ig: '💬 Engaged or married? Comment "COUPLES" and I\'ll send you how certified marriage counseling works: a validated assessment, then three sessions built on your results.',
-    fb: 'Certified marriage counseling for engaged and married couples, with Brian Greene, pastor and certified marriage counselor. A validated assessment, then three sessions built on your results.\nhttps://5e95-brian.systeme.io/0d29fa39',
-    th: 'Engaged or married? Certified marriage counseling → 5e95-brian.systeme.io/0d29fa39',
+    fb: 'Certified marriage counseling for engaged and married couples, with Brian Greene, pastor and certified marriage counselor. A validated assessment, then three sessions built on your results.\nhttps://www.bethemansystem.com/couples/',
+    th: 'Engaged or married? Certified marriage counseling → www.bethemansystem.com/couples/',
     foot: 'Comment “COUPLES”', btn: 'Comment “COUPLES” →',
   },
   share: {
     ig: '📤 Send this to your spouse. Then talk about it tonight.\n💬 Want help? Comment "COUPLES."',
-    fb: '📤 Share this with your spouse, then talk about it tonight.\nCertified marriage counseling: https://5e95-brian.systeme.io/0d29fa39',
+    fb: '📤 Share this with your spouse, then talk about it tonight.\nCertified marriage counseling: https://www.bethemansystem.com/couples/',
     th: 'Send this to your spouse. Talk about it tonight.',
     foot: 'Send this to your spouse', btn: 'Send this to your spouse',
   },
@@ -113,7 +113,7 @@ export const CTA = {
   },
   save: {
     ig: '💾 Save this for your next date night.\n💬 Want help as a couple? Comment "COUPLES."',
-    fb: 'Save this for your next date night.\nCertified marriage counseling: https://5e95-brian.systeme.io/0d29fa39',
+    fb: 'Save this for your next date night.\nCertified marriage counseling: https://www.bethemansystem.com/couples/',
     th: 'Save this for your next date night.',
     foot: 'Save this for date night', btn: 'Save for date night',
   },

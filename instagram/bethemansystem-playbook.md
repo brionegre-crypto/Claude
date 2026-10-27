@@ -11,7 +11,7 @@
 The **Name** field is searchable, but the bio is not. Put your main keyword in the Name field instead of repeating the handle.
 
 > **Updated from a review of go.bethemansystem.com.** What the site actually offers:
-> - **Free:** *Step 1 of 7*, a worksheet built on one question, "What type of man do you want to be?", which ends in a one-sentence vision statement. Signing up also adds the man to the weekly Thursday email. URL: `go.bethemansystem.com/framework`
+> - **Free:** *Step 1 of 7*, a worksheet built on one question, "What type of man do you want to be?", which ends in a one-sentence vision statement. Signing up also adds the man to the weekly Thursday email. URL: `www.bethemansystem.com/step-1/#get`
 > - **Low-ticket store:** The Weekly Scorecard, The Father's Field Guide, The Godly Husband Field Guide, Christian Marriage Workbook for Men, The Husband's Devotional (30 Mornings), Men's Discipleship Workbook, Men's Bible Study (8 Weeks), The Prayer Strategy for Men, and the Father & Son, Christian Couples, and Forty Cards for Men conversation card sets
 > - **Membership:** The Be The Man Club, $17/month. It includes all 11 tools, Steps 1–7, a monthly Club-only tool, and the weekly email.
 > - **Voice:** calm, specific, anti-hype. "A mechanism, not a mood." "On an ordinary Tuesday." "Would your wife be able to tell?" Christian, but practical rather than preachy.
@@ -56,7 +56,7 @@ every time. Break the cycle.
 
 ### Other profile settings
 
-- **Link:** `go.bethemansystem.com/framework`, the free Step 1 page. Send cold traffic here, not to the Club checkout. If you use a multi-link page, order the links: 1) Free Step 1, 2) The Be The Man Club ($17/mo), 3) The Weekly Scorecard.
+- **Link:** `www.bethemansystem.com/step-1/#get`, the free Step 1 page. Send cold traffic here, not to the Club checkout. If you use a multi-link page, order the links: 1) Free Step 1, 2) The Be The Man Club ($17/mo), 3) The Weekly Scorecard.
 - **Comment-to-DM keyword:** `STEP1`. Auto-DM the `/framework` link.
 - **Profile photo:** A clear face shot or a bold monogram logo on a high-contrast background. It has to be readable at 40px.
 - **Category:** "Coach" or "Education".
@@ -236,7 +236,7 @@ Adjust the weekly schedule to match.
 
 - [ ] Change the Name field to `Be The Man | Discipline for Husbands & Dads`
 - [ ] Paste in bio Option A
-- [ ] Set the bio link to `go.bethemansystem.com/framework`
+- [ ] Set the bio link to `www.bethemansystem.com/step-1/#get`
 - [ ] Switch the category to Coach or Education
 - [ ] Create the 6 Story Highlight covers and fill START HERE
 - [ ] Pin 3 posts (origin story, best carousel, lead magnet)

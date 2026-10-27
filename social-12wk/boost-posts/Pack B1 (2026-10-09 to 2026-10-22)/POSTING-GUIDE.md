@@ -134,7 +134,7 @@ Drift is quiet, and that's why it's dangerous. If you counted 3 or more, it's ti
 Drift is quiet, and that's why it's dangerous. If you counted 3 or more, it's time to steer.
 
 Certified marriage counseling for engaged and married couples, with Brian Greene, pastor and certified marriage counselor. A validated assessment, then three sessions built on your results.
-https://5e95-brian.systeme.io/0d29fa39
+https://www.bethemansystem.com/couples/
 
 #blackmarriage #blacklove
 ```
@@ -143,7 +143,7 @@ https://5e95-brian.systeme.io/0d29fa39
 ```
 5 signs you're drifting, not fighting: only logistics, phones at dinner, no real questions, rare touch, fights that feel pointless. Drift is quiet. That's why it's dangerous.
 
-Engaged or married? Certified marriage counseling → 5e95-brian.systeme.io/0d29fa39
+Engaged or married? Certified marriage counseling → www.bethemansystem.com/couples/
 ```
 
 ---
@@ -220,7 +220,7 @@ Couples who last don't fight less. They repair faster.
 The length of the cold war matters more than the fight. Shorten it.
 
 📤 Share this with your spouse, then talk about it tonight.
-Certified marriage counseling: https://5e95-brian.systeme.io/0d29fa39
+Certified marriage counseling: https://www.bethemansystem.com/couples/
 
 #husbandandwife #blackcouples
 ```
@@ -262,7 +262,7 @@ Give it a day. Give it a time. Then it's a plan.
 
 What's the promise you keep making? Give it a time tonight.
 
-Get Step 1 free (20 minutes and a pen): https://go.bethemansystem.com/framework
+Get Step 1 free (20 minutes and a pen): https://www.bethemansystem.com/step-1/#get
 
 #christianfather #faithandfamily
 ```
@@ -271,7 +271,7 @@ Get Step 1 free (20 minutes and a pen): https://go.bethemansystem.com/framework
 ```
 A promise with no time attached is a feeling. Give it a day and a time. Then it's a plan.
 
-Step 1 is free → go.bethemansystem.com/framework
+Step 1 is free → www.bethemansystem.com/step-1/#get
 ```
 
 ---
@@ -400,7 +400,7 @@ The Sunday night couple check-in. 20 minutes, 5 questions:
 Then pray together, right there. Save this for tonight.
 
 Save this for your next date night.
-Certified marriage counseling: https://5e95-brian.systeme.io/0d29fa39
+Certified marriage counseling: https://www.bethemansystem.com/couples/
 
 #marriagetips #husbandandwife
 ```
@@ -442,7 +442,7 @@ Not what you want to have. Not what you want to do. Who you want to be on an ord
 
 The Step 1 worksheet walks you through it in 20 minutes.
 
-Get Step 1 free (20 minutes and a pen): https://go.bethemansystem.com/framework
+Get Step 1 free (20 minutes and a pen): https://www.bethemansystem.com/step-1/#get
 
 #blackmenwholead #godlyhusband
 ```
@@ -451,7 +451,7 @@ Get Step 1 free (20 minutes and a pen): https://go.bethemansystem.com/framework
 ```
 One question that changes every goal after it: what type of man do you want to be? Not what you want to have. Who you want to be on a Tuesday.
 
-Step 1 is free → go.bethemansystem.com/framework
+Step 1 is free → www.bethemansystem.com/step-1/#get
 ```
 
 ---
@@ -486,7 +486,7 @@ Sit down. Put the phone face down. Say, "I've got time."
 Then wait. Most of the time, she'll tell you. She just needed to know you'd stay for the answer.
 
 📤 Share this with your spouse, then talk about it tonight.
-Certified marriage counseling: https://5e95-brian.systeme.io/0d29fa39
+Certified marriage counseling: https://www.bethemansystem.com/couples/
 
 #premaritalcounseling #blackmarriage
 ```
@@ -662,7 +662,7 @@ Pick one for tomorrow.
 Pick one for tomorrow.
 
 Save this for your next date night.
-Certified marriage counseling: https://5e95-brian.systeme.io/0d29fa39
+Certified marriage counseling: https://www.bethemansystem.com/couples/
 
 #blackcouples #christiancouples
 ```
@@ -705,7 +705,7 @@ Most couples guess. A validated relationship assessment shows you. Then we meet 
 For engaged and married couples.
 
 Certified marriage counseling for engaged and married couples, with Brian Greene, pastor and certified marriage counselor. A validated assessment, then three sessions built on your results.
-https://5e95-brian.systeme.io/0d29fa39
+https://www.bethemansystem.com/couples/
 
 #blackcouples #christiancouples
 ```
@@ -714,7 +714,7 @@ https://5e95-brian.systeme.io/0d29fa39
 ```
 Do you know where your marriage is strong and where it's stretched? Most couples guess. A validated assessment shows you.
 
-Engaged or married? Certified marriage counseling → 5e95-brian.systeme.io/0d29fa39
+Engaged or married? Certified marriage counseling → www.bethemansystem.com/couples/
 ```
 
 ---
@@ -749,7 +749,7 @@ Try: "I was wrong when I… I can see it hurt you. Next time I'll…"
 No "but." The moment you add "but," you've started a defense.
 
 📤 Share this with your spouse, then talk about it tonight.
-Certified marriage counseling: https://5e95-brian.systeme.io/0d29fa39
+Certified marriage counseling: https://www.bethemansystem.com/couples/
 
 #husbandandwife #blackcouples
 ```
@@ -929,7 +929,7 @@ Screenshot this.
 Screenshot this.
 
 Save this for your next date night.
-Certified marriage counseling: https://5e95-brian.systeme.io/0d29fa39
+Certified marriage counseling: https://www.bethemansystem.com/couples/
 
 #husbandandwife #blackcouples
 ```
@@ -967,7 +967,7 @@ Don't wait for January to start over. That's 80 more days of the same man.
 
 Step 1 takes 20 minutes and a pen. One question: what type of man do you want to be?
 
-Get Step 1 free (20 minutes and a pen): https://go.bethemansystem.com/framework
+Get Step 1 free (20 minutes and a pen): https://www.bethemansystem.com/step-1/#get
 
 #christianmen #christianfather
 ```
@@ -976,7 +976,7 @@ Get Step 1 free (20 minutes and a pen): https://go.bethemansystem.com/framework
 ```
 Don't wait for January to start over. That's 80 more days of the same man. Step 1 takes 20 minutes and a pen.
 
-Step 1 is free → go.bethemansystem.com/framework
+Step 1 is free → www.bethemansystem.com/step-1/#get
 ```
 
 ---
@@ -1011,7 +1011,7 @@ Kids down by 8. Candles at 8:15. Phones in a drawer. Your favorite takeout on th
 On purpose, just you two. Tag your spouse so it actually happens.
 
 Save this for your next date night.
-Certified marriage counseling: https://5e95-brian.systeme.io/0d29fa39
+Certified marriage counseling: https://www.bethemansystem.com/couples/
 
 #blackmarriage #blacklove
 ```
@@ -1191,7 +1191,7 @@ They want you, not a budget.
 
 They want you, not a budget.
 
-Get Step 1 free (20 minutes and a pen): https://go.bethemansystem.com/framework
+Get Step 1 free (20 minutes and a pen): https://www.bethemansystem.com/step-1/#get
 
 #godlyhusband #blackfathers
 ```
@@ -1200,7 +1200,7 @@ Get Step 1 free (20 minutes and a pen): https://go.bethemansystem.com/framework
 ```
 5 free things to do with your kids this weekend: breakfast together, a walk with a real question, teach one skill, lose a game well, pray over them by name.
 
-Step 1 is free → go.bethemansystem.com/framework
+Step 1 is free → www.bethemansystem.com/step-1/#get
 ```
 
 ---
@@ -1275,7 +1275,7 @@ Sound familiar? You're not the only ones.
 Try this: hold hands and pray for 60 seconds before you leave the house on Sunday. Not after. Before.
 
 📤 Share this with your spouse, then talk about it tonight.
-Certified marriage counseling: https://5e95-brian.systeme.io/0d29fa39
+Certified marriage counseling: https://www.bethemansystem.com/couples/
 
 #godlymarriage #premaritalcounseling
 ```
@@ -1315,7 +1315,7 @@ You're not against each other. You're for the same marriage.
 Remember that in the next argument. Then say it out loud.
 
 📤 Share this with your spouse, then talk about it tonight.
-Certified marriage counseling: https://5e95-brian.systeme.io/0d29fa39
+Certified marriage counseling: https://www.bethemansystem.com/couples/
 
 #blackcouples #christiancouples
 ```
@@ -1452,7 +1452,7 @@ On criticism: "We're good. She's with me."
 Always decide at home, together, and present it as "we."
 
 Certified marriage counseling for engaged and married couples, with Brian Greene, pastor and certified marriage counselor. A validated assessment, then three sessions built on your results.
-https://5e95-brian.systeme.io/0d29fa39
+https://www.bethemansystem.com/couples/
 
 #premaritalcounseling #blackmarriage
 ```
@@ -1461,7 +1461,7 @@ https://5e95-brian.systeme.io/0d29fa39
 ```
 When in-laws cross a line: "Thanks, we'll try it our way." "Saturday 2 to 5 works for us." "We've decided on that one." "We're good. She's with me." Always as "we."
 
-Engaged or married? Certified marriage counseling → 5e95-brian.systeme.io/0d29fa39
+Engaged or married? Certified marriage counseling → www.bethemansystem.com/couples/
 ```
 
 ---
@@ -1532,7 +1532,7 @@ Six seconds. Long enough to actually stop, short enough to do every day.
 Leaving and coming home, starting today. Count if you have to. Laugh about counting. That's part of it.
 
 📤 Share this with your spouse, then talk about it tonight.
-Certified marriage counseling: https://5e95-brian.systeme.io/0d29fa39
+Certified marriage counseling: https://www.bethemansystem.com/couples/
 
 #marriagecounseling #christianmarriage
 ```
@@ -1709,7 +1709,7 @@ How to talk about money without a fight:
 It's rarely about the money. It's about feeling safe.
 
 Save this for your next date night.
-Certified marriage counseling: https://5e95-brian.systeme.io/0d29fa39
+Certified marriage counseling: https://www.bethemansystem.com/couples/
 
 #premaritalcounseling #blackmarriage
 ```
@@ -1793,7 +1793,7 @@ Not from movies. Not from sermons. From you, on a tired Tuesday.
 Give them a good one to copy.
 
 📤 Share this with your spouse, then talk about it tonight.
-Certified marriage counseling: https://5e95-brian.systeme.io/0d29fa39
+Certified marriage counseling: https://www.bethemansystem.com/couples/
 
 #blackmarriage #blacklove
 ```
@@ -1831,7 +1831,7 @@ The cycle didn't start with you. It can end with you.
 
 Not with a promise. With a system your kids can see working.
 
-Get Step 1 free (20 minutes and a pen): https://go.bethemansystem.com/framework
+Get Step 1 free (20 minutes and a pen): https://www.bethemansystem.com/step-1/#get
 
 #blackfathers #selfdisciplineformen
 ```
@@ -1840,7 +1840,7 @@ Get Step 1 free (20 minutes and a pen): https://go.bethemansystem.com/framework
 ```
 The cycle didn't start with you. It can end with you. Not with a promise. With a system your kids can see working.
 
-Step 1 is free → go.bethemansystem.com/framework
+Step 1 is free → www.bethemansystem.com/step-1/#get
 ```
 
 ---
@@ -1870,7 +1870,7 @@ Go into the holidays on the same page, not on edge.
 Certified marriage counseling for engaged and married couples: a validated assessment you each take, then three sessions built on your results.
 
 Certified marriage counseling for engaged and married couples, with Brian Greene, pastor and certified marriage counselor. A validated assessment, then three sessions built on your results.
-https://5e95-brian.systeme.io/0d29fa39
+https://www.bethemansystem.com/couples/
 
 #christianmarriage #marriagetips
 ```
@@ -1879,7 +1879,7 @@ https://5e95-brian.systeme.io/0d29fa39
 ```
 Go into the holidays on the same page, not on edge. A validated assessment, then three sessions built on your results.
 
-Engaged or married? Certified marriage counseling → 5e95-brian.systeme.io/0d29fa39
+Engaged or married? Certified marriage counseling → www.bethemansystem.com/couples/
 ```
 
 ---

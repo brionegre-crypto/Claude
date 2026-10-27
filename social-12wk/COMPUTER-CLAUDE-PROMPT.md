@@ -34,7 +34,7 @@ Tap below to see the details 👇
 Here's the page. You can ask me a question first, or book right away.
 
 It's $300 for three sessions, and that includes the Couples Conversation Cards and the Christian Marriage Workbook. (The $35 assessment fee goes directly to the assessment provider.)
-   Button: "See couples counseling" → https://5e95-brian.systeme.io/0d29fa39
+   Button: "See couples counseling" → https://www.bethemansystem.com/couples/
 Show it to me, then set it Live once I say OK.
 
 == TASK 3: Schedule Instagram + Facebook (business.facebook.com → Planner) ==

@@ -41,7 +41,7 @@ Friday night. The kids don't need a plan. They need you on the floor.
 
 Phone in a drawer. One game, their pick. Let them see you lose well.
 
-Get Step 1 free (20 minutes and a pen): https://go.bethemansystem.com/framework
+Get Step 1 free (20 minutes and a pen): https://www.bethemansystem.com/step-1/#get
 
 #mensdiscipline #christianhusband
 ```
@@ -50,7 +50,7 @@ Get Step 1 free (20 minutes and a pen): https://go.bethemansystem.com/framework
 ```
 Friday night. The kids don't need a plan. They need you on the floor. Phone in a drawer, one game, their pick.
 
-Step 1 is free → go.bethemansystem.com/framework
+Step 1 is free → www.bethemansystem.com/step-1/#get
 ```
 
 ---
@@ -93,7 +93,7 @@ Pick one and put it on the calendar.
 Pick one and put it on the calendar.
 
 Save this for your next date night.
-Certified marriage counseling: https://5e95-brian.systeme.io/0d29fa39
+Certified marriage counseling: https://www.bethemansystem.com/couples/
 
 #godlymarriage #premaritalcounseling
 ```
@@ -175,7 +175,7 @@ She asked for help three times this week. Today, say yes before she asks.
 Take the kids. Handle the errand. Let her rest. That's leadership.
 
 📤 Share this with your spouse, then talk about it tonight.
-Certified marriage counseling: https://5e95-brian.systeme.io/0d29fa39
+Certified marriage counseling: https://www.bethemansystem.com/couples/
 
 #christiancouples #godlymarriage
 ```
@@ -261,7 +261,7 @@ Give yourself 20 minutes this weekend. A pen, one question, and one sentence tha
 ```
 Give yourself 20 minutes this weekend. A pen, one question, and one sentence that changes Monday.
 
-Get Step 1 free (20 minutes and a pen): https://go.bethemansystem.com/framework
+Get Step 1 free (20 minutes and a pen): https://www.bethemansystem.com/step-1/#get
 
 #christianfather #faithandfamily
 ```
@@ -270,7 +270,7 @@ Get Step 1 free (20 minutes and a pen): https://go.bethemansystem.com/framework
 ```
 Give yourself 20 minutes this weekend. A pen, one question, one sentence that changes Monday.
 
-Step 1 is free → go.bethemansystem.com/framework
+Step 1 is free → www.bethemansystem.com/step-1/#get
 ```
 
 ---

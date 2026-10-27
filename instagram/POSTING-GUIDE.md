@@ -23,7 +23,7 @@ A mechanism, not a mood.
 
 **Links → Add external link:**
 ```
-https://go.bethemansystem.com/framework
+https://www.bethemansystem.com/step-1/#get
 ```
 
 **Category:** Coach (or Education)
@@ -47,7 +47,7 @@ https://go.bethemansystem.com/framework
 **Files:** `story-step-1.png`
 
 
-Post this in the Instagram app. Add a **Link** sticker in the empty space at the bottom that points to `https://go.bethemansystem.com/framework`, with the sticker text "Step 1 — free". Then save it to a Highlight called **START**.
+Post this in the Instagram app. Add a **Link** sticker in the empty space at the bottom that points to `https://www.bethemansystem.com/step-1/#get`, with the sticker text "Step 1 — free". Then save it to a Highlight called **START**.
 
 
 ---

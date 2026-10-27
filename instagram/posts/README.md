@@ -10,7 +10,7 @@ Ready-to-upload PNGs are in `out/`, and `bethemansystem-posts.zip` has all of th
 | `04-wife-test.png` | 1080×1350 | Feed |
 | `05-club.png` | 1080×1350 | Feed; pin it |
 | `carousel-1-cover.png` … `carousel-6-cta.png` | 1080×1350 | One carousel post, 6 slides, in order |
-| `story-step-1.png` | 1080×1920 | Story. Add a link sticker to `go.bethemansystem.com/framework` in the empty space at the bottom |
+| `story-step-1.png` | 1080×1920 | Story. Add a link sticker to `www.bethemansystem.com/step-1/#get` in the empty space at the bottom |
 | `highlight-*.png` | 1080×1920 | Story Highlight covers (Start, Free, System, Home, Club, Faith) |
 
 **Carousel caption:**
