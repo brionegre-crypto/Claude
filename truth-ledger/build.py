@@ -5,12 +5,12 @@ import datetime, html, os
 from content import *
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-TONIGHT = ("TONIGHT, BEFORE YOU SLEEP (30 min)\n"
+TONIGHT = ("TONIGHT, BEFORE YOU SLEEP (20 min)\n"
            "1. Write one sentence: \"I am a man whose word holds, even when the truth costs me.\"\n"
-           "2. Count honestly: roughly how many lies did you tell this week? Write the number.\n"
-           "3. Write two names: one man to be your accountability brother, and a pastor or older man you respect to be your witness. You'll ask them by Day 3.\n"
-           "4. Text your brother now: \"I'm working on something. Can I send you my numbers once a week?\"\n"
-           "5. If she's open to it, tell your wife: \"I've lied to you, and it comes from fear. I'm not asking you to trust me. I've started daily work and I'm getting men around me to hold me to it. You'll see it, not just hear it.\"\n"
+           "2. Count honestly: roughly how many lies did you tell this week? Write the number. It's your starting point.\n"
+           "3. Write the three situations where you lie most (a person, a place, a kind of question).\n"
+           "4. Pick where you'll keep your ledger: a notebook by the bed or a note on your phone.\n"
+           "5. Read the three lines: no new lies, correct it fast, log every one.\n"
            "Then do not tell another lie tonight.")
 
 def week_of(i): return WEEKS[i // 7]
@@ -27,7 +27,7 @@ def items():
         if d % 7 == 0:
             nxt = WEEKS[w['n']] if w['n'] < 7 else None
             body = ("WEEKLY REVIEW (20 min)\nAdd up this week's ledgers: lies told, lies caught, corrections made. "
-                    "Text the three numbers to your brother. Share the week's patterns with your witness.")
+                    "Compare them with last week. Find the situation that beat you most, and write a new if-then plan for it.")
             body += f"\n\nNext week: {nxt['name']}. {nxt['why']}" if nxt else "\n\nYou made it to Day 49. Decide what keeps running from here."
             out.append((d, "review", f"Week {w['n']} review", body))
         out.append((d, "evening", f"Day {d} Evening Ledger",
@@ -124,7 +124,7 @@ on run argv
   tell application "Reminders" to tell list listName to make new reminder with properties {{name:"Day 0 Tonight: start here", body:{as_str(TONIGHT)}, due date:t, remind me date:t}}
 {rows}
   -- Day 50: set up the next 90 days
-  my addOne(50, "review", "Day 50 Keep it running", "Set your ongoing reminders: nightly ledger, weekly review, weekly text to your brother. A streak ends. An identity keeps going.")
+  my addOne(50, "review", "Day 50 Keep it running", "Set your ongoing reminders: nightly ledger and weekly review. A streak ends. An identity keeps going.")
 end run
 APPLESCRIPT
 

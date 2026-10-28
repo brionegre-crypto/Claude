@@ -5,7 +5,7 @@ CALSCALE:GREGORIAN
 X-WR-CALNAME:Be The Man: Truth Ledger
 BEGIN:VEVENT
 UID:truth-ledger-0@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261029T063000
 DTEND:20261029T063500
 SUMMARY:Day 1 Morning: The count begins
@@ -14,9 +14,10 @@ DESCRIPTION:Week 1: See It. You can't fix what you won't count.\n\nToday y
  wasn't true. No fixing\, no beating yourself up. Keep a tally in your phon
  e notes as it happens.\n\nBefore you go\, write today's if-then: "If ___ h
  appens\, then I'll say ___."\n\nWhy it works: Tracking your behavior chang
- es your behavior. The nightly ledger is the written record. The weekly tex
- t with your numbers to your accountability brother is the reporting. (Hark
- in et al. (2016)\, Psychological Bulletin)
+ es your behavior. The nightly ledger is the written record\, and the weekl
+ y review compares your numbers week to week. You can also enter your three
+  numbers on each day in this guide. (Harkin et al. (2016)\, Psychological 
+ Bulletin)
 BEGIN:VALARM
 ACTION:DISPLAY
 DESCRIPTION:Day 1 Morning: The count begins
@@ -25,7 +26,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-1@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261029T123000
 DTEND:20261029T123500
 SUMMARY:Day 1 Midday check
@@ -39,7 +40,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-2@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261029T210000
 DTEND:20261029T211000
 SUMMARY:Day 1 Evening Ledger
@@ -59,7 +60,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-3@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261030T063000
 DTEND:20261030T063500
 SUMMARY:Day 2 Morning: Name the kind
@@ -79,7 +80,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-4@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261030T123000
 DTEND:20261030T123500
 SUMMARY:Day 2 Midday check
@@ -93,7 +94,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-5@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261030T210000
 DTEND:20261030T211000
 SUMMARY:Day 2 Evening Ledger
@@ -113,32 +114,27 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-6@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261031T063000
 DTEND:20261031T063500
-SUMMARY:Day 3 Morning: Build your corner
-DESCRIPTION:Week 1: See It. You can't fix what you won't count.\n\nAction 
- before noon: ask the men who will be in your corner. 1) Your accountabilit
- y brother\, who gets your numbers every week. 2) Your witness: your pastor
-  or an older man you respect\, who will hear your inventory and help you p
- repare to tell your wife. 3) A free group if one is near you\, like Celebr
- ate Recovery or a church men's group. If your job (or your wife's) has an 
- Employee Assistance Program\, call it today. Most offer a few free\, confi
- dential counseling sessions.\n\nBefore you go\, write today's if-then: "If
-  ___ happens\, then I'll say ___."\n\nWhy it works: Self-guided CBT can wo
- rk as well as sessions with a therapist. You can do this work without payi
- ng a counselor\, but not alone. The "guided" part matters: your brother\, 
- your witness and your group keep you from quitting. (Cuijpers et al. (2010
- )\, Psychological Medicine)
+SUMMARY:Day 3 Morning: Where and when
+DESCRIPTION:Week 1: See It. You can't fix what you won't count.\n\nNote wh
+ ere you are and what time it is each time you lie today: at home\, at work
+ \, on the phone\, by text\, tired\, rushed\, after a mistake.\n\nBefore yo
+ u go\, write today's if-then: "If ___ happens\, then I'll say ___."\n\nWhy
+  it works: You can do CBT on your own. Doing it alone works if you keep sh
+ owing up. The daily reminders and the nightly ledger are your structure. T
+ he biggest risk is quitting\, so the plan is built around never missing tw
+ o nights in a row. (Karyotaki et al. (2017)\, JAMA Psychiatry)
 BEGIN:VALARM
 ACTION:DISPLAY
-DESCRIPTION:Day 3 Morning: Build your corner
+DESCRIPTION:Day 3 Morning: Where and when
 TRIGGER:PT0M
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-7@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261031T123000
 DTEND:20261031T123500
 SUMMARY:Day 3 Midday check
@@ -152,19 +148,18 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-8@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261031T210000
 DTEND:20261031T211000
 SUMMARY:Day 3 Evening Ledger
-DESCRIPTION:Tonight's question: Who said yes? If someone is missing\, what
-  did you tell yourself about why you can't ask\, and was that true?\n\nTHE
-  LEDGER (10 min)\n1. Lies told today (#): what\, to whom\n2. Lies caught b
- efore I spoke (#)\n3. Corrections made (#)\n4. The trigger: who\, where\, 
- how tired I was\, and the fear (failure / rejection / conflict / looking w
- eak)\n5. The story in my head: "If I tell the truth\, ___ will happen."\n6
- . What actually happened when I told the truth\n7. Tomorrow's risk moment\
- , written as an if-then: "If ___\, then I'll say ___."\n8. One line of pra
- yer or thanks
+DESCRIPTION:Tonight's question: List your top three lie situations. These 
+ are where the rest of the 49 days will aim.\n\nTHE LEDGER (10 min)\n1. Lie
+ s told today (#): what\, to whom\n2. Lies caught before I spoke (#)\n3. Co
+ rrections made (#)\n4. The trigger: who\, where\, how tired I was\, and th
+ e fear (failure / rejection / conflict / looking weak)\n5. The story in my
+  head: "If I tell the truth\, ___ will happen."\n6. What actually happened
+  when I told the truth\n7. Tomorrow's risk moment\, written as an if-then:
+  "If ___\, then I'll say ___."\n8. One line of prayer or thanks
 BEGIN:VALARM
 ACTION:DISPLAY
 DESCRIPTION:Day 3 Evening Ledger
@@ -173,7 +168,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-9@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261101T063000
 DTEND:20261101T063500
 SUMMARY:Day 4 Morning: Who gets the lies
@@ -193,7 +188,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-10@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261101T123000
 DTEND:20261101T123500
 SUMMARY:Day 4 Midday check
@@ -207,7 +202,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-11@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261101T210000
 DTEND:20261101T211000
 SUMMARY:Day 4 Evening Ledger
@@ -227,7 +222,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-12@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261102T063000
 DTEND:20261102T063500
 SUMMARY:Day 5 Morning: The alarm in your body
@@ -236,10 +231,9 @@ DESCRIPTION:Week 1: See It. You can't fix what you won't count.\n\nNotice
  t\, talking faster. That feeling is your alarm. Learn it today.\n\nBefore 
  you go\, write today's if-then: "If ___ happens\, then I'll say ___."\n\nW
  hy it works: Break an automatic habit: notice it\, then replace it. Day 5 
- teaches you your body's alarm. The pause and a prepared true sentence are 
- the replacement response. Your brother is the support. (Bate\, Malouff\, T
- horsteinsson & Bhullar (2011)\, Clinical Psychology Review (meta-analysis)
- )
+ teaches you your body's alarm. The pause and a prepared true sentence (Wee
+ k 4) are the replacement response. (Bate\, Malouff\, Thorsteinsson & Bhull
+ ar (2011)\, Clinical Psychology Review (meta-analysis))
 BEGIN:VALARM
 ACTION:DISPLAY
 DESCRIPTION:Day 5 Morning: The alarm in your body
@@ -248,7 +242,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-13@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261102T123000
 DTEND:20261102T123500
 SUMMARY:Day 5 Midday check
@@ -262,7 +256,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-14@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261102T210000
 DTEND:20261102T211000
 SUMMARY:Day 5 Evening Ledger
@@ -282,18 +276,18 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-15@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261103T063000
 DTEND:20261103T063500
 SUMMARY:Day 6 Morning: The cost
 DESCRIPTION:Week 1: See It. You can't fix what you won't count.\n\nWrite a
   specific list of what lying has cost you: trust\, peace\, money\, time\, 
- intimacy\, sleep\, respect for yourself. Names and moments\, not general i
- deas.\n\nBefore you go\, write today's if-then: "If ___ happens\, then I'l
- l say ___."\n\nWhy it works: Lying less goes with better health and relati
- onships. The payoff of this work isn't only your marriage. You should also
-  start to feel better. (Kelly & Wang (2012)\, American Psychological Assoc
- iation convention)
+ closeness\, sleep\, respect for yourself. Names and moments\, not general 
+ ideas.\n\nBefore you go\, write today's if-then: "If ___ happens\, then I'
+ ll say ___."\n\nWhy it works: Lying less goes with better health and relat
+ ionships. The payoff of this work isn't only your marriage. You should als
+ o start to feel better. (Kelly & Wang (2012)\, American Psychological Asso
+ ciation convention)
 BEGIN:VALARM
 ACTION:DISPLAY
 DESCRIPTION:Day 6 Morning: The cost
@@ -302,7 +296,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-16@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261103T123000
 DTEND:20261103T123500
 SUMMARY:Day 6 Midday check
@@ -316,7 +310,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-17@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261103T210000
 DTEND:20261103T211000
 SUMMARY:Day 6 Evening Ledger
@@ -336,18 +330,17 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-18@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261104T063000
 DTEND:20261104T063500
 SUMMARY:Day 7 Morning: Week 1 review
-DESCRIPTION:Week 1: See It. You can't fix what you won't count.\n\nTonight
-  is your first weekly review. Today\, keep counting. Also pick your accoun
- tability brother: one man you will text your numbers to every week.\n\nBef
- ore you go\, write today's if-then: "If ___ happens\, then I'll say ___."\
- n\nWhy it works: Tracking your behavior changes your behavior. The nightly
-  ledger is the written record. The weekly text with your numbers to your a
- ccountability brother is the reporting. (Harkin et al. (2016)\, Psychologi
- cal Bulletin)
+DESCRIPTION:Week 1: See It. You can't fix what you won't count.\n\nKeep co
+ unting today. Tonight is your first weekly review.\n\nBefore you go\, writ
+ e today's if-then: "If ___ happens\, then I'll say ___."\n\nWhy it works: 
+ Tracking your behavior changes your behavior. The nightly ledger is the wr
+ itten record\, and the weekly review compares your numbers week to week. Y
+ ou can also enter your three numbers on each day in this guide. (Harkin et
+  al. (2016)\, Psychological Bulletin)
 BEGIN:VALARM
 ACTION:DISPLAY
 DESCRIPTION:Day 7 Morning: Week 1 review
@@ -356,7 +349,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-19@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261104T123000
 DTEND:20261104T123500
 SUMMARY:Day 7 Midday check
@@ -370,16 +363,16 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-20@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261104T190000
 DTEND:20261104T192000
 SUMMARY:Week 1 review
 DESCRIPTION:WEEKLY REVIEW (20 min)\nAdd up this week's ledgers: lies told\
- , lies caught\, corrections made. Text the three numbers to your brother. 
- Share the week's patterns with your witness.\n\nNext week: The Fear Undern
- eath. You told us why you lie: fear of failing and fear of not being accep
- ted. This week you find exactly where those fears live and what they've be
- en buying you.
+ , lies caught\, corrections made. Compare them with last week. Find the si
+ tuation that beat you most\, and write a new if-then plan for it.\n\nNext 
+ week: The Fear Underneath. Most men lie out of fear of failing or fear of 
+ not being accepted. This week you find exactly where those fears live and 
+ what lying has been buying you.
 BEGIN:VALARM
 ACTION:DISPLAY
 DESCRIPTION:Week 1 review
@@ -388,19 +381,19 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-21@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261104T210000
 DTEND:20261104T211000
 SUMMARY:Day 7 Evening Ledger
 DESCRIPTION:Tonight's question: Total the week: lies told\, caught\, corre
- cted. Text your brother the three numbers with no excuses attached. What p
- attern do you see?\n\nTHE LEDGER (10 min)\n1. Lies told today (#): what\, 
- to whom\n2. Lies caught before I spoke (#)\n3. Corrections made (#)\n4. Th
- e trigger: who\, where\, how tired I was\, and the fear (failure / rejecti
- on / conflict / looking weak)\n5. The story in my head: "If I tell the tru
- th\, ___ will happen."\n6. What actually happened when I told the truth\n7
- . Tomorrow's risk moment\, written as an if-then: "If ___\, then I'll say 
- ___."\n8. One line of prayer or thanks
+ cted. Which day was worst\, and what was different about it?\n\nTHE LEDGER
+  (10 min)\n1. Lies told today (#): what\, to whom\n2. Lies caught before I
+  spoke (#)\n3. Corrections made (#)\n4. The trigger: who\, where\, how tir
+ ed I was\, and the fear (failure / rejection / conflict / looking weak)\n5
+ . The story in my head: "If I tell the truth\, ___ will happen."\n6. What 
+ actually happened when I told the truth\n7. Tomorrow's risk moment\, writt
+ en as an if-then: "If ___\, then I'll say ___."\n8. One line of prayer or 
+ thanks
 BEGIN:VALARM
 ACTION:DISPLAY
 DESCRIPTION:Day 7 Evening Ledger
@@ -409,7 +402,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-22@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261105T063000
 DTEND:20261105T063500
 SUMMARY:Day 8 Morning: The fear of failing
@@ -429,7 +422,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-23@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261105T123000
 DTEND:20261105T123500
 SUMMARY:Day 8 Midday check
@@ -443,7 +436,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-24@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261105T210000
 DTEND:20261105T211000
 SUMMARY:Day 8 Evening Ledger
@@ -464,7 +457,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-25@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261106T063000
 DTEND:20261106T063500
 SUMMARY:Day 9 Morning: The fear of not being accepted
@@ -484,7 +477,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-26@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261106T123000
 DTEND:20261106T123500
 SUMMARY:Day 9 Midday check
@@ -498,7 +491,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-27@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261106T210000
 DTEND:20261106T211000
 SUMMARY:Day 9 Evening Ledger
@@ -518,7 +511,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-28@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261107T063000
 DTEND:20261107T063500
 SUMMARY:Day 10 Morning: Where it started
@@ -537,7 +530,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-29@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261107T123000
 DTEND:20261107T123500
 SUMMARY:Day 10 Midday check
@@ -551,19 +544,18 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-30@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261107T210000
 DTEND:20261107T211000
 SUMMARY:Day 10 Evening Ledger
 DESCRIPTION:Tonight's question: Write that boy a short letter. What did he
-  need to hear that he never heard? Read it to your witness this week.\n\nT
- HE LEDGER (10 min)\n1. Lies told today (#): what\, to whom\n2. Lies caught
-  before I spoke (#)\n3. Corrections made (#)\n4. The trigger: who\, where\
- , how tired I was\, and the fear (failure / rejection / conflict / looking
-  weak)\n5. The story in my head: "If I tell the truth\, ___ will happen."\
- n6. What actually happened when I told the truth\n7. Tomorrow's risk momen
- t\, written as an if-then: "If ___\, then I'll say ___."\n8. One line of p
- rayer or thanks
+  need to hear that he never heard?\n\nTHE LEDGER (10 min)\n1. Lies told to
+ day (#): what\, to whom\n2. Lies caught before I spoke (#)\n3. Corrections
+  made (#)\n4. The trigger: who\, where\, how tired I was\, and the fear (f
+ ailure / rejection / conflict / looking weak)\n5. The story in my head: "I
+ f I tell the truth\, ___ will happen."\n6. What actually happened when I t
+ old the truth\n7. Tomorrow's risk moment\, written as an if-then: "If ___\
+ , then I'll say ___."\n8. One line of prayer or thanks
 BEGIN:VALARM
 ACTION:DISPLAY
 DESCRIPTION:Day 10 Evening Ledger
@@ -572,7 +564,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-31@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261108T063000
 DTEND:20261108T063500
 SUMMARY:Day 11 Morning: Shame vs. guilt
@@ -592,7 +584,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-32@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261108T123000
 DTEND:20261108T123500
 SUMMARY:Day 11 Midday check
@@ -606,7 +598,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-33@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261108T210000
 DTEND:20261108T211000
 SUMMARY:Day 11 Evening Ledger
@@ -626,28 +618,27 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-34@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261109T063000
 DTEND:20261109T063500
-SUMMARY:Day 12 Morning: Test your prediction
+SUMMARY:Day 12 Morning: What lying pays you
 DESCRIPTION:Week 2: The Fear Underneath. Every lie is protecting something
- .\n\nRun an experiment. Before one hard truth today\, write your predictio
- n first: "If I say it\, ___ will happen." Then say it.\n\nBefore you go\, 
- write today's if-then: "If ___ happens\, then I'll say ___."\n\nWhy it wor
- ks: Lies are safety behaviors. Dropping them teaches you that the truth is
-  survivable. Each lie you don't tell is a test of your prediction. The tru
- th ladder (Week 4) and the prediction test (Day 12) are behavioral experim
- ents. (Clark & Wells cognitive model\; Morgan & Raffle (1999)\; Salkovskis
- )
+ .\n\nBe honest: lying pays. It buys relief\, approval\, time and escape. E
+ ach time today\, name the payoff you were after.\n\nBefore you go\, write 
+ today's if-then: "If ___ happens\, then I'll say ___."\n\nWhy it works: Co
+ mpulsive lying is real\, and there is no proven cure yet. This guide is bu
+ ilt from CBT tools that work for similar problems\, arranged so one man ca
+ n do the work on his own\, every day. (Curtis & Hart (2020)\, Psychiatric 
+ Research and Clinical Practice)
 BEGIN:VALARM
 ACTION:DISPLAY
-DESCRIPTION:Day 12 Morning: Test your prediction
+DESCRIPTION:Day 12 Morning: What lying pays you
 TRIGGER:PT0M
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-35@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261109T123000
 DTEND:20261109T123500
 SUMMARY:Day 12 Midday check
@@ -661,18 +652,18 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-36@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261109T210000
 DTEND:20261109T211000
 SUMMARY:Day 12 Evening Ledger
-DESCRIPTION:Tonight's question: Did the prediction come true? Score it: wo
- rse\, the same\, or better than you predicted.\n\nTHE LEDGER (10 min)\n1. 
- Lies told today (#): what\, to whom\n2. Lies caught before I spoke (#)\n3.
-  Corrections made (#)\n4. The trigger: who\, where\, how tired I was\, and
-  the fear (failure / rejection / conflict / looking weak)\n5. The story in
-  my head: "If I tell the truth\, ___ will happen."\n6. What actually happe
- ned when I told the truth\n7. Tomorrow's risk moment\, written as an if-th
- en: "If ___\, then I'll say ___."\n8. One line of prayer or thanks
+DESCRIPTION:Tonight's question: Which payoff will you have to give up to s
+ top? What will you do with that feeling instead?\n\nTHE LEDGER (10 min)\n1
+ . Lies told today (#): what\, to whom\n2. Lies caught before I spoke (#)\n
+ 3. Corrections made (#)\n4. The trigger: who\, where\, how tired I was\, a
+ nd the fear (failure / rejection / conflict / looking weak)\n5. The story 
+ in my head: "If I tell the truth\, ___ will happen."\n6. What actually hap
+ pened when I told the truth\n7. Tomorrow's risk moment\, written as an if-
+ then: "If ___\, then I'll say ___."\n8. One line of prayer or thanks
 BEGIN:VALARM
 ACTION:DISPLAY
 DESCRIPTION:Day 12 Evening Ledger
@@ -681,27 +672,28 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-37@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261110T063000
 DTEND:20261110T063500
-SUMMARY:Day 13 Morning: What lying pays you
+SUMMARY:Day 13 Morning: Test your prediction
 DESCRIPTION:Week 2: The Fear Underneath. Every lie is protecting something
- .\n\nBe honest: lying pays. It buys relief\, approval\, time and escape. E
- ach time today\, name the payoff you were after.\n\nBefore you go\, write 
- today's if-then: "If ___ happens\, then I'll say ___."\n\nWhy it works: Co
- mpulsive lying is real\, and there is no proven cure yet. This guide is bu
- ilt from CBT tools that work for similar problems. It is a structure for d
- oing the work\, and you do it with men in your corner\, not alone. (Curtis
-  & Hart (2020)\, Psychiatric Research and Clinical Practice)
+ .\n\nRun an experiment. Before one true thing you'd normally lie about tod
+ ay\, write your prediction first: "If I say it\, ___ will happen." Then sa
+ y it.\n\nBefore you go\, write today's if-then: "If ___ happens\, then I'l
+ l say ___."\n\nWhy it works: Lies are safety behaviors. Dropping them teac
+ hes you that the truth is survivable. Each lie you don't tell is a test of
+  your prediction. The prediction test (Day 13) and the truth ladder (Week 
+ 5) are behavioral experiments. (Clark & Wells cognitive model\; Morgan & R
+ affle (1999)\; Salkovskis)
 BEGIN:VALARM
 ACTION:DISPLAY
-DESCRIPTION:Day 13 Morning: What lying pays you
+DESCRIPTION:Day 13 Morning: Test your prediction
 TRIGGER:PT0M
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-38@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261110T123000
 DTEND:20261110T123500
 SUMMARY:Day 13 Midday check
@@ -715,18 +707,18 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-39@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261110T210000
 DTEND:20261110T211000
 SUMMARY:Day 13 Evening Ledger
-DESCRIPTION:Tonight's question: Which payoff will you have to grieve to gi
- ve this up?\n\nTHE LEDGER (10 min)\n1. Lies told today (#): what\, to whom
- \n2. Lies caught before I spoke (#)\n3. Corrections made (#)\n4. The trigg
- er: who\, where\, how tired I was\, and the fear (failure / rejection / co
- nflict / looking weak)\n5. The story in my head: "If I tell the truth\, __
- _ will happen."\n6. What actually happened when I told the truth\n7. Tomor
- row's risk moment\, written as an if-then: "If ___\, then I'll say ___."\n
- 8. One line of prayer or thanks
+DESCRIPTION:Tonight's question: Did the prediction come true? Score it: wo
+ rse\, the same\, or better than you predicted.\n\nTHE LEDGER (10 min)\n1. 
+ Lies told today (#): what\, to whom\n2. Lies caught before I spoke (#)\n3.
+  Corrections made (#)\n4. The trigger: who\, where\, how tired I was\, and
+  the fear (failure / rejection / conflict / looking weak)\n5. The story in
+  my head: "If I tell the truth\, ___ will happen."\n6. What actually happe
+ ned when I told the truth\n7. Tomorrow's risk moment\, written as an if-th
+ en: "If ___\, then I'll say ___."\n8. One line of prayer or thanks
 BEGIN:VALARM
 ACTION:DISPLAY
 DESCRIPTION:Day 13 Evening Ledger
@@ -735,19 +727,18 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-40@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261111T063000
 DTEND:20261111T063500
 SUMMARY:Day 14 Morning: Week 2 review: your Fear Map
 DESCRIPTION:Week 2: The Fear Underneath. Every lie is protecting something
  .\n\nToday\, draw your Fear Map: your top three fears\, the lie each one p
- roduces\, and the truth each one avoids. Share it with your witness.\n\nBe
- fore you go\, write today's if-then: "If ___ happens\, then I'll say ___."
- \n\nWhy it works: Lies are safety behaviors. Dropping them teaches you tha
- t the truth is survivable. Each lie you don't tell is a test of your predi
- ction. The truth ladder (Week 4) and the prediction test (Day 12) are beha
- vioral experiments. (Clark & Wells cognitive model\; Morgan & Raffle (1999
- )\; Salkovskis)
+ roduces\, and the truth each one avoids.\n\nBefore you go\, write today's 
+ if-then: "If ___ happens\, then I'll say ___."\n\nWhy it works: Lies are s
+ afety behaviors. Dropping them teaches you that the truth is survivable. E
+ ach lie you don't tell is a test of your prediction. The prediction test (
+ Day 13) and the truth ladder (Week 5) are behavioral experiments. (Clark &
+  Wells cognitive model\; Morgan & Raffle (1999)\; Salkovskis)
 BEGIN:VALARM
 ACTION:DISPLAY
 DESCRIPTION:Day 14 Morning: Week 2 review: your Fear Map
@@ -756,7 +747,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-41@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261111T123000
 DTEND:20261111T123500
 SUMMARY:Day 14 Midday check
@@ -770,16 +761,15 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-42@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261111T190000
 DTEND:20261111T192000
 SUMMARY:Week 2 review
 DESCRIPTION:WEEKLY REVIEW (20 min)\nAdd up this week's ledgers: lies told\
- , lies caught\, corrections made. Text the three numbers to your brother. 
- Share the week's patterns with your witness.\n\nNext week: The Pause. The 
- lie usually leaves your mouth before you've decided anything. This week yo
- u build the gap between the urge and the words\, and you fill it with true
-  sentences you've written ahead of time.
+ , lies caught\, corrections made. Compare them with last week. Find the si
+ tuation that beat you most\, and write a new if-then plan for it.\n\nNext 
+ week: The Pause. The lie usually leaves your mouth before you've decided a
+ nything. This week you build a gap between the urge and the words.
 BEGIN:VALARM
 ACTION:DISPLAY
 DESCRIPTION:Week 2 review
@@ -788,19 +778,18 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-43@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261111T210000
 DTEND:20261111T211000
 SUMMARY:Day 14 Evening Ledger
-DESCRIPTION:Tonight's question: Total the week and text your brother. Comp
- are it with Week 1. Which fear on the map is running your life the most?\n
- \nTHE LEDGER (10 min)\n1. Lies told today (#): what\, to whom\n2. Lies cau
- ght before I spoke (#)\n3. Corrections made (#)\n4. The trigger: who\, whe
- re\, how tired I was\, and the fear (failure / rejection / conflict / look
- ing weak)\n5. The story in my head: "If I tell the truth\, ___ will happen
- ."\n6. What actually happened when I told the truth\n7. Tomorrow's risk mo
- ment\, written as an if-then: "If ___\, then I'll say ___."\n8. One line o
- f prayer or thanks
+DESCRIPTION:Tonight's question: Total the week and compare it with Week 1.
+  Which fear on the map is running your life the most?\n\nTHE LEDGER (10 mi
+ n)\n1. Lies told today (#): what\, to whom\n2. Lies caught before I spoke 
+ (#)\n3. Corrections made (#)\n4. The trigger: who\, where\, how tired I wa
+ s\, and the fear (failure / rejection / conflict / looking weak)\n5. The s
+ tory in my head: "If I tell the truth\, ___ will happen."\n6. What actuall
+ y happened when I told the truth\n7. Tomorrow's risk moment\, written as a
+ n if-then: "If ___\, then I'll say ___."\n8. One line of prayer or thanks
 BEGIN:VALARM
 ACTION:DISPLAY
 DESCRIPTION:Day 14 Evening Ledger
@@ -809,18 +798,17 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-44@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261112T063000
 DTEND:20261112T063500
 SUMMARY:Day 15 Morning: The three-second pause
 DESCRIPTION:Week 3: The Pause. Lies are fast. Truth needs three seconds.\n
  \nPractice the sequence: alarm\, breath\, "Give me a second." Use it at le
- ast once today\, even in a conversation that's easy.\n\nBefore you go\, wr
- ite today's if-then: "If ___ happens\, then I'll say ___."\n\nWhy it works
- : The pause interrupts an automatic response. The three-second pause isn't
-  magic. It's the gap where your prepared true sentence gets a chance. (Kob
- is et al. (2019)\, Perspectives on Psychological Science\; Curtis & Hart (
- 2020))
+ ast once today\, even in an easy conversation.\n\nBefore you go\, write to
+ day's if-then: "If ___ happens\, then I'll say ___."\n\nWhy it works: The 
+ pause interrupts an automatic response. The three-second pause isn't magic
+ . It's the gap where your prepared true sentence gets a chance. (Kobis et 
+ al. (2019)\, Perspectives on Psychological Science\; Curtis & Hart (2020))
 BEGIN:VALARM
 ACTION:DISPLAY
 DESCRIPTION:Day 15 Morning: The three-second pause
@@ -829,7 +817,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-45@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261112T123000
 DTEND:20261112T123500
 SUMMARY:Day 15 Midday check
@@ -843,7 +831,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-46@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261112T210000
 DTEND:20261112T211000
 SUMMARY:Day 15 Evening Ledger
@@ -863,27 +851,27 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-47@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261113T063000
 DTEND:20261113T063500
-SUMMARY:Day 16 Morning: "I don't know"
+SUMMARY:Day 16 Morning: Ride the urge
 DESCRIPTION:Week 3: The Pause. Lies are fast. Truth needs three seconds.\n
- \nSay "I don't know" or "I'm not sure" at least once today instead of fill
- ing the silence with something you made up.\n\nBefore you go\, write today
- 's if-then: "If ___ happens\, then I'll say ___."\n\nWhy it works: Lies ar
- e safety behaviors. Dropping them teaches you that the truth is survivable
- . Each lie you don't tell is a test of your prediction. The truth ladder (
- Week 4) and the prediction test (Day 12) are behavioral experiments. (Clar
- k & Wells cognitive model\; Morgan & Raffle (1999)\; Salkovskis)
+ \nWhen the urge to lie hits today\, don't act on it right away. Rate it fr
+ om 0 to 10 and watch it. Urges rise\, peak and fade\, usually within a min
+ ute or two.\n\nBefore you go\, write today's if-then: "If ___ happens\, th
+ en I'll say ___."\n\nWhy it works: A slip doesn't have to become a relapse
+ . If you lie\, you correct it\, log it\, and keep going. You never go back
+  to Day 1. (Marlatt & Gordon\, Relapse Prevention\; Larimer\, Palmer & Mar
+ latt (1999))
 BEGIN:VALARM
 ACTION:DISPLAY
-DESCRIPTION:Day 16 Morning: "I don't know"
+DESCRIPTION:Day 16 Morning: Ride the urge
 TRIGGER:PT0M
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-48@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261113T123000
 DTEND:20261113T123500
 SUMMARY:Day 16 Midday check
@@ -897,18 +885,18 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-49@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261113T210000
 DTEND:20261113T211000
 SUMMARY:Day 16 Evening Ledger
-DESCRIPTION:Tonight's question: How did it feel not to have an answer? Did
-  anyone actually think less of you?\n\nTHE LEDGER (10 min)\n1. Lies told t
- oday (#): what\, to whom\n2. Lies caught before I spoke (#)\n3. Correction
- s made (#)\n4. The trigger: who\, where\, how tired I was\, and the fear (
- failure / rejection / conflict / looking weak)\n5. The story in my head: "
- If I tell the truth\, ___ will happen."\n6. What actually happened when I 
- told the truth\n7. Tomorrow's risk moment\, written as an if-then: "If ___
- \, then I'll say ___."\n8. One line of prayer or thanks
+DESCRIPTION:Tonight's question: How high did the urge get? How long did it
+  take to drop when you didn't feed it?\n\nTHE LEDGER (10 min)\n1. Lies tol
+ d today (#): what\, to whom\n2. Lies caught before I spoke (#)\n3. Correct
+ ions made (#)\n4. The trigger: who\, where\, how tired I was\, and the fea
+ r (failure / rejection / conflict / looking weak)\n5. The story in my head
+ : "If I tell the truth\, ___ will happen."\n6. What actually happened when
+  I told the truth\n7. Tomorrow's risk moment\, written as an if-then: "If 
+ ___\, then I'll say ___."\n8. One line of prayer or thanks
 BEGIN:VALARM
 ACTION:DISPLAY
 DESCRIPTION:Day 16 Evening Ledger
@@ -917,27 +905,27 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-50@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261114T063000
 DTEND:20261114T063500
-SUMMARY:Day 17 Morning: The 60-second correction
+SUMMARY:Day 17 Morning: "I don't know"
 DESCRIPTION:Week 3: The Pause. Lies are fast. Truth needs three seconds.\n
- \nIf a lie slips out\, correct it inside a minute: "Actually\, that's not 
- true. The truth is ___." Fast correction beats a perfect record.\n\nBefore
-  you go\, write today's if-then: "If ___ happens\, then I'll say ___."\n\n
- Why it works: A slip doesn't have to become a relapse. If you lie\, you co
- rrect it\, log it\, tell your brother\, and keep going. You never go back 
- to Day 1. (Marlatt & Gordon\, Relapse Prevention\; Larimer\, Palmer & Marl
- att (1999))
+ \nSay "I don't know" or "I'm not sure" at least once today instead of fill
+ ing the silence with something you made up.\n\nBefore you go\, write today
+ 's if-then: "If ___ happens\, then I'll say ___."\n\nWhy it works: Lies ar
+ e safety behaviors. Dropping them teaches you that the truth is survivable
+ . Each lie you don't tell is a test of your prediction. The prediction tes
+ t (Day 13) and the truth ladder (Week 5) are behavioral experiments. (Clar
+ k & Wells cognitive model\; Morgan & Raffle (1999)\; Salkovskis)
 BEGIN:VALARM
 ACTION:DISPLAY
-DESCRIPTION:Day 17 Morning: The 60-second correction
+DESCRIPTION:Day 17 Morning: "I don't know"
 TRIGGER:PT0M
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-51@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261114T123000
 DTEND:20261114T123500
 SUMMARY:Day 17 Midday check
@@ -951,19 +939,18 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-52@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261114T210000
 DTEND:20261114T211000
 SUMMARY:Day 17 Evening Ledger
-DESCRIPTION:Tonight's question: Did you correct one? If not\, which lie fr
- om today can you still correct tomorrow? Put it on tomorrow's list.\n\nTHE
-  LEDGER (10 min)\n1. Lies told today (#): what\, to whom\n2. Lies caught b
- efore I spoke (#)\n3. Corrections made (#)\n4. The trigger: who\, where\, 
- how tired I was\, and the fear (failure / rejection / conflict / looking w
- eak)\n5. The story in my head: "If I tell the truth\, ___ will happen."\n6
- . What actually happened when I told the truth\n7. Tomorrow's risk moment\
- , written as an if-then: "If ___\, then I'll say ___."\n8. One line of pra
- yer or thanks
+DESCRIPTION:Tonight's question: How did it feel not to have an answer? Did
+  anyone actually think less of you?\n\nTHE LEDGER (10 min)\n1. Lies told t
+ oday (#): what\, to whom\n2. Lies caught before I spoke (#)\n3. Correction
+ s made (#)\n4. The trigger: who\, where\, how tired I was\, and the fear (
+ failure / rejection / conflict / looking weak)\n5. The story in my head: "
+ If I tell the truth\, ___ will happen."\n6. What actually happened when I 
+ told the truth\n7. Tomorrow's risk moment\, written as an if-then: "If ___
+ \, then I'll say ___."\n8. One line of prayer or thanks
 BEGIN:VALARM
 ACTION:DISPLAY
 DESCRIPTION:Day 17 Evening Ledger
@@ -972,28 +959,26 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-53@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261115T063000
 DTEND:20261115T063500
-SUMMARY:Day 18 Morning: Write your if-then plans
+SUMMARY:Day 18 Morning: The 60-second correction
 DESCRIPTION:Week 3: The Pause. Lies are fast. Truth needs three seconds.\n
- \nWrite five if-then plans for your five most common lie situations: "If s
- he asks whether I finished it\, then I say exactly how far I got." "If som
- eone asks what I paid\, then I say the real number." Save them in your pho
- ne.\n\nBefore you go\, write today's if-then: "If ___ happens\, then I'll 
- say ___."\n\nWhy it works: If-then plans work. Every morning you write one
-  if-then plan for the day's risk moment: "If she asks about the money\, th
- en I'll say the real number." (Gollwitzer & Sheeran (2006)\, Advances in E
- xperimental Social Psychology)
+ \nIf a lie slips out\, correct it inside a minute: "Actually\, that's not 
+ true. The truth is ___." Fast correction beats a perfect record.\n\nBefore
+  you go\, write today's if-then: "If ___ happens\, then I'll say ___."\n\n
+ Why it works: A slip doesn't have to become a relapse. If you lie\, you co
+ rrect it\, log it\, and keep going. You never go back to Day 1. (Marlatt &
+  Gordon\, Relapse Prevention\; Larimer\, Palmer & Marlatt (1999))
 BEGIN:VALARM
 ACTION:DISPLAY
-DESCRIPTION:Day 18 Morning: Write your if-then plans
+DESCRIPTION:Day 18 Morning: The 60-second correction
 TRIGGER:PT0M
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-54@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261115T123000
 DTEND:20261115T123500
 SUMMARY:Day 18 Midday check
@@ -1007,18 +992,19 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-55@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261115T210000
 DTEND:20261115T211000
 SUMMARY:Day 18 Evening Ledger
-DESCRIPTION:Tonight's question: Which script is hardest to say out loud? S
- ay it out loud right now\, three times.\n\nTHE LEDGER (10 min)\n1. Lies to
- ld today (#): what\, to whom\n2. Lies caught before I spoke (#)\n3. Correc
- tions made (#)\n4. The trigger: who\, where\, how tired I was\, and the fe
- ar (failure / rejection / conflict / looking weak)\n5. The story in my hea
- d: "If I tell the truth\, ___ will happen."\n6. What actually happened whe
- n I told the truth\n7. Tomorrow's risk moment\, written as an if-then: "If
-  ___\, then I'll say ___."\n8. One line of prayer or thanks
+DESCRIPTION:Tonight's question: Did you correct one? If not\, which lie fr
+ om today can you still correct tomorrow? Put it on tomorrow's list.\n\nTHE
+  LEDGER (10 min)\n1. Lies told today (#): what\, to whom\n2. Lies caught b
+ efore I spoke (#)\n3. Corrections made (#)\n4. The trigger: who\, where\, 
+ how tired I was\, and the fear (failure / rejection / conflict / looking w
+ eak)\n5. The story in my head: "If I tell the truth\, ___ will happen."\n6
+ . What actually happened when I told the truth\n7. Tomorrow's risk moment\
+ , written as an if-then: "If ___\, then I'll say ___."\n8. One line of pra
+ yer or thanks
 BEGIN:VALARM
 ACTION:DISPLAY
 DESCRIPTION:Day 18 Evening Ledger
@@ -1027,18 +1013,17 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-56@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261116T063000
 DTEND:20261116T063500
 SUMMARY:Day 19 Morning: Slow down
 DESCRIPTION:Week 3: The Pause. Lies are fast. Truth needs three seconds.\n
  \nIn every hard conversation today\, speak about 20% slower. Rushing feeds
   lies.\n\nBefore you go\, write today's if-then: "If ___ happens\, then I'
- ll say ___."\n\nWhy it works: Break an automatic habit: notice it\, then r
- eplace it. Day 5 teaches you your body's alarm. The pause and a prepared t
- rue sentence are the replacement response. Your brother is the support. (B
- ate\, Malouff\, Thorsteinsson & Bhullar (2011)\, Clinical Psychology Revie
- w (meta-analysis))
+ ll say ___."\n\nWhy it works: The pause interrupts an automatic response. 
+ The three-second pause isn't magic. It's the gap where your prepared true 
+ sentence gets a chance. (Kobis et al. (2019)\, Perspectives on Psychologic
+ al Science\; Curtis & Hart (2020))
 BEGIN:VALARM
 ACTION:DISPLAY
 DESCRIPTION:Day 19 Morning: Slow down
@@ -1047,7 +1032,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-57@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261116T123000
 DTEND:20261116T123500
 SUMMARY:Day 19 Midday check
@@ -1061,7 +1046,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-58@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261116T210000
 DTEND:20261116T211000
 SUMMARY:Day 19 Evening Ledger
@@ -1081,7 +1066,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-59@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261117T063000
 DTEND:20261117T063500
 SUMMARY:Day 20 Morning: No rounding up
@@ -1101,7 +1086,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-60@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261117T123000
 DTEND:20261117T123500
 SUMMARY:Day 20 Midday check
@@ -1115,7 +1100,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-61@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261117T210000
 DTEND:20261117T211000
 SUMMARY:Day 20 Evening Ledger
@@ -1135,18 +1120,17 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-62@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261118T063000
 DTEND:20261118T063500
 SUMMARY:Day 21 Morning: Week 3 review
 DESCRIPTION:Week 3: The Pause. Lies are fast. Truth needs three seconds.\n
- \nRead your if-then plans once this morning. Talk with your witness about 
- whether it's time to offer your wife your weekly numbers. If it is\, ask h
- er whether she wants them.\n\nBefore you go\, write today's if-then: "If _
- __ happens\, then I'll say ___."\n\nWhy it works: Tracking your behavior c
- hanges your behavior. The nightly ledger is the written record. The weekly
-  text with your numbers to your accountability brother is the reporting. (
- Harkin et al. (2016)\, Psychological Bulletin)
+ \nRead your top three lie situations from Day 3.\n\nBefore you go\, write 
+ today's if-then: "If ___ happens\, then I'll say ___."\n\nWhy it works: Tr
+ acking your behavior changes your behavior. The nightly ledger is the writ
+ ten record\, and the weekly review compares your numbers week to week. You
+  can also enter your three numbers on each day in this guide. (Harkin et a
+ l. (2016)\, Psychological Bulletin)
 BEGIN:VALARM
 ACTION:DISPLAY
 DESCRIPTION:Day 21 Morning: Week 3 review
@@ -1155,7 +1139,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-63@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261118T123000
 DTEND:20261118T123500
 SUMMARY:Day 21 Midday check
@@ -1169,16 +1153,16 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-64@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261118T190000
 DTEND:20261118T192000
 SUMMARY:Week 3 review
 DESCRIPTION:WEEKLY REVIEW (20 min)\nAdd up this week's ledgers: lies told\
- , lies caught\, corrections made. Text the three numbers to your brother. 
- Share the week's patterns with your witness.\n\nNext week: Small Truths\, 
- Out Loud. Counselors call this exposure: you practice the thing you fear i
- n small\, planned steps until your body learns that the truth doesn't kill
-  you.
+ , lies caught\, corrections made. Compare them with last week. Find the si
+ tuation that beat you most\, and write a new if-then plan for it.\n\nNext 
+ week: Replace the Lie. A habit breaks when a new response takes its place.
+  This week you write and rehearse the true sentences you'll say in the mom
+ ents you used to lie.
 BEGIN:VALARM
 ACTION:DISPLAY
 DESCRIPTION:Week 3 review
@@ -1187,19 +1171,19 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-65@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261118T210000
 DTEND:20261118T211000
 SUMMARY:Day 21 Evening Ledger
-DESCRIPTION:Tonight's question: Total the week and text your brother. Is y
- our pause count going up while your lie count goes down?\n\nTHE LEDGER (10
-  min)\n1. Lies told today (#): what\, to whom\n2. Lies caught before I spo
- ke (#)\n3. Corrections made (#)\n4. The trigger: who\, where\, how tired I
-  was\, and the fear (failure / rejection / conflict / looking weak)\n5. Th
- e story in my head: "If I tell the truth\, ___ will happen."\n6. What actu
- ally happened when I told the truth\n7. Tomorrow's risk moment\, written a
- s an if-then: "If ___\, then I'll say ___."\n8. One line of prayer or than
- ks
+DESCRIPTION:Tonight's question: Total the week. Is your pause count going 
+ up while your lie count goes down? Which situation still beats you?\n\nTHE
+  LEDGER (10 min)\n1. Lies told today (#): what\, to whom\n2. Lies caught b
+ efore I spoke (#)\n3. Corrections made (#)\n4. The trigger: who\, where\, 
+ how tired I was\, and the fear (failure / rejection / conflict / looking w
+ eak)\n5. The story in my head: "If I tell the truth\, ___ will happen."\n6
+ . What actually happened when I told the truth\n7. Tomorrow's risk moment\
+ , written as an if-then: "If ___\, then I'll say ___."\n8. One line of pra
+ yer or thanks
 BEGIN:VALARM
 ACTION:DISPLAY
 DESCRIPTION:Day 21 Evening Ledger
@@ -1208,28 +1192,28 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-66@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261119T063000
 DTEND:20261119T063500
-SUMMARY:Day 22 Morning: Build your truth ladder
-DESCRIPTION:Week 4: Small Truths\, Out Loud. Courage is a muscle. Train it
-  light first.\n\nList ten truths you've been avoiding\, from easiest ("I'm
-  running late") to hardest. Today\, tell the easiest one.\n\nBefore you go
- \, write today's if-then: "If ___ happens\, then I'll say ___."\n\nWhy it 
- works: Lies are safety behaviors. Dropping them teaches you that the truth
-  is survivable. Each lie you don't tell is a test of your prediction. The 
- truth ladder (Week 4) and the prediction test (Day 12) are behavioral expe
- riments. (Clark & Wells cognitive model\; Morgan & Raffle (1999)\; Salkovs
- kis)
+SUMMARY:Day 22 Morning: Write your if-then plans
+DESCRIPTION:Week 4: Replace the Lie. You can't just stop. You have to say 
+ something else.\n\nWrite five if-then plans for your top lie situations: "
+ If she asks whether I finished it\, then I say exactly how far I got." "If
+  someone asks what I paid\, then I say the real number." Save them in your
+  phone.\n\nBefore you go\, write today's if-then: "If ___ happens\, then I
+ 'll say ___."\n\nWhy it works: If-then plans work. Every morning you write
+  one if-then plan for the day's risk moment: "If she asks about the money\
+ , then I'll say the real number." (Gollwitzer & Sheeran (2006)\, Advances 
+ in Experimental Social Psychology)
 BEGIN:VALARM
 ACTION:DISPLAY
-DESCRIPTION:Day 22 Morning: Build your truth ladder
+DESCRIPTION:Day 22 Morning: Write your if-then plans
 TRIGGER:PT0M
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-67@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261119T123000
 DTEND:20261119T123500
 SUMMARY:Day 22 Midday check
@@ -1243,18 +1227,18 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-68@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261119T210000
 DTEND:20261119T211000
 SUMMARY:Day 22 Evening Ledger
-DESCRIPTION:Tonight's question: Rate your fear from 0 to 10 before you sai
- d it and after. What changed?\n\nTHE LEDGER (10 min)\n1. Lies told today (
- #): what\, to whom\n2. Lies caught before I spoke (#)\n3. Corrections made
-  (#)\n4. The trigger: who\, where\, how tired I was\, and the fear (failur
- e / rejection / conflict / looking weak)\n5. The story in my head: "If I t
- ell the truth\, ___ will happen."\n6. What actually happened when I told t
- he truth\n7. Tomorrow's risk moment\, written as an if-then: "If ___\, the
- n I'll say ___."\n8. One line of prayer or thanks
+DESCRIPTION:Tonight's question: Which plan will be hardest to follow? Rewr
+ ite it so it's shorter and easier to say.\n\nTHE LEDGER (10 min)\n1. Lies 
+ told today (#): what\, to whom\n2. Lies caught before I spoke (#)\n3. Corr
+ ections made (#)\n4. The trigger: who\, where\, how tired I was\, and the 
+ fear (failure / rejection / conflict / looking weak)\n5. The story in my h
+ ead: "If I tell the truth\, ___ will happen."\n6. What actually happened w
+ hen I told the truth\n7. Tomorrow's risk moment\, written as an if-then: "
+ If ___\, then I'll say ___."\n8. One line of prayer or thanks
 BEGIN:VALARM
 ACTION:DISPLAY
 DESCRIPTION:Day 22 Evening Ledger
@@ -1263,27 +1247,28 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-69@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261120T063000
 DTEND:20261120T063500
-SUMMARY:Day 23 Morning: Disappoint someone on purpose
-DESCRIPTION:Week 4: Small Truths\, Out Loud. Courage is a muscle. Train it
-  light first.\n\nSay one honest "no" or "I can't" today with no made-up ex
- cuse attached.\n\nBefore you go\, write today's if-then: "If ___ happens\,
-  then I'll say ___."\n\nWhy it works: Lies are safety behaviors. Dropping 
- them teaches you that the truth is survivable. Each lie you don't tell is 
- a test of your prediction. The truth ladder (Week 4) and the prediction te
- st (Day 12) are behavioral experiments. (Clark & Wells cognitive model\; M
- organ & Raffle (1999)\; Salkovskis)
+SUMMARY:Day 23 Morning: Rehearse out loud
+DESCRIPTION:Week 4: Replace the Lie. You can't just stop. You have to say 
+ something else.\n\nSay each if-then plan out loud three times\, in the car
+  or the mirror. Your mouth has practiced the lie for years. Give it practi
+ ce with the truth.\n\nBefore you go\, write today's if-then: "If ___ happe
+ ns\, then I'll say ___."\n\nWhy it works: Break an automatic habit: notice
+  it\, then replace it. Day 5 teaches you your body's alarm. The pause and 
+ a prepared true sentence (Week 4) are the replacement response. (Bate\, Ma
+ louff\, Thorsteinsson & Bhullar (2011)\, Clinical Psychology Review (meta-
+ analysis))
 BEGIN:VALARM
 ACTION:DISPLAY
-DESCRIPTION:Day 23 Morning: Disappoint someone on purpose
+DESCRIPTION:Day 23 Morning: Rehearse out loud
 TRIGGER:PT0M
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-70@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261120T123000
 DTEND:20261120T123500
 SUMMARY:Day 23 Midday check
@@ -1297,18 +1282,18 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-71@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261120T210000
 DTEND:20261120T211000
 SUMMARY:Day 23 Evening Ledger
-DESCRIPTION:Tonight's question: What happened? Did the relationship surviv
- e the truth?\n\nTHE LEDGER (10 min)\n1. Lies told today (#): what\, to who
- m\n2. Lies caught before I spoke (#)\n3. Corrections made (#)\n4. The trig
- ger: who\, where\, how tired I was\, and the fear (failure / rejection / c
- onflict / looking weak)\n5. The story in my head: "If I tell the truth\, _
- __ will happen."\n6. What actually happened when I told the truth\n7. Tomo
- rrow's risk moment\, written as an if-then: "If ___\, then I'll say ___."\
- n8. One line of prayer or thanks
+DESCRIPTION:Tonight's question: Which true sentence still felt strange to 
+ say? Say it three more times before bed.\n\nTHE LEDGER (10 min)\n1. Lies t
+ old today (#): what\, to whom\n2. Lies caught before I spoke (#)\n3. Corre
+ ctions made (#)\n4. The trigger: who\, where\, how tired I was\, and the f
+ ear (failure / rejection / conflict / looking weak)\n5. The story in my he
+ ad: "If I tell the truth\, ___ will happen."\n6. What actually happened wh
+ en I told the truth\n7. Tomorrow's risk moment\, written as an if-then: "I
+ f ___\, then I'll say ___."\n8. One line of prayer or thanks
 BEGIN:VALARM
 ACTION:DISPLAY
 DESCRIPTION:Day 23 Evening Ledger
@@ -1317,26 +1302,27 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-72@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261121T063000
 DTEND:20261121T063500
-SUMMARY:Day 24 Morning: Admit it first
-DESCRIPTION:Week 4: Small Truths\, Out Loud. Courage is a muscle. Train it
-  light first.\n\nBefore anyone finds out\, admit one small mistake today: 
- "That was me. I'll fix it."\n\nBefore you go\, write today's if-then: "If 
- ___ happens\, then I'll say ___."\n\nWhy it works: Shame hides. Guilt repa
- irs. Day 11 teaches you to turn shame sentences into guilt sentences. You 
- can repair something you did. You can't repair who you are. (Tangney & Dea
- ring\, Shame and Guilt (2002) and later reviews)
+SUMMARY:Day 24 Morning: Say the feeling instead
+DESCRIPTION:Week 4: Replace the Lie. You can't just stop. You have to say 
+ something else.\n\nMany lies stand in for feelings. Today\, when the urge 
+ hits\, name the feeling instead\, out loud or to yourself: "I'm embarrasse
+ d." "I'm afraid I'll look bad."\n\nBefore you go\, write today's if-then: 
+ "If ___ happens\, then I'll say ___."\n\nWhy it works: Writing about hard 
+ things helps a little. The evening questions and letters are writing exerc
+ ises. They help\, but they're one tool among several\, not a cure. (Fratta
+ roli (2006)\, Psychological Bulletin)
 BEGIN:VALARM
 ACTION:DISPLAY
-DESCRIPTION:Day 24 Morning: Admit it first
+DESCRIPTION:Day 24 Morning: Say the feeling instead
 TRIGGER:PT0M
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-73@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261121T123000
 DTEND:20261121T123500
 SUMMARY:Day 24 Midday check
@@ -1350,18 +1336,18 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-74@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261121T210000
 DTEND:20261121T211000
 SUMMARY:Day 24 Evening Ledger
-DESCRIPTION:Tonight's question: How did it land? Compare what it cost with
-  what you feared it would cost.\n\nTHE LEDGER (10 min)\n1. Lies told today
-  (#): what\, to whom\n2. Lies caught before I spoke (#)\n3. Corrections ma
- de (#)\n4. The trigger: who\, where\, how tired I was\, and the fear (fail
- ure / rejection / conflict / looking weak)\n5. The story in my head: "If I
-  tell the truth\, ___ will happen."\n6. What actually happened when I told
-  the truth\n7. Tomorrow's risk moment\, written as an if-then: "If ___\, t
- hen I'll say ___."\n8. One line of prayer or thanks
+DESCRIPTION:Tonight's question: What feeling showed up most today? What li
+ e has that feeling been producing?\n\nTHE LEDGER (10 min)\n1. Lies told to
+ day (#): what\, to whom\n2. Lies caught before I spoke (#)\n3. Corrections
+  made (#)\n4. The trigger: who\, where\, how tired I was\, and the fear (f
+ ailure / rejection / conflict / looking weak)\n5. The story in my head: "I
+ f I tell the truth\, ___ will happen."\n6. What actually happened when I t
+ old the truth\n7. Tomorrow's risk moment\, written as an if-then: "If ___\
+ , then I'll say ___."\n8. One line of prayer or thanks
 BEGIN:VALARM
 ACTION:DISPLAY
 DESCRIPTION:Day 24 Evening Ledger
@@ -1370,27 +1356,28 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-75@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261122T063000
 DTEND:20261122T063500
-SUMMARY:Day 25 Morning: Money and work
-DESCRIPTION:Week 4: Small Truths\, Out Loud. Courage is a muscle. Train it
-  light first.\n\nMoney and work attract lies. Tell one true thing today ab
- out money or work that you've been fudging.\n\nBefore you go\, write today
- 's if-then: "If ___ happens\, then I'll say ___."\n\nWhy it works: Secrets
-  weigh on you even when nobody is asking. The lies you're still carrying c
- ost you every day\, not just when you're questioned. That's part of why We
- ek 5 plans a full disclosure. (Slepian\, Chun & Mason (2017)\, Journal of 
- Personality and Social Psychology)
+SUMMARY:Day 25 Morning: Private is not a lie
+DESCRIPTION:Week 4: Replace the Lie. You can't just stop. You have to say 
+ something else.\n\nYou're allowed to not share something. "I'd rather not 
+ get into that" is honest. Making something up is not. Today\, when you wan
+ t to hide something\, decline instead of inventing.\n\nBefore you go\, wri
+ te today's if-then: "If ___ happens\, then I'll say ___."\n\nWhy it works:
+  If-then plans work. Every morning you write one if-then plan for the day'
+ s risk moment: "If she asks about the money\, then I'll say the real numbe
+ r." (Gollwitzer & Sheeran (2006)\, Advances in Experimental Social Psychol
+ ogy)
 BEGIN:VALARM
 ACTION:DISPLAY
-DESCRIPTION:Day 25 Morning: Money and work
+DESCRIPTION:Day 25 Morning: Private is not a lie
 TRIGGER:PT0M
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-76@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261122T123000
 DTEND:20261122T123500
 SUMMARY:Day 25 Midday check
@@ -1404,19 +1391,19 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-77@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261122T210000
 DTEND:20261122T211000
 SUMMARY:Day 25 Evening Ledger
-DESCRIPTION:Tonight's question: What's still hidden in money or work that 
- needs to come out? Add it to the list for your inventory in Week 5.\n\nTHE
-  LEDGER (10 min)\n1. Lies told today (#): what\, to whom\n2. Lies caught b
- efore I spoke (#)\n3. Corrections made (#)\n4. The trigger: who\, where\, 
- how tired I was\, and the fear (failure / rejection / conflict / looking w
- eak)\n5. The story in my head: "If I tell the truth\, ___ will happen."\n6
- . What actually happened when I told the truth\n7. Tomorrow's risk moment\
- , written as an if-then: "If ___\, then I'll say ___."\n8. One line of pra
- yer or thanks
+DESCRIPTION:Tonight's question: Where did you decline instead of lie? Is t
+ here anything you're keeping private that really affects someone else and 
+ shouldn't be hidden?\n\nTHE LEDGER (10 min)\n1. Lies told today (#): what\
+ , to whom\n2. Lies caught before I spoke (#)\n3. Corrections made (#)\n4. 
+ The trigger: who\, where\, how tired I was\, and the fear (failure / rejec
+ tion / conflict / looking weak)\n5. The story in my head: "If I tell the t
+ ruth\, ___ will happen."\n6. What actually happened when I told the truth\
+ n7. Tomorrow's risk moment\, written as an if-then: "If ___\, then I'll sa
+ y ___."\n8. One line of prayer or thanks
 BEGIN:VALARM
 ACTION:DISPLAY
 DESCRIPTION:Day 25 Evening Ledger
@@ -1425,27 +1412,28 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-78@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261123T063000
 DTEND:20261123T063500
-SUMMARY:Day 26 Morning: Climb a rung
-DESCRIPTION:Week 4: Small Truths\, Out Loud. Courage is a muscle. Train it
-  light first.\n\nTell rung three or four of your ladder today.\n\nBefore y
- ou go\, write today's if-then: "If ___ happens\, then I'll say ___."\n\nWh
- y it works: Lies are safety behaviors. Dropping them teaches you that the 
- truth is survivable. Each lie you don't tell is a test of your prediction.
-  The truth ladder (Week 4) and the prediction test (Day 12) are behavioral
-  experiments. (Clark & Wells cognitive model\; Morgan & Raffle (1999)\; Sa
- lkovskis)
+SUMMARY:Day 26 Morning: No made-up excuses
+DESCRIPTION:Week 4: Replace the Lie. You can't just stop. You have to say 
+ something else.\n\nWhen you're late\, forget or fall short today\, state t
+ he fact with no invented reason: "I'm late. I left late." "I forgot."\n\nB
+ efore you go\, write today's if-then: "If ___ happens\, then I'll say ___.
+ "\n\nWhy it works: Lies are safety behaviors. Dropping them teaches you th
+ at the truth is survivable. Each lie you don't tell is a test of your pred
+ iction. The prediction test (Day 13) and the truth ladder (Week 5) are beh
+ avioral experiments. (Clark & Wells cognitive model\; Morgan & Raffle (199
+ 9)\; Salkovskis)
 BEGIN:VALARM
 ACTION:DISPLAY
-DESCRIPTION:Day 26 Morning: Climb a rung
+DESCRIPTION:Day 26 Morning: No made-up excuses
 TRIGGER:PT0M
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-79@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261123T123000
 DTEND:20261123T123500
 SUMMARY:Day 26 Midday check
@@ -1459,18 +1447,18 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-80@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261123T210000
 DTEND:20261123T211000
 SUMMARY:Day 26 Evening Ledger
-DESCRIPTION:Tonight's question: Rate your fear before and after. What's ge
- tting easier?\n\nTHE LEDGER (10 min)\n1. Lies told today (#): what\, to wh
- om\n2. Lies caught before I spoke (#)\n3. Corrections made (#)\n4. The tri
- gger: who\, where\, how tired I was\, and the fear (failure / rejection / 
- conflict / looking weak)\n5. The story in my head: "If I tell the truth\, 
- ___ will happen."\n6. What actually happened when I told the truth\n7. Tom
- orrow's risk moment\, written as an if-then: "If ___\, then I'll say ___."
- \n8. One line of prayer or thanks
+DESCRIPTION:Tonight's question: What excuse did you want to use? How did t
+ he plain fact land?\n\nTHE LEDGER (10 min)\n1. Lies told today (#): what\,
+  to whom\n2. Lies caught before I spoke (#)\n3. Corrections made (#)\n4. T
+ he trigger: who\, where\, how tired I was\, and the fear (failure / reject
+ ion / conflict / looking weak)\n5. The story in my head: "If I tell the tr
+ uth\, ___ will happen."\n6. What actually happened when I told the truth\n
+ 7. Tomorrow's risk moment\, written as an if-then: "If ___\, then I'll say
+  ___."\n8. One line of prayer or thanks
 BEGIN:VALARM
 ACTION:DISPLAY
 DESCRIPTION:Day 26 Evening Ledger
@@ -1479,29 +1467,28 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-81@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261124T063000
 DTEND:20261124T063500
-SUMMARY:Day 27 Morning: Take the reaction
-DESCRIPTION:Week 4: Small Truths\, Out Loud. Courage is a muscle. Train it
-  light first.\n\nBefore a hard conversation today\, take two minutes to wr
- ite about why your faith or your children matter to you. Then\, when the t
- ruth gets a reaction (frustration\, hurt\, silence)\, don't defend\, expla
- in or lie again. Say: "You're right to feel that."\n\nBefore you go\, writ
- e today's if-then: "If ___ happens\, then I'll say ___."\n\nWhy it works: 
- Remembering your values makes you less defensive. Before a hard conversati
- on with your wife\, spend two minutes writing about why your faith or your
-  children matter to you. Then go listen. (Sherman & Cohen (2002)\, Current
-  Directions in Psychological Science)
+SUMMARY:Day 27 Morning: When you're tired
+DESCRIPTION:Week 4: Replace the Lie. You can't just stop. You have to say 
+ something else.\n\nLook at your ledger: lies often come when you're tired\
+ , rushed or stressed. Write an if-then for tonight: "If I'm worn out and s
+ omeone asks me something\, then I'll say: let me answer that in the mornin
+ g."\n\nBefore you go\, write today's if-then: "If ___ happens\, then I'll 
+ say ___."\n\nWhy it works: Tired men have less self-control. Treat being t
+ ired as a risk factor. Your evening ledger and your relapse warning signs 
+ include sleep. (Barnes\, Schaubroeck\, Huth & Ghumman (2011)\, Organizatio
+ nal Behavior and Human Decision Processes)
 BEGIN:VALARM
 ACTION:DISPLAY
-DESCRIPTION:Day 27 Morning: Take the reaction
+DESCRIPTION:Day 27 Morning: When you're tired
 TRIGGER:PT0M
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-82@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261124T123000
 DTEND:20261124T123500
 SUMMARY:Day 27 Midday check
@@ -1515,18 +1502,18 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-83@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261124T210000
 DTEND:20261124T211000
 SUMMARY:Day 27 Evening Ledger
-DESCRIPTION:Tonight's question: Where did you want to defend yourself? Wha
- t did you do instead?\n\nTHE LEDGER (10 min)\n1. Lies told today (#): what
- \, to whom\n2. Lies caught before I spoke (#)\n3. Corrections made (#)\n4.
-  The trigger: who\, where\, how tired I was\, and the fear (failure / reje
- ction / conflict / looking weak)\n5. The story in my head: "If I tell the 
- truth\, ___ will happen."\n6. What actually happened when I told the truth
- \n7. Tomorrow's risk moment\, written as an if-then: "If ___\, then I'll s
- ay ___."\n8. One line of prayer or thanks
+DESCRIPTION:Tonight's question: Were you more likely to lie when tired thi
+ s week? What time of day is your danger zone?\n\nTHE LEDGER (10 min)\n1. L
+ ies told today (#): what\, to whom\n2. Lies caught before I spoke (#)\n3. 
+ Corrections made (#)\n4. The trigger: who\, where\, how tired I was\, and 
+ the fear (failure / rejection / conflict / looking weak)\n5. The story in 
+ my head: "If I tell the truth\, ___ will happen."\n6. What actually happen
+ ed when I told the truth\n7. Tomorrow's risk moment\, written as an if-the
+ n: "If ___\, then I'll say ___."\n8. One line of prayer or thanks
 BEGIN:VALARM
 ACTION:DISPLAY
 DESCRIPTION:Day 27 Evening Ledger
@@ -1535,17 +1522,17 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-84@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261125T063000
 DTEND:20261125T063500
 SUMMARY:Day 28 Morning: Week 4 review
-DESCRIPTION:Week 4: Small Truths\, Out Loud. Courage is a muscle. Train it
-  light first.\n\nLook at your ladder. Mark every rung you've climbed.\n\nB
- efore you go\, write today's if-then: "If ___ happens\, then I'll say ___.
- "\n\nWhy it works: Tracking your behavior changes your behavior. The night
- ly ledger is the written record. The weekly text with your numbers to your
-  accountability brother is the reporting. (Harkin et al. (2016)\, Psycholo
- gical Bulletin)
+DESCRIPTION:Week 4: Replace the Lie. You can't just stop. You have to say 
+ something else.\n\nRead all your if-then plans this morning.\n\nBefore you
+  go\, write today's if-then: "If ___ happens\, then I'll say ___."\n\nWhy 
+ it works: Tracking your behavior changes your behavior. The nightly ledger
+  is the written record\, and the weekly review compares your numbers week 
+ to week. You can also enter your three numbers on each day in this guide. 
+ (Harkin et al. (2016)\, Psychological Bulletin)
 BEGIN:VALARM
 ACTION:DISPLAY
 DESCRIPTION:Day 28 Morning: Week 4 review
@@ -1554,7 +1541,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-85@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261125T123000
 DTEND:20261125T123500
 SUMMARY:Day 28 Midday check
@@ -1568,15 +1555,16 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-86@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261125T190000
 DTEND:20261125T192000
 SUMMARY:Week 4 review
 DESCRIPTION:WEEKLY REVIEW (20 min)\nAdd up this week's ledgers: lies told\
- , lies caught\, corrections made. Text the three numbers to your brother. 
- Share the week's patterns with your witness.\n\nNext week: Repair. This is
-  the week the work turns toward your wife. It is done carefully\, with you
- r witness\, following the disclosure plan\, and never in pieces.
+ , lies caught\, corrections made. Compare them with last week. Find the si
+ tuation that beat you most\, and write a new if-then plan for it.\n\nNext 
+ week: Small Truths\, Out Loud. This is exposure\, the core method of CBT f
+ or fear: you practice the thing you fear in small\, planned steps until yo
+ ur body learns that the truth doesn't kill you.
 BEGIN:VALARM
 ACTION:DISPLAY
 DESCRIPTION:Week 4 review
@@ -1585,18 +1573,18 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-87@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261125T210000
 DTEND:20261125T211000
 SUMMARY:Day 28 Evening Ledger
-DESCRIPTION:Tonight's question: Total the week and text your brother. Whic
- h truth did you think would wreck you but didn't?\n\nTHE LEDGER (10 min)\n
- 1. Lies told today (#): what\, to whom\n2. Lies caught before I spoke (#)\
- n3. Corrections made (#)\n4. The trigger: who\, where\, how tired I was\, 
- and the fear (failure / rejection / conflict / looking weak)\n5. The story
-  in my head: "If I tell the truth\, ___ will happen."\n6. What actually ha
- ppened when I told the truth\n7. Tomorrow's risk moment\, written as an if
- -then: "If ___\, then I'll say ___."\n8. One line of prayer or thanks
+DESCRIPTION:Tonight's question: Total the week. Which if-then plan worked?
+  Which one failed\, and how will you rewrite it?\n\nTHE LEDGER (10 min)\n1
+ . Lies told today (#): what\, to whom\n2. Lies caught before I spoke (#)\n
+ 3. Corrections made (#)\n4. The trigger: who\, where\, how tired I was\, a
+ nd the fear (failure / rejection / conflict / looking weak)\n5. The story 
+ in my head: "If I tell the truth\, ___ will happen."\n6. What actually hap
+ pened when I told the truth\n7. Tomorrow's risk moment\, written as an if-
+ then: "If ___\, then I'll say ___."\n8. One line of prayer or thanks
 BEGIN:VALARM
 ACTION:DISPLAY
 DESCRIPTION:Day 28 Evening Ledger
@@ -1605,28 +1593,28 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-88@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261126T063000
 DTEND:20261126T063500
-SUMMARY:Day 29 Morning: The inventory
-DESCRIPTION:Week 5: Repair. Telling the truth is the start. Repair is the 
- work.\n\nStart a private\, written inventory of the lies that have affecte
- d your wife. Facts only\, no excuses. Your witness sees it first. This is 
- not a midnight confession.\n\nBefore you go\, write today's if-then: "If _
- __ happens\, then I'll say ___."\n\nWhy it works: Secrets weigh on you eve
- n when nobody is asking. The lies you're still carrying cost you every day
- \, not just when you're questioned. That's part of why Week 5 plans a full
-  disclosure. (Slepian\, Chun & Mason (2017)\, Journal of Personality and S
- ocial Psychology)
+SUMMARY:Day 29 Morning: Build your truth ladder
+DESCRIPTION:Week 5: Small Truths\, Out Loud. Courage is a muscle. Train it
+  light first.\n\nList ten truths you've been avoiding\, from easiest ("I'm
+  running late") to hardest. Today\, tell the easiest one.\n\nBefore you go
+ \, write today's if-then: "If ___ happens\, then I'll say ___."\n\nWhy it 
+ works: Lies are safety behaviors. Dropping them teaches you that the truth
+  is survivable. Each lie you don't tell is a test of your prediction. The 
+ prediction test (Day 13) and the truth ladder (Week 5) are behavioral expe
+ riments. (Clark & Wells cognitive model\; Morgan & Raffle (1999)\; Salkovs
+ kis)
 BEGIN:VALARM
 ACTION:DISPLAY
-DESCRIPTION:Day 29 Morning: The inventory
+DESCRIPTION:Day 29 Morning: Build your truth ladder
 TRIGGER:PT0M
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-89@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261126T123000
 DTEND:20261126T123500
 SUMMARY:Day 29 Midday check
@@ -1640,18 +1628,18 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-90@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261126T210000
 DTEND:20261126T211000
 SUMMARY:Day 29 Evening Ledger
-DESCRIPTION:Tonight's question: What's the hardest item on the list? What 
- do you fear will happen if she knows it?\n\nTHE LEDGER (10 min)\n1. Lies t
- old today (#): what\, to whom\n2. Lies caught before I spoke (#)\n3. Corre
- ctions made (#)\n4. The trigger: who\, where\, how tired I was\, and the f
- ear (failure / rejection / conflict / looking weak)\n5. The story in my he
- ad: "If I tell the truth\, ___ will happen."\n6. What actually happened wh
- en I told the truth\n7. Tomorrow's risk moment\, written as an if-then: "I
- f ___\, then I'll say ___."\n8. One line of prayer or thanks
+DESCRIPTION:Tonight's question: Rate your fear from 0 to 10 before you sai
+ d it and after. What changed?\n\nTHE LEDGER (10 min)\n1. Lies told today (
+ #): what\, to whom\n2. Lies caught before I spoke (#)\n3. Corrections made
+  (#)\n4. The trigger: who\, where\, how tired I was\, and the fear (failur
+ e / rejection / conflict / looking weak)\n5. The story in my head: "If I t
+ ell the truth\, ___ will happen."\n6. What actually happened when I told t
+ he truth\n7. Tomorrow's risk moment\, written as an if-then: "If ___\, the
+ n I'll say ___."\n8. One line of prayer or thanks
 BEGIN:VALARM
 ACTION:DISPLAY
 DESCRIPTION:Day 29 Evening Ledger
@@ -1660,29 +1648,27 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-91@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261127T063000
 DTEND:20261127T063500
-SUMMARY:Day 30 Morning: No trickle truth
-DESCRIPTION:Week 5: Repair. Telling the truth is the start. Repair is the 
- work.\n\nKnow this: telling the truth in pieces\, a little more each time 
- you're caught\, does more damage than the original lie. Read the disclosur
- e plan in this guide tonight\, and set a date with your witness to go over
-  your inventory.\n\nBefore you go\, write today's if-then: "If ___ happens
- \, then I'll say ___."\n\nWhy it works: Full disclosure\, with support\, i
- s usually seen as right afterward. Plan one full disclosure with your witn
- ess\, using the disclosure plan in this guide (Week 5). Don't let it come 
- out in pieces\, and don't do it in a panic. (Schneider\, Corley & Irons (1
- 998)\, Sexual Addiction & Compulsivity)
+SUMMARY:Day 30 Morning: An honest no
+DESCRIPTION:Week 5: Small Truths\, Out Loud. Courage is a muscle. Train it
+  light first.\n\nSay one honest "no" or "I can't" today with no made-up ex
+ cuse attached.\n\nBefore you go\, write today's if-then: "If ___ happens\,
+  then I'll say ___."\n\nWhy it works: Lies are safety behaviors. Dropping 
+ them teaches you that the truth is survivable. Each lie you don't tell is 
+ a test of your prediction. The prediction test (Day 13) and the truth ladd
+ er (Week 5) are behavioral experiments. (Clark & Wells cognitive model\; M
+ organ & Raffle (1999)\; Salkovskis)
 BEGIN:VALARM
 ACTION:DISPLAY
-DESCRIPTION:Day 30 Morning: No trickle truth
+DESCRIPTION:Day 30 Morning: An honest no
 TRIGGER:PT0M
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-92@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261127T123000
 DTEND:20261127T123500
 SUMMARY:Day 30 Midday check
@@ -1696,18 +1682,18 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-93@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261127T210000
 DTEND:20261127T211000
 SUMMARY:Day 30 Evening Ledger
-DESCRIPTION:Tonight's question: Have you set the date with your witness? I
- f not\, when exactly will you?\n\nTHE LEDGER (10 min)\n1. Lies told today 
- (#): what\, to whom\n2. Lies caught before I spoke (#)\n3. Corrections mad
- e (#)\n4. The trigger: who\, where\, how tired I was\, and the fear (failu
- re / rejection / conflict / looking weak)\n5. The story in my head: "If I 
- tell the truth\, ___ will happen."\n6. What actually happened when I told 
- the truth\n7. Tomorrow's risk moment\, written as an if-then: "If ___\, th
- en I'll say ___."\n8. One line of prayer or thanks
+DESCRIPTION:Tonight's question: What happened? Did the relationship surviv
+ e the truth?\n\nTHE LEDGER (10 min)\n1. Lies told today (#): what\, to who
+ m\n2. Lies caught before I spoke (#)\n3. Corrections made (#)\n4. The trig
+ ger: who\, where\, how tired I was\, and the fear (failure / rejection / c
+ onflict / looking weak)\n5. The story in my head: "If I tell the truth\, _
+ __ will happen."\n6. What actually happened when I told the truth\n7. Tomo
+ rrow's risk moment\, written as an if-then: "If ___\, then I'll say ___."\
+ n8. One line of prayer or thanks
 BEGIN:VALARM
 ACTION:DISPLAY
 DESCRIPTION:Day 30 Evening Ledger
@@ -1716,29 +1702,26 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-94@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261128T063000
 DTEND:20261128T063500
-SUMMARY:Day 31 Morning: Her side
-DESCRIPTION:Week 5: Repair. Telling the truth is the start. Repair is the 
- work.\n\nToday\, try to see it from her side. What has it been like to liv
- e with a man whose word she couldn't count on?\n\nBefore you go\, write to
- day's if-then: "If ___ happens\, then I'll say ___."\n\nWhy it works: Coup
- les therapy has tested models for repairing betrayal. Free and low-cost op
- tions come first: a church marriage ministry or marriage workshop\, or a u
- niversity training clinic. If you can afford it later\, look for a couples
-  therapist trained in EFT\, the Gottman Method or affair recovery. (Makine
- n & Johnson (2006)\, Journal of Consulting and Clinical Psychology\; Bauco
- m\, Snyder & Gordon)
+SUMMARY:Day 31 Morning: Admit it first
+DESCRIPTION:Week 5: Small Truths\, Out Loud. Courage is a muscle. Train it
+  light first.\n\nBefore anyone finds out\, admit one small mistake today: 
+ "That was me. I'll fix it."\n\nBefore you go\, write today's if-then: "If 
+ ___ happens\, then I'll say ___."\n\nWhy it works: Shame hides. Guilt repa
+ irs. Day 11 teaches you to turn shame sentences into guilt sentences. You 
+ can repair something you did. You can't repair who you are. (Tangney & Dea
+ ring\, Shame and Guilt (2002) and later reviews)
 BEGIN:VALARM
 ACTION:DISPLAY
-DESCRIPTION:Day 31 Morning: Her side
+DESCRIPTION:Day 31 Morning: Admit it first
 TRIGGER:PT0M
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-95@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261128T123000
 DTEND:20261128T123500
 SUMMARY:Day 31 Midday check
@@ -1752,18 +1735,18 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-96@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261128T210000
 DTEND:20261128T211000
 SUMMARY:Day 31 Evening Ledger
-DESCRIPTION:Tonight's question: Write one page in her voice about what she
-  has felt. Don't send it. Read it twice.\n\nTHE LEDGER (10 min)\n1. Lies t
- old today (#): what\, to whom\n2. Lies caught before I spoke (#)\n3. Corre
- ctions made (#)\n4. The trigger: who\, where\, how tired I was\, and the f
- ear (failure / rejection / conflict / looking weak)\n5. The story in my he
- ad: "If I tell the truth\, ___ will happen."\n6. What actually happened wh
- en I told the truth\n7. Tomorrow's risk moment\, written as an if-then: "I
- f ___\, then I'll say ___."\n8. One line of prayer or thanks
+DESCRIPTION:Tonight's question: How did it land? Compare what it cost with
+  what you feared it would cost.\n\nTHE LEDGER (10 min)\n1. Lies told today
+  (#): what\, to whom\n2. Lies caught before I spoke (#)\n3. Corrections ma
+ de (#)\n4. The trigger: who\, where\, how tired I was\, and the fear (fail
+ ure / rejection / conflict / looking weak)\n5. The story in my head: "If I
+  tell the truth\, ___ will happen."\n6. What actually happened when I told
+  the truth\n7. Tomorrow's risk moment\, written as an if-then: "If ___\, t
+ hen I'll say ___."\n8. One line of prayer or thanks
 BEGIN:VALARM
 ACTION:DISPLAY
 DESCRIPTION:Day 31 Evening Ledger
@@ -1772,28 +1755,27 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-97@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261129T063000
 DTEND:20261129T063500
-SUMMARY:Day 32 Morning: A real apology
-DESCRIPTION:Week 5: Repair. Telling the truth is the start. Repair is the 
- work.\n\nA real apology has five parts: what I did\, how it hurt you\, no 
- excuses\, what I'm doing about it\, and no demand to be forgiven. Draft on
- e.\n\nBefore you go\, write today's if-then: "If ___ happens\, then I'll s
- ay ___."\n\nWhy it works: Trust after lying comes back slowly\, through ac
- tions. Set your expectations: this is a long road\, and words won't carry 
- you. Make small\, specific promises and keep them exactly (Day 40). Never 
- demand trust (Day 39). (Schweitzer\, Hershey & Bradlow (2006)\, Organizati
- onal Behavior and Human Decision Processes)
+SUMMARY:Day 32 Morning: Climb a rung
+DESCRIPTION:Week 5: Small Truths\, Out Loud. Courage is a muscle. Train it
+  light first.\n\nTell rung three or four of your ladder today.\n\nBefore y
+ ou go\, write today's if-then: "If ___ happens\, then I'll say ___."\n\nWh
+ y it works: Lies are safety behaviors. Dropping them teaches you that the 
+ truth is survivable. Each lie you don't tell is a test of your prediction.
+  The prediction test (Day 13) and the truth ladder (Week 5) are behavioral
+  experiments. (Clark & Wells cognitive model\; Morgan & Raffle (1999)\; Sa
+ lkovskis)
 BEGIN:VALARM
 ACTION:DISPLAY
-DESCRIPTION:Day 32 Morning: A real apology
+DESCRIPTION:Day 32 Morning: Climb a rung
 TRIGGER:PT0M
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-98@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261129T123000
 DTEND:20261129T123500
 SUMMARY:Day 32 Midday check
@@ -1807,18 +1789,18 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-99@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261129T210000
 DTEND:20261129T211000
 SUMMARY:Day 32 Evening Ledger
-DESCRIPTION:Tonight's question: Read your draft and delete every "but\," "
- if" and "I was just." What's left?\n\nTHE LEDGER (10 min)\n1. Lies told to
- day (#): what\, to whom\n2. Lies caught before I spoke (#)\n3. Corrections
-  made (#)\n4. The trigger: who\, where\, how tired I was\, and the fear (f
- ailure / rejection / conflict / looking weak)\n5. The story in my head: "I
- f I tell the truth\, ___ will happen."\n6. What actually happened when I t
- old the truth\n7. Tomorrow's risk moment\, written as an if-then: "If ___\
- , then I'll say ___."\n8. One line of prayer or thanks
+DESCRIPTION:Tonight's question: Rate your fear before and after. What's ge
+ tting easier?\n\nTHE LEDGER (10 min)\n1. Lies told today (#): what\, to wh
+ om\n2. Lies caught before I spoke (#)\n3. Corrections made (#)\n4. The tri
+ gger: who\, where\, how tired I was\, and the fear (failure / rejection / 
+ conflict / looking weak)\n5. The story in my head: "If I tell the truth\, 
+ ___ will happen."\n6. What actually happened when I told the truth\n7. Tom
+ orrow's risk moment\, written as an if-then: "If ___\, then I'll say ___."
+ \n8. One line of prayer or thanks
 BEGIN:VALARM
 ACTION:DISPLAY
 DESCRIPTION:Day 32 Evening Ledger
@@ -1827,28 +1809,29 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-100@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261130T063000
 DTEND:20261130T063500
-SUMMARY:Day 33 Morning: Answer the whole question
-DESCRIPTION:Week 5: Repair. Telling the truth is the start. Repair is the 
- work.\n\nWhen she asks you something\, answer it fully the first time. If 
- you need time: "I'll answer that fully. Give me until tonight." Then do it
- .\n\nBefore you go\, write today's if-then: "If ___ happens\, then I'll sa
- y ___."\n\nWhy it works: Full disclosure\, with support\, is usually seen 
- as right afterward. Plan one full disclosure with your witness\, using the
-  disclosure plan in this guide (Week 5). Don't let it come out in pieces\,
-  and don't do it in a panic. (Schneider\, Corley & Irons (1998)\, Sexual A
- ddiction & Compulsivity)
+SUMMARY:Day 33 Morning: Take the reaction
+DESCRIPTION:Week 5: Small Truths\, Out Loud. Courage is a muscle. Train it
+  light first.\n\nBefore a hard truth today\, take two minutes to write abo
+ ut what matters most to you: your faith\, your children\, the man you've d
+ ecided to be. Then\, when the truth gets a reaction\, don't defend\, expla
+ in or lie again.\n\nBefore you go\, write today's if-then: "If ___ happens
+ \, then I'll say ___."\n\nWhy it works: Remembering your values makes you 
+ less defensive. Before a hard truth\, spend two minutes writing about what
+  matters most to you: your faith\, your children\, the man you've decided 
+ to be (Day 33). (Sherman & Cohen (2002)\, Current Directions in Psychologi
+ cal Science)
 BEGIN:VALARM
 ACTION:DISPLAY
-DESCRIPTION:Day 33 Morning: Answer the whole question
+DESCRIPTION:Day 33 Morning: Take the reaction
 TRIGGER:PT0M
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-101@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261130T123000
 DTEND:20261130T123500
 SUMMARY:Day 33 Midday check
@@ -1862,18 +1845,18 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-102@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261130T210000
 DTEND:20261130T211000
 SUMMARY:Day 33 Evening Ledger
-DESCRIPTION:Tonight's question: Did you answer anything only partway today
- ? Finish it.\n\nTHE LEDGER (10 min)\n1. Lies told today (#): what\, to who
- m\n2. Lies caught before I spoke (#)\n3. Corrections made (#)\n4. The trig
- ger: who\, where\, how tired I was\, and the fear (failure / rejection / c
- onflict / looking weak)\n5. The story in my head: "If I tell the truth\, _
- __ will happen."\n6. What actually happened when I told the truth\n7. Tomo
- rrow's risk moment\, written as an if-then: "If ___\, then I'll say ___."\
- n8. One line of prayer or thanks
+DESCRIPTION:Tonight's question: Where did you want to defend yourself? Wha
+ t did you do instead?\n\nTHE LEDGER (10 min)\n1. Lies told today (#): what
+ \, to whom\n2. Lies caught before I spoke (#)\n3. Corrections made (#)\n4.
+  The trigger: who\, where\, how tired I was\, and the fear (failure / reje
+ ction / conflict / looking weak)\n5. The story in my head: "If I tell the 
+ truth\, ___ will happen."\n6. What actually happened when I told the truth
+ \n7. Tomorrow's risk moment\, written as an if-then: "If ___\, then I'll s
+ ay ___."\n8. One line of prayer or thanks
 BEGIN:VALARM
 ACTION:DISPLAY
 DESCRIPTION:Day 33 Evening Ledger
@@ -1882,26 +1865,27 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-103@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261201T063000
 DTEND:20261201T063500
-SUMMARY:Day 34 Morning: Repair with action
-DESCRIPTION:Week 5: Repair. Telling the truth is the start. Repair is the 
- work.\n\nPick one lie you can repair with action: return the money\, keep 
- the promise\, finish the task. Do it today.\n\nBefore you go\, write today
- 's if-then: "If ___ happens\, then I'll say ___."\n\nWhy it works: Shame h
- ides. Guilt repairs. Day 11 teaches you to turn shame sentences into guilt
-  sentences. You can repair something you did. You can't repair who you are
- . (Tangney & Dearing\, Shame and Guilt (2002) and later reviews)
+SUMMARY:Day 34 Morning: Climb again
+DESCRIPTION:Week 5: Small Truths\, Out Loud. Courage is a muscle. Train it
+  light first.\n\nTell rung five or six of your ladder today.\n\nBefore you
+  go\, write today's if-then: "If ___ happens\, then I'll say ___."\n\nWhy 
+ it works: Lies are safety behaviors. Dropping them teaches you that the tr
+ uth is survivable. Each lie you don't tell is a test of your prediction. T
+ he prediction test (Day 13) and the truth ladder (Week 5) are behavioral e
+ xperiments. (Clark & Wells cognitive model\; Morgan & Raffle (1999)\; Salk
+ ovskis)
 BEGIN:VALARM
 ACTION:DISPLAY
-DESCRIPTION:Day 34 Morning: Repair with action
+DESCRIPTION:Day 34 Morning: Climb again
 TRIGGER:PT0M
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-104@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261201T123000
 DTEND:20261201T123500
 SUMMARY:Day 34 Midday check
@@ -1915,18 +1899,19 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-105@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261201T210000
 DTEND:20261201T211000
 SUMMARY:Day 34 Evening Ledger
-DESCRIPTION:Tonight's question: What did the repair cost you? Was it worth
-  it?\n\nTHE LEDGER (10 min)\n1. Lies told today (#): what\, to whom\n2. Li
- es caught before I spoke (#)\n3. Corrections made (#)\n4. The trigger: who
- \, where\, how tired I was\, and the fear (failure / rejection / conflict 
- / looking weak)\n5. The story in my head: "If I tell the truth\, ___ will 
- happen."\n6. What actually happened when I told the truth\n7. Tomorrow's r
- isk moment\, written as an if-then: "If ___\, then I'll say ___."\n8. One 
- line of prayer or thanks
+DESCRIPTION:Tonight's question: Rate your fear before and after. Is the ga
+ p between what you fear and what happens getting wider?\n\nTHE LEDGER (10 
+ min)\n1. Lies told today (#): what\, to whom\n2. Lies caught before I spok
+ e (#)\n3. Corrections made (#)\n4. The trigger: who\, where\, how tired I 
+ was\, and the fear (failure / rejection / conflict / looking weak)\n5. The
+  story in my head: "If I tell the truth\, ___ will happen."\n6. What actua
+ lly happened when I told the truth\n7. Tomorrow's risk moment\, written as
+  an if-then: "If ___\, then I'll say ___."\n8. One line of prayer or thank
+ s
 BEGIN:VALARM
 ACTION:DISPLAY
 DESCRIPTION:Day 34 Evening Ledger
@@ -1935,18 +1920,17 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-106@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261202T063000
 DTEND:20261202T063500
 SUMMARY:Day 35 Morning: Week 5 review
-DESCRIPTION:Week 5: Repair. Telling the truth is the start. Repair is the 
- work.\n\nGo through the readiness checklist in the disclosure plan with yo
- ur witness. Are you ready\, and what's the date?\n\nBefore you go\, write 
- today's if-then: "If ___ happens\, then I'll say ___."\n\nWhy it works: Fu
- ll disclosure\, with support\, is usually seen as right afterward. Plan on
- e full disclosure with your witness\, using the disclosure plan in this gu
- ide (Week 5). Don't let it come out in pieces\, and don't do it in a panic
- . (Schneider\, Corley & Irons (1998)\, Sexual Addiction & Compulsivity)
+DESCRIPTION:Week 5: Small Truths\, Out Loud. Courage is a muscle. Train it
+  light first.\n\nLook at your ladder. Mark every rung you've climbed.\n\nB
+ efore you go\, write today's if-then: "If ___ happens\, then I'll say ___.
+ "\n\nWhy it works: Tracking your behavior changes your behavior. The night
+ ly ledger is the written record\, and the weekly review compares your numb
+ ers week to week. You can also enter your three numbers on each day in thi
+ s guide. (Harkin et al. (2016)\, Psychological Bulletin)
 BEGIN:VALARM
 ACTION:DISPLAY
 DESCRIPTION:Day 35 Morning: Week 5 review
@@ -1955,7 +1939,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-107@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261202T123000
 DTEND:20261202T123500
 SUMMARY:Day 35 Midday check
@@ -1969,15 +1953,16 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-108@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261202T190000
 DTEND:20261202T192000
 SUMMARY:Week 5 review
 DESCRIPTION:WEEKLY REVIEW (20 min)\nAdd up this week's ledgers: lies told\
- , lies caught\, corrections made. Text the three numbers to your brother. 
- Share the week's patterns with your witness.\n\nNext week: Transparency. S
- he can't trust your words yet\, so give her things she can check. Trust co
- mes back through small\, verifiable\, repeated evidence.
+ , lies caught\, corrections made. Compare them with last week. Find the si
+ tuation that beat you most\, and write a new if-then plan for it.\n\nNext 
+ week: Hard Truths. Now you take the skill into the places where lying is m
+ ost tempting: money\, work and home\, and the old lies that are still stan
+ ding.
 BEGIN:VALARM
 ACTION:DISPLAY
 DESCRIPTION:Week 5 review
@@ -1986,18 +1971,18 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-109@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261202T210000
 DTEND:20261202T211000
 SUMMARY:Day 35 Evening Ledger
-DESCRIPTION:Tonight's question: Total the week and text your brother. What
-  has repair taught you that confession alone couldn't?\n\nTHE LEDGER (10 m
- in)\n1. Lies told today (#): what\, to whom\n2. Lies caught before I spoke
-  (#)\n3. Corrections made (#)\n4. The trigger: who\, where\, how tired I w
- as\, and the fear (failure / rejection / conflict / looking weak)\n5. The 
- story in my head: "If I tell the truth\, ___ will happen."\n6. What actual
- ly happened when I told the truth\n7. Tomorrow's risk moment\, written as 
- an if-then: "If ___\, then I'll say ___."\n8. One line of prayer or thanks
+DESCRIPTION:Tonight's question: Total the week. Which truth did you think 
+ would wreck you but didn't?\n\nTHE LEDGER (10 min)\n1. Lies told today (#)
+ : what\, to whom\n2. Lies caught before I spoke (#)\n3. Corrections made (
+ #)\n4. The trigger: who\, where\, how tired I was\, and the fear (failure 
+ / rejection / conflict / looking weak)\n5. The story in my head: "If I tel
+ l the truth\, ___ will happen."\n6. What actually happened when I told the
+  truth\n7. Tomorrow's risk moment\, written as an if-then: "If ___\, then 
+ I'll say ___."\n8. One line of prayer or thanks
 BEGIN:VALARM
 ACTION:DISPLAY
 DESCRIPTION:Day 35 Evening Ledger
@@ -2006,27 +1991,27 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-110@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261203T063000
 DTEND:20261203T063500
-SUMMARY:Day 36 Morning: Get ahead of it
-DESCRIPTION:Week 6: Transparency. Trust is rebuilt on boring days.\n\nTell
-  her something before she asks: your schedule\, a purchase\, a mistake.\n\
- nBefore you go\, write today's if-then: "If ___ happens\, then I'll say __
- _."\n\nWhy it works: Trust after lying comes back slowly\, through actions
- . Set your expectations: this is a long road\, and words won't carry you. 
- Make small\, specific promises and keep them exactly (Day 40). Never deman
- d trust (Day 39). (Schweitzer\, Hershey & Bradlow (2006)\, Organizational 
- Behavior and Human Decision Processes)
+SUMMARY:Day 36 Morning: Money
+DESCRIPTION:Week 6: Hard Truths. Tell the truth where it costs the most.\n
+ \nMoney attracts lies. Today\, tell the exact truth about every money ques
+ tion: what it cost\, where it went\, what you owe.\n\nBefore you go\, writ
+ e today's if-then: "If ___ happens\, then I'll say ___."\n\nWhy it works: 
+ Secrets weigh on you even when nobody is asking. The lies you're still sta
+ nding behind cost you every day\, not just when you're questioned. That's 
+ why Week 6 has you start taking old lies down\, one at a time. (Slepian\, 
+ Chun & Mason (2017)\, Journal of Personality and Social Psychology)
 BEGIN:VALARM
 ACTION:DISPLAY
-DESCRIPTION:Day 36 Morning: Get ahead of it
+DESCRIPTION:Day 36 Morning: Money
 TRIGGER:PT0M
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-111@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261203T123000
 DTEND:20261203T123500
 SUMMARY:Day 36 Midday check
@@ -2040,18 +2025,18 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-112@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261203T210000
 DTEND:20261203T211000
 SUMMARY:Day 36 Evening Ledger
-DESCRIPTION:Tonight's question: What did you volunteer? How did it feel to
-  be ahead of the truth instead of behind it?\n\nTHE LEDGER (10 min)\n1. Li
- es told today (#): what\, to whom\n2. Lies caught before I spoke (#)\n3. C
- orrections made (#)\n4. The trigger: who\, where\, how tired I was\, and t
- he fear (failure / rejection / conflict / looking weak)\n5. The story in m
- y head: "If I tell the truth\, ___ will happen."\n6. What actually happene
- d when I told the truth\n7. Tomorrow's risk moment\, written as an if-then
- : "If ___\, then I'll say ___."\n8. One line of prayer or thanks
+DESCRIPTION:Tonight's question: What's still hidden about money? Write it 
+ down. That's on your list of truths you still owe.\n\nTHE LEDGER (10 min)\
+ n1. Lies told today (#): what\, to whom\n2. Lies caught before I spoke (#)
+ \n3. Corrections made (#)\n4. The trigger: who\, where\, how tired I was\,
+  and the fear (failure / rejection / conflict / looking weak)\n5. The stor
+ y in my head: "If I tell the truth\, ___ will happen."\n6. What actually h
+ appened when I told the truth\n7. Tomorrow's risk moment\, written as an i
+ f-then: "If ___\, then I'll say ___."\n8. One line of prayer or thanks
 BEGIN:VALARM
 ACTION:DISPLAY
 DESCRIPTION:Day 36 Evening Ledger
@@ -2060,28 +2045,27 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-113@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261204T063000
 DTEND:20261204T063500
-SUMMARY:Day 37 Morning: Open book
-DESCRIPTION:Week 6: Transparency. Trust is rebuilt on boring days.\n\nOffe
- r access without being asked: phone\, accounts\, calendar\, whatever was h
- idden before. Offer it as evidence\, not as punishment.\n\nBefore you go\,
-  write today's if-then: "If ___ happens\, then I'll say ___."\n\nWhy it wo
- rks: Trust after lying comes back slowly\, through actions. Set your expec
- tations: this is a long road\, and words won't carry you. Make small\, spe
- cific promises and keep them exactly (Day 40). Never demand trust (Day 39)
- . (Schweitzer\, Hershey & Bradlow (2006)\, Organizational Behavior and Hum
- an Decision Processes)
+SUMMARY:Day 37 Morning: Work
+DESCRIPTION:Week 6: Hard Truths. Tell the truth where it costs the most.\n
+ \nAt work today\, no inflating your progress and no excuses for what isn't
+  done. Report exactly where things stand.\n\nBefore you go\, write today's
+  if-then: "If ___ happens\, then I'll say ___."\n\nWhy it works: Trying to
+  look competent or likable makes people lie more. Your two fears\, failing
+  and not being accepted\, are exactly these two goals. Week 2 teaches you 
+ to notice which one is running in the moment. (Feldman\, Forrest & Happ (2
+ 002)\, Basic and Applied Social Psychology)
 BEGIN:VALARM
 ACTION:DISPLAY
-DESCRIPTION:Day 37 Morning: Open book
+DESCRIPTION:Day 37 Morning: Work
 TRIGGER:PT0M
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-114@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261204T123000
 DTEND:20261204T123500
 SUMMARY:Day 37 Midday check
@@ -2095,18 +2079,18 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-115@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261204T210000
 DTEND:20261204T211000
 SUMMARY:Day 37 Evening Ledger
-DESCRIPTION:Tonight's question: What are you still keeping in a back room?
- \n\nTHE LEDGER (10 min)\n1. Lies told today (#): what\, to whom\n2. Lies c
- aught before I spoke (#)\n3. Corrections made (#)\n4. The trigger: who\, w
- here\, how tired I was\, and the fear (failure / rejection / conflict / lo
- oking weak)\n5. The story in my head: "If I tell the truth\, ___ will happ
- en."\n6. What actually happened when I told the truth\n7. Tomorrow's risk 
- moment\, written as an if-then: "If ___\, then I'll say ___."\n8. One line
-  of prayer or thanks
+DESCRIPTION:Tonight's question: Where did you want to make yourself look b
+ etter at work? What did you say instead?\n\nTHE LEDGER (10 min)\n1. Lies t
+ old today (#): what\, to whom\n2. Lies caught before I spoke (#)\n3. Corre
+ ctions made (#)\n4. The trigger: who\, where\, how tired I was\, and the f
+ ear (failure / rejection / conflict / looking weak)\n5. The story in my he
+ ad: "If I tell the truth\, ___ will happen."\n6. What actually happened wh
+ en I told the truth\n7. Tomorrow's risk moment\, written as an if-then: "I
+ f ___\, then I'll say ___."\n8. One line of prayer or thanks
 BEGIN:VALARM
 ACTION:DISPLAY
 DESCRIPTION:Day 37 Evening Ledger
@@ -2115,29 +2099,28 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-116@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261205T063000
 DTEND:20261205T063500
-SUMMARY:Day 38 Morning: Her anger isn't the enemy
-DESCRIPTION:Week 6: Transparency. Trust is rebuilt on boring days.\n\nIf s
- he's hurt or angry today\, it's the cost of what happened\, not an attack 
- on you. Before you talk\, take two minutes to remember what kind of husban
- d you've decided to be. Then stay in the room\, listen\, and don't argue a
- bout the facts.\n\nBefore you go\, write today's if-then: "If ___ happens\
- , then I'll say ___."\n\nWhy it works: Remembering your values makes you l
- ess defensive. Before a hard conversation with your wife\, spend two minut
- es writing about why your faith or your children matter to you. Then go li
- sten. (Sherman & Cohen (2002)\, Current Directions in Psychological Scienc
- e)
+SUMMARY:Day 38 Morning: Answer the whole question
+DESCRIPTION:Week 6: Hard Truths. Tell the truth where it costs the most.\n
+ \nWhen someone asks you something today\, especially at home\, answer it f
+ ully the first time. A half-answer is a lie with better manners.\n\nBefore
+  you go\, write today's if-then: "If ___ happens\, then I'll say ___."\n\n
+ Why it works: Trust after lying comes back slowly\, through actions. Set y
+ our expectations: people believe you again slowly\, and words won't carry 
+ you. Answer fully the first time (Day 38) and keep small\, specific promis
+ es exactly (Day 41). (Schweitzer\, Hershey & Bradlow (2006)\, Organization
+ al Behavior and Human Decision Processes)
 BEGIN:VALARM
 ACTION:DISPLAY
-DESCRIPTION:Day 38 Morning: Her anger isn't the enemy
+DESCRIPTION:Day 38 Morning: Answer the whole question
 TRIGGER:PT0M
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-117@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261205T123000
 DTEND:20261205T123500
 SUMMARY:Day 38 Midday check
@@ -2151,18 +2134,18 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-118@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261205T210000
 DTEND:20261205T211000
 SUMMARY:Day 38 Evening Ledger
-DESCRIPTION:Tonight's question: Did you stay? At what moment did you want 
- to leave?\n\nTHE LEDGER (10 min)\n1. Lies told today (#): what\, to whom\n
- 2. Lies caught before I spoke (#)\n3. Corrections made (#)\n4. The trigger
- : who\, where\, how tired I was\, and the fear (failure / rejection / conf
- lict / looking weak)\n5. The story in my head: "If I tell the truth\, ___ 
- will happen."\n6. What actually happened when I told the truth\n7. Tomorro
- w's risk moment\, written as an if-then: "If ___\, then I'll say ___."\n8.
-  One line of prayer or thanks
+DESCRIPTION:Tonight's question: Did you answer anything only partway today
+ ? Go finish it.\n\nTHE LEDGER (10 min)\n1. Lies told today (#): what\, to 
+ whom\n2. Lies caught before I spoke (#)\n3. Corrections made (#)\n4. The t
+ rigger: who\, where\, how tired I was\, and the fear (failure / rejection 
+ / conflict / looking weak)\n5. The story in my head: "If I tell the truth\
+ , ___ will happen."\n6. What actually happened when I told the truth\n7. T
+ omorrow's risk moment\, written as an if-then: "If ___\, then I'll say ___
+ ."\n8. One line of prayer or thanks
 BEGIN:VALARM
 ACTION:DISPLAY
 DESCRIPTION:Day 38 Evening Ledger
@@ -2171,29 +2154,27 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-119@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261206T063000
 DTEND:20261206T063500
-SUMMARY:Day 39 Morning: Don't demand trust
-DESCRIPTION:Week 6: Transparency. Trust is rebuilt on boring days.\n\nDon'
- t ask "When are you going to trust me?" Research on trust after deception 
- shows it comes back slowly and through actions\, not words. Whether she tr
- usts you is her decision. Being consistent is yours.\n\nBefore you go\, wr
- ite today's if-then: "If ___ happens\, then I'll say ___."\n\nWhy it works
- : Trust after lying comes back slowly\, through actions. Set your expectat
- ions: this is a long road\, and words won't carry you. Make small\, specif
- ic promises and keep them exactly (Day 40). Never demand trust (Day 39). (
- Schweitzer\, Hershey & Bradlow (2006)\, Organizational Behavior and Human 
- Decision Processes)
+SUMMARY:Day 39 Morning: Correct an old lie
+DESCRIPTION:Week 6: Hard Truths. Tell the truth where it costs the most.\n
+ \nPick one old lie that is still standing\, a small one\, and correct it: 
+ "I told you ___. That wasn't true. The truth is ___."\n\nBefore you go\, w
+ rite today's if-then: "If ___ happens\, then I'll say ___."\n\nWhy it work
+ s: Secrets weigh on you even when nobody is asking. The lies you're still 
+ standing behind cost you every day\, not just when you're questioned. That
+ 's why Week 6 has you start taking old lies down\, one at a time. (Slepian
+ \, Chun & Mason (2017)\, Journal of Personality and Social Psychology)
 BEGIN:VALARM
 ACTION:DISPLAY
-DESCRIPTION:Day 39 Morning: Don't demand trust
+DESCRIPTION:Day 39 Morning: Correct an old lie
 TRIGGER:PT0M
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-120@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261206T123000
 DTEND:20261206T123500
 SUMMARY:Day 39 Midday check
@@ -2207,18 +2188,18 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-121@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261206T210000
 DTEND:20261206T211000
 SUMMARY:Day 39 Evening Ledger
-DESCRIPTION:Tonight's question: What did you do today that she could check
-  for herself?\n\nTHE LEDGER (10 min)\n1. Lies told today (#): what\, to wh
- om\n2. Lies caught before I spoke (#)\n3. Corrections made (#)\n4. The tri
- gger: who\, where\, how tired I was\, and the fear (failure / rejection / 
- conflict / looking weak)\n5. The story in my head: "If I tell the truth\, 
- ___ will happen."\n6. What actually happened when I told the truth\n7. Tom
- orrow's risk moment\, written as an if-then: "If ___\, then I'll say ___."
- \n8. One line of prayer or thanks
+DESCRIPTION:Tonight's question: How did it feel to take one old lie down? 
+ Which one is next?\n\nTHE LEDGER (10 min)\n1. Lies told today (#): what\, 
+ to whom\n2. Lies caught before I spoke (#)\n3. Corrections made (#)\n4. Th
+ e trigger: who\, where\, how tired I was\, and the fear (failure / rejecti
+ on / conflict / looking weak)\n5. The story in my head: "If I tell the tru
+ th\, ___ will happen."\n6. What actually happened when I told the truth\n7
+ . Tomorrow's risk moment\, written as an if-then: "If ___\, then I'll say 
+ ___."\n8. One line of prayer or thanks
 BEGIN:VALARM
 ACTION:DISPLAY
 DESCRIPTION:Day 39 Evening Ledger
@@ -2227,26 +2208,27 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-122@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261207T063000
 DTEND:20261207T063500
-SUMMARY:Day 40 Morning: Keep one small promise
-DESCRIPTION:Week 6: Transparency. Trust is rebuilt on boring days.\n\nMake
-  one small\, specific promise with a time on it\, and keep it exactly.\n\n
+SUMMARY:Day 40 Morning: No covering lies
+DESCRIPTION:Week 6: Hard Truths. Tell the truth where it costs the most.\n
+ \nWhen an old lie comes up today\, don't tell a new lie to protect it. If 
+ you're not ready to correct it\, say nothing. Never add another layer.\n\n
  Before you go\, write today's if-then: "If ___ happens\, then I'll say ___
- ."\n\nWhy it works: If-then plans work. Every morning you write one if-the
- n plan for the day's risk moment: "If she asks about the money\, then I'll
-  say the real number." (Gollwitzer & Sheeran (2006)\, Advances in Experime
- ntal Social Psychology)
+ ."\n\nWhy it works: Small lies make bigger lies easier. There's no such th
+ ing as a harmless small lie for you. Every exaggeration trains the slope. 
+ That's why Day 20 is "No rounding up." (Garrett\, Lazzaro\, Ariely & Sharo
+ t (2016)\, Nature Neuroscience)
 BEGIN:VALARM
 ACTION:DISPLAY
-DESCRIPTION:Day 40 Morning: Keep one small promise
+DESCRIPTION:Day 40 Morning: No covering lies
 TRIGGER:PT0M
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-123@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261207T123000
 DTEND:20261207T123500
 SUMMARY:Day 40 Midday check
@@ -2260,18 +2242,18 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-124@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261207T210000
 DTEND:20261207T211000
 SUMMARY:Day 40 Evening Ledger
-DESCRIPTION:Tonight's question: Did you keep it\, on time? Small promises 
- kept are how your words become believable again.\n\nTHE LEDGER (10 min)\n1
- . Lies told today (#): what\, to whom\n2. Lies caught before I spoke (#)\n
- 3. Corrections made (#)\n4. The trigger: who\, where\, how tired I was\, a
- nd the fear (failure / rejection / conflict / looking weak)\n5. The story 
- in my head: "If I tell the truth\, ___ will happen."\n6. What actually hap
- pened when I told the truth\n7. Tomorrow's risk moment\, written as an if-
- then: "If ___\, then I'll say ___."\n8. One line of prayer or thanks
+DESCRIPTION:Tonight's question: Did an old lie come up? What did you do?\n
+ \nTHE LEDGER (10 min)\n1. Lies told today (#): what\, to whom\n2. Lies cau
+ ght before I spoke (#)\n3. Corrections made (#)\n4. The trigger: who\, whe
+ re\, how tired I was\, and the fear (failure / rejection / conflict / look
+ ing weak)\n5. The story in my head: "If I tell the truth\, ___ will happen
+ ."\n6. What actually happened when I told the truth\n7. Tomorrow's risk mo
+ ment\, written as an if-then: "If ___\, then I'll say ___."\n8. One line o
+ f prayer or thanks
 BEGIN:VALARM
 ACTION:DISPLAY
 DESCRIPTION:Day 40 Evening Ledger
@@ -2280,26 +2262,27 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-125@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261208T063000
 DTEND:20261208T063500
-SUMMARY:Day 41 Morning: Say the feeling
-DESCRIPTION:Week 6: Transparency. Trust is rebuilt on boring days.\n\nMany
-  lies stand in for feelings. Today\, say one feeling out loud: "I'm afraid
- ." "I'm embarrassed." "I'm stressed about money."\n\nBefore you go\, write
-  today's if-then: "If ___ happens\, then I'll say ___."\n\nWhy it works: W
- riting about hard things helps a little. The evening questions and letters
-  are writing exercises. They help\, but they're one tool among several\, n
- ot a cure. (Frattaroli (2006)\, Psychological Bulletin)
+SUMMARY:Day 41 Morning: Keep one small promise
+DESCRIPTION:Week 6: Hard Truths. Tell the truth where it costs the most.\n
+ \nMake one small\, specific promise with a time on it\, and keep it exactl
+ y.\n\nBefore you go\, write today's if-then: "If ___ happens\, then I'll s
+ ay ___."\n\nWhy it works: Trust after lying comes back slowly\, through ac
+ tions. Set your expectations: people believe you again slowly\, and words 
+ won't carry you. Answer fully the first time (Day 38) and keep small\, spe
+ cific promises exactly (Day 41). (Schweitzer\, Hershey & Bradlow (2006)\, 
+ Organizational Behavior and Human Decision Processes)
 BEGIN:VALARM
 ACTION:DISPLAY
-DESCRIPTION:Day 41 Morning: Say the feeling
+DESCRIPTION:Day 41 Morning: Keep one small promise
 TRIGGER:PT0M
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-126@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261208T123000
 DTEND:20261208T123500
 SUMMARY:Day 41 Midday check
@@ -2313,18 +2296,18 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-127@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261208T210000
 DTEND:20261208T211000
 SUMMARY:Day 41 Evening Ledger
-DESCRIPTION:Tonight's question: What feeling did you finally say? What hap
- pened next?\n\nTHE LEDGER (10 min)\n1. Lies told today (#): what\, to whom
- \n2. Lies caught before I spoke (#)\n3. Corrections made (#)\n4. The trigg
- er: who\, where\, how tired I was\, and the fear (failure / rejection / co
- nflict / looking weak)\n5. The story in my head: "If I tell the truth\, __
- _ will happen."\n6. What actually happened when I told the truth\n7. Tomor
- row's risk moment\, written as an if-then: "If ___\, then I'll say ___."\n
- 8. One line of prayer or thanks
+DESCRIPTION:Tonight's question: Did you keep it\, on time? Small promises 
+ kept are how your words become believable again.\n\nTHE LEDGER (10 min)\n1
+ . Lies told today (#): what\, to whom\n2. Lies caught before I spoke (#)\n
+ 3. Corrections made (#)\n4. The trigger: who\, where\, how tired I was\, a
+ nd the fear (failure / rejection / conflict / looking weak)\n5. The story 
+ in my head: "If I tell the truth\, ___ will happen."\n6. What actually hap
+ pened when I told the truth\n7. Tomorrow's risk moment\, written as an if-
+ then: "If ___\, then I'll say ___."\n8. One line of prayer or thanks
 BEGIN:VALARM
 ACTION:DISPLAY
 DESCRIPTION:Day 41 Evening Ledger
@@ -2333,20 +2316,17 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-128@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261209T063000
 DTEND:20261209T063500
 SUMMARY:Day 42 Morning: Week 6 review
-DESCRIPTION:Week 6: Transparency. Trust is rebuilt on boring days.\n\nAsk 
- your wife one question today\, and only if she's open to it: "What's one t
- hing that would help you feel safer with me this week?" Just listen.\n\nBe
- fore you go\, write today's if-then: "If ___ happens\, then I'll say ___."
- \n\nWhy it works: Couples therapy has tested models for repairing betrayal
- . Free and low-cost options come first: a church marriage ministry or marr
- iage workshop\, or a university training clinic. If you can afford it late
- r\, look for a couples therapist trained in EFT\, the Gottman Method or af
- fair recovery. (Makinen & Johnson (2006)\, Journal of Consulting and Clini
- cal Psychology\; Baucom\, Snyder & Gordon)
+DESCRIPTION:Week 6: Hard Truths. Tell the truth where it costs the most.\n
+ \nRead your list of truths you still owe.\n\nBefore you go\, write today's
+  if-then: "If ___ happens\, then I'll say ___."\n\nWhy it works: Tracking 
+ your behavior changes your behavior. The nightly ledger is the written rec
+ ord\, and the weekly review compares your numbers week to week. You can al
+ so enter your three numbers on each day in this guide. (Harkin et al. (201
+ 6)\, Psychological Bulletin)
 BEGIN:VALARM
 ACTION:DISPLAY
 DESCRIPTION:Day 42 Morning: Week 6 review
@@ -2355,7 +2335,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-129@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261209T123000
 DTEND:20261209T123500
 SUMMARY:Day 42 Midday check
@@ -2369,15 +2349,15 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-130@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261209T190000
 DTEND:20261209T192000
 SUMMARY:Week 6 review
 DESCRIPTION:WEEKLY REVIEW (20 min)\nAdd up this week's ledgers: lies told\
- , lies caught\, corrections made. Text the three numbers to your brother. 
- Share the week's patterns with your witness.\n\nNext week: A Man Whose Wor
- d Holds. You finish by deciding who you are\, planning for the day you sli
- p\, and choosing what keeps running after Day 49.
+ , lies caught\, corrections made. Compare them with last week. Find the si
+ tuation that beat you most\, and write a new if-then plan for it.\n\nNext 
+ week: A Man Whose Word Holds. You finish by deciding who you are\, plannin
+ g for the day you slip\, and choosing what keeps running after Day 49.
 BEGIN:VALARM
 ACTION:DISPLAY
 DESCRIPTION:Week 6 review
@@ -2386,18 +2366,18 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-131@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261209T210000
 DTEND:20261209T211000
 SUMMARY:Day 42 Evening Ledger
-DESCRIPTION:Tonight's question: Total the week and text your brother. What
-  did she tell you\, and what will you do about it?\n\nTHE LEDGER (10 min)\
- n1. Lies told today (#): what\, to whom\n2. Lies caught before I spoke (#)
- \n3. Corrections made (#)\n4. The trigger: who\, where\, how tired I was\,
-  and the fear (failure / rejection / conflict / looking weak)\n5. The stor
- y in my head: "If I tell the truth\, ___ will happen."\n6. What actually h
- appened when I told the truth\n7. Tomorrow's risk moment\, written as an i
- f-then: "If ___\, then I'll say ___."\n8. One line of prayer or thanks
+DESCRIPTION:Tonight's question: Total the week. Which hard truth did you t
+ ell this week that you couldn't have told on Day 1?\n\nTHE LEDGER (10 min)
+ \n1. Lies told today (#): what\, to whom\n2. Lies caught before I spoke (#
+ )\n3. Corrections made (#)\n4. The trigger: who\, where\, how tired I was\
+ , and the fear (failure / rejection / conflict / looking weak)\n5. The sto
+ ry in my head: "If I tell the truth\, ___ will happen."\n6. What actually 
+ happened when I told the truth\n7. Tomorrow's risk moment\, written as an 
+ if-then: "If ___\, then I'll say ___."\n8. One line of prayer or thanks
 BEGIN:VALARM
 ACTION:DISPLAY
 DESCRIPTION:Day 42 Evening Ledger
@@ -2406,7 +2386,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-132@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261210T063000
 DTEND:20261210T063500
 SUMMARY:Day 43 Morning: Your identity sentence
@@ -2414,10 +2394,10 @@ DESCRIPTION:Week 7: A Man Whose Word Holds. Not a streak. An identity.\n\n
  Rewrite your vision sentence: "I am a man who tells the truth when it cost
  s me." Read it three times this morning.\n\nBefore you go\, write today's 
  if-then: "If ___ happens\, then I'll say ___."\n\nWhy it works: Rememberin
- g your values makes you less defensive. Before a hard conversation with yo
- ur wife\, spend two minutes writing about why your faith or your children 
- matter to you. Then go listen. (Sherman & Cohen (2002)\, Current Direction
- s in Psychological Science)
+ g your values makes you less defensive. Before a hard truth\, spend two mi
+ nutes writing about what matters most to you: your faith\, your children\,
+  the man you've decided to be (Day 33). (Sherman & Cohen (2002)\, Current 
+ Directions in Psychological Science)
 BEGIN:VALARM
 ACTION:DISPLAY
 DESCRIPTION:Day 43 Morning: Your identity sentence
@@ -2426,7 +2406,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-133@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261210T123000
 DTEND:20261210T123500
 SUMMARY:Day 43 Midday check
@@ -2440,7 +2420,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-134@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261210T210000
 DTEND:20261210T211000
 SUMMARY:Day 43 Evening Ledger
@@ -2460,18 +2440,18 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-135@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261211T063000
 DTEND:20261211T063500
 SUMMARY:Day 44 Morning: Your warning signs
 DESCRIPTION:Week 7: A Man Whose Word Holds. Not a streak. An identity.\n\n
  Write your relapse warning signs: short on sleep\, stressed\, money troubl
- e\, isolated\, skipping the ledger\, keeping "small" secrets\, rounding up
-  again.\n\nBefore you go\, write today's if-then: "If ___ happens\, then I
- 'll say ___."\n\nWhy it works: Tired men have less self-control. Treat bei
- ng tired as a risk factor. Your evening ledger and your relapse warning si
- gns include sleep. (Barnes\, Schaubroeck\, Huth & Ghumman (2011)\, Organiz
- ational Behavior and Human Decision Processes)
+ e\, skipping the ledger\, keeping "small" secrets\, rounding up again.\n\n
+ Before you go\, write today's if-then: "If ___ happens\, then I'll say ___
+ ."\n\nWhy it works: Tired men have less self-control. Treat being tired as
+  a risk factor. Your evening ledger and your relapse warning signs include
+  sleep. (Barnes\, Schaubroeck\, Huth & Ghumman (2011)\, Organizational Beh
+ avior and Human Decision Processes)
 BEGIN:VALARM
 ACTION:DISPLAY
 DESCRIPTION:Day 44 Morning: Your warning signs
@@ -2480,7 +2460,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-136@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261211T123000
 DTEND:20261211T123500
 SUMMARY:Day 44 Midday check
@@ -2494,7 +2474,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-137@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261211T210000
 DTEND:20261211T211000
 SUMMARY:Day 44 Evening Ledger
@@ -2514,19 +2494,19 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-138@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261212T063000
 DTEND:20261212T063500
 SUMMARY:Day 45 Morning: Your relapse plan
 DESCRIPTION:Week 7: A Man Whose Word Holds. Not a streak. An identity.\n\n
  Write it and sign it: If I lie\, I will 1) correct it the same day\, 2) lo
- g it\, 3) write myself two honest\, kind sentences instead of tearing myse
- lf down\, 4) tell my brother within 24 hours\, 5) tell my witness at our n
- ext talk. I don't start over at Day 1.\n\nBefore you go\, write today's if
- -then: "If ___ happens\, then I'll say ___."\n\nWhy it works: A slip doesn
- 't have to become a relapse. If you lie\, you correct it\, log it\, tell y
- our brother\, and keep going. You never go back to Day 1. (Marlatt & Gordo
- n\, Relapse Prevention\; Larimer\, Palmer & Marlatt (1999))
+ g it honestly\, 3) write myself two honest\, kind sentences instead of tea
+ ring myself down\, 4) reread my if-then plans\, 5) keep going. I don't sta
+ rt over at Day 1.\n\nBefore you go\, write today's if-then: "If ___ happen
+ s\, then I'll say ___."\n\nWhy it works: A slip doesn't have to become a r
+ elapse. If you lie\, you correct it\, log it\, and keep going. You never g
+ o back to Day 1. (Marlatt & Gordon\, Relapse Prevention\; Larimer\, Palmer
+  & Marlatt (1999))
 BEGIN:VALARM
 ACTION:DISPLAY
 DESCRIPTION:Day 45 Morning: Your relapse plan
@@ -2535,7 +2515,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-139@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261212T123000
 DTEND:20261212T123500
 SUMMARY:Day 45 Midday check
@@ -2549,18 +2529,18 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-140@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261212T210000
 DTEND:20261212T211000
 SUMMARY:Day 45 Evening Ledger
-DESCRIPTION:Tonight's question: Who has a copy? Send it to your brother to
- night.\n\nTHE LEDGER (10 min)\n1. Lies told today (#): what\, to whom\n2. 
- Lies caught before I spoke (#)\n3. Corrections made (#)\n4. The trigger: w
- ho\, where\, how tired I was\, and the fear (failure / rejection / conflic
- t / looking weak)\n5. The story in my head: "If I tell the truth\, ___ wil
- l happen."\n6. What actually happened when I told the truth\n7. Tomorrow's
-  risk moment\, written as an if-then: "If ___\, then I'll say ___."\n8. On
- e line of prayer or thanks
+DESCRIPTION:Tonight's question: Where will you keep the plan so you see it
+  when you need it? Put it there tonight.\n\nTHE LEDGER (10 min)\n1. Lies t
+ old today (#): what\, to whom\n2. Lies caught before I spoke (#)\n3. Corre
+ ctions made (#)\n4. The trigger: who\, where\, how tired I was\, and the f
+ ear (failure / rejection / conflict / looking weak)\n5. The story in my he
+ ad: "If I tell the truth\, ___ will happen."\n6. What actually happened wh
+ en I told the truth\n7. Tomorrow's risk moment\, written as an if-then: "I
+ f ___\, then I'll say ___."\n8. One line of prayer or thanks
 BEGIN:VALARM
 ACTION:DISPLAY
 DESCRIPTION:Day 45 Evening Ledger
@@ -2569,27 +2549,27 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-141@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261213T063000
 DTEND:20261213T063500
-SUMMARY:Day 46 Morning: Teach it
+SUMMARY:Day 46 Morning: A full honest day
 DESCRIPTION:Week 7: A Man Whose Word Holds. Not a streak. An identity.\n\n
- How you handle your own mistakes teaches your kids how to handle theirs. A
- dmit a mistake in front of them today\, in a way that fits their age.\n\nB
- efore you go\, write today's if-then: "If ___ happens\, then I'll say ___.
- "\n\nWhy it works: Lying less goes with better health and relationships. T
- he payoff of this work isn't only your marriage. You should also start to 
- feel better. (Kelly & Wang (2012)\, American Psychological Association con
- vention)
+ Today is a test: go the whole day with zero lies. Use everything: the paus
+ e\, "I don't know\," your if-then plans\, the 60-second correction.\n\nBef
+ ore you go\, write today's if-then: "If ___ happens\, then I'll say ___."\
+ n\nWhy it works: If-then plans work. Every morning you write one if-then p
+ lan for the day's risk moment: "If she asks about the money\, then I'll sa
+ y the real number." (Gollwitzer & Sheeran (2006)\, Advances in Experimenta
+ l Social Psychology)
 BEGIN:VALARM
 ACTION:DISPLAY
-DESCRIPTION:Day 46 Morning: Teach it
+DESCRIPTION:Day 46 Morning: A full honest day
 TRIGGER:PT0M
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-142@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261213T123000
 DTEND:20261213T123500
 SUMMARY:Day 46 Midday check
@@ -2603,18 +2583,18 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-143@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261213T210000
 DTEND:20261213T211000
 SUMMARY:Day 46 Evening Ledger
-DESCRIPTION:Tonight's question: What do you want your children to learn ab
- out truth from watching you?\n\nTHE LEDGER (10 min)\n1. Lies told today (#
- ): what\, to whom\n2. Lies caught before I spoke (#)\n3. Corrections made 
- (#)\n4. The trigger: who\, where\, how tired I was\, and the fear (failure
-  / rejection / conflict / looking weak)\n5. The story in my head: "If I te
- ll the truth\, ___ will happen."\n6. What actually happened when I told th
- e truth\n7. Tomorrow's risk moment\, written as an if-then: "If ___\, then
-  I'll say ___."\n8. One line of prayer or thanks
+DESCRIPTION:Tonight's question: Did you make it? If not\, where did it bre
+ ak\, and what's the if-then for that moment?\n\nTHE LEDGER (10 min)\n1. Li
+ es told today (#): what\, to whom\n2. Lies caught before I spoke (#)\n3. C
+ orrections made (#)\n4. The trigger: who\, where\, how tired I was\, and t
+ he fear (failure / rejection / conflict / looking weak)\n5. The story in m
+ y head: "If I tell the truth\, ___ will happen."\n6. What actually happene
+ d when I told the truth\n7. Tomorrow's risk moment\, written as an if-then
+ : "If ___\, then I'll say ___."\n8. One line of prayer or thanks
 BEGIN:VALARM
 ACTION:DISPLAY
 DESCRIPTION:Day 46 Evening Ledger
@@ -2623,17 +2603,17 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-144@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261214T063000
 DTEND:20261214T063500
 SUMMARY:Day 47 Morning: What the truth gave you
 DESCRIPTION:Week 7: A Man Whose Word Holds. Not a streak. An identity.\n\n
- List five things that seven weeks of truth have given you.\n\nBefore you g
- o\, write today's if-then: "If ___ happens\, then I'll say ___."\n\nWhy it
-  works: Self-compassion makes men more likely to make amends. Beating your
- self up feeds shame\, and shame feeds hiding. After a slip\, you write you
- rself two honest\, kind sentences\, then you go fix it. (Breines & Chen (2
- 012)\, Personality and Social Psychology Bulletin)
+ List five things that seven weeks of telling the truth have given you.\n\n
+ Before you go\, write today's if-then: "If ___ happens\, then I'll say ___
+ ."\n\nWhy it works: Self-compassion makes men more likely to make amends. 
+ Beating yourself up feeds shame\, and shame feeds hiding. After a slip\, y
+ ou write yourself two honest\, kind sentences\, then you go fix it. (Brein
+ es & Chen (2012)\, Personality and Social Psychology Bulletin)
 BEGIN:VALARM
 ACTION:DISPLAY
 DESCRIPTION:Day 47 Morning: What the truth gave you
@@ -2642,7 +2622,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-145@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261214T123000
 DTEND:20261214T123500
 SUMMARY:Day 47 Midday check
@@ -2656,18 +2636,18 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-146@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261214T210000
 DTEND:20261214T211000
 SUMMARY:Day 47 Evening Ledger
-DESCRIPTION:Tonight's question: Thank your wife for one specific thing she
-  has done during this. Thank God for one too.\n\nTHE LEDGER (10 min)\n1. L
- ies told today (#): what\, to whom\n2. Lies caught before I spoke (#)\n3. 
- Corrections made (#)\n4. The trigger: who\, where\, how tired I was\, and 
- the fear (failure / rejection / conflict / looking weak)\n5. The story in 
- my head: "If I tell the truth\, ___ will happen."\n6. What actually happen
- ed when I told the truth\n7. Tomorrow's risk moment\, written as an if-the
- n: "If ___\, then I'll say ___."\n8. One line of prayer or thanks
+DESCRIPTION:Tonight's question: Thank God for one of them\, by name.\n\nTH
+ E LEDGER (10 min)\n1. Lies told today (#): what\, to whom\n2. Lies caught 
+ before I spoke (#)\n3. Corrections made (#)\n4. The trigger: who\, where\,
+  how tired I was\, and the fear (failure / rejection / conflict / looking 
+ weak)\n5. The story in my head: "If I tell the truth\, ___ will happen."\n
+ 6. What actually happened when I told the truth\n7. Tomorrow's risk moment
+ \, written as an if-then: "If ___\, then I'll say ___."\n8. One line of pr
+ ayer or thanks
 BEGIN:VALARM
 ACTION:DISPLAY
 DESCRIPTION:Day 47 Evening Ledger
@@ -2676,18 +2656,18 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-147@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261215T063000
 DTEND:20261215T063500
 SUMMARY:Day 48 Morning: Your ongoing system
 DESCRIPTION:Week 7: A Man Whose Word Holds. Not a streak. An identity.\n\n
- Decide what keeps running after Day 49. Keep: the nightly ledger\, the wee
- kly review\, a weekly text to your brother\, and regular talks with your w
- itness or your group. Optional: the midday check.\n\nBefore you go\, write
-  today's if-then: "If ___ happens\, then I'll say ___."\n\nWhy it works: T
- racking your behavior changes your behavior. The nightly ledger is the wri
- tten record. The weekly text with your numbers to your accountability brot
- her is the reporting. (Harkin et al. (2016)\, Psychological Bulletin)
+ Decide what keeps running after Day 49. Keep: the nightly ledger and the w
+ eekly review. Optional: the morning if-then and the midday check.\n\nBefor
+ e you go\, write today's if-then: "If ___ happens\, then I'll say ___."\n\
+ nWhy it works: You can do CBT on your own. Doing it alone works if you kee
+ p showing up. The daily reminders and the nightly ledger are your structur
+ e. The biggest risk is quitting\, so the plan is built around never missin
+ g two nights in a row. (Karyotaki et al. (2017)\, JAMA Psychiatry)
 BEGIN:VALARM
 ACTION:DISPLAY
 DESCRIPTION:Day 48 Morning: Your ongoing system
@@ -2696,7 +2676,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-148@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261215T123000
 DTEND:20261215T123500
 SUMMARY:Day 48 Midday check
@@ -2710,7 +2690,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-149@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261215T210000
 DTEND:20261215T211000
 SUMMARY:Day 48 Evening Ledger
@@ -2730,7 +2710,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-150@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261216T063000
 DTEND:20261216T063500
 SUMMARY:Day 49 Morning: Day 49
@@ -2749,7 +2729,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-151@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261216T123000
 DTEND:20261216T123500
 SUMMARY:Day 49 Midday check
@@ -2763,14 +2743,14 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-152@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261216T190000
 DTEND:20261216T192000
 SUMMARY:Week 7 review
 DESCRIPTION:WEEKLY REVIEW (20 min)\nAdd up this week's ledgers: lies told\
- , lies caught\, corrections made. Text the three numbers to your brother. 
- Share the week's patterns with your witness.\n\nYou made it to Day 49. Dec
- ide what keeps running from here.
+ , lies caught\, corrections made. Compare them with last week. Find the si
+ tuation that beat you most\, and write a new if-then plan for it.\n\nYou m
+ ade it to Day 49. Decide what keeps running from here.
 BEGIN:VALARM
 ACTION:DISPLAY
 DESCRIPTION:Week 7 review
@@ -2779,19 +2759,18 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-153@bethemansystem.com
-DTSTAMP:20261028T233011Z
+DTSTAMP:20261028T233650Z
 DTSTART:20261216T210000
 DTEND:20261216T211000
 SUMMARY:Day 49 Evening Ledger
 DESCRIPTION:Tonight's question: Write a letter to the man who started on D
- ay 1. Then tell your wife one thing you've learned about yourself.\n\nTHE 
- LEDGER (10 min)\n1. Lies told today (#): what\, to whom\n2. Lies caught be
- fore I spoke (#)\n3. Corrections made (#)\n4. The trigger: who\, where\, h
- ow tired I was\, and the fear (failure / rejection / conflict / looking we
- ak)\n5. The story in my head: "If I tell the truth\, ___ will happen."\n6.
-  What actually happened when I told the truth\n7. Tomorrow's risk moment\,
-  written as an if-then: "If ___\, then I'll say ___."\n8. One line of pray
- er or thanks
+ ay 1. What does he need to know?\n\nTHE LEDGER (10 min)\n1. Lies told toda
+ y (#): what\, to whom\n2. Lies caught before I spoke (#)\n3. Corrections m
+ ade (#)\n4. The trigger: who\, where\, how tired I was\, and the fear (fai
+ lure / rejection / conflict / looking weak)\n5. The story in my head: "If 
+ I tell the truth\, ___ will happen."\n6. What actually happened when I tol
+ d the truth\n7. Tomorrow's risk moment\, written as an if-then: "If ___\, 
+ then I'll say ___."\n8. One line of prayer or thanks
 BEGIN:VALARM
 ACTION:DISPLAY
 DESCRIPTION:Day 49 Evening Ledger
