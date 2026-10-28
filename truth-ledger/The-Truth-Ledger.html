@@ -1,11 +1,12 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>The Truth Ledger</title>
+<meta charset="utf-8"><meta name="claude:viewport-fit-sides" content="cover">
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;700&family=Lora:ital,wght@1,500&family=Inter:wght@400;600&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#0B0B0C;--panel:#141416;--ink:#F2EEE6;--em:#E18B1F;--soft:#BFBCB6;--mute:#8C877E;--rule:#2a2925}
+:root{--bg:#0B0B0C;--panel:#141416;--ink:#F2EEE6;--em:#E18B1F;--soft:#BFBCB6;--mute:#8C877E;--rule:#2a2925;color-scheme:dark}
 *{box-sizing:border-box}html{scroll-behavior:smooth}
 body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.6 Inter,system-ui,sans-serif}
-.wrap{max-width:760px;margin:0 auto;padding:0 16px 80px}
+.wrap{max-width:760px;margin:0 auto;padding-block:0 80px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
 .brand{font:500 13px Oswald;letter-spacing:.32em;text-transform:uppercase;color:var(--soft);padding:28px 0 0}
 .brand b{color:var(--em)}
 .hero{padding:56px 0 40px;border-bottom:2px solid var(--em)}
@@ -35,7 +36,7 @@ cite{display:block;font:500 12px Oswald;letter-spacing:.2em;text-transform:upper
 .day.today{border-color:var(--em)}.day.done{opacity:.55}
 .check input{position:absolute;opacity:0}.check span{display:block;width:24px;height:24px;border:2px solid var(--mute);margin-top:2px;cursor:pointer}
 .check input:checked+span{background:var(--em);border-color:var(--em)}.check input:focus-visible+span{outline:2px solid var(--ink)}
-.bar{position:sticky;top:0;z-index:5;background:rgba(11,11,12,.94);border-bottom:1px solid var(--rule);padding:8px 16px;display:flex;gap:6px 12px;align-items:center;flex-wrap:wrap;font-size:13px;color:var(--soft)}
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:rgba(11,11,12,.94);border-bottom:1px solid var(--rule);padding-block:8px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;gap:6px 12px;align-items:center;flex-wrap:wrap;font-size:13px;color:var(--soft)}
 .bar input{background:var(--panel);color:var(--ink);border:1px solid var(--rule);padding:6px 8px;font:inherit}
 .bar a,.btn{background:var(--em);color:var(--bg);font:700 13px Oswald;letter-spacing:.08em;text-transform:uppercase;padding:6px 12px;text-decoration:none}
 #status{color:var(--ink)}
@@ -49,7 +50,7 @@ cite{display:block;font:500 12px Oswald;letter-spacing:.2em;text-transform:upper
 .legend{font-size:14px;color:var(--soft);line-height:2.2}
 footer{margin-top:64px;padding-top:24px;border-top:2px solid var(--em);color:var(--mute);font-size:14px}
 @media print{.bar{display:none}body{background:#fff;color:#000}.day,.note,.lines li,.rhythm div,pre{background:#f4f1ea}}
-</style></head><body>
+</style>
 <div class="bar"><label>Day 1 is <input type="date" id="start"></label><span id="status"></span><a href="#" id="jump">Go to today</a></div>
 <div class="wrap">
 <p class="brand"><b>■</b> Be The Man</p>
@@ -406,7 +407,7 @@ footer{margin-top:64px;padding-top:24px;border-top:2px solid var(--em);color:var
 
 <h2 id="setup">Set up the reminders</h2>
 <ol>
-<li>Download <b>install-truth-ledger.command</b> to your Mac's Downloads folder.</li>
+<li>Save <b>install-truth-ledger.command</b> from your Claude chat to your Mac's Downloads folder.</li>
 <li>Open Terminal and run: <code>bash ~/Downloads/install-truth-ledger.command</code> (add <code>today</code> at the end to make today Day 1).</li>
 <li>Allow Terminal to control Reminders when your Mac asks.</li>
 <li>Check that the list syncs to your iPhone: Settings &rarr; your name &rarr; iCloud &rarr; Reminders is on.</li>
@@ -432,4 +433,4 @@ footer{margin-top:64px;padding-top:24px;border-top:2px solid var(--em);color:var
   jump.addEventListener('click',function(ev){ev.preventDefault();var n=Math.min(Math.max(today(),1),49);document.getElementById('day-'+n).scrollIntoView({block:'center'})});
   paint();
 })();
-</script></body></html>
+</script>
