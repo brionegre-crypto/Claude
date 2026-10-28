@@ -1,0 +1,301 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Truth Ledger</title>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;700&family=Lora:ital,wght@1,500&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0B0B0C;--panel:#141416;--ink:#F2EEE6;--em:#E18B1F;--soft:#BFBCB6;--mute:#8C877E;--rule:#2a2925}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.6 Inter,system-ui,sans-serif}
+.wrap{max-width:760px;margin:0 auto;padding:0 16px 80px}
+.brand{font:500 13px Oswald;letter-spacing:.32em;text-transform:uppercase;color:var(--soft);padding:28px 0 0}
+.brand b{color:var(--em)}
+.hero{padding:56px 0 40px;border-bottom:2px solid var(--em)}
+h1,h2,h3,h4{font-family:Oswald;text-transform:uppercase;line-height:1;margin:0}
+h1{font-size:clamp(48px,12vw,88px);font-weight:700}h2{font-size:34px;margin:56px 0 16px}h3{font-size:40px;margin:4px 0 8px}h4{font-size:20px;margin:2px 0 8px;letter-spacing:.02em}
+.label,.dnum{font:500 13px Oswald;letter-spacing:.24em;text-transform:uppercase;color:var(--em);margin:0}
+.serif{font-family:Lora;font-style:italic;color:var(--soft)}.big{font-size:22px;margin:0 0 12px}
+.hero .serif{font-size:24px;margin:18px 0 0}
+.note{background:var(--panel);border-left:3px solid var(--em);padding:16px 20px;margin:24px 0;color:var(--soft);font-size:15px}
+.note b{color:var(--ink)}
+ol,ul{padding-left:22px}li{margin:6px 0}
+.lines{display:grid;gap:12px;counter-reset:l;padding:0;list-style:none}
+.lines li{background:var(--panel);padding:16px 18px 16px 64px;position:relative;margin:0}
+.lines li:before{counter-increment:l;content:counter(l);position:absolute;left:18px;top:8px;font:700 38px Oswald;color:var(--em)}
+.rhythm{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px}
+.rhythm div{background:var(--panel);padding:16px}.rhythm strong{display:block;font:700 22px Oswald;color:var(--em)}
+.rhythm span{font-size:14px;color:var(--soft)}
+table{width:100%;border-collapse:collapse;font-size:15px}td{padding:10px 8px;border-bottom:1px solid var(--rule);vertical-align:top}
+td:first-child{color:var(--mute);width:38%}
+pre{background:var(--panel);padding:16px;white-space:pre-wrap;font:14px/1.6 'IBM Plex Mono',ui-monospace,monospace;color:var(--soft)}
+blockquote{margin:16px 0 24px;padding:0 0 0 16px;border-left:2px solid var(--rule);font-family:Lora;font-style:italic;color:var(--soft)}
+cite{display:block;font:500 12px Oswald;letter-spacing:.2em;text-transform:uppercase;color:var(--mute);margin-top:6px;font-style:normal}
+.day,.week{scroll-margin-top:100px}
+.week{border-top:1px solid var(--rule);padding-top:40px;margin-top:40px}
+.day{display:flex;gap:14px;padding:16px;margin:10px 0;background:var(--panel);border:1px solid transparent}
+.day p{margin:4px 0;font-size:15.5px}.day b{color:var(--em);font-weight:600}
+.day.today{border-color:var(--em)}.day.done{opacity:.55}
+.check input{position:absolute;opacity:0}.check span{display:block;width:24px;height:24px;border:2px solid var(--mute);margin-top:2px;cursor:pointer}
+.check input:checked+span{background:var(--em);border-color:var(--em)}.check input:focus-visible+span{outline:2px solid var(--ink)}
+.bar{position:sticky;top:0;z-index:5;background:rgba(11,11,12,.94);border-bottom:1px solid var(--rule);padding:8px 16px;display:flex;gap:6px 12px;align-items:center;flex-wrap:wrap;font-size:13px;color:var(--soft)}
+.bar input{background:var(--panel);color:var(--ink);border:1px solid var(--rule);padding:6px 8px;font:inherit}
+.bar a,.btn{background:var(--em);color:var(--bg);font:700 13px Oswald;letter-spacing:.08em;text-transform:uppercase;padding:6px 12px;text-decoration:none}
+#status{color:var(--ink)}
+footer{margin-top:64px;padding-top:24px;border-top:2px solid var(--em);color:var(--mute);font-size:14px}
+@media print{.bar{display:none}body{background:#fff;color:#000}.day,.note,.lines li,.rhythm div,pre{background:#f4f1ea}}
+</style></head><body>
+<div class="bar"><label>Day 1 is <input type="date" id="start"></label><span id="status"></span><a href="#" id="jump">Go to today</a></div>
+<div class="wrap">
+<p class="brand"><b>■</b> Be The Man</p>
+<header class="hero"><p class="label">A Be The Man daily system</p><h1>The Truth<br>Ledger</h1>
+<p class="serif">49 days to become a man whose word holds.</p></header>
+
+<div class="note"><b>Read this first.</b> This guide is built on the methods counselors use for compulsive lying: tracking the behavior (CBT), finding the fear that drives it, building a pause, practicing small truths (exposure), repair, and relapse planning. It is a daily structure, not therapy. Do it <b>alongside</b> a licensed counselor; booking one is on Day 3. If you ever feel hopeless or think about harming yourself, call or text <b>988</b> (Suicide &amp; Crisis Lifeline, US).</div>
+
+<h2>Tonight: Day 0</h2>
+<p>Don't wait for Monday. Do these five things before you sleep.</p>
+<ol><li>Write one sentence: &quot;I am a man whose word holds, even when the truth costs me.&quot;</li><li>Count honestly: roughly how many lies did you tell this week? Write the number.</li><li>Find 2 or 3 licensed counselors and write their names. You&#x27;ll book one by Day 3.</li><li>Choose your accountability brother and text him: &quot;I&#x27;m working on something. Can I send you my numbers once a week?&quot;</li><li>If she&#x27;s open to it, tell your wife: &quot;I&#x27;ve lied to you, and it comes from fear. I&#x27;m not asking you to trust me. I&#x27;ve started daily work and I&#x27;m booking a counselor this week. You&#x27;ll see it, not just hear it.&quot;</li></ol>
+<p class="serif">Then do not tell another lie tonight.</p>
+
+<h2>The three lines</h2>
+<ol class="lines">
+<li><b>No new lies.</b> When the alarm goes off in your body, pause. Three seconds and one breath, then a true sentence.</li>
+<li><b>Correct it fast.</b> If one gets out, fix it within 60 seconds, or the same day at the latest: “Actually, that's not true.”</li>
+<li><b>Log every one, every night.</b> Being honest with the ledger is the first honesty. A ledger with a lie in it is worthless.</li>
+</ol>
+
+<h2>The daily rhythm</h2>
+<div class="rhythm">
+<div><strong>6:30 AM</strong>Morning · 2 min<br><span>Read your sentence and today's focus. Name today's risk moment and the true sentence you'll say.</span></div>
+<div><strong>12:30 PM</strong>Midday · 60 sec<br><span>Anything to correct since morning? Fix it before 5 PM.</span></div>
+<div><strong>9:00 PM</strong>Evening Ledger · 10 min<br><span>Fill in the ledger and answer tonight's question.</span></div>
+<div><strong>Every 7th day</strong>7:00 PM · 20 min<br><span>Add up the week. Text your brother the three numbers.</span></div>
+</div>
+
+<h2>The pause: true sentences to use</h2>
+<p>A lie fills a silence. Have true sentences ready so you have something else to say.</p>
+<table><tr><td>When the urge hits</td><td>“Give me a second. I want to answer that honestly.”</td></tr><tr><td>When you don&#x27;t know</td><td>“I don&#x27;t know.” / “I&#x27;m not sure. Let me check and tell you.”</td></tr><tr><td>When you didn&#x27;t do it</td><td>“I didn&#x27;t do it yet. I&#x27;ll have it done by ___.”</td></tr><tr><td>When you failed</td><td>“I messed that up. Here&#x27;s what I&#x27;m doing about it.”</td></tr><tr><td>When it already slipped out</td><td>“Actually, that&#x27;s not true. The truth is ___.”</td></tr><tr><td>When you&#x27;re ashamed</td><td>“I&#x27;m embarrassed to tell you this, but…”</td></tr><tr><td>When she asks and you need time</td><td>“I&#x27;ll answer that fully. Give me until tonight.” Then answer it tonight.</td></tr></table>
+
+<h2>The evening ledger</h2>
+<p>Use the Notes app or a paper notebook, one page per night. Numbers matter. Over 49 days you should see lies told go down while lies caught and corrections go up.</p>
+<pre>THE LEDGER (10 min)
+1. Lies told today (#): what, to whom
+2. Lies caught before I spoke (#)
+3. Corrections made (#)
+4. The trigger: who, where, and the fear (failure / rejection / conflict / looking weak)
+5. The story in my head: &quot;If I tell the truth, ___ will happen.&quot;
+6. What actually happened when I told the truth
+7. Tomorrow&#x27;s risk moment and the true sentence I&#x27;ll say
+8. One line of prayer or thanks</pre>
+
+<h2>With your wife</h2>
+<ul>
+<li><b>Don't dump everything in a panic tonight.</b> A rushed, emotional confession usually comes out in pieces and causes more damage. Plan the full truth with your counselor (Week 5).</li>
+<li><b>Don't add any new lies.</b> If she asks you something directly, don't lie. If you need time: “I'll answer that fully. I want to do it right, with the counselor.” Then follow through.</li>
+<li><b>No trickle truth.</b> Telling the truth a little at a time, each time you're caught, breaks trust again every time. One full disclosure is far better.</li>
+<li><b>Don't ask for trust. Earn it.</b> Never ask “When will you trust me?” Give her things she can check: kept promises, open access, your weekly numbers if she wants them.</li>
+<li><b>Her pain isn't an attack.</b> Stay in the room, listen, and don't argue about the details.</li>
+<li><b>Consider couples counseling</b> once your own work has started. Your counselor can tell you when.</li>
+</ul>
+
+<section class="week" id="week-1">
+  <p class="label">Week 1</p><h3>See It</h3><p class="serif big">You can&#x27;t fix what you won&#x27;t count.</p>
+  <p>Compulsive lying runs on autopilot. This week you don&#x27;t fix anything; you turn the lights on. Counting is the first honest thing you do.</p><blockquote>“Whoever conceals their sins does not prosper, but the one who confesses and renounces them finds mercy.” <cite>Proverbs 28:13</cite></blockquote>
+  <article class="day" id="day-1" data-day="1">
+  <label class="check"><input type="checkbox" data-day="1"><span></span></label>
+  <div><p class="dnum">Day 1</p><h4>The count begins</h4>
+  <p><b>Morning.</b> Today you only count. Every lie, every exaggeration, every &quot;yeah, I did&quot; that wasn&#x27;t true. No fixing, no beating yourself up. Keep a tally in your phone notes as it happens.</p><p><b>Tonight.</b> How many did you log? Which one surprised you most, and why?</p></div></article><article class="day" id="day-2" data-day="2">
+  <label class="check"><input type="checkbox" data-day="2"><span></span></label>
+  <div><p class="dnum">Day 2</p><h4>Name the kind</h4>
+  <p><b>Morning.</b> Tag each lie today by type. COVER: hiding a mistake. INFLATE: looking better than you are. SMOOTH: avoiding conflict. AUTO: no reason at all, it just came out.</p><p><b>Tonight.</b> Which type showed up most? What does that tell you that you&#x27;re protecting?</p></div></article><article class="day" id="day-3" data-day="3">
+  <label class="check"><input type="checkbox" data-day="3"><span></span></label>
+  <div><p class="dnum">Day 3</p><h4>Book the counselor</h4>
+  <p><b>Morning.</b> Action before noon: book a licensed counselor (LPC, LMFT or psychologist) who works with shame, anxiety or couples. Ask your pastor for a referral or search a directory. Put the first appointment on your calendar.</p><p><b>Tonight.</b> Is it booked? If not, what did you tell yourself about why not, and was that true?</p></div></article><article class="day" id="day-4" data-day="4">
+  <label class="check"><input type="checkbox" data-day="4"><span></span></label>
+  <div><p class="dnum">Day 4</p><h4>Who gets the lies</h4>
+  <p><b>Morning.</b> Notice who you lie to most. Write their names as it happens: wife, boss, kids, friends, parents, yourself.</p><p><b>Tonight.</b> Who is it hardest to tell the truth to? What do you fear they&#x27;ll think of you?</p></div></article><article class="day" id="day-5" data-day="5">
+  <label class="check"><input type="checkbox" data-day="5"><span></span></label>
+  <div><p class="dnum">Day 5</p><h4>The alarm in your body</h4>
+  <p><b>Morning.</b> Notice what your body does right before a lie: tight chest, hot face, dry throat, talking faster. That feeling is your alarm. Learn it today.</p><p><b>Tonight.</b> Describe your alarm. How many seconds were there between the alarm and the lie?</p></div></article><article class="day" id="day-6" data-day="6">
+  <label class="check"><input type="checkbox" data-day="6"><span></span></label>
+  <div><p class="dnum">Day 6</p><h4>The cost</h4>
+  <p><b>Morning.</b> Write a specific list of what lying has cost you: trust, peace, money, time, intimacy, sleep, respect for yourself. Names and moments, not general ideas.</p><p><b>Tonight.</b> Which cost are you no longer willing to pay?</p></div></article><article class="day" id="day-7" data-day="7">
+  <label class="check"><input type="checkbox" data-day="7"><span></span></label>
+  <div><p class="dnum">Day 7 · Review</p><h4>Week 1 review</h4>
+  <p><b>Morning.</b> Tonight is your first weekly review. Today, keep counting. Also pick your accountability brother: one man you will text your numbers to every week.</p><p><b>Tonight.</b> Total the week: lies told, caught, corrected. Text your brother the three numbers with no excuses attached. What pattern do you see?</p></div></article></section><section class="week" id="week-2">
+  <p class="label">Week 2</p><h3>The Fear Underneath</h3><p class="serif big">Every lie is protecting something.</p>
+  <p>You told us why you lie: fear of failing and fear of not being accepted. This week you find exactly where those fears live and what they&#x27;ve been buying you.</p><blockquote>“There is no fear in love. But perfect love drives out fear.” <cite>1 John 4:18</cite></blockquote>
+  <article class="day" id="day-8" data-day="8">
+  <label class="check"><input type="checkbox" data-day="8"><span></span></label>
+  <div><p class="dnum">Day 8</p><h4>The fear of failing</h4>
+  <p><b>Morning.</b> Each time you feel the urge to lie today, ask yourself: &quot;Am I hiding that I failed?&quot;</p><p><b>Tonight.</b> What failure are you most ashamed for people to see? Where did you learn that failing makes you less of a man?</p></div></article><article class="day" id="day-9" data-day="9">
+  <label class="check"><input type="checkbox" data-day="9"><span></span></label>
+  <div><p class="dnum">Day 9</p><h4>The fear of not being accepted</h4>
+  <p><b>Morning.</b> Each time the urge hits, ask yourself: &quot;Am I trying to be liked right now?&quot;</p><p><b>Tonight.</b> Finish this sentence ten times without stopping: &quot;If they knew the real me, they would...&quot;</p></div></article><article class="day" id="day-10" data-day="10">
+  <label class="check"><input type="checkbox" data-day="10"><span></span></label>
+  <div><p class="dnum">Day 10</p><h4>Where it started</h4>
+  <p><b>Morning.</b> At some point today, think back to the first time you remember lying to stay safe. Who were you protecting yourself from?</p><p><b>Tonight.</b> Write that boy a short letter. What did he need to hear that he never heard? Bring it to your counselor.</p></div></article><article class="day" id="day-11" data-day="11">
+  <label class="check"><input type="checkbox" data-day="11"><span></span></label>
+  <div><p class="dnum">Day 11</p><h4>Shame vs. guilt</h4>
+  <p><b>Morning.</b> Guilt says &quot;I did something wrong.&quot; Shame says &quot;I am wrong.&quot; Shame drives lies. Catch shame talk in your head today and write it down.</p><p><b>Tonight.</b> Rewrite one shame sentence as a guilt sentence: &quot;I did ___, and I can make it right by ___.&quot;</p></div></article><article class="day" id="day-12" data-day="12">
+  <label class="check"><input type="checkbox" data-day="12"><span></span></label>
+  <div><p class="dnum">Day 12</p><h4>The story in your head</h4>
+  <p><b>Morning.</b> Before one hard truth today, write your prediction first: &quot;If I say it, ___ will happen.&quot; Then say it.</p><p><b>Tonight.</b> Did the prediction come true? Score it: worse, the same, or better than you predicted.</p></div></article><article class="day" id="day-13" data-day="13">
+  <label class="check"><input type="checkbox" data-day="13"><span></span></label>
+  <div><p class="dnum">Day 13</p><h4>What lying pays you</h4>
+  <p><b>Morning.</b> Be honest: lying pays. It buys relief, approval, time and escape. Each time today, name the payoff you were after.</p><p><b>Tonight.</b> Which payoff will you have to grieve to give this up?</p></div></article><article class="day" id="day-14" data-day="14">
+  <label class="check"><input type="checkbox" data-day="14"><span></span></label>
+  <div><p class="dnum">Day 14 · Review</p><h4>Week 2 review: your Fear Map</h4>
+  <p><b>Morning.</b> Today, draw your Fear Map: your top three fears, the lie each one produces, and the truth each one avoids. Bring it to counseling.</p><p><b>Tonight.</b> Total the week and text your brother. Compare it with Week 1. Which fear on the map is running your life the most?</p></div></article></section><section class="week" id="week-3">
+  <p class="label">Week 3</p><h3>The Pause</h3><p class="serif big">Lies are fast. Truth needs three seconds.</p>
+  <p>The lie usually leaves your mouth before you&#x27;ve decided anything. This week you build the gap between the urge and the words, and you fill it with true sentences you&#x27;ve written ahead of time.</p><blockquote>“Everyone should be quick to listen, slow to speak and slow to become angry.” <cite>James 1:19</cite></blockquote>
+  <article class="day" id="day-15" data-day="15">
+  <label class="check"><input type="checkbox" data-day="15"><span></span></label>
+  <div><p class="dnum">Day 15</p><h4>The three-second pause</h4>
+  <p><b>Morning.</b> Practice the sequence: alarm, breath, &quot;Give me a second.&quot; Use it at least once today, even in a conversation that&#x27;s easy.</p><p><b>Tonight.</b> How many times did you pause? What happened in those three seconds?</p></div></article><article class="day" id="day-16" data-day="16">
+  <label class="check"><input type="checkbox" data-day="16"><span></span></label>
+  <div><p class="dnum">Day 16</p><h4>&quot;I don&#x27;t know&quot;</h4>
+  <p><b>Morning.</b> Say &quot;I don&#x27;t know&quot; or &quot;I&#x27;m not sure&quot; at least once today instead of filling the silence with something you made up.</p><p><b>Tonight.</b> How did it feel not to have an answer? Did anyone actually think less of you?</p></div></article><article class="day" id="day-17" data-day="17">
+  <label class="check"><input type="checkbox" data-day="17"><span></span></label>
+  <div><p class="dnum">Day 17</p><h4>The 60-second correction</h4>
+  <p><b>Morning.</b> If a lie slips out, correct it inside a minute: &quot;Actually, that&#x27;s not true. The truth is ___.&quot; Fast correction beats a perfect record.</p><p><b>Tonight.</b> Did you correct one? If not, which lie from today can you still correct tomorrow? Put it on tomorrow&#x27;s list.</p></div></article><article class="day" id="day-18" data-day="18">
+  <label class="check"><input type="checkbox" data-day="18"><span></span></label>
+  <div><p class="dnum">Day 18</p><h4>Write your scripts</h4>
+  <p><b>Morning.</b> Write five true sentences for your five most common lie situations (&quot;Did you finish it?&quot; &quot;Where were you?&quot; &quot;How much did it cost?&quot;). Save them in your phone.</p><p><b>Tonight.</b> Which script is hardest to say out loud? Say it out loud right now, three times.</p></div></article><article class="day" id="day-19" data-day="19">
+  <label class="check"><input type="checkbox" data-day="19"><span></span></label>
+  <div><p class="dnum">Day 19</p><h4>Slow down</h4>
+  <p><b>Morning.</b> In every hard conversation today, speak about 20% slower. Rushing feeds lies.</p><p><b>Tonight.</b> Where did slowing down change what came out of your mouth?</p></div></article><article class="day" id="day-20" data-day="20">
+  <label class="check"><input type="checkbox" data-day="20"><span></span></label>
+  <div><p class="dnum">Day 20</p><h4>No rounding up</h4>
+  <p><b>Morning.</b> Today, nothing gets inflated: not numbers, times, effort or stories. Exact is the goal.</p><p><b>Tonight.</b> Where did you want to round up? Who were you trying to be in that moment?</p></div></article><article class="day" id="day-21" data-day="21">
+  <label class="check"><input type="checkbox" data-day="21"><span></span></label>
+  <div><p class="dnum">Day 21 · Review</p><h4>Week 3 review</h4>
+  <p><b>Morning.</b> Read your scripts once this morning. Ask your counselor whether it&#x27;s time to let your wife see your weekly numbers.</p><p><b>Tonight.</b> Total the week and text your brother. Is your pause count going up while your lie count goes down?</p></div></article></section><section class="week" id="week-4">
+  <p class="label">Week 4</p><h3>Small Truths, Out Loud</h3><p class="serif big">Courage is a muscle. Train it light first.</p>
+  <p>Counselors call this exposure: you practice the thing you fear in small, planned steps until your body learns that the truth doesn&#x27;t kill you.</p><blockquote>“Therefore each of you must put off falsehood and speak truthfully to your neighbor.” <cite>Ephesians 4:25</cite></blockquote>
+  <article class="day" id="day-22" data-day="22">
+  <label class="check"><input type="checkbox" data-day="22"><span></span></label>
+  <div><p class="dnum">Day 22</p><h4>Build your truth ladder</h4>
+  <p><b>Morning.</b> List ten truths you&#x27;ve been avoiding, from easiest (&quot;I&#x27;m running late&quot;) to hardest. Today, tell the easiest one.</p><p><b>Tonight.</b> Rate your fear from 0 to 10 before you said it and after. What changed?</p></div></article><article class="day" id="day-23" data-day="23">
+  <label class="check"><input type="checkbox" data-day="23"><span></span></label>
+  <div><p class="dnum">Day 23</p><h4>Disappoint someone on purpose</h4>
+  <p><b>Morning.</b> Say one honest &quot;no&quot; or &quot;I can&#x27;t&quot; today with no made-up excuse attached.</p><p><b>Tonight.</b> What happened? Did the relationship survive the truth?</p></div></article><article class="day" id="day-24" data-day="24">
+  <label class="check"><input type="checkbox" data-day="24"><span></span></label>
+  <div><p class="dnum">Day 24</p><h4>Admit it first</h4>
+  <p><b>Morning.</b> Before anyone finds out, admit one small mistake today: &quot;That was me. I&#x27;ll fix it.&quot;</p><p><b>Tonight.</b> How did it land? Compare what it cost with what you feared it would cost.</p></div></article><article class="day" id="day-25" data-day="25">
+  <label class="check"><input type="checkbox" data-day="25"><span></span></label>
+  <div><p class="dnum">Day 25</p><h4>Money and work</h4>
+  <p><b>Morning.</b> Money and work attract lies. Tell one true thing today about money or work that you&#x27;ve been fudging.</p><p><b>Tonight.</b> What&#x27;s still hidden in money or work that needs to come out? Write it down for your counselor.</p></div></article><article class="day" id="day-26" data-day="26">
+  <label class="check"><input type="checkbox" data-day="26"><span></span></label>
+  <div><p class="dnum">Day 26</p><h4>Climb a rung</h4>
+  <p><b>Morning.</b> Tell rung three or four of your ladder today.</p><p><b>Tonight.</b> Rate your fear before and after. What&#x27;s getting easier?</p></div></article><article class="day" id="day-27" data-day="27">
+  <label class="check"><input type="checkbox" data-day="27"><span></span></label>
+  <div><p class="dnum">Day 27</p><h4>Take the reaction</h4>
+  <p><b>Morning.</b> When a truth gets a reaction today (frustration, hurt, silence), don&#x27;t defend, explain or lie again. Say: &quot;You&#x27;re right to feel that.&quot;</p><p><b>Tonight.</b> Where did you want to defend yourself? What did you do instead?</p></div></article><article class="day" id="day-28" data-day="28">
+  <label class="check"><input type="checkbox" data-day="28"><span></span></label>
+  <div><p class="dnum">Day 28 · Review</p><h4>Week 4 review</h4>
+  <p><b>Morning.</b> Look at your ladder. Mark every rung you&#x27;ve climbed.</p><p><b>Tonight.</b> Total the week and text your brother. Which truth did you think would wreck you but didn&#x27;t?</p></div></article></section><section class="week" id="week-5">
+  <p class="label">Week 5</p><h3>Repair</h3><p class="serif big">Telling the truth is the start. Repair is the work.</p>
+  <p>This is the week the work turns toward your wife. It is done carefully, with your counselor, and never in pieces.</p><blockquote>“Therefore confess your sins to each other and pray for each other so that you may be healed.” <cite>James 5:16</cite></blockquote>
+  <article class="day" id="day-29" data-day="29">
+  <label class="check"><input type="checkbox" data-day="29"><span></span></label>
+  <div><p class="dnum">Day 29</p><h4>The inventory</h4>
+  <p><b>Morning.</b> Start a private, written inventory of the lies that have affected your wife. Facts only, no excuses. It&#x27;s for your counselor first. This is not a midnight confession.</p><p><b>Tonight.</b> What&#x27;s the hardest item on the list? What do you fear will happen if she knows it?</p></div></article><article class="day" id="day-30" data-day="30">
+  <label class="check"><input type="checkbox" data-day="30"><span></span></label>
+  <div><p class="dnum">Day 30</p><h4>No trickle truth</h4>
+  <p><b>Morning.</b> Know this: telling the truth in pieces, a little more each time you&#x27;re caught, does more damage than the original lie. Ask your counselor to help you plan one full, honest disclosure.</p><p><b>Tonight.</b> Have you asked your counselor about disclosure? If not, when exactly will you?</p></div></article><article class="day" id="day-31" data-day="31">
+  <label class="check"><input type="checkbox" data-day="31"><span></span></label>
+  <div><p class="dnum">Day 31</p><h4>Her side</h4>
+  <p><b>Morning.</b> Today, try to see it from her side. What has it been like to live with a man whose word she couldn&#x27;t count on?</p><p><b>Tonight.</b> Write one page in her voice about what she has felt. Don&#x27;t send it. Read it twice.</p></div></article><article class="day" id="day-32" data-day="32">
+  <label class="check"><input type="checkbox" data-day="32"><span></span></label>
+  <div><p class="dnum">Day 32</p><h4>A real apology</h4>
+  <p><b>Morning.</b> A real apology has five parts: what I did, how it hurt you, no excuses, what I&#x27;m doing about it, and no demand to be forgiven. Draft one.</p><p><b>Tonight.</b> Read your draft and delete every &quot;but,&quot; &quot;if&quot; and &quot;I was just.&quot; What&#x27;s left?</p></div></article><article class="day" id="day-33" data-day="33">
+  <label class="check"><input type="checkbox" data-day="33"><span></span></label>
+  <div><p class="dnum">Day 33</p><h4>Answer the whole question</h4>
+  <p><b>Morning.</b> When she asks you something, answer it fully the first time. If you need time: &quot;I&#x27;ll answer that fully. Give me until tonight.&quot; Then do it.</p><p><b>Tonight.</b> Did you answer anything only partway today? Finish it.</p></div></article><article class="day" id="day-34" data-day="34">
+  <label class="check"><input type="checkbox" data-day="34"><span></span></label>
+  <div><p class="dnum">Day 34</p><h4>Repair with action</h4>
+  <p><b>Morning.</b> Pick one lie you can repair with action: return the money, keep the promise, finish the task. Do it today.</p><p><b>Tonight.</b> What did the repair cost you? Was it worth it?</p></div></article><article class="day" id="day-35" data-day="35">
+  <label class="check"><input type="checkbox" data-day="35"><span></span></label>
+  <div><p class="dnum">Day 35 · Review</p><h4>Week 5 review</h4>
+  <p><b>Morning.</b> Check with your counselor: are you ready for disclosure, and what&#x27;s the plan?</p><p><b>Tonight.</b> Total the week and text your brother. What has repair taught you that confession alone couldn&#x27;t?</p></div></article></section><section class="week" id="week-6">
+  <p class="label">Week 6</p><h3>Transparency</h3><p class="serif big">Trust is rebuilt on boring days.</p>
+  <p>She can&#x27;t trust your words yet, so give her things she can check. Trust comes back through small, verifiable, repeated evidence.</p><blockquote>“Whoever can be trusted with very little can also be trusted with much.” <cite>Luke 16:10</cite></blockquote>
+  <article class="day" id="day-36" data-day="36">
+  <label class="check"><input type="checkbox" data-day="36"><span></span></label>
+  <div><p class="dnum">Day 36</p><h4>Get ahead of it</h4>
+  <p><b>Morning.</b> Tell her something before she asks: your schedule, a purchase, a mistake.</p><p><b>Tonight.</b> What did you volunteer? How did it feel to be ahead of the truth instead of behind it?</p></div></article><article class="day" id="day-37" data-day="37">
+  <label class="check"><input type="checkbox" data-day="37"><span></span></label>
+  <div><p class="dnum">Day 37</p><h4>Open book</h4>
+  <p><b>Morning.</b> Offer access without being asked: phone, accounts, calendar, whatever was hidden before. Offer it as evidence, not as punishment.</p><p><b>Tonight.</b> What are you still keeping in a back room?</p></div></article><article class="day" id="day-38" data-day="38">
+  <label class="check"><input type="checkbox" data-day="38"><span></span></label>
+  <div><p class="dnum">Day 38</p><h4>Her anger isn&#x27;t the enemy</h4>
+  <p><b>Morning.</b> If she&#x27;s hurt or angry today, it&#x27;s the cost of what happened, not an attack on you. Stay in the room, listen, and don&#x27;t argue about the facts.</p><p><b>Tonight.</b> Did you stay? At what moment did you want to leave?</p></div></article><article class="day" id="day-39" data-day="39">
+  <label class="check"><input type="checkbox" data-day="39"><span></span></label>
+  <div><p class="dnum">Day 39</p><h4>Don&#x27;t demand trust</h4>
+  <p><b>Morning.</b> Don&#x27;t ask &quot;When are you going to trust me?&quot; Whether she trusts you is her decision. Being consistent is yours.</p><p><b>Tonight.</b> What did you do today that she could check for herself?</p></div></article><article class="day" id="day-40" data-day="40">
+  <label class="check"><input type="checkbox" data-day="40"><span></span></label>
+  <div><p class="dnum">Day 40</p><h4>Keep one small promise</h4>
+  <p><b>Morning.</b> Make one small, specific promise with a time on it, and keep it exactly.</p><p><b>Tonight.</b> Did you keep it, on time? Small promises kept are how your words become believable again.</p></div></article><article class="day" id="day-41" data-day="41">
+  <label class="check"><input type="checkbox" data-day="41"><span></span></label>
+  <div><p class="dnum">Day 41</p><h4>Say the feeling</h4>
+  <p><b>Morning.</b> Many lies stand in for feelings. Today, say one feeling out loud: &quot;I&#x27;m afraid.&quot; &quot;I&#x27;m embarrassed.&quot; &quot;I&#x27;m stressed about money.&quot;</p><p><b>Tonight.</b> What feeling did you finally say? What happened next?</p></div></article><article class="day" id="day-42" data-day="42">
+  <label class="check"><input type="checkbox" data-day="42"><span></span></label>
+  <div><p class="dnum">Day 42 · Review</p><h4>Week 6 review</h4>
+  <p><b>Morning.</b> Ask your wife one question today, and only if she&#x27;s open to it: &quot;What&#x27;s one thing that would help you feel safer with me this week?&quot; Just listen.</p><p><b>Tonight.</b> Total the week and text your brother. What did she tell you, and what will you do about it?</p></div></article></section><section class="week" id="week-7">
+  <p class="label">Week 7</p><h3>A Man Whose Word Holds</h3><p class="serif big">Not a streak. An identity.</p>
+  <p>You finish by deciding who you are, planning for the day you slip, and choosing what keeps running after Day 49.</p><blockquote>“All you need to say is simply &#x27;Yes&#x27; or &#x27;No.&#x27;” <cite>Matthew 5:37</cite></blockquote>
+  <article class="day" id="day-43" data-day="43">
+  <label class="check"><input type="checkbox" data-day="43"><span></span></label>
+  <div><p class="dnum">Day 43</p><h4>Your identity sentence</h4>
+  <p><b>Morning.</b> Rewrite your vision sentence: &quot;I am a man who tells the truth when it costs me.&quot; Read it three times this morning.</p><p><b>Tonight.</b> Where did you live that sentence today?</p></div></article><article class="day" id="day-44" data-day="44">
+  <label class="check"><input type="checkbox" data-day="44"><span></span></label>
+  <div><p class="dnum">Day 44</p><h4>Your warning signs</h4>
+  <p><b>Morning.</b> Write your relapse warning signs: tired, stressed, money trouble, isolated, skipping the ledger, keeping &quot;small&quot; secrets.</p><p><b>Tonight.</b> Which warning sign is showing right now?</p></div></article><article class="day" id="day-45" data-day="45">
+  <label class="check"><input type="checkbox" data-day="45"><span></span></label>
+  <div><p class="dnum">Day 45</p><h4>Your relapse plan</h4>
+  <p><b>Morning.</b> Write it and sign it: If I lie, I will 1) correct it the same day, 2) log it, 3) tell my brother within 24 hours, 4) bring it to counseling.</p><p><b>Tonight.</b> Who has a copy? Send it to your brother tonight.</p></div></article><article class="day" id="day-46" data-day="46">
+  <label class="check"><input type="checkbox" data-day="46"><span></span></label>
+  <div><p class="dnum">Day 46</p><h4>Teach it</h4>
+  <p><b>Morning.</b> How you handle your own mistakes teaches your kids how to handle theirs. Admit a mistake in front of them today, in a way that fits their age.</p><p><b>Tonight.</b> What do you want your children to learn about truth from watching you?</p></div></article><article class="day" id="day-47" data-day="47">
+  <label class="check"><input type="checkbox" data-day="47"><span></span></label>
+  <div><p class="dnum">Day 47</p><h4>What the truth gave you</h4>
+  <p><b>Morning.</b> List five things that seven weeks of truth have given you.</p><p><b>Tonight.</b> Thank your wife for one specific thing she has done during this. Thank God for one too.</p></div></article><article class="day" id="day-48" data-day="48">
+  <label class="check"><input type="checkbox" data-day="48"><span></span></label>
+  <div><p class="dnum">Day 48</p><h4>Your ongoing system</h4>
+  <p><b>Morning.</b> Decide what keeps running after Day 49. Keep: the nightly ledger, the Sunday review, counseling until your counselor says otherwise, and a weekly text to your brother. Optional: the midday check.</p><p><b>Tonight.</b> Set those reminders for the next 90 days before you sleep.</p></div></article><article class="day" id="day-49" data-day="49">
+  <label class="check"><input type="checkbox" data-day="49"><span></span></label>
+  <div><p class="dnum">Day 49 · Review</p><h4>Day 49</h4>
+  <p><b>Morning.</b> Read your Day 1 numbers this morning.</p><p><b>Tonight.</b> Write a letter to the man who started on Day 1. Then tell your wife one thing you&#x27;ve learned about yourself.</p></div></article></section>
+
+<h2>If you lie (and on some day you will)</h2>
+<p>A slip isn't a relapse. Hiding the slip is the relapse.</p>
+<ol><li>Correct it the same day.</li><li>Log it honestly tonight.</li><li>Tell your brother within 24 hours.</li><li>Bring it to counseling.</li><li>Start the next day where you are. Don't go back to Day 1.</li></ol>
+
+<h2>Set up the reminders</h2>
+<ol>
+<li>Download <b>install-truth-ledger.command</b> to your Mac's Downloads folder.</li>
+<li>Open Terminal and run: <code>bash ~/Downloads/install-truth-ledger.command</code> (add <code>today</code> at the end to make today Day 1).</li>
+<li>Allow Terminal to control Reminders when your Mac asks.</li>
+<li>Check that the list syncs to your iPhone: Settings &rarr; your name &rarr; iCloud &rarr; Reminders is on.</li>
+</ol>
+<p>No Mac nearby? Open <b>Truth-Ledger.ics</b> on your iPhone to add the same schedule to Calendar, with alerts.</p>
+
+<footer><p class="serif">Break the cycle. Build the system. Be the man.</p><p>The Truth Ledger · a Be The Man daily system · bethemansystem.com</p></footer>
+</div>
+<script>
+(function(){
+  var S={get:function(k){try{return localStorage.getItem(k)}catch(e){return null}},set:function(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
+  var start=document.getElementById('start'),status=document.getElementById('status'),jump=document.getElementById('jump');
+  var iso=function(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
+  var t=new Date();t.setDate(t.getDate()+1);
+  start.value=S.get('tl-start')||iso(t);
+  function today(){var p=start.value.split('-');var d0=new Date(p[0],p[1]-1,p[2]);var n=new Date();n.setHours(0,0,0,0);return Math.round((n-d0)/864e5)+1}
+  function paint(){var n=today();document.querySelectorAll('.day').forEach(function(el){el.classList.toggle('today',+el.dataset.day===n)});
+    var done=document.querySelectorAll('.day input:checked').length;
+    status.textContent=(n<1?'Starts in '+(1-n)+' day'+(n===0?'':'s')+'. Tonight is Day 0.':n>49?'49 days complete.':'Today is Day '+n+'.')+' '+done+'/49 done';}
+  document.querySelectorAll('.day input').forEach(function(c){c.checked=S.get('tl-d'+c.dataset.day)==='1';c.closest('.day').classList.toggle('done',c.checked);
+    c.addEventListener('change',function(){S.set('tl-d'+c.dataset.day,c.checked?'1':'0');c.closest('.day').classList.toggle('done',c.checked);paint()})});
+  start.addEventListener('change',function(){S.set('tl-start',start.value);paint()});
+  jump.addEventListener('click',function(ev){ev.preventDefault();var n=Math.min(Math.max(today(),1),49);document.getElementById('day-'+n).scrollIntoView({block:'center'})});
+  paint();
+})();
+</script></body></html>
