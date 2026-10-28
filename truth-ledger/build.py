@@ -8,9 +8,9 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 TONIGHT = ("TONIGHT, BEFORE YOU SLEEP (30 min)\n"
            "1. Write one sentence: \"I am a man whose word holds, even when the truth costs me.\"\n"
            "2. Count honestly: roughly how many lies did you tell this week? Write the number.\n"
-           "3. Find 2 or 3 licensed counselors and write their names. You'll book one by Day 3.\n"
-           "4. Choose your accountability brother and text him: \"I'm working on something. Can I send you my numbers once a week?\"\n"
-           "5. If she's open to it, tell your wife: \"I've lied to you, and it comes from fear. I'm not asking you to trust me. I've started daily work and I'm booking a counselor this week. You'll see it, not just hear it.\"\n"
+           "3. Write two names: one man to be your accountability brother, and a pastor or older man you respect to be your witness. You'll ask them by Day 3.\n"
+           "4. Text your brother now: \"I'm working on something. Can I send you my numbers once a week?\"\n"
+           "5. If she's open to it, tell your wife: \"I've lied to you, and it comes from fear. I'm not asking you to trust me. I've started daily work and I'm getting men around me to hold me to it. You'll see it, not just hear it.\"\n"
            "Then do not tell another lie tonight.")
 
 def week_of(i): return WEEKS[i // 7]
@@ -27,7 +27,7 @@ def items():
         if d % 7 == 0:
             nxt = WEEKS[w['n']] if w['n'] < 7 else None
             body = ("WEEKLY REVIEW (20 min)\nAdd up this week's ledgers: lies told, lies caught, corrections made. "
-                    "Text the three numbers to your brother. Bring the week's patterns to counseling.")
+                    "Text the three numbers to your brother. Share the week's patterns with your witness.")
             body += f"\n\nNext week: {nxt['name']}. {nxt['why']}" if nxt else "\n\nYou made it to Day 49. Decide what keeps running from here."
             out.append((d, "review", f"Week {w['n']} review", body))
         out.append((d, "evening", f"Day {d} Evening Ledger",

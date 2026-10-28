@@ -32,7 +32,7 @@ def build(path):
   <p>{e(w['why'])}</p><blockquote>“{e(w['verse'])}” <cite>{e(w['ref'])}</cite></blockquote>
   {''.join(days)}</section>''')
 
-    order = ["curtis", "prolific", "selfpres", "escalate", "track", "ifthen", "hrt", "pause", "exposure", "shame",
+    order = ["curtis", "selfhelp", "prolific", "selfpres", "escalate", "track", "ifthen", "hrt", "pause", "exposure", "shame",
              "compassion", "lapse", "affirm", "secrets", "expressive", "sleep", "kelly", "trust", "disclosure", "couples"]
     assert sorted(order) == sorted(SCIENCE)
     cards = ''.join(f'''<article class="sci" id="sci-{k}"><p class="badge b-{SCIENCE[k]['strength'].lower()}">{SCIENCE[k]['strength']} evidence</p>
@@ -89,6 +89,7 @@ cite{{display:block;font:500 12px Oswald;letter-spacing:.2em;text-transform:uppe
 .badge{{display:inline-block;font:500 11px Oswald;letter-spacing:.18em;text-transform:uppercase;padding:3px 8px;margin:0}}
 .b-strong{{background:var(--em);color:var(--bg)}}.b-moderate{{border:1px solid var(--em);color:var(--em)}}.b-early{{border:1px solid var(--mute);color:var(--soft)}}
 .sci .badge{{margin-bottom:10px}}
+.h3s{{font-size:22px;margin:28px 0 8px;color:var(--em)}}
 .legend{{font-size:14px;color:var(--soft);line-height:2.2}}
 footer{{margin-top:64px;padding-top:24px;border-top:2px solid var(--em);color:var(--mute);font-size:14px}}
 @media print{{.bar{{display:none}}body{{background:#fff;color:#000}}.day,.note,.lines li,.rhythm div,pre{{background:#f4f1ea}}}}
@@ -99,9 +100,9 @@ footer{{margin-top:64px;padding-top:24px;border-top:2px solid var(--em);color:va
 <header class="hero"><p class="label">A Be The Man daily system</p><h1>The Truth<br>Ledger</h1>
 <p class="serif">49 days to become a man whose word holds.</p></header>
 
-<nav class="toc"><a href="#tonight">Tonight</a><a href="#rhythm">Daily rhythm</a><a href="#science">The science</a><a href="#counselor">Choosing a counselor</a><a href="#week-1">The 49 days</a><a href="#relapse">If you lie</a><a href="#setup">Reminders</a></nav>
+<nav class="toc"><a href="#tonight">Tonight</a><a href="#rhythm">Daily rhythm</a><a href="#science">The science</a><a href="#corner">Your corner</a><a href="#disclosure">Disclosure plan</a><a href="#week-1">The 49 days</a><a href="#relapse">If you lie</a><a href="#setup">Reminders</a></nav>
 
-<div class="note"><b>Read this first.</b> Researchers who study pathological lying say plainly that no proven treatment exists yet, and they point to cognitive behavioral therapy (CBT) as the best place to start. So this guide is built from CBT methods with strong evidence for similar problems: tracking the behavior, if-then plans, habit reversal, exposure, relapse prevention, and research on shame, self-compassion and rebuilding trust. Every day links to the study behind it, rated honestly as Strong, Moderate or Early. It is a daily structure, not therapy. Do it <b>alongside</b> a licensed counselor; booking one is on Day 3. If you ever feel hopeless or think about harming yourself, call or text <b>988</b> (Suicide &amp; Crisis Lifeline, US).</div>
+<div class="note"><b>Read this first.</b> This is built for men who can't afford a counselor. Researchers who study pathological lying say no proven treatment exists yet, and they point to cognitive behavioral therapy (CBT) as the best place to start. Reviews of many studies show that guided self-help CBT can work about as well as seeing a therapist, as long as another person is helping you stay with it. So this guide gives you the CBT methods with the strongest evidence (tracking, if-then plans, habit reversal, exposure, relapse prevention), and it puts men in your corner to keep you honest. Every day links to the study behind it, rated honestly as Strong, Moderate or Early. If free or low-cost professional help becomes available to you, take it. If you ever feel hopeless or think about harming yourself, call or text <b>988</b> (Suicide &amp; Crisis Lifeline, US).</div>
 
 <h2 id="tonight">Tonight: Day 0</h2>
 <p>Don't wait for Monday. Do these five things before you sleep.</p>
@@ -133,12 +134,12 @@ footer{{margin-top:64px;padding-top:24px;border-top:2px solid var(--em);color:va
 
 <h2>With your wife</h2>
 <ul>
-<li><b>Don't dump everything in a panic tonight.</b> A rushed, emotional confession usually comes out in pieces and causes more damage. Plan the full truth with your counselor (Week 5).</li>
-<li><b>Don't add any new lies.</b> If she asks you something directly, don't lie. If you need time: “I'll answer that fully. I want to do it right, with the counselor.” Then follow through.</li>
+<li><b>Don't dump everything in a panic tonight.</b> A rushed, emotional confession usually comes out in pieces and causes more damage. Plan the full truth with your witness, using the disclosure plan (Week 5).</li>
+<li><b>Don't add any new lies.</b> If she asks you something directly, don't lie. If you need time: “I'll answer that fully. I want to do it right, and I'm preparing to.” Then follow through.</li>
 <li><b>No trickle truth.</b> Telling the truth a little at a time, each time you're caught, breaks trust again every time. One full disclosure is far better.</li>
 <li><b>Don't ask for trust. Earn it.</b> Never ask “When will you trust me?” Give her things she can check: kept promises, open access, your weekly numbers if she wants them.</li>
 <li><b>Her pain isn't an attack.</b> Stay in the room, listen, and don't argue about the details.</li>
-<li><b>Consider couples counseling</b> once your own work has started. Your counselor can tell you when.</li>
+<li><b>Encourage her to have support of her own:</b> a trusted friend, a pastor's wife or a women's group. She shouldn't have to carry this alone either.</li>
 </ul>
 
 <h2 id="science">The science behind the system</h2>
@@ -146,21 +147,54 @@ footer{{margin-top:64px;padding-top:24px;border-top:2px solid var(--em);color:va
 <p class="legend"><span class="badge b-strong">Strong</span> reviews of many experiments &nbsp; <span class="badge b-moderate">Moderate</span> solid studies, or a proven method borrowed from a related problem &nbsp; <span class="badge b-early">Early</span> small, mixed or unpublished evidence</p>
 {cards}
 
-<h2 id="counselor">Choosing a counselor</h2>
-<p>Because there's no proven treatment for compulsive lying yet, the counselor you choose matters. Look for:</p>
+<h2 id="corner">Your corner (no cost)</h2>
+<p>Self-help works when someone is helping you stay with it. You need three kinds of support, and none of them costs money.</p>
+<table>
+<tr><td>Your brother</td><td>One man who gets your three numbers every week: lies told, lies caught, corrections made. He doesn't fix you. He just asks, every week.</td></tr>
+<tr><td>Your witness</td><td>Your pastor or an older man you respect, who can keep a confidence. He hears your inventory before your wife does, checks it for anything missing, minimized or blamed on someone else, and helps you prepare. Meet him about every two weeks.</td></tr>
+<tr><td>Your group</td><td>A free group that meets weekly, if one is near you. Celebrate Recovery is a free Christian recovery program open to anyone with \u201churts, habits and hang-ups\u201d (find one at celebraterecovery.com). A church men's group also works.</td></tr>
+</table>
+<p class="serif">Choose men who will tell you the truth. A man who only makes you feel better isn't in your corner.</p>
+
+<h3 class="h3s">If you can get professional help, here's where it's free or cheap</h3>
 <ul>
-<li><b>A licensed clinician:</b> a psychologist, LPC or LMFT. If your faith matters to you, look for one who is licensed and also comfortable working with Christian clients.</li>
-<li><b>CBT-based methods,</b> including exposure and behavioral experiments. Ask: \u201cHow would you treat lying that feels automatic and is driven by fear of failure and rejection?\u201d</li>
-<li><b>A real assessment.</b> Ask them to check whether anxiety, depression, ADHD, trauma or something else is feeding the lying. Treating that can make everything else easier.</li>
-<li><b>Later, a couples therapist</b> trained in Emotionally Focused Therapy (EFT), the Gottman Method or affair-recovery work, when your counselor says it's time.</li>
-<li><b>Bring this guide.</b> Show them your ledger numbers and ask them to adjust the plan to fit you.</li>
+<li><b>Employee Assistance Program (EAP):</b> many employers offer a few free, confidential counseling sessions, often around six a year, and often for spouses too. Check your benefits or HR page, or your wife's.</li>
+<li><b>University training clinics:</b> graduate students supervised by licensed psychologists. Fees are often on a sliding scale, from about $5 to $50 a session.</li>
+<li><b>Open Path Collective</b> (openpathcollective.org): therapists who charge $40 to $70 a session after a one-time membership fee.</li>
+<li><b>Community mental health centers:</b> often charge based on income. Call or text <b>211</b> to find one near you.</li>
+<li><b>Free CBT workbooks:</b> the Centre for Clinical Interventions (cci.health.wa.gov.au) publishes free workbooks on self-esteem and self-compassion, written by clinicians.</li>
 </ul>
+<p>Even one or two sessions are worth it. Use them to check whether anxiety, depression, ADHD or past trauma is feeding the lying, and to review your disclosure plan.</p>
+
+<h2 id="disclosure">The disclosure plan</h2>
+<p>This is how you tell your wife the full truth once, without a therapist in the room. Do it in Week 5 or later, never in a panic.</p>
+<h3 class="h3s">Before</h3>
+<ol>
+<li><b>Write the full inventory.</b> Every lie that affected her: what, when, and what was really true. Facts only. No reasons, no excuses, no \u201cbut you\u2026\u201d</li>
+<li><b>Read it to your witness.</b> His job is to ask you three questions: Is anything missing? Is anything made smaller than it was? Is anything blamed on someone else? Fix it until the answer to all three is no.</li>
+<li><b>Ask her, don't spring it on her.</b> \u201cI want to tell you the whole truth, all of it, one time. When would be a good time for you?\u201d She chooses the time. Pick somewhere private, with no kids around and nothing scheduled after.</li>
+<li><b>Make sure she has support lined up</b> for afterward: a friend, a pastor's wife or a women's group.</li>
+</ol>
+<h3 class="h3s">During</h3>
+<ol>
+<li><b>Read it as written.</b> Don't paraphrase, and don't soften it as you go.</li>
+<li><b>Answer every question truthfully,</b> including \u201cIs there anything else?\u201d If there is, say so now. Something new coming out later is what destroys trust.</li>
+<li><b>Don't defend, explain or ask for anything.</b> Don't ask for forgiveness, and don't ask her to calm down. Her reaction is hers.</li>
+<li><b>If she needs to stop, stop.</b> Agree on when you'll continue.</li>
+</ol>
+<h3 class="h3s">After</h3>
+<ol>
+<li>Give her the written copy if she wants it.</li>
+<li>Have a follow-up talk two or three days later, when she chooses. Expect questions for weeks, and answer every one fully the first time.</li>
+<li>Keep doing the ledger. From here on, the evidence she sees every day matters more than anything you said.</li>
+</ol>
+<div class="note"><b>Wait, and get outside help first, if:</b> anyone in the home is at risk of violence, or the truth involves something illegal or a danger to someone. In that case, call or text 211 for local help first. If you or she ever thinks about self-harm, call or text <b>988</b>.</div>
 
 {''.join(weeks)}
 
 <h2 id="relapse">If you lie (and on some day you will)</h2>
 <p>A slip isn't a relapse. Hiding the slip is the relapse. Research on relapse shows that the \u201cI've blown it, what's the use\u201d thought after one slip is what turns it into a full return to the old pattern.</p>
-<ol><li>Correct it the same day.</li><li>Log it honestly tonight.</li><li>Write yourself two honest, kind sentences. Don't tear yourself down: shame makes men hide.</li><li>Tell your brother within 24 hours.</li><li>Bring it to counseling.</li><li>Start the next day where you are. Don't go back to Day 1.</li></ol>
+<ol><li>Correct it the same day.</li><li>Log it honestly tonight.</li><li>Write yourself two honest, kind sentences. Don't tear yourself down: shame makes men hide.</li><li>Tell your brother within 24 hours.</li><li>Tell your witness at your next talk.</li><li>Start the next day where you are. Don't go back to Day 1.</li></ol>
 
 <h2 id="setup">Set up the reminders</h2>
 <ol>
