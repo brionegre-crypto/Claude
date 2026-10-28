@@ -39,6 +39,14 @@ cite{display:block;font:500 12px Oswald;letter-spacing:.2em;text-transform:upper
 .bar input{background:var(--panel);color:var(--ink);border:1px solid var(--rule);padding:6px 8px;font:inherit}
 .bar a,.btn{background:var(--em);color:var(--bg);font:700 13px Oswald;letter-spacing:.08em;text-transform:uppercase;padding:6px 12px;text-decoration:none}
 #status{color:var(--ink)}
+.toc{display:flex;flex-wrap:wrap;gap:8px;margin:28px 0 0}.toc a{font:500 12px Oswald;letter-spacing:.14em;text-transform:uppercase;color:var(--soft);border:1px solid var(--rule);padding:6px 10px;text-decoration:none}
+.why{margin-top:8px!important}.why a{color:var(--soft);font-size:14px;text-decoration:none;border-bottom:1px solid var(--rule)}
+.sci{background:var(--panel);padding:18px;margin:12px 0;scroll-margin-top:100px}.sci p{margin:6px 0;font-size:15.5px}.sci b{color:var(--em);font-weight:600}
+.src{font-size:13.5px!important;color:var(--mute)}.src a{color:var(--soft)}
+.badge{display:inline-block;font:500 11px Oswald;letter-spacing:.18em;text-transform:uppercase;padding:3px 8px;margin:0}
+.b-strong{background:var(--em);color:var(--bg)}.b-moderate{border:1px solid var(--em);color:var(--em)}.b-early{border:1px solid var(--mute);color:var(--soft)}
+.sci .badge{margin-bottom:10px}
+.legend{font-size:14px;color:var(--soft);line-height:2.2}
 footer{margin-top:64px;padding-top:24px;border-top:2px solid var(--em);color:var(--mute);font-size:14px}
 @media print{.bar{display:none}body{background:#fff;color:#000}.day,.note,.lines li,.rhythm div,pre{background:#f4f1ea}}
 </style></head><body>
@@ -48,9 +56,11 @@ footer{margin-top:64px;padding-top:24px;border-top:2px solid var(--em);color:var
 <header class="hero"><p class="label">A Be The Man daily system</p><h1>The Truth<br>Ledger</h1>
 <p class="serif">49 days to become a man whose word holds.</p></header>
 
-<div class="note"><b>Read this first.</b> This guide is built on the methods counselors use for compulsive lying: tracking the behavior (CBT), finding the fear that drives it, building a pause, practicing small truths (exposure), repair, and relapse planning. It is a daily structure, not therapy. Do it <b>alongside</b> a licensed counselor; booking one is on Day 3. If you ever feel hopeless or think about harming yourself, call or text <b>988</b> (Suicide &amp; Crisis Lifeline, US).</div>
+<nav class="toc"><a href="#tonight">Tonight</a><a href="#rhythm">Daily rhythm</a><a href="#science">The science</a><a href="#counselor">Choosing a counselor</a><a href="#week-1">The 49 days</a><a href="#relapse">If you lie</a><a href="#setup">Reminders</a></nav>
 
-<h2>Tonight: Day 0</h2>
+<div class="note"><b>Read this first.</b> Researchers who study pathological lying say plainly that no proven treatment exists yet, and they point to cognitive behavioral therapy (CBT) as the best place to start. So this guide is built from CBT methods with strong evidence for similar problems: tracking the behavior, if-then plans, habit reversal, exposure, relapse prevention, and research on shame, self-compassion and rebuilding trust. Every day links to the study behind it, rated honestly as Strong, Moderate or Early. It is a daily structure, not therapy. Do it <b>alongside</b> a licensed counselor; booking one is on Day 3. If you ever feel hopeless or think about harming yourself, call or text <b>988</b> (Suicide &amp; Crisis Lifeline, US).</div>
+
+<h2 id="tonight">Tonight: Day 0</h2>
 <p>Don't wait for Monday. Do these five things before you sleep.</p>
 <ol><li>Write one sentence: &quot;I am a man whose word holds, even when the truth costs me.&quot;</li><li>Count honestly: roughly how many lies did you tell this week? Write the number.</li><li>Find 2 or 3 licensed counselors and write their names. You&#x27;ll book one by Day 3.</li><li>Choose your accountability brother and text him: &quot;I&#x27;m working on something. Can I send you my numbers once a week?&quot;</li><li>If she&#x27;s open to it, tell your wife: &quot;I&#x27;ve lied to you, and it comes from fear. I&#x27;m not asking you to trust me. I&#x27;ve started daily work and I&#x27;m booking a counselor this week. You&#x27;ll see it, not just hear it.&quot;</li></ol>
 <p class="serif">Then do not tell another lie tonight.</p>
@@ -62,9 +72,9 @@ footer{margin-top:64px;padding-top:24px;border-top:2px solid var(--em);color:var
 <li><b>Log every one, every night.</b> Being honest with the ledger is the first honesty. A ledger with a lie in it is worthless.</li>
 </ol>
 
-<h2>The daily rhythm</h2>
+<h2 id="rhythm">The daily rhythm</h2>
 <div class="rhythm">
-<div><strong>6:30 AM</strong>Morning · 2 min<br><span>Read your sentence and today's focus. Name today's risk moment and the true sentence you'll say.</span></div>
+<div><strong>6:30 AM</strong>Morning · 2 min<br><span>Read your sentence and today's focus. Write one if-then plan: “If ___ happens, then I'll say ___.”</span></div>
 <div><strong>12:30 PM</strong>Midday · 60 sec<br><span>Anything to correct since morning? Fix it before 5 PM.</span></div>
 <div><strong>9:00 PM</strong>Evening Ledger · 10 min<br><span>Fill in the ledger and answer tonight's question.</span></div>
 <div><strong>Every 7th day</strong>7:00 PM · 20 min<br><span>Add up the week. Text your brother the three numbers.</span></div>
@@ -80,10 +90,10 @@ footer{margin-top:64px;padding-top:24px;border-top:2px solid var(--em);color:var
 1. Lies told today (#): what, to whom
 2. Lies caught before I spoke (#)
 3. Corrections made (#)
-4. The trigger: who, where, and the fear (failure / rejection / conflict / looking weak)
+4. The trigger: who, where, how tired I was, and the fear (failure / rejection / conflict / looking weak)
 5. The story in my head: &quot;If I tell the truth, ___ will happen.&quot;
 6. What actually happened when I told the truth
-7. Tomorrow&#x27;s risk moment and the true sentence I&#x27;ll say
+7. Tomorrow&#x27;s risk moment, written as an if-then: &quot;If ___, then I&#x27;ll say ___.&quot;
 8. One line of prayer or thanks</pre>
 
 <h2>With your wife</h2>
@@ -96,181 +106,305 @@ footer{margin-top:64px;padding-top:24px;border-top:2px solid var(--em);color:var
 <li><b>Consider couples counseling</b> once your own work has started. Your counselor can tell you when.</li>
 </ul>
 
+<h2 id="science">The science behind the system</h2>
+<p>What researchers know about lying, habits, shame and trust, and exactly where each finding shows up in your 49 days.</p>
+<p class="legend"><span class="badge b-strong">Strong</span> reviews of many experiments &nbsp; <span class="badge b-moderate">Moderate</span> solid studies, or a proven method borrowed from a related problem &nbsp; <span class="badge b-early">Early</span> small, mixed or unpublished evidence</p>
+<article class="sci" id="sci-curtis"><p class="badge b-moderate">Moderate evidence</p>
+  <h4>Compulsive lying is real, and there is no proven cure yet</h4><p>In a 2020 study of over 600 people, about 13% said they or others saw them as pathological liars: telling many lies every day for six months or more. They described the lying as compulsive and out of their control, said it reduced their anxiety in the moment, and said lies often grew out of one first lie. The authors note there is no evidence-based treatment yet and suggest cognitive behavioral therapy (CBT) as the place to start.</p>
+  <p><b>In your system:</b> This guide is built from CBT tools that work for similar problems. It is a structure for doing the work, and you should do it with a counselor.</p>
+  <p class="src"><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC9176035" target="_blank" rel="noopener">Curtis &amp; Hart (2020), Psychiatric Research and Clinical Practice</a> · Used on Days 3, 13</p></article><article class="sci" id="sci-prolific"><p class="badge b-moderate">Moderate evidence</p>
+  <h4>Most lies come from a small group of people</h4><p>In a survey of 1,000 U.S. adults, 60% reported telling no lies in the past 24 hours. A small group of prolific liars told a large share of all the lies.</p>
+  <p><b>In your system:</b> Lying a lot is a pattern, not human nature. Patterns can be counted and changed. That&#x27;s why Week 1 is counting.</p>
+  <p class="src"><a href="https://oakland.edu/Assets/upload/docs/News/2014/Serota-et-al-Prevalence-of-Lying-2010.pdf" target="_blank" rel="noopener">Serota, Levine &amp; Boster (2010), Human Communication Research</a> · Used on Days 2</p></article><article class="sci" id="sci-selfpres"><p class="badge b-moderate">Moderate evidence</p>
+  <h4>Trying to look competent or likable makes people lie more</h4><p>When people in a recorded conversation were trying to come across as likable or competent, they told more lies than people with no such goal.</p>
+  <p><b>In your system:</b> Your two fears, failing and not being accepted, are exactly these two goals. Week 2 teaches you to notice which one is running in the moment.</p>
+  <p class="src"><a href="https://websites.umass.edu/rfeldman/research" target="_blank" rel="noopener">Feldman, Forrest &amp; Happ (2002), Basic and Applied Social Psychology</a> · Used on Days 4, 8, 9</p></article><article class="sci" id="sci-escalate"><p class="badge b-moderate">Moderate evidence</p>
+  <h4>Small lies make bigger lies easier</h4><p>In a brain-imaging study, the brain&#x27;s emotional alarm (the amygdala) reacted strongly to the first self-serving lie and less to each lie after it, while the lies grew bigger. The bigger the drop in that reaction, the bigger the next lie.</p>
+  <p><b>In your system:</b> There&#x27;s no such thing as a harmless small lie for you. Every exaggeration trains the slope. That&#x27;s why Day 20 is &quot;No rounding up.&quot;</p>
+  <p class="src"><a href="https://discovery.ucl.ac.uk/1540243/" target="_blank" rel="noopener">Garrett, Lazzaro, Ariely &amp; Sharot (2016), Nature Neuroscience</a> · Used on Days 20</p></article><article class="sci" id="sci-track"><p class="badge b-strong">Strong evidence</p>
+  <h4>Tracking your behavior changes your behavior</h4><p>A review of 138 experiments with almost 20,000 people found that monitoring your progress helps you reach your goals. The effect was larger when progress was written down and when it was reported to someone else.</p>
+  <p><b>In your system:</b> The nightly ledger is the written record. The weekly text with your numbers to your accountability brother is the reporting.</p>
+  <p class="src"><a href="https://eprints.whiterose.ac.uk/91437/" target="_blank" rel="noopener">Harkin et al. (2016), Psychological Bulletin</a> · Used on Days 1, 7, 21, 28, 48</p></article><article class="sci" id="sci-ifthen"><p class="badge b-strong">Strong evidence</p>
+  <h4>If-then plans work</h4><p>A review of 94 experiments found that plans written as &quot;If X happens, then I will do Y&quot; substantially improved follow-through compared with good intentions alone.</p>
+  <p><b>In your system:</b> Every morning you write one if-then plan for the day&#x27;s risk moment: &quot;If she asks about the money, then I&#x27;ll say the real number.&quot;</p>
+  <p class="src"><a href="https://kops.uni-konstanz.de/entities/publication/2e749bfb-8533-437c-8203-7e788c910c5f" target="_blank" rel="noopener">Gollwitzer &amp; Sheeran (2006), Advances in Experimental Social Psychology</a> · Used on Days 18, 40</p></article><article class="sci" id="sci-hrt"><p class="badge b-moderate">Moderate evidence</p>
+  <h4>Break an automatic habit: notice it, then replace it</h4><p>Habit reversal training (learning the early warning signs, practicing a replacement response, and getting support from someone) is a well-established treatment for automatic behaviors like tics and hair-pulling. It hasn&#x27;t been tested on lying specifically.</p>
+  <p><b>In your system:</b> Day 5 teaches you your body&#x27;s alarm. The pause and a prepared true sentence are the replacement response. Your brother is the support.</p>
+  <p class="src"><a href="https://rune.une.edu.au/web/handle/1959.11/9765" target="_blank" rel="noopener">Bate, Malouff, Thorsteinsson &amp; Bhullar (2011), Clinical Psychology Review (meta-analysis)</a> · Used on Days 5, 19</p></article><article class="sci" id="sci-pause"><p class="badge b-early">Early evidence</p>
+  <h4>The pause interrupts an automatic response</h4><p>Research on whether people are more honest when rushed or when they slow down is mixed. Results depend on the situation. But for compulsive liars, who describe their lies as automatic and out of their control, the goal is to interrupt the habit before the words come out.</p>
+  <p><b>In your system:</b> The three-second pause isn&#x27;t magic. It&#x27;s the gap where your prepared true sentence gets a chance.</p>
+  <p class="src"><a href="https://dspace.mit.edu/handle/1721.1/135515" target="_blank" rel="noopener">Kobis et al. (2019), Perspectives on Psychological Science; Curtis &amp; Hart (2020)</a> · Used on Days 15</p></article><article class="sci" id="sci-exposure"><p class="badge b-moderate">Moderate evidence</p>
+  <h4>Lies are safety behaviors. Dropping them teaches you that the truth is survivable</h4><p>In CBT for social anxiety, &quot;safety behaviors&quot; protect people from what they fear but keep the fear alive, because they never get to see that the feared outcome doesn&#x27;t happen. Dropping them during planned practice is a standard part of treatment.</p>
+  <p><b>In your system:</b> Each lie you don&#x27;t tell is a test of your prediction. The truth ladder (Week 4) and the prediction test (Day 12) are behavioral experiments.</p>
+  <p class="src"><a href="https://pubmed.ncbi.nlm.nih.gov/10483844" target="_blank" rel="noopener">Clark &amp; Wells cognitive model; Morgan &amp; Raffle (1999); Salkovskis</a> · Used on Days 12, 14, 16, 22, 23, 26</p></article><article class="sci" id="sci-shame"><p class="badge b-moderate">Moderate evidence</p>
+  <h4>Shame hides. Guilt repairs</h4><p>Decades of research by June Tangney and others show that shame (&quot;I am bad&quot;) tends to make people hide and withdraw, while guilt (&quot;I did something bad&quot;) tends to make people take steps to repair. The pattern isn&#x27;t perfect, but it&#x27;s consistent.</p>
+  <p><b>In your system:</b> Day 11 teaches you to turn shame sentences into guilt sentences. You can repair something you did. You can&#x27;t repair who you are.</p>
+  <p class="src"><a href="https://en.wikiversity.org/wiki/Motivation_and_emotion/Book/2018/Guilt_and_shame" target="_blank" rel="noopener">Tangney &amp; Dearing, Shame and Guilt (2002) and later reviews</a> · Used on Days 11, 24, 34</p></article><article class="sci" id="sci-compassion"><p class="badge b-moderate">Moderate evidence</p>
+  <h4>Self-compassion makes men more likely to make amends</h4><p>After recalling something they had done wrong, people who wrote to themselves with kindness and understanding were more motivated to make amends and not repeat it than people who boosted their self-esteem or did nothing.</p>
+  <p><b>In your system:</b> Beating yourself up feeds shame, and shame feeds hiding. After a slip, you write yourself two honest, kind sentences, then you go fix it.</p>
+  <p class="src"><a href="https://pubmed.ncbi.nlm.nih.gov/22645164/" target="_blank" rel="noopener">Breines &amp; Chen (2012), Personality and Social Psychology Bulletin</a> · Used on Days 47, 49</p></article><article class="sci" id="sci-lapse"><p class="badge b-moderate">Moderate evidence</p>
+  <h4>A slip doesn&#x27;t have to become a relapse</h4><p>Relapse prevention research describes the &quot;abstinence violation effect&quot;: after one slip, thinking &quot;I&#x27;m a failure, it&#x27;s no use&quot; makes a full return to the old pattern more likely. Seeing a slip as a mistake you can correct protects against that.</p>
+  <p><b>In your system:</b> If you lie, you correct it, log it, tell your brother, and keep going. You never go back to Day 1.</p>
+  <p class="src"><a href="https://open-exam-prep.com/study-guides/icrc-aadc/cbt-relapse-prevention/marlatt-relapse-prevention" target="_blank" rel="noopener">Marlatt &amp; Gordon, Relapse Prevention; Larimer, Palmer &amp; Marlatt (1999)</a> · Used on Days 17, 45</p></article><article class="sci" id="sci-affirm"><p class="badge b-moderate">Moderate evidence</p>
+  <h4>Remembering your values makes you less defensive</h4><p>When people first reflect on a value that matters to them, they&#x27;re better able to hear threatening information without getting defensive, and more likely to change. The effect varies across studies.</p>
+  <p><b>In your system:</b> Before a hard conversation with your wife, spend two minutes writing about why your faith or your children matter to you. Then go listen.</p>
+  <p class="src"><a href="https://labs.psych.ucsb.edu/sherman/david/publications/276" target="_blank" rel="noopener">Sherman &amp; Cohen (2002), Current Directions in Psychological Science</a> · Used on Days 27, 38, 43</p></article><article class="sci" id="sci-secrets"><p class="badge b-moderate">Moderate evidence</p>
+  <h4>Secrets weigh on you even when nobody is asking</h4><p>Across ten studies, the harm from a secret came mostly from how often people&#x27;s minds drifted back to it, not from how often they had to actively hide it.</p>
+  <p><b>In your system:</b> The lies you&#x27;re still carrying cost you every day, not just when you&#x27;re questioned. That&#x27;s part of why Week 5 plans a full disclosure.</p>
+  <p class="src"><a href="https://www.columbia.edu/~ms4992/Pubs/in-press_Slepian-Chun-Mason_JPSP.pdf" target="_blank" rel="noopener">Slepian, Chun &amp; Mason (2017), Journal of Personality and Social Psychology</a> · Used on Days 25, 29</p></article><article class="sci" id="sci-expressive"><p class="badge b-moderate">Moderate evidence</p>
+  <h4>Writing about hard things helps a little</h4><p>A review of 146 experiments found that writing about difficult experiences has a small but real benefit for health and well-being.</p>
+  <p><b>In your system:</b> The evening questions and letters are writing exercises. They help, but they&#x27;re one tool among several, not a cure.</p>
+  <p class="src"><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC3830620" target="_blank" rel="noopener">Frattaroli (2006), Psychological Bulletin</a> · Used on Days 10, 41</p></article><article class="sci" id="sci-sleep"><p class="badge b-early">Early evidence</p>
+  <h4>Tired men have less self-control</h4><p>Studies at work found that people who slept less behaved less ethically, apparently because fatigue drains self-control. A later replication found no effect, so the evidence is mixed.</p>
+  <p><b>In your system:</b> Treat being tired as a risk factor. Your evening ledger and your relapse warning signs include sleep.</p>
+  <p class="src"><a href="https://ideas.repec.org/a/eee/jobhdp/v115y2011i2p169-180.html" target="_blank" rel="noopener">Barnes, Schaubroeck, Huth &amp; Ghumman (2011), Organizational Behavior and Human Decision Processes</a> · Used on Days 44</p></article><article class="sci" id="sci-kelly"><p class="badge b-early">Early evidence</p>
+  <h4>Lying less goes with better health and relationships</h4><p>In a 10-week experiment, weeks when people told fewer lies were weeks they reported better physical and mental health, mostly because their relationships improved. It was presented at a conference and wasn&#x27;t published in a journal, so treat it as preliminary.</p>
+  <p><b>In your system:</b> The payoff of this work isn&#x27;t only your marriage. You should also start to feel better.</p>
+  <p class="src"><a href="https://www.apa.org/news/press/releases/2012/08/lying-less" target="_blank" rel="noopener">Kelly &amp; Wang (2012), American Psychological Association convention</a> · Used on Days 6, 46</p></article><article class="sci" id="sci-trust"><p class="badge b-moderate">Moderate evidence</p>
+  <h4>Trust after lying comes back slowly, through actions</h4><p>In a lab experiment, trust broken by bad actions alone came back after a consistent run of trustworthy actions. Trust broken by bad actions plus lies never fully recovered, even with a promise, an apology and consistent good behavior. A promise to change did speed things up.</p>
+  <p><b>In your system:</b> Set your expectations: this is a long road, and words won&#x27;t carry you. Make small, specific promises and keep them exactly (Day 40). Never demand trust (Day 39).</p>
+  <p class="src"><a href="https://faculty.wharton.upenn.edu/wp-content/uploads/2014/06/Promises-and-Lies.pdf" target="_blank" rel="noopener">Schweitzer, Hershey &amp; Bradlow (2006), Organizational Behavior and Human Decision Processes</a> · Used on Days 32, 36, 37, 39</p></article><article class="sci" id="sci-disclosure"><p class="badge b-early">Early evidence</p>
+  <h4>Full disclosure, with support, is usually seen as right afterward</h4><p>In a survey of 164 people recovering from betrayal in their marriages, about 96% of those who disclosed and 93% of their partners said afterward that disclosure was the right decision. Most couples didn&#x27;t separate. Partners said they needed more support from professionals during the process. The study was about infidelity, not lying in general.</p>
+  <p><b>In your system:</b> Plan one full disclosure with your counselor (Week 5). Don&#x27;t let it come out in pieces, and don&#x27;t do it alone in a panic.</p>
+  <p class="src"><a href="https://jenniferschneider.com/articles/Surviving_Disclosure_of_Infidelity.html" target="_blank" rel="noopener">Schneider, Corley &amp; Irons (1998), Sexual Addiction &amp; Compulsivity</a> · Used on Days 30, 33, 35</p></article><article class="sci" id="sci-couples"><p class="badge b-moderate">Moderate evidence</p>
+  <h4>Couples therapy has tested models for repairing betrayal</h4><p>Emotionally Focused Therapy has a tested process for resolving &quot;attachment injuries&quot; (betrayals at a moment of need), and an integrative couples model for affairs moves through three stages: dealing with the impact, understanding why it happened, and moving forward.</p>
+  <p><b>In your system:</b> Once your own work is underway, ask your counselor about couples therapy with someone trained in EFT, the Gottman Method or affair-recovery work.</p>
+  <p class="src"><a href="https://iceeft.com/research-articles/makinen-j-a-johnson-s-2006-resolving-attachment-injuries-in-couples/" target="_blank" rel="noopener">Makinen &amp; Johnson (2006), Journal of Consulting and Clinical Psychology; Baucom, Snyder &amp; Gordon</a> · Used on Days 31, 42</p></article>
+
+<h2 id="counselor">Choosing a counselor</h2>
+<p>Because there's no proven treatment for compulsive lying yet, the counselor you choose matters. Look for:</p>
+<ul>
+<li><b>A licensed clinician:</b> a psychologist, LPC or LMFT. If your faith matters to you, look for one who is licensed and also comfortable working with Christian clients.</li>
+<li><b>CBT-based methods,</b> including exposure and behavioral experiments. Ask: “How would you treat lying that feels automatic and is driven by fear of failure and rejection?”</li>
+<li><b>A real assessment.</b> Ask them to check whether anxiety, depression, ADHD, trauma or something else is feeding the lying. Treating that can make everything else easier.</li>
+<li><b>Later, a couples therapist</b> trained in Emotionally Focused Therapy (EFT), the Gottman Method or affair-recovery work, when your counselor says it's time.</li>
+<li><b>Bring this guide.</b> Show them your ledger numbers and ask them to adjust the plan to fit you.</li>
+</ul>
+
 <section class="week" id="week-1">
   <p class="label">Week 1</p><h3>See It</h3><p class="serif big">You can&#x27;t fix what you won&#x27;t count.</p>
   <p>Compulsive lying runs on autopilot. This week you don&#x27;t fix anything; you turn the lights on. Counting is the first honest thing you do.</p><blockquote>“Whoever conceals their sins does not prosper, but the one who confesses and renounces them finds mercy.” <cite>Proverbs 28:13</cite></blockquote>
   <article class="day" id="day-1" data-day="1">
   <label class="check"><input type="checkbox" data-day="1"><span></span></label>
   <div><p class="dnum">Day 1</p><h4>The count begins</h4>
-  <p><b>Morning.</b> Today you only count. Every lie, every exaggeration, every &quot;yeah, I did&quot; that wasn&#x27;t true. No fixing, no beating yourself up. Keep a tally in your phone notes as it happens.</p><p><b>Tonight.</b> How many did you log? Which one surprised you most, and why?</p></div></article><article class="day" id="day-2" data-day="2">
+  <p><b>Morning.</b> Today you only count. Every lie, every exaggeration, every &quot;yeah, I did&quot; that wasn&#x27;t true. No fixing, no beating yourself up. Keep a tally in your phone notes as it happens.</p><p><b>Tonight.</b> How many did you log? Which one surprised you most, and why?</p>
+  <p class="why"><a href="#sci-track">Why it works: Tracking your behavior changes your behavior</a></p></div></article><article class="day" id="day-2" data-day="2">
   <label class="check"><input type="checkbox" data-day="2"><span></span></label>
   <div><p class="dnum">Day 2</p><h4>Name the kind</h4>
-  <p><b>Morning.</b> Tag each lie today by type. COVER: hiding a mistake. INFLATE: looking better than you are. SMOOTH: avoiding conflict. AUTO: no reason at all, it just came out.</p><p><b>Tonight.</b> Which type showed up most? What does that tell you that you&#x27;re protecting?</p></div></article><article class="day" id="day-3" data-day="3">
+  <p><b>Morning.</b> Tag each lie today by type. COVER: hiding a mistake. INFLATE: looking better than you are. SMOOTH: avoiding conflict. AUTO: no reason at all, it just came out.</p><p><b>Tonight.</b> Which type showed up most? What does that tell you that you&#x27;re protecting?</p>
+  <p class="why"><a href="#sci-prolific">Why it works: Most lies come from a small group of people</a></p></div></article><article class="day" id="day-3" data-day="3">
   <label class="check"><input type="checkbox" data-day="3"><span></span></label>
   <div><p class="dnum">Day 3</p><h4>Book the counselor</h4>
-  <p><b>Morning.</b> Action before noon: book a licensed counselor (LPC, LMFT or psychologist) who works with shame, anxiety or couples. Ask your pastor for a referral or search a directory. Put the first appointment on your calendar.</p><p><b>Tonight.</b> Is it booked? If not, what did you tell yourself about why not, and was that true?</p></div></article><article class="day" id="day-4" data-day="4">
+  <p><b>Morning.</b> Action before noon: book a licensed counselor (LPC, LMFT or psychologist) who works with shame, anxiety or couples. Ask your pastor for a referral or search a directory. Put the first appointment on your calendar.</p><p><b>Tonight.</b> Is it booked? If not, what did you tell yourself about why not, and was that true?</p>
+  <p class="why"><a href="#sci-curtis">Why it works: Compulsive lying is real, and there is no proven cure yet</a></p></div></article><article class="day" id="day-4" data-day="4">
   <label class="check"><input type="checkbox" data-day="4"><span></span></label>
   <div><p class="dnum">Day 4</p><h4>Who gets the lies</h4>
-  <p><b>Morning.</b> Notice who you lie to most. Write their names as it happens: wife, boss, kids, friends, parents, yourself.</p><p><b>Tonight.</b> Who is it hardest to tell the truth to? What do you fear they&#x27;ll think of you?</p></div></article><article class="day" id="day-5" data-day="5">
+  <p><b>Morning.</b> Notice who you lie to most. Write their names as it happens: wife, boss, kids, friends, parents, yourself.</p><p><b>Tonight.</b> Who is it hardest to tell the truth to? What do you fear they&#x27;ll think of you?</p>
+  <p class="why"><a href="#sci-selfpres">Why it works: Trying to look competent or likable makes people lie more</a></p></div></article><article class="day" id="day-5" data-day="5">
   <label class="check"><input type="checkbox" data-day="5"><span></span></label>
   <div><p class="dnum">Day 5</p><h4>The alarm in your body</h4>
-  <p><b>Morning.</b> Notice what your body does right before a lie: tight chest, hot face, dry throat, talking faster. That feeling is your alarm. Learn it today.</p><p><b>Tonight.</b> Describe your alarm. How many seconds were there between the alarm and the lie?</p></div></article><article class="day" id="day-6" data-day="6">
+  <p><b>Morning.</b> Notice what your body does right before a lie: tight chest, hot face, dry throat, talking faster. That feeling is your alarm. Learn it today.</p><p><b>Tonight.</b> Describe your alarm. How many seconds were there between the alarm and the lie?</p>
+  <p class="why"><a href="#sci-hrt">Why it works: Break an automatic habit: notice it, then replace it</a></p></div></article><article class="day" id="day-6" data-day="6">
   <label class="check"><input type="checkbox" data-day="6"><span></span></label>
   <div><p class="dnum">Day 6</p><h4>The cost</h4>
-  <p><b>Morning.</b> Write a specific list of what lying has cost you: trust, peace, money, time, intimacy, sleep, respect for yourself. Names and moments, not general ideas.</p><p><b>Tonight.</b> Which cost are you no longer willing to pay?</p></div></article><article class="day" id="day-7" data-day="7">
+  <p><b>Morning.</b> Write a specific list of what lying has cost you: trust, peace, money, time, intimacy, sleep, respect for yourself. Names and moments, not general ideas.</p><p><b>Tonight.</b> Which cost are you no longer willing to pay?</p>
+  <p class="why"><a href="#sci-kelly">Why it works: Lying less goes with better health and relationships</a></p></div></article><article class="day" id="day-7" data-day="7">
   <label class="check"><input type="checkbox" data-day="7"><span></span></label>
   <div><p class="dnum">Day 7 · Review</p><h4>Week 1 review</h4>
-  <p><b>Morning.</b> Tonight is your first weekly review. Today, keep counting. Also pick your accountability brother: one man you will text your numbers to every week.</p><p><b>Tonight.</b> Total the week: lies told, caught, corrected. Text your brother the three numbers with no excuses attached. What pattern do you see?</p></div></article></section><section class="week" id="week-2">
+  <p><b>Morning.</b> Tonight is your first weekly review. Today, keep counting. Also pick your accountability brother: one man you will text your numbers to every week.</p><p><b>Tonight.</b> Total the week: lies told, caught, corrected. Text your brother the three numbers with no excuses attached. What pattern do you see?</p>
+  <p class="why"><a href="#sci-track">Why it works: Tracking your behavior changes your behavior</a></p></div></article></section><section class="week" id="week-2">
   <p class="label">Week 2</p><h3>The Fear Underneath</h3><p class="serif big">Every lie is protecting something.</p>
   <p>You told us why you lie: fear of failing and fear of not being accepted. This week you find exactly where those fears live and what they&#x27;ve been buying you.</p><blockquote>“There is no fear in love. But perfect love drives out fear.” <cite>1 John 4:18</cite></blockquote>
   <article class="day" id="day-8" data-day="8">
   <label class="check"><input type="checkbox" data-day="8"><span></span></label>
   <div><p class="dnum">Day 8</p><h4>The fear of failing</h4>
-  <p><b>Morning.</b> Each time you feel the urge to lie today, ask yourself: &quot;Am I hiding that I failed?&quot;</p><p><b>Tonight.</b> What failure are you most ashamed for people to see? Where did you learn that failing makes you less of a man?</p></div></article><article class="day" id="day-9" data-day="9">
+  <p><b>Morning.</b> Each time you feel the urge to lie today, ask yourself: &quot;Am I hiding that I failed?&quot;</p><p><b>Tonight.</b> What failure are you most ashamed for people to see? Where did you learn that failing makes you less of a man?</p>
+  <p class="why"><a href="#sci-selfpres">Why it works: Trying to look competent or likable makes people lie more</a></p></div></article><article class="day" id="day-9" data-day="9">
   <label class="check"><input type="checkbox" data-day="9"><span></span></label>
   <div><p class="dnum">Day 9</p><h4>The fear of not being accepted</h4>
-  <p><b>Morning.</b> Each time the urge hits, ask yourself: &quot;Am I trying to be liked right now?&quot;</p><p><b>Tonight.</b> Finish this sentence ten times without stopping: &quot;If they knew the real me, they would...&quot;</p></div></article><article class="day" id="day-10" data-day="10">
+  <p><b>Morning.</b> Each time the urge hits, ask yourself: &quot;Am I trying to be liked right now?&quot;</p><p><b>Tonight.</b> Finish this sentence ten times without stopping: &quot;If they knew the real me, they would...&quot;</p>
+  <p class="why"><a href="#sci-selfpres">Why it works: Trying to look competent or likable makes people lie more</a></p></div></article><article class="day" id="day-10" data-day="10">
   <label class="check"><input type="checkbox" data-day="10"><span></span></label>
   <div><p class="dnum">Day 10</p><h4>Where it started</h4>
-  <p><b>Morning.</b> At some point today, think back to the first time you remember lying to stay safe. Who were you protecting yourself from?</p><p><b>Tonight.</b> Write that boy a short letter. What did he need to hear that he never heard? Bring it to your counselor.</p></div></article><article class="day" id="day-11" data-day="11">
+  <p><b>Morning.</b> At some point today, think back to the first time you remember lying to stay safe. Who were you protecting yourself from?</p><p><b>Tonight.</b> Write that boy a short letter. What did he need to hear that he never heard? Bring it to your counselor.</p>
+  <p class="why"><a href="#sci-expressive">Why it works: Writing about hard things helps a little</a></p></div></article><article class="day" id="day-11" data-day="11">
   <label class="check"><input type="checkbox" data-day="11"><span></span></label>
   <div><p class="dnum">Day 11</p><h4>Shame vs. guilt</h4>
-  <p><b>Morning.</b> Guilt says &quot;I did something wrong.&quot; Shame says &quot;I am wrong.&quot; Shame drives lies. Catch shame talk in your head today and write it down.</p><p><b>Tonight.</b> Rewrite one shame sentence as a guilt sentence: &quot;I did ___, and I can make it right by ___.&quot;</p></div></article><article class="day" id="day-12" data-day="12">
+  <p><b>Morning.</b> Guilt says &quot;I did something wrong.&quot; Shame says &quot;I am wrong.&quot; Shame drives lies. Catch shame talk in your head today and write it down.</p><p><b>Tonight.</b> Rewrite one shame sentence as a guilt sentence: &quot;I did ___, and I can make it right by ___.&quot;</p>
+  <p class="why"><a href="#sci-shame">Why it works: Shame hides. Guilt repairs</a></p></div></article><article class="day" id="day-12" data-day="12">
   <label class="check"><input type="checkbox" data-day="12"><span></span></label>
-  <div><p class="dnum">Day 12</p><h4>The story in your head</h4>
-  <p><b>Morning.</b> Before one hard truth today, write your prediction first: &quot;If I say it, ___ will happen.&quot; Then say it.</p><p><b>Tonight.</b> Did the prediction come true? Score it: worse, the same, or better than you predicted.</p></div></article><article class="day" id="day-13" data-day="13">
+  <div><p class="dnum">Day 12</p><h4>Test your prediction</h4>
+  <p><b>Morning.</b> Run an experiment. Before one hard truth today, write your prediction first: &quot;If I say it, ___ will happen.&quot; Then say it.</p><p><b>Tonight.</b> Did the prediction come true? Score it: worse, the same, or better than you predicted.</p>
+  <p class="why"><a href="#sci-exposure">Why it works: Lies are safety behaviors. Dropping them teaches you that the truth is survivable</a></p></div></article><article class="day" id="day-13" data-day="13">
   <label class="check"><input type="checkbox" data-day="13"><span></span></label>
   <div><p class="dnum">Day 13</p><h4>What lying pays you</h4>
-  <p><b>Morning.</b> Be honest: lying pays. It buys relief, approval, time and escape. Each time today, name the payoff you were after.</p><p><b>Tonight.</b> Which payoff will you have to grieve to give this up?</p></div></article><article class="day" id="day-14" data-day="14">
+  <p><b>Morning.</b> Be honest: lying pays. It buys relief, approval, time and escape. Each time today, name the payoff you were after.</p><p><b>Tonight.</b> Which payoff will you have to grieve to give this up?</p>
+  <p class="why"><a href="#sci-curtis">Why it works: Compulsive lying is real, and there is no proven cure yet</a></p></div></article><article class="day" id="day-14" data-day="14">
   <label class="check"><input type="checkbox" data-day="14"><span></span></label>
   <div><p class="dnum">Day 14 · Review</p><h4>Week 2 review: your Fear Map</h4>
-  <p><b>Morning.</b> Today, draw your Fear Map: your top three fears, the lie each one produces, and the truth each one avoids. Bring it to counseling.</p><p><b>Tonight.</b> Total the week and text your brother. Compare it with Week 1. Which fear on the map is running your life the most?</p></div></article></section><section class="week" id="week-3">
+  <p><b>Morning.</b> Today, draw your Fear Map: your top three fears, the lie each one produces, and the truth each one avoids. Bring it to counseling.</p><p><b>Tonight.</b> Total the week and text your brother. Compare it with Week 1. Which fear on the map is running your life the most?</p>
+  <p class="why"><a href="#sci-exposure">Why it works: Lies are safety behaviors. Dropping them teaches you that the truth is survivable</a></p></div></article></section><section class="week" id="week-3">
   <p class="label">Week 3</p><h3>The Pause</h3><p class="serif big">Lies are fast. Truth needs three seconds.</p>
   <p>The lie usually leaves your mouth before you&#x27;ve decided anything. This week you build the gap between the urge and the words, and you fill it with true sentences you&#x27;ve written ahead of time.</p><blockquote>“Everyone should be quick to listen, slow to speak and slow to become angry.” <cite>James 1:19</cite></blockquote>
   <article class="day" id="day-15" data-day="15">
   <label class="check"><input type="checkbox" data-day="15"><span></span></label>
   <div><p class="dnum">Day 15</p><h4>The three-second pause</h4>
-  <p><b>Morning.</b> Practice the sequence: alarm, breath, &quot;Give me a second.&quot; Use it at least once today, even in a conversation that&#x27;s easy.</p><p><b>Tonight.</b> How many times did you pause? What happened in those three seconds?</p></div></article><article class="day" id="day-16" data-day="16">
+  <p><b>Morning.</b> Practice the sequence: alarm, breath, &quot;Give me a second.&quot; Use it at least once today, even in a conversation that&#x27;s easy.</p><p><b>Tonight.</b> How many times did you pause? What happened in those three seconds?</p>
+  <p class="why"><a href="#sci-pause">Why it works: The pause interrupts an automatic response</a></p></div></article><article class="day" id="day-16" data-day="16">
   <label class="check"><input type="checkbox" data-day="16"><span></span></label>
   <div><p class="dnum">Day 16</p><h4>&quot;I don&#x27;t know&quot;</h4>
-  <p><b>Morning.</b> Say &quot;I don&#x27;t know&quot; or &quot;I&#x27;m not sure&quot; at least once today instead of filling the silence with something you made up.</p><p><b>Tonight.</b> How did it feel not to have an answer? Did anyone actually think less of you?</p></div></article><article class="day" id="day-17" data-day="17">
+  <p><b>Morning.</b> Say &quot;I don&#x27;t know&quot; or &quot;I&#x27;m not sure&quot; at least once today instead of filling the silence with something you made up.</p><p><b>Tonight.</b> How did it feel not to have an answer? Did anyone actually think less of you?</p>
+  <p class="why"><a href="#sci-exposure">Why it works: Lies are safety behaviors. Dropping them teaches you that the truth is survivable</a></p></div></article><article class="day" id="day-17" data-day="17">
   <label class="check"><input type="checkbox" data-day="17"><span></span></label>
   <div><p class="dnum">Day 17</p><h4>The 60-second correction</h4>
-  <p><b>Morning.</b> If a lie slips out, correct it inside a minute: &quot;Actually, that&#x27;s not true. The truth is ___.&quot; Fast correction beats a perfect record.</p><p><b>Tonight.</b> Did you correct one? If not, which lie from today can you still correct tomorrow? Put it on tomorrow&#x27;s list.</p></div></article><article class="day" id="day-18" data-day="18">
+  <p><b>Morning.</b> If a lie slips out, correct it inside a minute: &quot;Actually, that&#x27;s not true. The truth is ___.&quot; Fast correction beats a perfect record.</p><p><b>Tonight.</b> Did you correct one? If not, which lie from today can you still correct tomorrow? Put it on tomorrow&#x27;s list.</p>
+  <p class="why"><a href="#sci-lapse">Why it works: A slip doesn&#x27;t have to become a relapse</a></p></div></article><article class="day" id="day-18" data-day="18">
   <label class="check"><input type="checkbox" data-day="18"><span></span></label>
-  <div><p class="dnum">Day 18</p><h4>Write your scripts</h4>
-  <p><b>Morning.</b> Write five true sentences for your five most common lie situations (&quot;Did you finish it?&quot; &quot;Where were you?&quot; &quot;How much did it cost?&quot;). Save them in your phone.</p><p><b>Tonight.</b> Which script is hardest to say out loud? Say it out loud right now, three times.</p></div></article><article class="day" id="day-19" data-day="19">
+  <div><p class="dnum">Day 18</p><h4>Write your if-then plans</h4>
+  <p><b>Morning.</b> Write five if-then plans for your five most common lie situations: &quot;If she asks whether I finished it, then I say exactly how far I got.&quot; &quot;If someone asks what I paid, then I say the real number.&quot; Save them in your phone.</p><p><b>Tonight.</b> Which script is hardest to say out loud? Say it out loud right now, three times.</p>
+  <p class="why"><a href="#sci-ifthen">Why it works: If-then plans work</a></p></div></article><article class="day" id="day-19" data-day="19">
   <label class="check"><input type="checkbox" data-day="19"><span></span></label>
   <div><p class="dnum">Day 19</p><h4>Slow down</h4>
-  <p><b>Morning.</b> In every hard conversation today, speak about 20% slower. Rushing feeds lies.</p><p><b>Tonight.</b> Where did slowing down change what came out of your mouth?</p></div></article><article class="day" id="day-20" data-day="20">
+  <p><b>Morning.</b> In every hard conversation today, speak about 20% slower. Rushing feeds lies.</p><p><b>Tonight.</b> Where did slowing down change what came out of your mouth?</p>
+  <p class="why"><a href="#sci-hrt">Why it works: Break an automatic habit: notice it, then replace it</a></p></div></article><article class="day" id="day-20" data-day="20">
   <label class="check"><input type="checkbox" data-day="20"><span></span></label>
   <div><p class="dnum">Day 20</p><h4>No rounding up</h4>
-  <p><b>Morning.</b> Today, nothing gets inflated: not numbers, times, effort or stories. Exact is the goal.</p><p><b>Tonight.</b> Where did you want to round up? Who were you trying to be in that moment?</p></div></article><article class="day" id="day-21" data-day="21">
+  <p><b>Morning.</b> Today, nothing gets inflated: not numbers, times, effort or stories. Small lies make the brain&#x27;s alarm quieter, which makes the next lie bigger. Exact is the goal.</p><p><b>Tonight.</b> Where did you want to round up? Who were you trying to be in that moment?</p>
+  <p class="why"><a href="#sci-escalate">Why it works: Small lies make bigger lies easier</a></p></div></article><article class="day" id="day-21" data-day="21">
   <label class="check"><input type="checkbox" data-day="21"><span></span></label>
   <div><p class="dnum">Day 21 · Review</p><h4>Week 3 review</h4>
-  <p><b>Morning.</b> Read your scripts once this morning. Ask your counselor whether it&#x27;s time to let your wife see your weekly numbers.</p><p><b>Tonight.</b> Total the week and text your brother. Is your pause count going up while your lie count goes down?</p></div></article></section><section class="week" id="week-4">
+  <p><b>Morning.</b> Read your scripts once this morning. Ask your counselor whether it&#x27;s time to let your wife see your weekly numbers.</p><p><b>Tonight.</b> Total the week and text your brother. Is your pause count going up while your lie count goes down?</p>
+  <p class="why"><a href="#sci-track">Why it works: Tracking your behavior changes your behavior</a></p></div></article></section><section class="week" id="week-4">
   <p class="label">Week 4</p><h3>Small Truths, Out Loud</h3><p class="serif big">Courage is a muscle. Train it light first.</p>
   <p>Counselors call this exposure: you practice the thing you fear in small, planned steps until your body learns that the truth doesn&#x27;t kill you.</p><blockquote>“Therefore each of you must put off falsehood and speak truthfully to your neighbor.” <cite>Ephesians 4:25</cite></blockquote>
   <article class="day" id="day-22" data-day="22">
   <label class="check"><input type="checkbox" data-day="22"><span></span></label>
   <div><p class="dnum">Day 22</p><h4>Build your truth ladder</h4>
-  <p><b>Morning.</b> List ten truths you&#x27;ve been avoiding, from easiest (&quot;I&#x27;m running late&quot;) to hardest. Today, tell the easiest one.</p><p><b>Tonight.</b> Rate your fear from 0 to 10 before you said it and after. What changed?</p></div></article><article class="day" id="day-23" data-day="23">
+  <p><b>Morning.</b> List ten truths you&#x27;ve been avoiding, from easiest (&quot;I&#x27;m running late&quot;) to hardest. Today, tell the easiest one.</p><p><b>Tonight.</b> Rate your fear from 0 to 10 before you said it and after. What changed?</p>
+  <p class="why"><a href="#sci-exposure">Why it works: Lies are safety behaviors. Dropping them teaches you that the truth is survivable</a></p></div></article><article class="day" id="day-23" data-day="23">
   <label class="check"><input type="checkbox" data-day="23"><span></span></label>
   <div><p class="dnum">Day 23</p><h4>Disappoint someone on purpose</h4>
-  <p><b>Morning.</b> Say one honest &quot;no&quot; or &quot;I can&#x27;t&quot; today with no made-up excuse attached.</p><p><b>Tonight.</b> What happened? Did the relationship survive the truth?</p></div></article><article class="day" id="day-24" data-day="24">
+  <p><b>Morning.</b> Say one honest &quot;no&quot; or &quot;I can&#x27;t&quot; today with no made-up excuse attached.</p><p><b>Tonight.</b> What happened? Did the relationship survive the truth?</p>
+  <p class="why"><a href="#sci-exposure">Why it works: Lies are safety behaviors. Dropping them teaches you that the truth is survivable</a></p></div></article><article class="day" id="day-24" data-day="24">
   <label class="check"><input type="checkbox" data-day="24"><span></span></label>
   <div><p class="dnum">Day 24</p><h4>Admit it first</h4>
-  <p><b>Morning.</b> Before anyone finds out, admit one small mistake today: &quot;That was me. I&#x27;ll fix it.&quot;</p><p><b>Tonight.</b> How did it land? Compare what it cost with what you feared it would cost.</p></div></article><article class="day" id="day-25" data-day="25">
+  <p><b>Morning.</b> Before anyone finds out, admit one small mistake today: &quot;That was me. I&#x27;ll fix it.&quot;</p><p><b>Tonight.</b> How did it land? Compare what it cost with what you feared it would cost.</p>
+  <p class="why"><a href="#sci-shame">Why it works: Shame hides. Guilt repairs</a></p></div></article><article class="day" id="day-25" data-day="25">
   <label class="check"><input type="checkbox" data-day="25"><span></span></label>
   <div><p class="dnum">Day 25</p><h4>Money and work</h4>
-  <p><b>Morning.</b> Money and work attract lies. Tell one true thing today about money or work that you&#x27;ve been fudging.</p><p><b>Tonight.</b> What&#x27;s still hidden in money or work that needs to come out? Write it down for your counselor.</p></div></article><article class="day" id="day-26" data-day="26">
+  <p><b>Morning.</b> Money and work attract lies. Tell one true thing today about money or work that you&#x27;ve been fudging.</p><p><b>Tonight.</b> What&#x27;s still hidden in money or work that needs to come out? Write it down for your counselor.</p>
+  <p class="why"><a href="#sci-secrets">Why it works: Secrets weigh on you even when nobody is asking</a></p></div></article><article class="day" id="day-26" data-day="26">
   <label class="check"><input type="checkbox" data-day="26"><span></span></label>
   <div><p class="dnum">Day 26</p><h4>Climb a rung</h4>
-  <p><b>Morning.</b> Tell rung three or four of your ladder today.</p><p><b>Tonight.</b> Rate your fear before and after. What&#x27;s getting easier?</p></div></article><article class="day" id="day-27" data-day="27">
+  <p><b>Morning.</b> Tell rung three or four of your ladder today.</p><p><b>Tonight.</b> Rate your fear before and after. What&#x27;s getting easier?</p>
+  <p class="why"><a href="#sci-exposure">Why it works: Lies are safety behaviors. Dropping them teaches you that the truth is survivable</a></p></div></article><article class="day" id="day-27" data-day="27">
   <label class="check"><input type="checkbox" data-day="27"><span></span></label>
   <div><p class="dnum">Day 27</p><h4>Take the reaction</h4>
-  <p><b>Morning.</b> When a truth gets a reaction today (frustration, hurt, silence), don&#x27;t defend, explain or lie again. Say: &quot;You&#x27;re right to feel that.&quot;</p><p><b>Tonight.</b> Where did you want to defend yourself? What did you do instead?</p></div></article><article class="day" id="day-28" data-day="28">
+  <p><b>Morning.</b> Before a hard conversation today, take two minutes to write about why your faith or your children matter to you. Then, when the truth gets a reaction (frustration, hurt, silence), don&#x27;t defend, explain or lie again. Say: &quot;You&#x27;re right to feel that.&quot;</p><p><b>Tonight.</b> Where did you want to defend yourself? What did you do instead?</p>
+  <p class="why"><a href="#sci-affirm">Why it works: Remembering your values makes you less defensive</a></p></div></article><article class="day" id="day-28" data-day="28">
   <label class="check"><input type="checkbox" data-day="28"><span></span></label>
   <div><p class="dnum">Day 28 · Review</p><h4>Week 4 review</h4>
-  <p><b>Morning.</b> Look at your ladder. Mark every rung you&#x27;ve climbed.</p><p><b>Tonight.</b> Total the week and text your brother. Which truth did you think would wreck you but didn&#x27;t?</p></div></article></section><section class="week" id="week-5">
+  <p><b>Morning.</b> Look at your ladder. Mark every rung you&#x27;ve climbed.</p><p><b>Tonight.</b> Total the week and text your brother. Which truth did you think would wreck you but didn&#x27;t?</p>
+  <p class="why"><a href="#sci-track">Why it works: Tracking your behavior changes your behavior</a></p></div></article></section><section class="week" id="week-5">
   <p class="label">Week 5</p><h3>Repair</h3><p class="serif big">Telling the truth is the start. Repair is the work.</p>
   <p>This is the week the work turns toward your wife. It is done carefully, with your counselor, and never in pieces.</p><blockquote>“Therefore confess your sins to each other and pray for each other so that you may be healed.” <cite>James 5:16</cite></blockquote>
   <article class="day" id="day-29" data-day="29">
   <label class="check"><input type="checkbox" data-day="29"><span></span></label>
   <div><p class="dnum">Day 29</p><h4>The inventory</h4>
-  <p><b>Morning.</b> Start a private, written inventory of the lies that have affected your wife. Facts only, no excuses. It&#x27;s for your counselor first. This is not a midnight confession.</p><p><b>Tonight.</b> What&#x27;s the hardest item on the list? What do you fear will happen if she knows it?</p></div></article><article class="day" id="day-30" data-day="30">
+  <p><b>Morning.</b> Start a private, written inventory of the lies that have affected your wife. Facts only, no excuses. It&#x27;s for your counselor first. This is not a midnight confession.</p><p><b>Tonight.</b> What&#x27;s the hardest item on the list? What do you fear will happen if she knows it?</p>
+  <p class="why"><a href="#sci-secrets">Why it works: Secrets weigh on you even when nobody is asking</a></p></div></article><article class="day" id="day-30" data-day="30">
   <label class="check"><input type="checkbox" data-day="30"><span></span></label>
   <div><p class="dnum">Day 30</p><h4>No trickle truth</h4>
-  <p><b>Morning.</b> Know this: telling the truth in pieces, a little more each time you&#x27;re caught, does more damage than the original lie. Ask your counselor to help you plan one full, honest disclosure.</p><p><b>Tonight.</b> Have you asked your counselor about disclosure? If not, when exactly will you?</p></div></article><article class="day" id="day-31" data-day="31">
+  <p><b>Morning.</b> Know this: telling the truth in pieces, a little more each time you&#x27;re caught, does more damage than the original lie. Ask your counselor to help you plan one full, honest disclosure.</p><p><b>Tonight.</b> Have you asked your counselor about disclosure? If not, when exactly will you?</p>
+  <p class="why"><a href="#sci-disclosure">Why it works: Full disclosure, with support, is usually seen as right afterward</a></p></div></article><article class="day" id="day-31" data-day="31">
   <label class="check"><input type="checkbox" data-day="31"><span></span></label>
   <div><p class="dnum">Day 31</p><h4>Her side</h4>
-  <p><b>Morning.</b> Today, try to see it from her side. What has it been like to live with a man whose word she couldn&#x27;t count on?</p><p><b>Tonight.</b> Write one page in her voice about what she has felt. Don&#x27;t send it. Read it twice.</p></div></article><article class="day" id="day-32" data-day="32">
+  <p><b>Morning.</b> Today, try to see it from her side. What has it been like to live with a man whose word she couldn&#x27;t count on?</p><p><b>Tonight.</b> Write one page in her voice about what she has felt. Don&#x27;t send it. Read it twice.</p>
+  <p class="why"><a href="#sci-couples">Why it works: Couples therapy has tested models for repairing betrayal</a></p></div></article><article class="day" id="day-32" data-day="32">
   <label class="check"><input type="checkbox" data-day="32"><span></span></label>
   <div><p class="dnum">Day 32</p><h4>A real apology</h4>
-  <p><b>Morning.</b> A real apology has five parts: what I did, how it hurt you, no excuses, what I&#x27;m doing about it, and no demand to be forgiven. Draft one.</p><p><b>Tonight.</b> Read your draft and delete every &quot;but,&quot; &quot;if&quot; and &quot;I was just.&quot; What&#x27;s left?</p></div></article><article class="day" id="day-33" data-day="33">
+  <p><b>Morning.</b> A real apology has five parts: what I did, how it hurt you, no excuses, what I&#x27;m doing about it, and no demand to be forgiven. Draft one.</p><p><b>Tonight.</b> Read your draft and delete every &quot;but,&quot; &quot;if&quot; and &quot;I was just.&quot; What&#x27;s left?</p>
+  <p class="why"><a href="#sci-trust">Why it works: Trust after lying comes back slowly, through actions</a></p></div></article><article class="day" id="day-33" data-day="33">
   <label class="check"><input type="checkbox" data-day="33"><span></span></label>
   <div><p class="dnum">Day 33</p><h4>Answer the whole question</h4>
-  <p><b>Morning.</b> When she asks you something, answer it fully the first time. If you need time: &quot;I&#x27;ll answer that fully. Give me until tonight.&quot; Then do it.</p><p><b>Tonight.</b> Did you answer anything only partway today? Finish it.</p></div></article><article class="day" id="day-34" data-day="34">
+  <p><b>Morning.</b> When she asks you something, answer it fully the first time. If you need time: &quot;I&#x27;ll answer that fully. Give me until tonight.&quot; Then do it.</p><p><b>Tonight.</b> Did you answer anything only partway today? Finish it.</p>
+  <p class="why"><a href="#sci-disclosure">Why it works: Full disclosure, with support, is usually seen as right afterward</a></p></div></article><article class="day" id="day-34" data-day="34">
   <label class="check"><input type="checkbox" data-day="34"><span></span></label>
   <div><p class="dnum">Day 34</p><h4>Repair with action</h4>
-  <p><b>Morning.</b> Pick one lie you can repair with action: return the money, keep the promise, finish the task. Do it today.</p><p><b>Tonight.</b> What did the repair cost you? Was it worth it?</p></div></article><article class="day" id="day-35" data-day="35">
+  <p><b>Morning.</b> Pick one lie you can repair with action: return the money, keep the promise, finish the task. Do it today.</p><p><b>Tonight.</b> What did the repair cost you? Was it worth it?</p>
+  <p class="why"><a href="#sci-shame">Why it works: Shame hides. Guilt repairs</a></p></div></article><article class="day" id="day-35" data-day="35">
   <label class="check"><input type="checkbox" data-day="35"><span></span></label>
   <div><p class="dnum">Day 35 · Review</p><h4>Week 5 review</h4>
-  <p><b>Morning.</b> Check with your counselor: are you ready for disclosure, and what&#x27;s the plan?</p><p><b>Tonight.</b> Total the week and text your brother. What has repair taught you that confession alone couldn&#x27;t?</p></div></article></section><section class="week" id="week-6">
+  <p><b>Morning.</b> Check with your counselor: are you ready for disclosure, and what&#x27;s the plan?</p><p><b>Tonight.</b> Total the week and text your brother. What has repair taught you that confession alone couldn&#x27;t?</p>
+  <p class="why"><a href="#sci-disclosure">Why it works: Full disclosure, with support, is usually seen as right afterward</a></p></div></article></section><section class="week" id="week-6">
   <p class="label">Week 6</p><h3>Transparency</h3><p class="serif big">Trust is rebuilt on boring days.</p>
   <p>She can&#x27;t trust your words yet, so give her things she can check. Trust comes back through small, verifiable, repeated evidence.</p><blockquote>“Whoever can be trusted with very little can also be trusted with much.” <cite>Luke 16:10</cite></blockquote>
   <article class="day" id="day-36" data-day="36">
   <label class="check"><input type="checkbox" data-day="36"><span></span></label>
   <div><p class="dnum">Day 36</p><h4>Get ahead of it</h4>
-  <p><b>Morning.</b> Tell her something before she asks: your schedule, a purchase, a mistake.</p><p><b>Tonight.</b> What did you volunteer? How did it feel to be ahead of the truth instead of behind it?</p></div></article><article class="day" id="day-37" data-day="37">
+  <p><b>Morning.</b> Tell her something before she asks: your schedule, a purchase, a mistake.</p><p><b>Tonight.</b> What did you volunteer? How did it feel to be ahead of the truth instead of behind it?</p>
+  <p class="why"><a href="#sci-trust">Why it works: Trust after lying comes back slowly, through actions</a></p></div></article><article class="day" id="day-37" data-day="37">
   <label class="check"><input type="checkbox" data-day="37"><span></span></label>
   <div><p class="dnum">Day 37</p><h4>Open book</h4>
-  <p><b>Morning.</b> Offer access without being asked: phone, accounts, calendar, whatever was hidden before. Offer it as evidence, not as punishment.</p><p><b>Tonight.</b> What are you still keeping in a back room?</p></div></article><article class="day" id="day-38" data-day="38">
+  <p><b>Morning.</b> Offer access without being asked: phone, accounts, calendar, whatever was hidden before. Offer it as evidence, not as punishment.</p><p><b>Tonight.</b> What are you still keeping in a back room?</p>
+  <p class="why"><a href="#sci-trust">Why it works: Trust after lying comes back slowly, through actions</a></p></div></article><article class="day" id="day-38" data-day="38">
   <label class="check"><input type="checkbox" data-day="38"><span></span></label>
   <div><p class="dnum">Day 38</p><h4>Her anger isn&#x27;t the enemy</h4>
-  <p><b>Morning.</b> If she&#x27;s hurt or angry today, it&#x27;s the cost of what happened, not an attack on you. Stay in the room, listen, and don&#x27;t argue about the facts.</p><p><b>Tonight.</b> Did you stay? At what moment did you want to leave?</p></div></article><article class="day" id="day-39" data-day="39">
+  <p><b>Morning.</b> If she&#x27;s hurt or angry today, it&#x27;s the cost of what happened, not an attack on you. Before you talk, take two minutes to remember what kind of husband you&#x27;ve decided to be. Then stay in the room, listen, and don&#x27;t argue about the facts.</p><p><b>Tonight.</b> Did you stay? At what moment did you want to leave?</p>
+  <p class="why"><a href="#sci-affirm">Why it works: Remembering your values makes you less defensive</a></p></div></article><article class="day" id="day-39" data-day="39">
   <label class="check"><input type="checkbox" data-day="39"><span></span></label>
   <div><p class="dnum">Day 39</p><h4>Don&#x27;t demand trust</h4>
-  <p><b>Morning.</b> Don&#x27;t ask &quot;When are you going to trust me?&quot; Whether she trusts you is her decision. Being consistent is yours.</p><p><b>Tonight.</b> What did you do today that she could check for herself?</p></div></article><article class="day" id="day-40" data-day="40">
+  <p><b>Morning.</b> Don&#x27;t ask &quot;When are you going to trust me?&quot; Research on trust after deception shows it comes back slowly and through actions, not words. Whether she trusts you is her decision. Being consistent is yours.</p><p><b>Tonight.</b> What did you do today that she could check for herself?</p>
+  <p class="why"><a href="#sci-trust">Why it works: Trust after lying comes back slowly, through actions</a></p></div></article><article class="day" id="day-40" data-day="40">
   <label class="check"><input type="checkbox" data-day="40"><span></span></label>
   <div><p class="dnum">Day 40</p><h4>Keep one small promise</h4>
-  <p><b>Morning.</b> Make one small, specific promise with a time on it, and keep it exactly.</p><p><b>Tonight.</b> Did you keep it, on time? Small promises kept are how your words become believable again.</p></div></article><article class="day" id="day-41" data-day="41">
+  <p><b>Morning.</b> Make one small, specific promise with a time on it, and keep it exactly.</p><p><b>Tonight.</b> Did you keep it, on time? Small promises kept are how your words become believable again.</p>
+  <p class="why"><a href="#sci-ifthen">Why it works: If-then plans work</a></p></div></article><article class="day" id="day-41" data-day="41">
   <label class="check"><input type="checkbox" data-day="41"><span></span></label>
   <div><p class="dnum">Day 41</p><h4>Say the feeling</h4>
-  <p><b>Morning.</b> Many lies stand in for feelings. Today, say one feeling out loud: &quot;I&#x27;m afraid.&quot; &quot;I&#x27;m embarrassed.&quot; &quot;I&#x27;m stressed about money.&quot;</p><p><b>Tonight.</b> What feeling did you finally say? What happened next?</p></div></article><article class="day" id="day-42" data-day="42">
+  <p><b>Morning.</b> Many lies stand in for feelings. Today, say one feeling out loud: &quot;I&#x27;m afraid.&quot; &quot;I&#x27;m embarrassed.&quot; &quot;I&#x27;m stressed about money.&quot;</p><p><b>Tonight.</b> What feeling did you finally say? What happened next?</p>
+  <p class="why"><a href="#sci-expressive">Why it works: Writing about hard things helps a little</a></p></div></article><article class="day" id="day-42" data-day="42">
   <label class="check"><input type="checkbox" data-day="42"><span></span></label>
   <div><p class="dnum">Day 42 · Review</p><h4>Week 6 review</h4>
-  <p><b>Morning.</b> Ask your wife one question today, and only if she&#x27;s open to it: &quot;What&#x27;s one thing that would help you feel safer with me this week?&quot; Just listen.</p><p><b>Tonight.</b> Total the week and text your brother. What did she tell you, and what will you do about it?</p></div></article></section><section class="week" id="week-7">
+  <p><b>Morning.</b> Ask your wife one question today, and only if she&#x27;s open to it: &quot;What&#x27;s one thing that would help you feel safer with me this week?&quot; Just listen.</p><p><b>Tonight.</b> Total the week and text your brother. What did she tell you, and what will you do about it?</p>
+  <p class="why"><a href="#sci-couples">Why it works: Couples therapy has tested models for repairing betrayal</a></p></div></article></section><section class="week" id="week-7">
   <p class="label">Week 7</p><h3>A Man Whose Word Holds</h3><p class="serif big">Not a streak. An identity.</p>
   <p>You finish by deciding who you are, planning for the day you slip, and choosing what keeps running after Day 49.</p><blockquote>“All you need to say is simply &#x27;Yes&#x27; or &#x27;No.&#x27;” <cite>Matthew 5:37</cite></blockquote>
   <article class="day" id="day-43" data-day="43">
   <label class="check"><input type="checkbox" data-day="43"><span></span></label>
   <div><p class="dnum">Day 43</p><h4>Your identity sentence</h4>
-  <p><b>Morning.</b> Rewrite your vision sentence: &quot;I am a man who tells the truth when it costs me.&quot; Read it three times this morning.</p><p><b>Tonight.</b> Where did you live that sentence today?</p></div></article><article class="day" id="day-44" data-day="44">
+  <p><b>Morning.</b> Rewrite your vision sentence: &quot;I am a man who tells the truth when it costs me.&quot; Read it three times this morning.</p><p><b>Tonight.</b> Where did you live that sentence today?</p>
+  <p class="why"><a href="#sci-affirm">Why it works: Remembering your values makes you less defensive</a></p></div></article><article class="day" id="day-44" data-day="44">
   <label class="check"><input type="checkbox" data-day="44"><span></span></label>
   <div><p class="dnum">Day 44</p><h4>Your warning signs</h4>
-  <p><b>Morning.</b> Write your relapse warning signs: tired, stressed, money trouble, isolated, skipping the ledger, keeping &quot;small&quot; secrets.</p><p><b>Tonight.</b> Which warning sign is showing right now?</p></div></article><article class="day" id="day-45" data-day="45">
+  <p><b>Morning.</b> Write your relapse warning signs: short on sleep, stressed, money trouble, isolated, skipping the ledger, keeping &quot;small&quot; secrets, rounding up again.</p><p><b>Tonight.</b> Which warning sign is showing right now?</p>
+  <p class="why"><a href="#sci-sleep">Why it works: Tired men have less self-control</a></p></div></article><article class="day" id="day-45" data-day="45">
   <label class="check"><input type="checkbox" data-day="45"><span></span></label>
   <div><p class="dnum">Day 45</p><h4>Your relapse plan</h4>
-  <p><b>Morning.</b> Write it and sign it: If I lie, I will 1) correct it the same day, 2) log it, 3) tell my brother within 24 hours, 4) bring it to counseling.</p><p><b>Tonight.</b> Who has a copy? Send it to your brother tonight.</p></div></article><article class="day" id="day-46" data-day="46">
+  <p><b>Morning.</b> Write it and sign it: If I lie, I will 1) correct it the same day, 2) log it, 3) write myself two honest, kind sentences instead of tearing myself down, 4) tell my brother within 24 hours, 5) bring it to counseling. I don&#x27;t start over at Day 1.</p><p><b>Tonight.</b> Who has a copy? Send it to your brother tonight.</p>
+  <p class="why"><a href="#sci-lapse">Why it works: A slip doesn&#x27;t have to become a relapse</a></p></div></article><article class="day" id="day-46" data-day="46">
   <label class="check"><input type="checkbox" data-day="46"><span></span></label>
   <div><p class="dnum">Day 46</p><h4>Teach it</h4>
-  <p><b>Morning.</b> How you handle your own mistakes teaches your kids how to handle theirs. Admit a mistake in front of them today, in a way that fits their age.</p><p><b>Tonight.</b> What do you want your children to learn about truth from watching you?</p></div></article><article class="day" id="day-47" data-day="47">
+  <p><b>Morning.</b> How you handle your own mistakes teaches your kids how to handle theirs. Admit a mistake in front of them today, in a way that fits their age.</p><p><b>Tonight.</b> What do you want your children to learn about truth from watching you?</p>
+  <p class="why"><a href="#sci-kelly">Why it works: Lying less goes with better health and relationships</a></p></div></article><article class="day" id="day-47" data-day="47">
   <label class="check"><input type="checkbox" data-day="47"><span></span></label>
   <div><p class="dnum">Day 47</p><h4>What the truth gave you</h4>
-  <p><b>Morning.</b> List five things that seven weeks of truth have given you.</p><p><b>Tonight.</b> Thank your wife for one specific thing she has done during this. Thank God for one too.</p></div></article><article class="day" id="day-48" data-day="48">
+  <p><b>Morning.</b> List five things that seven weeks of truth have given you.</p><p><b>Tonight.</b> Thank your wife for one specific thing she has done during this. Thank God for one too.</p>
+  <p class="why"><a href="#sci-compassion">Why it works: Self-compassion makes men more likely to make amends</a></p></div></article><article class="day" id="day-48" data-day="48">
   <label class="check"><input type="checkbox" data-day="48"><span></span></label>
   <div><p class="dnum">Day 48</p><h4>Your ongoing system</h4>
-  <p><b>Morning.</b> Decide what keeps running after Day 49. Keep: the nightly ledger, the Sunday review, counseling until your counselor says otherwise, and a weekly text to your brother. Optional: the midday check.</p><p><b>Tonight.</b> Set those reminders for the next 90 days before you sleep.</p></div></article><article class="day" id="day-49" data-day="49">
+  <p><b>Morning.</b> Decide what keeps running after Day 49. Keep: the nightly ledger, the Sunday review, counseling until your counselor says otherwise, and a weekly text to your brother. Optional: the midday check.</p><p><b>Tonight.</b> Set those reminders for the next 90 days before you sleep.</p>
+  <p class="why"><a href="#sci-track">Why it works: Tracking your behavior changes your behavior</a></p></div></article><article class="day" id="day-49" data-day="49">
   <label class="check"><input type="checkbox" data-day="49"><span></span></label>
   <div><p class="dnum">Day 49 · Review</p><h4>Day 49</h4>
-  <p><b>Morning.</b> Read your Day 1 numbers this morning.</p><p><b>Tonight.</b> Write a letter to the man who started on Day 1. Then tell your wife one thing you&#x27;ve learned about yourself.</p></div></article></section>
+  <p><b>Morning.</b> Read your Day 1 numbers this morning.</p><p><b>Tonight.</b> Write a letter to the man who started on Day 1. Then tell your wife one thing you&#x27;ve learned about yourself.</p>
+  <p class="why"><a href="#sci-compassion">Why it works: Self-compassion makes men more likely to make amends</a></p></div></article></section>
 
-<h2>If you lie (and on some day you will)</h2>
-<p>A slip isn't a relapse. Hiding the slip is the relapse.</p>
-<ol><li>Correct it the same day.</li><li>Log it honestly tonight.</li><li>Tell your brother within 24 hours.</li><li>Bring it to counseling.</li><li>Start the next day where you are. Don't go back to Day 1.</li></ol>
+<h2 id="relapse">If you lie (and on some day you will)</h2>
+<p>A slip isn't a relapse. Hiding the slip is the relapse. Research on relapse shows that the “I've blown it, what's the use” thought after one slip is what turns it into a full return to the old pattern.</p>
+<ol><li>Correct it the same day.</li><li>Log it honestly tonight.</li><li>Write yourself two honest, kind sentences. Don't tear yourself down: shame makes men hide.</li><li>Tell your brother within 24 hours.</li><li>Bring it to counseling.</li><li>Start the next day where you are. Don't go back to Day 1.</li></ol>
 
-<h2>Set up the reminders</h2>
+<h2 id="setup">Set up the reminders</h2>
 <ol>
 <li>Download <b>install-truth-ledger.command</b> to your Mac's Downloads folder.</li>
 <li>Open Terminal and run: <code>bash ~/Downloads/install-truth-ledger.command</code> (add <code>today</code> at the end to make today Day 1).</li>

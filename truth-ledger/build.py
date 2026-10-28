@@ -20,8 +20,9 @@ def items():
     out = []
     for i, (title, focus, question) in enumerate(DAYS):
         d, w = i + 1, week_of(i)
+        sci = SCIENCE[DAY_SCI[d]]
         out.append((d, "morning", f"Day {d} Morning: {title}",
-                    f"Week {w['n']}: {w['name']}. {w['line']}\n\n{focus}\n\nBefore you go: name today's risk moment and the exact true sentence you'll say."))
+                    f"Week {w['n']}: {w['name']}. {w['line']}\n\n{focus}\n\nBefore you go, write today's if-then: \"If ___ happens, then I'll say ___.\"\n\nWhy it works: {sci['title']}. {sci['use']} ({sci['source']})"))
         out.append((d, "midday", f"Day {d} Midday check", MIDDAY))
         if d % 7 == 0:
             nxt = WEEKS[w['n']] if w['n'] < 7 else None

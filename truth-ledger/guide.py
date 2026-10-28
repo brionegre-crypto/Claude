@@ -21,16 +21,24 @@ def build(path):
     for w in WEEKS:
         days = []
         for i in range((w['n'] - 1) * 7, w['n'] * 7):
-            t, f, q = DAYS[i]; d = i + 1
+            t, f, q = DAYS[i]; d = i + 1; k = DAY_SCI[d]
             days.append(f'''<article class="day" id="day-{d}" data-day="{d}">
   <label class="check"><input type="checkbox" data-day="{d}"><span></span></label>
   <div><p class="dnum">Day {d}{' · Review' if d % 7 == 0 else ''}</p><h4>{e(t)}</h4>
-  <p><b>Morning.</b> {e(f)}</p><p><b>Tonight.</b> {e(q)}</p></div></article>''')
+  <p><b>Morning.</b> {e(f)}</p><p><b>Tonight.</b> {e(q)}</p>
+  <p class="why"><a href="#sci-{k}">Why it works: {e(SCIENCE[k]['title'])}</a></p></div></article>''')
         weeks.append(f'''<section class="week" id="week-{w['n']}">
   <p class="label">Week {w['n']}</p><h3>{e(w['name'])}</h3><p class="serif big">{e(w['line'])}</p>
   <p>{e(w['why'])}</p><blockquote>“{e(w['verse'])}” <cite>{e(w['ref'])}</cite></blockquote>
   {''.join(days)}</section>''')
 
+    order = ["curtis", "prolific", "selfpres", "escalate", "track", "ifthen", "hrt", "pause", "exposure", "shame",
+             "compassion", "lapse", "affirm", "secrets", "expressive", "sleep", "kelly", "trust", "disclosure", "couples"]
+    assert sorted(order) == sorted(SCIENCE)
+    cards = ''.join(f'''<article class="sci" id="sci-{k}"><p class="badge b-{SCIENCE[k]['strength'].lower()}">{SCIENCE[k]['strength']} evidence</p>
+  <h4>{e(SCIENCE[k]['title'])}</h4><p>{e(SCIENCE[k]['finding'])}</p>
+  <p><b>In your system:</b> {e(SCIENCE[k]['use'])}</p>
+  <p class="src"><a href="{e(SCIENCE[k]['url'])}" target="_blank" rel="noopener">{e(SCIENCE[k]['source'])}</a> · Used on Days {', '.join(str(d) for d in sorted(DAY_SCI) if DAY_SCI[d] == k)}</p></article>''' for k in order)
     tonight = TONIGHT.split('\n')
     page = f'''<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>The Truth Ledger</title>
@@ -73,6 +81,14 @@ cite{{display:block;font:500 12px Oswald;letter-spacing:.2em;text-transform:uppe
 .bar input{{background:var(--panel);color:var(--ink);border:1px solid var(--rule);padding:6px 8px;font:inherit}}
 .bar a,.btn{{background:var(--em);color:var(--bg);font:700 13px Oswald;letter-spacing:.08em;text-transform:uppercase;padding:6px 12px;text-decoration:none}}
 #status{{color:var(--ink)}}
+.toc{{display:flex;flex-wrap:wrap;gap:8px;margin:28px 0 0}}.toc a{{font:500 12px Oswald;letter-spacing:.14em;text-transform:uppercase;color:var(--soft);border:1px solid var(--rule);padding:6px 10px;text-decoration:none}}
+.why{{margin-top:8px!important}}.why a{{color:var(--soft);font-size:14px;text-decoration:none;border-bottom:1px solid var(--rule)}}
+.sci{{background:var(--panel);padding:18px;margin:12px 0;scroll-margin-top:100px}}.sci p{{margin:6px 0;font-size:15.5px}}.sci b{{color:var(--em);font-weight:600}}
+.src{{font-size:13.5px!important;color:var(--mute)}}.src a{{color:var(--soft)}}
+.badge{{display:inline-block;font:500 11px Oswald;letter-spacing:.18em;text-transform:uppercase;padding:3px 8px;margin:0}}
+.b-strong{{background:var(--em);color:var(--bg)}}.b-moderate{{border:1px solid var(--em);color:var(--em)}}.b-early{{border:1px solid var(--mute);color:var(--soft)}}
+.sci .badge{{margin-bottom:10px}}
+.legend{{font-size:14px;color:var(--soft);line-height:2.2}}
 footer{{margin-top:64px;padding-top:24px;border-top:2px solid var(--em);color:var(--mute);font-size:14px}}
 @media print{{.bar{{display:none}}body{{background:#fff;color:#000}}.day,.note,.lines li,.rhythm div,pre{{background:#f4f1ea}}}}
 </style></head><body>
@@ -82,9 +98,11 @@ footer{{margin-top:64px;padding-top:24px;border-top:2px solid var(--em);color:va
 <header class="hero"><p class="label">A Be The Man daily system</p><h1>The Truth<br>Ledger</h1>
 <p class="serif">49 days to become a man whose word holds.</p></header>
 
-<div class="note"><b>Read this first.</b> This guide is built on the methods counselors use for compulsive lying: tracking the behavior (CBT), finding the fear that drives it, building a pause, practicing small truths (exposure), repair, and relapse planning. It is a daily structure, not therapy. Do it <b>alongside</b> a licensed counselor; booking one is on Day 3. If you ever feel hopeless or think about harming yourself, call or text <b>988</b> (Suicide &amp; Crisis Lifeline, US).</div>
+<nav class="toc"><a href="#tonight">Tonight</a><a href="#rhythm">Daily rhythm</a><a href="#science">The science</a><a href="#counselor">Choosing a counselor</a><a href="#week-1">The 49 days</a><a href="#relapse">If you lie</a><a href="#setup">Reminders</a></nav>
 
-<h2>Tonight: Day 0</h2>
+<div class="note"><b>Read this first.</b> Researchers who study pathological lying say plainly that no proven treatment exists yet, and they point to cognitive behavioral therapy (CBT) as the best place to start. So this guide is built from CBT methods with strong evidence for similar problems: tracking the behavior, if-then plans, habit reversal, exposure, relapse prevention, and research on shame, self-compassion and rebuilding trust. Every day links to the study behind it, rated honestly as Strong, Moderate or Early. It is a daily structure, not therapy. Do it <b>alongside</b> a licensed counselor; booking one is on Day 3. If you ever feel hopeless or think about harming yourself, call or text <b>988</b> (Suicide &amp; Crisis Lifeline, US).</div>
+
+<h2 id="tonight">Tonight: Day 0</h2>
 <p>Don't wait for Monday. Do these five things before you sleep.</p>
 <ol>{''.join(f"<li>{e(x[3:])}</li>" for x in tonight[1:6])}</ol>
 <p class="serif">{e(tonight[6])}</p>
@@ -96,9 +114,9 @@ footer{{margin-top:64px;padding-top:24px;border-top:2px solid var(--em);color:va
 <li><b>Log every one, every night.</b> Being honest with the ledger is the first honesty. A ledger with a lie in it is worthless.</li>
 </ol>
 
-<h2>The daily rhythm</h2>
+<h2 id="rhythm">The daily rhythm</h2>
 <div class="rhythm">
-<div><strong>{hm(TIMES['morning'])}</strong>Morning · 2 min<br><span>Read your sentence and today's focus. Name today's risk moment and the true sentence you'll say.</span></div>
+<div><strong>{hm(TIMES['morning'])}</strong>Morning · 2 min<br><span>Read your sentence and today's focus. Write one if-then plan: \u201cIf ___ happens, then I'll say ___.\u201d</span></div>
 <div><strong>{hm(TIMES['midday'])}</strong>Midday · 60 sec<br><span>Anything to correct since morning? Fix it before 5 PM.</span></div>
 <div><strong>{hm(TIMES['evening'])}</strong>Evening Ledger · 10 min<br><span>Fill in the ledger and answer tonight's question.</span></div>
 <div><strong>Every 7th day</strong>{hm(TIMES['review'])} · 20 min<br><span>Add up the week. Text your brother the three numbers.</span></div>
@@ -122,13 +140,28 @@ footer{{margin-top:64px;padding-top:24px;border-top:2px solid var(--em);color:va
 <li><b>Consider couples counseling</b> once your own work has started. Your counselor can tell you when.</li>
 </ul>
 
+<h2 id="science">The science behind the system</h2>
+<p>What researchers know about lying, habits, shame and trust, and exactly where each finding shows up in your 49 days.</p>
+<p class="legend"><span class="badge b-strong">Strong</span> reviews of many experiments &nbsp; <span class="badge b-moderate">Moderate</span> solid studies, or a proven method borrowed from a related problem &nbsp; <span class="badge b-early">Early</span> small, mixed or unpublished evidence</p>
+{cards}
+
+<h2 id="counselor">Choosing a counselor</h2>
+<p>Because there's no proven treatment for compulsive lying yet, the counselor you choose matters. Look for:</p>
+<ul>
+<li><b>A licensed clinician:</b> a psychologist, LPC or LMFT. If your faith matters to you, look for one who is licensed and also comfortable working with Christian clients.</li>
+<li><b>CBT-based methods,</b> including exposure and behavioral experiments. Ask: \u201cHow would you treat lying that feels automatic and is driven by fear of failure and rejection?\u201d</li>
+<li><b>A real assessment.</b> Ask them to check whether anxiety, depression, ADHD, trauma or something else is feeding the lying. Treating that can make everything else easier.</li>
+<li><b>Later, a couples therapist</b> trained in Emotionally Focused Therapy (EFT), the Gottman Method or affair-recovery work, when your counselor says it's time.</li>
+<li><b>Bring this guide.</b> Show them your ledger numbers and ask them to adjust the plan to fit you.</li>
+</ul>
+
 {''.join(weeks)}
 
-<h2>If you lie (and on some day you will)</h2>
-<p>A slip isn't a relapse. Hiding the slip is the relapse.</p>
-<ol><li>Correct it the same day.</li><li>Log it honestly tonight.</li><li>Tell your brother within 24 hours.</li><li>Bring it to counseling.</li><li>Start the next day where you are. Don't go back to Day 1.</li></ol>
+<h2 id="relapse">If you lie (and on some day you will)</h2>
+<p>A slip isn't a relapse. Hiding the slip is the relapse. Research on relapse shows that the \u201cI've blown it, what's the use\u201d thought after one slip is what turns it into a full return to the old pattern.</p>
+<ol><li>Correct it the same day.</li><li>Log it honestly tonight.</li><li>Write yourself two honest, kind sentences. Don't tear yourself down: shame makes men hide.</li><li>Tell your brother within 24 hours.</li><li>Bring it to counseling.</li><li>Start the next day where you are. Don't go back to Day 1.</li></ol>
 
-<h2>Set up the reminders</h2>
+<h2 id="setup">Set up the reminders</h2>
 <ol>
 <li>Download <b>install-truth-ledger.command</b> to your Mac's Downloads folder.</li>
 <li>Open Terminal and run: <code>bash ~/Downloads/install-truth-ledger.command</code> (add <code>today</code> at the end to make today Day 1).</li>
