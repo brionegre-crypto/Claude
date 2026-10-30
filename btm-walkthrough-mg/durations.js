@@ -1,0 +1,1 @@
+window.WT_DURS={"welcome":21.418667,"pattern":19.541333,"scorecard":24.170667,"seven":22.442667,"why":27.52,"step1":19.221333,"challenge":18.56,"training":21.354667,"humility":26.496,"club":41.082,"workshop":21.973333,"group":36.388667,"inner":35.343333,"store":28.394667,"couples":37.946,"church":25.514667,"about":29.013333,"start":16.149333,"outro":4.288};
