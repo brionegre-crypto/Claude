@@ -1,0 +1,8 @@
+node_modules/
+.hyperframes/
+renders/_*
+renders/work-*
+renders/.*
+renders/*master*
+assets/narration.f32
+assets/narr/*.txt

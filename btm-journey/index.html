@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <title>be the man — the system, in motion</title>
+    <script src="vendor/gsap.min.js"></script>
+    <script src="durations.js"></script>
+    <script src="script.js"></script>
+    <script src="sting.js"></script>
+    <style>
+      @font-face { font-family: "Geist"; font-weight: 400; src: url("fonts/geist-latin-400-normal.woff2") format("woff2"); }
+      @font-face { font-family: "Geist"; font-weight: 500; src: url("fonts/geist-latin-500-normal.woff2") format("woff2"); }
+      @font-face { font-family: "Geist"; font-weight: 600; src: url("fonts/geist-latin-600-normal.woff2") format("woff2"); }
+      @font-face { font-family: "Geist"; font-weight: 700; src: url("fonts/geist-latin-700-normal.woff2") format("woff2"); }
+      @font-face { font-family: "Geist Mono"; font-weight: 500; src: url("fonts/geist-mono-latin-500-normal.woff2") format("woff2"); }
+      @font-face { font-family: "Lora"; font-style: italic; font-weight: 500; src: url("fonts/Lora-500-italic.woff2") format("woff2"); }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1920px; height: 1080px; overflow: hidden; background: #000; }
+      #root { position: relative; width: 1920px; height: 1080px; overflow: hidden; background: #000; color: #f5f5f7; font-family: "Geist", sans-serif; }
+      .layer { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; }
+      #bg { background-image: radial-gradient(rgba(255,255,255,.055) 1.2px, transparent 1.6px); background-size: 64px 64px; background-position: 32px 32px; }
+      #glowA { background: radial-gradient(ellipse 900px 700px at 8% 100%, rgba(225,139,31,.20), rgba(225,139,31,0) 70%); }
+      .sc { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; background: transparent; overflow: hidden; display: none; }
+      .scbg { position: absolute; inset: 0; background: #000; }
+      .ghost { position: absolute; right: 70px; bottom: -70px; font: 700 620px/1 Geist, sans-serif; letter-spacing: -0.06em; color: transparent; -webkit-text-stroke: 3px rgba(225,139,31,.16); }
+      .beat { position: absolute; left: 190px; right: 170px; top: 150px; bottom: 120px; display: flex; flex-direction: column; justify-content: center; }
+      .el { opacity: 0; will-change: transform, opacity; }
+      .kick { font: 500 27px/34px "Geist Mono", monospace; letter-spacing: .1em; text-transform: uppercase; color: #e18b1f; margin-bottom: 30px; }
+      .h1 { font: 700 124px/118px Geist, sans-serif; letter-spacing: -.045em; color: #F2EEE6; max-width: 1560px; }
+      .sub { font: 400 38px/54px Geist, sans-serif; color: #a1a1a6; margin-top: 40px; max-width: 1240px; }
+      .rule { height: 6px; width: 0; background: #e18b1f; margin-top: 44px; border-radius: 3px; }
+      .big { font: 600 96px/104px Geist, sans-serif; letter-spacing: -.035em; color: #F2EEE6; max-width: 1560px; }
+      .stp { display: flex; align-items: center; gap: 38px; height: 98px; margin-bottom: 8px; position: relative; }
+      .stp .nb { flex: none; min-width: 78px; height: 78px; border-radius: 39px; padding: 0 24px; background: #1c1c1e; color: #f5f5f7; font: 600 36px/78px Geist, sans-serif; text-align: center; transition: none; }
+      .stp .nm { font: 600 60px/68px Geist, sans-serif; letter-spacing: -.02em; color: #8d8d93; flex: 1; }
+      .stp .tg { font: 500 24px/30px "Geist Mono", monospace; text-transform: uppercase; letter-spacing: .1em; color: #e18b1f; }
+      .stp.on .nb { background: #e18b1f; color: #0b0b0c; } .stp.on .nm { color: #F2EEE6; }
+      .stline { position: absolute; left: 38px; width: 3px; background: #e18b1f; top: 0; height: 0; border-radius: 2px; }
+      .rw { display: flex; align-items: baseline; justify-content: space-between; gap: 60px; padding: 30px 0 30px 40px; border-bottom: 1px solid rgba(255,255,255,.12); position: relative; }
+      .rw::before { content: ""; position: absolute; left: 0; top: 18px; bottom: 18px; width: 8px; border-radius: 4px; background: #e18b1f; opacity: 0; }
+      .rw.on::before { opacity: 1; }
+      .rw .l { font: 600 70px/78px Geist, sans-serif; letter-spacing: -.025em; color: #8d8d93; } .rw .v { font: 400 44px/54px Geist, sans-serif; color: #a1a1a6; text-align: right; }
+      .rw.on .l { color: #F2EEE6; } .rw.on .v { color: #F2EEE6; }
+      .cards { display: flex; gap: 30px; margin-top: 40px; }
+      .cd { flex: 1; border: 2px solid rgba(255,255,255,.12); border-radius: 36px; padding: 48px 46px; background: #0c0c0d; }
+      .cd .nm { font: 600 50px/58px Geist, sans-serif; color: #F2EEE6; } .cd .pr { font: 700 170px/160px Geist, sans-serif; letter-spacing: -.05em; color: #e18b1f; margin: 26px 0 20px; } .cd .ds { font: 400 36px/48px Geist, sans-serif; color: #a1a1a6; }
+      .cd.on { border-color: #e18b1f; background: rgba(225,139,31,.09); }
+      .cols { display: flex; gap: 34px; margin-top: 54px; } .cols .cd { padding: 54px; } .cols .hd { font: 500 26px/32px "Geist Mono", monospace; letter-spacing: .1em; text-transform: uppercase; color: #e18b1f; } .cols .ln { font: 600 66px/76px Geist, sans-serif; letter-spacing: -.03em; margin-top: 22px; color: #F2EEE6; }
+      .sbar { height: 54px; border-radius: 27px; background: #1c1c1e; overflow: hidden; margin: 14px 0 46px; } .sbar i { display: block; height: 100%; width: 0; border-radius: 27px; background: #e18b1f; } .sbar i.w { background: #F2EEE6; opacity: .75; }
+      .sl { display: flex; justify-content: space-between; align-items: baseline; font: 500 52px/60px Geist, sans-serif; color: #F2EEE6; } .sl b { font: 700 130px/120px Geist, sans-serif; letter-spacing: -.05em; font-variant-numeric: tabular-nums; color: #e18b1f; } .sl b.vb { color: #F2EEE6; }
+      .note { font: 400 38px/54px Geist, sans-serif; color: #9a9aa3; margin-top: 18px; max-width: 1300px; }
+      .btn { display: inline-flex; align-items: center; gap: 28px; align-self: flex-start; height: 138px; border-radius: 69px; padding: 0 84px; background: #e18b1f; color: #0b0b0c; font: 600 66px/138px Geist, sans-serif; letter-spacing: -.02em; margin-top: 10px; }
+      .chips { display: flex; flex-wrap: wrap; gap: 22px; margin-top: 8px; } .chip { border: 2px solid rgba(255,255,255,.18); border-radius: 54px; padding: 0 64px; height: 108px; font: 600 58px/104px Geist, sans-serif; color: #8d8d93; background: #0c0c0d; } .chip.on { border-color: #e18b1f; background: rgba(225,139,31,.16); color: #f6b24f; }
+      .kp { display: flex; gap: 30px; } .kp .cd { padding: 54px 50px; } .kp .bg { font: 700 210px/190px Geist, sans-serif; letter-spacing: -.055em; color: #e18b1f; } .kp .sm { font: 400 40px/52px Geist, sans-serif; color: #a1a1a6; margin-top: 18px; }
+      .scq { font: 600 62px/72px Geist, sans-serif; letter-spacing: -.035em; color: #F2EEE6; margin-bottom: 50px; max-width: 1560px; }
+      .sco { display: flex; align-items: center; gap: 40px; padding: 22px 0; border-bottom: 1px solid rgba(255,255,255,.12); } .sco .l { flex: 1; font: 600 56px/64px Geist, sans-serif; color: #F2EEE6; } .sco .tm { font: 500 28px/34px "Geist Mono", monospace; color: #9a9aa3; width: 150px; }
+      .days { display: flex; gap: 14px; } .days i { width: 74px; height: 74px; border-radius: 16px; background: #1c1c1e; } .days i.k { background: #e18b1f; }
+      #chap { position: absolute; left: 190px; top: 54px; font: 500 26px/32px "Geist Mono", monospace; letter-spacing: .12em; text-transform: uppercase; color: #F2EEE6; z-index: 30; white-space: pre; }
+      #chap b { color: #e18b1f; font-weight: 500; }
+      #prog { position: absolute; left: 0; top: 0; height: 6px; width: 0; background: #e18b1f; z-index: 31; }
+      #thread { position: absolute; left: 96px; top: 54px; width: 3px; height: 970px; background: rgba(255,255,255,.12); z-index: 29; border-radius: 2px; }
+      #threadF { position: absolute; left: 96px; top: 54px; width: 3px; height: 0; background: #e18b1f; z-index: 29; border-radius: 2px; }
+      #threadN { position: absolute; left: 88px; top: 54px; width: 19px; height: 19px; border-radius: 10px; background: #e18b1f; z-index: 29; box-shadow: 0 0 24px rgba(225,139,31,.7); }
+      #sweep { position: absolute; top: 0; width: 8px; height: 1080px; background: #e18b1f; z-index: 28; opacity: 0; box-shadow: 0 0 40px rgba(225,139,31,.8); }
+      #cover { background: #000; opacity: 0; z-index: 40; }
+      canvas.layer { background: transparent; }
+      #glow { opacity: 0; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="503.23333333333335" data-width="1920" data-height="1080">
+      <div id="bg" class="layer"></div><div id="glowA" class="layer"></div>
+      <div id="scenes"></div>
+      <div id="thread"></div><div id="threadF"></div><div id="threadN"></div>
+      <div id="sweep"></div>
+      <div id="chap"></div><div id="prog"></div>
+      <div id="cover" class="layer"></div>
+      <canvas id="line" class="layer" width="1920" height="1080" style="z-index:41"></canvas>
+      <div id="glowwrap" class="layer" style="z-index:42"><canvas id="glow" class="layer" width="1920" height="1080"></canvas></div>
+      <canvas id="fin" class="layer" width="1920" height="1080" style="z-index:43"></canvas>
+    </div>
+    <script src="engine.js"></script>
+  </body>
+</html>
