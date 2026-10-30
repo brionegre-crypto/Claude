@@ -58,14 +58,16 @@ W.SCENES.forEach((s, si) => {
   let ni = 0;
   const pat = (t, big) => { const tt = W.snap(t); if (big) { bell(tt + 0.02, NOTES[ni++ % 7] * (si % 2 ? 1 : 0.5), 0.07, -0.25 + 0.5 * ((ni % 5) / 4)); } else key(tt, 0.35, -0.2); };
   s.page.forEach((b) => {
-    const bc = W.cueTime(s, b.cue, s.t0 + 0.5);
-    if (b.t === 'hero') { pat(bc, 0); pat(bc + 0.25, 0); pat(bc + 0.75, 0); }
-    else if (b.t === 'stat') { pat(bc, 1); bell(W.snap(bc + 0.9), 392, 0.07, 0.3); }
-    else if (b.t === 'kpis' || b.t === 'cards') { b.items.forEach((it, i) => pat(W.cueTime(s, it.cue, bc + i * 0.5), 1)); }
-    else if (b.t === 'steps' || b.t === 'rows') { b.items.forEach((it, i) => pat(W.cueTime(s, it.cue, bc + i * 0.4), 0)); }
-    else if (b.t === 'chips') { b.items.forEach((it, i) => pat(W.cueTime(s, b.cues[i], bc + i * 0.4), 0)); }
-    else if (b.t === 'card') { b.rows.forEach((r, i) => pat(W.cueTime(s, r.cue, bc + i * 0.8), 0)); pat(W.cueTime(s, b.totalCue, bc + 3), 1); }
-    else pat(bc, 0);
+    const bc = W.cueTime(s, b.cue, s.t0 + 0.5), cues = [], bellish = ['route', 'kpis', 'cards', 'stat', 'map', 'stairs'].includes(b.t);
+    (b.items || []).forEach((it, i) => cues.push(W.cueTime(s, it.cue || (b.cues && b.cues[i]), bc + i * 0.5)));
+    (b.rows || []).forEach((r, i) => cues.push(W.cueTime(s, r.cue, bc + i * 0.5)));
+    (b.lines || []).forEach((r, i) => cues.push(W.cueTime(s, r.cue, bc + i * 0.8)));
+    (b.labels || []).forEach((r, i) => cues.push(W.cueTime(s, r.cue, bc + i)));
+    if (b.t === 'hero' || b.t === 'text' || b.t === 'cta' || !cues.length) { pat(bc, 0); if (b.t === 'hero') { pat(bc + 0.25, 0); pat(bc + 0.75, 0); } }
+    cues.forEach((c) => pat(c, bellish ? 1 : 0));
+    if (b.t === 'stat') bell(W.snap(bc + 0.9), 392, 0.07, 0.3);
+    if (b.t === 'cycle') { const bt = W.cueTime(s, b.breakCue, bc + 10); whoosh(bt - 0.4, 1.4, 0.13); }
+    if (b.t === 'week') { const tA = W.cueTime(s, b.sweepA, bc + 4), tB = W.cueTime(s, b.sweepB, bc + 12); for (let d = 0; d < 7; d++) key(W.snap(tA + d * (tB - tA) / 7 + 0.1), 0.28, -0.4 + d * 0.13); }
   });
 });
 /* 3. the logo, as in the other films: the thread draws it, a click closes the loop, a low note holds under it */

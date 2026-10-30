@@ -114,9 +114,8 @@
       narr: 'The six-week group is four men, six Sundays, seven to eight P M Central on Google Meet, a hundred and forty-seven dollars at the founding price. The test: by December twentieth, could someone in your house tell something changed, without you telling them? At the top is the Inner Circle: ten men at most, a private weekly class with me every Thursday, a monthly one-on-one, and your scorecard reviewed every week. The founding circle is a hundred and ninety-seven dollars a month, by application. Come to four Thursdays, and if after thirty days it isn’t worth it, I refund you in full.',
       page: [
         { t: 'route', rise: true, cue: 'The six-week group', label: 'Road 3 · I need other men', items: [
-          { name: 'The 6-week group', tag: '$147 founding', desc: 'Four men. Six Sundays. Nov 15 to Dec 20.', cue: 'The six-week group' },
-          { name: 'The Inner Circle', tag: '$197 a month', desc: 'Ten men. A weekly class with Brian. By application. 30-day refund.', cue: 'At the top is the Inner Circle' } ] },
-        { t: 'text', cue: 'The test', kicker: 'The test', big: 'By December 20, could someone in your house tell something changed, without you telling them?' }
+          { name: 'The 6-week group', tag: '$147 founding', desc: 'Four men. Six Sundays, Nov 15 to Dec 20. The test: could someone in your house tell something changed, without you telling them?', cue: 'The six-week group' },
+          { name: 'The Inner Circle', tag: '$197 a month', desc: 'Ten men. A weekly class with Brian. By application. 30-day refund.', cue: 'At the top is the Inner Circle' } ] }
       ] },
     { id: 'couples', url: '', cam: 'wide',
       narr: 'If you want a stronger marriage, there is couples counseling, engaged or married, with me. You each take a validated relationship assessment online, separately, on your own time. Then we meet for three sessions to go through your results together and choose what to work on. It is three hundred dollars for three sessions. Couples who did premarital education were about thirty percent less likely to divorce. Send an inquiry, and I reply within twenty-four hours.',
@@ -164,7 +163,7 @@
   /* ---------------------------------------------------------------- the timeline ---------------------------------------------------------------- */
   let DURS = null;
   try { DURS = isNode ? JSON.parse(require('fs').readFileSync(require('path').join(__dirname, 'durations.json'), 'utf8')) : (typeof window !== 'undefined' ? window.WT_DURS : null); } catch (e) { DURS = null; }
-  const LEAD = 1.6, GAP = 0.9, TAILPAD = 0.35;
+  const LEAD = 1.8, GAP = 1.4, TAILPAD = 0.45;
   let cursor = LEAD;
   SCENES.forEach((s, i) => {
     s.n = s.narr.split(/\s+/).length;
