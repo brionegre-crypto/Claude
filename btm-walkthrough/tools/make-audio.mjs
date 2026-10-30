@@ -3,8 +3,8 @@
 import { createRequire } from 'module';
 import { writeFileSync, readFileSync } from 'fs';
 const require = createRequire(import.meta.url);
-const W = require('./script.js');
-const M = require('./sting.js');
+const W = require('../script.js');
+const M = require('../sting.js');
 const out = process.argv[2] || 'assets/walkthrough-audio.wav';
 const SR = 48000, DUR = W.DUR, N = Math.ceil(SR * DUR), BEAT = 0.6;
 const sc = M.create('orbit', { targetW: 1500, comp0: 0.05 });

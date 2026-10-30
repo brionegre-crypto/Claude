@@ -217,7 +217,7 @@
   }
 
   /* camera: wide (the man in view, the screen a little back) or push (the screen fills more of the frame) */
-  const camKey = { wide: { dz: -330, ry: 5, rx: 1.5, px: 90, py: -14 }, push: { dz: 130, ry: -2.5, rx: 0.5, px: 20, py: 0 }, logo: { dz: 420, ry: 0, rx: 0, px: 0, py: 0 } };
+  const camKey = { wide: { dz: -250, ry: 5, rx: 1.5, px: 90, py: -14 }, push: { dz: 150, ry: -2.5, rx: 0.5, px: 20, py: 0 }, logo: { dz: 420, ry: 0, rx: 0, px: 0, py: 0 } };
   const camKeys = (function () {
     const k = { dz: [], ry: [], rx: [], px: [], py: [] };
     const put = (t, c) => { Object.keys(k).forEach((n) => k[n].push([t, c[n]])); };

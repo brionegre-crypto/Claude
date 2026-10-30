@@ -86,11 +86,13 @@
   function measureScroll(s) {
     s.pg.style.display = "block"; s.pg.style.visibility = "hidden";
     var VIEW = 664, keys = [[s.t0 - 1, 0]], prev = 0;
-    var colH = s.col.offsetHeight - 140;
+    var colH = s.col.offsetHeight - 120, maxS = Math.max(0, colH - VIEW + 40);
     s.blks.forEach(function (b) {
-      var top = b.blk.offsetTop + 52, bot = top + b.blk.offsetHeight, target = Math.max(0, Math.min(top - 60, bot + 70 - VIEW));
-      target = Math.min(target, Math.max(0, colH + 60 - VIEW + 60));
-      if (target > prev) { keys.push([b.cue - 0.2, prev]); keys.push([b.cue + 1.1, target]); prev = target; }
+      var top = b.blk.offsetTop + 52, bot = top + b.blk.offsetHeight;
+      if (bot + 36 - prev > VIEW) {                       // it does not fit: bring the block to the top of the screen, whole
+        var target = Math.min(maxS, Math.max(0, top - 30));
+        if (target > prev + 4) { keys.push([b.cue - 0.25, prev]); keys.push([b.cue + 1.0, target]); prev = target; }
+      }
     });
     keys.push([s.t1 + 2, prev]);
     var clean = keys.filter(function (v, i, a) { return i === 0 || v[0] > a[i - 1][0] + 0.01; });
@@ -132,7 +134,7 @@
     man.style.transform = "translate3d(" + cm.px.toFixed(2) + "px," + cm.py.toFixed(2) + "px," + (210 - cm.dz).toFixed(2) + "px)";
     man.style.opacity = (1 - W.sstep((t - (T.morphA - 0.1)) / 0.9)).toFixed(3);
     // the man: leans toward the screen as it fills the shot, breathes, nods on his words, and his jaw moves with the voice
-    var ln = W.clamp((cm.dz + 330) / 520) * 0.6 + 0.15, br = Math.sin(t * 1.5) * 3;
+    var ln = W.clamp((cm.dz + 250) / 450) * 0.6 + 0.15, br = Math.sin(t * 1.5) * 3;
     manG.style.transform = "translate(" + (ln * 40).toFixed(1) + "px," + (ln * 16 + br).toFixed(1) + "px) rotate(" + (ln * 2 - 0.6).toFixed(2) + "deg)";
     mHeadG.style.transform = "rotate(" + (Math.sin(t * 0.8) * 0.5 + sp * 1.1 - 0.4).toFixed(2) + "deg) translate(" + (sp * 2).toFixed(1) + "px," + (sp * 5 + 4 * ln).toFixed(1) + "px)";
     mJaw.style.transform = "translateY(" + (sp * 5).toFixed(2) + "px) rotate(" + (-sp * 1.6).toFixed(2) + "deg)";
