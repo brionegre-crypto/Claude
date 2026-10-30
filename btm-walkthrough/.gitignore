@@ -6,3 +6,7 @@ renders/.*
 renders/*.mov
 assets/narration.f32
 assets/narr/*.txt
+renders/be-the-man-site-walkthrough.mp4
+renders/work-*
+renders/.*
+renders/_*
