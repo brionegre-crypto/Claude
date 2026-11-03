@@ -1,0 +1,27 @@
+<!doctype html><html><head><meta charset="utf-8"><title>thumbnail B</title>
+<script src="../sting.js"></script><script src="wm.js"></script>
+<style>
+@font-face{font-family:Geist;font-weight:700;src:url("../fonts/geist-latin-700-normal.woff2")}
+@font-face{font-family:Geist;font-weight:600;src:url("../fonts/geist-latin-600-normal.woff2")}
+@font-face{font-family:"Geist Mono";font-weight:500;src:url("../fonts/geist-mono-latin-500-normal.woff2")}
+*{margin:0;padding:0;box-sizing:border-box} html,body{width:1920px;height:1080px;background:#e18b1f;overflow:hidden}
+#t{position:relative;width:1920px;height:1080px;overflow:hidden;background:radial-gradient(circle 1000px at 88% 10%,rgba(255,236,200,.5),rgba(255,236,200,0) 62%),#e18b1f;font-family:Geist,sans-serif}
+h1{position:absolute;left:110px;top:84px;font:700 204px/176px Geist,sans-serif;letter-spacing:-.055em;color:#0b0b0c;text-transform:uppercase}
+h1 span{display:block;color:#F2EEE6}
+#grid{position:absolute;right:104px;bottom:92px;display:grid;grid-template-columns:repeat(7,88px);gap:14px}
+#grid i{display:block;width:88px;height:88px;border-radius:22px;background:#0b0b0c}
+#grid i.o{background:rgba(11,11,12,.16)}
+#cnt{position:absolute;right:104px;top:108px;text-align:right;font:700 210px/200px Geist,sans-serif;letter-spacing:-.05em;color:#0b0b0c}
+#cnt small{display:block;font:500 36px/44px "Geist Mono",monospace;letter-spacing:.16em;margin-top:6px;text-transform:uppercase}
+#badge{position:absolute;left:104px;bottom:84px;background:#0b0b0c;border-radius:30px;padding:30px 42px 24px}
+#tag{position:absolute;left:104px;bottom:210px;font:500 30px/36px "Geist Mono",monospace;letter-spacing:.16em;color:#0b0b0c;text-transform:uppercase}
+</style></head><body><div id="t">
+<h1>Do what<br>you said.<span>Every week.</span></h1>
+<div id="cnt">13/15<small>kept this week</small></div>
+<div id="grid"></div>
+<div id="tag">A 6-minute walkthrough</div>
+<div id="badge"><canvas id="wm"></canvas></div>
+</div><script>
+var g=document.getElementById('grid'),days=[[1,1,1,1,1,0,1],[1,1,1,1,0,1,1],[1,0,1,0,1,0,0]];
+days.forEach(function(r){r.forEach(function(v){var i=document.createElement('i');if(!v)i.className='o';g.appendChild(i)})});
+document.fonts.ready.then(function(){drawWordmark(document.getElementById('wm'),440);document.title='ready'});</script></body></html>

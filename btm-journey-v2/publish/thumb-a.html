@@ -1,0 +1,25 @@
+<!doctype html><html><head><meta charset="utf-8"><title>thumbnail A</title>
+<script src="../sting.js"></script><script src="wm.js"></script>
+<style>
+@font-face{font-family:Geist;font-weight:700;src:url("../fonts/geist-latin-700-normal.woff2")}
+@font-face{font-family:Geist;font-weight:600;src:url("../fonts/geist-latin-600-normal.woff2")}
+@font-face{font-family:"Geist Mono";font-weight:500;src:url("../fonts/geist-mono-latin-500-normal.woff2")}
+*{margin:0;padding:0;box-sizing:border-box} html,body{width:1920px;height:1080px;background:#000;overflow:hidden}
+#t{position:relative;width:1920px;height:1080px;overflow:hidden;background:radial-gradient(ellipse 1300px 900px at 8% 110%,rgba(225,139,31,.42),rgba(225,139,31,0) 70%),radial-gradient(ellipse 800px 600px at 100% -10%,rgba(225,139,31,.16),rgba(225,139,31,0) 70%),#000;font-family:Geist,sans-serif}
+h1{position:absolute;left:110px;top:92px;font:700 196px/176px Geist,sans-serif;letter-spacing:-.05em;color:#F2EEE6;text-transform:uppercase}
+h1 span{display:block;color:#e18b1f}
+svg{position:absolute;left:0;top:0}
+#wm{position:absolute;left:112px;bottom:96px}
+#tag{position:absolute;left:112px;bottom:60px;font:500 26px/30px "Geist Mono",monospace;letter-spacing:.16em;color:#a1a1a6;text-transform:uppercase}
+#pill{position:absolute;right:96px;top:300px;background:#F2EEE6;color:#0b0b0c;font:600 38px/76px Geist,sans-serif;border-radius:40px;padding:0 40px}
+</style></head><body><div id="t">
+<svg width="1920" height="1080" viewBox="0 0 1920 1080" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <circle cx="1480" cy="760" r="262" stroke="#e18b1f" stroke-opacity=".30" stroke-width="16" transform="translate(10 -8)"/>
+  <circle cx="1480" cy="760" r="250" stroke="#e18b1f" stroke-width="30"/>
+  <path d="M1480 510 L1980 510" stroke="#e18b1f" stroke-width="30"/>
+  <circle cx="1480" cy="510" r="30" fill="#f6b24f" stroke="none"/>
+</svg>
+<h1>You meant it.<span>Every time.</span></h1>
+<div id="pill">6-MIN WALKTHROUGH</div>
+<canvas id="wm"></canvas><div id="tag">The Be The Man System</div>
+</div><script>document.fonts.ready.then(function(){drawWordmark(document.getElementById('wm'),520);document.title='ready'});</script></body></html>
