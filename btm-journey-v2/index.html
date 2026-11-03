@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <title>be the man — the system, in motion</title>
+    <script src="vendor/gsap.min.js"></script>
+    <script src="durations.js"></script>
+    <script src="script.js"></script>
+    <script src="sting.js"></script>
+    <style>
+      @font-face { font-family: "Geist"; font-weight: 400; src: url("fonts/geist-latin-400-normal.woff2") format("woff2"); }
+      @font-face { font-family: "Geist"; font-weight: 500; src: url("fonts/geist-latin-500-normal.woff2") format("woff2"); }
+      @font-face { font-family: "Geist"; font-weight: 600; src: url("fonts/geist-latin-600-normal.woff2") format("woff2"); }
+      @font-face { font-family: "Geist"; font-weight: 700; src: url("fonts/geist-latin-700-normal.woff2") format("woff2"); }
+      @font-face { font-family: "Geist Mono"; font-weight: 500; src: url("fonts/geist-mono-latin-500-normal.woff2") format("woff2"); }
+      @font-face { font-family: "Lora"; font-style: italic; font-weight: 500; src: url("fonts/Lora-500-italic.woff2") format("woff2"); }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1920px; height: 1080px; overflow: hidden; background: #000; }
+      #root { position: relative; width: 1920px; height: 1080px; overflow: hidden; background: #000; color: #f5f5f7; font-family: "Geist", sans-serif; }
+      .layer { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; }
+      #bg { background-image: radial-gradient(rgba(255,255,255,.055) 1.2px, transparent 1.6px); background-size: 64px 64px; background-position: 32px 32px; }
+      #glowA { background: radial-gradient(ellipse 900px 700px at 8% 100%, rgba(225,139,31,.20), rgba(225,139,31,0) 70%); }
+      #root, .th-dark { --bg:#000; --fg:#F2EEE6; --muted:#a1a1a6; --dim:#8d8d93; --tile:#0c0c0d; --track:#1c1c1e; --line:rgba(255,255,255,.14); --acc:#e18b1f; --acc2:#f6b24f; --acct:#e18b1f; --onacc:#0b0b0c; --accsoft:rgba(225,139,31,.14); --ghost:rgba(225,139,31,.18); --nodefill:#000; --capbg:rgba(0,0,0,.0); }
+      .th-cream { --bg:#F2EEE6; --fg:#0b0b0c; --muted:#47433d; --dim:#6b665d; --tile:#ffffff; --track:rgba(11,11,12,.10); --line:rgba(11,11,12,.16); --acc:#e18b1f; --acc2:#c97200; --acct:#a85a00; --onacc:#0b0b0c; --accsoft:rgba(225,139,31,.18); --ghost:rgba(11,11,12,.07); --nodefill:#F2EEE6; }
+      .th-amber { --bg:#e18b1f; --fg:#0b0b0c; --muted:rgba(11,11,12,.8); --dim:rgba(11,11,12,.64); --tile:rgba(11,11,12,.10); --track:rgba(11,11,12,.20); --line:rgba(11,11,12,.3); --acc:#0b0b0c; --acc2:#F2EEE6; --acct:#0b0b0c; --onacc:#F2EEE6; --accsoft:rgba(11,11,12,.12); --ghost:rgba(11,11,12,.11); --nodefill:#e18b1f; }
+      .bbg { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; background: var(--bg); overflow: hidden; }
+      .bbg.th-dark { background: radial-gradient(ellipse 1200px 860px at 10% 108%, rgba(225,139,31,.30), rgba(225,139,31,0) 72%), radial-gradient(ellipse 700px 500px at 96% -6%, rgba(225,139,31,.10), rgba(225,139,31,0) 70%), #000; }
+      .bbg.th-cream { background: radial-gradient(ellipse 1000px 760px at 98% -8%, rgba(225,139,31,.30), rgba(225,139,31,0) 68%), #F2EEE6; }
+      .bbg.th-amber { background: radial-gradient(circle 900px at 88% 14%, rgba(255,236,200,.38), rgba(255,236,200,0) 62%), #e18b1f; }
+      #cap { position: absolute; left: 190px; right: 170px; bottom: 44px; text-align: center; font: 600 44px/54px Geist, sans-serif; letter-spacing: -.015em; color: var(--fg); z-index: 35; min-height: 108px; display: flex; align-items: flex-end; justify-content: center; }
+      #cap span { display: inline-block; max-width: 1400px; }
+      .sc { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; background: transparent; overflow: hidden; display: none; }
+      
+      .ghost { position: absolute; right: 70px; bottom: -70px; font: 700 620px/1 Geist, sans-serif; letter-spacing: -0.06em; color: transparent; -webkit-text-stroke: 3px var(--accsoft); }
+      .beat { position: absolute; left: 190px; right: 170px; top: 150px; bottom: 120px; display: flex; flex-direction: column; justify-content: center; }
+      .el { opacity: 0; will-change: transform, opacity; }
+      .kick { font: 500 27px/34px "Geist Mono", monospace; letter-spacing: .1em; text-transform: uppercase; color: var(--acct); margin-bottom: 30px; }
+      .h1 { font: 700 124px/118px Geist, sans-serif; letter-spacing: -.045em; color: var(--fg); max-width: 1560px; }
+      .sub { font: 400 38px/54px Geist, sans-serif; color: var(--muted); margin-top: 40px; max-width: 1240px; }
+      .rule { height: 6px; width: 0; background: var(--acc); margin-top: 44px; border-radius: 3px; }
+      .big { font: 600 96px/104px Geist, sans-serif; letter-spacing: -.035em; color: var(--fg); max-width: 1560px; }
+      .stp { display: flex; align-items: center; gap: 38px; height: 98px; margin-bottom: 8px; position: relative; }
+      .stp .nb { flex: none; min-width: 78px; height: 78px; border-radius: 39px; padding: 0 24px; background: var(--track); color: var(--fg); font: 600 36px/78px Geist, sans-serif; text-align: center; transition: none; }
+      .stp .nm { font: 600 60px/68px Geist, sans-serif; letter-spacing: -.02em; color: var(--dim); flex: 1; }
+      .stp .tg { font: 500 24px/30px "Geist Mono", monospace; text-transform: uppercase; letter-spacing: .1em; color: var(--acct); }
+      .stp.on .nb { background: var(--acc); color: var(--onacc); } .stp.on .nm { color: var(--fg); }
+      .stline { position: absolute; left: 38px; width: 3px; background: var(--acc); top: 0; height: 0; border-radius: 2px; }
+      .rw { display: flex; align-items: baseline; justify-content: space-between; gap: 60px; padding: 30px 0 30px 40px; border-bottom: 1px solid var(--line); position: relative; }
+      .rw::before { content: ""; position: absolute; left: 0; top: 18px; bottom: 18px; width: 8px; border-radius: 4px; background: var(--acc); opacity: 0; }
+      .rw.on::before { opacity: 1; }
+      .rw .l { font: 600 70px/78px Geist, sans-serif; letter-spacing: -.025em; color: var(--dim); } .rw .v { font: 400 44px/54px Geist, sans-serif; color: var(--muted); text-align: right; }
+      .rw.on .l { color: var(--fg); } .rw.on .v { color: var(--fg); }
+      .cards { display: flex; gap: 30px; margin-top: 40px; }
+      .cd { flex: 1; border: 2px solid var(--line); border-radius: 36px; padding: 48px 46px; background: var(--tile); }
+      .cd .nm { font: 600 50px/58px Geist, sans-serif; color: var(--fg); } .cd .pr { font: 700 170px/160px Geist, sans-serif; letter-spacing: -.05em; color: var(--acct); margin: 26px 0 20px; } .cd .ds { font: 400 36px/48px Geist, sans-serif; color: var(--muted); }
+      .cd.on { border-color: var(--acc); background: var(--accsoft); }
+      .cols { display: flex; gap: 34px; margin-top: 54px; } .cols .cd { padding: 54px; } .cols .hd { font: 500 26px/32px "Geist Mono", monospace; letter-spacing: .1em; text-transform: uppercase; color: var(--acct); } .cols .ln { font: 600 66px/76px Geist, sans-serif; letter-spacing: -.03em; margin-top: 22px; color: var(--fg); }
+      .sbar { height: 54px; border-radius: 27px; background: var(--track); overflow: hidden; margin: 14px 0 46px; } .sbar i { display: block; height: 100%; width: 0; border-radius: 27px; background: var(--acc); } .sbar i.w { background: var(--fg); opacity: .75; }
+      .sl { display: flex; justify-content: space-between; align-items: baseline; font: 500 52px/60px Geist, sans-serif; color: var(--fg); } .sl b { font: 700 130px/120px Geist, sans-serif; letter-spacing: -.05em; font-variant-numeric: tabular-nums; color: var(--acct); } .sl b.vb { color: var(--fg); }
+      .note { font: 400 38px/54px Geist, sans-serif; color: var(--dim); margin-top: 18px; max-width: 1300px; }
+      .btn { display: inline-flex; align-items: center; gap: 28px; align-self: flex-start; height: 138px; border-radius: 69px; padding: 0 84px; background: var(--acc); color: var(--onacc); font: 600 66px/138px Geist, sans-serif; letter-spacing: -.02em; margin-top: 10px; }
+      .chips { display: flex; flex-wrap: wrap; gap: 22px; margin-top: 8px; } .chip { border: 2px solid var(--line); border-radius: 54px; padding: 0 64px; height: 108px; font: 600 58px/104px Geist, sans-serif; color: var(--dim); background: var(--tile); } .chip.on { border-color: var(--acc); background: var(--accsoft); color: var(--acct); }
+      .kp { display: flex; gap: 30px; } .kp .cd { padding: 54px 50px; } .kp .bg { font: 700 210px/190px Geist, sans-serif; letter-spacing: -.055em; color: var(--acct); } .kp .sm { font: 400 40px/52px Geist, sans-serif; color: var(--muted); margin-top: 18px; }
+      .scq { font: 600 62px/72px Geist, sans-serif; letter-spacing: -.035em; color: var(--fg); margin-bottom: 50px; max-width: 1560px; }
+      .sco { display: flex; align-items: center; gap: 40px; padding: 22px 0; border-bottom: 1px solid var(--line); } .sco .l { flex: 1; font: 600 56px/64px Geist, sans-serif; color: var(--fg); } .sco .tm { font: 500 28px/34px "Geist Mono", monospace; color: var(--dim); width: 150px; }
+      .days { display: flex; gap: 14px; } .days i { width: 74px; height: 74px; border-radius: 16px; background: var(--track); } .days i.k { background: var(--acc); }
+      #chap { position: absolute; left: 190px; top: 54px; font: 500 26px/32px "Geist Mono", monospace; letter-spacing: .12em; text-transform: uppercase; color: var(--fg); z-index: 30; white-space: pre; }
+      #chap b { color: var(--acct); font-weight: 500; }
+      #prog { position: absolute; left: 0; top: 0; height: 6px; width: 0; background: var(--acc); z-index: 31; }
+      #thread { position: absolute; left: 96px; top: 54px; width: 3px; height: 970px; background: var(--line); z-index: 29; border-radius: 2px; }
+      #threadF { position: absolute; left: 96px; top: 54px; width: 3px; height: 0; background: var(--acc); z-index: 29; border-radius: 2px; }
+      #threadN { position: absolute; left: 88px; top: 54px; width: 19px; height: 19px; border-radius: 10px; background: var(--acc); z-index: 29; box-shadow: 0 0 24px var(--accsoft); }
+      #sweep { position: absolute; top: 0; width: 8px; height: 1080px; background: #e18b1f; z-index: 28; opacity: 0; box-shadow: 0 0 40px rgba(225,139,31,.8); }
+      #cover { background: #000; opacity: 0; z-index: 40; }
+      canvas.layer { background: transparent; }
+      #glow { opacity: 0; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="374.73333333333335" data-width="1920" data-height="1080">
+      <div id="bg" class="layer"></div><div id="glowA" class="layer"></div>
+      <div id="scenes"></div>
+      <div id="thread"></div><div id="threadF"></div><div id="threadN"></div>
+      <div id="sweep"></div>
+      <div id="chap"></div><div id="prog"></div><div id="cap"></div>
+      <div id="cover" class="layer"></div>
+      <canvas id="line" class="layer" width="1920" height="1080" style="z-index:41"></canvas>
+      <div id="glowwrap" class="layer" style="z-index:42"><canvas id="glow" class="layer" width="1920" height="1080"></canvas></div>
+      <canvas id="fin" class="layer" width="1920" height="1080" style="z-index:43"></canvas>
+    </div>
+    <script src="engine.js"></script>
+  </body>
+</html>
