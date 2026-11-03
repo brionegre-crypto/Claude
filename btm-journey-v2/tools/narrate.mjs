@@ -12,7 +12,7 @@ if (phase === 'speak') {
     const out = `assets/narr/${s.id}.wav`;
     if (!existsSync(out)) {
       writeFileSync(`assets/narr/${s.id}.txt`, s.narr);
-      execFileSync('npx', ['--yes', 'hyperframes@0.8.181', 'tts', `assets/narr/${s.id}.txt`, '-v', 'am_adam', '-s', '1.0', '-o', out, '--json'], { env: { ...process.env, HYPERFRAMES_PYTHON: PY }, stdio: ['ignore', 'pipe', 'inherit'] });
+      execFileSync('npx', ['--yes', 'hyperframes@0.8.181', 'tts', `assets/narr/${s.id}.txt`, '-v', 'am_adam', '-s', '0.95', '-o', out, '--json'], { env: { ...process.env, HYPERFRAMES_PYTHON: PY }, stdio: ['ignore', 'pipe', 'inherit'] });
     }
     const total = parseFloat(execFileSync('ffprobe', ['-v', 'error', '-show_entries', 'format=duration', '-of', 'csv=p=0', out]).toString());
     // sentence boundaries from the pauses in the voice: the longest S-1 internal gaps are the sentence ends

@@ -114,7 +114,7 @@
       narr: 'Ready for more? The six-week group is four men, six Sundays, a hundred and forty-seven dollars at the founding price. The test: by December twentieth, could someone in your house tell something changed, without you telling them? And at the top, the Inner Circle. Ten men. A weekly class every Thursday. A monthly one-on-one. Your scorecard reviewed every week. A hundred and ninety-seven dollars a month, by application. Come to four Thursdays, and if it isn’t worth it after thirty days, you get a full refund.',
       page: [
         { t: 'route', theme: 'dark', rise: true, cue: 'Ready for more', label: 'Road 3 · I need other men', items: [
-          { name: 'The 6-week group', tag: '$147 founding', desc: 'Four men. Six Sundays, Nov 15 to Dec 20. The test: could someone in your house tell something changed, without you telling them?', cue: 'The six-week group' },
+          { name: 'The 6-week group', tag: '$147 founding', desc: 'Four men. Six Sundays, Nov 15 to Dec 20. Includes the Complete Library.', cue: 'The six-week group' },
           { name: 'The Inner Circle', tag: '$197 a month', desc: 'Ten men. A weekly class with Brian. By application. 30-day refund.', cue: 'at the top, the Inner Circle' } ] }
       ] },
     { id: 'couples', url: '', cam: 'wide',
@@ -160,6 +160,16 @@
           { label: 'Is it run by a church?', value: 'No. Any Black Christian man.', cue: 'Is it connected' },
           { label: 'Why a system, not motivation?', value: 'A plan you can check changes a week.', cue: 'why a system' } ] }
       ] },
+    { id: 'watch', url: '', cam: 'wide',
+      narr: 'Want to see how it’s taught first? There’s a YouTube channel, Be The Man System. Start with Why Your Goals Keep Failing. It’s four minutes. Then, How to Finish What You Start. You Don’t Need More Motivation. You Need a System. How a Godly Man Leads. And How to Come Back After You’ve Hurt Her. Every video ends the same way: with one thing that’s still not fixed.',
+      page: [
+        { t: 'rows', theme: 'cream', cue: 'Want to see how it', head: 'Watch · YouTube @BeTheManSystem', items: [
+          { label: 'Why Your Goals Keep Failing', value: '4:25', cue: 'Why Your Goals Keep Failing' },
+          { label: 'How to Finish What You Start', value: '7:01', cue: 'How to Finish What You Start' },
+          { label: 'You Need a System, Not Motivation', value: '12:40', cue: 'You Don’t Need More Motivation' },
+          { label: 'How a Godly Man Leads', value: '10:32', cue: 'How a Godly Man Leads' },
+          { label: 'How to Come Back After You’ve Hurt Her', value: '10:13', cue: 'How to Come Back' } ] }
+      ] },
     { id: 'about', url: '', cam: 'wide',
       narr: 'So who’s behind this? I grew up without a father in the house. Nobody showed me how a man keeps his word on a Tuesday when nobody’s watching, so I learned the hard way. Today I’m a husband of eleven years, a father of three, a pastor of ten years, and a certified marriage counselor. And I still have weeks where something slips. This is the system I wish someone had handed me at twenty-five. I hold myself to six laws, written before anything was published.',
       page: [
@@ -181,7 +191,7 @@
   /* ---------------------------------------------------------------- the timeline ---------------------------------------------------------------- */
   let DURS = null;
   try { DURS = isNode ? JSON.parse(require('fs').readFileSync(require('path').join(__dirname, 'durations.json'), 'utf8')) : (typeof window !== 'undefined' ? window.WT_DURS : null); } catch (e) { DURS = null; }
-  const LEAD = 0.8, GAP = 0.85, TAILPAD = 0.3;
+  const LEAD = 1.0, GAP = 1.1, TAILPAD = 0.4;
   let cursor = LEAD;
   SCENES.forEach((s, i) => {
     s.n = s.narr.split(/\s+/).length;
@@ -197,7 +207,7 @@
   STING.speed = (STING.tsClose - STING.ts0) / (STING.closeFilm - STING.tf0);
   const tsOf = (tf) => STING.ts0 + (tf - STING.tf0) * STING.speed;
   const tfOf = (ts) => STING.tf0 + (ts - STING.ts0) / STING.speed;
-  const DUR = Math.ceil((T.morphB + 5.6) * 60) / 60;
+  const DUR = Math.ceil((T.morphB + 6.4) * 60) / 60;
   const WORDS = { tagline: TAGLINE, url: URL, label: LABEL, note: 'bethemansystem.com' };
 
   /* a cue phrase -> a time inside its scene.  Uses the measured sentence boundaries of the narration when they exist (assets/narr/*.wav), else proportional */

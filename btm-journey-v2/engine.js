@@ -7,7 +7,7 @@
   var facc = document.createElement("canvas"); facc.width = 1920; facc.height = 1080; var facx = facc.getContext("2d");
   var measure = document.createElement("canvas").getContext("2d");
   var sc5 = null, stingTarget = null, ready = false;
-  var CHAP = { hook: "The loop", system: "How it works", steps: "The seven steps", proof: "Why it works", map: "Where are you right now?", start: "Road 1 \u00b7 Just starting", honest: "Road 2 \u00b7 See yourself honestly", ladder1: "Road 3 \u00b7 Other men", ladder2: "Road 3 \u00b7 The ladder", couples: "Road 4 \u00b7 Your marriage", church: "Road 5 \u00b7 Your church", store: "The Store", about: "Who is behind this", close: "Your next step", outro: "" };
+  var CHAP = { hook: "The loop", system: "How it works", steps: "The seven steps", proof: "Why it works", map: "Where are you right now?", start: "Road 1 \u00b7 Just starting", honest: "Road 2 \u00b7 See yourself honestly", ladder1: "Road 3 \u00b7 Other men", ladder2: "Road 3 \u00b7 The ladder", couples: "Road 4 \u00b7 Your marriage", church: "Road 5 \u00b7 Your church", store: "The Store", recap: "Free to paid, at a glance", faq: "Questions men ask first", watch: "Watch the teaching", about: "Who is behind this", close: "Your next step", outro: "" };
   var clamp = W.clamp, eo = W.eOut, eio = W.eInOut;
   var eoBack = function (x) { x = clamp(x); var c1 = 1.5, c3 = c1 + 1; return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2); };
 
@@ -85,8 +85,8 @@
       } else if (b.t === "route") {
         var lb2 = E("kick", esc(b.label)); lb2.style.cssText += ";position:absolute;left:0;top:30px;margin:0;"; var cv4 = E("cv"); cv4.style.cssText = "position:relative;width:1560px;height:800px;"; beat.appendChild(cv4); cv4.appendChild(lb2); reg(lb2, bc, "wipe");
         var svg4 = document.createElementNS("http://www.w3.org/2000/svg", "svg"); svg4.setAttribute("width", 1560); svg4.setAttribute("height", 800); svg4.style.cssText = "position:absolute;left:0;top:0;overflow:visible"; cv4.appendChild(svg4);
-        var n4 = b.items.length, xs = [], ys = [], cw = n4 >= 4 ? 372 : (n4 === 3 ? 440 : 560);
-        for (var i4 = 0; i4 < n4; i4++) { xs.push(n4 === 1 ? 300 : (n4 === 2 ? 180 + i4 * 780 : (n4 === 3 ? 140 + i4 * 500 : 120 + i4 * 400))); ys.push(b.rise ? 470 - i4 * (n4 === 1 ? 0 : 300 / (n4 - 1)) : 230); }
+        var n4 = b.items.length, xs = [], ys = [], cw = n4 >= 5 ? 290 : (n4 === 4 ? 372 : (n4 === 3 ? 440 : 560));
+        for (var i4 = 0; i4 < n4; i4++) { xs.push(n4 === 1 ? 300 : (n4 === 2 ? 180 + i4 * 780 : (n4 === 3 ? 140 + i4 * 500 : (n4 === 4 ? 120 + i4 * 400 : 90 + i4 * (1180 / (n4 - 1)))))); ys.push(b.rise ? 470 - i4 * (n4 === 1 ? 0 : 300 / (n4 - 1)) : 230); }
         var d4 = "M0 " + ys[0]; for (var j4 = 0; j4 < n4; j4++) d4 += " L" + xs[j4] + " " + ys[j4];
         var path4 = document.createElementNS("http://www.w3.org/2000/svg", "path"); path4.setAttribute("d", d4); path4.setAttribute("fill", "none"); path4.style.stroke = "var(--acc)"; path4.setAttribute("stroke-width", "10"); path4.setAttribute("stroke-linecap", "round"); path4.setAttribute("stroke-linejoin", "round"); svg4.appendChild(path4);
         var base = document.createElementNS("http://www.w3.org/2000/svg", "path"); base.setAttribute("d", d4); base.setAttribute("fill", "none"); base.style.stroke = "var(--line)"; base.setAttribute("stroke-width", "10"); base.setAttribute("stroke-linecap", "round"); base.setAttribute("stroke-linejoin", "round"); svg4.insertBefore(base, path4);
