@@ -1,4 +1,11 @@
 #!/usr/bin/env python3
+"""Posts due Substack Notes from notes.json using a saved Substack login session.
+
+Runs automatically in the cloud via .github/workflows/substack-notes.yml (see README).
+One-time, on your computer:  pip install playwright && playwright install chromium
+                             python3 post_notes.py --login
+Flags: --dry-run, --login, --limit N (max notes per run, default 1)
+posted.json records what was posted so nothing posts twice.
 """Posts due Substack Notes from notes.json using your own logged-in browser session.
 
 Setup (once):
@@ -10,15 +17,22 @@ Then run on a schedule (every 15 min), e.g. crontab:
 
 Flags: --dry-run (print what would post), --login, --limit N (max notes per run, default 1)
 State is kept in posted.json so nothing is ever posted twice.
+"""Posts due Substack Notes from notes.json using a saved Substack login session.
+
+Runs automatically in the cloud via .github/workflows/substack-notes.yml (see README).
+One-time, on your computer:  pip install playwright && playwright install chromium
+                             python3 post_notes.py --login
+Flags: --dry-run, --login, --limit N (max notes per run, default 1)
+posted.json records what was posted so nothing posts twice.
 """
-import argparse, json, sys, time
+import argparse, json, os, sys, time
 from datetime import datetime, timezone
 from pathlib import Path
 
 HERE = Path(__file__).parent
-NOTES, STATE, PROFILE = HERE / "notes.json", HERE / "posted.json", HERE / ".browser-profile"
+NOTES, STATE, SESSION = HERE / "notes.json", HERE / "posted.json", HERE / "session.json"
 NOTES_URL = "https://substack.com/notes"
-LATE_LIMIT_HOURS = 12  # skip anything more than this overdue instead of dumping a backlog
+LATE_LIMIT_HOURS = 6  # skip anything more than this overdue instead of dumping a backlog
 
 def load_state():
     return set(json.loads(STATE.read_text())) if STATE.exists() else set()
@@ -58,10 +72,13 @@ def main():
     if a.login:
         from playwright.sync_api import sync_playwright
         with sync_playwright() as p:
-            ctx = p.chromium.launch_persistent_context(str(PROFILE), headless=False)
+            b = p.chromium.launch(headless=False)
+            ctx = b.new_context()
             ctx.new_page().goto("https://substack.com/sign-in")
             input("Log in in the browser window, then press Enter here...")
-            ctx.close()
+            ctx.storage_state(path=str(SESSION))
+            b.close()
+        print(f"Saved {SESSION}. Copy its ENTIRE contents into the GitHub secret SUBSTACK_STORAGE_STATE.")
         return
 
     todo = []
@@ -78,7 +95,12 @@ def main():
 
     from playwright.sync_api import sync_playwright
     with sync_playwright() as p:
-        ctx = p.chromium.launch_persistent_context(str(PROFILE), headless=True)
+        raw = os.environ.get("SUBSTACK_STORAGE_STATE")
+        state = json.loads(raw) if raw else (str(SESSION) if SESSION.exists() else None)
+        if not state:
+            sys.exit("No session. Run --login (or set SUBSTACK_STORAGE_STATE).")
+        b = p.chromium.launch(headless=True)
+        ctx = b.new_context(storage_state=state)
         page = ctx.new_page()
         for n in todo:
             try:
@@ -89,7 +111,7 @@ def main():
                 page.screenshot(path=str(HERE / "last-error.png"))
                 print(f"FAILED #{n['id']}: {e}", file=sys.stderr); break
             time.sleep(5)
-        ctx.close()
+        b.close()
     STATE.write_text(json.dumps(sorted(done)))
 
 if __name__ == "__main__":
