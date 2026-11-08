@@ -1,0 +1,43 @@
+name: Post Substack Notes
+on:
+  schedule:
+    - cron: "*/10 * * * *"
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: substack-notes
+  cancel-in-progress: false
+jobs:
+  post:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - name: Skip when nothing is due
+        id: due
+        working-directory: substack
+        run: |
+          out=$(python3 post_notes.py --dry-run)
+          echo "$out"
+          if echo "$out" | grep -q "WOULD POST"; then echo "go=true" >> "$GITHUB_OUTPUT"; fi
+      - name: Install Playwright
+        if: steps.due.outputs.go == 'true'
+        run: pip install playwright && playwright install --with-deps chromium
+      - name: Post due note(s)
+        if: steps.due.outputs.go == 'true'
+        working-directory: substack
+        env:
+          SUBSTACK_STORAGE_STATE: ${{ secrets.SUBSTACK_STORAGE_STATE }}
+        run: python3 post_notes.py
+      - name: Save posted.json
+        if: always() && steps.due.outputs.go == 'true'
+        run: |
+          git config user.name "substack-bot"; git config user.email "bot@users.noreply.github.com"
+          git add substack/posted.json
+          git diff --cached --quiet || (git commit -m "Record posted notes" && git pull --rebase -q && git push -q)
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with: { name: error, path: substack/last-error.png, if-no-files-found: ignore }
