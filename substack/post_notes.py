@@ -6,24 +6,6 @@ One-time, on your computer:  pip install playwright && playwright install chromi
                              python3 post_notes.py --login
 Flags: --dry-run, --login, --limit N (max notes per run, default 1)
 posted.json records what was posted so nothing posts twice.
-"""Posts due Substack Notes from notes.json using your own logged-in browser session.
-
-Setup (once):
-  pip install playwright && playwright install chromium
-  python3 post_notes.py --login      # opens a browser; log in to Substack yourself (2FA included), then close it
-
-Then run on a schedule (every 15 min), e.g. crontab:
-  */15 * * * * cd /path/to/substack && python3 post_notes.py >> post.log 2>&1
-
-Flags: --dry-run (print what would post), --login, --limit N (max notes per run, default 1)
-State is kept in posted.json so nothing is ever posted twice.
-"""Posts due Substack Notes from notes.json using a saved Substack login session.
-
-Runs automatically in the cloud via .github/workflows/substack-notes.yml (see README).
-One-time, on your computer:  pip install playwright && playwright install chromium
-                             python3 post_notes.py --login
-Flags: --dry-run, --login, --limit N (max notes per run, default 1)
-posted.json records what was posted so nothing posts twice.
 """
 import argparse, json, os, sys, time
 from datetime import datetime, timezone
