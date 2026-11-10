@@ -48,6 +48,7 @@ NAV = [
         ("/step-1/", "Step 1 worksheet", "20 minutes, one sentence", None),
         ("/7-week-challenge/", "The 7-week challenge", "One email every Tuesday", None),
         ("/humility/", "The Low Seat Check", "How humble are you?", None),
+        ("/truth-ledger/", "The Truth Ledger", "49 days to stop lying", None),
         ("/training/", "Free training", "6-minute video", None),
         ("/call/", "Book a free call", "15 minutes with Brian", None),
     ]),
@@ -521,6 +522,7 @@ def main():
         out.write_text(swap_checkout_links(render(meta, body), products))
         if not meta.get("noindex"):
             urls.append((meta["path"], meta.get("priority", "0.8")))
+    urls.append(("/truth-ledger/", "0.7"))  # static page: web/static/truth-ledger/index.html
     today = datetime.date.today().isoformat()
     sm = ['<?xml version="1.0" encoding="UTF-8"?>',
           '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
