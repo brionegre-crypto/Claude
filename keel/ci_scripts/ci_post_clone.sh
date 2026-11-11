@@ -6,11 +6,14 @@ cd "$CI_PRIMARY_REPOSITORY_PATH/keel"
 
 brew install xcodegen
 
-# App blocking (Screen Time / FamilyControls): Apple granted the distribution entitlement, so cloud builds
-# include it. Escape hatch: set KEEL_FAMILY_CONTROLS=0 in the Xcode Cloud workflow to build without it.
-if [ "${KEEL_FAMILY_CONTROLS:-1}" = "0" ]; then
+# App blocking (Screen Time / FamilyControls): Apple granted the distribution entitlement, but Xcode Cloud
+# also exports an ad-hoc build, and the ad-hoc provisioning profile doesn't carry Family Controls yet, so
+# that export fails (exit code 70) and takes the whole build down. Until Apple enables Family Controls for
+# ad-hoc on the App ID, cloud builds leave it out (the app shows "not available in this build").
+# Once fixed, set KEEL_FAMILY_CONTROLS=1 in the Xcode Cloud workflow's environment variables.
+if [ "${KEEL_FAMILY_CONTROLS:-0}" != "1" ]; then
   sed -i '' '/com.apple.developer.family-controls/d' project.yml
-  echo "FamilyControls entitlement removed for this build (KEEL_FAMILY_CONTROLS=0)."
+  echo "FamilyControls entitlement left out of this build (set KEEL_FAMILY_CONTROLS=1 to include it)."
 fi
 
 # Default mail app: Apple must grant the com.apple.developer.mail-client entitlement first.
