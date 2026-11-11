@@ -367,6 +367,7 @@ struct TaskDetailView: View {
     @State private var newListName = ""
     @State private var showNewList = false
     @State private var confirmDelete = false
+    @Query(filter: #Predicate<Goal> { !$0.isArchived }) private var goals: [Goal]
 
     private let cal = Calendar.current
 
@@ -428,6 +429,10 @@ struct TaskDetailView: View {
                 Picker("List", selection: $task.listName) {
                     ForEach(lists, id: \.self) { Text($0).tag($0) }
                 }
+                Picker("Goal", selection: $task.goalId) {
+                    Text("None").tag(UUID?.none)
+                    ForEach(goals) { g in Text("\(g.emoji) \(g.title)").tag(Optional(g.id)) }
+                }
                 Button("New list…") { showNewList = true }
                 TextField("Tags (comma separated)", text: Binding(
                     get: { task.tags.joined(separator: ", ") },
@@ -471,6 +476,28 @@ struct TaskDetailView: View {
                 }.disabled(breaking)
             } header: { Text("Subtasks") } footer: { Text("Stuck? The first step is always small enough to start right now.") }
 
+            if task.isDone || task.completionCount > 0 {
+                Section {
+                    HStack {
+                        ForEach(TaskFeeling.allCases) { f in
+                            Button { task.feeling = task.feeling == f ? nil : f; Haptics.tap() } label: {
+                                VStack(spacing: 2) {
+                                    Text(f.emoji).font(.title2)
+                                    Text(f.label).font(.caption2).multilineTextAlignment(.center)
+                                }
+                                .frame(maxWidth: .infinity).padding(.vertical, 6)
+                                .background(task.feeling == f ? DS.Palette.accent.opacity(0.15) : .clear, in: .rect(cornerRadius: 10))
+                            }
+                            .buttonStyle(.plain)
+                        }
+                    }
+                } header: { Text("How did it feel?") } footer: {
+                    Text("Feel-Good Productivity: notice what gives you energy (play, power, people) and what drains you. Your weekly review shows the pattern.")
+                }
+            }
+            if let g = goals.first(where: { $0.id == task.goalId }), !g.why.isEmpty {
+                Section("Why this matters") { Text("\(g.emoji) \(g.why)").foregroundStyle(DS.Palette.inkSoft) }
+            }
             Section("Notes") { TextEditor(text: $task.notes).frame(minHeight: 100) }
 
             Section {

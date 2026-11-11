@@ -97,13 +97,26 @@ struct OpenPromisesIntent: AppIntent {
 }
 
 struct KeelShortcuts: AppShortcutsProvider {
+    // Apple allows up to 10 spoken shortcuts per app. Everything else is in the Shortcuts app.
     static var appShortcuts: [AppShortcut] {
-        AppShortcut(intent: AddTaskIntent(), phrases: ["Add a task in \(.applicationName)", "Capture in \(.applicationName)"],
+        AppShortcut(intent: AskKeelIntent(), phrases: ["Ask \(.applicationName)", "Ask \(.applicationName) something", "Talk to \(.applicationName)"],
+                    shortTitle: "Ask Keel", systemImageName: "sparkles")
+        AppShortcut(intent: AddTaskIntent(), phrases: ["Add a task in \(.applicationName)", "Capture in \(.applicationName)", "Remind me in \(.applicationName)"],
                     shortTitle: "Add Task", systemImageName: "plus.circle")
-        AppShortcut(intent: StartFocusIntent(), phrases: ["Start focus in \(.applicationName)", "Shut down distractions with \(.applicationName)"],
-                    shortTitle: "Focus", systemImageName: "moon.zzz")
+        AppShortcut(intent: CompleteTaskIntent(), phrases: ["Complete \(\.$task) in \(.applicationName)", "Mark \(\.$task) done in \(.applicationName)", "Complete a task in \(.applicationName)"],
+                    shortTitle: "Complete Task", systemImageName: "checkmark.circle")
+        AppShortcut(intent: TodayAgendaIntent(), phrases: ["What's on today in \(.applicationName)", "Brief me with \(.applicationName)", "What's my day in \(.applicationName)"],
+                    shortTitle: "Today", systemImageName: "sun.max")
+        AppShortcut(intent: NextEventIntent(), phrases: ["What's next on my calendar in \(.applicationName)", "Next meeting in \(.applicationName)"],
+                    shortTitle: "Next Event", systemImageName: "calendar")
+        AppShortcut(intent: InboxSummaryIntent(), phrases: ["Check my inbox in \(.applicationName)", "Any important email in \(.applicationName)"],
+                    shortTitle: "Inbox", systemImageName: "tray")
         AppShortcut(intent: WhatNowIntent(), phrases: ["What should I do now in \(.applicationName)", "Ask \(.applicationName) what's next"],
                     shortTitle: "What Now?", systemImageName: "scope")
+        AppShortcut(intent: StartFocusIntent(), phrases: ["Start focus in \(.applicationName)", "Shut down distractions with \(.applicationName)"],
+                    shortTitle: "Focus", systemImageName: "moon.zzz")
+        AppShortcut(intent: EndFocusIntent(), phrases: ["End focus in \(.applicationName)", "Stop focus in \(.applicationName)"],
+                    shortTitle: "End Focus", systemImageName: "moon.zzz.fill")
         AppShortcut(intent: OpenPromisesIntent(), phrases: ["What did I promise in \(.applicationName)", "Show my promises in \(.applicationName)"],
                     shortTitle: "Promises", systemImageName: "hand.raised.fingers.spread")
     }

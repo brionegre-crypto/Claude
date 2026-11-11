@@ -11,6 +11,7 @@ struct KeelApp: App {
         SyncEngine.registerBackgroundTasks()
         UNUserNotificationCenter.current().delegate = NotificationHandler.shared
         TaskAlerts.registerCategories()
+        WeeklyReview.scheduleReminder()
     }
 
     var body: some Scene {

@@ -43,6 +43,7 @@ struct FocusView: View {
 
     private var setup: some View {
         VStack(spacing: DS.Space.l) {
+            FocusStatsStrip()
             if let t = preselected {
                 Text(t.title).font(DS.Font.title).multilineTextAlignment(.center)
                 if bodyDouble { Label("Body-double mode: Keel checks in with you every 10 min", systemImage: "person.2.wave.2").font(DS.Font.caption) }

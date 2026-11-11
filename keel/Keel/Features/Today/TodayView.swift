@@ -10,6 +10,8 @@ struct TodayView: View {
     @Query private var stacks: [HabitStack]
     @Query(sort: \Commitment.sentAt) private var commitments: [Commitment]
     @AppStorage("energy") private var energyRaw = EnergyLevel.medium.rawValue
+    @AppStorage("year.theme") private var yearTheme = ""
+    @Query(sort: \FollowUp.remindAt) private var followUps: [FollowUp]
     @State private var plan: DayPlan?
     @State private var planning = false
     @State private var showSettings = false
@@ -29,6 +31,16 @@ struct TodayView: View {
                     if !events.isEmpty { upNext }
                     planCard
                     promisesCard
+                    followUpsCard
+                    if WeeklyReview.isDue {
+                        NavigationLink { WeeklyReviewView() } label: {
+                            GlassCard(tint: .purple) {
+                                Label("Your weekly review is ready · 10 min", systemImage: "chart.bar.doc.horizontal")
+                                    .font(DS.Font.headline).foregroundStyle(DS.Palette.ink)
+                            }
+                        }
+                        .buttonStyle(.plain)
+                    }
                     attentionCard
                     avoidedCard
                 }
@@ -42,8 +54,14 @@ struct TodayView: View {
                         .accessibilityLabel("Brain dump")
                 }
                 ToolbarItem(placement: .topBarTrailing) {
-                    NavigationLink { HabitsView() } label: { Image(systemName: "link") }
-                        .accessibilityLabel("Habit stacks")
+                    Menu {
+                        NavigationLink { GoalsView() } label: { Label("Goals", systemImage: "target") }
+                        NavigationLink { HabitsView() } label: { Label("Habit stacks", systemImage: "link") }
+                        NavigationLink { WeeklyReviewView() } label: { Label("Weekly review", systemImage: "chart.bar.doc.horizontal") }
+                        NavigationLink { AssistantView() } label: { Label("Ask Keel", systemImage: "sparkles") }
+                        NavigationLink { FeatureGuideView() } label: { Label("How Keel works", systemImage: "questionmark.circle") }
+                    } label: { Image(systemName: "square.grid.2x2") }
+                    .accessibilityLabel("More")
                 }
                 ToolbarItem(placement: .topBarTrailing) {
                     Button { showSettings = true } label: { Image(systemName: "person.crop.circle") }
@@ -59,6 +77,9 @@ struct TodayView: View {
             Text(Date.now, format: .dateTime.weekday(.wide).month().day())
                 .font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft).textCase(.uppercase)
             Text(greetingText).font(DS.Font.hero)
+            if !yearTheme.isEmpty {
+                Label(yearTheme, systemImage: "sparkle").font(DS.Font.caption).foregroundStyle(DS.Palette.accent)
+            }
         }
     }
 
@@ -198,6 +219,28 @@ struct TodayView: View {
                             }
                             Spacer()
                             Image(systemName: "chevron.right").foregroundStyle(DS.Palette.inkSoft)
+                        }
+                    }
+                }
+                .buttonStyle(.plain)
+            }
+        }
+    }
+
+    private var followUpsCard: some View {
+        let due = followUps.filter(\.isDue)
+        return Group {
+            if let first = due.first {
+                Button { MailRouter.shared.pending = FollowUps.nudgeDraft(first) } label: {
+                    GlassCard(tint: DS.Palette.meeting) {
+                        HStack(spacing: DS.Space.m) {
+                            Image(systemName: "bubble.left.and.exclamationmark.bubble.right").font(.title2).foregroundStyle(DS.Palette.meeting)
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(due.count == 1 ? "No reply from \(first.recipientName.isEmpty ? first.recipient : first.recipientName)" : "\(due.count) people haven't replied")
+                                    .font(DS.Font.headline)
+                                Text("Tap to send a friendly nudge").font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
+                            }
+                            Spacer()
                         }
                     }
                 }

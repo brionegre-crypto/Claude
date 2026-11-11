@@ -1,0 +1,145 @@
+import AppIntents
+import SwiftData
+import EventKit
+
+// Siri & Shortcuts. Everything here also works in the Shortcuts app, Spotlight and the Action button.
+
+// MARK: - Task entity (lets Siri refer to your tasks by name: "Complete Gym in Keel")
+
+struct TaskEntity: AppEntity {
+    static let typeDisplayRepresentation: TypeDisplayRepresentation = "Task"
+    static let defaultQuery = TaskEntityQuery()
+    let id: UUID
+    let title: String
+    var displayRepresentation: DisplayRepresentation { DisplayRepresentation(title: "\(title)") }
+}
+
+struct TaskEntityQuery: EntityStringQuery {
+    @MainActor private func open() -> [TaskItem] {
+        ((try? KeelStore.container.mainContext.fetch(FetchDescriptor<TaskItem>())) ?? []).filter { !$0.isDone }
+    }
+
+    func entities(for identifiers: [UUID]) async throws -> [TaskEntity] {
+        await MainActor.run { open().filter { identifiers.contains($0.id) }.map { TaskEntity(id: $0.id, title: $0.title) } }
+    }
+
+    func entities(matching string: String) async throws -> [TaskEntity] {
+        await MainActor.run {
+            open().filter { $0.title.localizedCaseInsensitiveContains(string) }.map { TaskEntity(id: $0.id, title: $0.title) }
+        }
+    }
+
+    func suggestedEntities() async throws -> [TaskEntity] {
+        await MainActor.run {
+            open().sorted { ($0.dueDate ?? .distantFuture) < ($1.dueDate ?? .distantFuture) }
+                .prefix(15).map { TaskEntity(id: $0.id, title: $0.title) }
+        }
+    }
+}
+
+// MARK: - Intents
+
+struct AskKeelIntent: AppIntent {
+    static let title: LocalizedStringResource = "Ask Keel"
+    static let description: IntentDescription = "Ask Keel's on-device AI about your day, or tell it to do something."
+    @Parameter(title: "Question", requestValueDialog: "What do you want to ask Keel?") var question: String
+
+    @MainActor func perform() async throws -> some IntentResult & ProvidesDialog {
+        let answer = await KeelAssistant.shared.ask(question)
+        return .result(dialog: "\(answer)")
+    }
+}
+
+struct CompleteTaskIntent: AppIntent {
+    static let title: LocalizedStringResource = "Complete Keel Task"
+    @Parameter(title: "Task") var task: TaskEntity
+
+    @MainActor func perform() async throws -> some IntentResult & ProvidesDialog {
+        let ctx = KeelStore.container.mainContext
+        let id = task.id
+        guard let t = try ctx.fetch(FetchDescriptor<TaskItem>(predicate: #Predicate { $0.id == id })).first else {
+            return .result(dialog: "I couldn't find that task.")
+        }
+        let next = TaskActions.setDone(t, true)
+        try ctx.save()
+        if let next { return .result(dialog: "Done. “\(t.title)” repeats on \(next.formatted(date: .abbreviated, time: .omitted)).") }
+        return .result(dialog: "Done: “\(t.title)”. Nice work.")
+    }
+}
+
+struct TodayAgendaIntent: AppIntent {
+    static let title: LocalizedStringResource = "What's on Today"
+    static let description: IntentDescription = "Hear today's events, tasks and anything important."
+
+    @MainActor func perform() async throws -> some IntentResult & ProvidesDialog {
+        await CalendarService.shared.requestAccess()
+        let cal = Calendar.current
+        let end = cal.date(byAdding: .day, value: 1, to: cal.startOfDay(for: Date()))!
+        let events = CalendarService.shared.events(from: Date(), to: end).filter { !$0.isAllDay }
+        let tasks = ((try? KeelStore.container.mainContext.fetch(FetchDescriptor<TaskItem>())) ?? [])
+            .filter { !$0.isDone && ($0.dueDate.map { $0 < end } ?? false) }
+        var parts: [String] = []
+        if let e = events.first {
+            parts.append("Next up: \(e.title ?? "an event") at \(e.startDate.formatted(date: .omitted, time: .shortened))")
+            if events.count > 1 { parts.append("then \(events.count - 1) more event\(events.count == 2 ? "" : "s")") }
+        } else {
+            parts.append("No more events today")
+        }
+        parts.append(tasks.isEmpty ? "and no tasks due" : "and \(tasks.count) task\(tasks.count == 1 ? "" : "s") due, starting with \(tasks.first!.title)")
+        return .result(dialog: "\(parts.joined(separator: ", ")).")
+    }
+}
+
+struct NextEventIntent: AppIntent {
+    static let title: LocalizedStringResource = "Next Event"
+
+    @MainActor func perform() async throws -> some IntentResult & ProvidesDialog {
+        await CalendarService.shared.requestAccess()
+        let next = CalendarService.shared.events(from: Date(), to: Date().addingTimeInterval(7 * 86_400)).first { !$0.isAllDay }
+        guard let e = next else { return .result(dialog: "Nothing on your calendar this week.") }
+        let when = e.startDate.formatted(.relative(presentation: .named))
+        return .result(dialog: "\(e.title ?? "Your next event") \(when), at \(e.startDate.formatted(date: .omitted, time: .shortened)).")
+    }
+}
+
+struct InboxSummaryIntent: AppIntent {
+    static let title: LocalizedStringResource = "Check Keel Inbox"
+
+    @MainActor func perform() async throws -> some IntentResult & ProvidesDialog {
+        let mail = ((try? KeelStore.container.mainContext.fetch(FetchDescriptor<EmailMessage>())) ?? [])
+            .filter { !$0.isRead && !$0.isArchived && ($0.category == .important || $0.category == .actionable) }
+            .sorted { $0.priorityScore > $1.priorityScore }
+        guard !mail.isEmpty else { return .result(dialog: "Nothing important waiting. Inbox is calm.") }
+        let names = mail.prefix(3).map { $0.fromName.isEmpty ? $0.from : $0.fromName }
+        return .result(dialog: "\(mail.count) email\(mail.count == 1 ? "" : "s") need you, from \(names.joined(separator: ", ")).")
+    }
+}
+
+struct EndFocusIntent: AppIntent {
+    static let title: LocalizedStringResource = "End Keel Focus"
+
+    @MainActor func perform() async throws -> some IntentResult & ProvidesDialog {
+        guard ShutdownManager.shared.active != nil else { return .result(dialog: "You're not in a focus session.") }
+        ShutdownManager.shared.end(early: true)
+        return .result(dialog: "Focus ended. Take a breath.")
+    }
+}
+
+struct AddEventIntent: AppIntent {
+    static let title: LocalizedStringResource = "Add Keel Event"
+    @Parameter(title: "Title") var title: String
+    @Parameter(title: "Starts") var start: Date
+    @Parameter(title: "Minutes", default: 60) var minutes: Int
+
+    @MainActor func perform() async throws -> some IntentResult & ProvidesDialog {
+        await CalendarService.shared.requestAccess()
+        let store = CalendarService.shared.store
+        let e = EKEvent(eventStore: store)
+        e.title = title
+        e.startDate = start
+        e.endDate = start.addingTimeInterval(Double(minutes * 60))
+        e.calendar = store.defaultCalendarForNewEvents
+        try store.save(e, span: .thisEvent)
+        return .result(dialog: "Added “\(title)” on \(start.formatted(date: .abbreviated, time: .shortened)).")
+    }
+}
