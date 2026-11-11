@@ -27,6 +27,8 @@ struct CalendarView: View {
     @State private var showCalendars = false
     @State private var newTaskDate: Date?
     @State private var message: String?
+    @State private var taskGroup: TaskGroupRef?
+    @AppStorage("calendar.showTasks") private var showTasks = true
 
     private let cal = Calendar.current
     private var mode: CalendarMode { CalendarMode(rawValue: modeRaw) ?? .week }
@@ -58,15 +60,16 @@ struct CalendarView: View {
                 header
                 switch mode {
                 case .day, .week:
-                    TimelineGrid(days: visibleDays, events: events, tasks: tasks,
+                    TimelineGrid(days: visibleDays, events: events, tasks: showTasks ? tasks : [],
                                  onTapSlot: { draft = EventDraft(event: nil, start: $0) },
                                  onTapEvent: { viewing = EventRef(event: $0) },
                                  onTapTask: { openTask = $0 },
+                                 onTapTaskGroup: { taskGroup = TaskGroupRef(tasks: $0) },
                                  onTapDay: { anchor = $0; modeRaw = CalendarMode.day.rawValue },
                                  onMoveEvent: moveEvent, onMoveTask: moveTask)
                 case .month:
                     ScrollView {
-                        MonthGrid(days: visibleDays, month: anchor, selected: anchor, events: events, tasks: tasks) { day in
+                        MonthGrid(days: visibleDays, month: anchor, selected: anchor, events: events, tasks: showTasks ? tasks : []) { day in
                             withAnimation(DS.spring) { anchor = day }
                             Haptics.tap()
                         }
@@ -83,8 +86,11 @@ struct CalendarView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
-                    Button { showCalendars = true } label: { Image(systemName: "calendar.badge.checkmark") }
-                        .accessibilityLabel("Choose calendars")
+                    Menu {
+                        Button("Choose calendars…", systemImage: "calendar.badge.checkmark") { showCalendars = true }
+                        Toggle(isOn: $showTasks) { Label("Show tasks on calendar", systemImage: "checklist") }
+                    } label: { Image(systemName: "line.3.horizontal.decrease.circle") }
+                    .accessibilityLabel("Calendar options")
                 }
                 ToolbarItem(placement: .topBarTrailing) {
                     Menu {
@@ -106,6 +112,7 @@ struct CalendarView: View {
             }
             .sheet(item: $openTask) { t in NavigationStack { TaskDetailView(task: t) } }
             .sheet(isPresented: $showCalendars) { CalendarPicker(hiddenRaw: $hiddenRaw) }
+            .sheet(item: $taskGroup) { TaskGroupSheet(tasks: $0.tasks) }
             .sheet(item: Binding(get: { newTaskDate.map { DateBox(date: $0) } }, set: { newTaskDate = $0?.date })) { box in
                 QuickTaskSheet(date: box.date)
             }
@@ -197,6 +204,110 @@ extension EKEvent {
 
 // MARK: - Day / Week timeline
 
+/// One thing on the timeline: an event, a task, or several tasks due around the same time.
+struct TimelineItem: Identifiable {
+    enum Kind { case event(EKEvent), task(TaskItem), tasks([TaskItem]) }
+    let id: String
+    let kind: Kind
+    let start: Date
+    let end: Date          // visual end (never shorter than a readable card)
+    var lane = 0
+    var lanes = 1
+
+    var isTask: Bool { if case .event = kind { return false }; return true }
+}
+
+enum TimelineLayout {
+    /// Builds a day's items so nothing ever draws on top of anything else:
+    /// tasks due in the same slot become one pill, crowded clusters fold their tasks into a single
+    /// "N tasks" pill, and every overlapping cluster is split into side-by-side lanes.
+    static func items(day: Date, events: [EKEvent], tasks: [TaskItem], hourHeight: CGFloat, maxLanes: Int, slotMinutes: Int) -> [TimelineItem] {
+        let cal = Calendar.current
+        let dayStart = cal.startOfDay(for: day)
+        let dayEnd = dayStart.addingTimeInterval(86_400)
+        let minLength = TimeInterval(30 / hourHeight * 3600)          // ~30pt tall at minimum
+        func visualEnd(_ s: Date, _ e: Date) -> Date { min(max(e, s.addingTimeInterval(minLength)), dayEnd) }
+
+        var eventItems: [TimelineItem] = events
+            .filter { !$0.isAllDay && $0.startDate < dayEnd && $0.endDate > dayStart }
+            .map { e in
+                let s = max(e.startDate, dayStart)
+                return TimelineItem(id: "e|" + e.stableId, kind: .event(e), start: s, end: visualEnd(s, e.endDate))
+            }
+
+        let timed = tasks.filter { t in t.timelineStart.map { $0 >= dayStart && $0 < dayEnd } == true }
+        let slot = TimeInterval(slotMinutes * 60)
+        let bySlot = Dictionary(grouping: timed) { t in
+            Date(timeIntervalSinceReferenceDate: floor((t.timelineStart ?? dayStart).timeIntervalSinceReferenceDate / slot) * slot)
+        }
+        var taskItems: [TimelineItem] = bySlot.map { key, group in
+            let sorted = group.sorted { ($0.timelineStart ?? key, -$0.priority.rawValue) < ($1.timelineStart ?? key, -$1.priority.rawValue) }
+            let s = sorted.first?.timelineStart ?? key
+            if sorted.count == 1, let t = sorted.first {
+                let length = TimeInterval((t.estimatedMinutes ?? 0) * 60)
+                return TimelineItem(id: "t|\(t.id)", kind: .task(t), start: s, end: visualEnd(s, s.addingTimeInterval(length)))
+            }
+            return TimelineItem(id: "g|\(key.timeIntervalSince1970)", kind: .tasks(sorted), start: s, end: visualEnd(s, s))
+        }
+
+        // Fold tasks in clusters that would need too many lanes into one pill per cluster.
+        var all = eventItems + taskItems
+        for cluster in clusters(all) where laneCount(cluster) > maxLanes {
+            let clusterTasks = cluster.filter(\.isTask)
+            guard clusterTasks.count > 1 else { continue }
+            let ids = Set(clusterTasks.map(\.id))
+            let folded: [TaskItem] = clusterTasks.flatMap { item -> [TaskItem] in
+                switch item.kind { case .task(let t): [t]; case .tasks(let ts): ts; case .event: [] }
+            }
+            let s = clusterTasks.map(\.start).min() ?? dayStart
+            taskItems.removeAll { ids.contains($0.id) }
+            taskItems.append(TimelineItem(id: "f|\(s.timeIntervalSince1970)", kind: .tasks(folded), start: s, end: visualEnd(s, s)))
+        }
+        eventItems.sort { $0.start < $1.start }
+        all = eventItems + taskItems
+
+        // Assign lanes within each overlap cluster.
+        var out: [TimelineItem] = []
+        for cluster in clusters(all) {
+            var laneEnds: [Date] = []
+            var placed: [TimelineItem] = []
+            for var item in cluster {
+                if let free = laneEnds.firstIndex(where: { $0 <= item.start }) {
+                    item.lane = free; laneEnds[free] = item.end
+                } else {
+                    item.lane = laneEnds.count; laneEnds.append(item.end)
+                }
+                placed.append(item)
+            }
+            out += placed.map { var i = $0; i.lanes = max(1, laneEnds.count); return i }
+        }
+        return out
+    }
+
+    /// Groups items that overlap (directly or through each other), sorted by start, longest first.
+    static func clusters(_ items: [TimelineItem]) -> [[TimelineItem]] {
+        let sorted = items.sorted { $0.start == $1.start ? $0.end > $1.end : $0.start < $1.start }
+        var result: [[TimelineItem]] = []
+        var current: [TimelineItem] = []
+        var currentEnd = Date.distantPast
+        for item in sorted {
+            if !current.isEmpty && item.start >= currentEnd { result.append(current); current = [] ; currentEnd = .distantPast }
+            current.append(item)
+            currentEnd = max(currentEnd, item.end)
+        }
+        if !current.isEmpty { result.append(current) }
+        return result
+    }
+
+    static func laneCount(_ cluster: [TimelineItem]) -> Int {
+        var laneEnds: [Date] = []
+        for item in cluster {
+            if let free = laneEnds.firstIndex(where: { $0 <= item.start }) { laneEnds[free] = item.end } else { laneEnds.append(item.end) }
+        }
+        return laneEnds.count
+    }
+}
+
 struct TimelineGrid: View {
     let days: [Date]
     let events: [EKEvent]
@@ -204,21 +315,24 @@ struct TimelineGrid: View {
     var onTapSlot: (Date) -> Void
     var onTapEvent: (EKEvent) -> Void
     var onTapTask: (TaskItem) -> Void
+    var onTapTaskGroup: ([TaskItem]) -> Void
     var onTapDay: (Date) -> Void
     var onMoveEvent: (EKEvent, Date) -> Void
     var onMoveTask: (TaskItem, Date) -> Void
 
-    private let hourHeight: CGFloat = 56
-    private let gutter: CGFloat = 44
+    @State private var allDayExpanded = false
     private let cal = Calendar.current
+    private var isDay: Bool { days.count == 1 }
+    private var hourHeight: CGFloat { isDay ? 64 : 52 }
+    private let gutter: CGFloat = 46
 
     var body: some View {
         GeometryReader { geo in
-            let colWidth = (geo.size.width - gutter) / CGFloat(max(days.count, 1))
+            let colWidth = (geo.size.width - gutter - 4) / CGFloat(max(days.count, 1))
             VStack(spacing: 0) {
-                if days.count > 1 { dayHeader(colWidth) }
+                if !isDay { dayHeader(colWidth) }
                 allDayRow(colWidth)
-                Divider()
+                Rectangle().fill(DS.Palette.inkSoft.opacity(0.15)).frame(height: 0.5)
                 ScrollViewReader { proxy in
                     ScrollView {
                         ZStack(alignment: .topLeading) {
@@ -237,6 +351,7 @@ struct TimelineGrid: View {
                             }
                             nowLine(colWidth)
                         }
+                        .padding(.bottom, 80)        // room above the Focus bar
                     }
                     .onAppear { proxy.scrollTo(max(0, cal.component(.hour, from: Date()) - 1), anchor: .top) }
                 }
@@ -250,10 +365,12 @@ struct TimelineGrid: View {
             ForEach(days, id: \.self) { day in
                 let today = cal.isDateInToday(day)
                 Button { onTapDay(day) } label: {
-                    VStack(spacing: 2) {
-                        Text(day.formatted(.dateTime.weekday(.narrow))).font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
+                    VStack(spacing: 3) {
+                        Text(day.formatted(.dateTime.weekday(.abbreviated)).uppercased())
+                            .font(.system(size: 10, weight: .semibold, design: .rounded))
+                            .foregroundStyle(today ? DS.Palette.accent : DS.Palette.inkSoft)
                         Text(day.formatted(.dateTime.day()))
-                            .font(DS.Font.headline)
+                            .font(.system(size: 16, weight: today ? .bold : .medium, design: .rounded))
                             .frame(width: 30, height: 30)
                             .background(today ? DS.Palette.accent : .clear, in: Circle())
                             .foregroundStyle(today ? .white : DS.Palette.ink)
@@ -266,45 +383,63 @@ struct TimelineGrid: View {
         .padding(.bottom, DS.Space.xs)
     }
 
-    /// All-day events and undated-time tasks for each day.
+    /// All-day events (duplicates from overlapping holiday calendars merged) and date-only tasks.
     private func allDayRow(_ colWidth: CGFloat) -> some View {
-        HStack(alignment: .top, spacing: 0) {
-            Text("all-day").font(.system(size: 9)).foregroundStyle(DS.Palette.inkSoft).frame(width: gutter)
-            ForEach(days, id: \.self) { day in
-                let allDay = events.filter { $0.isAllDay && overlaps($0, day) }
-                let dayTasks = tasks.filter { t in t.timelineStart == nil && t.scheduledBlockStart == nil && t.dueDate.map { cal.isDate($0, inSameDayAs: day) } == true }
-                VStack(alignment: .leading, spacing: 2) {
-                    ForEach(allDay.prefix(2), id: \.stableId) { e in
-                        Text(e.title ?? "Event").font(.system(size: 10, weight: .medium)).lineLimit(1)
-                            .padding(.horizontal, 4).frame(maxWidth: .infinity, alignment: .leading)
-                            .background(e.color.opacity(0.25), in: .rect(cornerRadius: 4))
-                            .onTapGesture { onTapEvent(e) }
+        let limit = allDayExpanded ? 12 : (isDay ? 2 : 2)
+        let perDay: [(events: [EKEvent], tasks: [TaskItem])] = days.map { day in
+            var seen = Set<String>()
+            let evs = events.filter { $0.isAllDay && overlaps($0, day) }
+                .filter { seen.insert(($0.title ?? "").lowercased()).inserted }
+            let ts = tasks.filter { t in t.timelineStart == nil && t.scheduledBlockStart == nil && t.dueDate.map { cal.isDate($0, inSameDayAs: day) } == true }
+            return (evs, ts)
+        }
+        let anyOverflow = perDay.contains { $0.events.count + $0.tasks.count > 2 }
+        let isEmpty = perDay.allSatisfy { $0.events.isEmpty && $0.tasks.isEmpty }
+        return Group {
+            if !isEmpty {
+                HStack(alignment: .top, spacing: 0) {
+                    Text("all-day").font(.system(size: 10, weight: .medium)).foregroundStyle(DS.Palette.inkSoft)
+                        .frame(width: gutter - 6, alignment: .trailing).padding(.trailing, 6).padding(.top, 5)
+                    ForEach(Array(perDay.enumerated()), id: \.offset) { _, entry in
+                        VStack(alignment: .leading, spacing: 3) {
+                            ForEach(entry.events.prefix(limit), id: \.stableId) { e in
+                                AllDayChip(title: e.title ?? "Event", color: e.color, isTask: false, compact: !isDay)
+                                    .onTapGesture { onTapEvent(e) }
+                            }
+                            ForEach(entry.tasks.prefix(max(0, limit - min(entry.events.count, limit)))) { t in
+                                AllDayChip(title: t.title, color: DS.Palette.accent, isTask: true, compact: !isDay)
+                                    .onTapGesture { onTapTask(t) }
+                            }
+                            let extra = entry.events.count + entry.tasks.count - limit
+                            if extra > 0 {
+                                Text("+\(extra) more").font(.system(size: 10, weight: .medium)).foregroundStyle(DS.Palette.accent)
+                            }
+                        }
+                        .frame(width: colWidth - 2, alignment: .topLeading)
+                        .padding(.horizontal, 1)
                     }
-                    ForEach(dayTasks.prefix(days.count > 1 ? 2 : 6)) { t in
-                        Label(t.title, systemImage: "circle").font(.system(size: 10)).lineLimit(1)
-                            .labelStyle(.titleAndIcon)
-                            .padding(.horizontal, 4).frame(maxWidth: .infinity, alignment: .leading)
-                            .background(DS.Palette.accent.opacity(0.12), in: .rect(cornerRadius: 4))
-                            .onTapGesture { onTapTask(t) }
-                    }
-                    let extra = max(0, allDay.count - 2) + max(0, dayTasks.count - (days.count > 1 ? 2 : 6))
-                    if extra > 0 { Text("+\(extra)").font(.system(size: 9)).foregroundStyle(DS.Palette.inkSoft) }
                 }
-                .frame(width: colWidth - 2)
-                .padding(.horizontal, 1)
+                .padding(.vertical, 6)
+                .contentShape(Rectangle())
+                .onTapGesture { if anyOverflow { withAnimation(DS.spring) { allDayExpanded.toggle() } } }
             }
         }
-        .padding(.vertical, 4)
-        .frame(minHeight: 28)
     }
 
     private var hourRows: some View {
         VStack(spacing: 0) {
             ForEach(0..<24, id: \.self) { h in
                 HStack(alignment: .top, spacing: 0) {
-                    Text(hourLabel(h)).font(.system(size: 10)).foregroundStyle(DS.Palette.inkSoft)
-                        .frame(width: gutter, alignment: .trailing).padding(.trailing, 4).offset(y: -6)
-                    VStack { Divider(); Spacer() }
+                    Text(hourLabel(h))
+                        .font(.system(size: 10, weight: .medium, design: .rounded))
+                        .foregroundStyle(DS.Palette.inkSoft.opacity(0.8))
+                        .frame(width: gutter - 8, alignment: .trailing)
+                        .padding(.trailing, 8)
+                        .offset(y: -7)
+                    VStack(spacing: 0) {
+                        Rectangle().fill(DS.Palette.inkSoft.opacity(0.14)).frame(height: 0.5)
+                        Spacer()
+                    }
                 }
                 .frame(height: hourHeight)
                 .id(h)
@@ -319,45 +454,43 @@ struct TimelineGrid: View {
 
     @ViewBuilder
     private func dayColumn(day: Date, index: Int, colWidth: CGFloat) -> some View {
-        let timed = events.filter { !$0.isAllDay && overlaps($0, day) }.sorted { $0.startDate < $1.startDate }
-        let lanes = laneLayout(timed)
-        let laneCount = max(1, (lanes.values.max() ?? 0) + 1)
-        let laneWidth = (colWidth - 4) / CGFloat(laneCount)
+        let items = TimelineLayout.items(day: day, events: events, tasks: tasks, hourHeight: hourHeight,
+                                         maxLanes: isDay ? 3 : 2, slotMinutes: isDay ? 15 : 30)
         let dayStart = cal.startOfDay(for: day)
         let x0 = gutter + CGFloat(index) * colWidth + 2
 
-        ForEach(timed, id: \.stableId) { e in
-            let start = max(e.startDate, dayStart)
-            let end = min(e.endDate, dayStart.addingTimeInterval(86_400))
-            let y = CGFloat(start.timeIntervalSince(dayStart) / 3600) * hourHeight
-            let h = max(22, CGFloat(end.timeIntervalSince(start) / 3600) * hourHeight - 2)
-            DraggableBlock(hourHeight: hourHeight, colWidth: colWidth,
-                           onTap: { onTapEvent(e) },
-                           onDrop: { dDays, dMinutes in
-                               if let s = cal.date(byAdding: .minute, value: dMinutes, to: e.startDate),
-                                  let s2 = cal.date(byAdding: .day, value: dDays, to: s) { onMoveEvent(e, s2) }
-                           }) {
-                EventBlock(title: e.title ?? "Event", time: e.startDate, color: e.color, compact: days.count > 1)
-            }
-            .frame(width: laneWidth - 2, height: h)
-            .offset(x: x0 + CGFloat(lanes[e.stableId] ?? 0) * laneWidth, y: y)
+        ForEach(items) { item in
+            let laneWidth = (colWidth - 4) / CGFloat(item.lanes)
+            let y = CGFloat(item.start.timeIntervalSince(dayStart) / 3600) * hourHeight + 1
+            let h = max(26, CGFloat(item.end.timeIntervalSince(item.start) / 3600) * hourHeight - 2)
+            itemView(item, height: h, colWidth: colWidth)
+                .frame(width: laneWidth - 2, height: h)
+                .offset(x: x0 + CGFloat(item.lane) * laneWidth, y: y)
         }
+    }
 
-        ForEach(tasks.filter { $0.timelineStart.map { cal.isDate($0, inSameDayAs: day) } == true }) { t in
-            let start = t.timelineStart ?? dayStart
-            let y = CGFloat(start.timeIntervalSince(dayStart) / 3600) * hourHeight
-            let h = max(22, CGFloat(t.estimatedMinutes ?? 30) / 60 * hourHeight - 2)
-            DraggableBlock(hourHeight: hourHeight, colWidth: colWidth,
-                           onTap: { onTapTask(t) },
-                           onDrop: { dDays, dMinutes in
-                               if let s = cal.date(byAdding: .minute, value: dMinutes, to: start),
-                                  let s2 = cal.date(byAdding: .day, value: dDays, to: s) { onMoveTask(t, s2) }
-                           }) {
-                TaskBlock(title: t.title, compact: days.count > 1)
+    @ViewBuilder
+    private func itemView(_ item: TimelineItem, height: CGFloat, colWidth: CGFloat) -> some View {
+        switch item.kind {
+        case .event(let e):
+            DraggableBlock(hourHeight: hourHeight, colWidth: colWidth, onTap: { onTapEvent(e) },
+                           onDrop: { dDays, dMin in shift(e.startDate, dDays, dMin).map { onMoveEvent(e, $0) } }) {
+                EventCard(title: e.title ?? "Event", start: e.startDate, end: e.endDate, color: e.color,
+                          compact: !isDay, height: height)
             }
-            .frame(width: colWidth - 6, height: h)
-            .offset(x: x0 + 1, y: y)
+        case .task(let t):
+            DraggableBlock(hourHeight: hourHeight, colWidth: colWidth, onTap: { onTapTask(t) },
+                           onDrop: { dDays, dMin in shift(t.timelineStart ?? Date(), dDays, dMin).map { onMoveTask(t, $0) } }) {
+                TaskPill(task: t, compact: !isDay)
+            }
+        case .tasks(let ts):
+            TaskGroupPill(tasks: ts, compact: !isDay)
+                .onTapGesture { onTapTaskGroup(ts) }
         }
+    }
+
+    private func shift(_ date: Date, _ days: Int, _ minutes: Int) -> Date? {
+        cal.date(byAdding: .minute, value: minutes, to: date).flatMap { cal.date(byAdding: .day, value: days, to: $0) }
     }
 
     @ViewBuilder
@@ -365,32 +498,19 @@ struct TimelineGrid: View {
         if let i = days.firstIndex(where: { cal.isDateInToday($0) }) {
             let y = CGFloat(Date().timeIntervalSince(cal.startOfDay(for: Date())) / 3600) * hourHeight
             HStack(spacing: 0) {
-                Circle().fill(.red).frame(width: 8, height: 8)
-                Rectangle().fill(.red).frame(height: 1.5)
+                Circle().fill(Color.red).frame(width: 9, height: 9)
+                Rectangle().fill(Color.red).frame(height: 1.5)
             }
-            .frame(width: colWidth + 4)
-            .offset(x: gutter + CGFloat(i) * colWidth - 4, y: y - 4)
+            .frame(width: colWidth + 6)
+            .offset(x: gutter + CGFloat(i) * colWidth - 4, y: y - 4.5)
             .allowsHitTesting(false)
+            .shadow(color: .red.opacity(0.4), radius: 3)
         }
     }
 
     private func overlaps(_ e: EKEvent, _ day: Date) -> Bool {
         let s = cal.startOfDay(for: day)
         return e.startDate < s.addingTimeInterval(86_400) && e.endDate > s
-    }
-
-    /// Side-by-side lanes for overlapping events (greedy).
-    private func laneLayout(_ evts: [EKEvent]) -> [String: Int] {
-        var laneEnds: [Date] = []
-        var result: [String: Int] = [:]
-        for e in evts {
-            if let free = laneEnds.firstIndex(where: { $0 <= e.startDate }) {
-                laneEnds[free] = e.endDate; result[e.stableId] = free
-            } else {
-                laneEnds.append(e.endDate); result[e.stableId] = laneEnds.count - 1
-            }
-        }
-        return result
     }
 }
 
@@ -408,7 +528,7 @@ struct DraggableBlock<Content: View>: View {
     var body: some View {
         content
             .scaleEffect(lifted ? 1.03 : 1)
-            .shadow(color: .black.opacity(lifted ? 0.2 : 0), radius: 8, y: 4)
+            .shadow(color: .black.opacity(lifted ? 0.25 : 0), radius: 10, y: 6)
             .offset(drag)
             .zIndex(lifted ? 10 : 0)
             .onTapGesture(perform: onTap)
@@ -430,43 +550,146 @@ struct DraggableBlock<Content: View>: View {
     }
 }
 
-struct EventBlock: View {
+/// Solid, readable event card: tinted fill, color bar, title, and time when there's room.
+struct EventCard: View {
     let title: String
-    let time: Date
+    let start: Date
+    let end: Date
     let color: Color
     let compact: Bool
+    let height: CGFloat
+    @Environment(\.colorScheme) private var scheme
+
     var body: some View {
-        HStack(spacing: 4) {
-            RoundedRectangle(cornerRadius: 2).fill(color).frame(width: 3)
+        HStack(spacing: 0) {
+            Rectangle().fill(color).frame(width: 3)
             VStack(alignment: .leading, spacing: 1) {
-                Text(title).font(.system(size: compact ? 10 : 13, weight: .semibold)).lineLimit(compact ? 3 : 2)
-                if !compact { Text(time, style: .time).font(.system(size: 11)).foregroundStyle(DS.Palette.inkSoft) }
+                if height < 40 {
+                    Text(compact ? title : "\(title)  ·  \(start.formatted(date: .omitted, time: .shortened))")
+                        .lineLimit(1)
+                } else {
+                    Text(title).lineLimit(compact ? 4 : 3)
+                    Text("\(start.formatted(date: .omitted, time: .shortened)) – \(end.formatted(date: .omitted, time: .shortened))")
+                        .font(.system(size: compact ? 9 : 11, weight: .medium))
+                        .foregroundStyle(DS.Palette.inkSoft)
+                        .lineLimit(1)
+                }
             }
+            .font(.system(size: compact ? 10.5 : 13, weight: .semibold))
+            .foregroundStyle(DS.Palette.ink)
+            .padding(.horizontal, compact ? 4 : 7)
+            .padding(.vertical, compact ? 3 : 5)
             Spacer(minLength: 0)
         }
-        .padding(3)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-        .background(color.opacity(0.18), in: .rect(cornerRadius: 6))
+        .background(color.opacity(scheme == .dark ? 0.30 : 0.16))
+        .clipShape(.rect(cornerRadius: 8))
         .accessibilityElement(children: .combine)
     }
 }
 
-struct TaskBlock: View {
+/// A single timed task: slim pill with a tappable checkbox.
+struct TaskPill: View {
+    @Bindable var task: TaskItem
+    let compact: Bool
+
+    var body: some View {
+        HStack(spacing: 5) {
+            Button {
+                TaskActions.setDone(task, true)
+            } label: {
+                Image(systemName: "circle")
+                    .font(.system(size: compact ? 10 : 13, weight: .semibold))
+                    .foregroundStyle(task.priority == .none ? DS.Palette.accent : task.priority.color)
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel("Complete \(task.title)")
+            Text(task.title)
+                .font(.system(size: compact ? 10.5 : 13, weight: .medium))
+                .foregroundStyle(DS.Palette.ink)
+                .lineLimit(1)
+            Spacer(minLength: 0)
+            if !compact, task.recurrence != nil {
+                Image(systemName: "repeat").font(.system(size: 10)).foregroundStyle(DS.Palette.inkSoft)
+            }
+        }
+        .padding(.horizontal, compact ? 4 : 8)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+        .padding(.top, compact ? 4 : 6)
+        .background(DS.Palette.accent.opacity(0.14), in: .rect(cornerRadius: 8))
+    }
+}
+
+/// Several tasks due around the same time, folded into one pill. Tap for the checklist.
+struct TaskGroupPill: View {
+    let tasks: [TaskItem]
+    let compact: Bool
+
+    var body: some View {
+        HStack(spacing: 5) {
+            Image(systemName: "checklist")
+                .font(.system(size: compact ? 10 : 12, weight: .semibold))
+                .foregroundStyle(DS.Palette.accent)
+            Text(compact ? "\(tasks.count) tasks" : (tasks.first?.title ?? "Tasks"))
+                .font(.system(size: compact ? 10.5 : 13, weight: .medium))
+                .foregroundStyle(DS.Palette.ink)
+                .lineLimit(1)
+            Spacer(minLength: 0)
+            if !compact {
+                Text("+\(tasks.count - 1)")
+                    .font(.system(size: 11, weight: .bold, design: .rounded))
+                    .padding(.horizontal, 6).padding(.vertical, 2)
+                    .background(DS.Palette.accent, in: Capsule())
+                    .foregroundStyle(.white)
+            }
+        }
+        .padding(.horizontal, compact ? 4 : 8)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+        .padding(.top, compact ? 4 : 6)
+        .background(DS.Palette.accent.opacity(0.14), in: .rect(cornerRadius: 8))
+        .overlay(RoundedRectangle(cornerRadius: 8).strokeBorder(DS.Palette.accent.opacity(0.35), lineWidth: 1))
+        .accessibilityLabel("\(tasks.count) tasks")
+    }
+}
+
+struct AllDayChip: View {
     let title: String
+    let color: Color
+    let isTask: Bool
     let compact: Bool
     var body: some View {
         HStack(spacing: 4) {
-            Image(systemName: "circle").font(.system(size: compact ? 9 : 12))
-            Text(title).font(.system(size: compact ? 10 : 13, weight: .medium)).lineLimit(compact ? 3 : 2)
-            Spacer(minLength: 0)
+            if isTask { Image(systemName: "circle").font(.system(size: compact ? 8 : 10, weight: .semibold)).foregroundStyle(color) }
+            Text(title).lineLimit(1)
         }
-        .padding(4)
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-        .background(DS.Palette.accent.opacity(0.10), in: .rect(cornerRadius: 6))
-        .overlay(RoundedRectangle(cornerRadius: 6).strokeBorder(DS.Palette.accent.opacity(0.6), style: StrokeStyle(lineWidth: 1, dash: [4, 3])))
-        .foregroundStyle(DS.Palette.accent)
+        .font(.system(size: compact ? 10 : 12, weight: .semibold))
+        .foregroundStyle(DS.Palette.ink)
+        .padding(.horizontal, 6).padding(.vertical, 3)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(color.opacity(0.22), in: .rect(cornerRadius: 6))
     }
 }
+
+/// The checklist behind a "+N" task pill.
+struct TaskGroupSheet: View {
+    let tasks: [TaskItem]
+    @Environment(\.dismiss) private var dismiss
+    var body: some View {
+        NavigationStack {
+            List {
+                ForEach(tasks) { t in
+                    NavigationLink { TaskDetailView(task: t) } label: { TaskRow(task: t) }
+                }
+            }
+            .navigationTitle(tasks.first?.timelineStart?.formatted(date: .omitted, time: .shortened) ?? "Tasks")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar { Button("Done") { dismiss() } }
+        }
+        .presentationDetents([.medium, .large])
+    }
+}
+
+struct TaskGroupRef: Identifiable { let id = UUID(); let tasks: [TaskItem] }
 
 // MARK: - Month
 
