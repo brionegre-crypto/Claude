@@ -45,3 +45,12 @@ targets:
         CFBundleURLTypes:
           - CFBundleURLSchemes: [com.keel.app]
         KeelAIProxyURL: "https://YOUR-BACKEND.example.com/v1/messages"
+schemes:
+  Keel:   # shared scheme, committed to the repo; Xcode Cloud only sees shared schemes
+    build:
+      targets:
+        Keel: all
+    run:
+      config: Debug
+    archive:
+      config: Release
