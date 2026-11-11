@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		1E9022913FF88A6EADC00068 /* PromiseTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB62EF3D17A17E14F6923B77 /* PromiseTracker.swift */; };
+		2018C1DAFFD69BD28AE829AF /* ComposeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FD2977BFF93D2B3A4B40E78 /* ComposeView.swift */; };
 		21E7562BDD0EF8DF74F200A4 /* OAuthManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E72459AFB8B89A1509AB72D /* OAuthManager.swift */; };
 		27E9B13DE7B45A5FF13DE173 /* FocusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECB947CEC5E491E34C4572D7 /* FocusView.swift */; };
 		282F1904CC270F67AFA1B981 /* TasksView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52D02FDBC427DF0317C4A4E9 /* TasksView.swift */; };
@@ -29,6 +30,7 @@
 		AEA0B8BD83287B5BABEDB968 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17C252D173987B00D25462AF /* Models.swift */; };
 		B37C9261974F622FD2EDA1B1 /* DesignSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AAD56951A8EABC3E1B4B1E0 /* DesignSystem.swift */; };
 		C47D427217918E8C75B2B94D /* PromisesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6BC64A281F313E34B666753 /* PromisesView.swift */; };
+		CA2D3821E5A280010A905247 /* HTMLMailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 217E1E36CFDF363BEF82111D /* HTMLMailView.swift */; };
 		CF1624DA4B3A66E317B98BEF /* CalendarService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2158A7A622BDADF4767554DB /* CalendarService.swift */; };
 		E053C585567DDC029FB720D8 /* ClaudeBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14D1D78C56734503A909291D /* ClaudeBridge.swift */; };
 		E2B8FEF02893FAD636AE6E23 /* NotesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAAF02252EE2C633D8BD47D5 /* NotesView.swift */; };
@@ -40,6 +42,7 @@
 		14D1D78C56734503A909291D /* ClaudeBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeBridge.swift; sourceTree = "<group>"; };
 		17C252D173987B00D25462AF /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
 		2158A7A622BDADF4767554DB /* CalendarService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarService.swift; sourceTree = "<group>"; };
+		217E1E36CFDF363BEF82111D /* HTMLMailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTMLMailView.swift; sourceTree = "<group>"; };
 		24484F9F7D98891FB9522296 /* Keel.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Keel.entitlements; sourceTree = "<group>"; };
 		2AAD56951A8EABC3E1B4B1E0 /* DesignSystem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DesignSystem.swift; sourceTree = "<group>"; };
 		2E45C1FD390432029BC9DFF4 /* KeelApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeelApp.swift; sourceTree = "<group>"; };
@@ -52,6 +55,7 @@
 		52D02FDBC427DF0317C4A4E9 /* TasksView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TasksView.swift; sourceTree = "<group>"; };
 		6BE33F801FFD619712E382CF /* SyncEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncEngine.swift; sourceTree = "<group>"; };
 		6D48520D370A3903CB9A62B8 /* AIRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIRouter.swift; sourceTree = "<group>"; };
+		7FD2977BFF93D2B3A4B40E78 /* ComposeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComposeView.swift; sourceTree = "<group>"; };
 		8DF811CE33148A8C868866BD /* InboxView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InboxView.swift; sourceTree = "<group>"; };
 		8F2B871E95739B31F6282566 /* AccountsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountsView.swift; sourceTree = "<group>"; };
 		9552312DA272B5919FCC5388 /* TodayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayView.swift; sourceTree = "<group>"; };
@@ -83,6 +87,7 @@
 				E56E52A33694E7CEE93202D4 /* Focus */,
 				1598A14EE76D8F29FDBCD330 /* Habits */,
 				5BDB7A58DC87CE8BA738D57A /* Inbox */,
+				F715676E24FF7E781FDE906F /* Mail */,
 				2E86A7F00027CA613FA36EF4 /* Notes */,
 				933A492221CD1618E20868AC /* Promises */,
 				1E45ED5E7D73B7554BC46C48 /* Settings */,
@@ -279,6 +284,15 @@
 			path = Keel;
 			sourceTree = "<group>";
 		};
+		F715676E24FF7E781FDE906F /* Mail */ = {
+			isa = PBXGroup;
+			children = (
+				7FD2977BFF93D2B3A4B40E78 /* ComposeView.swift */,
+				217E1E36CFDF363BEF82111D /* HTMLMailView.swift */,
+			);
+			path = Mail;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -358,8 +372,10 @@
 				E053C585567DDC029FB720D8 /* ClaudeBridge.swift in Sources */,
 				2C6CBAF044E966ABBB73E086 /* CloudAI.swift in Sources */,
 				564E1BA5AB1AB64EA1E57121 /* CommandBar.swift in Sources */,
+				2018C1DAFFD69BD28AE829AF /* ComposeView.swift in Sources */,
 				B37C9261974F622FD2EDA1B1 /* DesignSystem.swift in Sources */,
 				27E9B13DE7B45A5FF13DE173 /* FocusView.swift in Sources */,
+				CA2D3821E5A280010A905247 /* HTMLMailView.swift in Sources */,
 				F27CF0E2C2C4EB6507312277 /* HabitEngine.swift in Sources */,
 				3A891E525241317051D27D67 /* HabitsView.swift in Sources */,
 				84ACF02D41CCACD6D7F72F3E /* InboxView.swift in Sources */,
