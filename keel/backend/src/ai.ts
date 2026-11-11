@@ -11,6 +11,7 @@ const ROUTES: Record<string, { model: string; effort: "low" | "medium" | "high";
   triage: { model: "claude-opus-5-5", effort: "low", maxTokens: 1024 },
   summarize: { model: "claude-opus-5-5", effort: "low", maxTokens: 1024 },
   draft_reply: { model: "claude-opus-5-5", effort: "medium", maxTokens: 4096 },
+  promises: { model: "claude-opus-5-5", effort: "low", maxTokens: 1024 },
   break_down: { model: "claude-opus-5-5", effort: "medium", maxTokens: 2048 },
   plan_day: { model: "claude-opus-5-5", effort: "high", maxTokens: 8192 },
 };

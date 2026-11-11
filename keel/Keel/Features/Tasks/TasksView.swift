@@ -36,7 +36,14 @@ struct TasksView: View {
                 }
             }
             .navigationTitle("Tasks")
-            .toolbar { Toggle(isOn: $showDone) { Image(systemName: "checkmark.circle") }.toggleStyle(.button) }
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    NavigationLink { PromisesView() } label: { Label("Promises", systemImage: "hand.raised.fingers.spread") }
+                }
+                ToolbarItem(placement: .topBarTrailing) {
+                    Toggle(isOn: $showDone) { Image(systemName: "checkmark.circle") }.toggleStyle(.button)
+                }
+            }
             .refreshable { await SyncEngine.shared.syncAll() }
         }
     }

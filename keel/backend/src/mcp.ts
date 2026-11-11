@@ -27,6 +27,11 @@ const TOOLS = [
     inputSchema: { type: "object", properties: { query: { type: "string" } }, required: ["query"], additionalProperties: false },
   },
   {
+    name: "list_promises",
+    description: "Open commitments the user made in emails they sent (e.g. 'I'll send the deck Friday'), with recipient, quote and due date.",
+    inputSchema: { type: "object", properties: {}, additionalProperties: false },
+  },
+  {
     name: "add_task",
     description: "Add a task to Keel (syncs to Apple Reminders). Due date optional, ISO 8601.",
     inputSchema: {
@@ -47,6 +52,7 @@ type Snapshot = {
   today?: unknown;
   tasks?: { title: string; list: string; due?: string; energy: string; steps: string[] }[];
   notes?: { title: string; text: string }[];
+  promises?: { promise: string; to: string; quote: string; due: string; overdue: boolean }[];
 };
 
 export async function handleMCP(req: Request, env: Env): Promise<Response> {
@@ -73,6 +79,8 @@ export async function handleMCP(req: Request, env: Env): Promise<Response> {
           return text(snap.today ?? "No snapshot yet — open Keel on the iPhone once.");
         case "list_tasks":
           return text((snap.tasks ?? []).filter((t) => !args.list || t.list === args.list));
+        case "list_promises":
+          return text(snap.promises ?? []);
         case "search_notes": {
           const q = String(args.query).toLowerCase();
           return text((snap.notes ?? []).filter((n) => (n.title + n.text).toLowerCase().includes(q)).slice(0, 10));

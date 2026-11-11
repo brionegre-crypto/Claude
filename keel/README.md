@@ -58,13 +58,22 @@
 - An **iOS Focus Filter** lets your system "Work" Focus auto-enter Keel's Soft mode.
 - **End-of-day Shutdown Ritual**: capture → inbox → move unfinished work to tomorrow → one win → "Work is closed. You're allowed to rest."
 
+### Promise tracker (Tasks → ✋ Promises, or a card on Today when one is due)
+- After each sync, Keel reads mail you **sent** (Gmail and Outlook; iCloud once IMAP lands). A free keyword pre-filter skips most messages, then Apple Intelligence (or Claude as a fallback) pulls out real commitments with the exact sentence and a deadline. Relative dates like "Friday" are resolved against the day you sent the email.
+- Grouped **Overdue · Today · This week · Later**. A promise with no date is treated as due a week after you sent it.
+- Swipe: **Kept** / **Make it a task** (also lands in Apple Reminders) / **Not a promise**.
+- Tap any promise for a **one-tap follow-up**: "Here it is", "Need a bit more time", or "Quick update", drafted by AI and sent from the right account.
+- **"Did you keep these?"**: if you later replied in the same thread with "attached" or "here's…", Keel asks you to confirm instead of closing it silently.
+- One gentle notification at 9am on the due day. A **kept rate** stat (no shaming).
+- Siri: "What did I promise in Keel?" Claude can read your promises through the `list_promises` connector tool.
+
 ### Apple Intelligence + Siri
 - On-device **Foundation Models** (Apple Intelligence) handle triage, summaries, extraction and quick drafts. Free and private.
 - **Writing Tools** work in every text field automatically.
-- **App Intents / Siri / Shortcuts**: "Add a task in Keel", "Start focus in Keel", "What should I do now in Keel?"
+- **App Intents / Siri / Shortcuts**: "Add a task in Keel", "Start focus in Keel", "What should I do now in Keel?", "What did I promise in Keel?"
 
 ### Works with Claude (and Claude Duet)
-- The backend exposes a **remote MCP server**, the standard way Claude apps connect to outside tools. Claude can call `get_today`, `list_tasks`, `search_notes`, `add_task` and `start_focus`.
+- The backend exposes a **remote MCP server**, the standard way Claude apps connect to outside tools. Claude can call `get_today`, `list_tasks`, `list_promises`, `search_notes`, `add_task` and `start_focus`.
 - Add it in Claude: **Settings → Connectors → Add custom connector → `https://<your-worker>/mcp`**.
 - **Claude Duet** (Anthropic's proactive agent, research preview since Oct 2026) has **no public API yet**, and it isn't confirmed whether it accepts custom connectors. Keel still works alongside it today: its sorting is written back to Gmail/Outlook labels, Apple Reminders and a Keel calendar, which Duet's own connectors can read. Once Duet supports custom connectors, the MCP server above is ready.
 - Claude never starts app-blocking silently. A `start_focus` request from Claude becomes a suggestion you confirm on the phone.
@@ -77,7 +86,7 @@
 2. **Wall of Awful detector**: when a task slips 3+ times, Keel stops nagging and offers to *shrink it*, *body-double it*, or *let it go*.
 3. **Time-blindness calibrator**: a personal estimate multiplier learned from your real focus sessions.
 4. **Calendar-anchored habit stacks**: habits fire when real events end ("after standup → stretch → water"), not at a guessed time.
-5. **Promise tracker** *(engine built, UI next)*: scans your **sent** mail for "I'll send it Friday" and turns your own commitments into tasks.
+5. **Promise tracker**: scans your **sent** mail for "I'll send it Friday" and keeps every commitment you made in one place (see Features above).
 6. **Reset my day**: one tap, no guilt. Overdue tasks move to tomorrow, and chronic ones go to "Someday".
 7. **Escalating shutdown with a cool-down**, plus a hyperfocus guard after the block ends.
 8. **Energy-matched planning**: the AI planner puts your hardest work where your energy peaks and plans only ~70% of free time.
@@ -136,16 +145,17 @@ iPhone (SwiftUI, iOS 26)                         Keel backend (Cloudflare Worker
 ```
 keel/
 ├─ project.yml                  XcodeGen spec (generates the Xcode project)
+├─ open-in-xcode.sh             one command: generate + open in Xcode
 ├─ Keel/App                     app entry, design system, command bar + Siri intents
 ├─ Keel/Models                  SwiftData models
 ├─ Keel/Services/AI             AIRouter, OnDeviceAI (Apple Intelligence), CloudAI (Claude), ADHDCoach
-├─ Keel/Services/Mail           Gmail, Outlook, iCloud providers
+├─ Keel/Services/Mail           Gmail, Outlook, iCloud providers + PromiseTracker
 ├─ Keel/Services/Auth           OAuth + PKCE, Keychain
 ├─ Keel/Services/Calendar       EventKit calendars + Reminders sync
 ├─ Keel/Services/Sync           SyncEngine (background refresh), ClaudeBridge
 ├─ Keel/Services/Focus          ShutdownManager, Focus Filter
 ├─ Keel/Services/Habits         HabitEngine
-├─ Keel/Features/*              Today, Inbox, Tasks, Notes, Habits, Focus, Settings
+├─ Keel/Features/*              Today, Inbox, Tasks, Promises, Notes, Habits, Focus, Settings
 └─ backend/                     Cloudflare Worker (TypeScript, official Anthropic SDK)
 ```
 
@@ -155,14 +165,11 @@ keel/
 
 **You need:** a Mac with Xcode 26+, an iPhone 15 Pro or newer (for Apple Intelligence), and an Apple Developer account.
 
-1. **Generate the Xcode project:**
+1. **Generate and open the Xcode project** (installs XcodeGen with Homebrew if needed). Pass your Team ID, found at developer.apple.com → Account → Membership details:
    ```bash
-   brew install xcodegen
+   cd keel && ./open-in-xcode.sh YOURTEAMID
    ```
-   ```bash
-   cd keel && xcodegen && open Keel.xcodeproj
-   ```
-   Set your Team in Signing & Capabilities.
+   The `.xcodeproj` is generated from `project.yml`, so edit `project.yml` (not Xcode's project settings) and re-run the script after adding files. With your developer account, Screen Time app blocking works on your own iPhone during development. Shipping it on the App Store needs a separate FamilyControls distribution request to Apple.
 2. **Google:** in Google Cloud Console, create a project, enable the Gmail API, and create an *iOS* OAuth client. Put the client ID in `OAuthManager.google` (two places) and add the reversed client ID URL scheme in `project.yml`.
 3. **Microsoft:** in Azure Portal → App registrations, create a *public client* with redirect `msauth.com.keel.Keel://auth`. Put the client ID in `OAuthManager.microsoft`.
 4. **iCloud Mail:** create an app-specific password at account.apple.com. ⚠️ The IMAP client isn't written yet (`ICloudMailProvider` is a stub). The next step is adding Apple's `swift-nio-imap` package.
@@ -196,6 +203,5 @@ keel/
 - [ ] A settings field to enter the backend device token (stored in Keychain as `keel.session`).
 - [ ] Connector auth: Claude custom connectors expect OAuth, but the MCP endpoint currently checks a static bearer token. Add OAuth (or authless + an unguessable URL path) before connecting it in Claude.
 - [ ] Gmail label creation (`Keel/<category>` labels must be created before `applyLabel`).
-- [ ] Promise-tracker UI (scanning Sent mail).
 - [ ] Live Activity / widgets / Watch.
 - [ ] Per-user auth (Sign in with Apple) before anyone else uses the backend.

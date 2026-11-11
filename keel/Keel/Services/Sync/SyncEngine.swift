@@ -62,6 +62,9 @@ final class SyncEngine {
             }
         }
 
+        // 2b. Promise tracker: commitments you made in sent mail
+        await PromiseTracker.scan(accounts: accounts, ctx: ctx)
+
         // 3. Apple Reminders ⇄ Keel tasks
         let tasks = (try? ctx.fetch(FetchDescriptor<TaskItem>())) ?? []
         await CalendarService.shared.syncReminders(tasks: tasks) { ctx.insert($0) }

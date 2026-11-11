@@ -19,6 +19,7 @@ enum MailProviderKind: String, Codable, CaseIterable, Identifiable {
     var colorHex: String
     var syncCursor: String?                      // Gmail historyId / Graph deltaLink / IMAP UIDNEXT
     var lastSyncedAt: Date?
+    var lastSentScanAt: Date?                    // promise tracker: last time Sent mail was scanned
     var isEnabled: Bool = true
 
     init(provider: MailProviderKind, address: String, displayName: String, colorHex: String = "#5B8DEF") {
@@ -230,6 +231,40 @@ enum StackAnchor: Codable, Hashable {
         self.day = day
         self.completedAt = completedAt
     }
+}
+
+// MARK: - Promise tracker
+
+/// A commitment YOU made in an email you sent ("I'll send the deck Friday").
+enum CommitmentStatus: String, Codable { case open, done, dismissed }
+
+@Model final class Commitment {
+    @Attribute(.unique) var id: String          // sent message id + index
+    var accountId: String
+    var sourceMessageId: String                 // provider id of the sent email
+    var threadId: String
+    var promise: String                         // "Send the Q3 deck"
+    var quote: String                           // the exact sentence you wrote
+    var recipient: String                       // address you promised
+    var recipientName: String
+    var subject: String
+    var sentAt: Date
+    var dueDate: Date?
+    var status: CommitmentStatus = CommitmentStatus.open
+    var taskId: UUID?                           // if turned into a task
+    var completedAt: Date?
+    var likelyKept: Bool = false                // a later reply in the thread looks like you delivered
+
+    init(id: String, accountId: String, sourceMessageId: String, threadId: String, promise: String, quote: String,
+         recipient: String, recipientName: String, subject: String, sentAt: Date, dueDate: Date?) {
+        self.id = id; self.accountId = accountId; self.sourceMessageId = sourceMessageId; self.threadId = threadId
+        self.promise = promise; self.quote = quote; self.recipient = recipient; self.recipientName = recipientName
+        self.subject = subject; self.sentAt = sentAt; self.dueDate = dueDate
+    }
+
+    var isOverdue: Bool { status == .open && (dueDate.map { $0 < Calendar.current.startOfDay(for: Date()) } ?? false) }
+    /// No date given: treat as owed within a week of sending (people remember "I'll get back to you").
+    var effectiveDue: Date { dueDate ?? sentAt.addingTimeInterval(7 * 86_400) }
 }
 
 // MARK: - Focus / Shutdown

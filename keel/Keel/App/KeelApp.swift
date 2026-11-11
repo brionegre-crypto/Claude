@@ -30,7 +30,7 @@ struct KeelApp: App {
     static let container: ModelContainer = {
         let schema = Schema([
             MailAccount.self, EmailMessage.self, TaskItem.self, Note.self,
-            Habit.self, HabitStack.self, HabitLog.self, FocusSession.self,
+            Habit.self, HabitStack.self, HabitLog.self, FocusSession.self, Commitment.self,
         ])
         // Lives in the App Group so widgets / intents extensions can read it too.
         let config = ModelConfiguration(schema: schema, groupContainer: .identifier("group.com.keel.shared"))

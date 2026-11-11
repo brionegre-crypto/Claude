@@ -88,6 +88,36 @@ final class OnDeviceAI {
         return try await session.respond(to: "Original from \(e.fromName): \(e.bodyPlain.prefix(2_500))\n\nMy intent: \(intent)").content
     }
 
+    @Generable
+    struct FoundPromise {
+        @Guide(description: "Short imperative of what the writer committed to do, e.g. 'Send the Q3 deck'")
+        var promise: String
+        @Guide(description: "The exact sentence from the email that contains the commitment")
+        var quote: String
+        @Guide(description: "Deadline as YYYY-MM-DD resolved against the sent date, or empty if none stated")
+        var dueDate: String
+    }
+
+    @Generable
+    struct PromiseScan {
+        @Guide(description: "Commitments the WRITER made to do something later. Empty if none.", .maximumCount(5))
+        var promises: [FoundPromise]
+    }
+
+    func extractPromises(body: String, sentAt: Date) async throws -> [PromiseCandidate] {
+        let session = LanguageModelSession(instructions: Self.promiseInstructions)
+        let prompt = "Sent on \(sentAt.formatted(.iso8601.year().month().day())) (\(sentAt.formatted(.dateTime.weekday(.wide))))\n\n\(body.prefix(3_000))"
+        let r = try await session.respond(to: prompt, generating: PromiseScan.self).content
+        return r.promises.map { PromiseCandidate(promise: $0.promise, quote: $0.quote, dueDateISO: $0.dueDate.isEmpty ? nil : $0.dueDate) }
+    }
+
+    static let promiseInstructions = """
+    You read an email the user SENT and list commitments the user made to do something in the future: \
+    "I'll send it Friday", "Let me check and get back to you", "I will review by EOD". \
+    Ignore requests to others, things already done, pleasantries ("let me know"), and offers ("happy to help"). \
+    Resolve relative dates ("Friday", "tomorrow", "next week" = the following Monday) against the sent date.
+    """
+
     private static func map(_ b: Bucket) -> TriageCategory {
         switch b {
         case .important: .important

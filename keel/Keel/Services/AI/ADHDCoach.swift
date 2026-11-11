@@ -80,7 +80,9 @@ enum ADHDCoach {
 
     /// Scans your sent emails for "I'll send it Friday" / "Let me get back to you" and turns them
     /// into tasks — the #1 thing ADHD folks forget, and no mail client tracks it.
-    static let promisePatterns = ["i'll ", "i will ", "let me ", "i'll get back", "will send", "by tomorrow", "by friday", "by eod"]
+    static let promisePatterns = ["i'll ", "i’ll ", "i will ", "let me check", "let me look", "let me get back", "i'll get back",
+                                  "will send", "will get you", "will follow up", "i can send", "i'm going to", "i’m going to",
+                                  "by tomorrow", "by friday", "by monday", "by eod", "by end of", "later today", "next week"]
     static func looksLikePromise(_ sentBody: String) -> Bool {
         let s = sentBody.lowercased()
         return promisePatterns.contains { s.contains($0) }

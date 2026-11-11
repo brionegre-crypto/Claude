@@ -85,6 +85,19 @@ struct WhatNowIntent: AppIntent {
     }
 }
 
+struct OpenPromisesIntent: AppIntent {
+    static let title: LocalizedStringResource = "What Did I Promise?"
+    static let description: IntentDescription = "Lists commitments you made in sent email that are still open."
+
+    @MainActor func perform() async throws -> some IntentResult & ProvidesDialog {
+        let all = try KeelStore.container.mainContext.fetch(FetchDescriptor<Commitment>(sortBy: [SortDescriptor(\.sentAt)]))
+        let open = all.filter { $0.status == .open }.sorted { $0.effectiveDue < $1.effectiveDue }
+        guard !open.isEmpty else { return .result(dialog: "No open promises. You're all caught up.") }
+        let top = open.prefix(3).map { "\($0.promise) for \($0.displayName)" }.joined(separator: "; ")
+        return .result(dialog: "You have \(open.count) open. Next: \(top).")
+    }
+}
+
 struct KeelShortcuts: AppShortcutsProvider {
     static var appShortcuts: [AppShortcut] {
         AppShortcut(intent: AddTaskIntent(), phrases: ["Add a task in \(.applicationName)", "Capture in \(.applicationName)"],
@@ -93,5 +106,7 @@ struct KeelShortcuts: AppShortcutsProvider {
                     shortTitle: "Focus", systemImageName: "moon.zzz")
         AppShortcut(intent: WhatNowIntent(), phrases: ["What should I do now in \(.applicationName)", "Ask \(.applicationName) what's next"],
                     shortTitle: "What Now?", systemImageName: "scope")
+        AppShortcut(intent: OpenPromisesIntent(), phrases: ["What did I promise in \(.applicationName)", "Show my promises in \(.applicationName)"],
+                    shortTitle: "Promises", systemImageName: "hand.raised.fingers.spread")
     }
 }

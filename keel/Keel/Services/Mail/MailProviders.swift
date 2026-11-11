@@ -15,6 +15,8 @@ protocol MailProvider {
     /// Writes Keel's AI category back as a label/category so other clients (and Claude Duet) see it.
     func applyLabel(_ providerId: String, label: String) async throws
     func send(to: String, subject: String, body: String, inReplyTo: String?) async throws
+    /// Emails YOU sent since `since` — the promise tracker reads these. `from` holds the first recipient.
+    func fetchSent(since: Date) async throws -> [FetchedMessage]
 }
 
 enum MailProviderFactory {
@@ -122,6 +124,34 @@ struct GmailProvider: MailProvider {
         // Production: cache label ids; create "Keel/<label>" via POST /labels on first use.
         _ = try await api.json(URL(string: "\(base)/messages/\(id)/modify")!, method: "POST", body: ["addLabelIds": [label]])
     }
+    func fetchSent(since: Date) async throws -> [FetchedMessage] {
+        let after = Int(since.timeIntervalSince1970)
+        let list = try await api.json(URL(string: "\(base)/messages?maxResults=50&q=in:sent%20after:\(after)")!)
+        var out: [FetchedMessage] = []
+        for id in (list["messages"] as? [[String: Any]] ?? []).compactMap({ $0["id"] as? String }) {
+            let m = try await api.json(URL(string: "\(base)/messages/\(id)?format=full")!)
+            var f = Self.parse(m)
+            let headers = ((m["payload"] as? [String: Any])?["headers"] as? [[String: String]] ?? [])
+            let to = headers.first { $0["name"]?.lowercased() == "to" }?["value"] ?? ""
+            let (name, email) = parseFrom(to.components(separatedBy: ",").first ?? to)
+            f.from = email; f.fromName = name
+            f.body = Self.stripQuotedReply(f.body)
+            out.append(f)
+        }
+        return out
+    }
+
+    /// Only YOUR new text matters — drop the quoted thread below "On … wrote:" / ">" lines.
+    static func stripQuotedReply(_ body: String) -> String {
+        var kept: [Substring] = []
+        for line in body.split(separator: "\n", omittingEmptySubsequences: false) {
+            let t = line.trimmingCharacters(in: .whitespaces)
+            if t.hasPrefix(">") || (t.hasPrefix("On ") && t.hasSuffix("wrote:")) || t.hasPrefix("-----Original Message") { break }
+            kept.append(line)
+        }
+        return kept.joined(separator: "\n")
+    }
+
     func send(to: String, subject: String, body: String, inReplyTo: String?) async throws {
         var raw = "To: \(to)\r\nSubject: \(subject)\r\nContent-Type: text/plain; charset=utf-8\r\n"
         if let inReplyTo { raw += "In-Reply-To: \(inReplyTo)\r\nReferences: \(inReplyTo)\r\n" }
@@ -167,11 +197,27 @@ struct OutlookProvider: MailProvider {
     func applyLabel(_ id: String, label: String) async throws {
         _ = try await api.json(URL(string: "\(base)/messages/\(id)")!, method: "PATCH", body: ["categories": ["Keel/\(label)"]])
     }
+    func fetchSent(since: Date) async throws -> [FetchedMessage] {
+        let iso = ISO8601DateFormatter().string(from: since)
+        let filter = "sentDateTime ge \(iso)".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
+        let page = try await api.json(URL(string: "\(base)/mailFolders/sentitems/messages?$top=50&$filter=\(filter)&$select=subject,toRecipients,body,uniqueBody,sentDateTime,conversationId")!)
+        return (page["value"] as? [[String: Any]] ?? []).map { m in
+            let to = (((m["toRecipients"] as? [[String: Any]])?.first)?["emailAddress"] as? [String: Any]) ?? [:]
+            // uniqueBody = only the text new in this message (Graph strips the quoted thread for us)
+            let body = ((m["uniqueBody"] ?? m["body"]) as? [String: Any])?["content"] as? String ?? ""
+            return FetchedMessage(providerId: m["id"] as? String ?? "", threadId: m["conversationId"] as? String ?? "",
+                                  from: to["address"] as? String ?? "", fromName: to["name"] as? String ?? "",
+                                  subject: m["subject"] as? String ?? "", snippet: "", body: body.strippingHTML,
+                                  date: ISO8601DateFormatter().date(from: m["sentDateTime"] as? String ?? "") ?? Date(),
+                                  isRead: true)
+        }
+    }
+
     func send(to: String, subject: String, body: String, inReplyTo: String?) async throws {
         _ = try await api.json(URL(string: "\(base)/sendMail")!, method: "POST", body: [
             "message": ["subject": subject, "body": ["contentType": "Text", "content": body],
-                        "toRecipients": [["emailAddress": ["address": to]]]],
-        ])
+                        "toRecipients": [["emailAddress": ["address": to]]]] as [String: Any],
+        ] as [String: Any])
     }
 }
 
@@ -186,6 +232,7 @@ struct ICloudMailProvider: MailProvider {
     func markRead(_ id: String, read: Bool) async throws {}
     func applyLabel(_ id: String, label: String) async throws {}
     func send(to: String, subject: String, body: String, inReplyTo: String?) async throws {}
+    func fetchSent(since: Date) async throws -> [FetchedMessage] { [] }
 }
 
 extension String {

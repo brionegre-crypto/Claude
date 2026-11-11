@@ -19,7 +19,7 @@ final class CloudAI {
         if let token = KeychainStore.read("keel.session") { req.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization") }
         req.httpBody = try JSONSerialization.data(withJSONObject: [
             "task": task, "system": system, "user": user, "schema": schema,
-        ])
+        ] as [String: Any])
         let (data, resp) = try await URLSession.shared.data(for: req)
         let code = (resp as? HTTPURLResponse)?.statusCode ?? 0
         guard code == 200 else { throw CloudError.http(code) }
@@ -55,6 +55,13 @@ final class CloudAI {
                               system: "Write a concise reply in the user's voice. Body only.",
                               user: "Original from \(e.fromName):\n\(e.bodyPlain.prefix(10_000))\n\nIntent: \(intent)",
                               schema: Schemas.draft, as: D.self).body
+    }
+
+    func extractPromises(body: String, sentAt: Date) async throws -> [PromiseCandidate] {
+        struct R: Decodable { let promises: [PromiseCandidate] }
+        return try await call(task: "promises", system: OnDeviceAI.promiseInstructions,
+                              user: "Sent on \(sentAt.ISO8601Format())\n\n\(body.prefix(8_000))",
+                              schema: Schemas.promises, as: R.self).promises
     }
 
     func breakDown(_ task: String, minutesAvailable: Int?) async throws -> [MicroStep] {
@@ -107,6 +114,16 @@ enum Schemas {
         "properties": ["steps": ["type": "array", "items": [
             "type": "object", "additionalProperties": false, "required": ["text", "minutes"],
             "properties": ["text": ["type": "string"], "minutes": ["type": "integer"]],
+        ]]],
+    ]
+    static let promises: [String: Any] = [
+        "type": "object", "additionalProperties": false, "required": ["promises"],
+        "properties": ["promises": ["type": "array", "items": [
+            "type": "object", "additionalProperties": false, "required": ["promise", "quote", "dueDateISO"],
+            "properties": [
+                "promise": ["type": "string"], "quote": ["type": "string"],
+                "dueDateISO": ["type": ["string", "null"]],
+            ],
         ]]],
     ]
     static let dayPlan: [String: Any] = [

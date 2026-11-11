@@ -35,6 +35,14 @@ final class AIRouter {
         return try? await cloud.summarize(text)
     }
 
+    /// Promise tracker: on-device first; cloud only if unavailable; keyword fallback in private mode.
+    func extractPromises(body: String, sentAt: Date) async -> [PromiseCandidate] {
+        guard ADHDCoach.looksLikePromise(body) else { return [] }        // free pre-filter: skips ~90% of sent mail
+        if onDeviceAvailable, let r = try? await onDevice.extractPromises(body: body, sentAt: sentAt) { return r }
+        if !privateMode, let r = try? await cloud.extractPromises(body: body, sentAt: sentAt) { return r }
+        return HeuristicPromises.extract(body)
+    }
+
     // MARK: Heavy reasoning → cloud (falls back to on-device in private mode)
 
     func planDay(context: DayContext) async -> DayPlan? {
@@ -77,6 +85,23 @@ struct DayPlan: Codable {
     var headline: String
     var blocks: [Block]
     var topThree: [String]
+}
+
+struct PromiseCandidate: Codable {
+    var promise: String
+    var quote: String
+    var dueDateISO: String?
+}
+
+/// Private-mode fallback: the sentence containing the promise phrase becomes the promise.
+enum HeuristicPromises {
+    static func extract(_ body: String) -> [PromiseCandidate] {
+        body.components(separatedBy: CharacterSet(charactersIn: ".!?\n"))
+            .map { $0.trimmingCharacters(in: .whitespaces) }
+            .filter { ADHDCoach.looksLikePromise($0) && $0.count < 200 }
+            .prefix(3)
+            .map { PromiseCandidate(promise: $0, quote: $0, dueDateISO: nil) }
+    }
 }
 
 /// Zero-cost fallback for old iPhones in private mode.

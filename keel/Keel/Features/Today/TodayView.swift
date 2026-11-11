@@ -8,6 +8,7 @@ struct TodayView: View {
     @Query(filter: #Predicate<TaskItem> { !$0.isDone }) private var tasks: [TaskItem]
     @Query(sort: \EmailMessage.priorityScore, order: .reverse) private var emails: [EmailMessage]
     @Query private var stacks: [HabitStack]
+    @Query(sort: \Commitment.sentAt) private var commitments: [Commitment]
     @AppStorage("energy") private var energyRaw = EnergyLevel.medium.rawValue
     @State private var plan: DayPlan?
     @State private var planning = false
@@ -27,6 +28,7 @@ struct TodayView: View {
                     justOneThing
                     if !events.isEmpty { upNext }
                     planCard
+                    promisesCard
                     attentionCard
                     avoidedCard
                 }
@@ -175,6 +177,31 @@ struct TodayView: View {
                         }
                     }
                 }
+            }
+        }
+    }
+
+    /// Promise tracker teaser: only shows when something is owed today or overdue.
+    private var promisesCard: some View {
+        let open = commitments.filter { $0.status == .open && !$0.likelyKept }
+        let pressing = open.filter { $0.effectiveDue < Calendar.current.date(byAdding: .day, value: 1, to: Calendar.current.startOfDay(for: Date()))! }
+        return Group {
+            if let first = pressing.first {
+                NavigationLink { PromisesView() } label: {
+                    GlassCard(tint: DS.Palette.warmth) {
+                        HStack(spacing: DS.Space.m) {
+                            Image(systemName: "hand.raised.fingers.spread").font(.title2).foregroundStyle(DS.Palette.warmth)
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(pressing.count == 1 ? "You promised \(first.displayName)" : "\(pressing.count) promises due")
+                                    .font(DS.Font.headline)
+                                Text("“\(first.promise)”").font(DS.Font.body).foregroundStyle(DS.Palette.inkSoft).lineLimit(1)
+                            }
+                            Spacer()
+                            Image(systemName: "chevron.right").foregroundStyle(DS.Palette.inkSoft)
+                        }
+                    }
+                }
+                .buttonStyle(.plain)
             }
         }
     }
