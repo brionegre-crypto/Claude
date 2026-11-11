@@ -17,10 +17,10 @@ final class OAuthManager: NSObject, ASWebAuthenticationPresentationContextProvid
     static let google = Config(
         authURL: URL(string: "https://accounts.google.com/o/oauth2/v2/auth")!,
         tokenURL: URL(string: "https://oauth2.googleapis.com/token")!,
-        clientId: "YOUR_GOOGLE_IOS_CLIENT_ID.apps.googleusercontent.com",
-        redirect: "com.googleusercontent.apps.YOUR_GOOGLE_IOS_CLIENT_ID:/oauth2redirect",
-        scopes: ["openid", "email", "https://www.googleapis.com/auth/gmail.modify",
-                 "https://www.googleapis.com/auth/calendar"],
+        clientId: "893825511742-h5bgc5adfd9f9tf1m6g0dhi4m59ude6n.apps.googleusercontent.com",
+        redirect: "com.googleusercontent.apps.893825511742-h5bgc5adfd9f9tf1m6g0dhi4m59ude6n:/oauth2redirect",
+        // Calendars come through EventKit on the phone, so only Gmail access is requested.
+        scopes: ["openid", "email", "https://www.googleapis.com/auth/gmail.modify"],
         extraParams: ["access_type": "offline", "prompt": "consent"])
 
     static let microsoft = Config(
