@@ -1,8 +1,8 @@
 import Foundation
 import FoundationModels
 
-/// Hybrid AI: Apple Intelligence (on-device, free, private) for high-volume work,
-/// Claude via your backend for heavy reasoning. Every feature asks the router, never a model directly.
+/// Keel's AI runs on Apple Intelligence: on-device, free and private. Claude is an optional add-on,
+/// used only if you connect a Keel server (Settings → Claude AI). Every feature asks the router.
 @MainActor
 final class AIRouter {
     static let shared = AIRouter()
@@ -16,43 +16,55 @@ final class AIRouter {
         set { UserDefaults.standard.set(newValue, forKey: "ai.privateMode") }
     }
 
+    /// Claude is used only when a server is connected and Private mode is off.
+    var cloudEnabled: Bool { !privateMode && KeelServer.isConfigured }
+
     var onDeviceAvailable: Bool {
         if case .available = SystemLanguageModel.default.availability { return true }
         return false
     }
 
-    // MARK: High-volume → on-device first
+    // MARK: Everything tries Apple Intelligence first; Claude only if connected
 
     func triage(_ email: EmailMessage) async -> TriageResult? {
         if onDeviceAvailable, let r = try? await onDevice.triage(email) { return r }
-        guard !privateMode else { return HeuristicTriage.triage(email) }
-        return (try? await cloud.triage(email)) ?? HeuristicTriage.triage(email)
+        if cloudEnabled, let r = try? await cloud.triage(email) { return r }
+        return HeuristicTriage.triage(email)
     }
 
     func summarize(_ text: String) async -> String? {
-        if onDeviceAvailable, text.count < 12_000, let s = try? await onDevice.summarize(text) { return s }
-        guard !privateMode else { return nil }
-        return try? await cloud.summarize(text)
+        if onDeviceAvailable, let s = try? await onDevice.summarize(String(text.prefix(12_000))) { return s }
+        return cloudEnabled ? try? await cloud.summarize(text) : nil
     }
 
-    /// Promise tracker: on-device first; cloud only if unavailable; keyword fallback in private mode.
+    /// Promise tracker: free keyword pre-filter, then Apple Intelligence; keyword fallback otherwise.
     func extractPromises(body: String, sentAt: Date) async -> [PromiseCandidate] {
-        guard ADHDCoach.looksLikePromise(body) else { return [] }        // free pre-filter: skips ~90% of sent mail
+        guard ADHDCoach.looksLikePromise(body) else { return [] }        // skips ~90% of sent mail
         if onDeviceAvailable, let r = try? await onDevice.extractPromises(body: body, sentAt: sentAt) { return r }
-        if !privateMode, let r = try? await cloud.extractPromises(body: body, sentAt: sentAt) { return r }
+        if cloudEnabled, let r = try? await cloud.extractPromises(body: body, sentAt: sentAt) { return r }
         return HeuristicPromises.extract(body)
     }
 
-    // MARK: Heavy reasoning → cloud (falls back to on-device in private mode)
-
     func planDay(context: DayContext) async -> DayPlan? {
-        if !privateMode, let plan = try? await cloud.planDay(context) { return plan }
+        // With a Claude server connected, its stronger planning is used first.
+        if cloudEnabled, let plan = try? await cloud.planDay(context) { return plan }
         return onDeviceAvailable ? try? await onDevice.planDay(context) : nil
     }
 
     func draftReply(to email: EmailMessage, intent: String) async -> String? {
-        if !privateMode, let d = try? await cloud.draftReply(email, intent: intent) { return d }
-        return onDeviceAvailable ? try? await onDevice.draftReply(email, intent: intent) : nil
+        if onDeviceAvailable, let d = try? await onDevice.draftReply(email, intent: intent) { return d }
+        return cloudEnabled ? try? await cloud.draftReply(email, intent: intent) : nil
+    }
+
+    /// "Break into tiny steps". Without any AI, a simple starter plan still beats a blank page.
+    func breakDown(_ task: String, minutesAvailable: Int?) async -> [MicroStep] {
+        if onDeviceAvailable, let steps = try? await onDevice.breakDown(task, minutesAvailable: minutesAvailable), !steps.isEmpty { return steps }
+        if cloudEnabled, let steps = try? await cloud.breakDown(task, minutesAvailable: minutesAvailable) { return steps }
+        return [
+            MicroStep(text: "Open what you need for “\(task)”", minutes: 2),
+            MicroStep(text: "Write the very first sentence or action", minutes: 5),
+            MicroStep(text: "Do 10 minutes, then decide the next step", minutes: 10),
+        ]
     }
 }
 

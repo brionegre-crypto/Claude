@@ -509,9 +509,8 @@ struct TaskDetailView: View {
 
     private func breakDown() async {
         breaking = true; defer { breaking = false }
-        if let steps = try? await AIRouter.shared.cloud.breakDown(task.title, minutesAvailable: task.estimatedMinutes) {
-            withAnimation(DS.spring) { task.microSteps = steps }
-        }
+        let steps = await AIRouter.shared.breakDown(task.title, minutesAvailable: task.estimatedMinutes)
+        withAnimation(DS.spring) { task.microSteps = steps }
     }
 }
 

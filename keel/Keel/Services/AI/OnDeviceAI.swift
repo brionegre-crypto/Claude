@@ -118,6 +118,27 @@ final class OnDeviceAI {
     Resolve relative dates ("Friday", "tomorrow", "next week" = the following Monday) against the sent date.
     """
 
+    @Generable
+    struct Step {
+        @Guide(description: "A concrete physical action starting with a verb, e.g. 'Open the budget spreadsheet'")
+        var text: String
+        @Guide(description: "Minutes this step takes", .range(2...10))
+        var minutes: Int
+    }
+
+    @Generable
+    struct Steps {
+        @Guide(description: "3 to 8 tiny next actions in order; the first must be laughably easy to start", .maximumCount(8))
+        var steps: [Step]
+    }
+
+    func breakDown(_ task: String, minutesAvailable: Int?) async throws -> [MicroStep] {
+        let session = LanguageModelSession(instructions: Prompts.breakdown)
+        let prompt = "Task: \(task)\nTime I have: \(minutesAvailable.map { "\($0) min" } ?? "unknown")"
+        return try await session.respond(to: prompt, generating: Steps.self).content.steps
+            .map { MicroStep(text: $0.text, minutes: $0.minutes) }
+    }
+
     private static func map(_ b: Bucket) -> TriageCategory {
         switch b {
         case .important: .important

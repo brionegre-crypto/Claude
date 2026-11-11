@@ -52,14 +52,14 @@ struct AccountsView: View {
                     Toggle("Private mode (on-device AI only)", isOn: $privateMode)
                     LabeledContent("Apple Intelligence", value: AIRouter.shared.onDeviceAvailable ? "Available" : "Not on this device")
                 } header: { Text("AI") } footer: {
-                    Text("Sorting and summaries run on your iPhone with Apple Intelligence. Day planning and long drafts use Claude unless Private mode is on.")
+                    Text("All of Keel's AI runs on this iPhone with Apple Intelligence: free and private. Turn it on in iPhone Settings → Apple Intelligence & Siri (iPhone 15 Pro or newer).")
                 }
 
                 Section {
                     LabeledContent("Status", value: KeelServer.isConfigured ? "Connected" : "Not set up")
                     Button(KeelServer.isConfigured ? "Change server" : "Connect Claude") { showServer = true }
-                } header: { Text("Claude AI") } footer: {
-                    Text("Powers “Plan my day”, AI reply drafts and breaking tasks into steps. Needs the Keel server you deployed; until then Keel uses Apple Intelligence on this iPhone.")
+                } header: { Text("Claude AI (optional)") } footer: {
+                    Text("Not needed. Keel works fully on Apple Intelligence. Connecting your own Claude server only adds stronger day planning, and it costs money per use.")
                 }
 
                 if Entitlements.paywallEnabled {
