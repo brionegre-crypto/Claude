@@ -95,6 +95,9 @@ final class SyncEngine {
             }
         }
 
+        // 2a. Replies close "remind me if no reply" follow-ups
+        FollowUps.check(ctx: ctx)
+
         // 2b. Promise tracker: commitments you made in sent mail
         await PromiseTracker.scan(accounts: accounts, ctx: ctx)
 

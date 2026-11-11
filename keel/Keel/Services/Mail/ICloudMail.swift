@@ -453,7 +453,9 @@ struct ICloudMailProvider: MailProvider {
             isRead: f.flags.contains("\\Seen"), html: p.html, messageIdHeader: messageId,
             to: RFC822.decodeWords(h["to"] ?? ""), cc: RFC822.decodeWords(h["cc"] ?? ""),
             isStarred: f.flags.contains("\\Flagged"),
-            hasAttachments: !p.attachments.isEmpty || (h["content-type"]?.lowercased().contains("multipart/mixed") ?? false))
+            hasAttachments: !p.attachments.isEmpty || (h["content-type"]?.lowercased().contains("multipart/mixed") ?? false),
+            unsubscribe: h["list-unsubscribe"],
+            unsubscribeOneClick: h["list-unsubscribe-post"]?.lowercased().contains("one-click") ?? false)
     }
 
     private func since(days: Int) -> String {

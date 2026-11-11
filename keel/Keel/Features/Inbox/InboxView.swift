@@ -6,11 +6,12 @@ import QuickLook
 /// AI split inbox, Starred / Snoozed / Sent / Archive mailboxes, search (on-phone and all-mail),
 /// compose, swipe actions, formatted emails and attachments.
 enum Mailbox: String, CaseIterable, Identifiable {
-    case inbox = "Inbox", starred = "Starred", snoozed = "Snoozed", sent = "Sent", archive = "Archive"
+    case inbox = "Inbox", starred = "Starred", snoozed = "Snoozed", awaiting = "Awaiting reply", sent = "Sent", archive = "Archive"
     var id: String { rawValue }
     var icon: String {
         switch self {
-        case .inbox: "tray"; case .starred: "star"; case .snoozed: "clock"; case .sent: "paperplane"; case .archive: "archivebox"
+        case .inbox: "tray"; case .starred: "star"; case .snoozed: "clock"; case .awaiting: "bubble.left.and.exclamationmark.bubble.right"
+        case .sent: "paperplane"; case .archive: "archivebox"
         }
     }
 }
@@ -39,6 +40,7 @@ struct InboxView: View {
         case .snoozed: allEmails.filter { $0.snoozedUntil != nil && inAccount($0) }
         case .archive: allEmails.filter { $0.isArchived && $0.snoozedUntil == nil && inAccount($0) }
         case .sent: sent.filter(inAccount)
+        case .awaiting: []
         }
     }
 
@@ -55,7 +57,9 @@ struct InboxView: View {
     var body: some View {
         NavigationStack {
             Group {
-                if mailbox == .inbox && (hiddenByFocus || ShutdownManager.shared.active != nil) {
+                if mailbox == .awaiting {
+                    FollowUpsView()
+                } else if mailbox == .inbox && (hiddenByFocus || ShutdownManager.shared.active != nil) {
                     ContentUnavailableView("Inbox is resting", systemImage: "moon.zzz",
                                            description: Text("You're in focus mode. Email will be here when you're done."))
                 } else {
@@ -167,6 +171,11 @@ struct InboxView: View {
                 Divider()
                 Button(e.isRead ? "Mark Unread" : "Mark Read", systemImage: e.isRead ? "envelope.badge" : "envelope.open") { toggleRead(e) }
                 Button(e.isStarred ? "Unstar" : "Star", systemImage: "star") { star(e) }
+                if e.category == .newsletters || e.category == .promotions || Unsubscribe.canUnsubscribe(e) {
+                    Button("Unsubscribe & archive all", systemImage: "hand.raised.slash") {
+                        Task { _ = await Unsubscribe.run(e, provider: provider(for: e), ctx: ctx) }
+                    }
+                }
             }
     }
 
@@ -297,6 +306,8 @@ struct EmailDetailView: View {
     @State private var previewURL: URL?
     @State private var compose: ComposeDraft?
     @State private var sentFlash = false
+    @State private var unsubscribing = false
+    @State private var unsubscribeMessage: String?
 
     private var provider: MailProvider? {
         accounts.first { $0.id == email.accountId }.map(MailProviderFactory.make)
@@ -308,6 +319,9 @@ struct EmailDetailView: View {
                 header
                 if let s = email.aiSummary {
                     GlassCard(tint: DS.Palette.accent) { Label(s, systemImage: "sparkles").font(DS.Font.body) }
+                }
+                if email.category == .newsletters || email.category == .promotions || Unsubscribe.canUnsubscribe(email) {
+                    unsubscribeBanner
                 }
                 if !attachments.isEmpty { attachmentStrip }
                 bodyView
@@ -378,6 +392,31 @@ struct EmailDetailView: View {
         } else {
             Text(email.bodyPlain).font(DS.Font.body).textSelection(.enabled)
         }
+    }
+
+    private var unsubscribeBanner: some View {
+        HStack {
+            Image(systemName: "hand.raised.slash").foregroundStyle(DS.Palette.warmth)
+            Text(unsubscribeMessage ?? "Don't want these anymore?").font(DS.Font.caption)
+            Spacer()
+            if unsubscribeMessage == nil {
+                Button(unsubscribing ? "Working…" : "Unsubscribe") {
+                    Task {
+                        unsubscribing = true
+                        let outcome = await Unsubscribe.run(email, provider: provider, ctx: ctx)
+                        unsubscribing = false
+                        switch outcome {
+                        case .done: unsubscribeMessage = "Unsubscribed. Past emails archived."
+                        case .openedWebPage: unsubscribeMessage = "Finish on the sender's page. Past emails archived."
+                        case .unavailable: unsubscribeMessage = "This sender doesn't offer an unsubscribe link."
+                        }
+                    }
+                }
+                .font(DS.Font.caption).buttonStyle(.bordered).disabled(unsubscribing)
+            }
+        }
+        .padding(DS.Space.s)
+        .background(DS.Palette.warmth.opacity(0.1), in: .rect(cornerRadius: DS.Radius.chip))
     }
 
     private var attachmentStrip: some View {

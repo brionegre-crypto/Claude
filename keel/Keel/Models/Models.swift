@@ -64,6 +64,8 @@ enum TriageCategory: String, Codable, CaseIterable, Identifiable {
     var ccLine: String = ""
     var isStarred: Bool = false
     var hasAttachments: Bool = false
+    var unsubscribeHeader: String?              // raw List-Unsubscribe header (mailto: and/or https:)
+    var unsubscribeOneClick: Bool = false       // List-Unsubscribe-Post: one-click supported
 
     // AI fields
     var category: TriageCategory?
@@ -99,6 +101,8 @@ enum TriageCategory: String, Codable, CaseIterable, Identifiable {
         ccLine = m.cc
         isStarred = m.isStarred
         hasAttachments = m.hasAttachments
+        unsubscribeHeader = m.unsubscribe
+        unsubscribeOneClick = m.unsubscribeOneClick
     }
 
     var replyContext: ReplyContext {
@@ -191,6 +195,8 @@ struct MicroStep: Codable, Identifiable, Hashable {
     var isWaitingOn: Bool = false               // "waiting for" someone else — out of sight, not out of mind
     var timesRescheduled: Int = 0               // AI offers to break down or drop tasks that keep slipping
     var actualMinutes: Int?                     // learns your real estimates (time blindness)
+    var goalId: UUID?                           // the goal this task moves forward
+    var feeling: TaskFeeling?                   // Feel-Good Productivity: how it felt to do
     // TickTick-style
     var recurrence: Recurrence?                 // repeating task; completing it moves it to the next date
     var alertOffsetMinutes: Int?                // nil = no Keel alert; 0 = at due time; 15 = 15 min before…
@@ -342,6 +348,70 @@ enum CommitmentStatus: String, Codable { case open, done, dismissed }
     var isOverdue: Bool { status == .open && (dueDate.map { $0 < Calendar.current.startOfDay(for: Date()) } ?? false) }
     /// No date given: treat as owed within a week of sending (people remember "I'll get back to you").
     var effectiveDue: Date { dueDate ?? sentAt.addingTimeInterval(7 * 86_400) }
+}
+
+// MARK: - Goals & life areas (Ali Abdaal-style: yearly theme → goals per life area → tasks)
+
+enum LifeArea: String, Codable, CaseIterable, Identifiable {
+    case health, wealth, relationships, work, growth, fun
+    var id: String { rawValue }
+    var title: String { rawValue.capitalized }
+    var icon: String {
+        switch self {
+        case .health: "heart.fill"; case .wealth: "banknote.fill"; case .relationships: "person.2.fill"
+        case .work: "briefcase.fill"; case .growth: "leaf.fill"; case .fun: "gamecontroller.fill"
+        }
+    }
+}
+
+@Model final class Goal {
+    var id: UUID = UUID()
+    var title: String
+    var area: LifeArea
+    var why: String = ""                        // the reason it matters (shown when motivation dips)
+    var targetDate: Date?
+    var emoji: String = "🎯"
+    var isArchived: Bool = false
+    var createdAt: Date = Date()
+
+    init(title: String, area: LifeArea) {
+        self.title = title
+        self.area = area
+    }
+}
+
+/// Feel-Good Productivity energizers (Play, Power, People) and drainers.
+enum TaskFeeling: String, Codable, CaseIterable, Identifiable {
+    case play, power, people, drained
+    var id: String { rawValue }
+    var label: String {
+        switch self { case .play: "Felt like play"; case .power: "Felt capable"; case .people: "Felt connected"; case .drained: "Drained me" }
+    }
+    var emoji: String { switch self { case .play: "🎈"; case .power: "💪"; case .people: "🤝"; case .drained: "🪫" } }
+}
+
+// MARK: - Follow-ups ("remind me if no reply")
+
+@Model final class FollowUp {
+    var id: UUID = UUID()
+    var accountId: String
+    var recipient: String
+    var recipientName: String
+    var subject: String
+    var sentAt: Date
+    var remindAt: Date
+    var resolvedAt: Date?                       // set when they reply (or you dismiss it)
+
+    init(accountId: String, recipient: String, recipientName: String, subject: String, sentAt: Date, remindAt: Date) {
+        self.accountId = accountId
+        self.recipient = recipient
+        self.recipientName = recipientName
+        self.subject = subject
+        self.sentAt = sentAt
+        self.remindAt = remindAt
+    }
+
+    var isDue: Bool { resolvedAt == nil && remindAt <= Date() }
 }
 
 // MARK: - Focus / Shutdown

@@ -106,6 +106,8 @@ struct ComposeView: View {
     @State private var error: String?
     @State private var loadingForwarded = false
     @FocusState private var bodyFocused: Bool
+    @State private var followUpDays: Int? = nil
+    @Environment(\.modelContext) private var ctx
 
     var body: some View {
         NavigationStack {
@@ -124,6 +126,9 @@ struct ComposeView: View {
                         Button("Add Cc / Bcc") { showCcBcc = true }.font(DS.Font.caption)
                     }
                     TextField("Subject", text: $draft.subject)
+                    Picker(selection: $followUpDays) {
+                        ForEach(FollowUps.options, id: \.label) { Text($0.label).tag($0.days) }
+                    } label: { Label("Remind me if no reply", systemImage: "bell.badge") }
                 }
                 Section {
                     // Apple Intelligence Writing Tools (proofread, rewrite, tone) work here automatically.
@@ -237,6 +242,9 @@ struct ComposeView: View {
                                 attachments: attachments)
         do {
             try await MailProviderFactory.make(for: account).send(mail)
+            if let days = followUpDays, let to = mail.to.first {
+                FollowUps.create(account: account.id, to: to, name: draft.original?.fromName ?? "", subject: draft.subject, days: days, ctx: ctx)
+            }
             Haptics.success()
             dismiss()
         } catch {

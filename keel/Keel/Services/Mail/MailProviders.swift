@@ -11,6 +11,8 @@ struct FetchedMessage {
     var cc: String = ""
     var isStarred: Bool = false
     var hasAttachments: Bool = false
+    var unsubscribe: String? = nil              // List-Unsubscribe header
+    var unsubscribeOneClick: Bool = false
 }
 
 struct MailAttachment: Identifiable, Hashable {
@@ -61,9 +63,13 @@ protocol MailProvider {
     func search(_ query: String) async throws -> [FetchedMessage]
     func attachments(for providerId: String) async throws -> [MailAttachment]
     func download(_ attachment: MailAttachment, messageId: String) async throws -> Data
+    /// List-Unsubscribe header for providers that don't include it when listing mail (Outlook).
+    func unsubscribeHeader(for providerId: String) async throws -> (header: String?, oneClick: Bool)
 }
 
 extension MailProvider {
+    func unsubscribeHeader(for providerId: String) async throws -> (header: String?, oneClick: Bool) { (nil, false) }
+
     /// Simple form used by quick replies and promise follow-ups.
     func send(to: String, subject: String, body: String, inReplyTo: ReplyContext?) async throws {
         try await send(OutgoingMail(to: [to], subject: subject, body: body, replyTo: inReplyTo))
@@ -159,7 +165,9 @@ struct GmailProvider: MailProvider {
                               html: html, messageIdHeader: headers["message-id"],
                               to: headers["to"] ?? "", cc: headers["cc"] ?? "",
                               isStarred: labels.contains("STARRED"),
-                              hasAttachments: !attachmentParts(payload).isEmpty)
+                              hasAttachments: !attachmentParts(payload).isEmpty,
+                              unsubscribe: headers["list-unsubscribe"],
+                              unsubscribeOneClick: headers["list-unsubscribe-post"]?.lowercased().contains("one-click") ?? false)
     }
 
     /// Kept for callers that only want plain text.
@@ -253,6 +261,14 @@ struct GmailProvider: MailProvider {
     func attachments(for id: String) async throws -> [MailAttachment] {
         let m = try await api.json(URL(string: "\(base)/messages/\(id)?format=full")!)
         return Self.attachmentParts(m["payload"] as? [String: Any] ?? [:])
+    }
+
+    func unsubscribeHeader(for providerId: String) async throws -> (header: String?, oneClick: Bool) {
+        let m = try await api.json(URL(string: "\(base)/messages/\(providerId)?$select=internetMessageHeaders")!)
+        let headers = (m["internetMessageHeaders"] as? [[String: Any]] ?? []).reduce(into: [String: String]()) {
+            $0[($1["name"] as? String ?? "").lowercased()] = $1["value"] as? String
+        }
+        return (headers["list-unsubscribe"], headers["list-unsubscribe-post"]?.lowercased().contains("one-click") ?? false)
     }
 
     func download(_ attachment: MailAttachment, messageId: String) async throws -> Data {
@@ -375,6 +391,14 @@ struct OutlookProvider: MailProvider {
             MailAttachment(id: $0["id"] as? String ?? "", filename: $0["name"] as? String ?? "attachment",
                            mimeType: $0["contentType"] as? String ?? "application/octet-stream", size: $0["size"] as? Int ?? 0)
         }
+    }
+
+    func unsubscribeHeader(for providerId: String) async throws -> (header: String?, oneClick: Bool) {
+        let m = try await api.json(URL(string: "\(base)/messages/\(providerId)?$select=internetMessageHeaders")!)
+        let headers = (m["internetMessageHeaders"] as? [[String: Any]] ?? []).reduce(into: [String: String]()) {
+            $0[($1["name"] as? String ?? "").lowercased()] = $1["value"] as? String
+        }
+        return (headers["list-unsubscribe"], headers["list-unsubscribe-post"]?.lowercased().contains("one-click") ?? false)
     }
 
     func download(_ attachment: MailAttachment, messageId: String) async throws -> Data {
