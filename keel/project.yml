@@ -21,6 +21,7 @@ targets:
         CURRENT_PROJECT_VERSION: "1"        # build number; Xcode Cloud overrides it on every build
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         CODE_SIGN_STYLE: Automatic
+        TARGETED_DEVICE_FAMILY: "1"          # iPhone only (an iPad build would need every rotation supported)
     entitlements:
       path: Keel/Keel.entitlements
       properties:
@@ -41,6 +42,12 @@ targets:
           - com.keel.sync.process
         NSCalendarsFullAccessUsageDescription: Keel shows your events next to your tasks and email so it can plan your day.
         NSRemindersFullAccessUsageDescription: Keel syncs with Apple Reminders so your tasks live in one place.
+        NSCalendarsWriteOnlyAccessUsageDescription: Keel adds focus blocks and events you create to your calendar.
+        NSCalendarsUsageDescription: Keel shows your events next to your tasks and email so it can plan your day.
+        NSRemindersUsageDescription: Keel syncs with Apple Reminders so your tasks live in one place.
+        NSContactsUsageDescription: Keel shows who's invited to your calendar events.
+        UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
+        UIRequiresFullScreen: true
         NSFaceIDUsageDescription: Keel locks your notes and mail behind Face ID.
         CFBundleURLTypes:
           - CFBundleURLSchemes: [com.keel.app, com.googleusercontent.apps.893825511742-h5bgc5adfd9f9tf1m6g0dhi4m59ude6n]   # Google sign-in redirect
