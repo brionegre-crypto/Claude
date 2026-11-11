@@ -49,10 +49,14 @@
 	<string>Keel shows who's invited to your calendar events.</string>
 	<key>NSFaceIDUsageDescription</key>
 	<string>Keel locks your notes and mail behind Face ID.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Keel records meetings you choose to record and turns them into notes.</string>
 	<key>NSRemindersFullAccessUsageDescription</key>
 	<string>Keel syncs with Apple Reminders so your tasks live in one place.</string>
 	<key>NSRemindersUsageDescription</key>
 	<string>Keel syncs with Apple Reminders so your tasks live in one place.</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>Keel transcribes your meeting recordings on this iPhone.</string>
 	<key>NSSupportsLiveActivities</key>
 	<true/>
 	<key>UIBackgroundModes</key>
@@ -60,6 +64,7 @@
 		<string>fetch</string>
 		<string>processing</string>
 		<string>remote-notification</string>
+		<string>audio</string>
 	</array>
 	<key>UILaunchScreen</key>
 	<dict/>

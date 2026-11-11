@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		005C6DEC7CE6E0CD912093F5 /* GoalsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DEEBF528E3474894C68514F /* GoalsView.swift */; };
+		06A84DCFD13EB3F46659AF4E /* ShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87BA63B48C9EAC76390B2DFC /* ShareViewController.swift */; };
+		1353B8274DDFC4B7A2987991 /* KeelShare.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 6A713FF0E72F2CE1AEE80CC5 /* KeelShare.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		19939B111F68D031B8D6B042 /* MailExtras.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42A27BFD8A306D1105C6A257 /* MailExtras.swift */; };
 		1E9022913FF88A6EADC00068 /* PromiseTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB62EF3D17A17E14F6923B77 /* PromiseTracker.swift */; };
 		2018C1DAFFD69BD28AE829AF /* ComposeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FD2977BFF93D2B3A4B40E78 /* ComposeView.swift */; };
@@ -23,17 +25,20 @@
 		3A891E525241317051D27D67 /* HabitsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 430FEBA07DBE819D0BEA460D /* HabitsView.swift */; };
 		3AA81895D50289A4D058F06E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EB9F51008F5680B7967B16CD /* Assets.xcassets */; };
 		3E454BF14F0F80669C88960B /* TodayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9552312DA272B5919FCC5388 /* TodayView.swift */; };
+		4466B51C48175D3F59DFEFA8 /* TimeViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3BE193F1FF25E6760C6616E /* TimeViews.swift */; };
 		4A77E54C26A989121DCFC52D /* MailProviders.swift in Sources */ = {isa = PBXBuildFile; fileRef = 367E3B118319EFDECE14242C /* MailProviders.swift */; };
 		4D305CCEC66744E4697BBF64 /* KeelApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E45C1FD390432029BC9DFF4 /* KeelApp.swift */; };
 		564E1BA5AB1AB64EA1E57121 /* CommandBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC81D332BB367C4D33D8162 /* CommandBar.swift */; };
 		5C9EF6DEF57B27F8B080D415 /* ADHDCoach.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5295CB657E143BD9EE26423B /* ADHDCoach.swift */; };
 		68A171A776915882DE934EA3 /* WidgetShared.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CD836265E2BB9D895940B33 /* WidgetShared.swift */; };
+		6980E570787EF9BEDB79A4ED /* MeetingRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = D14F2099627ADCE0C958846B /* MeetingRecorder.swift */; };
 		7174C18B1354C9B1E3049443 /* KeelWidgets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 285646C7689519D8ACD6E589 /* KeelWidgets.swift */; };
 		7F7C5048642D0317A17D3A5C /* AIRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D48520D370A3903CB9A62B8 /* AIRouter.swift */; };
 		84AC9B33386018120AADB576 /* SiriIntents.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE963CAEA71107BBBA1C2EB0 /* SiriIntents.swift */; };
 		84ACF02D41CCACD6D7F72F3E /* InboxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DF811CE33148A8C868866BD /* InboxView.swift */; };
 		8CC07EFCA332B8907BB3E65A /* SyncEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BE33F801FFD619712E382CF /* SyncEngine.swift */; };
 		8F340F1DFFF169BC050B645A /* AccountsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F2B871E95739B31F6282566 /* AccountsView.swift */; };
+		9A581C99346C85844710CEE0 /* ReadLaterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACDFE0D60FED0CACCB9E5602 /* ReadLaterView.swift */; };
 		A00AF67D479B619AB15E2F91 /* ShutdownManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBDA564035648255534FDF98 /* ShutdownManager.swift */; };
 		A446D4963BFA2F12EA7524DA /* TaskEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F965AFDF10B5B9C9369DA47 /* TaskEngine.swift */; };
 		A61B0FCCB0C3EA27DB241781 /* WidgetSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D0B9D5FF32ED24F051A1187 /* WidgetSync.swift */; };
@@ -45,6 +50,7 @@
 		CA2D3821E5A280010A905247 /* HTMLMailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 217E1E36CFDF363BEF82111D /* HTMLMailView.swift */; };
 		CF1624DA4B3A66E317B98BEF /* CalendarService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2158A7A622BDADF4767554DB /* CalendarService.swift */; };
 		D5D338A07EA42AA2AEACBBEC /* KeelWidgets.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 27321CB5159F42C3BDECDA23 /* KeelWidgets.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		D5DDC2EB0B49D716B4921496 /* OdysseyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7FE3315D85E763A9DA6C891 /* OdysseyView.swift */; };
 		E053C585567DDC029FB720D8 /* ClaudeBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14D1D78C56734503A909291D /* ClaudeBridge.swift */; };
 		E2B8FEF02893FAD636AE6E23 /* NotesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAAF02252EE2C633D8BD47D5 /* NotesView.swift */; };
 		F27CF0E2C2C4EB6507312277 /* HabitEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACB5B7727DBF2E63305F51B2 /* HabitEngine.swift */; };
@@ -52,6 +58,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		9A2CF9BF6277FE7887FBB967 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 21CE5A12478C27C89D8E099F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 0D45B085DAEF233D57776430;
+			remoteInfo = KeelShare;
+		};
 		DB58C0CD79881EDFDC9FC9F4 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 21CE5A12478C27C89D8E099F /* Project object */;
@@ -69,6 +82,7 @@
 			dstSubfolderSpec = 13;
 			files = (
 				D5D338A07EA42AA2AEACBBEC /* KeelWidgets.appex in Embed Foundation Extensions */,
+				1353B8274DDFC4B7A2987991 /* KeelShare.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -96,10 +110,13 @@
 		50AE0EC551C0F0F9AD8C3B78 /* OnDeviceAI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnDeviceAI.swift; sourceTree = "<group>"; };
 		5295CB657E143BD9EE26423B /* ADHDCoach.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ADHDCoach.swift; sourceTree = "<group>"; };
 		52D02FDBC427DF0317C4A4E9 /* TasksView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TasksView.swift; sourceTree = "<group>"; };
+		6A713FF0E72F2CE1AEE80CC5 /* KeelShare.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = KeelShare.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		6BE33F801FFD619712E382CF /* SyncEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncEngine.swift; sourceTree = "<group>"; };
 		6D48520D370A3903CB9A62B8 /* AIRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIRouter.swift; sourceTree = "<group>"; };
 		6F965AFDF10B5B9C9369DA47 /* TaskEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskEngine.swift; sourceTree = "<group>"; };
+		7F33FF829DF51CECA667C28C /* KeelShare.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = KeelShare.entitlements; sourceTree = "<group>"; };
 		7FD2977BFF93D2B3A4B40E78 /* ComposeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComposeView.swift; sourceTree = "<group>"; };
+		87BA63B48C9EAC76390B2DFC /* ShareViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareViewController.swift; sourceTree = "<group>"; };
 		8DEEBF528E3474894C68514F /* GoalsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalsView.swift; sourceTree = "<group>"; };
 		8DF811CE33148A8C868866BD /* InboxView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InboxView.swift; sourceTree = "<group>"; };
 		8F2B871E95739B31F6282566 /* AccountsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountsView.swift; sourceTree = "<group>"; };
@@ -108,15 +125,20 @@
 		9870452BC070FF9DB181C2A2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		AB62EF3D17A17E14F6923B77 /* PromiseTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromiseTracker.swift; sourceTree = "<group>"; };
 		ACB5B7727DBF2E63305F51B2 /* HabitEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HabitEngine.swift; sourceTree = "<group>"; };
+		ACDFE0D60FED0CACCB9E5602 /* ReadLaterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadLaterView.swift; sourceTree = "<group>"; };
 		B3B66ACF0AB320A058F6291F /* ICloudMail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ICloudMail.swift; sourceTree = "<group>"; };
 		BBDA564035648255534FDF98 /* ShutdownManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShutdownManager.swift; sourceTree = "<group>"; };
 		BDD70B09903F05C64E2DAD41 /* FeatureGuide.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatureGuide.swift; sourceTree = "<group>"; };
 		BE963CAEA71107BBBA1C2EB0 /* SiriIntents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SiriIntents.swift; sourceTree = "<group>"; };
+		C3D6C65D586B3C3032BDE5C6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		C582D11F72C1D13929026FAA /* Assistant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Assistant.swift; sourceTree = "<group>"; };
 		C6BC64A281F313E34B666753 /* PromisesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromisesView.swift; sourceTree = "<group>"; };
 		CEC81D332BB367C4D33D8162 /* CommandBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandBar.swift; sourceTree = "<group>"; };
+		D14F2099627ADCE0C958846B /* MeetingRecorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingRecorder.swift; sourceTree = "<group>"; };
+		D7FE3315D85E763A9DA6C891 /* OdysseyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OdysseyView.swift; sourceTree = "<group>"; };
 		DE657C753B3F4DF69C245D83 /* WeeklyReviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeeklyReviewView.swift; sourceTree = "<group>"; };
 		DFFC4DBF7D60E11E05E9A292 /* Keel.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Keel.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		E3BE193F1FF25E6760C6616E /* TimeViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeViews.swift; sourceTree = "<group>"; };
 		EAAF02252EE2C633D8BD47D5 /* NotesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotesView.swift; sourceTree = "<group>"; };
 		EB9F51008F5680B7967B16CD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		ECB947CEC5E491E34C4572D7 /* FocusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FocusView.swift; sourceTree = "<group>"; };
@@ -129,6 +151,7 @@
 			isa = PBXGroup;
 			children = (
 				DFFC4DBF7D60E11E05E9A292 /* Keel.app */,
+				6A713FF0E72F2CE1AEE80CC5 /* KeelShare.appex */,
 				27321CB5159F42C3BDECDA23 /* KeelWidgets.appex */,
 			);
 			name = Products;
@@ -145,10 +168,13 @@
 				5BDB7A58DC87CE8BA738D57A /* Inbox */,
 				F715676E24FF7E781FDE906F /* Mail */,
 				2E86A7F00027CA613FA36EF4 /* Notes */,
+				A73A3D32181D413C040E158F /* Odyssey */,
 				933A492221CD1618E20868AC /* Promises */,
+				65D29B86A2558A59A8EB4731 /* ReadLater */,
 				9E950D5C378FD6C0413C2C50 /* Review */,
 				1E45ED5E7D73B7554BC46C48 /* Settings */,
 				242089CA8502DDCB0C694FC0 /* Tasks */,
+				B5897004239AF434AC299F8E /* Time */,
 				6ABDAB05530105AC61BCFA95 /* Today */,
 			);
 			path = Features;
@@ -182,6 +208,7 @@
 		2E86A7F00027CA613FA36EF4 /* Notes */ = {
 			isa = PBXGroup;
 			children = (
+				D14F2099627ADCE0C958846B /* MeetingRecorder.swift */,
 				EAAF02252EE2C633D8BD47D5 /* NotesView.swift */,
 			);
 			path = Notes;
@@ -221,6 +248,14 @@
 				8DF811CE33148A8C868866BD /* InboxView.swift */,
 			);
 			path = Inbox;
+			sourceTree = "<group>";
+		};
+		65D29B86A2558A59A8EB4731 /* ReadLater */ = {
+			isa = PBXGroup;
+			children = (
+				ACDFE0D60FED0CACCB9E5602 /* ReadLaterView.swift */,
+			);
+			path = ReadLater;
 			sourceTree = "<group>";
 		};
 		690A08189925625AA10212C5 /* Goals */ = {
@@ -297,6 +332,14 @@
 			path = Review;
 			sourceTree = "<group>";
 		};
+		A73A3D32181D413C040E158F /* Odyssey */ = {
+			isa = PBXGroup;
+			children = (
+				D7FE3315D85E763A9DA6C891 /* OdysseyView.swift */,
+			);
+			path = Odyssey;
+			sourceTree = "<group>";
+		};
 		A9A577B95DDE975A86EDC06A /* Auth */ = {
 			isa = PBXGroup;
 			children = (
@@ -313,12 +356,30 @@
 			path = Shared;
 			sourceTree = "<group>";
 		};
+		ADF8E1797BD783F52B170ACD /* KeelShare */ = {
+			isa = PBXGroup;
+			children = (
+				C3D6C65D586B3C3032BDE5C6 /* Info.plist */,
+				7F33FF829DF51CECA667C28C /* KeelShare.entitlements */,
+				87BA63B48C9EAC76390B2DFC /* ShareViewController.swift */,
+			);
+			path = KeelShare;
+			sourceTree = "<group>";
+		};
 		B50EE4CA1841B06CD6EF4E0A /* Models */ = {
 			isa = PBXGroup;
 			children = (
 				17C252D173987B00D25462AF /* Models.swift */,
 			);
 			path = Models;
+			sourceTree = "<group>";
+		};
+		B5897004239AF434AC299F8E /* Time */ = {
+			isa = PBXGroup;
+			children = (
+				E3BE193F1FF25E6760C6616E /* TimeViews.swift */,
+			);
+			path = Time;
 			sourceTree = "<group>";
 		};
 		BB7A61CEC71B5891C483C4C9 /* KeelWidgets */ = {
@@ -335,6 +396,7 @@
 			isa = PBXGroup;
 			children = (
 				F42D77EC062728740A115C6A /* Keel */,
+				ADF8E1797BD783F52B170ACD /* KeelShare */,
 				BB7A61CEC71B5891C483C4C9 /* KeelWidgets */,
 				014F620FDAE77BCE1CDCC1D0 /* Products */,
 			);
@@ -429,6 +491,23 @@
 			productReference = 27321CB5159F42C3BDECDA23 /* KeelWidgets.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
+		0D45B085DAEF233D57776430 /* KeelShare */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 76AB70438B4D0F8C6B35E180 /* Build configuration list for PBXNativeTarget "KeelShare" */;
+			buildPhases = (
+				EDE6FA5DF5061A28E2BD97AE /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = KeelShare;
+			packageProductDependencies = (
+			);
+			productName = KeelShare;
+			productReference = 6A713FF0E72F2CE1AEE80CC5 /* KeelShare.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		BB6C7D59AEC98AEBABAFB251 /* Keel */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 6D85E3542563FBFE7F9C6A6B /* Build configuration list for PBXNativeTarget "Keel" */;
@@ -441,6 +520,7 @@
 			);
 			dependencies = (
 				1C4957FC14611E37471E02AF /* PBXTargetDependency */,
+				4358F7EC036F3F523FB54568 /* PBXTargetDependency */,
 			);
 			name = Keel;
 			packageProductDependencies = (
@@ -459,6 +539,10 @@
 				LastUpgradeCheck = 1430;
 				TargetAttributes = {
 					0349D24B5128121921653E51 = {
+						DevelopmentTeam = NT3YQF6DM5;
+						ProvisioningStyle = Automatic;
+					};
+					0D45B085DAEF233D57776430 = {
 						DevelopmentTeam = NT3YQF6DM5;
 						ProvisioningStyle = Automatic;
 					};
@@ -484,6 +568,7 @@
 			targets = (
 				BB6C7D59AEC98AEBABAFB251 /* Keel */,
 				0349D24B5128121921653E51 /* KeelWidgets */,
+				0D45B085DAEF233D57776430 /* KeelShare */,
 			);
 		};
 /* End PBXProject section */
@@ -527,17 +612,21 @@
 				A8C7BE58B4695E0FD7896EFA /* KeelServer.swift in Sources */,
 				19939B111F68D031B8D6B042 /* MailExtras.swift in Sources */,
 				4A77E54C26A989121DCFC52D /* MailProviders.swift in Sources */,
+				6980E570787EF9BEDB79A4ED /* MeetingRecorder.swift in Sources */,
 				AEA0B8BD83287B5BABEDB968 /* Models.swift in Sources */,
 				E2B8FEF02893FAD636AE6E23 /* NotesView.swift in Sources */,
 				21E7562BDD0EF8DF74F200A4 /* OAuthManager.swift in Sources */,
+				D5DDC2EB0B49D716B4921496 /* OdysseyView.swift in Sources */,
 				348F61E75CBF91977C2EAF03 /* OnDeviceAI.swift in Sources */,
 				1E9022913FF88A6EADC00068 /* PromiseTracker.swift in Sources */,
 				C47D427217918E8C75B2B94D /* PromisesView.swift in Sources */,
+				9A581C99346C85844710CEE0 /* ReadLaterView.swift in Sources */,
 				A00AF67D479B619AB15E2F91 /* ShutdownManager.swift in Sources */,
 				84AC9B33386018120AADB576 /* SiriIntents.swift in Sources */,
 				8CC07EFCA332B8907BB3E65A /* SyncEngine.swift in Sources */,
 				A446D4963BFA2F12EA7524DA /* TaskEngine.swift in Sources */,
 				282F1904CC270F67AFA1B981 /* TasksView.swift in Sources */,
+				4466B51C48175D3F59DFEFA8 /* TimeViews.swift in Sources */,
 				3E454BF14F0F80669C88960B /* TodayView.swift in Sources */,
 				2621FF728B063EB197EAD514 /* WeeklyReviewView.swift in Sources */,
 				2FB0264F83E51060C69E9807 /* WidgetShared.swift in Sources */,
@@ -554,6 +643,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		EDE6FA5DF5061A28E2BD97AE /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				06A84DCFD13EB3F46659AF4E /* ShareViewController.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -561,6 +658,11 @@
 			isa = PBXTargetDependency;
 			target = 0349D24B5128121921653E51 /* KeelWidgets */;
 			targetProxy = DB58C0CD79881EDFDC9FC9F4 /* PBXContainerItemProxy */;
+		};
+		4358F7EC036F3F523FB54568 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 0D45B085DAEF233D57776430 /* KeelShare */;
+			targetProxy = 9A2CF9BF6277FE7887FBB967 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -668,6 +770,25 @@
 			};
 			name = Debug;
 		};
+		5333C8083FFA81CBBDACBF5B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = KeelShare/KeelShare.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				INFOPLIST_FILE = KeelShare/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 0.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.briangreenejr.keel.share;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
 		68DFE817D555140150A10467 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -764,6 +885,25 @@
 			};
 			name = Release;
 		};
+		F22CCC533D818BF6DDF6A21B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = KeelShare/KeelShare.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				INFOPLIST_FILE = KeelShare/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 0.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.briangreenejr.keel.share;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -781,6 +921,15 @@
 			buildConfigurations = (
 				68DFE817D555140150A10467 /* Debug */,
 				3BD010658370695CD8ACA588 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		76AB70438B4D0F8C6B35E180 /* Build configuration list for PBXNativeTarget "KeelShare" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F22CCC533D818BF6DDF6A21B /* Debug */,
+				5333C8083FFA81CBBDACBF5B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
