@@ -150,7 +150,7 @@ struct GmailProvider: MailProvider {
         let labels = m["labelIds"] as? [String] ?? []
         let ms = Double(m["internalDate"] as? String ?? "0") ?? 0
         let html = body(payload, mime: "text/html")
-        var plain = body(payload, mime: "text/plain")
+        var plain = body(payload, mime: "text/plain") ?? ""
         if plain.isEmpty, let html { plain = html.strippingHTML }
         return FetchedMessage(providerId: m["id"] as? String ?? "", threadId: m["threadId"] as? String ?? "",
                               from: email, fromName: name, subject: headers["subject"] ?? "(no subject)",
