@@ -8,7 +8,7 @@ options:
 settings:
   base:
     SWIFT_VERSION: "5.0"   # Xcode accepts 5.0 or 6.0 here; 5.0 = Swift 5 language mode
-    DEVELOPMENT_TEAM: "" # set your Apple Developer team ID
+    DEVELOPMENT_TEAM: "NT3YQF6DM5" # set your Apple Developer team ID
 targets:
   Keel:
     type: application
