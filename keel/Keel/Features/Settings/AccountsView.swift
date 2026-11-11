@@ -10,6 +10,7 @@ struct AccountsView: View {
     @State private var error: String?
     @State private var showICloud = false
     @State private var showPaywall = false
+    @State private var showServer = false
     @AppStorage("ai.privateMode") private var privateMode = false
 
     var body: some View {
@@ -54,6 +55,13 @@ struct AccountsView: View {
                     Text("Sorting and summaries run on your iPhone with Apple Intelligence. Day planning and long drafts use Claude unless Private mode is on.")
                 }
 
+                Section {
+                    LabeledContent("Status", value: KeelServer.isConfigured ? "Connected" : "Not set up")
+                    Button(KeelServer.isConfigured ? "Change server" : "Connect Claude") { showServer = true }
+                } header: { Text("Claude AI") } footer: {
+                    Text("Powers “Plan my day”, AI reply drafts and breaking tasks into steps. Needs the Keel server you deployed; until then Keel uses Apple Intelligence on this iPhone.")
+                }
+
                 if Entitlements.paywallEnabled {
                     Section { Button("Keel Pro") { showPaywall = true } }
                 }
@@ -64,6 +72,7 @@ struct AccountsView: View {
             .toolbar { Button("Done") { dismiss() } }
             .sheet(isPresented: $showICloud) { ICloudSetupView() }
             .sheet(isPresented: $showPaywall) { PaywallView() }
+            .sheet(isPresented: $showServer) { KeelServerSetupView() }
         }
     }
 
@@ -183,5 +192,59 @@ extension Color {
     init(hex: String) {
         let v = UInt64(hex.trimmingCharacters(in: CharacterSet(charactersIn: "#")), radix: 16) ?? 0x5B8DEF
         self.init(red: Double((v >> 16) & 0xFF) / 255, green: Double((v >> 8) & 0xFF) / 255, blue: Double(v & 0xFF) / 255)
+    }
+}
+
+/// Paste the server address and access code from your Mac (Universal Clipboard: copy on Mac, paste here).
+struct KeelServerSetupView: View {
+    @Environment(\.dismiss) private var dismiss
+    @State private var address = UserDefaults.standard.string(forKey: KeelServer.addressKey) ?? ""
+    @State private var code = KeelServer.accessCode ?? ""
+    @State private var checking = false
+    @State private var message: String?
+    @State private var ok = false
+
+    var body: some View {
+        NavigationStack {
+            Form {
+                Section {
+                    TextField("keel-backend.yourname.workers.dev", text: $address)
+                        .keyboardType(.URL).textInputAutocapitalization(.never).autocorrectionDisabled()
+                    SecureField("Access code", text: $code)
+                        .textInputAutocapitalization(.never).autocorrectionDisabled()
+                } footer: {
+                    Text("Both come from deploying the Keel server. Copy each on your Mac and paste here (same Apple Account = shared clipboard).")
+                }
+                if checking { Section { ProgressView("Checking…") } }
+                if let message {
+                    Section { Label(message, systemImage: ok ? "checkmark.circle.fill" : "exclamationmark.triangle").foregroundStyle(ok ? DS.Palette.calm : .red) }
+                }
+            }
+            .navigationTitle("Claude AI")
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() } }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Test & Save") { Task { await testAndSave() } }
+                        .disabled(address.isEmpty || code.isEmpty || checking)
+                }
+            }
+        }
+    }
+
+    private func testAndSave() async {
+        checking = true; message = nil
+        defer { checking = false }
+        switch await KeelServer.check(address: address, accessCode: code) {
+        case .ok:
+            KeelServer.save(address: address, accessCode: code)
+            ok = true; message = "Connected. Claude features are on."
+            Haptics.success()
+            try? await Task.sleep(for: .seconds(1))
+            dismiss()
+        case .badCode:
+            ok = false; message = "The server is there, but that access code isn't right."
+        case .unreachable(let why):
+            ok = false; message = "Couldn't reach the server: \(why)"
+        }
     }
 }

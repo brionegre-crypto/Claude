@@ -11,6 +11,7 @@ export interface Env {
 
 /**
  * Keel light backend (Cloudflare Worker — free tier covers personal use).
+ *   GET  /health        Checks the device access code (no AI call).                       [device token]
  *   POST /v1/messages   AI proxy: holds the Claude key, routes model/effort, enforces a daily cap.   [device token]
  *   POST /snapshot      iPhone uploads a small JSON snapshot for the Claude connector.            [device token]
  *   GET  /actions       iPhone pulls actions Claude queued (add_task, start_focus), then clears. [device token]
@@ -22,8 +23,14 @@ export default {
   async fetch(req: Request, env: Env): Promise<Response> {
     const url = new URL(req.url);
     const bearer = req.headers.get("authorization")?.replace(/^Bearer /, "");
-    const device = bearer === env.KEEL_DEVICE_TOKEN;
+    // Never match when a secret is unset (undefined === undefined would otherwise let anyone in).
+    const device = !!env.KEEL_DEVICE_TOKEN && bearer === env.KEEL_DEVICE_TOKEN;
+    const mcp = !!env.KEEL_MCP_TOKEN && bearer === env.KEEL_MCP_TOKEN;
 
+    // Lets the app check its access code without spending AI credits.
+    if (url.pathname === "/health") {
+      return device ? json({ ok: true }) : unauthorized();
+    }
     if (url.pathname === "/v1/messages" && req.method === "POST") {
       return device ? handleAI(req, env) : unauthorized();
     }
@@ -39,7 +46,7 @@ export default {
       return new Response(actions, { headers: { "content-type": "application/json" } });
     }
     if (url.pathname === "/mcp" && req.method === "POST") {
-      return bearer === env.KEEL_MCP_TOKEN ? handleMCP(req, env) : unauthorized();
+      return mcp ? handleMCP(req, env) : unauthorized();
     }
     if (url.pathname === "/push/gmail" || url.pathname === "/push/graph") {
       // Graph validation handshake: echo validationToken.

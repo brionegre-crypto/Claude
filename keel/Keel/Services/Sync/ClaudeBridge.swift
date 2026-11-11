@@ -6,10 +6,7 @@ import SwiftData
 /// This is how Claude (and Claude Duet, once it supports custom connectors) works with Keel.
 @MainActor
 enum ClaudeBridge {
-    private static var base: URL? {
-        (Bundle.main.object(forInfoDictionaryKey: "KeelAIProxyURL") as? String)
-            .flatMap(URL.init(string:))?.deletingLastPathComponent().deletingLastPathComponent()  // strip /v1/messages
-    }
+    private static var base: URL? { KeelServer.baseURL }
 
     private static func request(_ path: String, method: String, body: Data? = nil) -> URLRequest? {
         guard let base, let token = KeychainStore.read("keel.session") else { return nil }

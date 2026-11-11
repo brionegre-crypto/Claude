@@ -4,17 +4,14 @@ import Foundation
 /// per-user quotas, and picks the model). The app never ships an API key.
 @MainActor
 final class CloudAI {
-    private let endpoint: URL = {
-        let s = Bundle.main.object(forInfoDictionaryKey: "KeelAIProxyURL") as? String ?? ""
-        return URL(string: s) ?? URL(string: "https://invalid.local")!
-    }()
-
-    enum CloudError: Error { case http(Int), refused, badOutput }
+    enum CloudError: Error { case notConfigured, http(Int), refused, badOutput }
 
     private struct Envelope<U: Decodable>: Decodable { let stop_reason: String; let json: U? }
 
     /// `task` tells the backend which model/effort to use (see backend/src/ai.ts ROUTES).
     private func call<T: Decodable>(task: String, system: String, user: String, schema: [String: Any], as: T.Type) async throws -> T {
+        // Not set up yet (Settings → Claude AI): fail fast so AIRouter falls back to Apple Intelligence.
+        guard let endpoint = KeelServer.endpoint("v1/messages"), KeelServer.isConfigured else { throw CloudError.notConfigured }
         var req = URLRequest(url: endpoint)
         req.httpMethod = "POST"
         req.setValue("application/json", forHTTPHeaderField: "Content-Type")
