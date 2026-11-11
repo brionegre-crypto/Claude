@@ -15,6 +15,7 @@
 		2C6CBAF044E966ABBB73E086 /* CloudAI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 035015EE8266684EFC26E2B0 /* CloudAI.swift */; };
 		2F403D9867E4E01BEF8FF755 /* CalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA81AC76EFE4BD69EB166CBE /* CalendarView.swift */; };
 		348F61E75CBF91977C2EAF03 /* OnDeviceAI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50AE0EC551C0F0F9AD8C3B78 /* OnDeviceAI.swift */; };
+		34A3D52DD7EA2B2F5CD93879 /* ICloudMail.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3B66ACF0AB320A058F6291F /* ICloudMail.swift */; };
 		3A891E525241317051D27D67 /* HabitsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 430FEBA07DBE819D0BEA460D /* HabitsView.swift */; };
 		3AA81895D50289A4D058F06E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EB9F51008F5680B7967B16CD /* Assets.xcassets */; };
 		3E454BF14F0F80669C88960B /* TodayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9552312DA272B5919FCC5388 /* TodayView.swift */; };
@@ -63,6 +64,7 @@
 		9552312DA272B5919FCC5388 /* TodayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayView.swift; sourceTree = "<group>"; };
 		AB62EF3D17A17E14F6923B77 /* PromiseTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromiseTracker.swift; sourceTree = "<group>"; };
 		ACB5B7727DBF2E63305F51B2 /* HabitEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HabitEngine.swift; sourceTree = "<group>"; };
+		B3B66ACF0AB320A058F6291F /* ICloudMail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ICloudMail.swift; sourceTree = "<group>"; };
 		BBDA564035648255534FDF98 /* ShutdownManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShutdownManager.swift; sourceTree = "<group>"; };
 		C6BC64A281F313E34B666753 /* PromisesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromisesView.swift; sourceTree = "<group>"; };
 		CEC81D332BB367C4D33D8162 /* CommandBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandBar.swift; sourceTree = "<group>"; };
@@ -192,6 +194,7 @@
 		84AE091B1B16BB4952E9F6C8 /* Mail */ = {
 			isa = PBXGroup;
 			children = (
+				B3B66ACF0AB320A058F6291F /* ICloudMail.swift */,
 				367E3B118319EFDECE14242C /* MailProviders.swift */,
 				AB62EF3D17A17E14F6923B77 /* PromiseTracker.swift */,
 			);
@@ -389,6 +392,7 @@
 				CA2D3821E5A280010A905247 /* HTMLMailView.swift in Sources */,
 				F27CF0E2C2C4EB6507312277 /* HabitEngine.swift in Sources */,
 				3A891E525241317051D27D67 /* HabitsView.swift in Sources */,
+				34A3D52DD7EA2B2F5CD93879 /* ICloudMail.swift in Sources */,
 				84ACF02D41CCACD6D7F72F3E /* InboxView.swift in Sources */,
 				4D305CCEC66744E4697BBF64 /* KeelApp.swift in Sources */,
 				4A77E54C26A989121DCFC52D /* MailProviders.swift in Sources */,
