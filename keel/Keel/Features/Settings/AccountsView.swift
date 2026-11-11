@@ -11,6 +11,7 @@ struct AccountsView: View {
     @State private var showICloud = false
     @State private var showPaywall = false
     @State private var showServer = false
+    @State private var showTour = false
     @AppStorage("ai.privateMode") private var privateMode = false
 
     var body: some View {
@@ -55,6 +56,12 @@ struct AccountsView: View {
                     Text("All of Keel's AI runs on this iPhone with Apple Intelligence: free and private. Turn it on in iPhone Settings → Apple Intelligence & Siri (iPhone 15 Pro or newer).")
                 }
 
+                Section("Help & alerts") {
+                    NavigationLink { FeatureGuideView() } label: { Label("How Keel works", systemImage: "questionmark.circle") }
+                    Button { showTour = true } label: { Label("Replay the welcome tour", systemImage: "play.circle") }
+                    NotificationStatusRow()
+                }
+
                 Section {
                     LabeledContent("Status", value: KeelServer.isConfigured ? "Connected" : "Not set up")
                     Button(KeelServer.isConfigured ? "Change server" : "Connect Claude") { showServer = true }
@@ -73,6 +80,7 @@ struct AccountsView: View {
             .sheet(isPresented: $showICloud) { ICloudSetupView() }
             .sheet(isPresented: $showPaywall) { PaywallView() }
             .sheet(isPresented: $showServer) { KeelServerSetupView() }
+            .fullScreenCover(isPresented: $showTour) { WelcomeTour() }
         }
     }
 

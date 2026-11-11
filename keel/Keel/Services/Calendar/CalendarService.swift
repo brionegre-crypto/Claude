@@ -107,23 +107,29 @@ final class CalendarService {
         }
     }
 
-    /// Pull Apple Reminders → Keel tasks, and push Keel task changes → Reminders.
-    /// Conflict rule: most recently modified side wins.
-    func syncReminders(tasks: [TaskItem], insert: (TaskItem) -> Void) async {
+    /// Two-way sync with Apple Reminders. Whichever side changed last wins; a reminder deleted in the
+    /// Reminders app is removed from Keel; tasks made in Keel are created in Reminders.
+    func syncReminders(tasks: [TaskItem], insert: (TaskItem) -> Void, delete: (TaskItem) -> Void) async {
+        guard hasReminderAccess else { return }
         let reminders = await fetchReminders()
-        let byId = Dictionary(uniqueKeysWithValues: tasks.compactMap { t in t.ekReminderId.map { ($0, t) } })
+        let byId = Dictionary(tasks.compactMap { t in t.ekReminderId.map { ($0, t) } }, uniquingKeysWith: { a, _ in a })
+        var seen = Set<String>()
 
         for r in reminders {
+            seen.insert(r.calendarItemIdentifier)
             if let t = byId[r.calendarItemIdentifier] {
                 let rModified = r.lastModifiedDate ?? .distantPast
-                if rModified > t.updatedAt {        // Reminders side newer → update Keel
+                if rModified.timeIntervalSince(t.updatedAt) > 1 {          // changed in Reminders → update Keel
                     t.title = r.title ?? t.title
                     t.isDone = r.isCompleted
+                    t.completedAt = r.completionDate
                     t.dueDate = Self.date(from: r.dueDateComponents)
                     t.listName = r.calendar.title
+                    t.notes = r.notes ?? t.notes
+                    t.priority = Self.priority(fromEK: r.priority)
                     t.recurrence = r.recurrenceRules?.first.flatMap(Recurrence.init(ek:))
                     t.updatedAt = rModified
-                } else {                            // Keel side newer → push
+                } else if t.updatedAt.timeIntervalSince(rModified) > 1 {   // changed in Keel → update Reminders
                     try? push(t)
                 }
             } else if !r.isCompleted {
@@ -133,8 +139,14 @@ final class CalendarService {
                 t.ekReminderId = r.calendarItemIdentifier
                 t.listName = r.calendar.title
                 t.notes = r.notes ?? ""
+                t.updatedAt = r.lastModifiedDate ?? Date()
                 insert(t)
             }
+        }
+        // Deleted in Reminders → delete in Keel (double-checked so a failed fetch can never wipe tasks).
+        for t in tasks {
+            guard let id = t.ekReminderId, !seen.contains(id), store.calendarItem(withIdentifier: id) == nil else { continue }
+            delete(t)
         }
         // Keel-only tasks → create reminders
         for t in tasks where t.ekReminderId == nil && !t.isDone { try? push(t) }
@@ -159,6 +171,7 @@ final class CalendarService {
         r.recurrenceRules = t.recurrence.map { [$0.ekRule] }
         try store.save(r, commit: true)
         t.ekReminderId = r.calendarItemIdentifier
+        t.updatedAt = r.lastModifiedDate ?? Date()     // both sides now agree, so the next sync leaves it alone
     }
 
     func removeReminder(for t: TaskItem) {

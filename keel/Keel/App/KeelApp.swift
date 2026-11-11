@@ -58,6 +58,7 @@ struct RootView: View {
     @State private var showCommandBar = false
     @State private var showFocus = false
     @State private var mailRouter = MailRouter.shared
+    @AppStorage("onboarding.done") private var onboarded = false
 
     enum Tab { case today, inbox, calendar, tasks, notes }
 
@@ -73,6 +74,7 @@ struct RootView: View {
         .tabViewBottomAccessory { FocusAccessory { showFocus = true } }
         .sheet(isPresented: $showFocus) { NavigationStack { FocusView() } }
         .sheet(item: $mailRouter.pending) { ComposeView(draft: $0) }
+        .fullScreenCover(isPresented: Binding(get: { !onboarded }, set: { if !$0 { onboarded = true } })) { WelcomeTour() }
         // Superhuman-style universal command bar: ⌘K on a keyboard
         .overlay(alignment: .top) {
             if showCommandBar { CommandBar(isPresented: $showCommandBar) }

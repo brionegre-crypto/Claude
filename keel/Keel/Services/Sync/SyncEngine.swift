@@ -1,4 +1,5 @@
 import Foundation
+import EventKit
 import SwiftData
 import BackgroundTasks
 import Observation
@@ -15,7 +16,35 @@ final class SyncEngine {
     private(set) var lastError: String?
     private var container: ModelContainer?
 
-    func configure(container: ModelContainer) { self.container = container }
+    private var storeObserver: NSObjectProtocol?
+    private var pendingReminderSync: Task<Void, Never>?
+
+    func configure(container: ModelContainer) {
+        self.container = container
+        // Live sync: when Reminders (or Calendar) changes while Keel is open, pull it in within ~2 seconds.
+        guard storeObserver == nil else { return }
+        storeObserver = NotificationCenter.default.addObserver(forName: .EKEventStoreChanged, object: nil, queue: .main) { _ in
+            Task { @MainActor in SyncEngine.shared.scheduleReminderSync() }
+        }
+    }
+
+    func scheduleReminderSync() {
+        pendingReminderSync?.cancel()
+        pendingReminderSync = Task {
+            try? await Task.sleep(for: .seconds(2))
+            guard !Task.isCancelled else { return }
+            await syncRemindersOnly()
+        }
+    }
+
+    func syncRemindersOnly() async {
+        guard let container, !isSyncing else { return }
+        let ctx = container.mainContext
+        let tasks = (try? ctx.fetch(FetchDescriptor<TaskItem>())) ?? []
+        await CalendarService.shared.syncReminders(tasks: tasks, insert: { ctx.insert($0) }, delete: { ctx.delete($0) })
+        TaskAlerts.rescheduleAll((try? ctx.fetch(FetchDescriptor<TaskItem>())) ?? [])
+        try? ctx.save()
+    }
 
     func syncAll() async {
         guard let container, !isSyncing else { return }
@@ -71,7 +100,7 @@ final class SyncEngine {
 
         // 3. Apple Reminders ⇄ Keel tasks
         let tasks = (try? ctx.fetch(FetchDescriptor<TaskItem>())) ?? []
-        await CalendarService.shared.syncReminders(tasks: tasks) { ctx.insert($0) }
+        await CalendarService.shared.syncReminders(tasks: tasks, insert: { ctx.insert($0) }, delete: { ctx.delete($0) })
         TaskAlerts.rescheduleAll((try? ctx.fetch(FetchDescriptor<TaskItem>())) ?? [])
 
         // 4. Claude connector: apply what Claude queued, then publish a fresh snapshot
