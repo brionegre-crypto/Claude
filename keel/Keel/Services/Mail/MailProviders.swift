@@ -5,6 +5,44 @@ struct FetchedMessage {
     var providerId, threadId, from, fromName, subject, snippet, body: String
     var date: Date
     var isRead: Bool
+    var html: String? = nil
+    var messageIdHeader: String? = nil      // RFC Message-ID, for threading replies
+    var to: String = ""
+    var cc: String = ""
+    var isStarred: Bool = false
+    var hasAttachments: Bool = false
+}
+
+struct MailAttachment: Identifiable, Hashable {
+    var id: String                          // provider attachment id
+    var filename: String
+    var mimeType: String
+    var size: Int
+}
+
+struct OutgoingAttachment: Identifiable, Hashable {
+    var id = UUID()
+    var filename: String
+    var mimeType: String
+    var data: Data
+}
+
+/// Set when replying, so the message lands in the same thread on the server.
+struct ReplyContext: Hashable {
+    var providerMessageId: String
+    var threadId: String
+    var messageIdHeader: String?
+    var replyAll: Bool
+}
+
+struct OutgoingMail {
+    var to: [String]
+    var cc: [String] = []
+    var bcc: [String] = []
+    var subject: String
+    var body: String
+    var replyTo: ReplyContext? = nil
+    var attachments: [OutgoingAttachment] = []
 }
 
 protocol MailProvider {
@@ -12,11 +50,24 @@ protocol MailProvider {
     func fetchChanges(cursor: String?) async throws -> (messages: [FetchedMessage], cursor: String?)
     func archive(_ providerId: String) async throws
     func markRead(_ providerId: String, read: Bool) async throws
+    func setStarred(_ providerId: String, starred: Bool) async throws
+    func trash(_ providerId: String) async throws
     /// Writes Keel's AI category back as a label/category so other clients (and Claude Duet) see it.
     func applyLabel(_ providerId: String, label: String) async throws
-    func send(to: String, subject: String, body: String, inReplyTo: String?) async throws
-    /// Emails YOU sent since `since` — the promise tracker reads these. `from` holds the first recipient.
+    func send(_ mail: OutgoingMail) async throws
+    /// Emails YOU sent since `since` — the promise tracker and Sent mailbox read these. `from` holds the first recipient.
     func fetchSent(since: Date) async throws -> [FetchedMessage]
+    /// Server-side search across ALL mail (not just what's synced to the phone).
+    func search(_ query: String) async throws -> [FetchedMessage]
+    func attachments(for providerId: String) async throws -> [MailAttachment]
+    func download(_ attachment: MailAttachment, messageId: String) async throws -> Data
+}
+
+extension MailProvider {
+    /// Simple form used by quick replies and promise follow-ups.
+    func send(to: String, subject: String, body: String, inReplyTo: ReplyContext?) async throws {
+        try await send(OutgoingMail(to: [to], subject: subject, body: body, replyTo: inReplyTo))
+    }
 }
 
 enum MailProviderFactory {
@@ -77,7 +128,7 @@ struct GmailProvider: MailProvider {
             }
             newCursor = h["historyId"] as? String ?? cursor
         } else {
-            let list = try await api.json(URL(string: "\(base)/messages?maxResults=100&q=newer_than:14d")!)
+            let list = try await api.json(URL(string: "\(base)/messages?maxResults=100&q=in:inbox%20newer_than:14d")!)
             ids = (list["messages"] as? [[String: Any]] ?? []).compactMap { $0["id"] as? String }
             let profile = try await api.json(URL(string: "\(base)/profile")!)
             newCursor = profile["historyId"] as? String
@@ -85,6 +136,8 @@ struct GmailProvider: MailProvider {
         var out: [FetchedMessage] = []
         for id in ids.prefix(200) {
             let m = try await api.json(URL(string: "\(base)/messages/\(id)?format=full")!)
+            // History includes sent mail too; the inbox only shows what's in INBOX.
+            guard (m["labelIds"] as? [String] ?? []).contains("INBOX") else { continue }
             out.append(Self.parse(m))
         }
         return (out, newCursor)
@@ -93,51 +146,42 @@ struct GmailProvider: MailProvider {
     static func parse(_ m: [String: Any]) -> FetchedMessage {
         let payload = m["payload"] as? [String: Any] ?? [:]
         let headers = (payload["headers"] as? [[String: String]] ?? []).reduce(into: [String: String]()) { $0[$1["name"]?.lowercased() ?? ""] = $1["value"] }
-        let fromRaw = headers["from"] ?? ""
-        let (name, email) = parseFrom(fromRaw)
+        let (name, email) = parseFrom(headers["from"] ?? "")
         let labels = m["labelIds"] as? [String] ?? []
         let ms = Double(m["internalDate"] as? String ?? "0") ?? 0
+        let html = body(payload, mime: "text/html")
+        var plain = body(payload, mime: "text/plain")
+        if plain.isEmpty, let html { plain = html.strippingHTML }
         return FetchedMessage(providerId: m["id"] as? String ?? "", threadId: m["threadId"] as? String ?? "",
                               from: email, fromName: name, subject: headers["subject"] ?? "(no subject)",
-                              snippet: m["snippet"] as? String ?? "", body: plainBody(payload),
-                              date: Date(timeIntervalSince1970: ms / 1000), isRead: !labels.contains("UNREAD"))
+                              snippet: m["snippet"] as? String ?? "", body: plain,
+                              date: Date(timeIntervalSince1970: ms / 1000), isRead: !labels.contains("UNREAD"),
+                              html: html, messageIdHeader: headers["message-id"],
+                              to: headers["to"] ?? "", cc: headers["cc"] ?? "",
+                              isStarred: labels.contains("STARRED"),
+                              hasAttachments: !attachmentParts(payload).isEmpty)
     }
 
-    static func plainBody(_ part: [String: Any]) -> String {
-        if part["mimeType"] as? String == "text/plain",
-           let data = (part["body"] as? [String: Any])?["data"] as? String,
-           let d = Data(base64Encoded: data.replacingOccurrences(of: "-", with: "+").replacingOccurrences(of: "_", with: "/").padding(toLength: ((data.count + 3) / 4) * 4, withPad: "=", startingAt: 0)) {
+    /// Kept for callers that only want plain text.
+    static func plainBody(_ part: [String: Any]) -> String { body(part, mime: "text/plain") ?? "" }
+
+    static func body(_ part: [String: Any], mime: String) -> String? {
+        if part["mimeType"] as? String == mime, (part["filename"] as? String ?? "").isEmpty,
+           let data = (part["body"] as? [String: Any])?["data"] as? String, let d = Data(base64URLEncoded: data) {
             return String(decoding: d, as: UTF8.self)
         }
-        for p in part["parts"] as? [[String: Any]] ?? [] { let b = plainBody(p); if !b.isEmpty { return b } }
-        return ""
+        for p in part["parts"] as? [[String: Any]] ?? [] { if let b = body(p, mime: mime), !b.isEmpty { return b } }
+        return nil
     }
 
-    func archive(_ id: String) async throws {
-        _ = try await api.json(URL(string: "\(base)/messages/\(id)/modify")!, method: "POST", body: ["removeLabelIds": ["INBOX"]])
-    }
-    func markRead(_ id: String, read: Bool) async throws {
-        let key = read ? "removeLabelIds" : "addLabelIds"
-        _ = try await api.json(URL(string: "\(base)/messages/\(id)/modify")!, method: "POST", body: [key: ["UNREAD"]])
-    }
-    func applyLabel(_ id: String, label: String) async throws {
-        // Production: cache label ids; create "Keel/<label>" via POST /labels on first use.
-        _ = try await api.json(URL(string: "\(base)/messages/\(id)/modify")!, method: "POST", body: ["addLabelIds": [label]])
-    }
-    func fetchSent(since: Date) async throws -> [FetchedMessage] {
-        let after = Int(since.timeIntervalSince1970)
-        let list = try await api.json(URL(string: "\(base)/messages?maxResults=50&q=in:sent%20after:\(after)")!)
-        var out: [FetchedMessage] = []
-        for id in (list["messages"] as? [[String: Any]] ?? []).compactMap({ $0["id"] as? String }) {
-            let m = try await api.json(URL(string: "\(base)/messages/\(id)?format=full")!)
-            var f = Self.parse(m)
-            let headers = ((m["payload"] as? [String: Any])?["headers"] as? [[String: String]] ?? [])
-            let to = headers.first { $0["name"]?.lowercased() == "to" }?["value"] ?? ""
-            let (name, email) = parseFrom(to.components(separatedBy: ",").first ?? to)
-            f.from = email; f.fromName = name
-            f.body = Self.stripQuotedReply(f.body)
-            out.append(f)
+    static func attachmentParts(_ part: [String: Any]) -> [MailAttachment] {
+        var out: [MailAttachment] = []
+        let filename = part["filename"] as? String ?? ""
+        if !filename.isEmpty, let b = part["body"] as? [String: Any], let attId = b["attachmentId"] as? String {
+            out.append(MailAttachment(id: attId, filename: filename, mimeType: part["mimeType"] as? String ?? "application/octet-stream",
+                                      size: b["size"] as? Int ?? 0))
         }
+        for p in part["parts"] as? [[String: Any]] ?? [] { out += attachmentParts(p) }
         return out
     }
 
@@ -152,11 +196,69 @@ struct GmailProvider: MailProvider {
         return kept.joined(separator: "\n")
     }
 
-    func send(to: String, subject: String, body: String, inReplyTo: String?) async throws {
-        var raw = "To: \(to)\r\nSubject: \(subject)\r\nContent-Type: text/plain; charset=utf-8\r\n"
-        if let inReplyTo { raw += "In-Reply-To: \(inReplyTo)\r\nReferences: \(inReplyTo)\r\n" }
-        raw += "\r\n\(body)"
-        _ = try await api.json(URL(string: "\(base)/messages/send")!, method: "POST", body: ["raw": Data(raw.utf8).base64URL])
+    private func modify(_ id: String, add: [String] = [], remove: [String] = []) async throws {
+        _ = try await api.json(URL(string: "\(base)/messages/\(id)/modify")!, method: "POST",
+                               body: ["addLabelIds": add, "removeLabelIds": remove] as [String: Any])
+    }
+
+    func archive(_ id: String) async throws { try await modify(id, remove: ["INBOX"]) }
+    func markRead(_ id: String, read: Bool) async throws { try await read ? modify(id, remove: ["UNREAD"]) : modify(id, add: ["UNREAD"]) }
+    func setStarred(_ id: String, starred: Bool) async throws { try await starred ? modify(id, add: ["STARRED"]) : modify(id, remove: ["STARRED"]) }
+    func trash(_ id: String) async throws { _ = try await api.json(URL(string: "\(base)/messages/\(id)/trash")!, method: "POST") }
+
+    func applyLabel(_ id: String, label: String) async throws {
+        // Labels must exist first: find or create "Keel/<label>", then apply its id.
+        let name = "Keel/\(label.capitalized)"
+        let list = try await api.json(URL(string: "\(base)/labels")!)
+        var labelId = (list["labels"] as? [[String: Any]] ?? []).first { $0["name"] as? String == name }?["id"] as? String
+        if labelId == nil {
+            let created = try await api.json(URL(string: "\(base)/labels")!, method: "POST",
+                                             body: ["name": name, "labelListVisibility": "labelShow", "messageListVisibility": "show"])
+            labelId = created["id"] as? String
+        }
+        if let labelId { try await modify(id, add: [labelId]) }
+    }
+
+    func send(_ mail: OutgoingMail) async throws {
+        var body: [String: Any] = ["raw": MIME.build(mail).base64URL]
+        if let r = mail.replyTo { body["threadId"] = r.threadId }
+        _ = try await api.json(URL(string: "\(base)/messages/send")!, method: "POST", body: body)
+    }
+
+    func fetchSent(since: Date) async throws -> [FetchedMessage] {
+        let after = Int(since.timeIntervalSince1970)
+        let list = try await api.json(URL(string: "\(base)/messages?maxResults=50&q=in:sent%20after:\(after)")!)
+        var out: [FetchedMessage] = []
+        for id in (list["messages"] as? [[String: Any]] ?? []).compactMap({ $0["id"] as? String }) {
+            let m = try await api.json(URL(string: "\(base)/messages/\(id)?format=full")!)
+            var f = Self.parse(m)
+            let (name, email) = parseFrom(f.to.components(separatedBy: ",").first ?? f.to)
+            f.from = email; f.fromName = name
+            f.body = Self.stripQuotedReply(f.body)
+            out.append(f)
+        }
+        return out
+    }
+
+    func search(_ query: String) async throws -> [FetchedMessage] {
+        let q = query.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
+        let list = try await api.json(URL(string: "\(base)/messages?maxResults=25&q=\(q)")!)
+        var out: [FetchedMessage] = []
+        for id in (list["messages"] as? [[String: Any]] ?? []).compactMap({ $0["id"] as? String }) {
+            out.append(Self.parse(try await api.json(URL(string: "\(base)/messages/\(id)?format=full")!)))
+        }
+        return out
+    }
+
+    func attachments(for id: String) async throws -> [MailAttachment] {
+        let m = try await api.json(URL(string: "\(base)/messages/\(id)?format=full")!)
+        return Self.attachmentParts(m["payload"] as? [String: Any] ?? [:])
+    }
+
+    func download(_ attachment: MailAttachment, messageId: String) async throws -> Data {
+        let r = try await api.json(URL(string: "\(base)/messages/\(messageId)/attachments/\(attachment.id)")!)
+        guard let s = r["data"] as? String, let d = Data(base64URLEncoded: s) else { throw URLError(.cannotDecodeContentData) }
+        return d
     }
 }
 
@@ -166,23 +268,35 @@ struct OutlookProvider: MailProvider {
     let account: String
     private var api: AuthedClient { AuthedClient(account: account, cfg: OAuthManager.microsoft) }
     private let base = "https://graph.microsoft.com/v1.0/me"
+    private static let select = "subject,from,toRecipients,ccRecipients,bodyPreview,body,receivedDateTime,isRead,conversationId,internetMessageId,flag,hasAttachments"
+
+    static func parse(_ m: [String: Any]) -> FetchedMessage {
+        let from = ((m["from"] as? [String: Any])?["emailAddress"] as? [String: Any]) ?? [:]
+        let bodyObj = m["body"] as? [String: Any] ?? [:]
+        let content = bodyObj["content"] as? String ?? ""
+        let isHTML = (bodyObj["contentType"] as? String)?.lowercased() == "html"
+        func addresses(_ key: String) -> String {
+            ((m[key] as? [[String: Any]]) ?? []).compactMap { ($0["emailAddress"] as? [String: Any])?["address"] as? String }.joined(separator: ", ")
+        }
+        return FetchedMessage(
+            providerId: m["id"] as? String ?? "", threadId: m["conversationId"] as? String ?? "",
+            from: from["address"] as? String ?? "", fromName: from["name"] as? String ?? "",
+            subject: m["subject"] as? String ?? "", snippet: m["bodyPreview"] as? String ?? "",
+            body: isHTML ? content.strippingHTML : content,
+            date: ISO8601DateFormatter().date(from: m["receivedDateTime"] as? String ?? "") ?? Date(),
+            isRead: m["isRead"] as? Bool ?? false,
+            html: isHTML ? content : nil, messageIdHeader: m["internetMessageId"] as? String,
+            to: addresses("toRecipients"), cc: addresses("ccRecipients"),
+            isStarred: ((m["flag"] as? [String: Any])?["flagStatus"] as? String) == "flagged",
+            hasAttachments: m["hasAttachments"] as? Bool ?? false)
+    }
 
     func fetchChanges(cursor: String?) async throws -> (messages: [FetchedMessage], cursor: String?) {
-        var url = URL(string: cursor ?? "\(base)/mailFolders/inbox/messages/delta?$select=subject,from,bodyPreview,body,receivedDateTime,isRead,conversationId")!
+        var url = URL(string: cursor ?? "\(base)/mailFolders/inbox/messages/delta?$select=\(Self.select)")!
         var out: [FetchedMessage] = []
         while true {
             let page = try await api.json(url)
-            for m in page["value"] as? [[String: Any]] ?? [] {
-                let from = ((m["from"] as? [String: Any])?["emailAddress"] as? [String: Any]) ?? [:]
-                let body = (m["body"] as? [String: Any])?["content"] as? String ?? ""
-                out.append(FetchedMessage(
-                    providerId: m["id"] as? String ?? "", threadId: m["conversationId"] as? String ?? "",
-                    from: from["address"] as? String ?? "", fromName: from["name"] as? String ?? "",
-                    subject: m["subject"] as? String ?? "", snippet: m["bodyPreview"] as? String ?? "",
-                    body: body.strippingHTML,
-                    date: ISO8601DateFormatter().date(from: m["receivedDateTime"] as? String ?? "") ?? Date(),
-                    isRead: m["isRead"] as? Bool ?? false))
-            }
+            for m in page["value"] as? [[String: Any]] ?? [] where m["@removed"] == nil { out.append(Self.parse(m)) }
             if let next = page["@odata.nextLink"] as? String { url = URL(string: next)!; continue }
             return (out, page["@odata.deltaLink"] as? String)
         }
@@ -194,9 +308,45 @@ struct OutlookProvider: MailProvider {
     func markRead(_ id: String, read: Bool) async throws {
         _ = try await api.json(URL(string: "\(base)/messages/\(id)")!, method: "PATCH", body: ["isRead": read])
     }
+    func setStarred(_ id: String, starred: Bool) async throws {
+        _ = try await api.json(URL(string: "\(base)/messages/\(id)")!, method: "PATCH",
+                               body: ["flag": ["flagStatus": starred ? "flagged" : "notFlagged"]])
+    }
+    func trash(_ id: String) async throws {
+        _ = try await api.json(URL(string: "\(base)/messages/\(id)/move")!, method: "POST", body: ["destinationId": "deleteditems"])
+    }
     func applyLabel(_ id: String, label: String) async throws {
         _ = try await api.json(URL(string: "\(base)/messages/\(id)")!, method: "PATCH", body: ["categories": ["Keel/\(label)"]])
     }
+
+    private static func recipients(_ list: [String]) -> [[String: Any]] {
+        list.map { ["emailAddress": ["address": $0]] }
+    }
+
+    private static func attachmentsJSON(_ list: [OutgoingAttachment]) -> [[String: Any]] {
+        list.map { ["@odata.type": "#microsoft.graph.fileAttachment", "name": $0.filename,
+                    "contentType": $0.mimeType, "contentBytes": $0.data.base64EncodedString()] }
+    }
+
+    func send(_ mail: OutgoingMail) async throws {
+        var message: [String: Any] = [
+            "toRecipients": Self.recipients(mail.to),
+            "ccRecipients": Self.recipients(mail.cc),
+            "bccRecipients": Self.recipients(mail.bcc),
+            "attachments": Self.attachmentsJSON(mail.attachments),
+        ]
+        if let r = mail.replyTo {
+            // /reply keeps the conversation threaded on the server.
+            let action = r.replyAll ? "replyAll" : "reply"
+            _ = try await api.json(URL(string: "\(base)/messages/\(r.providerMessageId)/\(action)")!, method: "POST",
+                                   body: ["message": message, "comment": mail.body] as [String: Any])
+        } else {
+            message["subject"] = mail.subject
+            message["body"] = ["contentType": "Text", "content": mail.body]
+            _ = try await api.json(URL(string: "\(base)/sendMail")!, method: "POST", body: ["message": message] as [String: Any])
+        }
+    }
+
     func fetchSent(since: Date) async throws -> [FetchedMessage] {
         let iso = ISO8601DateFormatter().string(from: since)
         let filter = "sentDateTime ge \(iso)".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
@@ -213,11 +363,24 @@ struct OutlookProvider: MailProvider {
         }
     }
 
-    func send(to: String, subject: String, body: String, inReplyTo: String?) async throws {
-        _ = try await api.json(URL(string: "\(base)/sendMail")!, method: "POST", body: [
-            "message": ["subject": subject, "body": ["contentType": "Text", "content": body],
-                        "toRecipients": [["emailAddress": ["address": to]]]] as [String: Any],
-        ] as [String: Any])
+    func search(_ query: String) async throws -> [FetchedMessage] {
+        let q = "\"\(query.replacingOccurrences(of: "\"", with: ""))\"".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
+        let page = try await api.json(URL(string: "\(base)/messages?$search=\(q)&$top=25&$select=\(Self.select)")!)
+        return (page["value"] as? [[String: Any]] ?? []).map(Self.parse)
+    }
+
+    func attachments(for id: String) async throws -> [MailAttachment] {
+        let page = try await api.json(URL(string: "\(base)/messages/\(id)/attachments?$select=id,name,contentType,size")!)
+        return (page["value"] as? [[String: Any]] ?? []).map {
+            MailAttachment(id: $0["id"] as? String ?? "", filename: $0["name"] as? String ?? "attachment",
+                           mimeType: $0["contentType"] as? String ?? "application/octet-stream", size: $0["size"] as? Int ?? 0)
+        }
+    }
+
+    func download(_ attachment: MailAttachment, messageId: String) async throws -> Data {
+        let r = try await api.json(URL(string: "\(base)/messages/\(messageId)/attachments/\(attachment.id)")!)
+        guard let s = r["contentBytes"] as? String, let d = Data(base64Encoded: s) else { throw URLError(.cannotDecodeContentData) }
+        return d
     }
 }
 
@@ -230,24 +393,88 @@ struct ICloudMailProvider: MailProvider {
     func fetchChanges(cursor: String?) async throws -> (messages: [FetchedMessage], cursor: String?) { ([], cursor) }
     func archive(_ id: String) async throws {}
     func markRead(_ id: String, read: Bool) async throws {}
+    func setStarred(_ id: String, starred: Bool) async throws {}
+    func trash(_ id: String) async throws {}
     func applyLabel(_ id: String, label: String) async throws {}
-    func send(to: String, subject: String, body: String, inReplyTo: String?) async throws {}
+    func send(_ mail: OutgoingMail) async throws {}
     func fetchSent(since: Date) async throws -> [FetchedMessage] { [] }
+    func search(_ query: String) async throws -> [FetchedMessage] { [] }
+    func attachments(for id: String) async throws -> [MailAttachment] { [] }
+    func download(_ attachment: MailAttachment, messageId: String) async throws -> Data { Data() }
+}
+
+// MARK: - MIME (RFC 5322) for Gmail sends, with attachments and threading headers
+
+enum MIME {
+    static func build(_ mail: OutgoingMail) -> Data {
+        var h = "To: \(mail.to.joined(separator: ", "))\r\n"
+        if !mail.cc.isEmpty { h += "Cc: \(mail.cc.joined(separator: ", "))\r\n" }
+        if !mail.bcc.isEmpty { h += "Bcc: \(mail.bcc.joined(separator: ", "))\r\n" }
+        h += "Subject: \(encodeHeader(mail.subject))\r\nMIME-Version: 1.0\r\n"
+        if let ref = mail.replyTo?.messageIdHeader { h += "In-Reply-To: \(ref)\r\nReferences: \(ref)\r\n" }
+
+        let textPart = "Content-Type: text/plain; charset=utf-8\r\nContent-Transfer-Encoding: base64\r\n\r\n" + wrap(Data(mail.body.utf8).base64EncodedString())
+        guard !mail.attachments.isEmpty else {
+            return Data((h + textPart).utf8)
+        }
+        let boundary = "keel-\(UUID().uuidString)"
+        var s = h + "Content-Type: multipart/mixed; boundary=\"\(boundary)\"\r\n\r\n"
+        s += "--\(boundary)\r\n" + textPart + "\r\n"
+        for a in mail.attachments {
+            let name = a.filename.replacingOccurrences(of: "\"", with: "")
+            s += "--\(boundary)\r\nContent-Type: \(a.mimeType); name=\"\(name)\"\r\n"
+            s += "Content-Disposition: attachment; filename=\"\(name)\"\r\nContent-Transfer-Encoding: base64\r\n\r\n"
+            s += wrap(a.data.base64EncodedString()) + "\r\n"
+        }
+        s += "--\(boundary)--\r\n"
+        return Data(s.utf8)
+    }
+
+    /// Non-ASCII subjects must be RFC 2047 encoded.
+    static func encodeHeader(_ s: String) -> String {
+        s.allSatisfy(\.isASCII) ? s : "=?UTF-8?B?\(Data(s.utf8).base64EncodedString())?="
+    }
+
+    static func wrap(_ b64: String) -> String {
+        var out = ""; var i = b64.startIndex
+        while i < b64.endIndex {
+            let j = b64.index(i, offsetBy: 76, limitedBy: b64.endIndex) ?? b64.endIndex
+            out += String(b64[i..<j]) + "\r\n"; i = j
+        }
+        return out
+    }
+}
+
+extension Data {
+    init?(base64URLEncoded s: String) {
+        var b = s.replacingOccurrences(of: "-", with: "+").replacingOccurrences(of: "_", with: "/")
+        b += String(repeating: "=", count: (4 - b.count % 4) % 4)
+        self.init(base64Encoded: b)
+    }
 }
 
 extension String {
     var strippingHTML: String {
-        replacingOccurrences(of: "<[^>]+>", with: " ", options: .regularExpression)
+        replacingOccurrences(of: "<(style|script)[^>]*>[\\s\\S]*?</(style|script)>", with: " ", options: .regularExpression)
+            .replacingOccurrences(of: "<br\\s*/?>|</p>|</div>", with: "\n", options: .regularExpression)
+            .replacingOccurrences(of: "<[^>]+>", with: " ", options: .regularExpression)
             .replacingOccurrences(of: "&nbsp;", with: " ")
-            .replacingOccurrences(of: "\\s+", with: " ", options: .regularExpression)
+            .replacingOccurrences(of: "&amp;", with: "&")
+            .replacingOccurrences(of: "&lt;", with: "<")
+            .replacingOccurrences(of: "&gt;", with: ">")
+            .replacingOccurrences(of: "&#39;", with: "'")
+            .replacingOccurrences(of: "&quot;", with: "\"")
+            .replacingOccurrences(of: "[ \\t]+", with: " ", options: .regularExpression)
+            .replacingOccurrences(of: "\\n\\s*\\n\\s*\\n+", with: "\n\n", options: .regularExpression)
             .trimmingCharacters(in: .whitespacesAndNewlines)
     }
 }
 
-private func parseFrom(_ raw: String) -> (String, String) {
+func parseFrom(_ raw: String) -> (String, String) {
     if let lt = raw.firstIndex(of: "<"), let gt = raw.firstIndex(of: ">") {
         let name = raw[..<lt].trimmingCharacters(in: CharacterSet(charactersIn: " \""))
         return (name, String(raw[raw.index(after: lt)..<gt]))
     }
-    return (raw, raw)
+    let t = raw.trimmingCharacters(in: .whitespaces)
+    return (t, t)
 }
