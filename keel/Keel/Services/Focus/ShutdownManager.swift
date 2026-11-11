@@ -84,12 +84,20 @@ struct KeelFocusFilter: SetFocusFilterIntent {
     static let title: LocalizedStringResource = "Keel Focus"
     static let description: IntentDescription? = "Hide the inbox and only show what you're working on."
 
-    @Parameter(title: "Hide inbox", default: true) var hideInbox: Bool
+    // iOS calls perform() with the *default* values when the Focus turns off, so the default must be
+    // the no-Focus state (inbox visible). Users switch this on when adding the filter to a Focus.
+    @Parameter(title: "Hide inbox", default: false) var hideInbox: Bool
 
     var displayRepresentation: DisplayRepresentation { DisplayRepresentation(title: "Keel: \(hideInbox ? "inbox hidden" : "normal")") }
 
     func perform() async throws -> some IntentResult {
         UserDefaults.standard.set(hideInbox, forKey: "focus.hideInbox")
         return .result()
+    }
+
+    /// Re-reads the active Focus filter (defaults when no Focus is on) so a stale "hide inbox" never sticks.
+    static func syncCurrent() async {
+        let hide = (try? await KeelFocusFilter.current)?.hideInbox ?? false
+        UserDefaults.standard.set(hide, forKey: "focus.hideInbox")
     }
 }

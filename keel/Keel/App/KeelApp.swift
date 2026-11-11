@@ -4,6 +4,7 @@ import SwiftData
 @main
 struct KeelApp: App {
     let container = KeelStore.container
+    @Environment(\.scenePhase) private var scenePhase
 
     init() {
         SyncEngine.registerBackgroundTasks()
@@ -22,6 +23,9 @@ struct KeelApp: App {
                 }
         }
         .modelContainer(container)
+        .onChange(of: scenePhase) { _, phase in
+            if phase == .active { Task { await KeelFocusFilter.syncCurrent() } }
+        }
     }
 }
 
