@@ -1,4 +1,5 @@
 import Foundation
+import ActivityKit
 import Observation
 import FamilyControls
 import ManagedSettings
@@ -59,11 +60,29 @@ final class ShutdownManager {
             store.shield.webDomains = selection.webDomainTokens.isEmpty ? nil : selection.webDomainTokens
         }
         scheduleTransitionNudges(minutes: minutes)
+        startLiveActivity(endsAt: s.startedAt.addingTimeInterval(Double(minutes * 60)), task: task?.title)
         Haptics.milestone()
         return s
     }
 
+    /// Lock Screen + Dynamic Island countdown.
+    private func startLiveActivity(endsAt: Date, task: String?) {
+        guard ActivityAuthorizationInfo().areActivitiesEnabled else { return }
+        let content = ActivityContent(state: FocusActivityAttributes.ContentState(endsAt: endsAt, taskTitle: task),
+                                      staleDate: endsAt.addingTimeInterval(60))
+        _ = try? Activity.request(attributes: FocusActivityAttributes(startedAt: Date()), content: content)
+    }
+
+    private func endLiveActivities() {
+        Task {
+            for activity in Activity<FocusActivityAttributes>.activities {
+                await activity.end(nil, dismissalPolicy: .immediate)
+            }
+        }
+    }
+
     func end(early: Bool) {
+        endLiveActivities()
         store.clearAllSettings()
         active?.endedAt = Date()
         active?.brokeEarly = early

@@ -110,6 +110,7 @@ final class SyncEngine {
         await ClaudeBridge.applyQueuedActions(ctx: ctx)
         try? ctx.save()
         await ClaudeBridge.uploadSnapshot(ctx: ctx)
+        WidgetSync.update(ctx)
     }
 
     // MARK: Background

@@ -22,6 +22,8 @@ struct KeelApp: App {
                 .onOpenURL { url in
                     if url.scheme?.lowercased() == "mailto" {
                         MailRouter.shared.pending = ComposeDraft.mailto(url)
+                    } else if AppRouter.shared.handle(url) {
+                        // opened from a widget or Live Activity
                     } else {
                         OAuthManager.shared.handleRedirect(url)
                     }
@@ -37,6 +39,7 @@ struct KeelApp: App {
         .modelContainer(container)
         .onChange(of: scenePhase) { _, phase in
             if phase == .active { Task { await KeelFocusFilter.syncCurrent() } }
+            if phase == .background { WidgetSync.update(container.mainContext) }
         }
     }
 }
@@ -55,16 +58,15 @@ struct KeelApp: App {
 }
 
 struct RootView: View {
-    @State private var tab: Tab = .today
+    @State private var router = AppRouter.shared
     @State private var showCommandBar = false
-    @State private var showFocus = false
     @State private var mailRouter = MailRouter.shared
     @AppStorage("onboarding.done") private var onboarded = false
 
     enum Tab { case today, inbox, calendar, tasks, notes }
 
     var body: some View {
-        TabView(selection: $tab) {
+        TabView(selection: $router.tab) {
             TodayView().tabItem { Label("Today", systemImage: "sun.max") }.tag(Tab.today)
             InboxView().tabItem { Label("Inbox", systemImage: "tray") }.tag(Tab.inbox)
             CalendarView().tabItem { Label("Calendar", systemImage: "calendar") }.tag(Tab.calendar)
@@ -72,8 +74,8 @@ struct RootView: View {
             NotesView().tabItem { Label("Notes", systemImage: "note.text") }.tag(Tab.notes)
         }
         // Focus lives above the tab bar (like Music's mini-player): always one tap away, shows the live timer.
-        .tabViewBottomAccessory { FocusAccessory { showFocus = true } }
-        .sheet(isPresented: $showFocus) { NavigationStack { FocusView() } }
+        .tabViewBottomAccessory { FocusAccessory { router.showFocus = true } }
+        .sheet(isPresented: $router.showFocus) { NavigationStack { FocusView() } }
         .sheet(item: $mailRouter.pending) { ComposeView(draft: $0) }
         .fullScreenCover(isPresented: Binding(get: { !onboarded }, set: { if !$0 { onboarded = true } })) { WelcomeTour() }
         // Superhuman-style universal command bar: ⌘K on a keyboard

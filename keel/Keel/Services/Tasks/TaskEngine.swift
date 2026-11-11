@@ -32,6 +32,7 @@ enum TaskActions {
         try? CalendarService.shared.push(t)
         TaskAlerts.schedule(t)
         done ? Haptics.success() : Haptics.tap()
+        if let ctx = t.modelContext { WidgetSync.update(ctx) }
         return rolledTo
     }
 
