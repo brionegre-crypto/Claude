@@ -77,6 +77,24 @@ final class CalendarService {
         task.scheduledBlockStart = start
     }
 
+    // MARK: Editing events (calendar tab)
+
+    /// Drag-to-reschedule: keeps the event's length, moves only this occurrence of a repeating event.
+    func move(_ event: EKEvent, to start: Date) throws {
+        guard event.calendar.allowsContentModifications else { throw CalendarError.readOnly }
+        let length = event.endDate.timeIntervalSince(event.startDate)
+        event.startDate = start
+        event.endDate = start.addingTimeInterval(length)
+        try store.save(event, span: .thisEvent)
+    }
+
+    func delete(_ event: EKEvent) throws {
+        guard event.calendar.allowsContentModifications else { throw CalendarError.readOnly }
+        try store.remove(event, span: .thisEvent)
+    }
+
+    enum CalendarError: Error { case readOnly }
+
     // MARK: Reminders (two-way)
 
     var reminderLists: [EKCalendar] { store.calendars(for: .reminder) }

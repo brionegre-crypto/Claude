@@ -45,18 +45,22 @@ struct KeelApp: App {
 struct RootView: View {
     @State private var tab: Tab = .today
     @State private var showCommandBar = false
+    @State private var showFocus = false
 
-    enum Tab { case today, inbox, tasks, notes, focus }
+    enum Tab { case today, inbox, calendar, tasks, notes }
 
     var body: some View {
         TabView(selection: $tab) {
             TodayView().tabItem { Label("Today", systemImage: "sun.max") }.tag(Tab.today)
             InboxView().tabItem { Label("Inbox", systemImage: "tray") }.tag(Tab.inbox)
+            CalendarView().tabItem { Label("Calendar", systemImage: "calendar") }.tag(Tab.calendar)
             TasksView().tabItem { Label("Tasks", systemImage: "checklist") }.tag(Tab.tasks)
             NotesView().tabItem { Label("Notes", systemImage: "note.text") }.tag(Tab.notes)
-            NavigationStack { FocusView() }.tabItem { Label("Focus", systemImage: "moon.zzz") }.tag(Tab.focus)
         }
-        // Superhuman-style universal command bar: pull down anywhere / ⌘K on iPad keyboard
+        // Focus lives above the tab bar (like Music's mini-player): always one tap away, shows the live timer.
+        .tabViewBottomAccessory { FocusAccessory { showFocus = true } }
+        .sheet(isPresented: $showFocus) { NavigationStack { FocusView() } }
+        // Superhuman-style universal command bar: ⌘K on a keyboard
         .overlay(alignment: .top) {
             if showCommandBar { CommandBar(isPresented: $showCommandBar) }
         }
@@ -64,5 +68,36 @@ struct RootView: View {
             Button("") { showCommandBar.toggle() }
                 .keyboardShortcut("k", modifiers: .command).hidden()
         )
+    }
+}
+
+/// The bar above the tabs: "Start focus" when idle; a live countdown while a session runs.
+struct FocusAccessory: View {
+    @Environment(ShutdownManager.self) private var shutdown
+    var onOpen: () -> Void
+
+    var body: some View {
+        Button(action: onOpen) {
+            HStack(spacing: DS.Space.s) {
+                Image(systemName: shutdown.active == nil ? "moon.zzz" : "moon.zzz.fill")
+                    .foregroundStyle(DS.Palette.focus)
+                    .symbolEffect(.pulse, isActive: shutdown.active != nil)
+                if let end = shutdown.endsAt, end > Date() {
+                    Text("Focusing").font(DS.Font.headline)
+                    Spacer()
+                    Text(timerInterval: Date()...end, countsDown: true)
+                        .font(DS.Font.headline.monospacedDigit())
+                        .foregroundStyle(DS.Palette.focus)
+                } else {
+                    Text(shutdown.active == nil ? "Start focus" : "Focus block done").font(DS.Font.headline)
+                    Spacer()
+                    Image(systemName: "chevron.up").font(.caption).foregroundStyle(DS.Palette.inkSoft)
+                }
+            }
+            .padding(.horizontal, DS.Space.m)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(shutdown.active == nil ? "Start a focus session" : "Open focus session")
     }
 }
