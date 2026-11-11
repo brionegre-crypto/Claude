@@ -94,24 +94,49 @@ struct ICloudSetupView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var email = ""
     @State private var password = ""
+    @State private var checking = false
+    @State private var error: String?
+
     var body: some View {
         NavigationStack {
             Form {
                 Section {
-                    TextField("you@icloud.com", text: $email).textContentType(.emailAddress).keyboardType(.emailAddress).textInputAutocapitalization(.never)
-                    SecureField("App-specific password", text: $password)
+                    TextField("you@icloud.com", text: $email)
+                        .textContentType(.emailAddress).keyboardType(.emailAddress)
+                        .textInputAutocapitalization(.never).autocorrectionDisabled()
+                    SecureField("App-specific password (xxxx-xxxx-xxxx-xxxx)", text: $password)
                 } footer: {
-                    Text("Apple doesn't offer a mail API, so iCloud uses IMAP with an app-specific password. Create one at account.apple.com → Sign-In and Security → App-Specific Passwords. It's stored only in your Keychain.")
+                    Text("Apple doesn't offer a mail API, so Keel connects to iCloud the standard way (IMAP and SMTP) using an app-specific password, not your Apple Account password. Create one at account.apple.com → Sign-In and Security → App-Specific Passwords. It's stored only in this iPhone's Keychain.")
                 }
+                if checking { Section { ProgressView("Checking with iCloud…") } }
+                if let error { Section { Text(error).foregroundStyle(.red) } }
             }
             .navigationTitle("iCloud Mail")
             .toolbar {
-                Button("Connect") {
-                    let a = MailAccount(provider: .icloud, address: email, displayName: email, colorHex: "#3E8EF7")
-                    KeychainStore.save(password, for: "imap.\(a.id)")
-                    ctx.insert(a); dismiss()
-                }.disabled(email.isEmpty || password.isEmpty)
+                ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() } }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Connect") { Task { await connect() } }
+                        .disabled(email.isEmpty || password.isEmpty || checking)
+                }
             }
+        }
+    }
+
+    private func connect() async {
+        checking = true; error = nil
+        defer { checking = false }
+        let address = email.trimmingCharacters(in: .whitespaces).lowercased()
+        let pass = password.trimmingCharacters(in: .whitespaces)
+        do {
+            try await ICloudMailProvider.verify(address: address, password: pass)
+            let a = MailAccount(provider: .icloud, address: address, displayName: address, colorHex: "#3E8EF7")
+            KeychainStore.save(pass, for: "imap.\(a.id)")
+            ctx.insert(a)
+            Haptics.success()
+            dismiss()
+            await SyncEngine.shared.syncAll()
+        } catch {
+            self.error = error.localizedDescription
         }
     }
 }

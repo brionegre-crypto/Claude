@@ -13,6 +13,14 @@ if [ "${KEEL_FAMILY_CONTROLS:-1}" = "0" ]; then
   echo "FamilyControls entitlement removed for this build (KEEL_FAMILY_CONTROLS=0)."
 fi
 
+# Default mail app: Apple must grant the com.apple.developer.mail-client entitlement first.
+# Once it's granted, add KEEL_MAIL_CLIENT=1 to the Xcode Cloud workflow's environment variables.
+if [ "${KEEL_MAIL_CLIENT:-0}" = "1" ]; then
+  sed -i '' 's/^\(        com.apple.security.application-groups:.*\)$/\1\
+        com.apple.developer.mail-client: true/' project.yml
+  echo "Default mail app entitlement included (KEEL_MAIL_CLIENT=1)."
+fi
+
 # Every TestFlight upload needs a higher build number; use Xcode Cloud's counter.
 if [ -n "$CI_BUILD_NUMBER" ]; then
   sed -i '' "s/CURRENT_PROJECT_VERSION: \"[0-9]*\"/CURRENT_PROJECT_VERSION: \"$CI_BUILD_NUMBER\"/" project.yml

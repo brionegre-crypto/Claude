@@ -75,7 +75,7 @@ enum MailProviderFactory {
         switch account.provider {
         case .gmail: GmailProvider(account: account.id)
         case .outlook: OutlookProvider(account: account.id)
-        case .icloud: ICloudMailProvider(address: account.address)
+        case .icloud: ICloudMailProvider(accountId: account.id, address: account.address)
         }
     }
 }
@@ -384,30 +384,19 @@ struct OutlookProvider: MailProvider {
     }
 }
 
-// MARK: - iCloud Mail (IMAP — Apple offers no mail API)
-
-/// iCloud requires IMAP (imap.mail.me.com:993) with an app-specific password from appleid.apple.com.
-/// TODO: implement with Apple's swift-nio-imap package (add via SPM). Until then this provider is inert.
-struct ICloudMailProvider: MailProvider {
-    let address: String
-    func fetchChanges(cursor: String?) async throws -> (messages: [FetchedMessage], cursor: String?) { ([], cursor) }
-    func archive(_ id: String) async throws {}
-    func markRead(_ id: String, read: Bool) async throws {}
-    func setStarred(_ id: String, starred: Bool) async throws {}
-    func trash(_ id: String) async throws {}
-    func applyLabel(_ id: String, label: String) async throws {}
-    func send(_ mail: OutgoingMail) async throws {}
-    func fetchSent(since: Date) async throws -> [FetchedMessage] { [] }
-    func search(_ query: String) async throws -> [FetchedMessage] { [] }
-    func attachments(for id: String) async throws -> [MailAttachment] { [] }
-    func download(_ attachment: MailAttachment, messageId: String) async throws -> Data { Data() }
-}
+// iCloud Mail (IMAP/SMTP) lives in ICloudMail.swift.
 
 // MARK: - MIME (RFC 5322) for Gmail sends, with attachments and threading headers
 
 enum MIME {
-    static func build(_ mail: OutgoingMail) -> Data {
-        var h = "To: \(mail.to.joined(separator: ", "))\r\n"
+    /// `from` is set for SMTP (iCloud); Gmail's API fills From, Date and Message-ID itself.
+    static func build(_ mail: OutgoingMail, from: String? = nil) -> Data {
+        var h = ""
+        if let from {
+            h += "From: \(from)\r\nDate: \(RFC822.headerDate.string(from: Date()))\r\n"
+            h += "Message-ID: <\(UUID().uuidString)@keel.app>\r\n"
+        }
+        h += "To: \(mail.to.joined(separator: ", "))\r\n"
         if !mail.cc.isEmpty { h += "Cc: \(mail.cc.joined(separator: ", "))\r\n" }
         if !mail.bcc.isEmpty { h += "Bcc: \(mail.bcc.joined(separator: ", "))\r\n" }
         h += "Subject: \(encodeHeader(mail.subject))\r\nMIME-Version: 1.0\r\n"
