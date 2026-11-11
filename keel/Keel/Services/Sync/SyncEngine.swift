@@ -72,6 +72,7 @@ final class SyncEngine {
         // 3. Apple Reminders ⇄ Keel tasks
         let tasks = (try? ctx.fetch(FetchDescriptor<TaskItem>())) ?? []
         await CalendarService.shared.syncReminders(tasks: tasks) { ctx.insert($0) }
+        TaskAlerts.rescheduleAll((try? ctx.fetch(FetchDescriptor<TaskItem>())) ?? [])
 
         // 4. Claude connector: apply what Claude queued, then publish a fresh snapshot
         await ClaudeBridge.applyQueuedActions(ctx: ctx)

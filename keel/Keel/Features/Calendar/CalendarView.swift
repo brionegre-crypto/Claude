@@ -684,8 +684,10 @@ struct QuickTaskSheet: View {
                     Button("Add") {
                         let when = hasTime ? due : Calendar.current.startOfDay(for: due)
                         let t = TaskItem(title: title, dueDate: when)
+                        if hasTime { t.alertOffsetMinutes = 0 }
                         ctx.insert(t)
                         try? CalendarService.shared.push(t)
+                        TaskAlerts.schedule(t)
                         Haptics.success()
                         dismiss()
                     }

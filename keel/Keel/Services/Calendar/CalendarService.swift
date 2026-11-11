@@ -119,15 +119,17 @@ final class CalendarService {
                 if rModified > t.updatedAt {        // Reminders side newer → update Keel
                     t.title = r.title ?? t.title
                     t.isDone = r.isCompleted
-                    t.dueDate = r.dueDateComponents?.date
+                    t.dueDate = Self.date(from: r.dueDateComponents)
                     t.listName = r.calendar.title
+                    t.recurrence = r.recurrenceRules?.first.flatMap(Recurrence.init(ek:))
                     t.updatedAt = rModified
                 } else {                            // Keel side newer → push
                     try? push(t)
                 }
             } else if !r.isCompleted {
-                let t = TaskItem(title: r.title ?? "Untitled", dueDate: r.dueDateComponents?.date,
+                let t = TaskItem(title: r.title ?? "Untitled", dueDate: Self.date(from: r.dueDateComponents),
                                  priority: Self.priority(fromEK: r.priority))
+                t.recurrence = r.recurrenceRules?.first.flatMap(Recurrence.init(ek:))
                 t.ekReminderId = r.calendarItemIdentifier
                 t.listName = r.calendar.title
                 t.notes = r.notes ?? ""
@@ -146,16 +148,58 @@ final class CalendarService {
             r = EKReminder(eventStore: store)
             r.calendar = reminderLists.first { $0.title == t.listName } ?? store.defaultCalendarForNewReminders()
         }
+        if let list = reminderLists.first(where: { $0.title == t.listName }), list != r.calendar { r.calendar = list }
         r.title = t.title
         r.notes = t.notes
         r.isCompleted = t.isDone
         r.priority = [0, 9, 5, 1][t.priority.rawValue]
-        r.dueDateComponents = t.dueDate.map { Calendar.current.dateComponents([.year, .month, .day, .hour, .minute], from: $0) }
+        // Date-only tasks stay date-only in Reminders (no "12:00 AM").
+        let fields: Set<Calendar.Component> = t.hasDueTime ? [.year, .month, .day, .hour, .minute] : [.year, .month, .day]
+        r.dueDateComponents = t.dueDate.map { Calendar.current.dateComponents(fields, from: $0) }
+        r.recurrenceRules = t.recurrence.map { [$0.ekRule] }
         try store.save(r, commit: true)
         t.ekReminderId = r.calendarItemIdentifier
     }
 
+    func removeReminder(for t: TaskItem) {
+        guard let id = t.ekReminderId, let r = store.calendarItem(withIdentifier: id) as? EKReminder else { return }
+        try? store.remove(r, commit: true)
+    }
+
+    /// DateComponents.date is nil unless a calendar is attached, which EventKit doesn't guarantee.
+    static func date(from comps: DateComponents?) -> Date? {
+        guard let comps else { return nil }
+        return Calendar.current.date(from: comps)
+    }
+
     private static func priority(fromEK p: Int) -> TaskPriority {
         switch p { case 1...4: .high; case 5: .medium; case 6...9: .low; default: .none }
+    }
+}
+
+// MARK: - Recurrence ⇄ EventKit
+
+extension Recurrence {
+    var ekRule: EKRecurrenceRule {
+        let freq: EKRecurrenceFrequency = switch frequency { case .daily: .daily; case .weekly: .weekly; case .monthly: .monthly; case .yearly: .yearly }
+        let days = weekdays.compactMap { EKWeekday(rawValue: $0) }.map { EKRecurrenceDayOfWeek($0) }
+        return EKRecurrenceRule(recurrenceWith: freq, interval: max(interval, 1),
+                                daysOfTheWeek: days.isEmpty ? nil : days, daysOfTheMonth: nil, monthsOfTheYear: nil,
+                                weeksOfTheYear: nil, daysOfTheYear: nil, setPositions: nil,
+                                end: endDate.map { EKRecurrenceEnd(end: $0) })
+    }
+
+    init?(ek rule: EKRecurrenceRule) {
+        let f: Frequency
+        switch rule.frequency {
+        case .daily: f = .daily
+        case .weekly: f = .weekly
+        case .monthly: f = .monthly
+        case .yearly: f = .yearly
+        @unknown default: return nil
+        }
+        self.init(frequency: f, interval: rule.interval,
+                  weekdays: (rule.daysOfTheWeek ?? []).map { $0.dayOfTheWeek.rawValue },
+                  endDate: rule.recurrenceEnd?.endDate)
     }
 }

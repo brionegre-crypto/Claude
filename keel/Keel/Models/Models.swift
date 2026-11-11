@@ -118,6 +118,48 @@ enum EnergyLevel: Int, Codable, CaseIterable, Identifiable {
     var icon: String { switch self { case .low: "battery.25"; case .medium: "battery.50"; case .high: "battery.100.bolt" } }
 }
 
+/// Repeat rule for tasks (mirrors to Apple Reminders as an EKRecurrenceRule).
+struct Recurrence: Codable, Hashable {
+    enum Frequency: String, Codable, CaseIterable, Identifiable {
+        case daily, weekly, monthly, yearly
+        var id: String { rawValue }
+        var unit: String { switch self { case .daily: "day"; case .weekly: "week"; case .monthly: "month"; case .yearly: "year" } }
+    }
+    var frequency: Frequency
+    var interval: Int = 1
+    var weekdays: [Int] = []                    // Calendar weekday numbers (1 = Sunday … 7 = Saturday), weekly only
+    var endDate: Date? = nil
+
+    static let weekdaysOnly = Recurrence(frequency: .weekly, weekdays: [2, 3, 4, 5, 6])
+
+    /// The next due date after `date`, keeping the time of day. Nil once the repeat has ended.
+    func next(after date: Date) -> Date? {
+        let cal = Calendar.current
+        var result: Date?
+        if frequency == .weekly && !weekdays.isEmpty {
+            for offset in 1...(7 * max(interval, 1) + 7) {
+                guard let d = cal.date(byAdding: .day, value: offset, to: date) else { continue }
+                if weekdays.contains(cal.component(.weekday, from: d)) { result = d; break }
+            }
+        } else {
+            let comp: Calendar.Component = switch frequency { case .daily: .day; case .weekly: .weekOfYear; case .monthly: .month; case .yearly: .year }
+            result = cal.date(byAdding: comp, value: max(interval, 1), to: date)
+        }
+        if let r = result, let end = endDate, r > end { return nil }
+        return result
+    }
+
+    var label: String {
+        if self == .weekdaysOnly { return "Every weekday" }
+        if frequency == .weekly && !weekdays.isEmpty {
+            let names = Calendar.current.shortWeekdaySymbols
+            let days = weekdays.sorted().map { names[($0 - 1) % 7] }.joined(separator: ", ")
+            return interval > 1 ? "Every \(interval) weeks on \(days)" : "Every \(days)"
+        }
+        return interval == 1 ? "Every \(frequency.unit)" : "Every \(interval) \(frequency.unit)s"
+    }
+}
+
 /// ADHD: big tasks are paralyzing — AI splits them into ≤10-minute physical next actions.
 struct MicroStep: Codable, Identifiable, Hashable {
     var id = UUID()
@@ -149,6 +191,18 @@ struct MicroStep: Codable, Identifiable, Hashable {
     var isWaitingOn: Bool = false               // "waiting for" someone else — out of sight, not out of mind
     var timesRescheduled: Int = 0               // AI offers to break down or drop tasks that keep slipping
     var actualMinutes: Int?                     // learns your real estimates (time blindness)
+    // TickTick-style
+    var recurrence: Recurrence?                 // repeating task; completing it moves it to the next date
+    var alertOffsetMinutes: Int?                // nil = no Keel alert; 0 = at due time; 15 = 15 min before…
+    var completionCount: Int = 0                // times a repeating task has been completed
+    var lastCompletedOccurrence: Date?
+
+    /// True when the due date carries a time (not just a day).
+    var hasDueTime: Bool {
+        guard let d = dueDate else { return false }
+        let c = Calendar.current.dateComponents([.hour, .minute], from: d)
+        return !(c.hour == 0 && c.minute == 0)
+    }
 
     init(title: String, dueDate: Date? = nil, priority: TaskPriority = .none) {
         self.title = title

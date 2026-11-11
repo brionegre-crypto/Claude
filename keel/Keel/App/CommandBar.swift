@@ -36,8 +36,7 @@ struct CommandBar: View {
         } else if t == "reset day" {
             ADHDCoach.resetDay(tasks: tasks)
         } else if !text.isEmpty {
-            let p = NaturalDate.parse(text)
-            ctx.insert(TaskItem(title: p.title, dueDate: p.date))
+            QuickAdd.create(text, in: ctx)      // understands repeats, !priority, #tags, ~list
         }
         Haptics.success()
         text = ""; isPresented = false
@@ -52,13 +51,10 @@ struct AddTaskIntent: AppIntent {
     @Parameter(title: "Task") var text: String
 
     @MainActor func perform() async throws -> some IntentResult & ProvidesDialog {
-        let container = KeelStore.container
-        let p = NaturalDate.parse(text)
-        let t = TaskItem(title: p.title, dueDate: p.date)
-        container.mainContext.insert(t)
-        try container.mainContext.save()
-        try? CalendarService.shared.push(t)
-        return .result(dialog: "Added “\(p.title)”.")
+        let ctx = KeelStore.container.mainContext
+        let t = QuickAdd.create(text, in: ctx)
+        try ctx.save()
+        return .result(dialog: "Added “\(t.title)”\(t.recurrence.map { ", \($0.label.lowercased())" } ?? "").")
     }
 }
 

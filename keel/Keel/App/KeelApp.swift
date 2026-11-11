@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import UserNotifications
 
 @main
 struct KeelApp: App {
@@ -8,6 +9,8 @@ struct KeelApp: App {
 
     init() {
         SyncEngine.registerBackgroundTasks()
+        UNUserNotificationCenter.current().delegate = NotificationHandler.shared
+        TaskAlerts.registerCategories()
     }
 
     var body: some Scene {
@@ -23,6 +26,8 @@ struct KeelApp: App {
                     }
                 }
                 .task {
+                    // Task, focus, habit and promise alerts all need this once.
+                    _ = try? await UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge])
                     SyncEngine.shared.configure(container: container)
                     await SyncEngine.shared.syncAll()
                     SyncEngine.scheduleNextRefresh()
