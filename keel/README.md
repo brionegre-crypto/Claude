@@ -171,7 +171,7 @@ keel/
    ```
    The `.xcodeproj` is generated from `project.yml`, so edit `project.yml` (not Xcode's project settings) and re-run the script after adding files. With your developer account, Screen Time app blocking works on your own iPhone during development. Shipping it on the App Store needs a separate FamilyControls distribution request to Apple.
 2. **Google:** in Google Cloud Console, create a project, enable the Gmail API, and create an *iOS* OAuth client. Put the client ID in `OAuthManager.google` (two places) and add the reversed client ID URL scheme in `project.yml`.
-3. **Microsoft:** in Azure Portal → App registrations, create a *public client* with redirect `msauth.com.keel.Keel://auth`. Put the client ID in `OAuthManager.microsoft`.
+3. **Microsoft:** in Azure Portal → App registrations, create a *public client* with redirect `msauth.com.briangreenejr.keel://auth`. Put the client ID in `OAuthManager.microsoft`.
 4. **iCloud Mail:** create an app-specific password at account.apple.com. ⚠️ The IMAP client isn't written yet (`ICloudMailProvider` is a stub). The next step is adding Apple's `swift-nio-imap` package.
 5. **Backend:**
    ```bash

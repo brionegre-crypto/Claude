@@ -33,7 +33,7 @@ struct KeelApp: App {
             Habit.self, HabitStack.self, HabitLog.self, FocusSession.self, Commitment.self,
         ])
         // Lives in the App Group so widgets / intents extensions can read it too.
-        let config = ModelConfiguration(schema: schema, groupContainer: .identifier("group.com.keel.shared"))
+        let config = ModelConfiguration(schema: schema, groupContainer: .identifier("group.com.briangreenejr.keel"))
         return try! ModelContainer(for: schema, configurations: config)
     }()
 }

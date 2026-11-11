@@ -27,7 +27,7 @@ final class OAuthManager: NSObject, ASWebAuthenticationPresentationContextProvid
         authURL: URL(string: "https://login.microsoftonline.com/common/oauth2/v2.0/authorize")!,
         tokenURL: URL(string: "https://login.microsoftonline.com/common/oauth2/v2.0/token")!,
         clientId: "YOUR_AZURE_APP_CLIENT_ID",
-        redirect: "msauth.com.keel.Keel://auth",
+        redirect: "msauth.com.briangreenejr.keel://auth",
         scopes: ["offline_access", "openid", "email", "Mail.ReadWrite", "Mail.Send", "Calendars.ReadWrite", "Tasks.ReadWrite"])
 
     struct Tokens: Codable { var access: String; var refresh: String?; var expiresAt: Date }

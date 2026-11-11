@@ -1,23 +1,26 @@
 # XcodeGen spec. On a Mac: `brew install xcodegen && cd keel && xcodegen` → opens Keel.xcodeproj
 name: Keel
 options:
-  bundleIdPrefix: com.keel
+  bundleIdPrefix: com.briangreenejr
   deploymentTarget:
     iOS: "26.0"   # Foundation Models (Apple Intelligence) needs iOS 26+
 settings:
   base:
-    SWIFT_VERSION: "5.10"
+    SWIFT_VERSION: "5.0"   # Xcode accepts 5.0 or 6.0 here; 5.0 = Swift 5 language mode
     DEVELOPMENT_TEAM: "" # set your Apple Developer team ID
 targets:
   Keel:
     type: application
     platform: iOS
     sources: [Keel]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.briangreenejr.keel   # must be unique across all Apple developers
     entitlements:
       path: Keel/Keel.entitlements
       properties:
         com.apple.developer.family-controls: true
-        com.apple.security.application-groups: [group.com.keel.shared]
+        com.apple.security.application-groups: [group.com.briangreenejr.keel]
         aps-environment: development
     info:
       path: Keel/Info.plist
