@@ -47,12 +47,16 @@ enum DS {
 }
 
 // MARK: - Haptics (dopamine on completion — important for ADHD reward loops)
-enum Haptics {
+@MainActor enum Haptics {
     static func tap() { UIImpactFeedbackGenerator(style: .light).impactOccurred() }
     static func success() { UINotificationFeedbackGenerator().notificationOccurred(.success) }
     static func milestone() {
         let g = UIImpactFeedbackGenerator(style: .rigid)
-        g.impactOccurred(); DispatchQueue.main.asyncAfter(deadline: .now() + 0.12) { g.impactOccurred(intensity: 0.7) }
+        g.impactOccurred()
+        Task { @MainActor in
+            try? await Task.sleep(for: .milliseconds(120))
+            g.impactOccurred(intensity: 0.7)
+        }
     }
 }
 
