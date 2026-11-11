@@ -2,6 +2,8 @@ import Foundation
 import SwiftData
 import WidgetKit
 import Observation
+import EventKit
+import CoreGraphics
 
 /// Writes the widget snapshot and asks WidgetKit to refresh. Cheap, so it runs after sync,
 /// when Keel goes to the background, and after task changes.

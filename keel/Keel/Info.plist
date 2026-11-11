@@ -29,6 +29,7 @@
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>com.keel.app</string>
+				<string>com.googleusercontent.apps.893825511742-h5bgc5adfd9f9tf1m6g0dhi4m59ude6n</string>
 			</array>
 		</dict>
 	</array>
@@ -40,10 +41,20 @@
 	<string>https://YOUR-BACKEND.example.com/v1/messages</string>
 	<key>NSCalendarsFullAccessUsageDescription</key>
 	<string>Keel shows your events next to your tasks and email so it can plan your day.</string>
+	<key>NSCalendarsUsageDescription</key>
+	<string>Keel shows your events next to your tasks and email so it can plan your day.</string>
+	<key>NSCalendarsWriteOnlyAccessUsageDescription</key>
+	<string>Keel adds focus blocks and events you create to your calendar.</string>
+	<key>NSContactsUsageDescription</key>
+	<string>Keel shows who's invited to your calendar events.</string>
 	<key>NSFaceIDUsageDescription</key>
 	<string>Keel locks your notes and mail behind Face ID.</string>
 	<key>NSRemindersFullAccessUsageDescription</key>
 	<string>Keel syncs with Apple Reminders so your tasks live in one place.</string>
+	<key>NSRemindersUsageDescription</key>
+	<string>Keel syncs with Apple Reminders so your tasks live in one place.</string>
+	<key>NSSupportsLiveActivities</key>
+	<true/>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>
@@ -52,5 +63,11 @@
 	</array>
 	<key>UILaunchScreen</key>
 	<dict/>
+	<key>UIRequiresFullScreen</key>
+	<true/>
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+	</array>
 </dict>
 </plist>
