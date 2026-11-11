@@ -1,5 +1,6 @@
 import Foundation
 import EventKit
+import UIKit
 
 /// TickTick-style sync: EventKit sees EVERY calendar the user has on the device —
 /// iCloud, Google, Outlook/Exchange, Yahoo, subscribed (.ics) — plus all Apple Reminders lists.

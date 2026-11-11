@@ -11,6 +11,8 @@ final class CloudAI {
 
     enum CloudError: Error { case http(Int), refused, badOutput }
 
+    private struct Envelope<U: Decodable>: Decodable { let stop_reason: String; let json: U? }
+
     /// `task` tells the backend which model/effort to use (see backend/src/ai.ts ROUTES).
     private func call<T: Decodable>(task: String, system: String, user: String, schema: [String: Any], as: T.Type) async throws -> T {
         var req = URLRequest(url: endpoint)
@@ -24,7 +26,6 @@ final class CloudAI {
         let code = (resp as? HTTPURLResponse)?.statusCode ?? 0
         guard code == 200 else { throw CloudError.http(code) }
         // Backend returns {"stop_reason": "...", "json": {...}}
-        struct Envelope<U: Decodable>: Decodable { let stop_reason: String; let json: U? }
         let env = try JSONDecoder().decode(Envelope<T>.self, from: data)
         if env.stop_reason == "refusal" { throw CloudError.refused }
         guard let out = env.json else { throw CloudError.badOutput }
