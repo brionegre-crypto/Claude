@@ -60,6 +60,8 @@ struct HabitsView: View {
                     }
                     if i < chain.count - 1 { Image(systemName: "arrow.down").font(.caption).foregroundStyle(DS.Palette.inkSoft).padding(.leading, 6) }
                 }
+                HabitHeatmap(habitIds: chain.map(\.id), logs: logs)
+                    .padding(.top, DS.Space.xs)
             }
         }
     }
@@ -128,5 +130,43 @@ struct NewStackView: View {
             let h = Habit(name: n); h.stackId = s.id; h.orderInStack = i; ctx.insert(h)
         }
         dismiss()
+    }
+}
+
+/// 12-week heatmap for a habit stack: darker = more of the stack done that day.
+struct HabitHeatmap: View {
+    let habitIds: [UUID]
+    let logs: [HabitLog]
+    private let weeks = 12
+    private let cal = Calendar.current
+
+    var body: some View {
+        let today = cal.startOfDay(for: Date())
+        let thisWeek = cal.dateInterval(of: .weekOfYear, for: today)?.start ?? today
+        let start = cal.date(byAdding: .weekOfYear, value: -(weeks - 1), to: thisWeek)!
+        let ids = Set(habitIds)
+        var perDay: [Date: Int] = [:]
+        for l in logs where ids.contains(l.habitId) && l.day >= start { perDay[l.day, default: 0] += 1 }
+        let total = max(1, habitIds.count)
+        return VStack(alignment: .leading, spacing: 4) {
+            HStack(spacing: 3) {
+                ForEach(0..<weeks, id: \.self) { w in
+                    VStack(spacing: 3) {
+                        ForEach(0..<7, id: \.self) { d in
+                            let day = cal.date(byAdding: .day, value: w * 7 + d, to: start)!
+                            let done = perDay[day] ?? 0
+                            RoundedRectangle(cornerRadius: 3)
+                                .fill(day > today ? Color.clear
+                                      : done == 0 ? DS.Palette.inkSoft.opacity(0.12)
+                                      : DS.Palette.calm.opacity(0.3 + 0.7 * Double(done) / Double(total)))
+                                .frame(width: 14, height: 14)
+                        }
+                    }
+                }
+            }
+            Text("Last 12 weeks").font(.caption2).foregroundStyle(DS.Palette.inkSoft)
+        }
+        .accessibilityElement()
+        .accessibilityLabel("\(perDay.count) active days in the last 12 weeks")
     }
 }

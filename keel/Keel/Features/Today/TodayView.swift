@@ -12,6 +12,7 @@ struct TodayView: View {
     @AppStorage("energy") private var energyRaw = EnergyLevel.medium.rawValue
     @AppStorage("year.theme") private var yearTheme = ""
     @Query(sort: \FollowUp.remindAt) private var followUps: [FollowUp]
+    @Query private var idealBlocks: [IdealBlock]
     @State private var plan: DayPlan?
     @State private var planning = false
     @State private var showSettings = false
@@ -58,6 +59,11 @@ struct TodayView: View {
                         NavigationLink { GoalsView() } label: { Label("Goals", systemImage: "target") }
                         NavigationLink { HabitsView() } label: { Label("Habit stacks", systemImage: "link") }
                         NavigationLink { WeeklyReviewView() } label: { Label("Weekly review", systemImage: "chart.bar.doc.horizontal") }
+                        NavigationLink { TimeAuditView() } label: { Label("Time audit", systemImage: "chart.pie") }
+                        NavigationLink { IdealWeekView() } label: { Label("Ideal week", systemImage: "calendar.badge.clock") }
+                        NavigationLink { ReadLaterView() } label: { Label("Read later", systemImage: "books.vertical") }
+                        NavigationLink { MeetingRecorderView() } label: { Label("Record a meeting", systemImage: "mic") }
+                        NavigationLink { OdysseyView() } label: { Label("Odyssey plan", systemImage: "point.3.filled.connected.trianglepath.dotted") }
                         NavigationLink { AssistantView() } label: { Label("Ask Keel", systemImage: "sparkles") }
                         NavigationLink { FeatureGuideView() } label: { Label("How Keel works", systemImage: "questionmark.circle") }
                     } label: { Image(systemName: "square.grid.2x2") }
@@ -281,7 +287,9 @@ struct TodayView: View {
             events: events.map { "\($0.startDate.formatted(date: .omitted, time: .shortened))-\($0.endDate.formatted(date: .omitted, time: .shortened)) \($0.title ?? "")" },
             tasks: tasks.prefix(20).map { "\($0.title) [~\(ADHDCoach.calibratedMinutes($0))m, energy \($0.energy.label)]" },
             importantEmails: emails.filter { $0.category == .important }.prefix(5).map { $0.subject },
-            habitStacks: stacks.map { "\($0.name): \($0.anchor.label)" })
+            habitStacks: stacks.map { "\($0.name): \($0.anchor.label)" },
+            idealWeek: idealBlocks.filter { $0.weekdays.contains(Calendar.current.component(.weekday, from: Date())) }
+                .sorted { $0.startMinute < $1.startMinute }.map { "\($0.timeLabel) \($0.title) (\($0.area.title))" })
         plan = await AIRouter.shared.planDay(context: ctxData)
     }
 }

@@ -24,6 +24,7 @@ struct NotesView: View {
                 Menu {
                     Button("Blank page") { create(Note(title: "Untitled")) }
                     Button("Meeting notes for next event") { createMeetingNote() }
+                    NavigationLink { MeetingRecorderView() } label: { Label("Record a meeting", systemImage: "mic") }
                     Button("Daily journal") { create(Note(title: Date().formatted(date: .complete, time: .omitted), blocks: [
                         .init(kind: .heading, text: "Wins"), .init(kind: .bullet, text: ""),
                         .init(kind: .heading, text: "On my mind"), .init(kind: .bullet, text: ""),

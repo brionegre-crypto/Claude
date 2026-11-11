@@ -16,6 +16,7 @@ targets:
     sources: [Keel]
     dependencies:
       - target: KeelWidgets               # widgets + focus Live Activity, embedded in the app
+      - target: KeelShare                 # "Save to Keel" in the share sheet
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.briangreenejr.keel   # must be unique across all Apple developers
@@ -38,7 +39,7 @@ targets:
         CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         ITSAppUsesNonExemptEncryption: false   # only standard HTTPS, so TestFlight skips the export-compliance question
         UILaunchScreen: {}
-        UIBackgroundModes: [fetch, processing, remote-notification]
+        UIBackgroundModes: [fetch, processing, remote-notification, audio]
         BGTaskSchedulerPermittedIdentifiers:
           - com.keel.sync.refresh
           - com.keel.sync.process
@@ -51,6 +52,8 @@ targets:
         UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
         UIRequiresFullScreen: true
         NSSupportsLiveActivities: true
+        NSMicrophoneUsageDescription: Keel records meetings you choose to record and turns them into notes.
+        NSSpeechRecognitionUsageDescription: Keel transcribes your meeting recordings on this iPhone.
         NSFaceIDUsageDescription: Keel locks your notes and mail behind Face ID.
         CFBundleURLTypes:
           - CFBundleURLSchemes: [com.keel.app, com.googleusercontent.apps.893825511742-h5bgc5adfd9f9tf1m6g0dhi4m59ude6n]   # Google sign-in redirect
@@ -79,6 +82,35 @@ targets:
         CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         NSExtension:
           NSExtensionPointIdentifier: com.apple.widgetkit-extension
+
+  KeelShare:
+    type: app-extension
+    platform: iOS
+    sources: [KeelShare]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.briangreenejr.keel.share
+        MARKETING_VERSION: "0.1.0"
+        CURRENT_PROJECT_VERSION: "1"
+        CODE_SIGN_STYLE: Automatic
+        TARGETED_DEVICE_FAMILY: "1"
+    entitlements:
+      path: KeelShare/KeelShare.entitlements
+      properties:
+        com.apple.security.application-groups: [group.com.briangreenejr.keel]
+    info:
+      path: KeelShare/Info.plist
+      properties:
+        CFBundleDisplayName: Keel
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.share-services
+          NSExtensionPrincipalClass: $(PRODUCT_MODULE_NAME).ShareViewController
+          NSExtensionAttributes:
+            NSExtensionActivationRule:
+              NSExtensionActivationSupportsWebURLWithMaxCount: 1
+              NSExtensionActivationSupportsText: true
 
 schemes:
   Keel:   # shared scheme, committed to the repo; Xcode Cloud only sees shared schemes

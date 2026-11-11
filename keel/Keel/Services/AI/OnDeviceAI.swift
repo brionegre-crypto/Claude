@@ -76,6 +76,7 @@ final class OnDeviceAI {
         Events: \(c.events.joined(separator: "; "))
         Tasks: \(c.tasks.prefix(15).joined(separator: "; "))
         Habit stacks: \(c.habitStacks.joined(separator: "; "))
+        Ideal day (follow it where events allow): \(c.idealWeek.joined(separator: "; "))
         """
         let p = try await session.respond(to: prompt, generating: Plan.self).content
         return DayPlan(headline: p.headline,

@@ -38,7 +38,10 @@ struct KeelApp: App {
         }
         .modelContainer(container)
         .onChange(of: scenePhase) { _, phase in
-            if phase == .active { Task { await KeelFocusFilter.syncCurrent() } }
+            if phase == .active {
+                Task { await KeelFocusFilter.syncCurrent() }
+                LinkSaver.importShared(into: container.mainContext)     // links saved from Safari's share sheet
+            }
             if phase == .background { WidgetSync.update(container.mainContext) }
         }
     }

@@ -84,6 +84,7 @@ struct DayContext: Codable {
     var tasks: [String]
     var importantEmails: [String]
     var habitStacks: [String]
+    var idealWeek: [String] = []        // today's blocks from the ideal week
 }
 
 struct DayPlan: Codable {
