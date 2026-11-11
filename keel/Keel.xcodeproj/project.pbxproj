@@ -27,6 +27,7 @@
 		8CC07EFCA332B8907BB3E65A /* SyncEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BE33F801FFD619712E382CF /* SyncEngine.swift */; };
 		8F340F1DFFF169BC050B645A /* AccountsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F2B871E95739B31F6282566 /* AccountsView.swift */; };
 		A00AF67D479B619AB15E2F91 /* ShutdownManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBDA564035648255534FDF98 /* ShutdownManager.swift */; };
+		A446D4963BFA2F12EA7524DA /* TaskEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F965AFDF10B5B9C9369DA47 /* TaskEngine.swift */; };
 		AEA0B8BD83287B5BABEDB968 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17C252D173987B00D25462AF /* Models.swift */; };
 		B37C9261974F622FD2EDA1B1 /* DesignSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AAD56951A8EABC3E1B4B1E0 /* DesignSystem.swift */; };
 		C47D427217918E8C75B2B94D /* PromisesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6BC64A281F313E34B666753 /* PromisesView.swift */; };
@@ -55,6 +56,7 @@
 		52D02FDBC427DF0317C4A4E9 /* TasksView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TasksView.swift; sourceTree = "<group>"; };
 		6BE33F801FFD619712E382CF /* SyncEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncEngine.swift; sourceTree = "<group>"; };
 		6D48520D370A3903CB9A62B8 /* AIRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIRouter.swift; sourceTree = "<group>"; };
+		6F965AFDF10B5B9C9369DA47 /* TaskEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskEngine.swift; sourceTree = "<group>"; };
 		7FD2977BFF93D2B3A4B40E78 /* ComposeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComposeView.swift; sourceTree = "<group>"; };
 		8DF811CE33148A8C868866BD /* InboxView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InboxView.swift; sourceTree = "<group>"; };
 		8F2B871E95739B31F6282566 /* AccountsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountsView.swift; sourceTree = "<group>"; };
@@ -164,6 +166,14 @@
 			path = Today;
 			sourceTree = "<group>";
 		};
+		6CF143E8847BC3F93B126920 /* Tasks */ = {
+			isa = PBXGroup;
+			children = (
+				6F965AFDF10B5B9C9369DA47 /* TaskEngine.swift */,
+			);
+			path = Tasks;
+			sourceTree = "<group>";
+		};
 		756DFE6A19E2E2C09041E447 /* Services */ = {
 			isa = PBXGroup;
 			children = (
@@ -174,6 +184,7 @@
 				8F1F0264CFA05CEB1B6FDA4C /* Habits */,
 				84AE091B1B16BB4952E9F6C8 /* Mail */,
 				F157118944B78513A709F8F6 /* Sync */,
+				6CF143E8847BC3F93B126920 /* Tasks */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -389,6 +400,7 @@
 				C47D427217918E8C75B2B94D /* PromisesView.swift in Sources */,
 				A00AF67D479B619AB15E2F91 /* ShutdownManager.swift in Sources */,
 				8CC07EFCA332B8907BB3E65A /* SyncEngine.swift in Sources */,
+				A446D4963BFA2F12EA7524DA /* TaskEngine.swift in Sources */,
 				282F1904CC270F67AFA1B981 /* TasksView.swift in Sources */,
 				3E454BF14F0F80669C88960B /* TodayView.swift in Sources */,
 			);
