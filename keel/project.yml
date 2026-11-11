@@ -1,4 +1,5 @@
-# XcodeGen spec. On a Mac: `brew install xcodegen && cd keel && xcodegen` → opens Keel.xcodeproj
+# XcodeGen spec. On a Mac: `./open-in-xcode.sh` regenerates Keel.xcodeproj from this file.
+# Xcode Cloud runs ci_scripts/ci_post_clone.sh, which does the same before every TestFlight build.
 name: Keel
 options:
   bundleIdPrefix: com.briangreenejr
@@ -16,6 +17,10 @@ targets:
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.briangreenejr.keel   # must be unique across all Apple developers
+        MARKETING_VERSION: "0.1.0"          # the version people see
+        CURRENT_PROJECT_VERSION: "1"        # build number; Xcode Cloud overrides it on every build
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        CODE_SIGN_STYLE: Automatic
     entitlements:
       path: Keel/Keel.entitlements
       properties:
@@ -26,6 +31,9 @@ targets:
       path: Keel/Info.plist
       properties:
         CFBundleDisplayName: Keel
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        ITSAppUsesNonExemptEncryption: false   # only standard HTTPS, so TestFlight skips the export-compliance question
         UILaunchScreen: {}
         UIBackgroundModes: [fetch, processing, remote-notification]
         BGTaskSchedulerPermittedIdentifiers:

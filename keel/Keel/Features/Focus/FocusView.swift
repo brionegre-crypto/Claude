@@ -68,12 +68,21 @@ struct FocusView: View {
                     }.buttonStyle(.plain)
                 }
                 if level != .soft {
-                    Button("Choose apps to block") {
-                        Task { if !shutdown.isAuthorized { await shutdown.authorize() }; showPicker = true }
-                    }.font(DS.Font.caption)
+                    if let reason = shutdown.blockingUnavailableReason {
+                        Label(reason, systemImage: "info.circle")
+                            .font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
+                    } else {
+                        Button("Choose apps to block") {
+                            Task {
+                                if !shutdown.isAuthorized { await shutdown.authorize() }
+                                if shutdown.isAuthorized { showPicker = true }
+                            }
+                        }.font(DS.Font.caption)
+                    }
                 }
             }
             Button {
+                // Without Screen Time permission, Shield/Locked still run as Soft focus plus the cool-down.
                 withAnimation(DS.spring) { ctx.insert(shutdown.start(minutes: minutes, level: level, task: preselected)) }
             } label: {
                 Text("Begin").font(DS.Font.headline).frame(maxWidth: .infinity).padding(.vertical, DS.Space.m)

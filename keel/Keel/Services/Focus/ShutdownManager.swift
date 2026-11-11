@@ -34,11 +34,19 @@ final class ShutdownManager {
     private(set) var level: Level = .soft
     var endsAt: Date? { active.map { $0.startedAt.addingTimeInterval(Double($0.plannedMinutes * 60)) } }
 
+    /// Why app blocking isn't available, if it isn't (shown in the Focus screen instead of failing silently).
+    private(set) var blockingUnavailableReason: String?
+
     func authorize() async {
         do {
             try await AuthorizationCenter.shared.requestAuthorization(for: .individual)
             isAuthorized = AuthorizationCenter.shared.authorizationStatus == .approved
-        } catch { isAuthorized = false }
+            blockingUnavailableReason = isAuthorized ? nil : "Screen Time permission wasn't granted. You can allow it in Settings → Screen Time."
+        } catch {
+            isAuthorized = false
+            // Simulator, or a TestFlight build before Apple approves the FamilyControls entitlement.
+            blockingUnavailableReason = "App blocking isn't available in this build yet. Soft focus still hides your inbox and holds Keel's alerts."
+        }
     }
 
     func start(minutes: Int, level: Level, task: TaskItem?) -> FocusSession {

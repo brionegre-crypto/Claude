@@ -9,6 +9,5 @@ social-12wk/.tmp-*
 social-12wk/packs-boost/
 social-12wk/packs-boost2/
 social-12wk/music/*.wav
-keel/Keel.xcodeproj/
-keel/Keel/Info.plist
-keel/Keel/Keel.entitlements
+keel/Keel.xcodeproj/xcuserdata/
+keel/Keel.xcodeproj/project.xcworkspace/xcuserdata/
