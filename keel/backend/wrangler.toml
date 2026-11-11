@@ -1,0 +1,18 @@
+name = "keel-backend"
+main = "src/index.ts"
+compatibility_date = "2026-11-01"
+compatibility_flags = ["nodejs_compat"]
+
+# KV namespace for per-user AI quotas, the Claude connector snapshot and queued actions.
+# Create with: npx wrangler kv namespace create KEEL  → paste the id below.
+[[kv_namespaces]]
+binding = "KEEL"
+id = "REPLACE_WITH_KV_ID"
+
+[vars]
+DAILY_AI_LIMIT = "200"
+
+# Secrets (never commit):
+#   npx wrangler secret put ANTHROPIC_API_KEY
+#   npx wrangler secret put KEEL_DEVICE_TOKEN     # long random string; the app sends it as Bearer
+#   npx wrangler secret put KEEL_MCP_TOKEN        # separate token for the Claude connector

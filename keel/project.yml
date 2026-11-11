@@ -1,0 +1,36 @@
+# XcodeGen spec. On a Mac: `brew install xcodegen && cd keel && xcodegen` → opens Keel.xcodeproj
+name: Keel
+options:
+  bundleIdPrefix: com.keel
+  deploymentTarget:
+    iOS: "26.0"   # Foundation Models (Apple Intelligence) needs iOS 26+
+settings:
+  base:
+    SWIFT_VERSION: "5.10"
+    DEVELOPMENT_TEAM: "" # set your Apple Developer team ID
+targets:
+  Keel:
+    type: application
+    platform: iOS
+    sources: [Keel]
+    entitlements:
+      path: Keel/Keel.entitlements
+      properties:
+        com.apple.developer.family-controls: true
+        com.apple.security.application-groups: [group.com.keel.shared]
+        aps-environment: development
+    info:
+      path: Keel/Info.plist
+      properties:
+        CFBundleDisplayName: Keel
+        UILaunchScreen: {}
+        UIBackgroundModes: [fetch, processing, remote-notification]
+        BGTaskSchedulerPermittedIdentifiers:
+          - com.keel.sync.refresh
+          - com.keel.sync.process
+        NSCalendarsFullAccessUsageDescription: Keel shows your events next to your tasks and email so it can plan your day.
+        NSRemindersFullAccessUsageDescription: Keel syncs with Apple Reminders so your tasks live in one place.
+        NSFaceIDUsageDescription: Keel locks your notes and mail behind Face ID.
+        CFBundleURLTypes:
+          - CFBundleURLSchemes: [com.keel.app]
+        KeelAIProxyURL: "https://YOUR-BACKEND.example.com/v1/messages"
