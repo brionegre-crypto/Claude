@@ -15,7 +15,13 @@ struct KeelApp: App {
             RootView()
                 .environment(SyncEngine.shared)
                 .environment(ShutdownManager.shared)
-                .onOpenURL { OAuthManager.shared.handleRedirect($0) }
+                .onOpenURL { url in
+                    if url.scheme?.lowercased() == "mailto" {
+                        MailRouter.shared.pending = ComposeDraft.mailto(url)
+                    } else {
+                        OAuthManager.shared.handleRedirect(url)
+                    }
+                }
                 .task {
                     SyncEngine.shared.configure(container: container)
                     await SyncEngine.shared.syncAll()
@@ -46,6 +52,7 @@ struct RootView: View {
     @State private var tab: Tab = .today
     @State private var showCommandBar = false
     @State private var showFocus = false
+    @State private var mailRouter = MailRouter.shared
 
     enum Tab { case today, inbox, calendar, tasks, notes }
 
@@ -60,6 +67,7 @@ struct RootView: View {
         // Focus lives above the tab bar (like Music's mini-player): always one tap away, shows the live timer.
         .tabViewBottomAccessory { FocusAccessory { showFocus = true } }
         .sheet(isPresented: $showFocus) { NavigationStack { FocusView() } }
+        .sheet(item: $mailRouter.pending) { ComposeView(draft: $0) }
         // Superhuman-style universal command bar: ⌘K on a keyboard
         .overlay(alignment: .top) {
             if showCommandBar { CommandBar(isPresented: $showCommandBar) }

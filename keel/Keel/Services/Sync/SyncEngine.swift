@@ -31,10 +31,14 @@ final class SyncEngine {
                 let provider = MailProviderFactory.make(for: account)
                 let (msgs, cursor) = try await provider.fetchChanges(cursor: account.syncCursor)
                 for m in msgs {
-                    let e = EmailMessage(accountId: account.id, providerMessageId: m.providerId, threadId: m.threadId,
-                                         from: m.from, fromName: m.fromName, subject: m.subject, snippet: m.snippet,
-                                         bodyPlain: m.body, receivedAt: m.date, isRead: m.isRead)
-                    ctx.insert(e)
+                    let id = "\(account.id)|\(m.providerId)"
+                    if let existing = try? ctx.fetch(FetchDescriptor<EmailMessage>(predicate: #Predicate { $0.id == id })).first {
+                        // Already synced: update state only, keep Keel's AI sorting and summary.
+                        existing.isRead = m.isRead
+                        existing.isStarred = m.isStarred
+                    } else {
+                        ctx.insert(EmailMessage(accountId: account.id, fetched: m))
+                    }
                 }
                 account.syncCursor = cursor
                 account.lastSyncedAt = Date()

@@ -17,7 +17,7 @@ struct CommandBar: View {
                 TextField("Add a task, search, or “focus 25”…", text: $text)
                     .focused($focused).onSubmit(run)
             }
-            Text("Enter = add as task · “focus N” · “reset day” · “dump”")
+            Text("Enter = add as task · “focus N” · “mail” · “reset day”")
                 .font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
         }
         .padding(DS.Space.m)
@@ -31,6 +31,8 @@ struct CommandBar: View {
         let t = text.lowercased()
         if t.hasPrefix("focus"), let m = Int(t.filter(\.isNumber)) {
             ctx.insert(ShutdownManager.shared.start(minutes: m, level: .soft, task: nil))
+        } else if t == "mail" || t == "compose" || t.hasPrefix("email ") {
+            MailRouter.shared.pending = ComposeDraft(to: t.hasPrefix("email ") ? String(text.dropFirst(6)) : "")
         } else if t == "reset day" {
             ADHDCoach.resetDay(tasks: tasks)
         } else if !text.isEmpty {

@@ -57,6 +57,13 @@ enum TriageCategory: String, Codable, CaseIterable, Identifiable {
     var isRead: Bool
     var isArchived: Bool = false
     var snoozedUntil: Date?
+    // Full mail client fields
+    var bodyHTML: String?
+    var messageIdHeader: String?               // RFC Message-ID, for threaded replies
+    var toLine: String = ""
+    var ccLine: String = ""
+    var isStarred: Bool = false
+    var hasAttachments: Bool = false
 
     // AI fields
     var category: TriageCategory?
@@ -80,6 +87,22 @@ enum TriageCategory: String, Codable, CaseIterable, Identifiable {
         self.bodyPlain = bodyPlain
         self.receivedAt = receivedAt
         self.isRead = isRead
+    }
+
+    convenience init(accountId: String, fetched m: FetchedMessage) {
+        self.init(accountId: accountId, providerMessageId: m.providerId, threadId: m.threadId, from: m.from,
+                  fromName: m.fromName, subject: m.subject, snippet: m.snippet, bodyPlain: m.body,
+                  receivedAt: m.date, isRead: m.isRead)
+        bodyHTML = m.html
+        messageIdHeader = m.messageIdHeader
+        toLine = m.to
+        ccLine = m.cc
+        isStarred = m.isStarred
+        hasAttachments = m.hasAttachments
+    }
+
+    var replyContext: ReplyContext {
+        ReplyContext(providerMessageId: providerMessageId, threadId: threadId, messageIdHeader: messageIdHeader, replyAll: false)
     }
 }
 
