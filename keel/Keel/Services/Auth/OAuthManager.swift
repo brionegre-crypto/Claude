@@ -122,6 +122,10 @@ enum KeychainStore {
         return String(data: d, encoding: .utf8)
     }
 
+    static func delete(_ key: String) {
+        SecItemDelete([kSecClass as String: kSecClassGenericPassword, kSecAttrAccount as String: key] as CFDictionary)
+    }
+
     static func saveTokens(_ t: OAuthManager.Tokens, account: String) {
         if let d = try? JSONEncoder().encode(t), let s = String(data: d, encoding: .utf8) { save(s, for: "tokens.\(account)") }
     }

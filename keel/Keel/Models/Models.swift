@@ -390,6 +390,100 @@ enum TaskFeeling: String, Codable, CaseIterable, Identifiable {
     var emoji: String { switch self { case .play: "🎈"; case .power: "💪"; case .people: "🤝"; case .drained: "🪫" } }
 }
 
+// MARK: - Read later
+
+@Model final class SavedLink {
+    var id: UUID = UUID()
+    var url: String
+    var title: String
+    var summary: String?
+    var siteName: String = ""
+    var addedAt: Date = Date()
+    var isRead: Bool = false
+    var readAt: Date?
+    var notes: String = ""
+
+    init(url: String, title: String) {
+        self.url = url
+        self.title = title
+    }
+}
+
+// MARK: - Time tracking & ideal week
+
+@Model final class TimeEntry {
+    var id: UUID = UUID()
+    var title: String
+    var area: LifeArea
+    var start: Date
+    var end: Date?                              // nil while the timer is running
+    var source: String = "manual"               // manual | focus | calendar
+
+    init(title: String, area: LifeArea, start: Date = Date(), end: Date? = nil) {
+        self.title = title
+        self.area = area
+        self.start = start
+        self.end = end
+    }
+
+    var minutes: Int { Int(((end ?? Date()).timeIntervalSince(start)) / 60) }
+}
+
+/// One block of your ideal week (e.g. Mon–Fri 9:00–11:30 Deep work, Work).
+@Model final class IdealBlock {
+    var id: UUID = UUID()
+    var title: String
+    var area: LifeArea
+    var weekdays: [Int]                         // 1 = Sunday … 7 = Saturday
+    var startMinute: Int                        // minutes after midnight
+    var endMinute: Int
+
+    init(title: String, area: LifeArea, weekdays: [Int], startMinute: Int, endMinute: Int) {
+        self.title = title
+        self.area = area
+        self.weekdays = weekdays
+        self.startMinute = startMinute
+        self.endMinute = endMinute
+    }
+
+    var minutes: Int { max(0, endMinute - startMinute) }
+    var timeLabel: String {
+        func f(_ m: Int) -> String { String(format: "%d:%02d", m / 60, m % 60) }
+        return "\(f(startMinute))–\(f(endMinute))"
+    }
+}
+
+// MARK: - Odyssey plan (Designing Your Life: three different 5-year futures)
+
+enum OdysseyKind: String, Codable, CaseIterable, Identifiable {
+    case current, alternative, wildcard
+    var id: String { rawValue }
+    var title: String {
+        switch self { case .current: "Life as planned"; case .alternative: "Plan B"; case .wildcard: "Wild card" }
+    }
+    var prompt: String {
+        switch self {
+        case .current: "Where your current path leads if things go well."
+        case .alternative: "If your current path disappeared tomorrow, what would you do?"
+        case .wildcard: "If money and what people think didn't matter, what would you do?"
+        }
+    }
+}
+
+@Model final class OdysseyPath {
+    var id: UUID = UUID()
+    var kind: OdysseyKind
+    var title: String = ""
+    var years: [String] = ["", "", "", "", ""]  // one line per year
+    var questions: String = ""                  // questions this path raises
+    var resources: Int = 3                      // 1…5 ratings
+    var likability: Int = 3
+    var confidence: Int = 3
+    var coherence: Int = 3
+
+    init(kind: OdysseyKind) { self.kind = kind }
+}
+
 // MARK: - Follow-ups ("remind me if no reply")
 
 @Model final class FollowUp {

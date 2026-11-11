@@ -300,6 +300,7 @@ struct EmailDetailView: View {
     @State private var drafting = false
     @State private var htmlHeight: CGFloat = 200
     @State private var loadRemote = false
+    @AppStorage(Prefs.loadImages) private var alwaysLoadImages = false
     @State private var showPlain = false
     @State private var attachments: [MailAttachment] = []
     @State private var downloading: String?
@@ -379,14 +380,14 @@ struct EmailDetailView: View {
     @ViewBuilder
     private var bodyView: some View {
         if let html = email.bodyHTML, !showPlain {
-            if !loadRemote && HTMLMailView.hasRemoteContent(html) {
+            if !loadRemote && !alwaysLoadImages && HTMLMailView.hasRemoteContent(html) {
                 Button { loadRemote = true } label: {
                     Label("Images blocked to stop tracking · Load images", systemImage: "eye.slash")
                         .font(DS.Font.caption)
                 }
                 .buttonStyle(.bordered)
             }
-            HTMLMailView(html: html, allowRemote: loadRemote, height: $htmlHeight)
+            HTMLMailView(html: html, allowRemote: loadRemote || alwaysLoadImages, height: $htmlHeight)
                 .frame(height: htmlHeight)
                 .clipShape(.rect(cornerRadius: DS.Radius.chip))
         } else {

@@ -1,90 +1,183 @@
 import SwiftUI
 import SwiftData
 import StoreKit
+import AppIntents
+import UserNotifications
 
-/// Connect Gmail / Outlook / iCloud, see every synced calendar & Reminders list, AI privacy, subscription.
+// Settings, laid out like iPhone Settings: icon tiles, grouped sections, one page per area.
+// (Kept the type name AccountsView so existing entry points keep working.)
+
+/// iOS-Settings-style colored icon tile.
+struct SettingsIcon: View {
+    let symbol: String
+    let color: Color
+    var body: some View {
+        Image(systemName: symbol)
+            .font(.system(size: 15, weight: .semibold))
+            .foregroundStyle(.white)
+            .frame(width: 29, height: 29)
+            .background(color.gradient, in: .rect(cornerRadius: 7))
+    }
+}
+
+struct SettingsRow<Destination: View>: View {
+    let title: String
+    let symbol: String
+    let color: Color
+    var value: String? = nil
+    @ViewBuilder var destination: Destination
+    var body: some View {
+        NavigationLink { destination } label: {
+            HStack(spacing: 12) {
+                SettingsIcon(symbol: symbol, color: color)
+                Text(title)
+                Spacer()
+                if let value { Text(value).foregroundStyle(.secondary) }
+            }
+        }
+    }
+}
+
+enum Prefs {
+    // Appearance
+    static let appearance = "appearance"                 // system | light | dark
+    static let hapticsOff = "haptics.off"
+    // Mail
+    static let undoSeconds = "mail.undoSeconds"         // 0 = send immediately
+    static let loadImages = "mail.loadImages"
+    static let signature = "mail.signature"
+    static let followUpDefault = "mail.followUpDefault" // 0 = off
+    // Tasks
+    static let defaultList = "tasks.defaultList"
+    static let defaultAlert = "tasks.defaultAlert"      // -1 = none, 0 = at time, n = minutes before
+    // Focus
+    static let focusMinutes = "focus.defaultMinutes"
+    static let hyperfocusCheck = "focus.hyperfocusOff"
+    // Notifications
+    static let reviewReminderOff = "review.reminderOff"
+}
+
 struct AccountsView: View {
     @Environment(\.modelContext) private var ctx
     @Environment(\.dismiss) private var dismiss
     @Query private var accounts: [MailAccount]
-    @State private var error: String?
-    @State private var showICloud = false
-    @State private var showPaywall = false
-    @State private var showServer = false
-    @State private var showTour = false
+    @AppStorage(Prefs.appearance) private var appearance = "system"
     @AppStorage("ai.privateMode") private var privateMode = false
+    @State private var showPaywall = false
+    @State private var showTour = false
+
+    private var version: String {
+        let v = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "1.0"
+        let b = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "1"
+        return "\(v) (\(b))"
+    }
 
     var body: some View {
         NavigationStack {
             List {
-                Section("Email accounts") {
-                    ForEach(accounts) { a in
-                        HStack {
-                            Image(systemName: "envelope.fill").foregroundStyle(Color(hex: a.colorHex))
-                            VStack(alignment: .leading) {
-                                Text(a.address)
-                                Text("\(a.provider.displayName) · \(a.lastSyncedAt.map { "synced \($0.formatted(.relative(presentation: .named)))" } ?? "not synced yet")")
-                                    .font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
-                            }
+                Section {
+                    HStack(spacing: 14) {
+                        Image(systemName: "sailboat.fill")
+                            .font(.system(size: 28, weight: .semibold)).foregroundStyle(.white)
+                            .frame(width: 60, height: 60)
+                            .background(DS.Palette.accent.gradient, in: .rect(cornerRadius: 14))
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("Keel").font(.title2.weight(.semibold))
+                            Text(accounts.isEmpty ? "Add an email account to get started" : "\(accounts.count) account\(accounts.count == 1 ? "" : "s") · syncing")
+                                .font(.subheadline).foregroundStyle(.secondary)
                         }
                     }
-                    .onDelete { $0.map { accounts[$0] }.forEach(ctx.delete) }
-                    Button("Add Gmail") { Task { await connect(.gmail) } }
-                    Button("Add Outlook / Microsoft 365") { Task { await connect(.outlook) } }
-                    Button("Add iCloud Mail") { showICloud = true }
+                    .padding(.vertical, 6)
                 }
 
                 Section {
-                    ForEach(CalendarService.shared.calendarsBySource, id: \.source) { group in
-                        DisclosureGroup(group.source) {
-                            ForEach(group.calendars, id: \.calendarIdentifier) { c in
-                                Label(c.title, systemImage: "circle.fill").foregroundStyle(Color(cgColor: c.cgColor))
-                            }
+                    SettingsRow(title: "Mail Accounts", symbol: "envelope.fill", color: .blue, value: accounts.isEmpty ? "None" : "\(accounts.count)") { MailAccountsSettings() }
+                    SettingsRow(title: "Calendars", symbol: "calendar", color: .red) { CalendarSettings() }
+                    SettingsRow(title: "Reminders", symbol: "checklist", color: .orange) { RemindersSettings() }
+                }
+
+                Section {
+                    SettingsRow(title: "Notifications", symbol: "bell.badge.fill", color: .red) { NotificationSettings() }
+                    SettingsRow(title: "Mail", symbol: "paperplane.fill", color: .blue) { MailSettings() }
+                    SettingsRow(title: "Tasks", symbol: "checkmark.circle.fill", color: .green) { TaskSettings() }
+                    SettingsRow(title: "Focus", symbol: "moon.fill", color: .indigo) { FocusSettings() }
+                }
+
+                Section {
+                    SettingsRow(title: "Appearance", symbol: "textformat.size", color: .gray, value: appearance.capitalized) { AppearanceSettings() }
+                    SettingsRow(title: "Siri & Shortcuts", symbol: "waveform", color: .purple) { SiriSettings() }
+                    SettingsRow(title: "AI & Privacy", symbol: "hand.raised.fill", color: .blue, value: privateMode ? "Private" : nil) { PrivacySettings() }
+                }
+
+                Section {
+                    SettingsRow(title: "How Keel Works", symbol: "questionmark", color: .teal) { FeatureGuideView() }
+                    Button { showTour = true } label: {
+                        HStack(spacing: 12) { SettingsIcon(symbol: "play.fill", color: .teal); Text("Replay Welcome Tour").foregroundStyle(.primary) }
+                    }
+                    if Entitlements.paywallEnabled {
+                        Button { showPaywall = true } label: {
+                            HStack(spacing: 12) { SettingsIcon(symbol: "star.fill", color: .yellow); Text("Keel Pro").foregroundStyle(.primary) }
                         }
                     }
-                    ForEach(CalendarService.shared.reminderLists, id: \.calendarIdentifier) { l in
-                        Label(l.title, systemImage: "checklist").foregroundStyle(Color(cgColor: l.cgColor))
-                    }
-                } header: { Text("Calendars & Reminders") } footer: {
-                    Text("Keel syncs every calendar on this iPhone — iCloud, Google, Outlook, Exchange, subscribed — and every Apple Reminders list, both ways. Add more in Settings → Apps → Calendar → Accounts.")
                 }
 
                 Section {
-                    Toggle("Private mode (on-device AI only)", isOn: $privateMode)
-                    LabeledContent("Apple Intelligence", value: AIRouter.shared.onDeviceAvailable ? "Available" : "Not on this device")
-                } header: { Text("AI") } footer: {
-                    Text("All of Keel's AI runs on this iPhone with Apple Intelligence: free and private. Turn it on in iPhone Settings → Apple Intelligence & Siri (iPhone 15 Pro or newer).")
+                    SettingsRow(title: "Data & Storage", symbol: "externaldrive.fill", color: .gray) { DataSettings() }
+                    LabeledContent("Version", value: version)
+                } footer: {
+                    Text("Your data stays on this iPhone and your own email, calendar and Reminders accounts. Keel has no servers of its own.")
                 }
-
-                Section("Help & alerts") {
-                    NavigationLink { FeatureGuideView() } label: { Label("How Keel works", systemImage: "questionmark.circle") }
-                    Button { showTour = true } label: { Label("Replay the welcome tour", systemImage: "play.circle") }
-                    NotificationStatusRow()
-                }
-
-                Section {
-                    LabeledContent("Status", value: KeelServer.isConfigured ? "Connected" : "Not set up")
-                    Button(KeelServer.isConfigured ? "Change server" : "Connect Claude") { showServer = true }
-                } header: { Text("Claude AI (optional)") } footer: {
-                    Text("Not needed. Keel works fully on Apple Intelligence. Connecting your own Claude server only adds stronger day planning, and it costs money per use.")
-                }
-
-                if Entitlements.paywallEnabled {
-                    Section { Button("Keel Pro") { showPaywall = true } }
-                }
-
-                if let error { Section { Text(error).foregroundStyle(.red) } }
             }
-            .navigationTitle("Accounts")
-            .toolbar { Button("Done") { dismiss() } }
-            .sheet(isPresented: $showICloud) { ICloudSetupView() }
+            .navigationTitle("Settings")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar { ToolbarItem(placement: .confirmationAction) { Button("Done") { dismiss() } } }
             .sheet(isPresented: $showPaywall) { PaywallView() }
-            .sheet(isPresented: $showServer) { KeelServerSetupView() }
             .fullScreenCover(isPresented: $showTour) { WelcomeTour() }
         }
     }
+}
+
+// MARK: - Mail accounts
+
+struct MailAccountsSettings: View {
+    @Environment(\.modelContext) private var ctx
+    @Query(sort: \MailAccount.address) private var accounts: [MailAccount]
+    @State private var error: String?
+    @State private var showICloud = false
+    @State private var working = false
+
+    var body: some View {
+        List {
+            Section {
+                ForEach(accounts) { a in
+                    NavigationLink { MailAccountDetail(account: a) } label: {
+                        HStack(spacing: 12) {
+                            SettingsIcon(symbol: "envelope.fill", color: Color(hex: a.colorHex))
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(a.address)
+                                Text(a.provider.displayName).font(.caption).foregroundStyle(.secondary)
+                            }
+                        }
+                    }
+                }
+            } header: { Text("Accounts") } footer: {
+                if accounts.isEmpty { Text("Add an account to bring your email into Keel.") }
+            }
+            Section("Add Account") {
+                Button { Task { await connect(.gmail) } } label: { Label("Gmail", systemImage: "envelope") }
+                Button { Task { await connect(.outlook) } } label: { Label("Outlook / Microsoft 365", systemImage: "envelope") }
+                Button { showICloud = true } label: { Label("iCloud Mail", systemImage: "icloud") }
+            }
+            if working { Section { ProgressView("Signing in…") } }
+            if let error { Section { Text(error).foregroundStyle(.red) } }
+        }
+        .navigationTitle("Mail Accounts")
+        .sheet(isPresented: $showICloud) { ICloudSetupView() }
+    }
 
     private func connect(_ kind: MailProviderKind) async {
+        working = true; error = nil
+        defer { working = false }
         do {
             let cfg = kind == .gmail ? OAuthManager.google : OAuthManager.microsoft
             let tokens = try await OAuthManager.shared.signIn(cfg)
@@ -93,6 +186,7 @@ struct AccountsView: View {
                                 colorHex: kind == .gmail ? "#EA4335" : "#0A64D6")
             KeychainStore.saveTokens(tokens, account: a.id)
             ctx.insert(a)
+            Haptics.success()
             await SyncEngine.shared.syncAll()
         } catch { self.error = error.localizedDescription }
     }
@@ -103,6 +197,414 @@ struct AccountsView: View {
         let (data, _) = try await URLSession.shared.data(for: req)
         let j = try JSONSerialization.jsonObject(with: data) as? [String: Any] ?? [:]
         return (j["emailAddress"] ?? j["mail"] ?? j["userPrincipalName"]) as? String ?? "unknown"
+    }
+}
+
+struct MailAccountDetail: View {
+    @Bindable var account: MailAccount
+    @Environment(\.modelContext) private var ctx
+    @Environment(\.dismiss) private var dismiss
+    @State private var confirmRemove = false
+    @State private var syncing = false
+
+    var body: some View {
+        List {
+            Section {
+                LabeledContent("Address", value: account.address)
+                LabeledContent("Type", value: account.provider.displayName)
+                LabeledContent("Last synced", value: account.lastSyncedAt?.formatted(.relative(presentation: .named)) ?? "Never")
+                Toggle("Sync this account", isOn: $account.isEnabled)
+            }
+            Section {
+                Button(syncing ? "Syncing…" : "Sync Now") {
+                    Task { syncing = true; await SyncEngine.shared.syncAll(); syncing = false }
+                }
+                .disabled(syncing)
+                if let err = SyncEngine.shared.lastError, err.contains(account.address) {
+                    Text(err).font(.caption).foregroundStyle(.red)
+                }
+            } footer: {
+                if account.provider == .gmail {
+                    Text("While Keel's Google project is in testing, Google asks you to sign in again every 7 days. Remove and re-add the account if sync stops.")
+                }
+            }
+            Section {
+                Button("Remove Account", role: .destructive) { confirmRemove = true }
+            } footer: {
+                Text("Removes this account and its email from Keel. Nothing is deleted from your mailbox.")
+            }
+        }
+        .navigationTitle(account.provider.displayName)
+        .confirmationDialog("Remove \(account.address)?", isPresented: $confirmRemove, titleVisibility: .visible) {
+            Button("Remove Account", role: .destructive) { remove() }
+        }
+    }
+
+    private func remove() {
+        let id = account.id
+        let mail = (try? ctx.fetch(FetchDescriptor<EmailMessage>(predicate: #Predicate { $0.accountId == id }))) ?? []
+        mail.forEach(ctx.delete)
+        KeychainStore.delete("tokens.\(id)")
+        KeychainStore.delete("imap.\(id)")
+        ctx.delete(account)
+        try? ctx.save()
+        dismiss()
+    }
+}
+
+// MARK: - Calendars & Reminders
+
+struct CalendarSettings: View {
+    @AppStorage("calendar.hidden") private var hiddenRaw = ""
+    @AppStorage("calendar.showTasks") private var showTasks = true
+    @AppStorage("calendar.mode") private var mode = CalendarMode.week.rawValue
+    private var hidden: Set<String> { Set(hiddenRaw.split(separator: ",").map(String.init)) }
+
+    var body: some View {
+        List {
+            Section {
+                Picker("Default View", selection: $mode) { ForEach(CalendarMode.allCases) { Text($0.rawValue).tag($0.rawValue) } }
+                Toggle("Show Tasks on Calendar", isOn: $showTasks)
+            }
+            ForEach(CalendarService.shared.calendarsBySource, id: \.source) { group in
+                Section(group.source) {
+                    ForEach(group.calendars, id: \.calendarIdentifier) { c in
+                        Toggle(isOn: Binding(
+                            get: { !hidden.contains(c.calendarIdentifier) },
+                            set: { show in
+                                var h = hidden
+                                if show { h.remove(c.calendarIdentifier) } else { h.insert(c.calendarIdentifier) }
+                                hiddenRaw = h.sorted().joined(separator: ",")
+                            })) {
+                            HStack { Circle().fill(Color(cgColor: c.cgColor)).frame(width: 12, height: 12); Text(c.title) }
+                        }
+                    }
+                }
+            }
+            Section {
+                Button("Add Calendar Accounts…") {
+                    if let url = URL(string: UIApplication.openSettingsURLString) { UIApplication.shared.open(url) }
+                }
+            } footer: {
+                Text("Keel shows every calendar on this iPhone, including iCloud, Google, Outlook and Exchange, and edits sync both ways. Add accounts in the iPhone Settings app under Apps → Calendar → Calendar Accounts.")
+            }
+        }
+        .navigationTitle("Calendars")
+    }
+}
+
+struct RemindersSettings: View {
+    @AppStorage(Prefs.defaultList) private var defaultList = "Inbox"
+    @State private var syncing = false
+
+    var body: some View {
+        List {
+            Section {
+                Picker("Default List", selection: $defaultList) {
+                    Text("Inbox").tag("Inbox")
+                    ForEach(CalendarService.shared.reminderLists, id: \.calendarIdentifier) { Text($0.title).tag($0.title) }
+                }
+            } footer: { Text("New tasks go here unless you add one with ~ListName.") }
+            Section {
+                ForEach(CalendarService.shared.reminderLists, id: \.calendarIdentifier) { l in
+                    HStack { Circle().fill(Color(cgColor: l.cgColor)).frame(width: 12, height: 12); Text(l.title) }
+                }
+            } header: { Text("Synced Lists") } footer: {
+                Text("Every Apple Reminders list syncs both ways, live while Keel is open. Completing, editing or deleting in either app updates the other.")
+            }
+            Section {
+                Button(syncing ? "Syncing…" : "Sync Now") {
+                    Task { syncing = true; await SyncEngine.shared.syncRemindersOnly(); syncing = false }
+                }
+                .disabled(syncing)
+            }
+        }
+        .navigationTitle("Reminders")
+    }
+}
+
+// MARK: - Notifications
+
+struct NotificationSettings: View {
+    @AppStorage(Prefs.defaultAlert) private var defaultAlert = 0
+    @AppStorage(Prefs.reviewReminderOff) private var reviewOff = false
+    @AppStorage(Prefs.hyperfocusCheck) private var hyperfocusOff = false
+
+    var body: some View {
+        List {
+            Section { NotificationStatusRow() } footer: {
+                Text("Keel's alerts come from this iPhone: task reminders, focus timers, habit nudges, promises and follow-ups.")
+            }
+            Section("Tasks") {
+                Picker("Default Alert", selection: $defaultAlert) {
+                    Text("None").tag(-1)
+                    ForEach(TaskAlerts.offsets.compactMap { $0.minutes == nil ? nil : $0 }, id: \.label) { Text($0.label).tag($0.minutes ?? 0) }
+                }
+            }
+            Section("Focus") {
+                Toggle("Hyperfocus Check-in", isOn: Binding(get: { !hyperfocusOff }, set: { hyperfocusOff = !$0 }))
+            }
+            Section {
+                Toggle("Weekly Review Reminder", isOn: Binding(get: { !reviewOff }, set: { on in
+                    reviewOff = !on
+                    if on { WeeklyReview.scheduleReminder() }
+                    else { UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: ["weekly.review"]) }
+                }))
+            } footer: { Text("Sundays at 5 PM.") }
+        }
+        .navigationTitle("Notifications")
+    }
+}
+
+// MARK: - Mail, Tasks, Focus
+
+struct MailSettings: View {
+    @AppStorage(Prefs.undoSeconds) private var undoSeconds = 5
+    @AppStorage(Prefs.loadImages) private var loadImages = false
+    @AppStorage(Prefs.signature) private var signature = ""
+    @AppStorage(Prefs.followUpDefault) private var followUp = 0
+
+    var body: some View {
+        List {
+            Section {
+                Picker("Undo Send Delay", selection: $undoSeconds) {
+                    Text("Off").tag(0); Text("5 seconds").tag(5); Text("10 seconds").tag(10); Text("20 seconds").tag(20)
+                }
+                Picker("Remind If No Reply", selection: $followUp) {
+                    Text("Off").tag(0); Text("Tomorrow").tag(1); Text("In 3 days").tag(3); Text("In a week").tag(7)
+                }
+            } header: { Text("Sending") } footer: { Text("“Remind if no reply” is the default for new emails; you can change it on each one.") }
+            Section {
+                Toggle("Load Remote Images", isOn: $loadImages)
+            } header: { Text("Privacy") } footer: {
+                Text("When off, images that could tell senders you opened their email are blocked until you tap “Load images”.")
+            }
+            Section("Signature") {
+                TextField("Sent from Keel", text: $signature, axis: .vertical).lineLimit(2...5)
+            }
+        }
+        .navigationTitle("Mail")
+    }
+}
+
+struct TaskSettings: View {
+    @AppStorage(Prefs.defaultList) private var defaultList = "Inbox"
+    @AppStorage(Prefs.defaultAlert) private var defaultAlert = 0
+
+    var body: some View {
+        List {
+            Section {
+                Picker("Default List", selection: $defaultList) {
+                    Text("Inbox").tag("Inbox")
+                    ForEach(CalendarService.shared.reminderLists, id: \.calendarIdentifier) { Text($0.title).tag($0.title) }
+                }
+                Picker("Default Alert", selection: $defaultAlert) {
+                    Text("None").tag(-1)
+                    ForEach(TaskAlerts.offsets.compactMap { $0.minutes == nil ? nil : $0 }, id: \.label) { Text($0.label).tag($0.minutes ?? 0) }
+                }
+            } footer: { Text("Applies to new tasks that have a time.") }
+            Section {
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("Quick add understands:").font(.subheadline.weight(.semibold))
+                    Text("tomorrow 5pm · next Friday · every weekday · every 2 weeks · !high · #tag · ~List")
+                        .font(.subheadline).foregroundStyle(.secondary)
+                }
+                .padding(.vertical, 4)
+            }
+        }
+        .navigationTitle("Tasks")
+    }
+}
+
+struct FocusSettings: View {
+    @AppStorage(Prefs.focusMinutes) private var minutes = 25
+    @AppStorage(Prefs.hyperfocusCheck) private var hyperfocusOff = false
+    @State private var shutdown = ShutdownManager.shared
+
+    var body: some View {
+        List {
+            Section {
+                Picker("Default Length", selection: $minutes) {
+                    ForEach([15, 25, 45, 50, 60, 90], id: \.self) { Text("\($0) minutes").tag($0) }
+                }
+                Toggle("Hyperfocus Check-in", isOn: Binding(get: { !hyperfocusOff }, set: { hyperfocusOff = !$0 }))
+            } footer: { Text("The check-in nudges you 30 minutes after a session ends, in case you lost track of time.") }
+            Section {
+                LabeledContent("Screen Time Access", value: shutdown.isAuthorized ? "Allowed" : "Not allowed")
+                if !shutdown.isAuthorized {
+                    Button("Allow App Blocking") { Task { await shutdown.authorize() } }
+                }
+            } header: { Text("App Blocking") } footer: {
+                Text(shutdown.blockingUnavailableReason ?? "Shield and Locked focus can block the apps you choose. Choose them on the Focus screen.")
+            }
+        }
+        .navigationTitle("Focus")
+    }
+}
+
+// MARK: - Appearance, Siri, Privacy
+
+struct AppearanceSettings: View {
+    @AppStorage(Prefs.appearance) private var appearance = "system"
+    @AppStorage(Prefs.hapticsOff) private var hapticsOff = false
+
+    var body: some View {
+        List {
+            Section("Appearance") {
+                Picker("Appearance", selection: $appearance) {
+                    Text("Automatic").tag("system"); Text("Light").tag("light"); Text("Dark").tag("dark")
+                }
+                .pickerStyle(.inline)
+                .labelsHidden()
+            }
+            Section {
+                Toggle("Haptics", isOn: Binding(get: { !hapticsOff }, set: { hapticsOff = !$0 }))
+            } footer: { Text("Small taps you feel when you complete things.") }
+        }
+        .navigationTitle("Appearance")
+    }
+}
+
+struct SiriSettings: View {
+    private let phrases = [
+        ("Ask Keel …", "Ask anything about your day, or tell Keel to do something"),
+        ("Add a task in Keel", "Capture a task by voice"),
+        ("Complete [task] in Keel", "Check off a task by name"),
+        ("What's on today in Keel", "Hear your day's events and tasks"),
+        ("What's next on my calendar in Keel", "Your next event"),
+        ("Check my inbox in Keel", "Who needs a reply"),
+        ("What should I do now in Keel", "Your single best next step"),
+        ("Start focus in Keel / End focus in Keel", "Control focus sessions"),
+        ("What did I promise in Keel", "Commitments from your sent email"),
+    ]
+
+    var body: some View {
+        List {
+            Section {
+                ForEach(phrases, id: \.0) { p in
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("“Hey Siri, \(p.0)”").font(.body.weight(.medium))
+                        Text(p.1).font(.caption).foregroundStyle(.secondary)
+                    }
+                    .padding(.vertical, 2)
+                }
+            } header: { Text("Things You Can Say") }
+            Section {
+                ShortcutsLink()
+            } footer: { Text("Keel's actions also work in the Shortcuts app, in Spotlight and with the Action button.") }
+        }
+        .navigationTitle("Siri & Shortcuts")
+    }
+}
+
+struct PrivacySettings: View {
+    @AppStorage("ai.privateMode") private var privateMode = false
+    @State private var showServer = false
+
+    var body: some View {
+        List {
+            Section {
+                LabeledContent("Apple Intelligence", value: AIRouter.shared.onDeviceAvailable ? "On" : "Off")
+                if !AIRouter.shared.onDeviceAvailable {
+                    Button("Turn On in Settings…") {
+                        if let url = URL(string: UIApplication.openSettingsURLString) { UIApplication.shared.open(url) }
+                    }
+                }
+            } header: { Text("On-Device AI") } footer: {
+                Text("Sorting, summaries, drafts, planning and Ask Keel run on this iPhone with Apple Intelligence. Turn it on in Settings → Apple Intelligence & Siri (iPhone 15 Pro or newer).")
+            }
+            Section {
+                Toggle("Private Mode", isOn: $privateMode)
+            } footer: { Text("Keeps everything on this iPhone, even if you connect an optional AI server.") }
+            Section {
+                LabeledContent("Status", value: KeelServer.isConfigured ? "Connected" : "Not connected")
+                Button(KeelServer.isConfigured ? "Change Server…" : "Connect Server…") { showServer = true }
+            } header: { Text("Optional AI Server") } footer: {
+                Text("Not needed. Advanced users can connect their own server for stronger day planning.")
+            }
+        }
+        .navigationTitle("AI & Privacy")
+        .sheet(isPresented: $showServer) { KeelServerSetupView() }
+    }
+}
+
+// MARK: - Data
+
+struct DataSettings: View {
+    @Environment(\.modelContext) private var ctx
+    @State private var exportURL: URL?
+    @State private var confirmErase = false
+    @State private var syncing = false
+    @AppStorage("onboarding.done") private var onboarded = true
+
+    var body: some View {
+        List {
+            Section {
+                LabeledContent("Last Sync", value: lastSync)
+                Button(syncing ? "Syncing…" : "Sync Everything Now") {
+                    Task { syncing = true; await SyncEngine.shared.syncAll(); syncing = false }
+                }
+                .disabled(syncing)
+            }
+            Section {
+                if let exportURL {
+                    ShareLink(item: exportURL) { Label("Share Export", systemImage: "square.and.arrow.up") }
+                } else {
+                    Button { exportURL = makeExport() } label: { Label("Export My Data", systemImage: "arrow.down.doc") }
+                }
+            } footer: { Text("A JSON file with your tasks, notes, goals and habits.") }
+            Section {
+                Button("Erase All Keel Data", role: .destructive) { confirmErase = true }
+            } footer: {
+                Text("Removes everything Keel stores on this iPhone, including signed-in accounts. Your email, calendars and Reminders are not touched.")
+            }
+        }
+        .navigationTitle("Data & Storage")
+        .confirmationDialog("Erase all Keel data on this iPhone?", isPresented: $confirmErase, titleVisibility: .visible) {
+            Button("Erase All Data", role: .destructive) { eraseAll() }
+        } message: { Text("This can't be undone.") }
+    }
+
+    private var lastSync: String {
+        let dates = ((try? ctx.fetch(FetchDescriptor<MailAccount>())) ?? []).compactMap(\.lastSyncedAt)
+        return dates.max()?.formatted(.relative(presentation: .named)) ?? "Never"
+    }
+
+    private func makeExport() -> URL? {
+        let iso = ISO8601DateFormatter()
+        let tasks = ((try? ctx.fetch(FetchDescriptor<TaskItem>())) ?? []).map { t -> [String: Any] in
+            ["title": t.title, "notes": t.notes, "list": t.listName, "done": t.isDone, "tags": t.tags,
+             "due": t.dueDate.map(iso.string(from:)) ?? "", "priority": t.priority.rawValue]
+        }
+        let notes = ((try? ctx.fetch(FetchDescriptor<Note>())) ?? []).map { ["title": $0.title, "text": $0.plainText] }
+        let goals = ((try? ctx.fetch(FetchDescriptor<Goal>())) ?? []).map { ["title": $0.title, "area": $0.area.rawValue, "why": $0.why] }
+        let habits = ((try? ctx.fetch(FetchDescriptor<Habit>())) ?? []).map { ["name": $0.name, "streak": $0.currentStreak, "total": $0.totalCompletions] as [String: Any] }
+        let payload: [String: Any] = ["exportedAt": iso.string(from: Date()), "tasks": tasks, "notes": notes, "goals": goals, "habits": habits]
+        guard let data = try? JSONSerialization.data(withJSONObject: payload, options: [.prettyPrinted, .sortedKeys]) else { return nil }
+        let url = FileManager.default.temporaryDirectory.appendingPathComponent("Keel Export \(Date().formatted(.iso8601.year().month().day())).json")
+        return (try? data.write(to: url)) != nil ? url : nil
+    }
+
+    private func eraseAll() {
+        for a in (try? ctx.fetch(FetchDescriptor<MailAccount>())) ?? [] {
+            KeychainStore.delete("tokens.\(a.id)")
+            KeychainStore.delete("imap.\(a.id)")
+        }
+        try? ctx.delete(model: EmailMessage.self)
+        try? ctx.delete(model: MailAccount.self)
+        try? ctx.delete(model: TaskItem.self)
+        try? ctx.delete(model: Note.self)
+        try? ctx.delete(model: Habit.self)
+        try? ctx.delete(model: HabitStack.self)
+        try? ctx.delete(model: HabitLog.self)
+        try? ctx.delete(model: FocusSession.self)
+        try? ctx.delete(model: Commitment.self)
+        try? ctx.delete(model: Goal.self)
+        try? ctx.delete(model: FollowUp.self)
+        try? ctx.save()
+        UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
+        onboarded = false
+        Haptics.success()
     }
 }
 
@@ -184,7 +686,7 @@ struct PaywallView: View {
                 Text("Keel Pro").font(DS.Font.hero)
                 VStack(alignment: .leading, spacing: DS.Space.s) {
                     Label("Unlimited email accounts", systemImage: "tray.2")
-                    Label("AI day planning with Claude", systemImage: "sparkles")
+                    Label("AI day planning", systemImage: "sparkles")
                     Label("App blocking & Locked focus", systemImage: "lock.shield")
                     Label("Promise tracker & body doubling", systemImage: "person.2.wave.2")
                 }.font(DS.Font.body)

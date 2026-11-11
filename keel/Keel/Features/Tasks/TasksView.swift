@@ -492,7 +492,7 @@ struct TaskDetailView: View {
                         }
                     }
                 } header: { Text("How did it feel?") } footer: {
-                    Text("Feel-Good Productivity: notice what gives you energy (play, power, people) and what drains you. Your weekly review shows the pattern.")
+                    Text("Notice what gives you energy (play, power, people) and what drains you. Your weekly review shows the pattern.")
                 }
             }
             if let g = goals.first(where: { $0.id == task.goalId }), !g.why.isEmpty {

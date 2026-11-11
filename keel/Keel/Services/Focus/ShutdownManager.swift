@@ -102,6 +102,7 @@ final class ShutdownManager {
         }
         note("focus.5min", "5 minutes left", "Start wrapping up — jot where you stopped so future-you can restart fast.", after: Double((minutes - 5) * 60))
         note("focus.end", "Focus block done 🎉", "Stand up, water, 5-minute break. Your next thing is ready when you are.", after: Double(minutes * 60))
+        if UserDefaults.standard.bool(forKey: "focus.hyperfocusOff") { return }
         note("focus.hyper", "Hyperfocus check", "You've gone 30 min past your block. Still the right thing to be doing?", after: Double((minutes + 30) * 60))
     }
 }

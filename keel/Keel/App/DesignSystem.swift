@@ -48,9 +48,11 @@ enum DS {
 
 // MARK: - Haptics (dopamine on completion — important for ADHD reward loops)
 @MainActor enum Haptics {
-    static func tap() { UIImpactFeedbackGenerator(style: .light).impactOccurred() }
-    static func success() { UINotificationFeedbackGenerator().notificationOccurred(.success) }
+    private static var off: Bool { UserDefaults.standard.bool(forKey: "haptics.off") }
+    static func tap() { guard !off else { return }; UIImpactFeedbackGenerator(style: .light).impactOccurred() }
+    static func success() { guard !off else { return }; UINotificationFeedbackGenerator().notificationOccurred(.success) }
     static func milestone() {
+        guard !off else { return }
         let g = UIImpactFeedbackGenerator(style: .rigid)
         g.impactOccurred()
         Task { @MainActor in

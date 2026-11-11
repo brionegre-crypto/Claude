@@ -183,6 +183,10 @@ struct ComposeView: View {
             .interactiveDismissDisabled(sendCountdown != nil || !draft.body.isEmpty)
             .task {
                 accountId = draft.accountId ?? accounts.first?.id ?? ""
+                let signature = UserDefaults.standard.string(forKey: Prefs.signature) ?? ""
+                if !signature.isEmpty && !draft.body.contains(signature) { draft.body = "\n\n" + signature + draft.body }
+                let defaultFollowUp = UserDefaults.standard.integer(forKey: Prefs.followUpDefault)
+                if defaultFollowUp > 0 && followUpDays == nil { followUpDays = defaultFollowUp }
                 if draft.replyTo == nil && draft.to.isEmpty { bodyFocused = false }
                 await loadForwardedAttachments()
             }
@@ -221,9 +225,11 @@ struct ComposeView: View {
     /// Spark-style undo send: a 5-second window before anything leaves the phone.
     private func startSend() {
         error = nil
-        withAnimation(DS.spring) { sendCountdown = 5 }
+        let seconds = UserDefaults.standard.object(forKey: Prefs.undoSeconds) as? Int ?? 5
+        guard seconds > 0 else { Task { sendCountdown = 0; await send() }; return }
+        withAnimation(DS.spring) { sendCountdown = seconds }
         sendTask = Task {
-            for n in stride(from: 4, through: 0, by: -1) {
+            for n in stride(from: seconds - 1, through: 0, by: -1) {
                 try? await Task.sleep(for: .seconds(1))
                 if Task.isCancelled { return }
                 sendCountdown = n

@@ -11,7 +11,7 @@ struct KeelApp: App {
         SyncEngine.registerBackgroundTasks()
         UNUserNotificationCenter.current().delegate = NotificationHandler.shared
         TaskAlerts.registerCategories()
-        WeeklyReview.scheduleReminder()
+        if !UserDefaults.standard.bool(forKey: Prefs.reviewReminderOff) { WeeklyReview.scheduleReminder() }
     }
 
     var body: some Scene {
@@ -49,7 +49,7 @@ struct KeelApp: App {
     static let container: ModelContainer = {
         let schema = Schema([
             MailAccount.self, EmailMessage.self, TaskItem.self, Note.self,
-            Habit.self, HabitStack.self, HabitLog.self, FocusSession.self, Commitment.self, Goal.self, FollowUp.self,
+            Habit.self, HabitStack.self, HabitLog.self, FocusSession.self, Commitment.self, Goal.self, FollowUp.self, SavedLink.self, TimeEntry.self, IdealBlock.self, OdysseyPath.self,
         ])
         // Lives in the App Group so widgets / intents extensions can read it too.
         let config = ModelConfiguration(schema: schema, groupContainer: .identifier("group.com.briangreenejr.keel"))
@@ -62,6 +62,7 @@ struct RootView: View {
     @State private var showCommandBar = false
     @State private var mailRouter = MailRouter.shared
     @AppStorage("onboarding.done") private var onboarded = false
+    @AppStorage(Prefs.appearance) private var appearance = "system"
 
     enum Tab { case today, inbox, calendar, tasks, notes }
 
@@ -78,6 +79,7 @@ struct RootView: View {
         .sheet(isPresented: $router.showFocus) { NavigationStack { FocusView() } }
         .sheet(item: $mailRouter.pending) { ComposeView(draft: $0) }
         .fullScreenCover(isPresented: Binding(get: { !onboarded }, set: { if !$0 { onboarded = true } })) { WelcomeTour() }
+        .preferredColorScheme(appearance == "light" ? .light : appearance == "dark" ? .dark : nil)
         // Superhuman-style universal command bar: ⌘K on a keyboard
         .overlay(alignment: .top) {
             if showCommandBar { CommandBar(isPresented: $showCommandBar) }

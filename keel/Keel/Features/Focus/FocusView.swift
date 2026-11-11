@@ -11,7 +11,7 @@ struct FocusView: View {
     @Environment(\.modelContext) private var ctx
     @Environment(ShutdownManager.self) private var shutdown
     @Query(filter: #Predicate<TaskItem> { !$0.isDone }) private var tasks: [TaskItem]
-    @State private var minutes = 25
+    @State private var minutes: Int = { let m = UserDefaults.standard.integer(forKey: "focus.defaultMinutes"); return m > 0 ? m : 25 }()
     @State private var level: ShutdownManager.Level = .soft
     @State private var showPicker = false
     @State private var showRitual = false

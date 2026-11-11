@@ -243,8 +243,11 @@ enum QuickAdd {
         let t = TaskItem(title: r.title, dueDate: r.dueDate ?? defaultDue, priority: r.priority)
         t.recurrence = r.recurrence
         t.tags = r.tags
-        if let list = r.list ?? defaultList { t.listName = list }
-        if t.hasDueTime { t.alertOffsetMinutes = 0 }
+        if let list = r.list ?? defaultList ?? UserDefaults.standard.string(forKey: Prefs.defaultList) { t.listName = list }
+        if t.hasDueTime {
+            let alert = UserDefaults.standard.integer(forKey: Prefs.defaultAlert)   // unset = 0 = at time
+            t.alertOffsetMinutes = alert < 0 ? nil : alert
+        }
         ctx.insert(t)
         try? CalendarService.shared.push(t)
         TaskAlerts.schedule(t)
