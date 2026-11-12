@@ -10,6 +10,7 @@ struct HubView: View {
     @AppStorage(Prefs.calm) private var calm = false
     @AppStorage("hub.state") private var stateRaw = ""
     @State private var search = ""
+    @Namespace private var zoom          // tiles grow into the screen they open
     @State private var stats: [String: String] = [:]
     @State private var recent: [String] = UserDefaults.standard.stringArray(forKey: "hub.recent") ?? []
 
@@ -92,10 +93,11 @@ struct HubView: View {
                 HStack(spacing: DS.Space.m) {
                     ForEach(picks, id: \.0.id) { pick in
                         let t = pick.0
-                        NavigationLink { t.dest() } label: {
+                        NavigationLink { t.dest().navigationTransition(.zoom(sourceID: "p" + t.id, in: zoom)) } label: {
                             PrescriptionCard(tool: t, why: pick.1, stat: stats[t.id], color: state?.color ?? color(of: t.id))
                         }
                         .buttonStyle(PressStyle())
+                        .matchedTransitionSource(id: "p" + t.id, in: zoom)
                         .simultaneousGesture(TapGesture().onEnded { remember(t.id) })
                     }
                 }
@@ -146,15 +148,17 @@ struct HubView: View {
             .accessibilityAddTraits(.isHeader)
 
             if let hero = g.tools.first {
-                NavigationLink { hero.dest() } label: { HeroTile(tool: hero, stat: stats[hero.id], color: g.color) }
+                NavigationLink { hero.dest().navigationTransition(.zoom(sourceID: "g" + hero.id, in: zoom)) } label: { HeroTile(tool: hero, stat: stats[hero.id], color: g.color) }
                     .buttonStyle(PressStyle())
+                    .matchedTransitionSource(id: "g" + hero.id, in: zoom)
                     .simultaneousGesture(TapGesture().onEnded { remember(hero.id) })
                     .padding(.horizontal)
             }
             FlexGrid(columns: 2, spacing: 10) {
                 ForEach(g.tools.dropFirst()) { t in
-                    NavigationLink { t.dest() } label: { ToolTile(tool: t, stat: stats[t.id], color: g.color) }
+                    NavigationLink { t.dest().navigationTransition(.zoom(sourceID: "g" + t.id, in: zoom)) } label: { ToolTile(tool: t, stat: stats[t.id], color: g.color) }
                         .buttonStyle(PressStyle())
+                        .matchedTransitionSource(id: "g" + t.id, in: zoom)
                         .simultaneousGesture(TapGesture().onEnded { remember(t.id) })
                 }
             }
@@ -194,8 +198,9 @@ struct HubView: View {
                 ContentUnavailableView.search(text: search)
             }
             ForEach(hits) { t in
-                NavigationLink { t.dest() } label: { ToolTile(tool: t, stat: stats[t.id], color: color(of: t.id), wide: true) }
+                NavigationLink { t.dest().navigationTransition(.zoom(sourceID: "s" + t.id, in: zoom)) } label: { ToolTile(tool: t, stat: stats[t.id], color: color(of: t.id), wide: true) }
                     .buttonStyle(PressStyle())
+                    .matchedTransitionSource(id: "s" + t.id, in: zoom)
                     .simultaneousGesture(TapGesture().onEnded { remember(t.id) })
             }
         }
@@ -213,6 +218,9 @@ struct HubView: View {
 
     /// Live lines for the tiles, worked out once when the Compass opens.
     private func loadStats() async {
+        // Let the screen finish sliding in first; the live numbers then fade in without hitching the animation.
+        try? await Task.sleep(for: .milliseconds(stats.isEmpty ? 380 : 0))
+        guard !Task.isCancelled else { return }
         var s: [String: String] = [:]
         let cal = Calendar.current
         let subs = ((try? ctx.fetch(FetchDescriptor<Subscription>())) ?? []).filter { !$0.isHidden }
@@ -266,7 +274,7 @@ struct HubView: View {
         }
         let routines = RoutineStore.all.count
         if routines > 0 { s["routines"] = "\(routines) ready to run" }
-        withAnimation { stats = s }
+        withAnimation(DS.spring) { stats = s }
     }
 }
 
@@ -435,7 +443,7 @@ struct PressStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .scaleEffect(configuration.isPressed ? 0.96 : 1)
-            .animation(.spring(duration: 0.25, bounce: 0.4), value: configuration.isPressed)
+            .animation(.spring(duration: 0.22, bounce: 0.15), value: configuration.isPressed)
     }
 }
 
@@ -447,7 +455,6 @@ private struct Glyph: View {
         Image(systemName: icon).font(.system(size: size * 0.45, weight: .semibold)).foregroundStyle(.white)
             .frame(width: size, height: size)
             .background(color.gradient, in: .rect(cornerRadius: size * 0.32, style: .continuous))
-            .shadow(color: color.opacity(0.35), radius: 6, y: 3)
     }
 }
 
@@ -537,22 +544,24 @@ private struct ToolTile: View {
 private struct CompassBackdrop: View {
     let tint: Color
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @State private var drift = false
 
     var body: some View {
-        TimelineView(.animation(minimumInterval: 1 / 15, paused: reduceMotion)) { tl in
-            let t = Float(tl.date.timeIntervalSinceReferenceDate.truncatingRemainder(dividingBy: 30) / 30) * 2 * .pi
-            MeshGradient(width: 3, height: 3, points: [
-                [0, 0], [0.5, 0], [1, 0],
-                [0, 0.5], [0.5 + 0.12 * sin(t), 0.5 + 0.1 * cos(t)], [1, 0.5],
-                [0, 1], [0.5, 1], [1, 1],
-            ], colors: [
-                tint.opacity(0.35), tint.opacity(0.18), .purple.opacity(0.2),
-                .teal.opacity(0.15), tint.opacity(0.25), .pink.opacity(0.12),
-                .clear, .clear, .clear,
-            ])
-        }
+        MeshGradient(width: 3, height: 3, points: [
+            [0, 0], [0.5, 0], [1, 0],
+            [0, 0.5], drift ? SIMD2<Float>(0.62, 0.42) : SIMD2<Float>(0.38, 0.58), [1, 0.5],
+            [0, 1], [0.5, 1], [1, 1],
+        ], colors: [
+            tint.opacity(0.35), tint.opacity(0.18), .purple.opacity(0.2),
+            .teal.opacity(0.15), tint.opacity(0.25), .pink.opacity(0.12),
+            .clear, .clear, .clear,
+        ])
         .mask(LinearGradient(colors: [.black, .black.opacity(0.6), .clear], startPoint: .top, endPoint: .bottom))
         .animation(.easeInOut(duration: 0.6), value: tint)
+        .onAppear {
+            guard !reduceMotion else { return }
+            withAnimation(.easeInOut(duration: 12).repeatForever(autoreverses: true)) { drift = true }
+        }
         .allowsHitTesting(false)
         .accessibilityHidden(true)
     }

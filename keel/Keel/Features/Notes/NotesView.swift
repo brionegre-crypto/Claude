@@ -68,6 +68,7 @@ struct NotesView: View {
                         FlexGrid(columns: 2, spacing: 12) {
                             ForEach(summaries) { f in
                                 FolderCard(summary: f) { openFolder = FolderRef(name: f.name); Haptics.tap() }
+                                    .matchedTransitionSource(id: "f" + f.id, in: zoom)
                                     .contextMenu {
                                         if let name = f.name {
                                             Button("Rename", systemImage: "pencil") { newFolderName = name; renamingFolder = name }
@@ -136,7 +137,7 @@ struct NotesView: View {
             .navigationDestination(isPresented: $showBrain) { BrainMapView() }
             .navigationDestination(isPresented: $showImport) { ImportView() }
             .sheet(isPresented: $showOrganize) { OrganizeNotesView() }
-            .navigationDestination(item: $openFolder) { folderPage($0) }
+            .navigationDestination(item: $openFolder) { ref in folderPage(ref).navigationTransition(.zoom(sourceID: "f" + ref.id, in: zoom)) }
             .alert("New folder", isPresented: $creatingFolder) {
                 TextField("Name", text: $newFolderName)
                 Button("Create") { addEmptyFolder(newFolderName) }
@@ -156,6 +157,7 @@ struct NotesView: View {
     @State private var showImport = false
     @State private var showOrganize = false
     @State private var openFolder: FolderRef?
+    @Namespace private var zoom          // folder cards grow into the folder
     @State private var renamingFolder: String?
     @State private var creatingFolder = false
     @AppStorage("notes.emptyFolders") private var emptyFoldersRaw = ""      // folders you made that have no pages yet

@@ -43,15 +43,20 @@ enum DS {
     enum Radius { static let card: CGFloat = 22, chip: CGFloat = 12 }
 
     // MARK: Motion
-    static let spring = Animation.spring(response: 0.42, dampingFraction: 0.82)
-    static let celebrate = Animation.spring(response: 0.5, dampingFraction: 0.55)
+    /// Smooth, critically damped motion (no wobble) for everyday state changes: lists, cards, toggles.
+    static let spring = Animation.smooth(duration: 0.35)
+    /// A touch of bounce, only for wins (finishing a task, a streak).
+    static let celebrate = Animation.spring(duration: 0.45, bounce: 0.25)
 }
 
 // MARK: - Haptics (dopamine on completion — important for ADHD reward loops)
 @MainActor enum Haptics {
     private static var off: Bool { UserDefaults.standard.bool(forKey: "haptics.off") }
-    static func tap() { guard !off else { return }; UIImpactFeedbackGenerator(style: .light).impactOccurred() }
-    static func success() { guard !off else { return }; UINotificationFeedbackGenerator().notificationOccurred(.success) }
+    // Reused and kept warm, so a tap's haptic lands with the touch instead of a beat later.
+    private static let light: UIImpactFeedbackGenerator = { let g = UIImpactFeedbackGenerator(style: .light); g.prepare(); return g }()
+    private static let notify: UINotificationFeedbackGenerator = { let g = UINotificationFeedbackGenerator(); g.prepare(); return g }()
+    static func tap() { guard !off else { return }; light.impactOccurred(); light.prepare() }
+    static func success() { guard !off else { return }; notify.notificationOccurred(.success); notify.prepare() }
     static func milestone() {
         guard !off else { return }
         let g = UIImpactFeedbackGenerator(style: .rigid)

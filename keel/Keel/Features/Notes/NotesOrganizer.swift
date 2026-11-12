@@ -131,6 +131,8 @@ enum NotesOrganizer {
     /// and each note is only tried once, so moving one back out is respected.
     static func autoFile(ctx: ModelContext) async {
         guard UserDefaults.standard.bool(forKey: autoKey) else { return }
+        try? await Task.sleep(for: .seconds(2))            // never compete with opening Notes
+        guard !Task.isCancelled else { return }
         // At most every 10 minutes, so opening Notes stays instant.
         let last = UserDefaults.standard.double(forKey: "notes.autofile.last")
         guard Date().timeIntervalSince1970 - last > 600 else { return }

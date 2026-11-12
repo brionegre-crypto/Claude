@@ -19,7 +19,14 @@ enum Mailbox: String, CaseIterable, Identifiable {
 
 struct InboxView: View {
     @Environment(\.modelContext) private var ctx
-    @Query(sort: \EmailMessage.receivedAt, order: .reverse) private var allEmails: [EmailMessage]
+    /// The newest 2,500 messages. Older mail is still found by Search (it asks the server), and keeping
+    /// the whole history in memory made every sync re-sort everything and stutter the app.
+    @Query(InboxView.recentMail) private var allEmails: [EmailMessage]
+    static var recentMail: FetchDescriptor<EmailMessage> {
+        var d = FetchDescriptor<EmailMessage>(sortBy: [SortDescriptor(\.receivedAt, order: .reverse)])
+        d.fetchLimit = 2500
+        return d
+    }
     @Query private var accounts: [MailAccount]
     @Query private var rules: [SenderRule]
     @AppStorage("focus.hideInbox") private var hiddenByFocus = false
@@ -49,6 +56,13 @@ struct InboxView: View {
     private func inAccount(_ e: EmailMessage) -> Bool { accountFilter == nil || e.accountId == accountFilter }
 
     private var mailboxEmails: [EmailMessage] {
+        if let m = memo.mailbox { return m }
+        let m = computeMailbox()
+        memo.mailbox = m
+        return m
+    }
+
+    private func computeMailbox() -> [EmailMessage] {
         switch mailbox {
         case .inbox: allEmails.filter { !$0.isArchived && inAccount($0) }
         case .starred: allEmails.filter { $0.isStarred && inAccount($0) }
@@ -96,7 +110,8 @@ struct InboxView: View {
     private final class Memo {
         var scores: [String: SenderScore]?
         var threads: [String: [EmailMessage]]?
-        func reset() { scores = nil; threads = nil }
+        var mailbox: [EmailMessage]?
+        func reset() { scores = nil; threads = nil; mailbox = nil }
     }
     private let memo = Memo()
 
