@@ -714,6 +714,7 @@ struct DataSettings: View {
                     Button { exportURL = makeExport() } label: { Label("Export My Data", systemImage: "arrow.down.doc") }
                 }
             } footer: { Text("A JSON file with your tasks, notes, goals and habits.") }
+            Section { NavigationLink { ImportView() } label: { Label("Import from Other Apps", systemImage: "square.and.arrow.down") } }
             BackupSection()
             Section {
                 Button("Erase All Keel Data", role: .destructive) { confirmErase = true }

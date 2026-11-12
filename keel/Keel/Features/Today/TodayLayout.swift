@@ -145,7 +145,10 @@ struct HubView: View {
                 link("Record a meeting", "mic") { MeetingRecorderView() }
                 link("Tasks from screenshots", "camera.viewfinder") { ScreenshotTasksView() }
             }
-            Section { link("How Keel works", "questionmark.circle") { FeatureGuideView() } }
+            Section {
+                link("Import from other apps", "square.and.arrow.down") { ImportView() }
+                link("How Keel works", "questionmark.circle") { FeatureGuideView() }
+            }
         }
         .navigationTitle("Everything")
     }
