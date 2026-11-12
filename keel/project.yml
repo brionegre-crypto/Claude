@@ -70,7 +70,7 @@ targets:
         NSFaceIDUsageDescription: Keel uses Face ID to unlock the app and your locked notes.
         CFBundleURLTypes:
           - CFBundleURLSchemes: [com.keel.app, com.googleusercontent.apps.893825511742-h5bgc5adfd9f9tf1m6g0dhi4m59ude6n]   # Google sign-in redirect
-        KeelAIProxyURL: "https://YOUR-BACKEND.example.com/v1/messages"
+        KeelAIProxyURL: "https://keel-backend.bbritt2223.workers.dev/v1/messages"   # the deployed Keel server
 
   KeelWidgets:
     type: app-extension

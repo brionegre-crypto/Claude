@@ -7,7 +7,7 @@ compatibility_flags = ["nodejs_compat"]
 # Create with: npx wrangler kv namespace create KEEL  → paste the id below.
 [[kv_namespaces]]
 binding = "KEEL"
-id = "REPLACE_WITH_KV_ID"
+id = "a735e26aad4043c896359455d9d7f951"
 
 [vars]
 DAILY_AI_LIMIT = "200"
