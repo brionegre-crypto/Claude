@@ -50,7 +50,7 @@ struct NotesView: View {
                         if roots.isEmpty {
                             Button { newPage() } label: { Label("Create your first page", systemImage: "plus") }
                         }
-                        ForEach(roots) { PageTreeNode(note: $0, all: notes, depth: 0, row: { row($0, showSnippet: false) }) }
+                        ForEach(roots) { root in PageTreeNode(note: root, all: notes, depth: 0, row: { page in row(page, showSnippet: false) }) }
                     }
                     if !templates.isEmpty {
                         Section {
@@ -188,7 +188,7 @@ struct PageTreeNode<Row: View>: View {
             row(note)
         } else {
             DisclosureGroup(isExpanded: $expanded) {
-                ForEach(children) { PageTreeNode(note: $0, all: all, depth: depth + 1, row: row) }
+                ForEach(children) { child in PageTreeNode(note: child, all: all, depth: depth + 1, row: row) }
             } label: { row(note) }
         }
     }
