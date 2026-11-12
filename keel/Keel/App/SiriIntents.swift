@@ -186,3 +186,43 @@ struct MessageToTaskIntent: AppIntent {
         return .result()
     }
 }
+
+// MARK: - Medications
+
+@MainActor
+enum MedsLogger {
+    /// Logs the earliest untaken dose due by now (+1h), optionally matching a name.
+    static func logNext(name: String, ctx: ModelContext) -> String {
+        let meds = ((try? ctx.fetch(FetchDescriptor<Medication>())) ?? []).filter(\.isActive)
+            .filter { name.isEmpty || $0.name.lowercased().contains(name.lowercased()) }
+        let doses = (try? ctx.fetch(FetchDescriptor<MedDose>())) ?? []
+        let now = Calendar.current.dateComponents([.hour, .minute], from: Date())
+        let nowMin = (now.hour ?? 0) * 60 + (now.minute ?? 0)
+        let next = meds.flatMap { m in m.times.sorted().map { (m, $0) } }
+            .filter { $0.1 <= nowMin + 60 && MedEngine.taken($0.0, slot: $0.1, doses: doses) == nil }
+            .min { $0.1 < $1.1 }
+        guard let pick = next else {
+            return meds.isEmpty ? "I couldn't find that medication in Keel." : "Nothing is due right now. " + MedEngine.statusSentence(ctx: ctx)
+        }
+        let (m, slot) = pick
+        MedEngine.take(m, slot: slot, ctx: ctx)
+        return "Logged \(m.name) as taken at \(Date().formatted(date: .omitted, time: .shortened))."
+    }
+}
+
+struct DidITakeMedsIntent: AppIntent {
+    static let title: LocalizedStringResource = "Did I Take My Meds?"
+    static let description: IntentDescription = "Hear whether you've logged today's medication."
+    @MainActor func perform() async throws -> some IntentResult & ProvidesDialog {
+        .result(dialog: "\(MedEngine.statusSentence(ctx: KeelStore.container.mainContext))")
+    }
+}
+
+struct LogMedsIntent: AppIntent {
+    static let title: LocalizedStringResource = "Log Medication Taken"
+    static let description: IntentDescription = "Marks your next due dose as taken."
+    @Parameter(title: "Medication", default: "") var name: String
+    @MainActor func perform() async throws -> some IntentResult & ProvidesDialog {
+        .result(dialog: "\(MedsLogger.logNext(name: name, ctx: KeelStore.container.mainContext))")
+    }
+}

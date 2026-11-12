@@ -77,6 +77,15 @@ final class WatchBridge: NSObject, WCSessionDelegate {
         payload.moodWeek = ((try? ctx.fetch(FetchDescriptor<CheckIn>())) ?? [])
             .filter { $0.day >= weekStart }.sorted { $0.day < $1.day }
             .map { .init(day: $0.day, mood: $0.mood, energy: $0.energy) }
+        let doses = (try? ctx.fetch(FetchDescriptor<MedDose>())) ?? []
+        payload.meds = ((try? ctx.fetch(FetchDescriptor<Medication>())) ?? []).filter(\.isActive).flatMap { m in
+            m.times.sorted().map { slot in
+                WatchPayload.MedRow(id: m.id, name: m.name, slot: slot, takenAt: MedEngine.taken(m, slot: slot, doses: doses)?.takenAt)
+            }
+        }
+        payload.momentum = Momentum.today(ctx: ctx).total
+        payload.achievementsUnlocked = Momentum.achievements(ctx: ctx).filter(\.unlocked).count
+        payload.scheduledMail = ((try? ctx.fetch(FetchDescriptor<ScheduledMail>())) ?? []).count
         if let w = KeelWeather.shared.today {
             payload.weather = .init(temperature: w.temperature, symbol: w.symbol, condition: w.condition,
                                     high: w.high, low: w.low, rainFrom: w.rainStartsAt)
@@ -132,6 +141,10 @@ final class WatchBridge: NSObject, WCSessionDelegate {
             let t = TaskItem(title: text)
             t.fromParkingLot = true
             ctx.insert(t)
+        case .takeMed(let id, let slot):
+            if let m = try? ctx.fetch(FetchDescriptor<Medication>(predicate: #Predicate { $0.id == id })).first {
+                MedEngine.take(m, slot: slot, ctx: ctx)
+            }
         case .carryOverToday:
             let cal = Calendar.current
             let end = cal.date(byAdding: .day, value: 1, to: cal.startOfDay(for: Date()))!

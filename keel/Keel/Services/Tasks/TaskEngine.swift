@@ -36,6 +36,23 @@ enum TaskActions {
         return rolledTo
     }
 
+    /// A copy with the same details (not done, not linked to the original reminder).
+    static func duplicate(_ t: TaskItem, ctx: ModelContext) {
+        let c = TaskItem(title: t.title, dueDate: t.dueDate, priority: t.priority)
+        c.notes = t.notes; c.listName = t.listName; c.tags = t.tags; c.estimatedMinutes = t.estimatedMinutes
+        c.microSteps = t.microSteps.map { MicroStep(text: $0.text, minutes: $0.minutes) }
+        c.recurrence = t.recurrence; c.alertOffsetMinutes = t.alertOffsetMinutes; c.goalId = t.goalId
+        c.projectId = t.projectId; c.energy = t.energy
+        c.locationName = t.locationName; c.latitude = t.latitude; c.longitude = t.longitude; c.remindOnArrive = t.remindOnArrive
+        ctx.insert(c)
+        try? CalendarService.shared.push(c)
+        TaskAlerts.schedule(c)
+        Haptics.success()
+        UndoCenter.shared.offer("Duplicated “\(t.title)”") { [ctx] in
+            TaskAlerts.cancel(c); CalendarService.shared.removeReminder(for: c); ctx.delete(c)
+        }
+    }
+
     static func delete(_ t: TaskItem, ctx: ModelContext) {
         // Keep enough to bring it back if you tap Undo.
         let title = t.title, notes = t.notes, due = t.dueDate, priority = t.priority, list = t.listName
@@ -89,7 +106,10 @@ enum TaskAlerts {
         let task = UNNotificationCategory(identifier: category, actions: [complete, snooze], intentIdentifiers: [])
         let habit = UNNotificationCategory(identifier: "HABIT_STACK", actions: [], intentIdentifiers: [])
         let promise = UNNotificationCategory(identifier: "PROMISE", actions: [], intentIdentifiers: [])
-        UNUserNotificationCenter.current().setNotificationCategories([task, habit, promise])
+        let med = UNNotificationCategory(identifier: MedEngine.category,
+                                         actions: [UNNotificationAction(identifier: MedEngine.takenAction, title: "Taken ✓", options: [])],
+                                         intentIdentifiers: [])
+        UNUserNotificationCenter.current().setNotificationCategories([task, habit, promise, med])
     }
 
     static func schedule(_ t: TaskItem) {
@@ -143,6 +163,17 @@ final class NotificationHandler: NSObject, UNUserNotificationCenterDelegate {
 
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse) async {
         let action = response.actionIdentifier
+        let info = response.notification.request.content.userInfo
+        if let medString = info["medId"] as? String, let medId = UUID(uuidString: medString), let slot = info["slot"] as? Int {
+            guard action == MedEngine.takenAction else { return }
+            await MainActor.run {
+                let ctx = KeelStore.container.mainContext
+                if let m = try? ctx.fetch(FetchDescriptor<Medication>(predicate: #Predicate { $0.id == medId })).first {
+                    MedEngine.take(m, slot: slot, ctx: ctx)
+                }
+            }
+            return
+        }
         guard let idString = response.notification.request.content.userInfo["taskId"] as? String,
               let id = UUID(uuidString: idString) else { return }
         await MainActor.run {

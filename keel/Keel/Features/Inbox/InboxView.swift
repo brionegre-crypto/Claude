@@ -92,6 +92,10 @@ struct InboxView: View {
                     .accessibilityLabel("Mailboxes and accounts")
                 }
                 ToolbarItem(placement: .topBarTrailing) {
+                    NavigationLink { ScheduledMailView() } label: { Image(systemName: "clock.arrow.circlepath") }
+                        .accessibilityLabel("Scheduled emails")
+                }
+                ToolbarItem(placement: .topBarTrailing) {
                     NavigationLink { DigestView() } label: { Image(systemName: "newspaper") }
                         .accessibilityLabel("Newsletter digest")
                 }
@@ -306,7 +310,10 @@ struct InboxView: View {
     }
 
     private func checkInboxZero() {
-        if allEmails.filter({ !$0.isArchived }).isEmpty { Haptics.milestone() }
+        if allEmails.filter({ !$0.isArchived }).isEmpty {
+            Haptics.milestone()
+            Momentum.recordInboxZero()
+        }
     }
 
     private func searchServer() async {
@@ -377,6 +384,7 @@ struct EmailDetailView: View {
     @State private var sentFlash = false
     @State private var unsubscribing = false
     @State private var unsubscribeMessage: String?
+    @State private var replyIdeas: [String] = []
 
     private var provider: MailProvider? {
         accounts.first { $0.id == email.accountId }.map(MailProviderFactory.make)
@@ -428,6 +436,9 @@ struct EmailDetailView: View {
             }
             if email.hasAttachments, let list = try? await provider?.attachments(for: email.providerMessageId) {
                 attachments = list
+            }
+            if email.category == .important || email.category == .actionable || email.category == .calendar || email.category == nil {
+                replyIdeas = await AIRouter.shared.replyIdeas(for: email)
             }
         }
     }
@@ -517,6 +528,10 @@ struct EmailDetailView: View {
             Text("Quick reply").font(DS.Font.headline)
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack {
+                    ForEach(replyIdeas, id: \.self) { idea in
+                        Button { intent = idea; Task { await makeDraft() } } label: { Label(idea, systemImage: "sparkles") }
+                            .font(DS.Font.caption).buttonStyle(.bordered).tint(DS.Palette.accent)
+                    }
                     ForEach(["Yes, sounds good", "Can't make it", "Need more time", "Thanks!"], id: \.self) { quick in
                         Button(quick) { intent = quick; Task { await makeDraft() } }.font(DS.Font.caption).buttonStyle(.bordered)
                     }

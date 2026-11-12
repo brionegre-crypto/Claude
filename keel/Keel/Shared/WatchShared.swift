@@ -53,6 +53,12 @@ struct WatchPayload: Codable {
         var mood: Int
         var energy: Int?
     }
+    struct MedRow: Codable, Hashable {
+        var id: UUID
+        var name: String
+        var slot: Int             // minutes after midnight
+        var takenAt: Date?
+    }
     struct CountdownRow: Codable, Hashable {
         var title: String
         var emoji: String
@@ -81,6 +87,10 @@ struct WatchPayload: Codable {
     var weather: WeatherRow? = nil
     var focusDays: [Int]? = nil           // minutes focused, oldest → today (7 days)
     var moodWeek: [MoodDay]? = nil
+    var meds: [MedRow]? = nil
+    var momentum: Int? = nil              // today's 0–100 momentum score
+    var achievementsUnlocked: Int? = nil
+    var scheduledMail: Int? = nil
 }
 
 /// What Apple Watch asks the iPhone to do.
@@ -97,6 +107,7 @@ enum WatchAction: Codable {
     case loggedContact(UUID)
     case carryOverToday
     case parkThought(String)
+    case takeMed(UUID, Int)
 }
 
 enum WatchCoding {

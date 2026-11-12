@@ -51,7 +51,9 @@ final class SyncEngine {
         isSyncing = true; defer { isSyncing = false }
         let ctx = container.mainContext
 
+        await SendLater.sendDue(ctx: ctx)
         await CalendarService.shared.requestAccess()
+        await LeaveBy.refresh()
 
         // 1. Mail, all accounts in parallel-ish (sequential per account keeps rate limits sane)
         let accounts = (try? ctx.fetch(FetchDescriptor<MailAccount>())) ?? []
@@ -135,9 +137,18 @@ final class SyncEngine {
         }
     }
 
+    /// Asks iPhone to wake Keel near a specific time (used by Send later).
+    static func scheduleRefresh(at date: Date) { scheduleNextRefresh() }
+
+    /// One pending request per app: ask for the sooner of 15 minutes or the next scheduled email.
     static func scheduleNextRefresh() {
         let req = BGAppRefreshTaskRequest(identifier: refreshId)
-        req.earliestBeginDate = Date(timeIntervalSinceNow: 15 * 60)
+        var next = Date(timeIntervalSinceNow: 15 * 60)
+        if let ctx = shared.container?.mainContext,
+           let soonest = ((try? ctx.fetch(FetchDescriptor<ScheduledMail>())) ?? []).map(\.sendAt).min() {
+            next = min(next, max(Date(timeIntervalSinceNow: 60), soonest))
+        }
+        req.earliestBeginDate = next
         try? BGTaskScheduler.shared.submit(req)
     }
 }

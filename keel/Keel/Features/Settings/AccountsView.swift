@@ -102,6 +102,7 @@ struct AccountsView: View {
                     SettingsRow(title: "Mail", symbol: "paperplane.fill", color: .blue) { MailSettings() }
                     SettingsRow(title: "Tasks", symbol: "checkmark.circle.fill", color: .green) { TaskSettings() }
                     SettingsRow(title: "Focus", symbol: "moon.fill", color: .indigo) { FocusSettings() }
+                    SettingsRow(title: "Medications", symbol: "pills.fill", color: .mint) { MedsView() }
                 }
 
                 Section {
@@ -259,6 +260,8 @@ struct CalendarSettings: View {
     @AppStorage("calendar.hidden") private var hiddenRaw = ""
     @AppStorage("calendar.showTasks") private var showTasks = true
     @AppStorage("calendar.mode") private var mode = CalendarMode.week.rawValue
+    @AppStorage("leaveBy.on") private var leaveBy = true
+    @AppStorage("leaveBy.transport") private var transport = "driving"
     private var hidden: Set<String> { Set(hiddenRaw.split(separator: ",").map(String.init)) }
 
     var body: some View {
@@ -267,6 +270,14 @@ struct CalendarSettings: View {
                 Picker("Default View", selection: $mode) { ForEach(CalendarMode.allCases) { Text($0.rawValue).tag($0.rawValue) } }
                 Toggle("Show Tasks on Calendar", isOn: $showTasks)
             }
+            Section {
+                Toggle("Time to Leave Alerts", isOn: $leaveBy)
+                if leaveBy {
+                    Picker("Travel By", selection: $transport) {
+                        Text("Car").tag("driving"); Text("Transit").tag("transit"); Text("Walking").tag("walking")
+                    }
+                }
+            } footer: { Text("For events with an address, Keel checks Apple Maps travel time from where you are and alerts you when it's time to leave, with a 10-minute buffer. Needs location access.") }
             ForEach(CalendarService.shared.calendarsBySource, id: \.source) { group in
                 Section(group.source) {
                     ForEach(group.calendars, id: \.calendarIdentifier) { c in

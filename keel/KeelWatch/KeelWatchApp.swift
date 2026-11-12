@@ -93,6 +93,12 @@ final class WatchStore: NSObject, WCSessionDelegate {
         send(.checkIn(mood))
     }
 
+    func takeMed(_ m: WatchPayload.MedRow) {
+        if let i = payload.meds?.firstIndex(of: m) { payload.meds?[i].takenAt = Date() }
+        WKInterfaceDevice.current().play(.success)
+        send(.takeMed(m.id, m.slot))
+    }
+
     func archive(_ mail: WatchPayload.MailRow) {
         payload.mail?.removeAll { $0.id == mail.id }
         WKInterfaceDevice.current().play(.success)
@@ -173,6 +179,10 @@ struct WatchRoot: View {
                     if let f = store.payload.followUps, !f.isEmpty { link("Awaiting reply", "bubble.left.and.exclamationmark.bubble.right", .teal, "\(f.count)") { ListPage(title: "Awaiting reply", items: f) } }
                     if let c = store.payload.countdowns, !c.isEmpty { link("Countdowns", "hourglass", .yellow, nil) { CountdownsPage() } }
                     if let p = store.payload.projects, !p.isEmpty { link("Projects", "folder.fill", .blue, "\(p.count)") { ProjectsPage() } }
+                    if let m = store.payload.meds, !m.isEmpty {
+                        link("Meds", "pills.fill", .mint, "\(m.filter { $0.takenAt != nil }.count)/\(m.count)") { MedsPage() }
+                    }
+                    if let s = store.payload.momentum { link("Momentum", "trophy.fill", .orange, "\(s)") { MomentumPage() } }
                     if let m = store.payload.moodWeek, !m.isEmpty { link("Mood", "face.smiling", .yellow, nil) { MoodPage() } }
                     link("Day in review", "moon.stars.fill", .indigo, nil) { DayReviewPage() }
                 }
@@ -538,5 +548,46 @@ struct MoodPage: View {
             }
         }
         .navigationTitle("Mood")
+    }
+}
+
+/// Today's doses: tap to log as taken (also clears the iPhone reminder).
+struct MedsPage: View {
+    @Environment(WatchStore.self) private var store
+    var body: some View {
+        List {
+            ForEach(store.payload.meds ?? [], id: \.self) { m in
+                Button { if m.takenAt == nil { store.takeMed(m) } } label: {
+                    HStack {
+                        Image(systemName: m.takenAt == nil ? "pills" : "checkmark.circle.fill")
+                            .foregroundStyle(m.takenAt == nil ? accent : calm)
+                        VStack(alignment: .leading) {
+                            Text(m.name)
+                            Text(m.takenAt.map { "Taken \($0.formatted(date: .omitted, time: .shortened))" } ?? "Due \(slotLabel(m.slot))")
+                                .font(.caption2).foregroundStyle(.secondary)
+                        }
+                    }
+                }
+            }
+        }
+        .navigationTitle("Meds")
+    }
+    private func slotLabel(_ s: Int) -> String {
+        (Calendar.current.date(bySettingHour: s / 60, minute: s % 60, second: 0, of: Date()) ?? Date()).formatted(date: .omitted, time: .shortened)
+    }
+}
+
+struct MomentumPage: View {
+    @Environment(WatchStore.self) private var store
+    var body: some View {
+        VStack(spacing: 8) {
+            Gauge(value: Double(store.payload.momentum ?? 0), in: 0...100) {
+                Text("Momentum")
+            } currentValueLabel: { Text("\(store.payload.momentum ?? 0)") }
+                .gaugeStyle(.accessoryCircularCapacity).tint(accent).scaleEffect(1.4).padding()
+            Text("Momentum only goes up today.").font(.caption2).foregroundStyle(.secondary).multilineTextAlignment(.center)
+            if let a = store.payload.achievementsUnlocked { Label("\(a) achievements", systemImage: "trophy.fill").font(.caption) }
+        }
+        .navigationTitle("Momentum")
     }
 }

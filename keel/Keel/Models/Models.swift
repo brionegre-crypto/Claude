@@ -211,6 +211,7 @@ struct MicroStep: Codable, Identifiable, Hashable {
     var alertOffsetMinutes: Int?                // nil = no Keel alert; 0 = at due time; 15 = 15 min before…
     var completionCount: Int = 0                // times a repeating task has been completed
     var lastCompletedOccurrence: Date?
+    var isPinned: Bool = false                  // pinned to the top of Tasks and Today
 
     /// True when the due date carries a time (not just a day).
     var hasDueTime: Bool {
@@ -688,5 +689,74 @@ enum OdysseyKind: String, Codable, CaseIterable, Identifiable {
         self.plannedMinutes = plannedMinutes
         self.mode = mode
         self.taskId = taskId
+    }
+}
+
+// MARK: - Send later
+
+/// An email waiting to be sent at `sendAt`. Sent by Keel's sync (foreground or background refresh).
+@Model final class ScheduledMail {
+    var id: UUID = UUID()
+    var accountId: String
+    var to: [String]
+    var cc: [String] = []
+    var bcc: [String] = []
+    var subject: String
+    var body: String
+    var replyProviderId: String?
+    var replyThreadId: String?
+    var replyMessageIdHeader: String?
+    var replyAll: Bool = false
+    var attachmentsJSON: Data?                  // [StoredAttachment]
+    var sendAt: Date
+    var lastError: String?
+    var createdAt: Date = Date()
+
+    init(accountId: String, to: [String], subject: String, body: String, sendAt: Date) {
+        self.accountId = accountId
+        self.to = to
+        self.subject = subject
+        self.body = body
+        self.sendAt = sendAt
+    }
+}
+
+struct StoredAttachment: Codable {
+    var filename: String
+    var mimeType: String
+    var data: Data
+}
+
+// MARK: - Medications
+
+@Model final class Medication {
+    var id: UUID = UUID()
+    var name: String
+    var dose: String = ""                       // "20 mg"
+    var times: [Int] = [480]                    // minutes after midnight, e.g. 8:00 = 480
+    var remind: Bool = true
+    var isActive: Bool = true
+    var pillsLeft: Int?                         // optional refill tracking
+    var refillAt: Int = 7                       // warn when this many are left
+    var createdAt: Date = Date()
+
+    init(name: String, dose: String = "", times: [Int] = [480]) {
+        self.name = name
+        self.dose = dose
+        self.times = times
+    }
+}
+
+@Model final class MedDose {
+    var id: UUID = UUID()
+    var medicationId: UUID
+    var slot: Int                               // which scheduled time (minutes after midnight)
+    var day: Date                               // start of day
+    var takenAt: Date = Date()
+
+    init(medicationId: UUID, slot: Int, day: Date) {
+        self.medicationId = medicationId
+        self.slot = slot
+        self.day = day
     }
 }

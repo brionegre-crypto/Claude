@@ -169,6 +169,29 @@ struct StartFocusTool: Tool {
     }
 }
 
+struct MedsTool: Tool {
+    let name = "medications"
+    let description = "Check whether the user already took their medication today, or log a dose as taken."
+
+    @Generable
+    struct Arguments {
+        @Guide(description: "check or take")
+        var action: String
+        @Guide(description: "Medication name to log as taken; empty for check or for the next due dose")
+        var name: String
+    }
+
+    func call(arguments: Arguments) async throws -> String {
+        await MainActor.run {
+            let ctx = Store.ctx
+            if arguments.action.lowercased() == "take" {
+                return MedsLogger.logNext(name: arguments.name, ctx: ctx)
+            }
+            return MedEngine.statusSentence(ctx: ctx)
+        }
+    }
+}
+
 // MARK: - Assistant brain
 
 @MainActor @Observable
@@ -193,7 +216,7 @@ final class KeelAssistant {
     private func makeSession() -> LanguageModelSession {
         let now = Date().formatted(.dateTime.weekday(.wide).month().day().year().hour().minute())
         return LanguageModelSession(
-            tools: [AgendaTool(), AddTaskTool(), CompleteTaskTool(), CreateEventTool(), SearchMailTool(), StartFocusTool()],
+            tools: [AgendaTool(), AddTaskTool(), CompleteTaskTool(), CreateEventTool(), SearchMailTool(), StartFocusTool(), MedsTool()],
             instructions: """
             You are Keel, a warm, concise assistant for someone with ADHD. It is \(now).
             Use the tools to look things up and to take actions. Never invent tasks, events or emails.

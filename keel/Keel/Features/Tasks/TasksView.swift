@@ -252,7 +252,9 @@ struct TasksView: View {
             ("Later", { ($0.dueDate.map { $0 >= week }) == true }),
             ("No Date", { $0.dueDate == nil }),
         ]
-        return buckets.map { (title, test) in (title, sorted(active.filter(test))) }.filter { !$0.items.isEmpty }
+        let pinned: [(title: String, items: [TaskItem])] = [("Pinned", sorted(active.filter(\.isPinned)))]
+        return (pinned + buckets.map { (title, test) in (title, sorted(active.filter { !$0.isPinned && test($0) })) })
+            .filter { !$0.items.isEmpty }
     }
 
     @ViewBuilder
@@ -277,6 +279,11 @@ struct TasksView: View {
                     Button(p.label) { t.priority = p; t.updatedAt = Date(); try? CalendarService.shared.push(t) }
                 }
             }
+            Divider()
+            Button(t.isPinned ? "Unpin" : "Pin", systemImage: t.isPinned ? "pin.slash" : "pin") {
+                withAnimation(DS.spring) { t.isPinned.toggle() }; Haptics.tap()
+            }
+            Button("Duplicate", systemImage: "plus.square.on.square") { TaskActions.duplicate(t, ctx: ctx) }
             Divider()
             Button("Delete", systemImage: "trash", role: .destructive) { TaskActions.delete(t, ctx: ctx) }
         }
@@ -338,6 +345,7 @@ struct TaskRow: View {
                     if let d = task.dueDate {
                         Text(dueText(d)).foregroundStyle(d < Date() && !task.isDone ? DS.Palette.warmth : DS.Palette.inkSoft)
                     }
+                    if task.isPinned { Image(systemName: "pin.fill").foregroundStyle(DS.Palette.accent) }
                     if task.recurrence != nil { Image(systemName: "repeat") }
                     if task.alertOffsetMinutes != nil { Image(systemName: "bell") }
                     if task.locationName != nil { Image(systemName: "location") }

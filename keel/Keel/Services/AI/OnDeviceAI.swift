@@ -91,6 +91,17 @@ final class OnDeviceAI {
     }
 
     @Generable
+    struct ReplyIdeas {
+        @Guide(description: "Three short, distinct reply intents the user might choose, 2 to 6 words each, e.g. 'Yes, Thursday works', 'Ask for the agenda', 'Decline politely'", .count(3))
+        var ideas: [String]
+    }
+
+    func replyIdeas(_ e: EmailMessage) async throws -> [String] {
+        let session = LanguageModelSession(instructions: "Suggest how the recipient might reply to this email. Match its content: answer questions, accept or decline invites, confirm requests.")
+        return try await session.respond(to: "From \(e.fromName): \(e.subject)\n\(e.bodyPlain.prefix(2_000))", generating: ReplyIdeas.self).content.ideas
+    }
+
+    @Generable
     struct FoundPromise {
         @Guide(description: "Short imperative of what the writer committed to do, e.g. 'Send the Q3 deck'")
         var promise: String

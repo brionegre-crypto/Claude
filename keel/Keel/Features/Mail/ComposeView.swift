@@ -107,6 +107,8 @@ struct ComposeView: View {
     @State private var loadingForwarded = false
     @FocusState private var bodyFocused: Bool
     @State private var followUpDays: Int? = nil
+    @State private var pickSendTime = false
+    @State private var sendTime = Date().addingTimeInterval(3600)
     @Environment(\.modelContext) private var ctx
 
     var body: some View {
@@ -158,9 +160,16 @@ struct ComposeView: View {
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() }.disabled(sendCountdown != nil) }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button { startSend() } label: { Image(systemName: "paperplane.fill") }
+                    Menu {
+                        Section("Send later") {
+                            ForEach(SendLater.presets(), id: \.1) { p in
+                                Button(p.0, systemImage: "clock") { scheduleSend(at: p.1) }
+                            }
+                            Button("Pick a time…", systemImage: "calendar.badge.clock") { pickSendTime = true }
+                        }
+                    } label: { Image(systemName: "paperplane.fill") } primaryAction: { startSend() }
                         .disabled(recipients(draft.to).isEmpty || sendCountdown != nil)
-                        .accessibilityLabel("Send")
+                        .accessibilityLabel("Send. Hold for send later")
                 }
                 ToolbarItemGroup(placement: .bottomBar) {
                     PhotosPicker(selection: $photoItems, maxSelectionCount: 10, matching: .images) { Image(systemName: "photo") }
@@ -172,6 +181,21 @@ struct ComposeView: View {
                 }
             }
             .overlay(alignment: .bottom) { if let n = sendCountdown { undoBar(n) } }
+            .sheet(isPresented: $pickSendTime) {
+                NavigationStack {
+                    Form {
+                        DatePicker("Send at", selection: $sendTime, in: Date()..., displayedComponents: [.date, .hourAndMinute])
+                            .datePickerStyle(.graphical)
+                        Section { } footer: { Text("Keel sends it at this time. If Keel is closed, iPhone may run it a few minutes later.") }
+                    }
+                    .navigationTitle("Send Later").navigationBarTitleDisplayMode(.inline)
+                    .toolbar {
+                        ToolbarItem(placement: .cancellationAction) { Button("Cancel") { pickSendTime = false } }
+                        ToolbarItem(placement: .confirmationAction) { Button("Schedule") { pickSendTime = false; scheduleSend(at: sendTime) } }
+                    }
+                }
+                .presentationDetents([.large])
+            }
             .fileImporter(isPresented: $showFiles, allowedContentTypes: [.item], allowsMultipleSelection: true) { result in
                 if case .success(let urls) = result { urls.forEach(addFile) }
             }
@@ -237,6 +261,23 @@ struct ComposeView: View {
             }
             await send()
         }
+    }
+
+    private func scheduleSend(at date: Date) {
+        guard let account = accounts.first(where: { $0.id == accountId }) ?? accounts.first else {
+            error = "Add an email account first (Today → profile icon)."; return
+        }
+        let mail = OutgoingMail(to: recipients(draft.to), cc: recipients(draft.cc), bcc: recipients(draft.bcc),
+                                subject: draft.subject, body: draft.body,
+                                replyTo: account.id == draft.accountId ? draft.replyTo : nil,
+                                attachments: attachments)
+        let scheduled = SendLater.schedule(mail, accountId: account.id, at: date, ctx: ctx)
+        if let days = followUpDays, let to = mail.to.first {
+            FollowUps.create(account: account.id, to: to, name: draft.original?.fromName ?? "", subject: draft.subject, days: days, ctx: ctx)
+        }
+        Haptics.success()
+        UndoCenter.shared.offer("Scheduled for \(date.formatted(date: .abbreviated, time: .shortened))", undo: { [ctx] in ctx.delete(scheduled); try? ctx.save() })
+        dismiss()
     }
 
     private func send() async {

@@ -34,6 +34,8 @@ struct TodayView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: DS.Space.l) {
                     greeting
+                    MedsTodayCard()
+                    PinnedTasksCard()
                     // Today reshapes itself through the day: plan in the morning, do in the day, wind down at night.
                     switch DayPhase.now {
                     case .morning:
@@ -98,6 +100,8 @@ struct TodayView: View {
                         NavigationLink { ProcessInboxView() } label: { Label("Sort loose tasks", systemImage: "tray.and.arrow.down") }
                         NavigationLink { HabitsView() } label: { Label("Habit stacks", systemImage: "link") }
                         NavigationLink { HabitLibraryView() } label: { Label("Habit library", systemImage: "books.vertical") }
+                        NavigationLink { MedsView() } label: { Label("Medications", systemImage: "pills") }
+                        NavigationLink { AchievementsView() } label: { Label("Achievements", systemImage: "trophy") }
                         NavigationLink { FocusHistoryView() } label: { Label("Focus history", systemImage: "chart.bar.xaxis") }
                         NavigationLink { JournalTimelineView() } label: { Label("Mood journal", systemImage: "face.smiling") }
                         NavigationLink { SharedCalendarsView() } label: { Label("Shared calendars", systemImage: "person.3") }
@@ -209,6 +213,10 @@ struct TodayView: View {
                         Text(e.title ?? "Event").font(DS.Font.headline)
                         Text("\(e.startDate.formatted(date: .omitted, time: .shortened)) · \(e.calendar.source.title)")
                             .font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
+                        if let leave = LeaveBy.times[e.calendarItemIdentifier] {
+                            Label("Leave by \(leave.formatted(date: .omitted, time: .shortened))", systemImage: "car.fill")
+                                .font(DS.Font.caption).foregroundStyle(leave < Date() ? .red : DS.Palette.warmth)
+                        }
                     }
                     Spacer()
                     // Time-blindness aid: countdown, not a timestamp ("Now" once it has started)

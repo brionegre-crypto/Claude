@@ -60,6 +60,14 @@ final class AIRouter {
         return cloudEnabled ? try? await cloud.draftReply(email, intent: intent) : nil
     }
 
+    /// Three one-tap reply ideas for an email, cached on the message.
+    func replyIdeas(for email: EmailMessage) async -> [String] {
+        if let cached = email.suggestedReply, !cached.isEmpty { return cached.components(separatedBy: "|") }
+        guard onDeviceAvailable, let ideas = try? await onDevice.replyIdeas(email), !ideas.isEmpty else { return [] }
+        email.suggestedReply = ideas.prefix(3).map { $0.replacingOccurrences(of: "|", with: "/") }.joined(separator: "|")
+        return Array(ideas.prefix(3))
+    }
+
     /// "Break into tiny steps". Without any AI, a simple starter plan still beats a blank page.
     func breakDown(_ task: String, minutesAvailable: Int?) async -> [MicroStep] {
         if preferCloud, let steps = try? await cloud.breakDown(task, minutesAvailable: minutesAvailable), !steps.isEmpty { return steps }
