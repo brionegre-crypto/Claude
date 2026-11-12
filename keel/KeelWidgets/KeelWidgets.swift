@@ -11,6 +11,8 @@ struct KeelWidgetBundle: WidgetBundle {
         CountdownWidget()
         TasksCheckWidget()
         HabitsCheckWidget()
+        MedsWidget()
+        MomentumWidget()
         FocusLiveActivity()
         CaptureControl()
         FocusControl()
@@ -389,5 +391,65 @@ struct HabitsCheckView: View {
                 Spacer(minLength: 0)
             }
         }
+    }
+}
+
+// MARK: - Lock Screen: next med dose and momentum
+
+struct MedsWidget: Widget {
+    var body: some WidgetConfiguration {
+        StaticConfiguration(kind: "KeelMeds", provider: KeelProvider()) { entry in
+            MedsWidgetView(entry: entry)
+                .containerBackground(for: .widget) { Color.clear }
+                .widgetURL(URL(string: "com.keel.app://today"))
+        }
+        .configurationDisplayName("Medication")
+        .description("Your next dose, right on the Lock Screen.")
+        .supportedFamilies([.accessoryRectangular, .accessoryInline, .accessoryCircular, .systemSmall])
+    }
+}
+
+struct MedsWidgetView: View {
+    let entry: KeelEntry
+    @Environment(\.widgetFamily) private var family
+
+    var body: some View {
+        let s = entry.snapshot
+        switch family {
+        case .accessoryInline:
+            if let n = s.nextMed, let at = s.nextMedAt { Text("💊 \(n) \(at, style: .time)") } else { Text("💊 All taken today") }
+        case .accessoryCircular:
+            VStack(spacing: 0) {
+                Image(systemName: "pills.fill")
+                Text(s.medsLeftToday.map { $0 == 0 ? "✓" : "\($0)" } ?? "–").font(.headline)
+            }
+        default:
+            VStack(alignment: .leading, spacing: 2) {
+                Label("NEXT DOSE", systemImage: "pills.fill").font(.caption2.weight(.semibold))
+                if let n = s.nextMed, let at = s.nextMedAt {
+                    Text(n).font(.headline).lineLimit(1)
+                    Text(at, style: .time).font(.caption)
+                } else {
+                    Text(s.medsLeftToday == nil ? "No meds added" : "All taken today ✓").font(.headline)
+                }
+                if family == .systemSmall { Spacer(minLength: 0) }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
+    }
+}
+
+struct MomentumWidget: Widget {
+    var body: some WidgetConfiguration {
+        StaticConfiguration(kind: "KeelMomentum", provider: KeelProvider()) { entry in
+            let m = entry.snapshot.momentum ?? 0
+            Gauge(value: Double(m), in: 0...100) { Image(systemName: "bolt.fill") } currentValueLabel: { Text("\(m)") }
+                .gaugeStyle(.accessoryCircularCapacity)
+                .containerBackground(for: .widget) { Color.clear }
+                .widgetURL(URL(string: "com.keel.app://today"))
+        }
+        .configurationDisplayName("Momentum")
+        .description("Today's momentum score. It only goes up.")
+        .supportedFamilies([.accessoryCircular])
     }
 }

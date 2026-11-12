@@ -6,7 +6,9 @@ import PhotosUI
 /// Notion-style block notes. Meeting notes auto-link to the calendar event; any line can become a task.
 struct NotesView: View {
     @Environment(\.modelContext) private var ctx
-    @Query(sort: \Note.updatedAt, order: .reverse) private var notes: [Note]
+    @Query(sort: \Note.updatedAt, order: .reverse) private var allNotes: [Note]
+    private var notes: [Note] { allNotes.filter { !$0.isTemplate } }
+    private var templates: [Note] { allNotes.filter(\.isTemplate) }
     @State private var search = ""
 
     private var filtered: [Note] {
@@ -19,12 +21,22 @@ struct NotesView: View {
                 let pinned = filtered.filter(\.isPinned)
                 if !pinned.isEmpty { Section("Pinned") { ForEach(pinned) { row($0) } } }
                 Section("All notes") { ForEach(filtered.filter { !$0.isPinned }) { row($0) }.onDelete(perform: delete) }
+                if !templates.isEmpty && search.isEmpty {
+                    Section {
+                        ForEach(templates) { row($0) }.onDelete { idx in idx.map { templates[$0] }.forEach(ctx.delete) }
+                    } header: { Text("Templates") } footer: { Text("Use {{date}} in a template to fill in today's date.") }
+                }
             }
             .searchable(text: $search, prompt: "Search notes")
             .navigationTitle("Notes")
             .toolbar {
                 Menu {
                     Button("Blank page") { create(Note(title: "Untitled")) }
+                    if !templates.isEmpty {
+                        Menu("From template", systemImage: "doc.on.doc") {
+                            ForEach(templates) { t in Button(t.title) { create(fromTemplate: t) } }
+                        }
+                    }
                     Button("Meeting notes for next event") { createMeetingNote() }
                     NavigationLink { MeetingRecorderView() } label: { Label("Record a meeting", systemImage: "mic") }
                     NavigationLink { NoteEditor(note: DailyNote.today(ctx)) } label: { Label("Today's note", systemImage: "calendar") }
@@ -50,6 +62,17 @@ struct NotesView: View {
     }
 
     private func create(_ n: Note) { ctx.insert(n); Haptics.tap() }
+
+    /// A fresh copy of a template, with {{date}} filled in.
+    private func create(fromTemplate t: Note) {
+        let today = Date().formatted(date: .long, time: .omitted)
+        let blocks = t.blocks.map { b -> NoteBlock in
+            var c = NoteBlock(kind: b.kind, text: b.text.replacingOccurrences(of: "{{date}}", with: today))
+            c.checked = false; c.refId = b.refId
+            return c
+        }
+        create(Note(title: t.title.replacingOccurrences(of: "{{date}}", with: today), blocks: blocks))
+    }
     private func delete(_ idx: IndexSet) { idx.map { filtered.filter { !$0.isPinned }[$0] }.forEach(ctx.delete) }
 
     private func createMeetingNote() {
@@ -137,6 +160,12 @@ struct NoteEditor: View {
                 } label: { Image(systemName: "sparkles") }
                 Menu {
                     Button(note.isLocked ? "Remove Lock" : "Lock Note", systemImage: note.isLocked ? "lock.open" : "lock") { toggleLock() }
+                    Button("Save as Template", systemImage: "doc.on.doc") {
+                        let t = Note(title: note.title, blocks: note.blocks.map { var b = $0; b.id = UUID(); b.checked = false; return b })
+                        t.isTemplate = true
+                        ctx.insert(t)
+                        UndoCenter.shared.notify("Saved “\(note.title)” as a template")
+                    }
                     Divider()
                     Button("Export as Markdown", systemImage: "doc.plaintext") { exportURL = NoteExport.markdownFile(note) }
                     Button("Export as PDF", systemImage: "doc.richtext") { exportURL = NoteExport.pdfFile(note) }

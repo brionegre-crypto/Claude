@@ -103,6 +103,8 @@ struct WatchPayload: Codable {
     var unreadCount: Int? = nil
     var worldClock: [String]? = nil       // time zone identifiers
     var calm: Bool? = nil
+    var weekDone: Int? = nil              // tasks completed in the last 7 days
+    var doneStreak: Int? = nil            // days in a row with something done
 }
 
 /// What Apple Watch asks the iPhone to do.

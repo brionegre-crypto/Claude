@@ -32,6 +32,10 @@ struct WidgetSnapshot: Codable {
     var countdowns: [CountdownLine]? = nil
     var habits: [HabitLine]? = nil
     var briefing: String? = nil
+    var nextMed: String? = nil            // "Adderall 20 mg"
+    var nextMedAt: Date? = nil
+    var medsLeftToday: Int? = nil
+    var momentum: Int? = nil
 
     struct CountdownLine: Codable, Hashable {
         var title: String

@@ -615,14 +615,16 @@ struct MedsPage: View {
 struct MomentumPage: View {
     @Environment(WatchStore.self) private var store
     var body: some View {
-        VStack(spacing: 8) {
+        ScrollView { VStack(spacing: 8) {
             Gauge(value: Double(store.payload.momentum ?? 0), in: 0...100) {
                 Text("Momentum")
             } currentValueLabel: { Text("\(store.payload.momentum ?? 0)") }
                 .gaugeStyle(.accessoryCircularCapacity).tint(accent).scaleEffect(1.4).padding()
             Text("Momentum only goes up today.").font(.caption2).foregroundStyle(.secondary).multilineTextAlignment(.center)
             if let a = store.payload.achievementsUnlocked { Label("\(a) achievements", systemImage: "trophy.fill").font(.caption) }
-        }
+            if let w = store.payload.weekDone { Label("\(w) done this week", systemImage: "checkmark.circle").font(.caption) }
+            if let s = store.payload.doneStreak, s > 1 { Label("\(s)-day streak", systemImage: "flame.fill").font(.caption).foregroundStyle(.orange) }
+        } }
         .navigationTitle("Momentum")
     }
 }

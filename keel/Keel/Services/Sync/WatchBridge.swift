@@ -87,6 +87,12 @@ final class WatchBridge: NSObject, WCSessionDelegate {
         payload.achievementsUnlocked = Momentum.achievements(ctx: ctx).filter(\.unlocked).count
         payload.scheduledMail = ((try? ctx.fetch(FetchDescriptor<ScheduledMail>())) ?? []).count
         payload.briefing = Briefing.latest
+        let doneDays = Set(allTasks.compactMap(\.completedAt).map { cal.startOfDay(for: $0) })
+        payload.weekDone = allTasks.filter { ($0.completedAt ?? .distantPast) >= weekStart }.count
+        var streakDay = doneDays.contains(today) ? today : cal.date(byAdding: .day, value: -1, to: today)!
+        var streak = 0
+        while doneDays.contains(streakDay) { streak += 1; streakDay = cal.date(byAdding: .day, value: -1, to: streakDay)! }
+        payload.doneStreak = streak
         payload.worldClock = (UserDefaults.standard.string(forKey: "worldclock.zones") ?? "")
             .split(separator: ",").map(String.init).filter { !$0.isEmpty }
         payload.calm = UserDefaults.standard.bool(forKey: Prefs.calm)

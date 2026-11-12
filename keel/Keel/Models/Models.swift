@@ -254,6 +254,7 @@ struct NoteBlock: Codable, Identifiable, Hashable {
     var isPinned: Bool = false
     var updatedAt: Date = Date()
     var aiSummary: String?
+    var isTemplate: Bool = false                // a reusable note template, hidden from Notes
     var isLocked: Bool = false                  // needs Face ID to open; hidden from search, Spotlight and AI
 
     init(title: String, blocks: [NoteBlock] = [NoteBlock(kind: .text, text: "")]) {
@@ -870,5 +871,36 @@ struct StoredAttachment: Codable {
         self.data = data
         self.filename = filename
         self.kind = kind
+    }
+}
+
+// MARK: - Smart lists (saved task filters)
+
+@Model final class SmartList {
+    var id: UUID = UUID()
+    var name: String
+    var icon: String = "line.3.horizontal.decrease.circle"
+    var priorities: [Int] = []                  // TaskPriority raw values; empty = any
+    var tags: [String] = []                     // any of these; empty = any
+    var lists: [String] = []                    // any of these; empty = any
+    var dueWithinDays: Int?                     // nil = any date; 0 = today (incl. overdue)
+    var includeNoDate: Bool = true
+    var energy: Int?                            // EnergyLevel raw value
+    var createdAt: Date = Date()
+
+    init(name: String) { self.name = name }
+
+    func matches(_ t: TaskItem, now: Date = Date()) -> Bool {
+        guard !t.isDone, !t.isSomeday else { return false }
+        if !priorities.isEmpty && !priorities.contains(t.priority.rawValue) { return false }
+        if !tags.isEmpty && !t.tags.contains(where: tags.contains) { return false }
+        if !lists.isEmpty && !lists.contains(t.listName) { return false }
+        if let e = energy, t.energy.rawValue != e { return false }
+        if let days = dueWithinDays {
+            guard let due = t.dueDate else { return includeNoDate }
+            let end = Calendar.current.date(byAdding: .day, value: days + 1, to: Calendar.current.startOfDay(for: now))!
+            return due < end
+        }
+        return t.dueDate != nil || includeNoDate
     }
 }

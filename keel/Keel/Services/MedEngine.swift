@@ -37,6 +37,7 @@ enum MedEngine {
         }
         try? ctx.save()
         Haptics.success()
+        WidgetSync.update(ctx)        // Lock Screen widget shows the next dose
     }
 
     static func undo(_ dose: MedDose, med: Medication?, ctx: ModelContext) {

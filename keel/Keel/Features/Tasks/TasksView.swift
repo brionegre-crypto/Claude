@@ -7,6 +7,7 @@ enum TaskFilter: Hashable {
     case today, next7, inbox, all, matrix, completed, someday
     case list(String)
     case tag(String)
+    case smart(UUID)
 
     var title: String {
         switch self {
@@ -19,6 +20,7 @@ enum TaskFilter: Hashable {
         case .someday: "Someday"
         case .list(let l): l
         case .tag(let t): "#\(t)"
+        case .smart: "Smart list"
         }
     }
 
@@ -33,6 +35,7 @@ enum TaskFilter: Hashable {
         case .someday: "moon.zzz"
         case .list: "list.bullet.rectangle"
         case .tag: "number"
+        case .smart: "line.3.horizontal.decrease.circle"
         }
     }
 }
@@ -40,6 +43,9 @@ enum TaskFilter: Hashable {
 struct TasksView: View {
     @Environment(\.modelContext) private var ctx
     @Query(sort: \TaskItem.createdAt, order: .reverse) private var tasks: [TaskItem]
+    @Query(sort: \SmartList.createdAt) private var smartLists: [SmartList]
+    @State private var editingSmart: SmartList?
+    @State private var newSmart = false
     @AppStorage("tasks.filter") private var filterKey = "today"
     @State private var newTitle = ""
     @State private var search = ""
@@ -61,7 +67,8 @@ struct TasksView: View {
         case "someday": .someday
         default:
             filterKey.hasPrefix("list:") ? .list(String(filterKey.dropFirst(5)))
-                : filterKey.hasPrefix("tag:") ? .tag(String(filterKey.dropFirst(4))) : .today
+                : filterKey.hasPrefix("tag:") ? .tag(String(filterKey.dropFirst(4)))
+                : filterKey.hasPrefix("smart:") ? (UUID(uuidString: String(filterKey.dropFirst(6))).map { .smart($0) } ?? .today) : .today
         }
     }
 
@@ -69,7 +76,7 @@ struct TasksView: View {
         switch f {
         case .today: "today"; case .next7: "next7"; case .inbox: "inbox"; case .all: "all"
         case .matrix: "matrix"; case .completed: "completed"; case .someday: "someday"
-        case .list(let l): "list:\(l)"; case .tag(let t): "tag:\(t)"
+        case .list(let l): "list:\(l)"; case .tag(let t): "tag:\(t)"; case .smart(let id): "smart:\(id.uuidString)"
         }
     }
 
@@ -77,6 +84,11 @@ struct TasksView: View {
         Array(Set(tasks.map(\.listName) + CalendarService.shared.reminderLists.map(\.title))).sorted()
     }
     private var tags: [String] { Array(Set(tasks.flatMap(\.tags))).sorted() }
+
+    private var screenTitle: String {
+        if case .smart(let id) = filter { return smartLists.first { $0.id == id }?.name ?? "Smart list" }
+        return filter.title
+    }
 
     private var open: [TaskItem] { tasks.filter { !$0.isDone && !$0.isSomeday } }
 
@@ -93,6 +105,7 @@ struct TasksView: View {
         case .someday: base = tasks.filter { !$0.isDone && $0.isSomeday }
         case .list(let l): base = open.filter { $0.listName == l }
         case .tag(let t): base = open.filter { $0.tags.contains(t) }
+        case .smart(let id): base = smartLists.first { $0.id == id }.map { s in tasks.filter { s.matches($0) } } ?? []
         }
         if !search.isEmpty {
             let q = search.lowercased()
@@ -113,7 +126,7 @@ struct TasksView: View {
                     list
                 }
             }
-            .navigationTitle(filter.title)
+            .navigationTitle(screenTitle)
             .searchable(text: $search, prompt: "Search tasks")
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
@@ -142,6 +155,9 @@ struct TasksView: View {
                             Button("Share “\(name)”…", systemImage: "person.2") { sharingList = name }
                         }
                         NavigationLink { TemplatesView() } label: { Label("Templates", systemImage: "doc.on.doc") }
+                        NavigationLink { WeekPlannerView() } label: { Label("Plan the week", systemImage: "calendar.day.timeline.left") }
+                        NavigationLink { StatsView() } label: { Label("Statistics", systemImage: "chart.xyaxis.line") }
+                        NavigationLink { TagsManagerView() } label: { Label("Manage tags", systemImage: "number") }
                         NavigationLink { ScreenshotTasksView() } label: { Label("From screenshots", systemImage: "camera.viewfinder") }
                         if case .list(let name) = filter {
                             Button("Save “\(name)” as a template", systemImage: "square.and.arrow.down") {
@@ -156,6 +172,8 @@ struct TasksView: View {
             }
             .refreshable { await SyncEngine.shared.syncAll() }
             .sheet(item: Binding(get: { sharingList.map { ListName(name: $0) } }, set: { sharingList = $0?.name })) { ShareListSheet(listName: $0.name) }
+            .sheet(isPresented: $newSmart) { SmartListEditor(list: nil, allLists: lists, allTags: tags) }
+            .sheet(item: $editingSmart) { SmartListEditor(list: $0, allLists: lists, allTags: tags) }
             .overlay(alignment: .bottom) {
                 if let toast {
                     Text(toast).font(DS.Font.caption).padding(.horizontal, DS.Space.m).padding(.vertical, DS.Space.s)
@@ -172,6 +190,17 @@ struct TasksView: View {
                 ForEach([TaskFilter.today, .next7, .inbox, .all, .matrix, .someday, .completed], id: \.self) { chip($0) }
                 ForEach(lists, id: \.self) { chip(.list($0)) }
                 ForEach(tags, id: \.self) { chip(.tag($0)) }
+                ForEach(smartLists) { s in
+                    Button { withAnimation(DS.spring) { filterKey = key(.smart(s.id)) }; Haptics.tap() } label: {
+                        Chip(text: s.name, color: filter == .smart(s.id) ? DS.Palette.accent : .gray, icon: s.icon)
+                    }
+                    .buttonStyle(.plain)
+                    .contextMenu {
+                        Button("Edit", systemImage: "pencil") { editingSmart = s }
+                        Button("Delete", systemImage: "trash", role: .destructive) { ctx.delete(s); filterKey = "today" }
+                    }
+                }
+                Button { newSmart = true } label: { Chip(text: "Smart list", color: .gray, icon: "plus") }.buttonStyle(.plain)
             }
             .padding(.horizontal).padding(.vertical, DS.Space.s)
         }

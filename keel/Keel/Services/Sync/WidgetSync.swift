@@ -37,7 +37,11 @@ enum WidgetSync {
                 .filter { $0.daysLeft >= 0 }.prefix(5)
                 .map { WidgetSnapshot.CountdownLine(title: $0.title, emoji: $0.emoji, date: $0.date) },
             habits: habitLines(ctx),
-            briefing: Briefing.latest
+            briefing: Briefing.latest,
+            nextMed: nextMed(ctx)?.name,
+            nextMedAt: nextMed(ctx)?.at,
+            medsLeftToday: medsLeft(ctx),
+            momentum: Momentum.today(ctx: ctx).total
         ).save()
         WidgetCenter.shared.reloadAllTimelines()
         WatchBridge.shared.push(ctx)          // keep Apple Watch in step
@@ -55,6 +59,27 @@ enum WidgetSync {
             .sorted { $0.orderInStack < $1.orderInStack }
             .prefix(8)
             .map { WidgetSnapshot.HabitLine(id: $0.id, name: $0.name, icon: $0.icon, done: doneToday.contains($0.id)) }
+    }
+
+    /// The next untaken dose today.
+    private static func nextMed(_ ctx: ModelContext) -> (name: String, at: Date)? {
+        let cal = Calendar.current
+        let doses = (try? ctx.fetch(FetchDescriptor<MedDose>())) ?? []
+        let due = ((try? ctx.fetch(FetchDescriptor<Medication>())) ?? []).filter(\.isActive).flatMap { m in
+            m.times.compactMap { slot -> (String, Date)? in
+                guard MedEngine.taken(m, slot: slot, doses: doses) == nil,
+                      let at = cal.date(byAdding: .minute, value: slot, to: cal.startOfDay(for: Date())) else { return nil }
+                return ("\(m.name)\(m.dose.isEmpty ? "" : " \(m.dose)")", at)
+            }
+        }
+        return due.min { $0.1 < $1.1 }.map { (name: $0.0, at: $0.1) }
+    }
+
+    private static func medsLeft(_ ctx: ModelContext) -> Int? {
+        let meds = ((try? ctx.fetch(FetchDescriptor<Medication>())) ?? []).filter(\.isActive)
+        guard !meds.isEmpty else { return nil }
+        let doses = (try? ctx.fetch(FetchDescriptor<MedDose>())) ?? []
+        return meds.flatMap { m in m.times.filter { MedEngine.taken(m, slot: $0, doses: doses) == nil } }.count
     }
 
     private static func hex(_ color: CGColor?) -> String {

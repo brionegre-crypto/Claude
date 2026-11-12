@@ -61,7 +61,7 @@ struct SearchView: View {
                     Section("Tasks") { ForEach(Array(t)) { task in NavigationLink { TaskDetailView(task: task) } label: { TaskRow(task: task) } } }
                 }
                 let n = smart.allows("note") && smart.flags.isEmpty && smart.from == nil
-                    ? Array(notes.filter { smart.matches($0.title, $0.isLocked ? "" : $0.plainText) && smart.inRange($0.updatedAt) }.prefix(smart.isStructured ? 20 : 6)) : []
+                    ? Array(notes.filter { !$0.isTemplate && smart.matches($0.title, $0.isLocked ? "" : $0.plainText) && smart.inRange($0.updatedAt) }.prefix(smart.isStructured ? 20 : 6)) : []
                 if !n.isEmpty {
                     Section("Notes") {
                         ForEach(n) { note in
@@ -135,7 +135,7 @@ struct SearchView: View {
 enum SpotlightIndex {
     static func refresh(_ ctx: ModelContext) {
         let tasks = ((try? ctx.fetch(FetchDescriptor<TaskItem>())) ?? []).filter { !$0.isDone }.prefix(500)
-        let notes = ((try? ctx.fetch(FetchDescriptor<Note>())) ?? []).filter { !$0.isLocked }.prefix(500)
+        let notes = ((try? ctx.fetch(FetchDescriptor<Note>())) ?? []).filter { !$0.isLocked && !$0.isTemplate }.prefix(500)
         var items: [CSSearchableItem] = []
         for t in tasks {
             let a = CSSearchableItemAttributeSet(contentType: .content)
