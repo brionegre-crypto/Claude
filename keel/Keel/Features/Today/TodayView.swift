@@ -26,6 +26,8 @@ struct TodayView: View {
     private var energy: EnergyLevel { EnergyLevel(rawValue: energyRaw) ?? .medium }
     private var nextThing: TaskItem? { ADHDCoach.nextThing(tasks: tasks, energy: energy) }
     private var events: [EKEvent] { CalendarService.shared.todaysEvents().filter { $0.endDate > Date() } }
+    /// "Up next" skips all-day events (holidays, birthdays): they have no start to count down to.
+    private var upNextEvents: [EKEvent] { events.filter { !$0.isAllDay } }
 
     var body: some View {
         NavigationStack {
@@ -39,17 +41,17 @@ struct TodayView: View {
                         energyPicker
                         justOneThing
                         planCard
-                        if !events.isEmpty { upNext }
+                        if !upNextEvents.isEmpty { upNext }
                     case .day:
                         energyPicker
                         justOneThing
-                        if !events.isEmpty { upNext }
+                        if !upNextEvents.isEmpty { upNext }
                         planCard
                         CheckInCard()
                     case .evening:
                         NavigationLink { DayReviewView() } label: { dayReviewTeaser }.buttonStyle(.plain)
                         CheckInCard()
-                        if !events.isEmpty { upNext }
+                        if !upNextEvents.isEmpty { upNext }
                         justOneThing
                     }
                     countdownCard
@@ -193,7 +195,7 @@ struct TodayView: View {
     private var upNext: some View {
         VStack(alignment: .leading, spacing: DS.Space.s) {
             SectionHeader(title: "Up next", trailing: "all calendars")
-            ForEach(events.prefix(3), id: \.eventIdentifier) { e in
+            ForEach(upNextEvents.prefix(3), id: \.eventIdentifier) { e in
                 HStack(spacing: DS.Space.m) {
                     RoundedRectangle(cornerRadius: 2).fill(Color(cgColor: e.calendar.cgColor)).frame(width: 4, height: 34)
                     VStack(alignment: .leading) {
@@ -202,8 +204,10 @@ struct TodayView: View {
                             .font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
                     }
                     Spacer()
-                    // Time-blindness aid: countdown, not a timestamp
-                    Text(e.startDate, style: .relative).font(DS.Font.caption).foregroundStyle(DS.Palette.meeting)
+                    // Time-blindness aid: countdown, not a timestamp ("Now" once it has started)
+                    Group {
+                        if e.startDate <= Date() { Text("Now") } else { Text(e.startDate, style: .relative) }
+                    }.font(DS.Font.caption).foregroundStyle(DS.Palette.meeting)
                 }
             }
         }
