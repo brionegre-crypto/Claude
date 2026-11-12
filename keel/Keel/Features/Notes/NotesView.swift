@@ -127,6 +127,10 @@ struct NotesView: View {
             }
             .navigationTitle("Notes")
             .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button { showBrain = true } label: { Image(systemName: "brain.head.profile") }
+                        .accessibilityLabel("Brain map of your notes")
+                }
                 ToolbarItem(placement: .topBarTrailing) {
                     Menu {
                         Button("New page", systemImage: "doc") { newPage() }
@@ -145,10 +149,12 @@ struct NotesView: View {
                 }
             }
             .navigationDestination(isPresented: $recording) { MeetingRecorderView() }
+            .navigationDestination(isPresented: $showBrain) { BrainMapView() }
         }
     }
 
     @State private var recording = false
+    @State private var showBrain = false
 
     // MARK: Pieces
 
@@ -160,6 +166,7 @@ struct NotesView: View {
                 QuickTile(title: "Record", icon: "waveform.badge.mic", color: .red) { recording = true }
                 QuickTile(title: "Meeting", icon: "person.2.fill", color: .teal) { createMeetingNote() }
                 QuickTile(title: "Journal", icon: "book.fill", color: .pink) { createJournalPage() }
+                QuickTile(title: "Brain map", icon: "brain.head.profile.fill", color: .pink) { showBrain = true }
                 QuickTile(title: "Database", icon: "tablecells.fill", color: .purple) {
                     opened = NotesDatabase.create(title: "Untitled database", parent: nil, ctx: ctx)
                 }

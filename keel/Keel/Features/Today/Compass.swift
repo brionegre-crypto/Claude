@@ -415,7 +415,8 @@ enum HubCatalog {
             t("talk", "Talk to Keel", "waveform", "voice speak") { TalkView() },
             t("record", "Record a meeting", "waveform.badge.mic", "meeting notes transcript") { MeetingRecorderView() },
             t("screenshots", "Tasks from screenshots", "camera.viewfinder", "photo scan") { ScreenshotTasksView() },
-            t("memory", "What Keel knows", "brain.head.profile", "memory facts about me") { MemoryView() },
+            t("brainMap", "Brain map", "brain.head.profile.fill", "notes graph links connections map neurons") { BrainMapView() },
+            t("memory", "What Keel knows", "brain", "memory facts about me") { MemoryView() },
         ]),
     ]
 }
