@@ -657,10 +657,12 @@ struct PrivacySettings: View {
             }
             Section {
                 NavigationLink { MemoryView() } label: { LabeledContent("What Keel Knows", value: "\(KeelMemory.shared.facts.count)") }
+                Toggle("Look Up Context on the Web", isOn: Binding(get: { UserDefaults.standard.object(forKey: WebContext.onKey) as? Bool ?? true },
+                                                                  set: { UserDefaults.standard.set($0, forKey: WebContext.onKey) }))
                 Toggle("Autopilot", isOn: Binding(get: { UserDefaults.standard.object(forKey: "autopilot.on") as? Bool ?? true },
                                                   set: { UserDefaults.standard.set($0, forKey: "autopilot.on") }))
             } header: { Text("Personal AI") } footer: {
-                Text("Autopilot prepares replies, rebalances overbooked days, finds focus time and more, and waits for your tap before doing anything.")
+                Text("Autopilot prepares replies, rebalances overbooked days, finds focus time and more, and waits for your tap before doing anything. Web context lets meeting notes read company websites, invite links and Wikipedia (and run a web search with your own AI key); people's names are never sent, and it's off in Private mode.")
             }
             Section {
                 Picker("AI Model", selection: $providerRaw) {

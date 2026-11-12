@@ -208,7 +208,7 @@ enum MeetingAI {
         var parts: [MeetingPartOut] = []
         var i = text.startIndex
         while i < text.endIndex {
-            let j = text.index(i, offsetBy: 5_000, limitedBy: text.endIndex) ?? text.endIndex
+            let j = text.index(i, offsetBy: 4_500, limitedBy: text.endIndex) ?? text.endIndex
             let session = LanguageModelSession(instructions: instructions)
             if let p = try? await session.respond(to: "Transcript part:\n\(text[i..<j])", generating: MeetingPartOut.self).content {
                 parts.append(p)
@@ -330,6 +330,9 @@ struct MeetingRecorderView: View {
                     .first { !$0.isAllDay && $0.startDate <= now.addingTimeInterval(900) && $0.endDate >= now }
             }
             sources = MeetingContext.build(event: event, title: title, ctx: ctx).sources
+            // A quick look at the web (company sites, invite links) so you can see what Keel will use.
+            let web = await WebContext.gather(event: event, title: title, transcript: "", deep: false)
+            sources += web.sources
         }
         .onDisappear { if recorder.isRecording { recorder.stop() } }
     }
@@ -402,8 +405,11 @@ struct MeetingRecorderView: View {
     private func writeUp() async {
         writing = true; defer { writing = false }
         let context = MeetingContext.build(event: event, title: title, ctx: ctx)
-        sources = context.sources
-        let w = await MeetingAI.writeUp(recorder.transcript, context: context.text, myNotes: myNotes)
+        // Web context: company sites, invite links, Wikipedia for recurring topics, and (with your own AI key) a live web search.
+        let web = await WebContext.gather(event: event, title: title, transcript: recorder.transcript, deep: true)
+        sources = context.sources + web.sources
+        let fullContext = web.text.isEmpty ? context.text : context.text + "\nFROM THE WEB (background only; the meeting itself is the source of truth):\n" + web.text
+        let w = await MeetingAI.writeUp(recorder.transcript, context: fullContext, myNotes: myNotes)
 
         var blocks: [NoteBlock] = []
         if let e = event {

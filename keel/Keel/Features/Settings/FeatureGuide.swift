@@ -133,6 +133,7 @@ enum Guide {
                      summary: "It knows the context and fills in the detail.",
                      tips: ["Type /meeting in any page (or Notes → ✏️ → Record a meeting). Transcription happens on your iPhone; pause and resume any time.",
                             "Before writing, Keel reads the context: the calendar invite and agenda, your last meeting with the same name and its open action items, recent emails and promises with the attendees, and what it knows about you.",
+                            "It also looks things up on the web: the websites of the companies attendees work at, links in the invite, and Wikipedia for topics and acronyms that come up. With your own Claude, ChatGPT or Gemini key, that AI runs a live web search too. Names are never sent; turn it off in Settings → AI & Privacy.",
                             "Jot quick notes in the My notes tab while you listen. Afterwards each one is expanded with names, numbers and reasons from the conversation.",
                             "The write-up has a summary, discussion topics with detail, decisions, action items with owners and due dates, open questions, and the full transcript in a toggle.",
                             "Your action items become tasks; other people's become “follow up with…” waiting tasks. Email recap sends everyone the summary and next steps."]),

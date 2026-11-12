@@ -143,6 +143,96 @@ enum DirectAI {
         return data
     }
 
+    // MARK: Web research (plain text answer, searched live by the provider)
+
+    /// Asks the chosen provider to search the web and answer briefly. Claude uses its web search tool,
+    /// ChatGPT the Responses API web search, Gemini grounding with Google Search.
+    static func research(system: String, question: String) async throws -> String {
+        let p = provider
+        guard p != .apple, let apiKey = key(for: p) else { throw Failure.empty }
+        let m = model(for: p)
+        switch p {
+        case .claude: return try await claudeResearch(system: system, question: question, key: apiKey, model: m)
+        case .openai: return try await openAIResearch(system: system, question: question, key: apiKey, model: m)
+        case .gemini: return try await geminiResearch(system: system, question: question, key: apiKey, model: m)
+        case .apple: throw Failure.empty
+        }
+    }
+
+    private static func claudeResearch(system: String, question: String, key: String, model: String) async throws -> String {
+        var messages: [[String: Any]] = [["role": "user", "content": question]]
+        var collected = ""
+        // The server runs the searches; a long search can pause the turn. Resend to let it finish (bounded).
+        for _ in 0..<3 {
+            var req = URLRequest(url: URL(string: "https://api.anthropic.com/v1/messages")!)
+            req.httpMethod = "POST"
+            req.timeoutInterval = 180
+            req.setValue("application/json", forHTTPHeaderField: "content-type")
+            req.setValue(key, forHTTPHeaderField: "x-api-key")
+            req.setValue("2026-10-21", forHTTPHeaderField: "anthropic-version")
+            req.setValue("server-side-fallback-2026-07-01", forHTTPHeaderField: "anthropic-beta")
+            req.httpBody = try JSONSerialization.data(withJSONObject: [
+                "model": model,
+                "max_tokens": 4_096,
+                "system": system,
+                "fallbacks": "default",
+                "output_config": ["effort": "medium"],
+                "tools": [["type": "web_search_20260209", "name": "web_search", "max_uses": 4] as [String: Any]],
+                "messages": messages,
+            ] as [String: Any])
+            let obj = try await send(req)
+            let stop = obj["stop_reason"] as? String
+            if stop == "refusal" { throw Failure.refused }
+            let content = obj["content"] as? [[String: Any]] ?? []
+            // Answers with citations arrive as several text blocks; join them in order.
+            collected += content.filter { $0["type"] as? String == "text" }.compactMap { $0["text"] as? String }.joined()
+            guard stop == "pause_turn" else { break }
+            messages = [["role": "user", "content": question], ["role": "assistant", "content": content]]
+        }
+        let text = collected.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !text.isEmpty else { throw Failure.empty }
+        return text
+    }
+
+    private static func openAIResearch(system: String, question: String, key: String, model: String) async throws -> String {
+        var req = URLRequest(url: URL(string: "https://api.openai.com/v1/responses")!)
+        req.httpMethod = "POST"
+        req.timeoutInterval = 120
+        req.setValue("application/json", forHTTPHeaderField: "content-type")
+        req.setValue("Bearer \(key)", forHTTPHeaderField: "authorization")
+        req.httpBody = try JSONSerialization.data(withJSONObject: [
+            "model": model, "instructions": system, "input": question,
+            "tools": [["type": "web_search"]],
+        ] as [String: Any])
+        let obj = try await send(req)
+        let text = (obj["output"] as? [[String: Any]] ?? [])
+            .filter { $0["type"] as? String == "message" }
+            .flatMap { ($0["content"] as? [[String: Any]]) ?? [] }
+            .filter { $0["type"] as? String == "output_text" }
+            .compactMap { $0["text"] as? String }.joined(separator: "\n")
+        guard !text.isEmpty else { throw Failure.empty }
+        return text
+    }
+
+    private static func geminiResearch(system: String, question: String, key: String, model: String) async throws -> String {
+        let path = model.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? model
+        var req = URLRequest(url: URL(string: "https://generativelanguage.googleapis.com/v1beta/models/\(path):generateContent")!)
+        req.httpMethod = "POST"
+        req.timeoutInterval = 120
+        req.setValue("application/json", forHTTPHeaderField: "content-type")
+        req.setValue(key, forHTTPHeaderField: "x-goog-api-key")
+        req.httpBody = try JSONSerialization.data(withJSONObject: [
+            "systemInstruction": ["parts": [["text": system]]],
+            "contents": [["role": "user", "parts": [["text": question]]]],
+            "tools": [["google_search": [String: Any]()]],
+        ] as [String: Any])
+        let obj = try await send(req)
+        let parts = (((obj["candidates"] as? [[String: Any]])?.first?["content"] as? [String: Any])?["parts"] as? [[String: Any]]) ?? []
+        let text = parts.compactMap { $0["text"] as? String }.joined()
+        guard !text.isEmpty else { throw Failure.empty }
+        return text
+    }
+
     private static func send(_ req: URLRequest) async throws -> [String: Any] {
         let (data, resp) = try await URLSession.shared.data(for: req)
         let code = (resp as? HTTPURLResponse)?.statusCode ?? 0
