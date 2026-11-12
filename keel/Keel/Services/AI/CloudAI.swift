@@ -10,7 +10,12 @@ final class CloudAI {
 
     /// `task` tells the backend which model/effort to use (see backend/src/ai.ts ROUTES).
     private func call<T: Decodable>(task: String, system: String, user: String, schema: [String: Any], as: T.Type) async throws -> T {
-        // Not set up yet (Settings → Claude AI): fail fast so AIRouter falls back to Apple Intelligence.
+        // Bring-your-own-key provider (Claude, ChatGPT, Gemini) chosen in Settings → AI & Privacy.
+        if DirectAI.isConfigured {
+            let data = try await DirectAI.json(task: task, system: system, user: user, schema: schema)
+            return try JSONDecoder().decode(T.self, from: data)
+        }
+        // Optional Keel server; when neither is set up, fail fast so AIRouter uses Apple Intelligence.
         guard let endpoint = KeelServer.endpoint("v1/messages"), KeelServer.isConfigured else { throw CloudError.notConfigured }
         var req = URLRequest(url: endpoint)
         req.httpMethod = "POST"

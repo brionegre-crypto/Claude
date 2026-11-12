@@ -17,7 +17,9 @@ final class AIRouter {
     }
 
     /// Claude is used only when a server is connected and Private mode is off.
-    var cloudEnabled: Bool { !privateMode && KeelServer.isConfigured }
+    var cloudEnabled: Bool { !privateMode && (DirectAI.isConfigured || KeelServer.isConfigured) }
+    /// You chose Claude / ChatGPT / Gemini in Settings: use it first for writing and thinking jobs.
+    var preferCloud: Bool { !privateMode && DirectAI.isConfigured }
 
     var onDeviceAvailable: Bool {
         if case .available = SystemLanguageModel.default.availability { return true }
@@ -33,6 +35,7 @@ final class AIRouter {
     }
 
     func summarize(_ text: String) async -> String? {
+        if preferCloud, let s = try? await cloud.summarize(text) { return s }
         if onDeviceAvailable, let s = try? await onDevice.summarize(String(text.prefix(12_000))) { return s }
         return cloudEnabled ? try? await cloud.summarize(text) : nil
     }
@@ -52,12 +55,14 @@ final class AIRouter {
     }
 
     func draftReply(to email: EmailMessage, intent: String) async -> String? {
+        if preferCloud, let d = try? await cloud.draftReply(email, intent: intent) { return d }
         if onDeviceAvailable, let d = try? await onDevice.draftReply(email, intent: intent) { return d }
         return cloudEnabled ? try? await cloud.draftReply(email, intent: intent) : nil
     }
 
     /// "Break into tiny steps". Without any AI, a simple starter plan still beats a blank page.
     func breakDown(_ task: String, minutesAvailable: Int?) async -> [MicroStep] {
+        if preferCloud, let steps = try? await cloud.breakDown(task, minutesAvailable: minutesAvailable), !steps.isEmpty { return steps }
         if onDeviceAvailable, let steps = try? await onDevice.breakDown(task, minutesAvailable: minutesAvailable), !steps.isEmpty { return steps }
         if cloudEnabled, let steps = try? await cloud.breakDown(task, minutesAvailable: minutesAvailable) { return steps }
         return [

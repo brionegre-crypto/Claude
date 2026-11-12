@@ -499,10 +499,25 @@ struct SiriSettings: View {
 
 struct PrivacySettings: View {
     @AppStorage("ai.privateMode") private var privateMode = false
+    @AppStorage("ai.provider") private var providerRaw = "apple"
     @State private var showServer = false
 
     var body: some View {
         List {
+            Section {
+                Picker("AI Model", selection: $providerRaw) {
+                    ForEach(AIProvider.allCases) { Text($0.name).tag($0.rawValue) }
+                }
+                if let p = AIProvider(rawValue: providerRaw), p != .apple {
+                    NavigationLink { AIKeySettings(provider: p) } label: {
+                        LabeledContent("\(p.name) Key", value: DirectAI.key(for: p) == nil ? "Not added" : "Added")
+                    }
+                }
+            } header: { Text("AI Model") } footer: {
+                Text(providerRaw == "apple"
+                     ? "Free and private. Runs on this iPhone."
+                     : "Used for planning, drafts and summaries when Apple Intelligence isn't enough. Requests go from this iPhone straight to the provider, and they bill you per use. Ask Keel and email sorting stay on Apple Intelligence.")
+            }
             Section {
                 LabeledContent("Apple Intelligence", value: AIRouter.shared.onDeviceAvailable ? "On" : "Off")
                 if !AIRouter.shared.onDeviceAvailable {
@@ -755,6 +770,58 @@ struct KeelServerSetupView: View {
             ok = false; message = "The server is there, but that access code isn't right."
         case .unreachable(let why):
             ok = false; message = "Couldn't reach the server: \(why)"
+        }
+    }
+}
+
+/// Paste and test an API key for Claude, ChatGPT or Gemini.
+struct AIKeySettings: View {
+    let provider: AIProvider
+    @State private var key = ""
+    @State private var model = ""
+    @State private var testing = false
+    @State private var result: String?
+    @State private var ok = false
+
+    var body: some View {
+        Form {
+            Section {
+                SecureField("API key", text: $key).textInputAutocapitalization(.never).autocorrectionDisabled()
+                TextField(provider.defaultModel, text: $model).textInputAutocapitalization(.never).autocorrectionDisabled()
+            } header: { Text("\(provider.company) API") } footer: {
+                Text("Leave the model blank to use \(provider.defaultModel). The key is stored only in this iPhone's Keychain.")
+            }
+            if let page = provider.keyPage {
+                Section { Link("Get a \(provider.company) API key", destination: page) } footer: {
+                    Text("API keys are separate from a \(provider.name) chat subscription. Most providers ask you to add a payment method first.")
+                }
+            }
+            Section {
+                Button(testing ? "Testing…" : "Test & Save") { Task { await testAndSave() } }
+                    .disabled(key.isEmpty || testing)
+                if let result { Label(result, systemImage: ok ? "checkmark.circle.fill" : "exclamationmark.triangle").foregroundStyle(ok ? .green : .red) }
+            }
+            if DirectAI.key(for: provider) != nil {
+                Section { Button("Remove Key", role: .destructive) { KeychainStore.delete(provider.keychainKey); key = ""; result = "Removed." ; ok = true } }
+            }
+        }
+        .navigationTitle(provider.name)
+        .onAppear {
+            key = DirectAI.key(for: provider) ?? ""
+            model = UserDefaults.standard.string(forKey: "ai.model.\(provider.rawValue)") ?? ""
+        }
+    }
+
+    private func testAndSave() async {
+        testing = true; defer { testing = false }
+        let m = model.trimmingCharacters(in: .whitespaces).isEmpty ? provider.defaultModel : model
+        if let error = await DirectAI.test(provider, key: key.trimmingCharacters(in: .whitespacesAndNewlines), model: m) {
+            ok = false; result = error
+        } else {
+            KeychainStore.save(key.trimmingCharacters(in: .whitespacesAndNewlines), for: provider.keychainKey)
+            UserDefaults.standard.set(model, forKey: "ai.model.\(provider.rawValue)")
+            ok = true; result = "Connected. Keel will use \(provider.name)."
+            Haptics.success()
         }
     }
 }
