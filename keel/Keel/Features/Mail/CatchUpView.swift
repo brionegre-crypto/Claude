@@ -62,7 +62,7 @@ struct CatchUpView: View {
         guard summary == nil, !needsYou.isEmpty else { return }
         working = true; defer { working = false }
         let lines = needsYou.prefix(25).map { "\($0.fromName.isEmpty ? $0.from : $0.fromName): \($0.subject). \($0.aiSummary ?? $0.snippet)" }
-        summary = await AIRouter.shared.summarize("Catch me up on my unread email. Group by what each person needs from me, most urgent first. Mention deadlines.\n" + lines.joined(separator: "\n"))
+        summary = await AIRouter.shared.write("Catch me up on my unread email. Group by what each person needs from me, most urgent first. Mention deadlines.\n" + lines.joined(separator: "\n"))
             ?? "Top: " + needsYou.prefix(3).map { "\($0.fromName.isEmpty ? $0.from : $0.fromName) (\($0.subject))" }.joined(separator: "; ") + "."
     }
 

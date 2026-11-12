@@ -107,8 +107,8 @@ struct KeelShortcuts: AppShortcutsProvider {
                     shortTitle: "Complete Task", systemImageName: "checkmark.circle")
         AppShortcut(intent: TodayAgendaIntent(), phrases: ["What's on today in \(.applicationName)", "Brief me with \(.applicationName)", "What's my day in \(.applicationName)"],
                     shortTitle: "Today", systemImageName: "sun.max")
-        AppShortcut(intent: NextEventIntent(), phrases: ["What's next on my calendar in \(.applicationName)", "Next meeting in \(.applicationName)"],
-                    shortTitle: "Next Event", systemImageName: "calendar")
+        AppShortcut(intent: BrainDumpIntent(), phrases: ["Brain dump in \(.applicationName)", "Empty my head with \(.applicationName)"],
+                    shortTitle: "Brain Dump", systemImageName: "brain.head.profile")
         AppShortcut(intent: InboxSummaryIntent(), phrases: ["Check my inbox in \(.applicationName)", "Any important email in \(.applicationName)"],
                     shortTitle: "Inbox", systemImageName: "tray")
         AppShortcut(intent: WhatNowIntent(), phrases: ["What should I do now in \(.applicationName)", "Ask \(.applicationName) what's next"],
@@ -117,7 +117,7 @@ struct KeelShortcuts: AppShortcutsProvider {
                     shortTitle: "Focus", systemImageName: "moon.zzz")
         AppShortcut(intent: EndFocusIntent(), phrases: ["End focus in \(.applicationName)", "Stop focus in \(.applicationName)"],
                     shortTitle: "End Focus", systemImageName: "moon.zzz.fill")
-        AppShortcut(intent: OpenPromisesIntent(), phrases: ["What did I promise in \(.applicationName)", "Show my promises in \(.applicationName)"],
-                    shortTitle: "Promises", systemImageName: "hand.raised.fingers.spread")
+        AppShortcut(intent: DidITakeMedsIntent(), phrases: ["Did I take my meds in \(.applicationName)", "Check my medication in \(.applicationName)"],
+                    shortTitle: "Did I Take My Meds?", systemImageName: "pills")
     }
 }

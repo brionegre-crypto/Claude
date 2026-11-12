@@ -40,6 +40,15 @@ final class AIRouter {
         return cloudEnabled ? try? await cloud.summarize(text) : nil
     }
 
+    /// Free-form writing that follows the prompt's own instructions (letters, briefs, rewrites).
+    func write(_ prompt: String) async -> String? {
+        if onDeviceAvailable {
+            let session = LanguageModelSession(instructions: "You are a thoughtful writing assistant. Follow the request exactly, including its length and format.")
+            if let r = try? await session.respond(to: String(prompt.prefix(10_000))).content { return r }
+        }
+        return cloudEnabled ? try? await cloud.summarize(prompt) : nil
+    }
+
     /// Promise tracker: free keyword pre-filter, then Apple Intelligence; keyword fallback otherwise.
     func extractPromises(body: String, sentAt: Date) async -> [PromiseCandidate] {
         guard ADHDCoach.looksLikePromise(body) else { return [] }        // skips ~90% of sent mail

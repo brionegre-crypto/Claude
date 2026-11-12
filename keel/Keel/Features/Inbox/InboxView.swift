@@ -1,4 +1,5 @@
 import SwiftUI
+import Translation
 import SwiftData
 import QuickLook
 
@@ -403,6 +404,8 @@ struct EmailDetailView: View {
     @State private var unsubscribing = false
     @State private var unsubscribeMessage: String?
     @State private var replyIdeas: [String] = []
+    @State private var readingMode = false
+    @State private var showTranslate = false
 
     private var provider: MailProvider? {
         accounts.first { $0.id == email.accountId }.map(MailProviderFactory.make)
@@ -434,6 +437,8 @@ struct EmailDetailView: View {
                     Button("Mark unread", systemImage: "envelope.badge") { email.isRead = false; Task { try? await provider?.markRead(email.providerMessageId, read: false) } }
                     Button("Make it a task", systemImage: "checklist") { makeTask() }
                     Button(showPlain ? "Show formatted" : "Show plain text", systemImage: "doc.plaintext") { showPlain.toggle() }
+                    Button(readingMode ? "Exit reading mode" : "Reading mode", systemImage: "text.book.closed") { withAnimation { readingMode.toggle() } }
+                    Button("Translate", systemImage: "translate") { showTranslate = true }
                     Button("Move to trash", systemImage: "trash", role: .destructive) { trash() }
                 } label: { Image(systemName: "ellipsis.circle") }
             }
@@ -447,6 +452,7 @@ struct EmailDetailView: View {
         }
         .sheet(item: $compose) { ComposeView(draft: $0) }
         .quickLookPreview($previewURL)
+        .translationPresentation(isPresented: $showTranslate, text: email.subject + "\n\n" + email.bodyPlain)
         .task {
             if !email.isRead {
                 email.isRead = true
@@ -476,7 +482,9 @@ struct EmailDetailView: View {
 
     @ViewBuilder
     private var bodyView: some View {
-        if let html = email.bodyHTML, !showPlain {
+        if readingMode {
+            ReadingModeText(text: email.bodyPlain)
+        } else if let html = email.bodyHTML, !showPlain {
             if !loadRemote && !alwaysLoadImages && HTMLMailView.hasRemoteContent(html) {
                 Button { loadRemote = true } label: {
                     Label("Images blocked to stop tracking · Load images", systemImage: "eye.slash")

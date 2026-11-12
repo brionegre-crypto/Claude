@@ -409,7 +409,10 @@ struct AskPage: View {
                 if thinking { ProgressView() }
                 if let answer { Text(answer).font(.body) }
                 if answer == nil && !thinking {
-                    Text("Try “What's next?” or “Add call mom at 5”").font(.caption2).foregroundStyle(.secondary)
+                    ForEach(["What's next?", "Did I take my meds?", "Where's my package?", "When's my next trip?", "How was my week?"], id: \.self) { q in
+                        Button(q) { question = q; Task { await ask() } }.font(.caption2)
+                    }
+                    Text("Or tap above and speak.").font(.caption2).foregroundStyle(.secondary)
                 }
             }
         }

@@ -169,6 +169,88 @@ struct StartFocusTool: Tool {
     }
 }
 
+struct SearchNotesTool: Tool {
+    let name = "searchNotes"
+    let description = "Search the user's notes (not locked ones) and return matching notes with their text."
+
+    @Generable
+    struct Arguments {
+        @Guide(description: "Keywords to look for")
+        var query: String
+    }
+
+    func call(arguments: Arguments) async throws -> String {
+        await MainActor.run {
+            let words = arguments.query.lowercased().split(separator: " ").map(String.init).filter { $0.count > 2 }
+            let notes = ((try? Store.ctx.fetch(FetchDescriptor<Note>())) ?? []).filter { !$0.isLocked && !$0.isTemplate }
+            let hits = notes.map { n -> (Note, Int) in
+                let hay = (n.title + " " + n.plainText).lowercased()
+                return (n, words.filter { hay.contains($0) }.count)
+            }
+            .filter { $0.1 > 0 }.sorted { $0.1 > $1.1 }.prefix(3)
+            guard !hits.isEmpty else { return "No notes match." }
+            return hits.map { "Note “\($0.0.title)” (\($0.0.updatedAt.formatted(date: .abbreviated, time: .omitted))): \($0.0.plainText.prefix(700))" }
+                .joined(separator: "\n\n")
+        }
+    }
+}
+
+/// One tool for everything else Keel knows: so the small on-device model has fewer tools to choose from.
+struct LifeInfoTool: Tool {
+    let name = "lifeInfo"
+    let description = "Look up: trips (flights, hotels), deliveries (packages), subscriptions (and bills), weather, habits, focus (time focused), momentum (today's score), mood."
+
+    @Generable
+    struct Arguments {
+        @Guide(description: "One of: trips, deliveries, subscriptions, weather, habits, focus, momentum, mood")
+        var topic: String
+    }
+
+    func call(arguments: Arguments) async throws -> String {
+        await MainActor.run {
+            let ctx = Store.ctx
+            let cal = Calendar.current
+            switch arguments.topic.lowercased() {
+            case let t where t.contains("trip") || t.contains("flight") || t.contains("hotel"):
+                let r = ((try? ctx.fetch(FetchDescriptor<Reservation>(sortBy: [SortDescriptor(\.start)]))) ?? [])
+                    .filter { !$0.isHidden && ($0.end ?? $0.start) > Date() }.prefix(6)
+                return r.isEmpty ? "No upcoming bookings found in email." : r.map {
+                    "\($0.kind): \($0.title), \($0.start.formatted(date: .abbreviated, time: .shortened))\($0.confirmation.isEmpty ? "" : ", confirmation \($0.confirmation)")"
+                }.joined(separator: "; ")
+            case let t where t.contains("deliver") || t.contains("package"):
+                let d = ((try? ctx.fetch(FetchDescriptor<Delivery>())) ?? []).filter { !$0.isArchived && $0.status != "delivered" }
+                return d.isEmpty ? "No packages on the way." : d.map {
+                    "\($0.title) via \($0.carrier), \($0.status == "out" ? "out for delivery" : $0.expected.map { "expected \($0.formatted(date: .abbreviated, time: .omitted))" } ?? "shipped")"
+                }.joined(separator: "; ")
+            case let t where t.contains("subscri") || t.contains("bill"):
+                let s = ((try? ctx.fetch(FetchDescriptor<Subscription>())) ?? []).filter { !$0.isHidden }
+                let monthly = s.filter { $0.kind == "subscription" }.reduce(0) { $0 + $1.monthlyCost }
+                return "About \(String(format: "%.0f", monthly)) a month. " + s.map {
+                    "\($0.name) \($0.currency)\(String(format: "%.2f", $0.amount)) \($0.period)\($0.nextDate.map { ", next \($0.formatted(date: .abbreviated, time: .omitted))" } ?? "")"
+                }.joined(separator: "; ")
+            case let t where t.contains("weather"):
+                return KeelWeather.shared.today?.plannerLine ?? "Weather isn't available right now."
+            case let t where t.contains("habit"):
+                let today = cal.startOfDay(for: Date())
+                let logs = ((try? ctx.fetch(FetchDescriptor<HabitLog>())) ?? []).filter { $0.day == today }
+                let habits = (try? ctx.fetch(FetchDescriptor<Habit>())) ?? []
+                return habits.map { h in "\(h.name): \(logs.contains { $0.habitId == h.id } ? "done today" : "not yet"), streak \(h.currentStreak)" }.joined(separator: "; ")
+            case let t where t.contains("focus"):
+                let week = cal.date(byAdding: .day, value: -6, to: cal.startOfDay(for: Date()))!
+                let mins = ((try? ctx.fetch(FetchDescriptor<FocusSession>())) ?? []).filter { $0.startedAt >= week && $0.endedAt != nil }
+                    .reduce(0) { $0 + Int($1.endedAt!.timeIntervalSince($1.startedAt) / 60) }
+                return "Focused \(mins / 60)h \(mins % 60)m in the last 7 days."
+            case let t where t.contains("mood"):
+                let c = ((try? ctx.fetch(FetchDescriptor<CheckIn>(sortBy: [SortDescriptor(\.day, order: .reverse)]))) ?? []).prefix(7)
+                return c.isEmpty ? "No check-ins yet." : c.map { "\($0.day.formatted(.dateTime.weekday(.abbreviated))): mood \($0.mood)/5\($0.highlight.isEmpty ? "" : ", “\($0.highlight)”")" }.joined(separator: "; ")
+            default:
+                let m = Momentum.today(ctx: ctx)
+                return "Momentum today: \(m.total)/100 (tasks \(m.tasks), focus \(m.focus), habits \(m.habits), check-in \(m.checkIn))."
+            }
+        }
+    }
+}
+
 struct MedsTool: Tool {
     let name = "medications"
     let description = "Check whether the user already took their medication today, or log a dose as taken."
@@ -216,7 +298,7 @@ final class KeelAssistant {
     private func makeSession() -> LanguageModelSession {
         let now = Date().formatted(.dateTime.weekday(.wide).month().day().year().hour().minute())
         return LanguageModelSession(
-            tools: [AgendaTool(), AddTaskTool(), CompleteTaskTool(), CreateEventTool(), SearchMailTool(), StartFocusTool(), MedsTool()],
+            tools: [AgendaTool(), AddTaskTool(), CompleteTaskTool(), CreateEventTool(), SearchMailTool(), StartFocusTool(), MedsTool(), SearchNotesTool(), LifeInfoTool()],
             instructions: """
             You are Keel, a warm, concise assistant for someone with ADHD. It is \(now).
             Use the tools to look things up and to take actions. Never invent tasks, events or emails.

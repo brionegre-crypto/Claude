@@ -67,6 +67,7 @@ struct KeelApp: App {
         ])
         // Lives in the App Group so widgets / intents extensions can read it too.
         let config = ModelConfiguration(schema: schema, groupContainer: .identifier("group.com.briangreenejr.keel"))
+        KeelBackup.applyPendingRestore(storeURL: config.url)       // finish a restore picked last session
         return try! ModelContainer(for: schema, configurations: config)
     }()
 }
@@ -104,6 +105,7 @@ struct RootView: View {
         .sheet(isPresented: $router.showFocus) { NavigationStack { FocusView() } }
         .sheet(item: $mailRouter.pending) { ComposeView(draft: $0) }
         .sheet(isPresented: $router.showSearch) { NavigationStack { SearchView() } }
+        .sheet(isPresented: $router.showPlan) { PlanRitualView() }
         .sheet(item: Binding(get: { router.openTaskId.flatMap { id in openTask(id) } }, set: { if $0 == nil { router.openTaskId = nil } })) { t in
             NavigationStack { TaskDetailView(task: t) }
         }

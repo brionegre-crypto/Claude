@@ -585,11 +585,12 @@ struct SiriSettings: View {
         ("Add a task in Keel", "Capture a task by voice"),
         ("Complete [task] in Keel", "Check off a task by name"),
         ("What's on today in Keel", "Hear your day's events and tasks"),
-        ("What's next on my calendar in Keel", "Your next event"),
+        ("Brain dump in Keel", "Say everything on your mind; Keel sorts it"),
         ("Check my inbox in Keel", "Who needs a reply"),
         ("What should I do now in Keel", "Your single best next step"),
         ("Start focus in Keel / End focus in Keel", "Control focus sessions"),
-        ("What did I promise in Keel", "Commitments from your sent email"),
+        ("Did I take my meds in Keel", "Whether you've logged today's doses"),
+        ("Plan my day (Shortcuts app)", "Opens the 3-minute planning ritual"),
     ]
 
     var body: some View {
@@ -690,6 +691,7 @@ struct DataSettings: View {
                     Button { exportURL = makeExport() } label: { Label("Export My Data", systemImage: "arrow.down.doc") }
                 }
             } footer: { Text("A JSON file with your tasks, notes, goals and habits.") }
+            BackupSection()
             Section {
                 Button("Erase All Keel Data", role: .destructive) { confirmErase = true }
             } footer: {

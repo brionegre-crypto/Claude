@@ -226,3 +226,31 @@ struct LogMedsIntent: AppIntent {
         .result(dialog: "\(MedsLogger.logNext(name: name, ctx: KeelStore.container.mainContext))")
     }
 }
+
+// MARK: - Brain dump and planning
+
+struct BrainDumpIntent: AppIntent {
+    static let title: LocalizedStringResource = "Brain Dump"
+    static let description: IntentDescription = "Say everything on your mind. Keel sorts it into tasks, events, notes and worries."
+    @Parameter(title: "What's on your mind?", requestValueDialog: "What's on your mind? Say it all.")
+    var text: String
+
+    @MainActor func perform() async throws -> some IntentResult & ProvidesDialog {
+        let ctx = KeelStore.container.mainContext
+        let items = await BrainDumpSorter.sort(text)
+        let summary = BrainDumpSorter.save(items, ctx: ctx)
+        WidgetSync.update(ctx)
+        return .result(dialog: "Got it. Added \(summary.isEmpty ? "nothing" : summary).")
+    }
+}
+
+struct PlanMyDayIntent: AppIntent {
+    static let title: LocalizedStringResource = "Plan My Day"
+    static let description: IntentDescription = "Opens Keel's 3-minute planning ritual."
+    static let openAppWhenRun = true
+
+    @MainActor func perform() async throws -> some IntentResult {
+        AppRouter.shared.showPlan = true
+        return .result()
+    }
+}

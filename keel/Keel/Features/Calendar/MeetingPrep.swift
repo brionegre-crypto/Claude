@@ -139,7 +139,7 @@ struct MeetingPrepView: View {
         text += "\n" + p.promises.map { "I promised: \($0.promise)" }.joined(separator: "\n")
         text += "\n" + p.tasks.map { "Open task: \($0.title)" }.joined(separator: "\n")
         text += "\n" + p.notes.map { "Note \($0.title): \($0.plainText.prefix(600))" }.joined(separator: "\n")
-        brief = await AIRouter.shared.summarize("Prepare me for this meeting: key context, what they may ask, and what I owe them.\n" + text)
+        brief = await AIRouter.shared.write("Prepare me for this meeting: key context, what they may ask, and what I owe them.\n" + text)
     }
 
     private func startNotes() {

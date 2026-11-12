@@ -134,6 +134,14 @@ enum Guide {
                      tips: ["Each morning Today offers Plan your day: decide what to do with yesterday's leftovers, tick today's tasks, then see them against the free time you really have.",
                             "If you've planned more than fits, Keel says so before the day does. Then time-block it all onto your calendar in one tap.",
                             "Calm mode (Today → ⊞ or Settings → Appearance) shows only your next thing and what's coming up, with no counts or red overdue dates."]),
+        GuideSection(icon: "text.book.closed.fill", color: .indigo, title: "Reading, translation & backup",
+                     summary: "Easier reading, any language, and your data safe.",
+                     tips: ["In an email's ⋯ menu, Reading mode shows bigger, spaced text and can bold the start of each word to help your eyes keep their place.",
+                            "Translate any email on your iPhone, in any language Apple supports.",
+                            "Ask Keel now knows your notes, trips, packages, subscriptions, weather, habits, focus time and mood: “When's my flight?”, “What did I write about the budget?”",
+                            "Weekly review starts with a short, kind note about your week, written on your iPhone.",
+                            "Settings → Data & Storage → Back Up Now saves everything to Files or iCloud Drive. Restore picks a backup and finishes the next time you open Keel.",
+                            "Siri: “Brain dump in Keel” to say everything on your mind, and “Plan my day in Keel”."]),
         GuideSection(icon: "calendar.day.timeline.left", color: .teal, title: "Plan the week & statistics",
                      summary: "See the whole week and how you're really doing.",
                      tips: ["Tasks → wand → Plan the week: drag tasks onto days and watch each day's load against its free time.",
@@ -208,6 +216,7 @@ enum Guide {
                             "Your morning briefing appears on the home screen until 11 AM.",
                             "Your next trip shows on the home screen, and Inbox shows how many emails are unread.",
                             "Momentum shows tasks done this week and your streak.",
+                            "Ask Keel has one-tap questions: meds, packages, trips and your week.",
                             "World clock for your saved cities. Calm mode on your iPhone simplifies the watch home screen too.",
                             "Capture → Brain dump: ramble into your watch and your iPhone sorts it. Deliveries and your subscriptions total are on the home screen.",
                             "Complications: one thing, next event, tasks left and countdown."]),
@@ -256,7 +265,7 @@ enum Guide {
                      tips: ["Prefer Claude, ChatGPT or Gemini? Add your own API key in Settings → AI & Privacy (billed by that provider).",
                             "Turn it on in iPhone Settings → Apple Intelligence & Siri.",
                             "Writing Tools (rewrite, proofread) work in every text box.",
-                            "Siri: “Add a task in Keel”, “What should I do now in Keel”, “What did I promise in Keel”."]),
+                            "Siri: “Add a task in Keel”, “What should I do now in Keel”, “Brain dump in Keel”, “Did I take my meds in Keel”. Ask Keel can still tell you your promises and next meeting."]),
     ]
 }
 

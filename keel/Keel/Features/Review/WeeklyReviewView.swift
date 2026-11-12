@@ -20,11 +20,45 @@ struct WeeklyReviewView: View {
     @State private var learned = ""
     @State private var top3 = ["", "", ""]
     @State private var saved = false
+    @State private var letter: String?
+    @State private var writing = false
 
     private let cal = Calendar.current
     private var start: Date { cal.date(byAdding: .day, value: -6, to: cal.startOfDay(for: Date()))! }
     private var days: [Date] { (0..<7).compactMap { cal.date(byAdding: .day, value: $0, to: start) } }
     private func inWeek(_ d: Date?) -> Bool { d.map { $0 >= start } ?? false }
+
+    /// A short, kind letter about your week, written on-device from what you actually did.
+    private var weekLetter: some View {
+        GlassCard(tint: DS.Palette.accent) {
+            VStack(alignment: .leading, spacing: DS.Space.s) {
+                Label("A note about your week", systemImage: "envelope.open.fill").font(DS.Font.headline)
+                if let letter {
+                    Text(letter).font(.callout)
+                } else {
+                    Button(writing ? "Writing…" : "Write it") { Task { await writeLetter() } }
+                        .buttonStyle(.borderedProminent).tint(DS.Palette.accent).disabled(writing)
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
+    }
+
+    private func writeLetter() async {
+        writing = true; defer { writing = false }
+        let moods = checkIns.filter { inWeek($0.day) }
+        let facts = """
+        Tasks done: \(completed.count) (\(completed.prefix(12).map(\.title).joined(separator: "; ")))
+        Focus: \(hours(focusMinutes)). Habit check-ins: \(habitCount). Promises kept: \(keptPromises).
+        Moods (1-5): \(moods.map { String($0.mood) }.joined(separator: ", ")). Highlights: \(moods.map(\.highlight).filter { !$0.isEmpty }.joined(separator: "; "))
+        Still open and overdue: \(tasks.filter { !$0.isDone && ($0.dueDate ?? .distantFuture) < Date() }.count)
+        """
+        letter = await AIRouter.shared.write("""
+        Write a warm, honest 4-sentence note to me about my week, like a kind coach who knows I have ADHD. \
+        Celebrate specific wins, notice one pattern, and suggest one small thing for next week. No bullet points.
+        \(facts)
+        """) ?? "You finished \(completed.count) tasks and focused for \(hours(focusMinutes)) this week. That counts. Pick one thing for Monday and start there."
+    }
 
     private var completed: [TaskItem] {
         tasks.filter { inWeek($0.completedAt) || inWeek($0.lastCompletedOccurrence) }
@@ -40,6 +74,8 @@ struct WeeklyReviewView: View {
             VStack(alignment: .leading, spacing: DS.Space.l) {
                 Text("\(start.formatted(.dateTime.month(.abbreviated).day())) – \(Date().formatted(.dateTime.month(.abbreviated).day()))")
                     .font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft).textCase(.uppercase)
+
+                weekLetter
 
                 LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: DS.Space.s) {
                     stat("\(completed.count)", "tasks done", "checkmark.circle.fill", DS.Palette.calm)
