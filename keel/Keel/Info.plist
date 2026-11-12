@@ -45,12 +45,20 @@
 	<string>Keel shows your events next to your tasks and email so it can plan your day.</string>
 	<key>NSCalendarsWriteOnlyAccessUsageDescription</key>
 	<string>Keel adds focus blocks and events you create to your calendar.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Keel uses the camera to scan documents into your notes.</string>
 	<key>NSContactsUsageDescription</key>
 	<string>Keel shows who's invited to your calendar events.</string>
 	<key>NSFaceIDUsageDescription</key>
 	<string>Keel locks your notes and mail behind Face ID.</string>
+	<key>NSHealthShareUsageDescription</key>
+	<string>Keel reads last night's sleep to suggest how much energy you have today. Nothing is written to Health.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Keel records meetings you choose to record and turns them into notes.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Keel can save images from your notes to Photos.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Keel reads your recent screenshots on this iPhone to suggest tasks, and lets you add photos to notes.</string>
 	<key>NSRemindersFullAccessUsageDescription</key>
 	<string>Keel syncs with Apple Reminders so your tasks live in one place.</string>
 	<key>NSRemindersUsageDescription</key>
