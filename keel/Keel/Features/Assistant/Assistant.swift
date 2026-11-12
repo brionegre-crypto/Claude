@@ -35,7 +35,7 @@ struct AgendaTool: Tool {
                 .filter { !$0.isDone && ($0.dueDate.map { $0 < next } ?? false) }
                 .map { "\($0.title)\($0.hasDueTime ? " at \($0.dueDate!.formatted(date: .omitted, time: .shortened))" : "")\($0.dueDate! < day ? " (overdue)" : "")" }
             let mail = ((try? Store.ctx.fetch(FetchDescriptor<EmailMessage>())) ?? [])
-                .filter { !$0.isRead && !$0.isArchived && ($0.category == .important || $0.category == .actionable) }
+                .filter { !$0.isRead && !$0.isArchived && ($0.category == .important || $0.category == .actionable) && !MailNoise.isAutomated($0) }
                 .prefix(5).map { "\($0.fromName.isEmpty ? $0.from : $0.fromName): \($0.aiSummary ?? $0.subject)" }
             let promises = ((try? Store.ctx.fetch(FetchDescriptor<Commitment>())) ?? [])
                 .filter { $0.status == .open && $0.effectiveDue < next }.map { "\($0.promise) (to \($0.displayName))" }

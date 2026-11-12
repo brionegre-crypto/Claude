@@ -91,12 +91,20 @@ final class SyncEngine {
         Task { await TripScanner.backfillIfNeeded(ctx: ctx) }   // one-time, in the background
         await TripScanner.scan(fresh, ctx: ctx)
 
+        // 1b. Machines aren't people: automated mail the AI called important/actionable becomes an update.
+        let misfiled = ((try? ctx.fetch(FetchDescriptor<EmailMessage>(predicate: #Predicate { !$0.isArchived }))) ?? [])
+            .filter { ($0.category == .important || $0.category == .actionable) && MailNoise.isAutomated($0) }
+        for e in misfiled { e.category = .updates; e.priorityScore = min(e.priorityScore, 0.3) }
+
         // 2. AI triage on anything new (on-device first — free)
         let untriaged = (try? ctx.fetch(FetchDescriptor<EmailMessage>(predicate: #Predicate { $0.triagedAt == nil }))) ?? []
         for email in untriaged.prefix(150) {
             guard let r = await AIRouter.shared.triage(email) else { continue }
             email.category = r.category
             email.priorityScore = r.priority
+            if (r.category == .important || r.category == .actionable) && MailNoise.isAutomated(email) {
+                email.category = .updates; email.priorityScore = min(r.priority, 0.3)
+            }
             email.aiSummary = r.summary
             email.triagedAt = Date()
             if let title = r.taskTitle, r.category == .actionable || r.category == .important {

@@ -68,7 +68,7 @@ enum Briefing {
             out.append("Meds: \(m.name) at \(MedEngine.timeLabel(t)).")
         }
         let important = ((try? ctx.fetch(FetchDescriptor<EmailMessage>())) ?? [])
-            .filter { !$0.isRead && !$0.isArchived && $0.category == .important }.count
+            .filter { !$0.isRead && !$0.isArchived && $0.category == .important && !MailNoise.isAutomated($0) }.count
         if important > 0 { out.append("\(important) important email\(important == 1 ? "" : "s") waiting.") }
         if cal.isDateInToday(day), let w = KeelWeather.shared.today { out.append("Weather: \(w.plannerLine).") }
         return out

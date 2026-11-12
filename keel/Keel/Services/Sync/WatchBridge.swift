@@ -46,7 +46,7 @@ final class WatchBridge: NSObject, WCSessionDelegate {
         payload.energy = energy.rawValue
         payload.checkedInMood = ((try? ctx.fetch(FetchDescriptor<CheckIn>())) ?? []).first { cal.isDateInToday($0.day) }?.mood
         payload.mail = ((try? ctx.fetch(FetchDescriptor<EmailMessage>(sortBy: [SortDescriptor(\.priorityScore, order: .reverse)]))) ?? [])
-            .filter { !$0.isRead && !$0.isArchived && ($0.category == .important || $0.category == .actionable) }
+            .filter { !$0.isRead && !$0.isArchived && ($0.category == .important || $0.category == .actionable) && !MailNoise.isAutomated($0) }
             .prefix(8)
             .map { .init(id: $0.id, from: $0.fromName.isEmpty ? $0.from : $0.fromName, subject: $0.subject, summary: $0.aiSummary ?? $0.snippet) }
         payload.promises = ((try? ctx.fetch(FetchDescriptor<Commitment>())) ?? [])

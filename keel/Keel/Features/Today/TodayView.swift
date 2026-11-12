@@ -297,22 +297,7 @@ struct TodayView: View {
         }
     }
 
-    private var attentionCard: some View {
-        let top = emails.filter { !$0.isArchived && ($0.category == .important || $0.category == .actionable) }.prefix(3)
-        return Group {
-            if !top.isEmpty {
-                VStack(alignment: .leading, spacing: DS.Space.s) {
-                    SectionHeader(title: "Needs you", trailing: "from all inboxes")
-                    ForEach(Array(top)) { e in
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text(e.fromName.isEmpty ? e.from : e.fromName).font(DS.Font.headline)
-                            Text(e.aiSummary ?? e.snippet).font(DS.Font.body).foregroundStyle(DS.Palette.inkSoft).lineLimit(2)
-                        }
-                    }
-                }
-            }
-        }
-    }
+    private var attentionCard: some View { NeedsYouCard() }
 
     /// Promise tracker teaser: only shows when something is owed today or overdue.
     private var promisesCard: some View {

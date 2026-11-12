@@ -36,7 +36,7 @@ enum Autopilot {
         // 1. Replies you owe, with a draft already written (at most 3 drafts per run: AI time is precious).
         var drafts = 0
         let owed = mail.filter {
-            !$0.isArchived && $0.category == .important && !accounts.contains($0.from.lowercased())
+            !$0.isArchived && $0.category == .important && !accounts.contains($0.from.lowercased()) && !MailNoise.isAutomated($0)
                 && $0.receivedAt < now.addingTimeInterval(-20 * 3600) && $0.receivedAt > now.addingTimeInterval(-5 * 86_400)
                 && !["noreply", "no-reply", "notifications"].contains(where: $0.from.lowercased().contains)
         }.sorted { $0.priorityScore > $1.priorityScore }
