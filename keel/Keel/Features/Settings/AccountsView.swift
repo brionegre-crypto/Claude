@@ -104,6 +104,7 @@ struct AccountsView: View {
                     SettingsRow(title: "Tasks", symbol: "checkmark.circle.fill", color: .green) { TaskSettings() }
                     SettingsRow(title: "Focus", symbol: "moon.fill", color: .indigo) { FocusSettings() }
                     SettingsRow(title: "Medications", symbol: "pills.fill", color: .mint) { MedsView() }
+                    SettingsRow(title: "Health & Nutrition", symbol: "fork.knife", color: .green) { NutritionSettingsView() }
                 }
 
                 Section {

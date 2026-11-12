@@ -118,6 +118,7 @@ struct WatchPayload: Codable {
     var routines: [Routine]? = nil            // step-by-step routines with timers
     var savePoint: String? = nil              // "Replying to Sam: Budget", what you were in the middle of
     var focusWindow: String? = nil            // today's best focus window, e.g. "10:00 AM–12:30 PM"
+    var food: [String]? = nil                 // today's food: goals, 🟢🟡🔴, brain foods, what you ate
 }
 
 /// A step-by-step routine (morning, evening, leaving the house). Shared by iPhone and Apple Watch.

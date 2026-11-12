@@ -37,16 +37,18 @@ enum DietGuide {
             .filter { $0.count >= 3 && !generic.contains($0) }
     }
 
+    /// Entry names split into words once, not on every scan.
+    private static let nameTokens: [(GuideEntry, [String])] = entries.filter { $0.s != 19 && $0.s != 0 }.map { ($0, tokens($0.name)) }
+
     /// The guide's own word on this product, if it names it (brand + product words).
     static func match(name: String, brand: String) -> GuideEntry? {
         let hay = Set(tokens(brand + " " + name))
         guard !hay.isEmpty else { return nil }
         let brandTokens = Set(tokens(brand))
         var best: (GuideEntry, Double)?
-        for e in entries where e.s != 19 && e.s != 0 {
-            let t = tokens(e.name)
+        for (e, t) in nameTokens {
             guard t.count >= 2 else { continue }
-            let hits = t.filter(hay.contains).count
+            let hits = t.filter { hay.contains($0) }.count
             let score = Double(hits) / Double(t.count)
             // The brand has to match, and most of the entry's words.
             guard hits >= 2, score >= 0.6, brandTokens.isEmpty || !brandTokens.isDisjoint(with: t) else { continue }
@@ -94,12 +96,12 @@ enum DietGuide {
         let candidates = entries.filter { $0.s == s && ($0.status == "approved" || $0.status == "best") && $0.name != excluding }
         return candidates
             .map { e -> (GuideEntry, Int) in
-                let t = Set(tokens(e.name + " " + e.group + " " + e.details.prefix(160)))
+                let t = Set(tokens(e.name + " " + e.group + " " + String(e.details.prefix(160))))
                 return (e, t.intersection(words).count)
             }
             .sorted { $0.1 > $1.1 }
             .prefix(limit)
-            .map(\.0)
+            .map { $0.0 }
     }
 }
 
@@ -282,7 +284,7 @@ enum DietChecker {
 
         // Database tags catch what the text misses.
         let dyeE = ["en:e129", "en:e127", "en:e102", "en:e110", "en:e133", "en:e132", "en:e143"]
-        if let tag = additiveTags.first(where: dyeE.contains) { add(.red, "Artificial dye", tag.replacingOccurrences(of: "en:", with: "").uppercased(), "Artificial dyes are out.") }
+        if let tag = additiveTags.first(where: { dyeE.contains($0) }) { add(.red, "Artificial dye", tag.replacingOccurrences(of: "en:", with: "").uppercased(), "Artificial dyes are out.") }
         if let tag = additiveTags.first(where: { ["en:e955", "en:e951", "en:e954", "en:e950", "en:e961", "en:e969"].contains($0) }) {
             add(.red, "Artificial sweetener (Tier 5)", tag.replacingOccurrences(of: "en:", with: "").uppercased(), "Artificial sweeteners disrupt the gut you're rebuilding.")
         }

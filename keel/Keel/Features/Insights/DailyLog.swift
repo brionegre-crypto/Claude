@@ -114,6 +114,13 @@ enum DailyLog {
                              title: e.title ?? "Meeting", detail: "\(Int(e.endDate.timeIntervalSince(e.startDate) / 60)) min meeting"))
         }
 
+        let food = (try? ctx.fetch(FetchDescriptor<FoodEntry>(predicate: #Predicate { $0.date >= start && $0.date < end }))) ?? []
+        for f in food {
+            let protein = f.facts.protein.map { "\(Int($0)) g protein" }
+            out.append(Entry(id: "n\(f.id)", time: f.date, icon: "fork.knife", color: f.verdict.color,
+                             title: "\(f.verdict.emoji) \(f.name)", detail: [f.meal.capitalized, protein].compactMap { $0 }.joined(separator: " · ")))
+        }
+
         if let c = ((try? ctx.fetch(FetchDescriptor<CheckIn>())) ?? []).first(where: { cal.isDate($0.day, inSameDayAs: start) }) {
             out.append(Entry(id: "c\(c.id)", time: c.createdAt, icon: "face.smiling", color: .pink,
                              title: "Checked in \(CheckIn.faces[max(0, min(4, c.mood - 1))])",

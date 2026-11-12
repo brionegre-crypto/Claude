@@ -14,14 +14,18 @@ const ROUTES: Record<string, { model: string; effort: "low" | "medium" | "high";
   promises: { model: "claude-opus-5-5", effort: "low", maxTokens: 1024 },
   break_down: { model: "claude-opus-5-5", effort: "medium", maxTokens: 2048 },
   plan_day: { model: "claude-opus-5-5", effort: "high", maxTokens: 8192 },
+  checklist: { model: "claude-opus-5-5", effort: "low", maxTokens: 2048 },
+  test: { model: "claude-opus-5-5", effort: "low", maxTokens: 256 },
 };
+// Any newer app task the server doesn't know yet still works, on the cheap setting.
+const DEFAULT_ROUTE = { model: "claude-opus-5-5", effort: "medium" as const, maxTokens: 4096 };
 
 type AIRequest = { task: string; system: string; user: string; schema: Record<string, unknown> };
 
 export async function handleAI(req: Request, env: Env): Promise<Response> {
   const body = (await req.json()) as AIRequest;
-  const route = ROUTES[body.task];
-  if (!route) return json({ error: "unknown task" }, 400);
+  if (!body || typeof body.task !== "string" || typeof body.user !== "string") return json({ error: "bad request" }, 400);
+  const route = ROUTES[body.task] ?? DEFAULT_ROUTE;
 
   // Daily quota so a sync bug can never run up your bill.
   const key = `quota:${new Date().toISOString().slice(0, 10)}`;

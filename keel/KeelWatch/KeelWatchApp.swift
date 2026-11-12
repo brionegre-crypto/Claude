@@ -191,6 +191,7 @@ struct WatchRoot: View {
                     link("Breathe", "lungs.fill", .mint, nil) { BreathePage() }
                     if let r = store.payload.routines, !r.isEmpty { link("Routines", "list.number", .orange, nil) { RoutinesPage(routines: r) } }
                     if let d = store.payload.dopamine, !d.isEmpty { link("Need a boost?", "dice.fill", .orange, nil) { BoostPage(items: d) } }
+                    if let f = store.payload.food, !f.isEmpty { link("Food", "fork.knife", .green, nil) { ListPage(title: "Food today", items: f) } }
                 }
                 if store.payload.calm != true {
                     Section {

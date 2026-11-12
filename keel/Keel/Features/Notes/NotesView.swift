@@ -73,11 +73,13 @@ struct NotesView: View {
                         Section { ForEach(favorites) { row($0, showSnippet: false) } } header: { sectionHeader("Favorites", nil) }
                     }
                     Section {
-                        if !folders.isEmpty {
+                        let folderList = folders
+                        if !folderList.isEmpty {
+                            let counts = Dictionary(notes.compactMap { n in n.folder.map { ($0, 1) } }, uniquingKeysWith: +)
                             ScrollView(.horizontal, showsIndicators: false) {
                                 HStack(spacing: 8) {
                                     folderChip("All", "", count: notes.filter { $0.parentId == nil }.count)
-                                    ForEach(folders, id: \.self) { f in folderChip(f, f, count: notes.filter { $0.folder == f }.count) }
+                                    ForEach(folderList, id: \.self) { f in folderChip(f, f, count: counts[f] ?? 0) }
                                 }
                                 .padding(.vertical, 2)
                             }
@@ -145,6 +147,7 @@ struct NotesView: View {
                         Button("Today's note", systemImage: "calendar") { opened = DailyNote.today(ctx) }
                         Button("Daily journal", systemImage: "book") { createJournalPage() }
                         Divider()
+                        Button("Organize my notes…", systemImage: "wand.and.stars") { showOrganize = true }
                         Button("Import from another app…", systemImage: "square.and.arrow.down") { showImport = true }
                     } label: { Image(systemName: "square.and.pencil") } primaryAction: { newPage() }
                     .accessibilityLabel("New page. Hold for more")
@@ -153,12 +156,15 @@ struct NotesView: View {
             .navigationDestination(isPresented: $recording) { MeetingRecorderView() }
             .navigationDestination(isPresented: $showBrain) { BrainMapView() }
             .navigationDestination(isPresented: $showImport) { ImportView() }
+            .sheet(isPresented: $showOrganize) { OrganizeNotesView() }
+            .task { await NotesOrganizer.autoFile(ctx: ctx) }
         }
     }
 
     @State private var recording = false
     @State private var showBrain = false
     @State private var showImport = false
+    @State private var showOrganize = false
 
     // MARK: Pieces
 
@@ -171,6 +177,7 @@ struct NotesView: View {
                 QuickTile(title: "Meeting", icon: "person.2.fill", color: .teal) { createMeetingNote() }
                 QuickTile(title: "Journal", icon: "book.fill", color: .pink) { createJournalPage() }
                 QuickTile(title: "Brain map", icon: "brain.head.profile.fill", color: .pink) { showBrain = true }
+                QuickTile(title: "Organize", icon: "wand.and.stars", color: .indigo) { showOrganize = true }
                 QuickTile(title: "Database", icon: "tablecells.fill", color: .purple) {
                     opened = NotesDatabase.create(title: "Untitled database", parent: nil, ctx: ctx)
                 }

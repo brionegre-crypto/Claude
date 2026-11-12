@@ -3,9 +3,16 @@ import SwiftData
 
 /// Today → Needs you: only real people waiting on you, most urgent first, with one-tap reply and done.
 struct NeedsYouCard: View {
-    @Query(sort: \EmailMessage.receivedAt, order: .reverse) private var emails: [EmailMessage]
+    /// Only the last 8 days of unarchived mail: Needs you never looks further back, and loading the whole mailbox made Today slow.
+    @Query private var emails: [EmailMessage]
     @Query private var accounts: [MailAccount]
     @State private var compose: ComposeDraft?
+
+    init() {
+        let since = Date().addingTimeInterval(-8 * 86_400)
+        _emails = Query(filter: #Predicate<EmailMessage> { !$0.isArchived && $0.receivedAt > since },
+                        sort: \EmailMessage.receivedAt, order: .reverse)
+    }
 
     private var items: [EmailMessage] {
         let mine = Set(accounts.map { $0.address.lowercased() })

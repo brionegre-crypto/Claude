@@ -6,7 +6,12 @@ import EventKit
 struct TodayView: View {
     @Environment(\.modelContext) private var ctx
     @Query(filter: #Predicate<TaskItem> { !$0.isDone }) private var tasks: [TaskItem]
-    @Query(sort: \EmailMessage.priorityScore, order: .reverse) private var emails: [EmailMessage]
+    @Query(TodayView.topEmails) private var emails: [EmailMessage]     // top 60 by priority, not the whole mailbox
+    static var topEmails: FetchDescriptor<EmailMessage> {
+        var d = FetchDescriptor<EmailMessage>(predicate: #Predicate { !$0.isArchived }, sortBy: [SortDescriptor(\.priorityScore, order: .reverse)])
+        d.fetchLimit = 60
+        return d
+    }
     @Query private var stacks: [HabitStack]
     @Query(sort: \Commitment.sentAt) private var commitments: [Commitment]
     @AppStorage("energy") private var energyRaw = EnergyLevel.medium.rawValue

@@ -382,6 +382,13 @@ enum HubCatalog {
             t("trips", "Trips", "airplane", "travel flight hotel") { TripsView() },
             t("readLater", "Read later", "books.vertical.fill", "articles links saved") { ReadLaterView() },
         ]),
+        HubGroup(id: "food", title: "Eat well", subtitle: "Scan it, check it against your plan, log it", icon: "fork.knife", color: .green, tools: [
+            t("scanFood", "Scan food", "barcode.viewfinder", "barcode scan grocery diet allowed can i eat label ingredients") { FoodScanView() },
+            t("food", "Food today", "fork.knife.circle.fill", "nutrition protein fiber sugar meals log calories health brain food fish") { NutritionView() },
+            t("describeMeal", "Log a meal", "text.bubble.fill", "ate lunch dinner breakfast describe meal") { DescribeMealView() },
+            t("foodLibrary", "Food library", "books.vertical.fill", "scanned products saved history") { FoodLibraryView() },
+            t("dietGuide", "Diet guide", "book.closed.fill", "approved avoid swap alternative brands adhd diet") { DietGuideView() },
+        ]),
         HubGroup(id: "back", title: "Look back", subtitle: "See how you're really doing", icon: "clock.arrow.circlepath", color: .pink, tools: [
             t("dayLog", "Daily log", "list.bullet.rectangle.fill", "today what did i do breathe log diary") { DayLogView() },
             t("journal", "Mood journal", "face.smiling.inverse", "mood feelings patterns sleep journal") { JournalTimelineView() },

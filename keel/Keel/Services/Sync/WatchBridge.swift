@@ -100,6 +100,7 @@ final class WatchBridge: NSObject, WCSessionDelegate {
             let f = FocusForecast.build(meds: meds, doses: doses, sleepHours: todayCheckIn?.sleepHours, sessions: sessions)
             payload.focusWindow = f.peaks.first { $0.end > Date() }?.label
         }
+        payload.food = Self.foodLines(ctx: ctx)
         payload.suggestions = Autopilot.pending(ctx: ctx).prefix(8).map {
             .init(id: $0.id, title: $0.title, detail: $0.kind == "reply" ? String($0.payload.prefix(240)) : $0.detail, accept: $0.acceptLabel, icon: $0.icon)
         }
@@ -255,5 +256,26 @@ final class WatchBridge: NSObject, WCSessionDelegate {
     func session(_ session: WCSession, didReceiveUserInfo userInfo: [String: Any] = [:]) {
         guard let data = userInfo["action"] as? Data else { return }
         Task { @MainActor in self.handle(data) }
+    }
+}
+
+extension WatchBridge {
+    /// "Protein 64 / 120 g", "🟢 3 · 🟡 1 · 🔴 0", "Oily fish 1/2 this week", then today's meals.
+    static func foodLines(ctx: ModelContext) -> [String]? {
+        let weekStart = Calendar.current.date(byAdding: .day, value: -6, to: Calendar.current.startOfDay(for: Date())) ?? Date()
+        let week = (try? ctx.fetch(FetchDescriptor<FoodEntry>(predicate: #Predicate { $0.date >= weekStart }, sortBy: [SortDescriptor(\.date)]))) ?? []
+        let today = week.filter { Calendar.current.isDateInToday($0.date) }
+        guard !week.isEmpty else { return nil }
+        let protein = today.reduce(0.0) { $0 + ($1.facts.protein ?? 0) }
+        let goal = NutritionGoals.protein(weightKg: nil)
+        var lines = ["Protein \(Int(protein)) / \(Int(goal)) g"]
+        if !today.isEmpty {
+            let g = today.filter { $0.verdict == .green }.count, y = today.filter { $0.verdict == .yellow }.count, r = today.filter { $0.verdict == .red }.count
+            lines.append("🟢 \(g) · 🟡 \(y) · 🔴 \(r)")
+        }
+        lines.append("🐟 Oily fish \(week.filter { $0.tags.contains("oilyfish") }.count)/2 this week")
+        lines.append(today.contains { $0.tags.contains("pumpkin") } ? "✓ Pumpkin seeds today" : "Pumpkin seeds: not yet today")
+        lines += today.suffix(6).map { "\($0.verdict.emoji) \($0.name)" }
+        return lines
     }
 }
