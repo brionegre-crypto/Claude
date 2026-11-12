@@ -8,7 +8,7 @@ enum Importer {
     // MARK: CSV tasks
 
     /// Parses CSV with quoted fields, commas and newlines inside quotes.
-    static func parseCSV(_ text: String) -> [[String]] {
+    nonisolated static func parseCSV(_ text: String) -> [[String]] {
         var rows: [[String]] = [], row: [String] = [], field = "", inQuotes = false
         var chars = Array(text.replacingOccurrences(of: "\r\n", with: "\n"))
         if chars.first == "\u{FEFF}" { chars.removeFirst() }
@@ -141,59 +141,26 @@ enum Importer {
     }
 }
 
-struct ImportView: View {
+/// The older single-file importer, still used for tasks from CSV.
+struct TaskCSVImportView: View {
     @Environment(\.modelContext) private var ctx
-    @State private var picking: String?
+    @State private var picking = false
     @State private var result: String?
 
     var body: some View {
         List {
             Section {
-                row("Tasks from a CSV file", "checklist", "Most to-do apps can export CSV. Keel reads the title, notes, due date, priority, list, tags and done status.", "csv")
-                row("Notes from Markdown or text", "doc.text", "Pick one or many .md or .txt files, such as a notes workspace export unzipped in Files. Headings, lists, to-dos, quotes and code become blocks.", "md")
-                row("Evernote export (.enex)", "note.text", "Export a notebook from Evernote and pick the .enex file.", "enex")
-            } footer: { Text("Imports are added alongside what's already in Keel. Nothing is replaced.") }
+                Button { result = nil; picking = true } label: { Label("Choose a CSV file", systemImage: "tablecells") }
+            } footer: { Text("Most to-do apps can export CSV. Keel reads the title, notes, due date, priority, list, tags and done status.") }
             if let result { Section { Label(result, systemImage: "checkmark.circle.fill").foregroundStyle(DS.Palette.calm) } }
         }
-        .navigationTitle("Import")
-        .fileImporter(isPresented: Binding(get: { picking != nil }, set: { if !$0 { picking = nil } }),
-                      allowedContentTypes: types(picking), allowsMultipleSelection: picking == "md") { res in
-            let kind = picking
-            guard case .success(let urls) = res else { return }
-            var n = 0
-            for url in urls {
-                guard let text = Importer.read(url) else { continue }
-                switch kind {
-                case "csv": n += Importer.importTasks(csv: text, ctx: ctx)
-                case "enex": n += Importer.importEnex(text, ctx: ctx)
-                default:
-                    ctx.insert(Importer.note(fromMarkdown: text, fallbackTitle: url.deletingPathExtension().lastPathComponent))
-                    n += 1
-                }
-            }
+        .navigationTitle("Tasks from CSV")
+        .fileImporter(isPresented: $picking, allowedContentTypes: [.commaSeparatedText, .plainText]) { res in
+            guard case .success(let url) = res, let text = Importer.read(url) else { return }
+            let n = Importer.importTasks(csv: text, ctx: ctx)
             try? ctx.save()
             Haptics.success()
-            result = "Imported \(n) \(kind == "csv" ? "task" : "note")\(n == 1 ? "" : "s")."
-        }
-    }
-
-    private func row(_ title: String, _ icon: String, _ detail: String, _ kind: String) -> some View {
-        Button { result = nil; picking = kind } label: {
-            HStack(alignment: .top, spacing: DS.Space.m) {
-                Image(systemName: icon).font(.title3).foregroundStyle(DS.Palette.accent).frame(width: 28)
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(title).font(DS.Font.headline).foregroundStyle(DS.Palette.ink)
-                    Text(detail).font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
-                }
-            }
-        }
-    }
-
-    private func types(_ kind: String?) -> [UTType] {
-        switch kind {
-        case "csv": [.commaSeparatedText, .plainText]
-        case "enex": [UTType(filenameExtension: "enex") ?? .xml, .xml]
-        default: [UTType(filenameExtension: "md") ?? .plainText, .plainText, .text]
+            result = "Imported \(n) task\(n == 1 ? "" : "s")."
         }
     }
 }

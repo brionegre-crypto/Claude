@@ -144,17 +144,21 @@ struct NotesView: View {
                         Button("Meeting notes for next event", systemImage: "person.2") { createMeetingNote() }
                         Button("Today's note", systemImage: "calendar") { opened = DailyNote.today(ctx) }
                         Button("Daily journal", systemImage: "book") { createJournalPage() }
+                        Divider()
+                        Button("Import from another app…", systemImage: "square.and.arrow.down") { showImport = true }
                     } label: { Image(systemName: "square.and.pencil") } primaryAction: { newPage() }
                     .accessibilityLabel("New page. Hold for more")
                 }
             }
             .navigationDestination(isPresented: $recording) { MeetingRecorderView() }
             .navigationDestination(isPresented: $showBrain) { BrainMapView() }
+            .navigationDestination(isPresented: $showImport) { ImportView() }
         }
     }
 
     @State private var recording = false
     @State private var showBrain = false
+    @State private var showImport = false
 
     // MARK: Pieces
 
@@ -184,6 +188,8 @@ struct NotesView: View {
                     .font(DS.Font.body).foregroundStyle(DS.Palette.inkSoft).multilineTextAlignment(.center)
             }
             quickActions
+            Button { showImport = true } label: { Label("Bring notes from another app", systemImage: "square.and.arrow.down") }
+                .buttonStyle(.bordered)
         }
         .frame(maxWidth: .infinity).padding(.vertical, DS.Space.xl)
         .listRowBackground(Color.clear)

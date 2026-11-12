@@ -171,7 +171,7 @@ struct HubView: View {
                     .buttonStyle(.bordered)
             }
             HStack(spacing: 10) {
-                NavigationLink { ImportView() } label: { Label("Import", systemImage: "square.and.arrow.down") }.buttonStyle(.bordered)
+                NavigationLink { ImportView() } label: { Label("Move to Keel", systemImage: "square.and.arrow.down") }.buttonStyle(.bordered)
                 NavigationLink { FeatureGuideView() } label: { Label("How Keel works", systemImage: "questionmark.circle") }.buttonStyle(.bordered)
             }
         }
