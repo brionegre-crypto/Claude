@@ -91,6 +91,10 @@ struct CalendarView: View {
                     Menu {
                         Button("Choose calendars…", systemImage: "calendar.badge.checkmark") { showCalendars = true }
                         Toggle(isOn: $showTasks) { Label("Show tasks on calendar", systemImage: "checklist") }
+                        Divider()
+                        NavigationLink { WorldClockView() } label: { Label("World clock", systemImage: "globe") }
+                        NavigationLink { SharedCalendarsView() } label: { Label("Shared calendars", systemImage: "person.3") }
+                        NavigationLink { EventTemplatesView() } label: { Label("Event templates", systemImage: "square.on.square") }
                     } label: { Image(systemName: "line.3.horizontal.decrease.circle") }
                     .accessibilityLabel("Calendar options")
                 }
@@ -98,6 +102,14 @@ struct CalendarView: View {
                     Menu {
                         Button("Quick event…", systemImage: "text.bubble") { showQuick = true }
                         Button("New event", systemImage: "calendar.badge.plus") { draft = EventDraft(event: nil, start: defaultNewStart()) }
+                        Menu("From template", systemImage: "square.on.square") {
+                            ForEach(EventTemplate.all) { t in
+                                Button("\(t.title) · \(t.minutes) min") {
+                                    let start = defaultNewStart()
+                                    draft = EventDraft(event: t.makeEvent(start: start), start: start)
+                                }
+                            }
+                        }
                         Button("New task", systemImage: "checklist") { newTaskDate = defaultNewStart() }
                     } label: { Image(systemName: "plus") }
                 }

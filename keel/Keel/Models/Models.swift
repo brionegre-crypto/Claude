@@ -135,6 +135,8 @@ struct Recurrence: Codable, Hashable {
     var interval: Int = 1
     var weekdays: [Int] = []                    // Calendar weekday numbers (1 = Sunday … 7 = Saturday), weekly only
     var endDate: Date? = nil
+    /// "Water plants 7 days after I last did it": the next date counts from when you complete it.
+    var fromCompletion: Bool?
 
     static let weekdaysOnly = Recurrence(frequency: .weekly, weekdays: [2, 3, 4, 5, 6])
 
@@ -162,7 +164,8 @@ struct Recurrence: Codable, Hashable {
             let days = weekdays.sorted().map { names[($0 - 1) % 7] }.joined(separator: ", ")
             return interval > 1 ? "Every \(interval) weeks on \(days)" : "Every \(days)"
         }
-        return interval == 1 ? "Every \(frequency.unit)" : "Every \(interval) \(frequency.unit)s"
+        let base = interval == 1 ? "Every \(frequency.unit)" : "Every \(interval) \(frequency.unit)s"
+        return fromCompletion == true ? base + " after done" : base
     }
 }
 
@@ -214,6 +217,7 @@ struct MicroStep: Codable, Identifiable, Hashable {
     var completionCount: Int = 0                // times a repeating task has been completed
     var lastCompletedOccurrence: Date?
     var isPinned: Bool = false                  // pinned to the top of Tasks and Today
+    var blockedById: UUID?                      // can't start until this task is done
 
     /// True when the due date carries a time (not just a day).
     var hasDueTime: Bool {
@@ -850,5 +854,21 @@ struct StoredAttachment: Codable {
         case "flight": "airplane"; case "hotel": "bed.double.fill"; case "car": "car.fill"
         case "train": "tram.fill"; case "restaurant": "fork.knife"; default: "ticket.fill"
         }
+    }
+}
+
+@Model final class TaskAttachment {
+    var id: UUID = UUID()
+    var taskId: UUID
+    @Attribute(.externalStorage) var data: Data
+    var filename: String
+    var kind: String                            // photo | file
+    var createdAt: Date = Date()
+
+    init(taskId: UUID, data: Data, filename: String, kind: String) {
+        self.taskId = taskId
+        self.data = data
+        self.filename = filename
+        self.kind = kind
     }
 }

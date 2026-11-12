@@ -13,7 +13,14 @@ enum TaskActions {
         var rolledTo: Date?
         if done, let rule = t.recurrence {
             let current = t.dueDate ?? Calendar.current.startOfDay(for: Date())
-            if let next = rule.next(after: current) {
+            // "After done": count from today, keeping the original time of day.
+            var base = current
+            if rule.fromCompletion == true {
+                let cal = Calendar.current
+                let time = cal.dateComponents([.hour, .minute], from: current)
+                base = cal.date(bySettingHour: time.hour ?? 0, minute: time.minute ?? 0, second: 0, of: Date()) ?? Date()
+            }
+            if let next = rule.next(after: base) {
                 t.completionCount += 1
                 t.lastCompletedOccurrence = current
                 t.dueDate = next
@@ -32,8 +39,24 @@ enum TaskActions {
         try? CalendarService.shared.push(t)
         TaskAlerts.schedule(t)
         done ? Haptics.success() : Haptics.tap()
+        if done, t.isDone, let ctx = t.modelContext { notifyUnblocked(by: t, ctx: ctx) }
         if let ctx = t.modelContext { WidgetSync.update(ctx) }
         return rolledTo
+    }
+
+    /// Finishing a task frees anything waiting on it: clear the link and say so.
+    static func notifyUnblocked(by t: TaskItem, ctx: ModelContext) {
+        let id = t.id
+        let waiting = (try? ctx.fetch(FetchDescriptor<TaskItem>(predicate: #Predicate { $0.blockedById == id }))) ?? []
+        guard !waiting.isEmpty else { return }
+        for w in waiting { w.blockedById = nil }
+        UndoCenter.shared.notify(waiting.count == 1 ? "Unblocked: \(waiting[0].title)" : "\(waiting.count) tasks unblocked")
+    }
+
+    /// True while the task it depends on is still open.
+    static func isBlocked(_ t: TaskItem, in all: [TaskItem]) -> Bool {
+        guard let b = t.blockedById else { return false }
+        return all.contains { $0.id == b && !$0.isDone }
     }
 
     /// A copy with the same details (not done, not linked to the original reminder).

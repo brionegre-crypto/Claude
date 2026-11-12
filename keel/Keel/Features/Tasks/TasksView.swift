@@ -343,9 +343,10 @@ struct TaskRow: View {
                 Text(task.title).strikethrough(task.isDone).foregroundStyle(task.isDone ? DS.Palette.inkSoft : DS.Palette.ink)
                 HStack(spacing: 6) {
                     if let d = task.dueDate {
-                        Text(dueText(d)).foregroundStyle(d < Date() && !task.isDone ? DS.Palette.warmth : DS.Palette.inkSoft)
+                        Text(dueText(d)).foregroundStyle(d < Date() && !task.isDone && !UserDefaults.standard.bool(forKey: Prefs.calm) ? DS.Palette.warmth : DS.Palette.inkSoft)
                     }
                     if task.isPinned { Image(systemName: "pin.fill").foregroundStyle(DS.Palette.accent) }
+                    if task.blockedById != nil { Image(systemName: "lock.fill").accessibilityLabel("Blocked by another task") }
                     if TaskTimer.shared.isRunning(task) { Image(systemName: "stopwatch.fill").foregroundStyle(DS.Palette.warmth) }
                     if task.recurrence != nil { Image(systemName: "repeat") }
                     if task.alertOffsetMinutes != nil { Image(systemName: "bell") }
@@ -527,6 +528,12 @@ struct TaskDetailView: View {
                 Stepper("Estimate: \(task.estimatedMinutes ?? 25) min  (really ~\(ADHDCoach.calibratedMinutes(task)))",
                         value: Binding(get: { task.estimatedMinutes ?? 25 }, set: { task.estimatedMinutes = $0 }), in: 5...480, step: 5)
                 Toggle("Waiting on someone else", isOn: $task.isWaitingOn)
+                Picker("Blocked By", selection: $task.blockedById) {
+                    Text("Nothing").tag(UUID?.none)
+                    ForEach(allTasks.filter { !$0.isDone && $0.id != task.id && $0.blockedById != task.id }.sorted { $0.title < $1.title }) { t in
+                        Text(t.title).lineLimit(1).tag(Optional(t.id))
+                    }
+                }
                 Button("Block time on my calendar") {
                     if let slot = CalendarService.shared.freeSlots(minMinutes: ADHDCoach.calibratedMinutes(task)).first {
                         try? CalendarService.shared.timeBlock(task, start: slot.start, minutes: ADHDCoach.calibratedMinutes(task))
@@ -581,6 +588,7 @@ struct TaskDetailView: View {
                 Section("Why this matters") { Text("\(g.emoji) \(g.why)").foregroundStyle(DS.Palette.inkSoft) }
             }
             Section("Notes") { TextEditor(text: $task.notes).frame(minHeight: 100) }
+            TaskAttachmentsSection(task: task)
 
             Section {
                 Button("Delete task", role: .destructive) { confirmDelete = true }
@@ -652,6 +660,9 @@ struct RecurrenceEditor: View {
                         }
                     }
                 }
+                Section {
+                    Toggle("Count From When I Finish", isOn: Binding(get: { draft.fromCompletion == true }, set: { draft.fromCompletion = $0 ? true : nil }))
+                } footer: { Text("Good for chores: “every 2 weeks” means 2 weeks after you last did it, not on a fixed date.") }
                 Section {
                     Toggle("Ends", isOn: $hasEnd)
                     if hasEnd {

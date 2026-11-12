@@ -101,6 +101,8 @@ struct WatchPayload: Codable {
     var subscriptionsMonthly: String? = nil
     var nextTrip: String? = nil           // "✈︎ UA 1234 SFO → JFK · Fri 7:05 AM · ABC123"
     var unreadCount: Int? = nil
+    var worldClock: [String]? = nil       // time zone identifiers
+    var calm: Bool? = nil
 }
 
 /// What Apple Watch asks the iPhone to do.

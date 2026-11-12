@@ -166,7 +166,7 @@ struct InboxView: View {
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack {
                             ForEach(TriageCategory.allCases) { c in
-                                let n = mailboxEmails.filter { ($0.category ?? .important) == c && !$0.isRead }.count
+                                let n = UserDefaults.standard.bool(forKey: Prefs.calm) ? 0 : mailboxEmails.filter { ($0.category ?? .important) == c && !$0.isRead }.count
                                 Button { withAnimation(DS.spring) { split = c }; Haptics.tap() } label: {
                                     Chip(text: "\(c.rawValue.capitalized)\(n > 0 ? " \(n)" : "")",
                                          color: split == c ? DS.Palette.category(c) : .gray)

@@ -9,7 +9,8 @@ enum ADHDCoach {
 
     /// Picks ONE task using energy, time until the next event, deadlines and how long it's been avoided.
     static func nextThing(tasks: [TaskItem], energy: EnergyLevel) -> TaskItem? {
-        let open = tasks.filter { !$0.isDone && !$0.isWaitingOn }
+        let openIds = Set(tasks.filter { !$0.isDone }.map(\.id))
+        let open = tasks.filter { !$0.isDone && !$0.isWaitingOn && !($0.blockedById.map(openIds.contains) ?? false) }
         let minutesFree = CalendarService.shared.freeSlots(minMinutes: 5).first.map { Int($0.duration / 60) } ?? 60
         return open.max { score($0, energy, minutesFree) < score($1, energy, minutesFree) }
     }

@@ -39,7 +39,7 @@ final class WatchBridge: NSObject, WCSessionDelegate {
 
         var payload = WatchPayload(
             nextThing: next?.title, nextThingStep: next?.microSteps.first { !$0.done }?.text,
-            tasks: dueToday.prefix(20).map { .init(id: $0.id, title: $0.title, due: $0.dueDate, hasTime: $0.hasDueTime, priority: $0.priority.rawValue) },
+            tasks: dueToday.filter { t in !(t.blockedById.map { b in dueToday.contains { $0.id == b } } ?? false) }.prefix(20).map { .init(id: $0.id, title: $0.title, due: $0.dueDate, hasTime: $0.hasDueTime, priority: $0.priority.rawValue) },
             habits: habitRows, events: Array(events), focusEndsAt: ShutdownManager.shared.endsAt)
 
         // Everything else the watch shows
@@ -87,6 +87,9 @@ final class WatchBridge: NSObject, WCSessionDelegate {
         payload.achievementsUnlocked = Momentum.achievements(ctx: ctx).filter(\.unlocked).count
         payload.scheduledMail = ((try? ctx.fetch(FetchDescriptor<ScheduledMail>())) ?? []).count
         payload.briefing = Briefing.latest
+        payload.worldClock = (UserDefaults.standard.string(forKey: "worldclock.zones") ?? "")
+            .split(separator: ",").map(String.init).filter { !$0.isEmpty }
+        payload.calm = UserDefaults.standard.bool(forKey: Prefs.calm)
         payload.deliveries = ((try? ctx.fetch(FetchDescriptor<Delivery>())) ?? [])
             .filter { !$0.isArchived && $0.status != "delivered" }.prefix(6)
             .map { d in

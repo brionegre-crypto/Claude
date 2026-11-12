@@ -173,27 +173,30 @@ struct WatchRoot: View {
                     link("Ask Keel", "sparkles", .cyan, nil) { AskPage() }
                     link("Capture", "plus.circle.fill", calm, nil) { AddPage() }
                 }
-                Section {
-                    if let p = store.payload.people, !p.isEmpty { link("Keep in touch", "person.2.fill", .pink, "\(p.count)") { PeoplePage() } }
-                    if let p = store.payload.promises, !p.isEmpty { link("Promises", "hand.raised.fill", .orange, "\(p.count)") { ListPage(title: "Promises", items: p) } }
-                    if let f = store.payload.followUps, !f.isEmpty { link("Awaiting reply", "bubble.left.and.exclamationmark.bubble.right", .teal, "\(f.count)") { ListPage(title: "Awaiting reply", items: f) } }
-                    if let c = store.payload.countdowns, !c.isEmpty { link("Countdowns", "hourglass", .yellow, nil) { CountdownsPage() } }
-                    if let p = store.payload.projects, !p.isEmpty { link("Projects", "folder.fill", .blue, "\(p.count)") { ProjectsPage() } }
-                    if let m = store.payload.meds, !m.isEmpty {
-                        link("Meds", "pills.fill", .mint, "\(m.filter { $0.takenAt != nil }.count)/\(m.count)") { MedsPage() }
-                    }
-                    if let s = store.payload.momentum { link("Momentum", "trophy.fill", .orange, "\(s)") { MomentumPage() } }
-                    if let d = store.payload.deliveries, !d.isEmpty { link("Deliveries", "shippingbox.fill", .brown, "\(d.count)") { DeliveriesPage() } }
-                    if let m = store.payload.subscriptionsMonthly {
-                        HStack {
-                            Image(systemName: "creditcard.fill").foregroundStyle(.green).frame(width: 22)
-                            Text("Subscriptions")
-                            Spacer()
-                            Text(m).font(.caption2).foregroundStyle(.secondary)
+                if store.payload.calm != true {
+                    Section {
+                        if let p = store.payload.people, !p.isEmpty { link("Keep in touch", "person.2.fill", .pink, "\(p.count)") { PeoplePage() } }
+                        if let p = store.payload.promises, !p.isEmpty { link("Promises", "hand.raised.fill", .orange, "\(p.count)") { ListPage(title: "Promises", items: p) } }
+                        if let f = store.payload.followUps, !f.isEmpty { link("Awaiting reply", "bubble.left.and.exclamationmark.bubble.right", .teal, "\(f.count)") { ListPage(title: "Awaiting reply", items: f) } }
+                        if let c = store.payload.countdowns, !c.isEmpty { link("Countdowns", "hourglass", .yellow, nil) { CountdownsPage() } }
+                        if let p = store.payload.projects, !p.isEmpty { link("Projects", "folder.fill", .blue, "\(p.count)") { ProjectsPage() } }
+                        if let m = store.payload.meds, !m.isEmpty {
+                            link("Meds", "pills.fill", .mint, "\(m.filter { $0.takenAt != nil }.count)/\(m.count)") { MedsPage() }
                         }
+                        if let s = store.payload.momentum { link("Momentum", "trophy.fill", .orange, "\(s)") { MomentumPage() } }
+                        if let d = store.payload.deliveries, !d.isEmpty { link("Deliveries", "shippingbox.fill", .brown, "\(d.count)") { DeliveriesPage() } }
+                        if let m = store.payload.subscriptionsMonthly {
+                            HStack {
+                                Image(systemName: "creditcard.fill").foregroundStyle(.green).frame(width: 22)
+                                Text("Subscriptions")
+                                Spacer()
+                                Text(m).font(.caption2).foregroundStyle(.secondary)
+                            }
+                        }
+                        if let m = store.payload.moodWeek, !m.isEmpty { link("Mood", "face.smiling", .yellow, nil) { MoodPage() } }
+                        if let z = store.payload.worldClock, !z.isEmpty { link("World clock", "globe", .teal, nil) { WorldClockPage(zones: z) } }
+                        link("Day in review", "moon.stars.fill", .indigo, nil) { DayReviewPage() }
                     }
-                    if let m = store.payload.moodWeek, !m.isEmpty { link("Mood", "face.smiling", .yellow, nil) { MoodPage() } }
-                    link("Day in review", "moon.stars.fill", .indigo, nil) { DayReviewPage() }
                 }
             }
             .navigationTitle("Keel")
@@ -636,5 +639,23 @@ struct DeliveriesPage: View {
             }
         }
         .navigationTitle("Deliveries")
+    }
+}
+
+struct WorldClockPage: View {
+    let zones: [String]
+    var body: some View {
+        TimelineView(.everyMinute) { ctx in
+            List(zones, id: \.self) { id in
+                if let z = TimeZone(identifier: id) {
+                    HStack {
+                        Text(id.split(separator: "/").last.map { $0.replacingOccurrences(of: "_", with: " ") } ?? id).font(.caption)
+                        Spacer()
+                        Text(ctx.date.formatted(Date.FormatStyle(date: .omitted, time: .shortened, timeZone: z))).monospacedDigit()
+                    }
+                }
+            }
+        }
+        .navigationTitle("World Clock")
     }
 }

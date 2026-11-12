@@ -13,7 +13,9 @@ enum AutoScheduler {
         let now = Date()
         let endOfDay = cal.date(byAdding: .day, value: 1, to: cal.startOfDay(for: now))!
         // Today's and overdue tasks that don't have a fixed time yet.
+        let openIds = Set(tasks.filter { !$0.isDone }.map(\.id))
         let candidates = tasks
+            .filter { !($0.blockedById.map(openIds.contains) ?? false) }
             .filter { !$0.isDone && !$0.isWaitingOn && $0.scheduledBlockStart == nil && !$0.hasDueTime && ($0.dueDate ?? .distantFuture) < endOfDay }
             .sorted { a, b in
                 // Highest priority and highest energy first, while you're freshest.

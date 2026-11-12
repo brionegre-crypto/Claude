@@ -42,6 +42,7 @@ enum Prefs {
     // Appearance
     static let appearance = "appearance"                 // system | light | dark
     static let hapticsOff = "haptics.off"
+    static let calm = "calm.on"                         // ADHD calm mode: fewer cards, no counts, no red
     // Mail
     static let undoSeconds = "mail.undoSeconds"         // 0 = send immediately
     static let loadImages = "mail.loadImages"
@@ -519,10 +520,14 @@ struct AppearanceSettings: View {
     @AppStorage(Prefs.appearance) private var appearance = "system"
     @AppStorage(Prefs.hapticsOff) private var hapticsOff = false
     @AppStorage("accent") private var accent = "indigo"
+    @AppStorage(Prefs.calm) private var calm = false
     @State private var icon = AppIconChoice.allCases.first { $0.iconName == UIApplication.shared.alternateIconName } ?? .standard
 
     var body: some View {
         List {
+            Section {
+                Toggle("Calm Mode", isOn: $calm)
+            } footer: { Text("For overwhelming days: Today shows only your next thing and what's coming up. Unread counts and red overdue dates are hidden everywhere.") }
             Section("App Icon") {
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 14) {

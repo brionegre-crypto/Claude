@@ -22,6 +22,7 @@ struct TodayView: View {
     @State private var planning = false
     @State private var showSettings = false
     @State private var showBrainDump = false
+    @AppStorage(Prefs.calm) private var calm = false
 
     private var energy: EnergyLevel { EnergyLevel(rawValue: energyRaw) ?? .medium }
     private var nextThing: TaskItem? { ADHDCoach.nextThing(tasks: tasks, energy: energy) }
@@ -35,44 +36,53 @@ struct TodayView: View {
                 VStack(alignment: .leading, spacing: DS.Space.l) {
                     greeting
                     MedsTodayCard()
-                    PinnedTasksCard()
-                    FoundInMailTodayCard()
-                    TripTodayCard()
-                    // Today reshapes itself through the day: plan in the morning, do in the day, wind down at night.
-                    switch DayPhase.now {
-                    case .morning:
-                        CheckInCard()
-                        energyPicker
-                        justOneThing
-                        planCard
-                        if !upNextEvents.isEmpty { upNext }
-                    case .day:
-                        energyPicker
+                    if calm {
+                        // Calm mode: just the next thing and what's coming. Everything else waits.
                         justOneThing
                         if !upNextEvents.isEmpty { upNext }
-                        planCard
-                        CheckInCard()
-                    case .evening:
-                        NavigationLink { DayReviewView() } label: { dayReviewTeaser }.buttonStyle(.plain)
-                        CheckInCard()
-                        if !upNextEvents.isEmpty { upNext }
-                        justOneThing
-                    }
-                    countdownCard
-                    promisesCard
-                    followUpsCard
-                    keepInTouchCard
-                    if WeeklyReview.isDue {
-                        NavigationLink { WeeklyReviewView() } label: {
-                            GlassCard(tint: .purple) {
-                                Label("Your weekly review is ready · 10 min", systemImage: "chart.bar.doc.horizontal")
-                                    .font(DS.Font.headline).foregroundStyle(DS.Palette.ink)
-                            }
+                        Label("Calm mode is on. Everything else is still here when you want it.", systemImage: "leaf")
+                            .font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
+                    } else {
+                        PinnedTasksCard()
+                        FoundInMailTodayCard()
+                        TripTodayCard()
+                        // Today reshapes itself through the day: plan in the morning, do in the day, wind down at night.
+                        switch DayPhase.now {
+                        case .morning:
+                            PlanRitualPrompt()
+                            CheckInCard()
+                            energyPicker
+                            justOneThing
+                            planCard
+                            if !upNextEvents.isEmpty { upNext }
+                        case .day:
+                            energyPicker
+                            justOneThing
+                            if !upNextEvents.isEmpty { upNext }
+                            planCard
+                            CheckInCard()
+                        case .evening:
+                            NavigationLink { DayReviewView() } label: { dayReviewTeaser }.buttonStyle(.plain)
+                            CheckInCard()
+                            if !upNextEvents.isEmpty { upNext }
+                            justOneThing
                         }
-                        .buttonStyle(.plain)
+                        countdownCard
+                        promisesCard
+                        followUpsCard
+                        keepInTouchCard
+                        if WeeklyReview.isDue {
+                            NavigationLink { WeeklyReviewView() } label: {
+                                GlassCard(tint: .purple) {
+                                    Label("Your weekly review is ready · 10 min", systemImage: "chart.bar.doc.horizontal")
+                                        .font(DS.Font.headline).foregroundStyle(DS.Palette.ink)
+                                }
+                            }
+                            .buttonStyle(.plain)
+                        }
+                        attentionCard
+                        avoidedCard
                     }
-                    attentionCard
-                    avoidedCard
                 }
                 .padding(DS.Space.m)
             }
@@ -101,6 +111,8 @@ struct TodayView: View {
                         NavigationLink { ProjectsView() } label: { Label("Projects", systemImage: "folder") }
                         NavigationLink { ProcessInboxView() } label: { Label("Sort loose tasks", systemImage: "tray.and.arrow.down") }
                         NavigationLink { HabitsView() } label: { Label("Habit stacks", systemImage: "link") }
+                        Toggle(isOn: $calm) { Label("Calm mode", systemImage: "leaf") }
+                        NavigationLink { PlanRitualView() } label: { Label("Plan my day", systemImage: "list.bullet.clipboard") }
                         NavigationLink { HabitLibraryView() } label: { Label("Habit library", systemImage: "books.vertical") }
                         NavigationLink { MedsView() } label: { Label("Medications", systemImage: "pills") }
                         NavigationLink { SubscriptionsView() } label: { Label("Subscriptions & bills", systemImage: "creditcard") }
