@@ -54,7 +54,7 @@
 	<key>NSHealthShareUsageDescription</key>
 	<string>Keel reads last night's sleep to suggest how much energy you have today. Nothing is written to Health.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Keel uses your approximate location for today's weather and to search places for location reminders.</string>
+	<string>Keel uses your location for today's weather, time-to-leave alerts for events, and finding places for location reminders.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Keel records meetings you choose to record and turns them into notes.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
