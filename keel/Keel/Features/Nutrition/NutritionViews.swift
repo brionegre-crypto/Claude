@@ -21,7 +21,7 @@ struct VerdictHeader: View {
                 if let subtitle, !subtitle.isEmpty { Text(subtitle).font(DS.Font.caption).foregroundStyle(.secondary) }
             }
         }
-        .padding(.vertical, 4)
+        .padding(.vertical, 6)
         .accessibilityElement(children: .combine)
     }
 }
@@ -31,7 +31,7 @@ struct FindingRow: View {
     var body: some View {
         HStack(alignment: .top, spacing: 10) {
             Circle().fill(f.level.color).frame(width: 10, height: 10).padding(.top, 5)
-            VStack(alignment: .leading, spacing: 2) {
+            VStack(alignment: .leading, spacing: 3) {
                 Text(f.rule).font(DS.Font.body.weight(.semibold))
                 Text("Found: \(f.matched)").font(DS.Font.caption).foregroundStyle(f.level.color)
                 Text(f.why).font(DS.Font.caption).foregroundStyle(.secondary)
@@ -58,7 +58,7 @@ struct FactsGrid: View {
         if rows.isEmpty {
             Text("No nutrition numbers yet. Scan the label to add them.").font(DS.Font.caption).foregroundStyle(.secondary)
         } else {
-            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())], alignment: .leading, spacing: 10) {
+            LazyVGrid(columns: [GridItem(.flexible(), spacing: 12), GridItem(.flexible(), spacing: 12), GridItem(.flexible())], alignment: .leading, spacing: 14) {
                 ForEach(rows) { r in
                     VStack(alignment: .leading, spacing: 1) {
                         Text(r.value).font(DS.Font.headline).monospacedDigit()
@@ -284,7 +284,7 @@ private struct BigAction: View {
     let icon: String
     let color: Color
     var body: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: 10) {
             Image(systemName: icon).font(.system(size: 28, weight: .semibold))
             Text(title).font(DS.Font.headline)
         }
@@ -303,7 +303,7 @@ private struct GoalBar: View {
     var isCeiling = false
     var body: some View {
         let over = isCeiling && value > goal
-        VStack(alignment: .leading, spacing: 4) {
+        VStack(alignment: .leading, spacing: 6) {
             HStack {
                 Text(title).font(DS.Font.body)
                 Spacer()

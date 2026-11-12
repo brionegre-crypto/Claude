@@ -62,7 +62,7 @@ struct NotesView: View {
                     let unfiled = summaries.first { $0.name == nil }?.count ?? 0
                     if unfiled >= 3 {
                         Section { organizeBanner(unfiled) }
-                            .listRowInsets(EdgeInsets(top: 6, leading: 16, bottom: 6, trailing: 16))
+                            .listRowInsets(EdgeInsets(top: 10, leading: 16, bottom: 10, trailing: 16))
                     }
                     Section {
                         LazyVGrid(columns: [GridItem(.flexible(), spacing: 12), GridItem(.flexible(), spacing: 12)], spacing: 12) {
@@ -80,7 +80,7 @@ struct NotesView: View {
                             NewFolderCard { newFolderName = ""; creatingFolder = true }
                         }
                         .padding(.vertical, 4)
-                        .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
+                        .listRowInsets(EdgeInsets(top: 4, leading: 0, bottom: 8, trailing: 0))
                         .listRowBackground(Color.clear)
                     } header: { sectionHeader("Folders", "\(notes.count) pages") }
                     if !templates.isEmpty {
@@ -324,7 +324,7 @@ struct NotesView: View {
         List {
             if ref.name == nil && list.count >= 2 {
                 Section { organizeBanner(list.count) }
-                    .listRowInsets(EdgeInsets(top: 6, leading: 16, bottom: 6, trailing: 16))
+                    .listRowInsets(EdgeInsets(top: 10, leading: 16, bottom: 10, trailing: 16))
             }
             Section {
                 ForEach(list) { root in PageTreeNode(note: root, all: notes, depth: 0, row: { page in row(page, showSnippet: true) }) }
@@ -582,7 +582,7 @@ private struct FolderCard: View {
                 }
                 .frame(height: 30, alignment: .topLeading)
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
+            .frame(maxWidth: .infinity, minHeight: 104, alignment: .topLeading)
             .padding(14)
             .background(DS.Palette.elevated, in: .rect(cornerRadius: 18))
             .overlay(RoundedRectangle(cornerRadius: 18).strokeBorder(style.color.opacity(0.18)))
@@ -603,7 +603,7 @@ private struct NewFolderCard: View {
                 Image(systemName: "folder.badge.plus").font(.title2).foregroundStyle(DS.Palette.accent)
                 Text("New folder").font(DS.Font.caption.weight(.semibold)).foregroundStyle(DS.Palette.ink)
             }
-            .frame(maxWidth: .infinity, minHeight: 118)
+            .frame(maxWidth: .infinity, minHeight: 132)
             .background(RoundedRectangle(cornerRadius: 18).strokeBorder(DS.Palette.inkSoft.opacity(0.3), style: StrokeStyle(lineWidth: 1.5, dash: [6, 5])))
             .contentShape(.rect(cornerRadius: 18))
         }
