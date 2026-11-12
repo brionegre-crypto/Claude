@@ -117,6 +117,9 @@ final class SyncEngine {
             }
         }
 
+        // 2b. A heads-up only for VIPs and urgent mail.
+        await InboxBrain.notify(fresh, ctx: ctx)
+
         // 2a. Replies close "remind me if no reply" follow-ups; blocked senders are archived;
         //     mail from people on your Keep in touch list counts as contact.
         FollowUps.check(ctx: ctx)

@@ -438,7 +438,12 @@ struct MailSettings: View {
                 Toggle("Group by Conversation", isOn: Binding(get: { UserDefaults.standard.object(forKey: MailSwipe.threadsKey) as? Bool ?? true },
                                                                set: { UserDefaults.standard.set($0, forKey: MailSwipe.threadsKey) }))
                 NavigationLink("Swipe Actions") { SwipeSettingsView() }
-            } header: { Text("Inbox") }
+                NavigationLink("VIPs") { VIPListView() }
+                Picker("Notify Me About", selection: Binding(get: { InboxBrain.notifyMode }, set: { UserDefaults.standard.set($0, forKey: InboxBrain.notifyKey) })) {
+                    Text("VIPs and urgent mail").tag("urgent"); Text("VIPs only").tag("vip"); Text("Nothing").tag("off")
+                }
+                NavigationLink("Batched Delivery") { BatchSettingsView() }
+            } header: { Text("Inbox") } footer: { Text("Keel learns from you: senders you open and reply to rise to Priority, senders you archive unread sink to Updates.") }
             Section { NavigationLink("Rules") { MailRulesView() } } footer: { Text("Auto-archive, star, file or turn mail into tasks as it arrives.") }
             Section { NavigationLink("Snippets") { SnippetsView() } } footer: { Text("Saved replies you can insert while writing an email.") }
             Section("Signature") {
@@ -452,9 +457,16 @@ struct MailSettings: View {
 struct TaskSettings: View {
     @AppStorage(Prefs.defaultList) private var defaultList = "Inbox"
     @AppStorage(Prefs.defaultAlert) private var defaultAlert = 0
+    @AppStorage(TaskAlarms.globalKey) private var alarms = false
 
     var body: some View {
         List {
+            Section {
+                Toggle("Full-Screen Alarms", isOn: Binding(get: { alarms }, set: { on in
+                    alarms = on
+                    if on { Task { if !(await TaskAlarms.authorize()) { alarms = false } } }
+                }))
+            } footer: { Text("Timed task alerts take over the screen like an alarm clock, even on the Lock Screen and in Silent mode, with Done and Snooze buttons. You can also turn this on for single tasks.") }
             Section {
                 Picker("Default List", selection: $defaultList) {
                     Text("Inbox").tag("Inbox")
@@ -1018,5 +1030,72 @@ struct AIKeySettings: View {
             ok = true; result = "Connected. Keel will use \(provider.name)."
             Haptics.success()
         }
+    }
+}
+
+/// Settings → Mail → VIPs.
+struct VIPListView: View {
+    @Environment(\.modelContext) private var ctx
+    @Query(filter: #Predicate<SenderScore> { $0.isVIP }, sort: \SenderScore.name) private var vips: [SenderScore]
+    @State private var newAddress = ""
+
+    var body: some View {
+        List {
+            Section {
+                ForEach(vips) { v in
+                    HStack {
+                        SenderAvatar(name: v.name, email: v.sender, size: 30)
+                        VStack(alignment: .leading) {
+                            Text(v.name.isEmpty ? v.sender : v.name)
+                            Text(v.sender).font(.caption).foregroundStyle(.secondary)
+                        }
+                    }
+                }
+                .onDelete { idx in idx.map { vips[$0] }.forEach { $0.isVIP = false } }
+            } footer: { Text("VIPs always land in Priority, skip batched delivery and can notify you. Long-press any email to add its sender.") }
+            Section("Add a VIP") {
+                TextField("name@example.com", text: $newAddress).keyboardType(.emailAddress).textInputAutocapitalization(.never).autocorrectionDisabled()
+                Button("Add") { InboxBrain.setVIP(true, sender: newAddress, name: "", ctx: ctx); newAddress = "" }
+                    .disabled(!newAddress.contains("@"))
+            }
+        }
+        .navigationTitle("VIPs")
+    }
+}
+
+/// Settings → Mail → Batched Delivery.
+struct BatchSettingsView: View {
+    @AppStorage(InboxBrain.batchOnKey) private var on = false
+    @AppStorage(InboxBrain.batchTimesKey) private var timesRaw = "540,780,1020"
+
+    private var times: [Int] { timesRaw.split(separator: ",").compactMap { Int($0) }.sorted() }
+
+    var body: some View {
+        List {
+            Section {
+                Toggle("Batched Delivery", isOn: $on)
+            } footer: { Text("Non-urgent mail waits and arrives all at once at the times below, so your inbox isn't a constant stream of interruptions. VIPs and urgent mail come straight through.") }
+            if on {
+                Section("Delivery times") {
+                    ForEach(Array(times.enumerated()), id: \.offset) { i, m in
+                        DatePicker("Delivery \(i + 1)", selection: Binding(
+                            get: { Calendar.current.date(bySettingHour: m / 60, minute: m % 60, second: 0, of: Date())! },
+                            set: { d in
+                                var t = times
+                                t[i] = Calendar.current.component(.hour, from: d) * 60 + Calendar.current.component(.minute, from: d)
+                                timesRaw = t.sorted().map(String.init).joined(separator: ",")
+                            }), displayedComponents: .hourAndMinute)
+                    }
+                    .onDelete { idx in
+                        var t = times; t.remove(atOffsets: idx)
+                        timesRaw = (t.isEmpty ? [540] : t).map(String.init).joined(separator: ",")
+                    }
+                    if times.count < 6 {
+                        Button("Add a delivery time") { timesRaw = (times + [min(1320, (times.last ?? 540) + 120)]).map(String.init).joined(separator: ",") }
+                    }
+                }
+            }
+        }
+        .navigationTitle("Batched Delivery")
     }
 }

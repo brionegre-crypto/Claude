@@ -302,6 +302,7 @@ struct ComposeView: View {
                                 attachments: attachments)
         do {
             try await MailProviderFactory.make(for: account).send(mail)
+            if mail.replyTo != nil, let o = draft.original { InboxBrain.record(.reply, sender: o.from, name: o.fromName, ctx: ctx) }
             if let days = followUpDays, let to = mail.to.first {
                 FollowUps.create(account: account.id, to: to, name: draft.original?.fromName ?? "", subject: draft.subject, days: days, ctx: ctx)
             }

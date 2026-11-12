@@ -167,6 +167,7 @@ enum Autopilot {
             do {
                 try await MailProviderFactory.make(for: a).send(to: e.from, subject: ComposeDraft.prefixed("Re:", e.subject), body: s.payload, inReplyTo: e.replyContext)
                 e.isRead = true
+                InboxBrain.record(.reply, sender: e.from, name: e.fromName, ctx: ctx)
                 return "Reply sent to \(e.fromName.isEmpty ? e.from : e.fromName)."
             } catch {
                 s.status = "pending"

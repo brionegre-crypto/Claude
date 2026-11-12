@@ -558,6 +558,11 @@ struct TaskDetailView: View {
                     Picker("Alert", selection: $task.alertOffsetMinutes) {
                         ForEach(TaskAlerts.offsets, id: \.label) { Text($0.label).tag($0.minutes) }
                     }
+                    if task.alertOffsetMinutes != nil && task.hasDueTime {
+                        Toggle(isOn: Binding(get: { TaskAlarms.wanted(task) }, set: { task.useAlarm = $0; TaskAlerts.schedule(task) })) {
+                            Label("Full-screen alarm", systemImage: "alarm")
+                        }
+                    }
                     if task.completionCount > 0 {
                         LabeledContent("Completed", value: "\(task.completionCount) times")
                     }

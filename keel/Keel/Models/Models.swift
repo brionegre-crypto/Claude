@@ -222,6 +222,7 @@ struct MicroStep: Codable, Identifiable, Hashable {
     var lastCompletedOccurrence: Date?
     var isPinned: Bool = false                  // pinned to the top of Tasks and Today
     var blockedById: UUID?                      // can't start until this task is done
+    var useAlarm: Bool?                         // full-screen alarm instead of a banner; nil = follow Settings
 
     /// True when the due date carries a time (not just a day).
     var hasDueTime: Bool {
@@ -981,5 +982,28 @@ struct StoredAttachment: Codable {
         case "promise": "hand.raised.fill"; case "bill": "creditcard.fill"; case "prep": "doc.text.magnifyingglass"
         case "followup": "bubble.left.and.exclamationmark.bubble.right.fill"; default: "sparkles"
         }
+    }
+}
+
+// MARK: - Inbox learning
+
+/// What Keel has learned about a sender from how you treat their mail.
+@Model final class SenderScore {
+    var sender: String = ""                     // lowercased address
+    var name: String = ""
+    var opens: Int = 0
+    var replies: Int = 0
+    var ignored: Int = 0                        // archived without reading
+    var isVIP: Bool = false
+    var updatedAt: Date = Date()
+
+    init(sender: String, name: String = "") {
+        self.sender = sender
+        self.name = name
+    }
+
+    /// Positive = you engage, negative = you ignore.
+    var affinity: Double {
+        Double(replies) * 3 + Double(opens) - Double(ignored) * 2
     }
 }

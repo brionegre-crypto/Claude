@@ -142,7 +142,11 @@ enum TaskAlerts {
         let base = t.hasDueTime ? due : (Calendar.current.date(bySettingHour: 9, minute: 0, second: 0, of: due) ?? due)
         let fire = base.addingTimeInterval(-Double(offset * 60))
         guard fire > Date() else { return }
-        add(t, at: fire, id: id(t))
+        if TaskAlarms.wanted(t) && t.hasDueTime {
+            Task { await TaskAlarms.schedule(t, at: fire) }     // full-screen alarm instead of a banner
+        } else {
+            add(t, at: fire, id: id(t))
+        }
     }
 
     static func snooze(_ t: TaskItem, minutes: Int = 10) {
@@ -166,6 +170,7 @@ enum TaskAlerts {
 
     static func cancel(_ t: TaskItem) {
         UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [id(t)])
+        TaskAlarms.cancel(t)
     }
 
     /// iOS keeps at most 64 pending alerts per app, so schedule the soonest ones.

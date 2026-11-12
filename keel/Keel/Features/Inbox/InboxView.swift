@@ -24,7 +24,9 @@ struct InboxView: View {
     @Query private var rules: [SenderRule]
     @AppStorage("focus.hideInbox") private var hiddenByFocus = false
     @State private var mailbox: Mailbox = .inbox
-    @State private var split: TriageCategory = .important
+    @AppStorage("inbox.tab") private var tabRaw = InboxTab.priority.rawValue
+    @Query private var senderScores: [SenderScore]
+    @State private var batchTick = 0
     @State private var accountFilter: String? = nil
     @State private var search = ""
     @State private var serverResults: [EmailMessage] = []
@@ -64,7 +66,36 @@ struct InboxView: View {
             return base.filter { [$0.subject, $0.fromName, $0.from, $0.snippet, $0.bodyPlain, $0.toLine]
                 .contains { $0.lowercased().contains(q) } }
         }
-        return mailbox == .inbox ? base.filter { ($0.category ?? .important) == split && !$0.isPinned } : base
+        guard mailbox == .inbox else { return base }
+        let scores = scoreMap
+        let shown = base.filter { !$0.isPinned && !InboxBrain.isHeld($0, score: scores[$0.from.lowercased()]) }
+        if tab == .quick {
+            return shown.filter { InboxBrain.isQuickWin($0, score: scores[$0.from.lowercased()]) }.sorted { $0.receivedAt < $1.receivedAt }
+        }
+        return shown.filter { InboxBrain.tab($0, score: scores[$0.from.lowercased()]) == tab }
+            .sorted { a, b in
+                let va = scores[a.from.lowercased()]?.isVIP == true, vb = scores[b.from.lowercased()]?.isVIP == true
+                return va != vb ? va : a.receivedAt > b.receivedAt
+            }
+    }
+
+    private var tab: InboxTab { InboxTab(rawValue: tabRaw) ?? .priority }
+    private var scoreMap: [String: SenderScore] {
+        Dictionary(senderScores.map { ($0.sender, $0) }, uniquingKeysWith: { a, _ in a })
+    }
+    private var tabCounts: [InboxTab: Int] {
+        let scores = scoreMap
+        let live = mailboxEmails.filter { !$0.isRead && !InboxBrain.isHeld($0, score: scores[$0.from.lowercased()]) }
+        var c: [InboxTab: Int] = [:]
+        for e in live { c[InboxBrain.tab(e, score: scores[e.from.lowercased()]), default: 0] += 1 }
+        c[.quick] = mailboxEmails.filter { InboxBrain.isQuickWin($0, score: scores[$0.from.lowercased()]) }.count
+        return c
+    }
+    private var heldCount: Int {
+        _ = batchTick
+        guard InboxBrain.batchingOn else { return 0 }
+        let scores = scoreMap
+        return mailboxEmails.filter { InboxBrain.isHeld($0, score: scores[$0.from.lowercased()]) }.count
     }
 
     /// Pinned emails sit above every split in Inbox.
@@ -179,21 +210,17 @@ struct InboxView: View {
                     .listRowBackground(Color.clear)
                 }
             }
-            if mailbox == .inbox && search.isEmpty {
-                Section {
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack {
-                            ForEach(TriageCategory.allCases) { c in
-                                let n = UserDefaults.standard.bool(forKey: Prefs.calm) ? 0 : mailboxEmails.filter { ($0.category ?? .important) == c && !$0.isRead }.count
-                                Button { withAnimation(DS.spring) { split = c }; Haptics.tap() } label: {
-                                    Chip(text: "\(c.rawValue.capitalized)\(n > 0 ? " \(n)" : "")",
-                                         color: split == c ? DS.Palette.category(c) : .gray)
-                                }.buttonStyle(.plain)
-                            }
-                        }
-                    }
+            if mailbox == .inbox && search.isEmpty && !selecting {
+                InboxTabBar(tab: Binding(get: { tab }, set: { tabRaw = $0.rawValue }), counts: tabCounts, hideCounts: calm)
+                    .listRowSeparator(.hidden)
+                    .listRowInsets(EdgeInsets(top: 4, leading: 12, bottom: 4, trailing: 12))
+                    .selectionDisabled()
+                if heldCount > 0 {
+                    BatchBanner(waiting: heldCount) { InboxBrain.revealNow(); batchTick += 1; Haptics.tap() }
+                        .listRowSeparator(.hidden)
+                        .listRowInsets(EdgeInsets(top: 4, leading: 12, bottom: 4, trailing: 12))
+                        .selectionDisabled()
                 }
-                .listRowBackground(Color.clear)
             }
 
             if mailbox == .sent && loadingSent { ProgressView().frame(maxWidth: .infinity).listRowBackground(Color.clear) }
@@ -208,7 +235,11 @@ struct InboxView: View {
             if !pinned.isEmpty {
                 Section("Pinned") { ForEach(pinned) { e in row(e) } }
             }
-            ForEach(collapse(visible)) { e in row(e) }
+            if mailbox == .inbox && search.isEmpty {
+                inboxContent
+            } else {
+                ForEach(collapse(visible)) { e in row(e) }
+            }
 
             if !search.isEmpty {
                 Section {
@@ -233,6 +264,72 @@ struct InboxView: View {
             wakeSnoozed()
             if mailbox == .sent { await loadSent() }
         }
+    }
+
+    // MARK: Smart inbox layout
+
+    @ViewBuilder
+    private var inboxContent: some View {
+        switch tab {
+        case .priority:
+            let items = collapse(visible)
+            ForEach(["Today", "Yesterday", "This week", "Older"], id: \.self) { name in
+                let group = items.filter { InboxBrain.section(for: $0.receivedAt) == name }
+                if !group.isEmpty {
+                    Section(name) { ForEach(group) { e in row(e) } }
+                }
+            }
+            otherTabsCard
+        case .updates, .newsletters:
+            if tab == .newsletters {
+                HStack {
+                    NavigationLink { DigestView() } label: { Label("Read as a digest", systemImage: "newspaper") }
+                    Spacer()
+                    Button { archiveRead(in: visible) } label: { Label("Clear read", systemImage: "archivebox") }
+                }
+                .font(DS.Font.caption).buttonStyle(.borderless)
+                .selectionDisabled()
+            }
+            ForEach(SenderBundle.group(visible)) { b in
+                if b.emails.count == 1 {
+                    row(b.emails[0])
+                } else {
+                    NavigationLink { SenderBundleView(bundle: b) } label: { SenderBundleRow(bundle: b) }
+                        .swipeActions(edge: .trailing) {
+                            Button { b.emails.forEach(archive) } label: { Label("Archive all", systemImage: "archivebox") }.tint(DS.Palette.calm)
+                        }
+                }
+            }
+        case .quick:
+            if !visible.isEmpty {
+                Section {
+                    ForEach(collapse(visible)) { e in row(e) }
+                } header: { Text("Each of these takes about 2 minutes. Clear a few for momentum.") }
+            }
+        }
+    }
+
+    /// At the bottom of Priority: what's waiting in the other tabs, without letting it crowd your people.
+    @ViewBuilder
+    private var otherTabsCard: some View {
+        let counts = tabCounts
+        let u = counts[.updates] ?? 0, n = counts[.newsletters] ?? 0
+        if u + n > 0 {
+            HStack(spacing: DS.Space.s) {
+                if u > 0 { Button { tabRaw = InboxTab.updates.rawValue } label: { Label("\(u) updates", systemImage: "bell") } }
+                if n > 0 { Button { tabRaw = InboxTab.newsletters.rawValue } label: { Label("\(n) newsletters", systemImage: "newspaper") } }
+                Spacer()
+            }
+            .font(DS.Font.caption).buttonStyle(.bordered)
+            .listRowSeparator(.hidden)
+            .selectionDisabled()
+        }
+    }
+
+    private func archiveRead(in list: [EmailMessage]) {
+        let read = list.filter(\.isRead)
+        guard !read.isEmpty else { return }
+        read.forEach(archive)
     }
 
     // MARK: Conversations
@@ -274,7 +371,7 @@ struct InboxView: View {
         let count = threaded && mailbox != .sent ? (threadCounts[e.threadId] ?? 1) : 1
         NavigationLink {
             if count > 1 { ThreadView(messages: conversation(e)) } else { EmailDetailView(email: e) }
-        } label: { EmailRow(email: e, count: count, unreadInThread: count > 1 && conversation(e).contains { !$0.isRead }) }
+        } label: { EmailRow(email: e, count: count, unreadInThread: count > 1 && conversation(e).contains { !$0.isRead }, score: scoreMap[e.from.lowercased()]) }
             .swipeActions(edge: .trailing) {
                 ForEach(MailSwipe.actions(trailingRaw).filter { mailbox != .sent || $0 == "task" }, id: \.self) { swipeButton($0, e) }
             }
@@ -290,6 +387,10 @@ struct InboxView: View {
                 Button(e.isStarred ? "Unstar" : "Star", systemImage: "star") { star(e) }
                 Button(e.isPinned ? "Unpin" : "Pin to Top", systemImage: e.isPinned ? "pin.slash" : "pin") {
                     withAnimation(DS.spring) { e.isPinned.toggle() }; Haptics.tap()
+                }
+                let vip = scoreMap[e.from.lowercased()]?.isVIP == true
+                Button(vip ? "Remove VIP" : "Mark Sender as VIP", systemImage: vip ? "star.slash" : "star.circle") {
+                    InboxBrain.setVIP(!vip, sender: e.from, name: e.fromName, ctx: ctx); Haptics.success()
                 }
                 Button("Create Rule…", systemImage: "line.3.horizontal.decrease.circle") { ruleFrom = e }
                 if e.category == .newsletters || e.category == .promotions || Unsubscribe.canUnsubscribe(e) {
@@ -311,6 +412,7 @@ struct InboxView: View {
     }
 
     private func archive(_ e: EmailMessage) {
+        if !e.isRead { InboxBrain.record(.ignored, sender: e.from, name: e.fromName, ctx: ctx) }
         let group = conversation(e)
         withAnimation(DS.spring) { for m in group { m.isArchived = true; m.snoozedUntil = nil } }
         Haptics.success()
@@ -451,24 +553,63 @@ struct EmailRow: View {
     let email: EmailMessage
     var count: Int = 1
     var unreadInThread = false
+    var score: SenderScore? = nil
+
+    private var unread: Bool { !email.isRead || unreadInThread }
+
+    /// Up to three small, useful facts: deadline, how long it's waited, invite, attachment, quick win.
+    private var chips: [(String, String, Color)] {
+        var out: [(String, String, Color)] = []
+        let cal = Calendar.current
+        if let due = email.extractedDueDate {
+            let late = due < cal.startOfDay(for: Date()).addingTimeInterval(86_400)
+            out.append(("Due \(cal.isDateInToday(due) ? "today" : cal.isDateInTomorrow(due) ? "tomorrow" : due.formatted(.dateTime.weekday(.abbreviated)))", "calendar.badge.exclamationmark", late ? .red : DS.Palette.warmth))
+        }
+        let age = Date().timeIntervalSince(email.receivedAt)
+        if !email.isRead && age > 86_400 && InboxBrain.tab(email, score: score) == .priority && !MailNoise.isAutomated(email) {
+            out.append(("Waiting \(Int(age / 86_400))d", "hourglass", DS.Palette.warmth))
+        }
+        if email.category == .calendar { out.append(("Invite", "calendar", .blue)) }
+        if InboxBrain.isQuickWin(email, score: score) { out.append(("2 min", "bolt.fill", DS.Palette.calm)) }
+        if email.hasAttachments { out.append(("Attachment", "paperclip", DS.Palette.inkSoft)) }
+        if let task = email.extractedTaskTitle, out.count < 3 { out.append((task, "checklist", DS.Palette.accent)) }
+        return Array(out.prefix(3))
+    }
+
     var body: some View {
         HStack(alignment: .top, spacing: DS.Space.m) {
-            Circle().fill(email.isRead && !unreadInThread ? .clear : DS.Palette.accent).frame(width: 8, height: 8).padding(.top, 6)
+            SenderAvatar(name: email.fromName, email: email.from)
+                .overlay(alignment: .topLeading) {
+                    if unread { Circle().fill(DS.Palette.accent).frame(width: 10, height: 10).overlay(Circle().stroke(DS.Palette.canvas, lineWidth: 2)).offset(x: -3, y: -3) }
+                }
             VStack(alignment: .leading, spacing: 3) {
                 HStack(spacing: 4) {
-                    Text(email.fromName.isEmpty ? email.from : email.fromName).font(DS.Font.headline).lineLimit(1)
+                    Text(email.fromName.isEmpty ? email.from : email.fromName)
+                        .font(unread ? DS.Font.headline : DS.Font.body).lineLimit(1)
+                    if score?.isVIP == true { Image(systemName: "star.fill").font(.caption2).foregroundStyle(.yellow) }
                     if count > 1 { Text("\(count)").font(.caption2.weight(.semibold)).foregroundStyle(DS.Palette.inkSoft) }
-                    if email.isStarred { Image(systemName: "star.fill").font(.caption2).foregroundStyle(.yellow) }
-                    if email.hasAttachments { Image(systemName: "paperclip").font(.caption2).foregroundStyle(DS.Palette.inkSoft) }
+                    if email.isStarred { Image(systemName: "flag.fill").font(.caption2).foregroundStyle(.orange) }
                     Spacer()
-                    Text(email.receivedAt, format: .relative(presentation: .named)).font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
+                    Text(Self.time(email.receivedAt)).font(DS.Font.caption).foregroundStyle(unread ? DS.Palette.accent : DS.Palette.inkSoft)
                 }
-                Text(email.subject).font(DS.Font.body).lineLimit(1)
-                Text(email.aiSummary ?? email.snippet).font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft).lineLimit(2)
-                if let task = email.extractedTaskTitle { Chip(text: task, color: DS.Palette.warmth, icon: "sparkles") }
+                Text(email.subject).font(DS.Font.body).foregroundStyle(unread ? DS.Palette.ink : DS.Palette.inkSoft).lineLimit(1)
+                Text((count > 1 ? "Thread · " : "") + (email.aiSummary ?? email.snippet))
+                    .font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft).lineLimit(count > 1 ? 1 : 2)
+                if !chips.isEmpty {
+                    HStack(spacing: 4) { ForEach(chips, id: \.0) { MailChip(text: $0.0, icon: $0.1, color: $0.2) } }
+                        .padding(.top, 2)
+                }
             }
         }
         .padding(.vertical, 4)
+    }
+
+    /// "9:41 AM" today, "Tue" this week, "Nov 3" otherwise.
+    static func time(_ d: Date) -> String {
+        let cal = Calendar.current
+        if cal.isDateInToday(d) { return d.formatted(date: .omitted, time: .shortened) }
+        if d > cal.date(byAdding: .day, value: -6, to: Date())! { return d.formatted(.dateTime.weekday(.abbreviated)) }
+        return d.formatted(.dateTime.month(.abbreviated).day())
     }
 }
 
@@ -526,6 +667,10 @@ struct EmailDetailView: View {
                 Menu {
                     Button("Mark unread", systemImage: "envelope.badge") { email.isRead = false; Task { try? await provider?.markRead(email.providerMessageId, read: false) } }
                     Button("Make it a task", systemImage: "checklist") { makeTask() }
+                    Button("Mark sender as VIP", systemImage: "star.circle") {
+                        InboxBrain.setVIP(true, sender: email.from, name: email.fromName, ctx: ctx); Haptics.success()
+                        UndoCenter.shared.notify("\(email.fromName.isEmpty ? email.from : email.fromName) is a VIP")
+                    }
                     Button(readingEvent ? "Reading…" : "Add to Calendar", systemImage: "calendar.badge.plus") {
                         Task {
                             readingEvent = true
@@ -554,6 +699,7 @@ struct EmailDetailView: View {
         .translationPresentation(isPresented: $showTranslate, text: email.subject + "\n\n" + email.bodyPlain)
         .task {
             if !email.isRead {
+                InboxBrain.record(.open, sender: email.from, name: email.fromName, ctx: ctx)
                 email.isRead = true
                 try? await provider?.markRead(email.providerMessageId, read: true)
             }
@@ -690,6 +836,7 @@ struct EmailDetailView: View {
 
     private func quickSend() {
         let body = draft
+        InboxBrain.record(.reply, sender: email.from, name: email.fromName, ctx: ctx)
         Task {
             try? await provider?.send(to: email.from, subject: ComposeDraft.prefixed("Re:", email.subject),
                                       body: body, inReplyTo: email.replyContext)

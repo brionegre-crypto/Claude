@@ -32,7 +32,27 @@ final class CalendarService {
     func events(from start: Date, to end: Date, calendars: [EKCalendar]? = nil) -> [EKEvent] {
         guard hasCalendarAccess else { return [] }
         let pred = store.predicateForEvents(withStart: start, end: end, calendars: calendars)
-        return store.events(matching: pred).sorted { $0.startDate < $1.startDate }
+        return Self.mergeDuplicates(store.events(matching: pred)).sorted { $0.startDate < $1.startDate }
+    }
+
+    /// The same event often lives in two calendars (an invite accepted in both Google and iCloud, a shared
+    /// calendar plus your own copy). Show it once: same title, start and end. Keeps the copy you can edit.
+    static func mergeDuplicates(_ events: [EKEvent]) -> [EKEvent] {
+        var best: [String: EKEvent] = [:]
+        var order: [String] = []
+        for e in events {
+            let title = (e.title ?? "").lowercased().split(whereSeparator: \.isWhitespace).joined(separator: " ")
+            let key = "\(title)|\(Int(e.startDate.timeIntervalSince1970))|\(Int(e.endDate.timeIntervalSince1970))|\(e.isAllDay)"
+            if let current = best[key] {
+                let better = (e.calendar.allowsContentModifications && !current.calendar.allowsContentModifications)
+                    || (e.calendar.type != .subscription && current.calendar.type == .subscription)
+                if better { best[key] = e }
+            } else {
+                best[key] = e
+                order.append(key)
+            }
+        }
+        return order.compactMap { best[$0] }
     }
 
     func todaysEvents() -> [EKEvent] {
