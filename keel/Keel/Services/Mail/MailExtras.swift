@@ -26,7 +26,7 @@ enum Unsubscribe {
 
     /// Tries, in order: one-click (RFC 8058) → email request → the sender's unsubscribe page.
     /// On success, archives everything already in your inbox from that sender.
-    static func run(_ e: EmailMessage, provider: MailProvider?, ctx: ModelContext) async -> Outcome {
+    static func run(_ e: EmailMessage, provider: MailProvider?, ctx: ModelContext, allowWebPage: Bool = true) async -> Outcome {
         if e.unsubscribeHeader == nil, let provider, let info = try? await provider.unsubscribeHeader(for: e.providerMessageId) {
             e.unsubscribeHeader = info.header
             e.unsubscribeOneClick = info.oneClick
@@ -54,7 +54,7 @@ enum Unsubscribe {
                 return .done
             }
         }
-        if let web = l.web {
+        if let web = l.web, allowWebPage {
             await UIApplication.shared.open(web)
             await archiveSender(e, provider: provider, ctx: ctx)
             return .openedWebPage

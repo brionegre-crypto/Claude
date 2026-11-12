@@ -35,6 +35,8 @@ struct InboxView: View {
     @State private var snoozing: EmailMessage?
     @State private var ruleFrom: EmailMessage?
     @State private var selecting = false
+    @State private var unsubCandidates: [UnsubscribeSuggestions.Candidate] = []
+    @AppStorage(Prefs.calm) private var calm = false
     @State private var selected = Set<String>()
     @AppStorage(MailSwipe.threadsKey) private var threaded = true
     @AppStorage(MailSwipe.leadingKey) private var leadingRaw = MailSwipe.defaultLeading
@@ -153,13 +155,20 @@ struct InboxView: View {
                 }
                 .presentationDetents([.medium, .large])
             }
-            .task { wakeSnoozed() }
+            .task { wakeSnoozed(); refreshUnsubscribe() }
+            .onChange(of: allEmails.count) { refreshUnsubscribe() }
             .onChange(of: mailbox) { if mailbox == .sent { Task { await loadSent() } } }
         }
     }
 
     private var list: some View {
         List(selection: $selected) {
+            if mailbox == .inbox && search.isEmpty && !selecting && !calm && !unsubCandidates.isEmpty {
+                UnsubscribeBanner(candidates: unsubCandidates, provider: provider(for:)) { refreshUnsubscribe() }
+                    .listRowSeparator(.hidden)
+                    .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
+                    .selectionDisabled()
+            }
             if mailbox == .inbox && search.isEmpty && Screener.enabled {
                 let newSenders = Screener.pending(emails: allEmails, rules: rules).count
                 if newSenders > 0 {
@@ -292,6 +301,10 @@ struct InboxView: View {
     }
 
     // MARK: Actions (local first, then the server)
+
+    private func refreshUnsubscribe() {
+        withAnimation(DS.spring) { unsubCandidates = UnsubscribeSuggestions.candidates(allEmails) }
+    }
 
     private func provider(for e: EmailMessage) -> MailProvider? {
         accounts.first { $0.id == e.accountId }.map(MailProviderFactory.make)
