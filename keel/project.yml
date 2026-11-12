@@ -4,7 +4,8 @@ name: Keel
 options:
   bundleIdPrefix: com.briangreenejr
   deploymentTarget:
-    iOS: "26.0"   # Foundation Models (Apple Intelligence) needs iOS 26+
+    iOS: "26.0"
+    watchOS: "26.0"   # Foundation Models (Apple Intelligence) needs iOS 26+
 settings:
   base:
     SWIFT_VERSION: "5.0"   # Xcode accepts 5.0 or 6.0 here; 5.0 = Swift 5 language mode
@@ -17,6 +18,7 @@ targets:
     dependencies:
       - target: KeelWidgets               # widgets + focus Live Activity, embedded in the app
       - target: KeelShare                 # "Save to Keel" in the share sheet
+      - target: KeelWatch                 # Apple Watch companion
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.briangreenejr.keel   # must be unique across all Apple developers
@@ -111,6 +113,26 @@ targets:
             NSExtensionActivationRule:
               NSExtensionActivationSupportsWebURLWithMaxCount: 1
               NSExtensionActivationSupportsText: true
+
+  KeelWatch:
+    type: application
+    platform: watchOS
+    sources: [KeelWatch, Keel/Shared/WatchShared.swift]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.briangreenejr.keel.watchkitapp
+        MARKETING_VERSION: "0.1.0"
+        CURRENT_PROJECT_VERSION: "1"
+        CODE_SIGN_STYLE: Automatic
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+    info:
+      path: KeelWatch/Info.plist
+      properties:
+        CFBundleDisplayName: Keel
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        WKApplication: true
+        WKCompanionAppBundleIdentifier: com.briangreenejr.keel
 
 schemes:
   Keel:   # shared scheme, committed to the repo; Xcode Cloud only sees shared schemes

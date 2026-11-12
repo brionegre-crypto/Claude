@@ -11,6 +11,7 @@ struct KeelApp: App {
         SyncEngine.registerBackgroundTasks()
         UNUserNotificationCenter.current().delegate = NotificationHandler.shared
         TaskAlerts.registerCategories()
+        WatchBridge.shared.activate()
         if !UserDefaults.standard.bool(forKey: Prefs.reviewReminderOff) { WeeklyReview.scheduleReminder() }
     }
 

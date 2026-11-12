@@ -35,6 +35,7 @@ enum WidgetSync {
             tasksDoneToday: doneToday.count
         ).save()
         WidgetCenter.shared.reloadAllTimelines()
+        WatchBridge.shared.push(ctx)          // keep Apple Watch in step
     }
 
     private static func hex(_ color: CGColor?) -> String {
