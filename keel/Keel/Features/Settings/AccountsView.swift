@@ -261,6 +261,7 @@ struct CalendarSettings: View {
     @AppStorage("calendar.showTasks") private var showTasks = true
     @AppStorage("calendar.mode") private var mode = CalendarMode.week.rawValue
     @AppStorage("leaveBy.on") private var leaveBy = true
+    @AppStorage("prep.on") private var prepOn = true
     @AppStorage("leaveBy.transport") private var transport = "driving"
     private var hidden: Set<String> { Set(hiddenRaw.split(separator: ",").map(String.init)) }
 
@@ -271,13 +272,14 @@ struct CalendarSettings: View {
                 Toggle("Show Tasks on Calendar", isOn: $showTasks)
             }
             Section {
+                Toggle("Meeting Prep Alerts", isOn: $prepOn)
                 Toggle("Time to Leave Alerts", isOn: $leaveBy)
                 if leaveBy {
                     Picker("Travel By", selection: $transport) {
                         Text("Car").tag("driving"); Text("Transit").tag("transit"); Text("Walking").tag("walking")
                     }
                 }
-            } footer: { Text("For events with an address, Keel checks Apple Maps travel time from where you are and alerts you when it's time to leave, with a 10-minute buffer. Needs location access.") }
+            } footer: { Text("For events with an address, Keel checks Apple Maps travel time from where you are and alerts you when it's time to leave, with a 10-minute buffer. Needs location access. Meeting prep alerts arrive 10 minutes before meetings that have related emails, notes, tasks or promises.") }
             ForEach(CalendarService.shared.calendarsBySource, id: \.source) { group in
                 Section(group.source) {
                     ForEach(group.calendars, id: \.calendarIdentifier) { c in
@@ -341,12 +343,25 @@ struct NotificationSettings: View {
     @AppStorage(Prefs.defaultAlert) private var defaultAlert = 0
     @AppStorage(Prefs.reviewReminderOff) private var reviewOff = false
     @AppStorage(Prefs.hyperfocusCheck) private var hyperfocusOff = false
+    @AppStorage(Briefing.onKey) private var briefingOn = true
+    @AppStorage(Briefing.minuteKey) private var briefingMinute = 450
 
     var body: some View {
         List {
             Section { NotificationStatusRow() } footer: {
                 Text("Keel's alerts come from this iPhone: task reminders, focus timers, habit nudges, promises and follow-ups.")
             }
+            Section {
+                Toggle("Morning Briefing", isOn: $briefingOn)
+                if briefingOn {
+                    DatePicker("Time", selection: Binding(
+                        get: { Calendar.current.date(bySettingHour: briefingMinute / 60, minute: briefingMinute % 60, second: 0, of: Date())! },
+                        set: { briefingMinute = Calendar.current.component(.hour, from: $0) * 60 + Calendar.current.component(.minute, from: $0) }),
+                        displayedComponents: .hourAndMinute)
+                }
+            } footer: { Text("Your first event, top tasks, meds, important email and weather in one notification, written by Apple Intelligence.") }
+            .onChange(of: briefingOn) { Task { await Briefing.refresh(ctx: KeelStore.container.mainContext) } }
+            .onChange(of: briefingMinute) { Task { await Briefing.refresh(ctx: KeelStore.container.mainContext) } }
             Section("Tasks") {
                 Picker("Default Alert", selection: $defaultAlert) {
                     Text("None").tag(-1)
@@ -563,10 +578,18 @@ struct SiriSettings: View {
 struct PrivacySettings: View {
     @AppStorage("ai.privateMode") private var privateMode = false
     @AppStorage("ai.provider") private var providerRaw = "apple"
+    @AppStorage(AppLock.enabledKey) private var appLock = false
     @State private var showServer = false
 
     var body: some View {
         List {
+            Section {
+                Toggle("Require \(AppLock.biometryName)", isOn: Binding(get: { appLock }, set: { on in
+                    Task { if await AppLock.authenticate(on ? "Turn on the Keel lock" : "Turn off the Keel lock") { appLock = on } }
+                }))
+            } header: { Text("App Lock") } footer: {
+                Text("Keel locks when you leave it and hides its contents in the app switcher. Lock single notes from a note's ⋯ menu.")
+            }
             Section {
                 Picker("AI Model", selection: $providerRaw) {
                     ForEach(AIProvider.allCases) { Text($0.name).tag($0.rawValue) }
@@ -654,7 +677,7 @@ struct DataSettings: View {
             ["title": t.title, "notes": t.notes, "list": t.listName, "done": t.isDone, "tags": t.tags,
              "due": t.dueDate.map(iso.string(from:)) ?? "", "priority": t.priority.rawValue]
         }
-        let notes = ((try? ctx.fetch(FetchDescriptor<Note>())) ?? []).map { ["title": $0.title, "text": $0.plainText] }
+        let notes = ((try? ctx.fetch(FetchDescriptor<Note>())) ?? []).map { ["title": $0.title, "text": $0.isLocked ? "(locked)" : $0.plainText] }
         let goals = ((try? ctx.fetch(FetchDescriptor<Goal>())) ?? []).map { ["title": $0.title, "area": $0.area.rawValue, "why": $0.why] }
         let habits = ((try? ctx.fetch(FetchDescriptor<Habit>())) ?? []).map { ["name": $0.name, "streak": $0.currentStreak, "total": $0.totalCompletions] as [String: Any] }
         let payload: [String: Any] = ["exportedAt": iso.string(from: Date()), "tasks": tasks, "notes": notes, "goals": goals, "habits": habits]

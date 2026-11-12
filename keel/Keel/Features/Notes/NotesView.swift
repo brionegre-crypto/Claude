@@ -10,7 +10,7 @@ struct NotesView: View {
     @State private var search = ""
 
     private var filtered: [Note] {
-        search.isEmpty ? notes : notes.filter { $0.title.localizedCaseInsensitiveContains(search) || $0.plainText.localizedCaseInsensitiveContains(search) }
+        search.isEmpty ? notes : notes.filter { $0.title.localizedCaseInsensitiveContains(search) || (!$0.isLocked && $0.plainText.localizedCaseInsensitiveContains(search)) }
     }
 
     var body: some View {
@@ -40,8 +40,11 @@ struct NotesView: View {
     private func row(_ n: Note) -> some View {
         NavigationLink { NoteEditor(note: n) } label: {
             VStack(alignment: .leading, spacing: 2) {
-                Text(n.title).font(DS.Font.headline)
-                Text(n.aiSummary ?? n.plainText).font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft).lineLimit(2)
+                HStack(spacing: 4) {
+                    if n.isLocked { Image(systemName: "lock.fill").font(.caption).foregroundStyle(DS.Palette.inkSoft) }
+                    Text(n.title).font(DS.Font.headline)
+                }
+                Text(n.isLocked ? "Locked" : (n.aiSummary ?? n.plainText)).font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft).lineLimit(2)
             }
         }
     }
@@ -70,8 +73,42 @@ struct NoteEditor: View {
     @State private var showSketch = false
     @State private var showScanner = false
     @State private var scanning = false
+    @State private var unlocked = false
+    @State private var exportURL: URL?
 
     var body: some View {
+        if note.isLocked && !unlocked {
+            ContentUnavailableView {
+                Label("This note is locked", systemImage: "lock.fill")
+            } description: {
+                Text(note.title)
+            } actions: {
+                Button("Unlock with \(AppLock.biometryName)") { Task { await unlockNote() } }
+                    .buttonStyle(.borderedProminent).tint(DS.Palette.accent)
+            }
+            .task { await unlockNote() }
+        } else {
+            editor
+        }
+    }
+
+    private func unlockNote() async {
+        if await AppLock.authenticate("Open “\(note.title)”") { withAnimation { unlocked = true } }
+    }
+
+    private func toggleLock() {
+        Task {
+            if note.isLocked {
+                if await AppLock.authenticate("Remove the lock from this note") { note.isLocked = false }
+            } else {
+                note.isLocked = true; note.aiSummary = nil; unlocked = true
+                Haptics.success()
+            }
+            SpotlightIndex.refresh(ctx)
+        }
+    }
+
+    private var editor: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: DS.Space.s) {
                 TextField("Title", text: $note.title, axis: .vertical).font(DS.Font.hero)
@@ -95,8 +132,15 @@ struct NoteEditor: View {
                 .accessibilityLabel("Insert")
                 Menu {
                     Button("Summarize", systemImage: "sparkles") { Task { note.aiSummary = await AIRouter.shared.summarize(note.plainText) } }
+                        .disabled(note.isLocked)
                     Button("Turn to-dos into tasks", systemImage: "checklist") { extractTasks() }
                 } label: { Image(systemName: "sparkles") }
+                Menu {
+                    Button(note.isLocked ? "Remove Lock" : "Lock Note", systemImage: note.isLocked ? "lock.open" : "lock") { toggleLock() }
+                    Divider()
+                    Button("Export as Markdown", systemImage: "doc.plaintext") { exportURL = NoteExport.markdownFile(note) }
+                    Button("Export as PDF", systemImage: "doc.richtext") { exportURL = NoteExport.pdfFile(note) }
+                } label: { Image(systemName: "ellipsis.circle") }
             }
         }
         .onChange(of: note.blocks) { note.updatedAt = Date() }
@@ -123,6 +167,9 @@ struct NoteEditor: View {
             .ignoresSafeArea()
         }
         .overlay { if scanning { ProgressView("Reading the scan…").padding().background(.regularMaterial, in: .rect(cornerRadius: 12)) } }
+        .sheet(item: Binding(get: { exportURL.map(ExportFile.init) }, set: { if $0 == nil { exportURL = nil } })) { f in
+            ShareSheet(url: f.url).presentationDetents([.medium, .large])
+        }
     }
 
     @ViewBuilder private func blockView(_ block: Binding<NoteBlock>) -> some View {

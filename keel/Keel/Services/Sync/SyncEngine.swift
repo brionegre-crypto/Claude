@@ -51,6 +51,7 @@ final class SyncEngine {
         isSyncing = true; defer { isSyncing = false }
         let ctx = container.mainContext
 
+        WidgetActions.applyPending(ctx: ctx)
         await SendLater.sendDue(ctx: ctx)
         await CalendarService.shared.requestAccess()
         await LeaveBy.refresh()
@@ -120,6 +121,8 @@ final class SyncEngine {
         // 4. Claude connector: apply what Claude queued, then publish a fresh snapshot
         await ClaudeBridge.applyQueuedActions(ctx: ctx)
         try? ctx.save()
+        await Briefing.refresh(ctx: ctx)
+        await MeetingPrep.scheduleReminders(ctx: ctx)
         await ClaudeBridge.uploadSnapshot(ctx: ctx)
         WidgetSync.update(ctx)
         SpotlightIndex.refresh(ctx)

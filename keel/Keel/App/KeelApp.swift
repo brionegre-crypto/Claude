@@ -43,11 +43,15 @@ struct KeelApp: App {
         .modelContainer(container)
         .onChange(of: scenePhase) { _, phase in
             if phase == .active {
+                WidgetActions.applyPending(ctx: container.mainContext)   // taps on interactive widgets
                 Task { await KeelFocusFilter.syncCurrent() }
                 LinkSaver.importShared(into: container.mainContext)     // links saved from Safari's share sheet
                 LinkSaver.importSharedNotes(into: container.mainContext) // text/images shared from Notes, Messages, Photos…
             }
-            if phase == .background { WidgetSync.update(container.mainContext) }
+            if phase == .background {
+                WidgetSync.update(container.mainContext)
+                AppLock.shared.lockIfEnabled()
+            }
         }
     }
 }
@@ -72,6 +76,8 @@ struct RootView: View {
     @AppStorage("onboarding.done") private var onboarded = false
     @AppStorage(Prefs.appearance) private var appearance = "system"
     @AppStorage("accent") private var accentName = "indigo"
+    @State private var appLock = AppLock.shared
+    @Environment(\.scenePhase) private var phase
 
     enum Tab { case today, inbox, calendar, tasks, notes }
 
@@ -124,6 +130,10 @@ struct RootView: View {
             Button("") { showCommandBar.toggle() }
                 .keyboardShortcut("k", modifiers: .command).hidden()
         )
+        .overlay {
+            if appLock.isLocked { LockScreen().transition(.opacity) }
+            else if AppLock.isEnabled && phase != .active { PrivacyCover() }
+        }
     }
 }
 

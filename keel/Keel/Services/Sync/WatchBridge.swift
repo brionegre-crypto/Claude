@@ -86,6 +86,7 @@ final class WatchBridge: NSObject, WCSessionDelegate {
         payload.momentum = Momentum.today(ctx: ctx).total
         payload.achievementsUnlocked = Momentum.achievements(ctx: ctx).filter(\.unlocked).count
         payload.scheduledMail = ((try? ctx.fetch(FetchDescriptor<ScheduledMail>())) ?? []).count
+        payload.briefing = Briefing.latest
         if let w = KeelWeather.shared.today {
             payload.weather = .init(temperature: w.temperature, symbol: w.symbol, condition: w.condition,
                                     high: w.high, low: w.low, rainFrom: w.rainStartsAt)
@@ -98,6 +99,12 @@ final class WatchBridge: NSObject, WCSessionDelegate {
     @MainActor
     private func handle(_ data: Data) {
         guard let action = WatchCoding.decode(WatchAction.self, data) else { return }
+        apply(action)
+    }
+
+    /// Runs an action from Apple Watch or an interactive widget.
+    @MainActor
+    func apply(_ action: WatchAction) {
         let ctx = KeelStore.container.mainContext
         switch action {
         case .completeTask(let id):

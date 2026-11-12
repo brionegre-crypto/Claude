@@ -9,6 +9,8 @@ struct KeelWidgetBundle: WidgetBundle {
         TodayWidget()
         NextEventWidget()
         CountdownWidget()
+        TasksCheckWidget()
+        HabitsCheckWidget()
         FocusLiveActivity()
         CaptureControl()
         FocusControl()
@@ -281,6 +283,111 @@ struct CountdownView: View {
             }
         } else {
             Text("Add a countdown in Keel").font(.caption).foregroundStyle(.secondary)
+        }
+    }
+}
+
+// MARK: - Interactive: check off tasks and habits right on the Home Screen
+
+struct TasksCheckWidget: Widget {
+    var body: some WidgetConfiguration {
+        StaticConfiguration(kind: "KeelTasksCheck", provider: KeelProvider()) { entry in
+            TasksCheckView(entry: entry)
+                .containerBackground(for: .widget) { Color(.systemBackground) }
+                .widgetURL(URL(string: "com.keel.app://tasks"))
+        }
+        .configurationDisplayName("Today's Tasks")
+        .description("Tap the circle to complete a task without opening Keel.")
+        .supportedFamilies([.systemMedium, .systemLarge])
+    }
+}
+
+struct TasksCheckView: View {
+    let entry: KeelEntry
+    @Environment(\.widgetFamily) private var family
+
+    var body: some View {
+        let limit = family == .systemLarge ? 8 : 4
+        VStack(alignment: .leading, spacing: 6) {
+            HStack {
+                Text("TODAY").font(.caption2.weight(.bold)).foregroundStyle(accent)
+                Spacer()
+                Text("\(entry.snapshot.tasksDoneToday) done · \(entry.snapshot.tasksLeftToday) left").font(.caption2).foregroundStyle(.secondary)
+            }
+            if entry.snapshot.tasks.isEmpty {
+                Spacer()
+                Text("All clear for today ✨").font(.headline).frame(maxWidth: .infinity)
+                Spacer()
+            } else {
+                ForEach(entry.snapshot.tasks.prefix(limit), id: \.self) { t in
+                    HStack(spacing: 8) {
+                        if let id = t.id {
+                            Button(intent: WidgetCompleteTaskIntent(id: id)) {
+                                Image(systemName: "circle").font(.title3).foregroundStyle(priorityColor(t.priority))
+                            }
+                            .buttonStyle(.plain)
+                        }
+                        Text(t.title).font(.subheadline).lineLimit(1)
+                        Spacer(minLength: 0)
+                        if let d = t.due, Calendar.current.dateComponents([.hour, .minute], from: d) != DateComponents(hour: 0, minute: 0) {
+                            Text(d, style: .time).font(.caption2).foregroundStyle(.secondary)
+                        }
+                    }
+                }
+                Spacer(minLength: 0)
+            }
+        }
+    }
+
+    private func priorityColor(_ p: Int) -> Color {
+        switch p { case 3: .red; case 2: .orange; case 1: .blue; default: .secondary }
+    }
+}
+
+struct HabitsCheckWidget: Widget {
+    var body: some WidgetConfiguration {
+        StaticConfiguration(kind: "KeelHabitsCheck", provider: KeelProvider()) { entry in
+            HabitsCheckView(entry: entry)
+                .containerBackground(for: .widget) { LinearGradient(colors: [accent.opacity(0.15), .clear], startPoint: .top, endPoint: .bottom) }
+                .widgetURL(URL(string: "com.keel.app://today"))
+        }
+        .configurationDisplayName("Habits")
+        .description("Tap a habit to mark it done for today.")
+        .supportedFamilies([.systemSmall, .systemMedium])
+    }
+}
+
+struct HabitsCheckView: View {
+    let entry: KeelEntry
+    @Environment(\.widgetFamily) private var family
+
+    var body: some View {
+        let habits = entry.snapshot.habits ?? []
+        let cols = family == .systemSmall ? 2 : 4
+        VStack(alignment: .leading, spacing: 6) {
+            Text("HABITS · \(habits.filter(\.done).count)/\(habits.count)").font(.caption2.weight(.bold)).foregroundStyle(accent)
+            if habits.isEmpty {
+                Spacer()
+                Text("Add a habit stack in Keel").font(.caption).foregroundStyle(.secondary)
+                Spacer()
+            } else {
+                LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 6), count: cols), spacing: 6) {
+                    ForEach(habits.prefix(cols * 2), id: \.self) { h in
+                        Button(intent: WidgetCompleteHabitIntent(id: h.id)) {
+                            VStack(spacing: 2) {
+                                Image(systemName: h.done ? "checkmark.circle.fill" : h.icon)
+                                    .font(.title3).foregroundStyle(h.done ? Color.green : accent)
+                                Text(h.name).font(.system(size: 9)).lineLimit(1)
+                            }
+                            .frame(maxWidth: .infinity, minHeight: 40)
+                            .background(Color.primary.opacity(0.05), in: RoundedRectangle(cornerRadius: 8))
+                        }
+                        .buttonStyle(.plain)
+                        .disabled(h.done)
+                    }
+                }
+                Spacer(minLength: 0)
+            }
         }
     }
 }

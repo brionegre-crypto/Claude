@@ -21,7 +21,7 @@ enum ClaudeBridge {
     static func uploadSnapshot(ctx: ModelContext) async {
         guard !AIRouter.shared.privateMode else { return }   // private mode: nothing leaves the phone
         let tasks = (try? ctx.fetch(FetchDescriptor<TaskItem>(predicate: #Predicate { !$0.isDone }))) ?? []
-        let notes = (try? ctx.fetch(FetchDescriptor<Note>())) ?? []
+        let notes = ((try? ctx.fetch(FetchDescriptor<Note>())) ?? []).filter { !$0.isLocked }
         let promises = ((try? ctx.fetch(FetchDescriptor<Commitment>())) ?? []).filter { $0.status == .open }
         let energy = EnergyLevel(rawValue: UserDefaults.standard.integer(forKey: "energy")) ?? .medium
         let snapshot: [String: Any] = [

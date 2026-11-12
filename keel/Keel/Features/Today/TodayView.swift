@@ -213,6 +213,11 @@ struct TodayView: View {
                         Text(e.title ?? "Event").font(DS.Font.headline)
                         Text("\(e.startDate.formatted(date: .omitted, time: .shortened)) · \(e.calendar.source.title)")
                             .font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
+                        if e.attendees?.isEmpty == false {
+                            NavigationLink { MeetingPrepView(event: e) } label: {
+                                Label("Prep", systemImage: "doc.text.magnifyingglass").font(DS.Font.caption)
+                            }
+                        }
                         if let leave = LeaveBy.times[e.calendarItemIdentifier] {
                             Label("Leave by \(leave.formatted(date: .omitted, time: .shortened))", systemImage: "car.fill")
                                 .font(DS.Font.caption).foregroundStyle(leave < Date() ? .red : DS.Palette.warmth)

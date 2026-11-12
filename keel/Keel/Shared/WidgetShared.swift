@@ -14,6 +14,13 @@ struct WidgetSnapshot: Codable {
         var title: String
         var due: Date?
         var priority: Int
+        var id: UUID? = nil
+    }
+    struct HabitLine: Codable, Hashable {
+        var id: UUID
+        var name: String
+        var icon: String
+        var done: Bool
     }
 
     var nextThing: String?
@@ -23,6 +30,8 @@ struct WidgetSnapshot: Codable {
     var tasksLeftToday: Int = 0
     var tasksDoneToday: Int = 0
     var countdowns: [CountdownLine]? = nil
+    var habits: [HabitLine]? = nil
+    var briefing: String? = nil
 
     struct CountdownLine: Codable, Hashable {
         var title: String

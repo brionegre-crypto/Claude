@@ -91,6 +91,7 @@ struct WatchPayload: Codable {
     var momentum: Int? = nil              // today's 0–100 momentum score
     var achievementsUnlocked: Int? = nil
     var scheduledMail: Int? = nil
+    var briefing: String? = nil
 }
 
 /// What Apple Watch asks the iPhone to do.

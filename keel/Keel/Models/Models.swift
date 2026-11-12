@@ -248,6 +248,7 @@ struct NoteBlock: Codable, Identifiable, Hashable {
     var isPinned: Bool = false
     var updatedAt: Date = Date()
     var aiSummary: String?
+    var isLocked: Bool = false                  // needs Face ID to open; hidden from search, Spotlight and AI
 
     init(title: String, blocks: [NoteBlock] = [NoteBlock(kind: .text, text: "")]) {
         self.title = title

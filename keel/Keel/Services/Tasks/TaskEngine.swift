@@ -164,6 +164,10 @@ final class NotificationHandler: NSObject, UNUserNotificationCenterDelegate {
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse) async {
         let action = response.actionIdentifier
         let info = response.notification.request.content.userInfo
+        if let link = info["deeplink"] as? String, let url = URL(string: link) {
+            await MainActor.run { _ = AppRouter.shared.handle(url) }
+            return
+        }
         if let medString = info["medId"] as? String, let medId = UUID(uuidString: medString), let slot = info["slot"] as? Int {
             guard action == MedEngine.takenAction else { return }
             await MainActor.run {

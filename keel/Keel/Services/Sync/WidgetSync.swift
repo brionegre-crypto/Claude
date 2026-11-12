@@ -30,15 +30,31 @@ enum WidgetSync {
             nextThingStep: next?.microSteps.first { !$0.done }?.text,
             events: Array(events),
             tasks: dueToday.sorted { ($0.dueDate ?? .distantFuture) < ($1.dueDate ?? .distantFuture) }.prefix(6)
-                .map { WidgetSnapshot.TaskLine(title: $0.title, due: $0.dueDate, priority: $0.priority.rawValue) },
+                .map { WidgetSnapshot.TaskLine(title: $0.title, due: $0.dueDate, priority: $0.priority.rawValue, id: $0.id) },
             tasksLeftToday: dueToday.count,
             tasksDoneToday: doneToday.count,
             countdowns: ((try? ctx.fetch(FetchDescriptor<Countdown>(sortBy: [SortDescriptor(\.date)]))) ?? [])
                 .filter { $0.daysLeft >= 0 }.prefix(5)
-                .map { WidgetSnapshot.CountdownLine(title: $0.title, emoji: $0.emoji, date: $0.date) }
+                .map { WidgetSnapshot.CountdownLine(title: $0.title, emoji: $0.emoji, date: $0.date) },
+            habits: habitLines(ctx),
+            briefing: Briefing.latest
         ).save()
         WidgetCenter.shared.reloadAllTimelines()
         WatchBridge.shared.push(ctx)          // keep Apple Watch in step
+    }
+
+    /// Today's habits (active stacks, scheduled for today) for the interactive habits widget.
+    private static func habitLines(_ ctx: ModelContext) -> [WidgetSnapshot.HabitLine] {
+        let cal = Calendar.current
+        let weekday = cal.component(.weekday, from: Date())
+        let stacks = ((try? ctx.fetch(FetchDescriptor<HabitStack>())) ?? []).filter { $0.isActive && $0.weekdays.contains(weekday) }
+        let ids = Set(stacks.map(\.id))
+        let doneToday = Set(((try? ctx.fetch(FetchDescriptor<HabitLog>())) ?? []).filter { cal.isDateInToday($0.day) }.map(\.habitId))
+        return ((try? ctx.fetch(FetchDescriptor<Habit>())) ?? [])
+            .filter { $0.stackId.map(ids.contains) ?? false }
+            .sorted { $0.orderInStack < $1.orderInStack }
+            .prefix(8)
+            .map { WidgetSnapshot.HabitLine(id: $0.id, name: $0.name, icon: $0.icon, done: doneToday.contains($0.id)) }
     }
 
     private static func hex(_ color: CGColor?) -> String {
@@ -72,5 +88,15 @@ final class AppRouter {
         default: return false
         }
         return true
+    }
+}
+
+/// Applies taps queued by interactive widgets.
+@MainActor
+enum WidgetActions {
+    static func applyPending(ctx: ModelContext) {
+        let actions = WidgetQueue.drain()
+        guard !actions.isEmpty else { return }
+        for a in actions { WatchBridge.shared.apply(a) }
     }
 }

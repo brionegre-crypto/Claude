@@ -222,6 +222,9 @@ struct NowCard: View {
                     }
                     .font(.caption2).foregroundStyle(.secondary)
                 }
+                if let b = store.payload.briefing, Calendar.current.component(.hour, from: Date()) < 11 {
+                    Text(b).font(.caption2).foregroundStyle(.secondary).lineLimit(4)
+                }
                 Text("JUST ONE THING").font(.caption2.weight(.bold)).foregroundStyle(accent)
                 Text(store.payload.nextThing ?? "Nothing urgent").font(.headline).lineLimit(3)
                 if let step = store.payload.nextThingStep { Text("Start: \(step)").font(.caption2).foregroundStyle(.secondary) }
