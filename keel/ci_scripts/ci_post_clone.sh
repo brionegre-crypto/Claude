@@ -31,6 +31,14 @@ if [ "${KEEL_HEALTHKIT:-0}" != "1" ]; then
   echo "HealthKit entitlements left out of this build (set KEEL_HEALTHKIT=1 to include them)."
 fi
 
+# Apple Watch app: it needs its own two App IDs (…watchkitapp and …watchkitapp.widgets), each with App Groups.
+# Until a build with it passes, cloud builds ship the iPhone app without the watch app embedded.
+# Set KEEL_WATCH=1 in the workflow's environment variables to include it.
+if [ "${KEEL_WATCH:-0}" != "1" ]; then
+  sed -i '' '/      - target: KeelWatch                 # Apple Watch companion/d' project.yml
+  echo "Apple Watch app left out of this build (set KEEL_WATCH=1 to include it)."
+fi
+
 # Default mail app: Apple must grant the com.apple.developer.mail-client entitlement first.
 # Once it's granted, add KEEL_MAIL_CLIENT=1 to the Xcode Cloud workflow's environment variables.
 if [ "${KEEL_MAIL_CLIENT:-0}" = "1" ]; then
