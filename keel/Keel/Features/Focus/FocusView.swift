@@ -20,6 +20,7 @@ struct FocusView: View {
     @State private var coolDownLeft = 0
     @State private var now = Date()
     @AppStorage("focus.rounds") private var roundsOn = false
+    @AppStorage("focus.sound") private var sound = "off"
     @State private var round = 1
     @State private var breakEndsAt: Date?
     private let tick = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
@@ -57,6 +58,12 @@ struct FocusView: View {
                 }
             }
             .tint(DS.Palette.focus)
+            Picker(selection: $sound) {
+                ForEach(FocusSound.Kind.allCases) { Text($0.label).tag($0.rawValue) }
+            } label: { Label("Focus sound", systemImage: "waveform") }
+            .onChange(of: sound) { _, new in
+                if shutdown.active != nil { FocusSound.shared.play(FocusSound.Kind(rawValue: new) ?? .off) }
+            }
             if let t = preselected {
                 Text(t.title).font(DS.Font.title).multilineTextAlignment(.center)
                 if bodyDouble { Label("Body-double mode: Keel checks in with you every 10 min", systemImage: "person.2.wave.2").font(DS.Font.caption) }

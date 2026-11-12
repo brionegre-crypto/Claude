@@ -61,6 +61,7 @@ final class ShutdownManager {
         }
         scheduleTransitionNudges(minutes: minutes)
         startLiveActivity(endsAt: s.startedAt.addingTimeInterval(Double(minutes * 60)), task: task?.title)
+        FocusSound.shared.play(FocusSound.Kind(rawValue: UserDefaults.standard.string(forKey: "focus.sound") ?? "off") ?? .off)
         Haptics.milestone()
         return s
     }
@@ -83,6 +84,7 @@ final class ShutdownManager {
 
     func end(early: Bool) {
         endLiveActivities()
+        FocusSound.shared.stop()
         store.clearAllSettings()
         active?.endedAt = Date()
         active?.brokeEarly = early

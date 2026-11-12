@@ -94,6 +94,7 @@ struct TodayView: View {
                         NavigationLink { GoalsView() } label: { Label("Goals", systemImage: "target") }
                         NavigationLink { HabitsView() } label: { Label("Habit stacks", systemImage: "link") }
                         NavigationLink { WeeklyReviewView() } label: { Label("Weekly review", systemImage: "chart.bar.doc.horizontal") }
+                        NavigationLink { MonthlyReviewView() } label: { Label("Monthly review", systemImage: "calendar.badge.checkmark") }
                         NavigationLink { PeopleView() } label: { Label("Keep in touch", systemImage: "person.2") }
                         NavigationLink { CountdownsView() } label: { Label("Countdowns", systemImage: "hourglass") }
                         NavigationLink { ScreenshotTasksView() } label: { Label("Tasks from screenshots", systemImage: "camera.viewfinder") }
