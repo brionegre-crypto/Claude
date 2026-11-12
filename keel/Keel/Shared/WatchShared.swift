@@ -59,6 +59,11 @@ struct WatchPayload: Codable {
         var slot: Int             // minutes after midnight
         var takenAt: Date?
     }
+    struct DeliveryRow: Codable, Hashable {
+        var title: String
+        var carrier: String
+        var status: String        // human label: "Arriving today", "Out for delivery"…
+    }
     struct CountdownRow: Codable, Hashable {
         var title: String
         var emoji: String
@@ -92,6 +97,8 @@ struct WatchPayload: Codable {
     var achievementsUnlocked: Int? = nil
     var scheduledMail: Int? = nil
     var briefing: String? = nil
+    var deliveries: [DeliveryRow]? = nil
+    var subscriptionsMonthly: String? = nil
 }
 
 /// What Apple Watch asks the iPhone to do.
@@ -109,6 +116,7 @@ enum WatchAction: Codable {
     case carryOverToday
     case parkThought(String)
     case takeMed(UUID, Int)
+    case brainDump(String)
 }
 
 enum WatchCoding {

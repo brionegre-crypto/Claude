@@ -23,6 +23,19 @@ final class UndoCenter {
         }
     }
 
+    /// A confirmation with no Undo button ("Added 4 tasks, 1 event").
+    func notify(_ message: String, seconds: Double = 3) {
+        finish()
+        self.message = message
+        timer = Task {
+            try? await Task.sleep(for: .seconds(seconds))
+            guard !Task.isCancelled else { return }
+            finish()
+        }
+    }
+
+    var hasUndo: Bool { undo != nil }
+
     func performUndo() {
         timer?.cancel()
         undo?()
@@ -51,7 +64,7 @@ struct UndoToast: View {
             HStack {
                 Text(message).font(DS.Font.body).lineLimit(1)
                 Spacer()
-                Button("Undo") { center.performUndo() }.font(DS.Font.headline)
+                if center.hasUndo { Button("Undo") { center.performUndo() }.font(DS.Font.headline) }
             }
             .padding(.horizontal, DS.Space.m).padding(.vertical, 12)
             .glassEffect(.regular, in: Capsule())

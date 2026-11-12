@@ -63,6 +63,7 @@ enum TriageCategory: String, Codable, CaseIterable, Identifiable {
     var toLine: String = ""
     var ccLine: String = ""
     var isStarred: Bool = false
+    var isPinned: Bool = false                  // pinned to the top of Inbox
     var hasAttachments: Bool = false
     var unsubscribeHeader: String?              // raw List-Unsubscribe header (mailto: and/or https:)
     var unsubscribeOneClick: Bool = false       // List-Unsubscribe-Post: one-click supported
@@ -759,5 +760,62 @@ struct StoredAttachment: Codable {
         self.medicationId = medicationId
         self.slot = slot
         self.day = day
+    }
+}
+
+// MARK: - Found in email: subscriptions, bills and deliveries
+
+@Model final class Subscription {
+    var id: UUID = UUID()
+    var name: String                            // merchant, e.g. "Netflix"
+    var key: String                             // lowercased name, for de-duplication
+    var amount: Double
+    var currency: String = "$"
+    var period: String = "monthly"              // monthly | yearly | weekly | once (bills)
+    var kind: String = "subscription"           // subscription | bill
+    var lastCharged: Date
+    var nextDate: Date?                         // renewal or due date
+    var sourceEmailId: String?
+    var isHidden: Bool = false                  // "not a subscription"
+    var remind: Bool = true
+
+    init(name: String, amount: Double, lastCharged: Date) {
+        self.name = name
+        self.key = name.lowercased()
+        self.amount = amount
+        self.lastCharged = lastCharged
+    }
+
+    var monthlyCost: Double {
+        switch period { case "yearly": amount / 12; case "weekly": amount * 52 / 12; case "once": 0; default: amount }
+    }
+}
+
+@Model final class Delivery {
+    var id: UUID = UUID()
+    var carrier: String                         // UPS | USPS | FedEx | DHL | Amazon
+    var tracking: String                        // tracking or order number
+    var title: String                           // what's coming, from the subject
+    var status: String = "shipped"              // ordered | shipped | out | delivered
+    var expected: Date?
+    var sourceEmailId: String?
+    var updatedAt: Date = Date()
+    var isArchived: Bool = false
+
+    init(carrier: String, tracking: String, title: String) {
+        self.carrier = carrier
+        self.tracking = tracking
+        self.title = title
+    }
+
+    var trackURL: URL? {
+        let n = tracking.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? tracking
+        switch carrier {
+        case "UPS": return URL(string: "https://www.ups.com/track?tracknum=\(n)")
+        case "USPS": return URL(string: "https://tools.usps.com/go/TrackConfirmAction?tLabels=\(n)")
+        case "FedEx": return URL(string: "https://www.fedex.com/fedextrack/?trknbr=\(n)")
+        case "DHL": return URL(string: "https://www.dhl.com/global-en/home/tracking.html?tracking-id=\(n)")
+        default: return nil
+        }
     }
 }

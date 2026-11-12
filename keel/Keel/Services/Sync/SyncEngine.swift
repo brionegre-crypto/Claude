@@ -85,6 +85,8 @@ final class SyncEngine {
 
         // 1a. Your smart rules run first; a rule's category skips AI sorting.
         await MailRules.apply(to: fresh, accounts: accounts, ctx: ctx)
+        MailScanners.backfillIfNeeded(ctx: ctx)
+        MailScanners.scan(fresh, ctx: ctx)
 
         // 2. AI triage on anything new (on-device first — free)
         let untriaged = (try? ctx.fetch(FetchDescriptor<EmailMessage>(predicate: #Predicate { $0.triagedAt == nil }))) ?? []

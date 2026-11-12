@@ -87,6 +87,17 @@ final class WatchBridge: NSObject, WCSessionDelegate {
         payload.achievementsUnlocked = Momentum.achievements(ctx: ctx).filter(\.unlocked).count
         payload.scheduledMail = ((try? ctx.fetch(FetchDescriptor<ScheduledMail>())) ?? []).count
         payload.briefing = Briefing.latest
+        payload.deliveries = ((try? ctx.fetch(FetchDescriptor<Delivery>())) ?? [])
+            .filter { !$0.isArchived && $0.status != "delivered" }.prefix(6)
+            .map { d in
+                let label = d.status == "out" ? "Out for delivery" :
+                    d.expected.map { Calendar.current.isDateInToday($0) ? "Arriving today" : "Arriving \($0.formatted(.dateTime.weekday(.abbreviated)))" } ?? "Shipped"
+                return .init(title: d.title, carrier: d.carrier, status: label)
+            }
+        let subs = ((try? ctx.fetch(FetchDescriptor<Subscription>())) ?? []).filter { !$0.isHidden && $0.kind == "subscription" }
+        if !subs.isEmpty {
+            payload.subscriptionsMonthly = String(format: "%@%.0f/mo", subs[0].currency, subs.reduce(0) { $0 + $1.monthlyCost })
+        }
         if let w = KeelWeather.shared.today {
             payload.weather = .init(temperature: w.temperature, symbol: w.symbol, condition: w.condition,
                                     high: w.high, low: w.low, rainFrom: w.rainStartsAt)
@@ -148,6 +159,12 @@ final class WatchBridge: NSObject, WCSessionDelegate {
             let t = TaskItem(title: text)
             t.fromParkingLot = true
             ctx.insert(t)
+        case .brainDump(let text):
+            Task { @MainActor in
+                let items = await BrainDumpSorter.sort(text)
+                BrainDumpSorter.save(items, ctx: ctx)
+                WidgetSync.update(ctx)
+            }
         case .takeMed(let id, let slot):
             if let m = try? ctx.fetch(FetchDescriptor<Medication>(predicate: #Predicate { $0.id == id })).first {
                 MedEngine.take(m, slot: slot, ctx: ctx)

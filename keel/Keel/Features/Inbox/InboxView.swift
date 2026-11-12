@@ -56,7 +56,12 @@ struct InboxView: View {
             return base.filter { [$0.subject, $0.fromName, $0.from, $0.snippet, $0.bodyPlain, $0.toLine]
                 .contains { $0.lowercased().contains(q) } }
         }
-        return mailbox == .inbox ? base.filter { ($0.category ?? .important) == split } : base
+        return mailbox == .inbox ? base.filter { ($0.category ?? .important) == split && !$0.isPinned } : base
+    }
+
+    /// Pinned emails sit above every split in Inbox.
+    private var pinned: [EmailMessage] {
+        mailbox == .inbox && search.isEmpty ? mailboxEmails.filter(\.isPinned) : []
     }
 
     var body: some View {
@@ -168,13 +173,16 @@ struct InboxView: View {
 
             if mailbox == .sent && loadingSent { ProgressView().frame(maxWidth: .infinity).listRowBackground(Color.clear) }
 
-            if visible.isEmpty && !loadingSent && serverResults.isEmpty {
+            if visible.isEmpty && pinned.isEmpty && !loadingSent && serverResults.isEmpty {
                 ContentUnavailableView(search.isEmpty ? "All clear" : "No matches on this phone",
                                        systemImage: search.isEmpty ? "checkmark.seal" : "magnifyingglass",
                                        description: Text(search.isEmpty ? "Nothing here. Nice." : "Press Search to look through all your mail."))
                     .listRowBackground(Color.clear)
             }
 
+            if !pinned.isEmpty {
+                Section("Pinned") { ForEach(pinned) { e in row(e) } }
+            }
             ForEach(visible) { e in row(e) }
 
             if !search.isEmpty {
@@ -223,6 +231,9 @@ struct InboxView: View {
                 Divider()
                 Button(e.isRead ? "Mark Unread" : "Mark Read", systemImage: e.isRead ? "envelope.badge" : "envelope.open") { toggleRead(e) }
                 Button(e.isStarred ? "Unstar" : "Star", systemImage: "star") { star(e) }
+                Button(e.isPinned ? "Unpin" : "Pin to Top", systemImage: e.isPinned ? "pin.slash" : "pin") {
+                    withAnimation(DS.spring) { e.isPinned.toggle() }; Haptics.tap()
+                }
                 Button("Create Rule…", systemImage: "line.3.horizontal.decrease.circle") { ruleFrom = e }
                 if e.category == .newsletters || e.category == .promotions || Unsubscribe.canUnsubscribe(e) {
                     Button("Unsubscribe & archive all", systemImage: "hand.raised.slash") {

@@ -183,6 +183,15 @@ struct WatchRoot: View {
                         link("Meds", "pills.fill", .mint, "\(m.filter { $0.takenAt != nil }.count)/\(m.count)") { MedsPage() }
                     }
                     if let s = store.payload.momentum { link("Momentum", "trophy.fill", .orange, "\(s)") { MomentumPage() } }
+                    if let d = store.payload.deliveries, !d.isEmpty { link("Deliveries", "shippingbox.fill", .brown, "\(d.count)") { DeliveriesPage() } }
+                    if let m = store.payload.subscriptionsMonthly {
+                        HStack {
+                            Image(systemName: "creditcard.fill").foregroundStyle(.green).frame(width: 22)
+                            Text("Subscriptions")
+                            Spacer()
+                            Text(m).font(.caption2).foregroundStyle(.secondary)
+                        }
+                    }
                     if let m = store.payload.moodWeek, !m.isEmpty { link("Mood", "face.smiling", .yellow, nil) { MoodPage() } }
                     link("Day in review", "moon.stars.fill", .indigo, nil) { DayReviewPage() }
                 }
@@ -484,15 +493,29 @@ struct AddPage: View {
     @Environment(WatchStore.self) private var store
     @State private var text = ""
     @State private var added = false
+    @State private var dump = ""
+    @State private var dumped = false
 
     var body: some View {
-        VStack(spacing: 10) {
+        ScrollView { VStack(spacing: 10) {
             TextField("Add a task…", text: $text).onSubmit(add)    // dictation or Scribble
             Button("Add", action: add).tint(accent).disabled(text.isEmpty)
             if added { Label("Added", systemImage: "checkmark.circle.fill").foregroundStyle(calm).font(.caption) }
             Text("Try “Call mom tomorrow 5pm”").font(.caption2).foregroundStyle(.secondary)
-        }
+            Divider()
+            TextField("Brain dump…", text: $dump).onSubmit(sendDump)
+            if dumped { Label("Sorting on iPhone", systemImage: "brain.head.profile").foregroundStyle(calm).font(.caption) }
+            Text("Ramble everything. Keel splits it into tasks, events and notes.").font(.caption2).foregroundStyle(.secondary)
+        } }
         .navigationTitle("Capture")
+    }
+
+    private func sendDump() {
+        guard !dump.isEmpty else { return }
+        store.send(.brainDump(dump))
+        WKInterfaceDevice.current().play(.success)
+        dump = ""
+        dumped = true
     }
 
     private func add() {
@@ -592,5 +615,20 @@ struct MomentumPage: View {
             if let a = store.payload.achievementsUnlocked { Label("\(a) achievements", systemImage: "trophy.fill").font(.caption) }
         }
         .navigationTitle("Momentum")
+    }
+}
+
+struct DeliveriesPage: View {
+    @Environment(WatchStore.self) private var store
+    var body: some View {
+        List {
+            ForEach(store.payload.deliveries ?? [], id: \.self) { d in
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(d.title).font(.caption).lineLimit(2)
+                    Text("\(d.carrier) · \(d.status)").font(.caption2).foregroundStyle(d.status.contains("today") || d.status.contains("Out") ? accent : .secondary)
+                }
+            }
+        }
+        .navigationTitle("Deliveries")
     }
 }

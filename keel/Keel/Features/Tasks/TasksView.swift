@@ -346,6 +346,7 @@ struct TaskRow: View {
                         Text(dueText(d)).foregroundStyle(d < Date() && !task.isDone ? DS.Palette.warmth : DS.Palette.inkSoft)
                     }
                     if task.isPinned { Image(systemName: "pin.fill").foregroundStyle(DS.Palette.accent) }
+                    if TaskTimer.shared.isRunning(task) { Image(systemName: "stopwatch.fill").foregroundStyle(DS.Palette.warmth) }
                     if task.recurrence != nil { Image(systemName: "repeat") }
                     if task.alertOffsetMinutes != nil { Image(systemName: "bell") }
                     if task.locationName != nil { Image(systemName: "location") }
@@ -450,6 +451,7 @@ struct TaskDetailView: View {
                 }
             }
 
+            TaskTimerSection(task: task)
             Section("When") {
                 Toggle("Due date", isOn: Binding(
                     get: { task.dueDate != nil },

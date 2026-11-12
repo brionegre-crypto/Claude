@@ -36,6 +36,7 @@ struct TodayView: View {
                     greeting
                     MedsTodayCard()
                     PinnedTasksCard()
+                    FoundInMailTodayCard()
                     // Today reshapes itself through the day: plan in the morning, do in the day, wind down at night.
                     switch DayPhase.now {
                     case .morning:
@@ -101,6 +102,8 @@ struct TodayView: View {
                         NavigationLink { HabitsView() } label: { Label("Habit stacks", systemImage: "link") }
                         NavigationLink { HabitLibraryView() } label: { Label("Habit library", systemImage: "books.vertical") }
                         NavigationLink { MedsView() } label: { Label("Medications", systemImage: "pills") }
+                        NavigationLink { SubscriptionsView() } label: { Label("Subscriptions & bills", systemImage: "creditcard") }
+                        NavigationLink { DeliveriesView() } label: { Label("Deliveries", systemImage: "shippingbox") }
                         NavigationLink { AchievementsView() } label: { Label("Achievements", systemImage: "trophy") }
                         NavigationLink { FocusHistoryView() } label: { Label("Focus history", systemImage: "chart.bar.xaxis") }
                         NavigationLink { JournalTimelineView() } label: { Label("Mood journal", systemImage: "face.smiling") }
@@ -426,34 +429,6 @@ struct TodayView: View {
             idealWeek: idealBlocks.filter { $0.weekdays.contains(Calendar.current.component(.weekday, from: Date())) }
                 .sorted { $0.startMinute < $1.startMinute }.map { "\($0.timeLabel) \($0.title) (\($0.area.title))" })
         plan = await AIRouter.shared.planDay(context: ctxData)
-    }
-}
-
-struct BrainDumpView: View {
-    @Environment(\.modelContext) private var ctx
-    @Environment(\.dismiss) private var dismiss
-    @State private var text = ""
-    var body: some View {
-        NavigationStack {
-            VStack(alignment: .leading) {
-                Text("Empty your head. One thing per line. Don't organize — Keel will.")
-                    .font(DS.Font.body).foregroundStyle(DS.Palette.inkSoft)
-                TextEditor(text: $text)   // Apple Intelligence Writing Tools + dictation work here for free
-                    .scrollContentBackground(.hidden)
-                    .padding(DS.Space.s)
-                    .background(DS.Palette.elevated, in: .rect(cornerRadius: DS.Radius.chip))
-            }
-            .padding()
-            .navigationTitle("Brain dump")
-            .toolbar {
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Sort it") {
-                        ADHDCoach.parseBrainDump(text).forEach { ctx.insert($0) }
-                        Haptics.success(); dismiss()
-                    }.disabled(text.isEmpty)
-                }
-            }
-        }
     }
 }
 
