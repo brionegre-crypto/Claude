@@ -28,6 +28,8 @@ struct CalendarView: View {
     @State private var newTaskDate: Date?
     @State private var message: String?
     @State private var taskGroup: TaskGroupRef?
+    @State private var showQuick = false
+    @State private var quickText = ""
     @AppStorage("calendar.showTasks") private var showTasks = true
 
     private let cal = Calendar.current
@@ -94,6 +96,7 @@ struct CalendarView: View {
                 }
                 ToolbarItem(placement: .topBarTrailing) {
                     Menu {
+                        Button("Quick event…", systemImage: "text.bubble") { showQuick = true }
                         Button("New event", systemImage: "calendar.badge.plus") { draft = EventDraft(event: nil, start: defaultNewStart()) }
                         Button("New task", systemImage: "checklist") { newTaskDate = defaultNewStart() }
                     } label: { Image(systemName: "plus") }
@@ -113,6 +116,21 @@ struct CalendarView: View {
             .sheet(item: $openTask) { t in NavigationStack { TaskDetailView(task: t) } }
             .sheet(isPresented: $showCalendars) { CalendarPicker(hiddenRaw: $hiddenRaw) }
             .sheet(item: $taskGroup) { TaskGroupSheet(tasks: $0.tasks) }
+            .alert("Quick event", isPresented: $showQuick) {
+                TextField("Lunch with Sam Thu 1pm for 90 min", text: $quickText)
+                Button("Add") {
+                    if let p = try? QuickEvent.create(quickText) {
+                        flash("Added “\(p.title)” · \(p.start.formatted(date: .abbreviated, time: p.allDay ? .omitted : .shortened))")
+                        anchor = Calendar.current.startOfDay(for: p.start)
+                        Haptics.success()
+                    } else {
+                        flash("Add a day or time, like “tomorrow 3pm”")
+                    }
+                    quickText = ""
+                    load()
+                }
+                Button("Cancel", role: .cancel) { quickText = "" }
+            } message: { Text("Type it like you'd say it.") }
             .sheet(item: Binding(get: { newTaskDate.map { DateBox(date: $0) } }, set: { newTaskDate = $0?.date })) { box in
                 QuickTaskSheet(date: box.date)
             }

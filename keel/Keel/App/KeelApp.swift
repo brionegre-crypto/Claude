@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import CoreSpotlight
 import UserNotifications
 
 @main
@@ -13,6 +14,7 @@ struct KeelApp: App {
         TaskAlerts.registerCategories()
         WatchBridge.shared.activate()
         if !UserDefaults.standard.bool(forKey: Prefs.reviewReminderOff) { WeeklyReview.scheduleReminder() }
+        if !UserDefaults.standard.bool(forKey: "dayReview.off") { DayReviewView.scheduleReminder() }
     }
 
     var body: some Scene {
@@ -53,7 +55,7 @@ struct KeelApp: App {
     static let container: ModelContainer = {
         let schema = Schema([
             MailAccount.self, EmailMessage.self, TaskItem.self, Note.self,
-            Habit.self, HabitStack.self, HabitLog.self, FocusSession.self, Commitment.self, Goal.self, FollowUp.self, SavedLink.self, TimeEntry.self, IdealBlock.self, OdysseyPath.self, SenderRule.self, Person.self, CheckIn.self,
+            Habit.self, HabitStack.self, HabitLog.self, FocusSession.self, Commitment.self, Goal.self, FollowUp.self, SavedLink.self, TimeEntry.self, IdealBlock.self, OdysseyPath.self, SenderRule.self, Person.self, CheckIn.self, TaskTemplate.self,
         ])
         // Lives in the App Group so widgets / intents extensions can read it too.
         let config = ModelConfiguration(schema: schema, groupContainer: .identifier("group.com.briangreenejr.keel"))
@@ -70,6 +72,13 @@ struct RootView: View {
 
     enum Tab { case today, inbox, calendar, tasks, notes }
 
+    private func openTask(_ id: UUID) -> TaskItem? {
+        try? KeelStore.container.mainContext.fetch(FetchDescriptor<TaskItem>(predicate: #Predicate { $0.id == id })).first
+    }
+    private func openNote(_ id: UUID) -> Note? {
+        try? KeelStore.container.mainContext.fetch(FetchDescriptor<Note>(predicate: #Predicate { $0.id == id })).first
+    }
+
     var body: some View {
         TabView(selection: $router.tab) {
             TodayView().tabItem { Label("Today", systemImage: "sun.max") }.tag(Tab.today)
@@ -82,6 +91,20 @@ struct RootView: View {
         .tabViewBottomAccessory { FocusAccessory { router.showFocus = true } }
         .sheet(isPresented: $router.showFocus) { NavigationStack { FocusView() } }
         .sheet(item: $mailRouter.pending) { ComposeView(draft: $0) }
+        .sheet(isPresented: $router.showSearch) { NavigationStack { SearchView() } }
+        .sheet(item: Binding(get: { router.openTaskId.flatMap { id in openTask(id) } }, set: { if $0 == nil { router.openTaskId = nil } })) { t in
+            NavigationStack { TaskDetailView(task: t) }
+        }
+        .sheet(item: Binding(get: { router.openNoteId.flatMap { id in openNote(id) } }, set: { if $0 == nil { router.openNoteId = nil } })) { n in
+            NavigationStack { NoteEditor(note: n) }
+        }
+        // Tapping a Keel result in iPhone search
+        .onContinueUserActivity(CSSearchableItemActionType) { activity in
+            guard let id = activity.userInfo?[CSSearchableItemActivityIdentifier] as? String else { return }
+            let parts = id.split(separator: ":", maxSplits: 1).map(String.init)
+            guard parts.count == 2, let uuid = UUID(uuidString: parts[1]) else { return }
+            if parts[0] == "task" { router.openTaskId = uuid } else { router.openNoteId = uuid }
+        }
         .fullScreenCover(isPresented: Binding(get: { !onboarded }, set: { if !$0 { onboarded = true } })) { WelcomeTour() }
         .preferredColorScheme(appearance == "light" ? .light : appearance == "dark" ? .dark : nil)
         // Superhuman-style universal command bar: ⌘K on a keyboard

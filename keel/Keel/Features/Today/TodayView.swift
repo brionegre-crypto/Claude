@@ -29,11 +29,26 @@ struct TodayView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: DS.Space.l) {
                     greeting
-                    energyPicker
-                    justOneThing
-                    if !events.isEmpty { upNext }
-                    planCard
-                    CheckInCard()
+                    // Today reshapes itself through the day: plan in the morning, do in the day, wind down at night.
+                    switch DayPhase.now {
+                    case .morning:
+                        CheckInCard()
+                        energyPicker
+                        justOneThing
+                        planCard
+                        if !events.isEmpty { upNext }
+                    case .day:
+                        energyPicker
+                        justOneThing
+                        if !events.isEmpty { upNext }
+                        planCard
+                        CheckInCard()
+                    case .evening:
+                        NavigationLink { DayReviewView() } label: { dayReviewTeaser }.buttonStyle(.plain)
+                        CheckInCard()
+                        if !events.isEmpty { upNext }
+                        justOneThing
+                    }
                     promisesCard
                     followUpsCard
                     keepInTouchCard
@@ -57,6 +72,10 @@ struct TodayView: View {
                 ToolbarItem(placement: .topBarLeading) {
                     Button { showBrainDump = true } label: { Image(systemName: "brain.head.profile") }
                         .accessibilityLabel("Brain dump")
+                }
+                ToolbarItem(placement: .topBarLeading) {
+                    NavigationLink { SearchView() } label: { Image(systemName: "magnifyingglass") }
+                        .accessibilityLabel("Search everything")
                 }
                 ToolbarItem(placement: .topBarTrailing) {
                     Menu {
@@ -242,6 +261,21 @@ struct TodayView: View {
                 .buttonStyle(.plain)
             }
         }
+    }
+
+    private var dayReviewTeaser: some View {
+        return GlassCard(tint: .indigo) {
+            HStack(spacing: DS.Space.m) {
+                Image(systemName: "moon.stars.fill").font(.title2).foregroundStyle(.indigo)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Day in review").font(DS.Font.headline)
+                    Text("See what you got done and close today in 2 minutes.").font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
+                }
+                Spacer()
+                Image(systemName: "chevron.right").foregroundStyle(DS.Palette.inkSoft)
+            }
+        }
+        .accessibilityHint("Evening wind-down")
     }
 
     private var keepInTouchCard: some View {

@@ -1,5 +1,6 @@
 import Foundation
 import EventKit
+import CoreLocation
 import UIKit
 
 /// TickTick-style sync: EventKit sees EVERY calendar the user has on the device —
@@ -169,6 +170,17 @@ final class CalendarService {
         let fields: Set<Calendar.Component> = t.hasDueTime ? [.year, .month, .day, .hour, .minute] : [.year, .month, .day]
         r.dueDateComponents = t.dueDate.map { Calendar.current.dateComponents(fields, from: $0) }
         r.recurrenceRules = t.recurrence.map { [$0.ekRule] }
+        // Location reminder → a Reminders location alarm (fires even when Keel is closed).
+        r.alarms?.filter { $0.structuredLocation != nil }.forEach { r.removeAlarm($0) }
+        if let name = t.locationName, let lat = t.latitude, let lon = t.longitude {
+            let place = EKStructuredLocation(title: name)
+            place.geoLocation = CLLocation(latitude: lat, longitude: lon)
+            place.radius = 150
+            let alarm = EKAlarm()
+            alarm.structuredLocation = place
+            alarm.proximity = t.remindOnArrive ? .enter : .leave
+            r.addAlarm(alarm)
+        }
         try store.save(r, commit: true)
         t.ekReminderId = r.calendarItemIdentifier
         t.updatedAt = r.lastModifiedDate ?? Date()     // both sides now agree, so the next sync leaves it alone

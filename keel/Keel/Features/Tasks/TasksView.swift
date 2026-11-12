@@ -119,6 +119,15 @@ struct TasksView: View {
                             Task { try? await Task.sleep(for: .seconds(2.5)); withAnimation { toast = nil } }
                         }
                         Button("Clear today's time blocks", systemImage: "calendar.badge.minus") { AutoScheduler.clearToday(tasks: tasks) }
+                        Divider()
+                        NavigationLink { TemplatesView() } label: { Label("Templates", systemImage: "doc.on.doc") }
+                        if case .list(let name) = filter {
+                            Button("Save “\(name)” as a template", systemImage: "square.and.arrow.down") {
+                                TemplateSaver.save(listName: name, tasks: tasks.filter { !$0.isDone }, ctx: ctx)
+                                withAnimation { toast = "Saved as a template" }
+                                Task { try? await Task.sleep(for: .seconds(2)); withAnimation { toast = nil } }
+                            }
+                        }
                     } label: { Image(systemName: "wand.and.stars") }
                     .accessibilityLabel("Schedule")
                 }
@@ -298,6 +307,7 @@ struct TaskRow: View {
                     }
                     if task.recurrence != nil { Image(systemName: "repeat") }
                     if task.alertOffsetMinutes != nil { Image(systemName: "bell") }
+                    if task.locationName != nil { Image(systemName: "location") }
                     if !task.microSteps.isEmpty { Text("\(task.microSteps.filter(\.done).count)/\(task.microSteps.count)") }
                     if task.sourceEmailId != nil { Image(systemName: "envelope") }
                     if showList && task.listName != "Inbox" { Text(task.listName) }
@@ -379,6 +389,7 @@ struct TaskDetailView: View {
     @State private var showNewList = false
     @State private var confirmDelete = false
     @Query(filter: #Predicate<Goal> { !$0.isArchived }) private var goals: [Goal]
+    @State private var showLocation = false
 
     private let cal = Calendar.current
 
@@ -434,6 +445,17 @@ struct TaskDetailView: View {
                         LabeledContent("Completed", value: "\(task.completionCount) times")
                     }
                 }
+            }
+
+            Section {
+                Button { showLocation = true } label: {
+                    LabeledContent {
+                        Text(task.locationName.map { "\(task.remindOnArrive ? "Arriving at" : "Leaving") \($0)" } ?? "None")
+                    } label: { Label("Location", systemImage: "location") }
+                }
+                .foregroundStyle(DS.Palette.ink)
+            } footer: {
+                if task.locationName != nil { Text("Apple Reminders will alert you at this place, even when Keel is closed.") }
             }
 
             Section("Organize") {
@@ -517,6 +539,7 @@ struct TaskDetailView: View {
         }
         .navigationTitle("Task")
         .toolbar { EditButton() }
+        .sheet(isPresented: $showLocation) { LocationPicker(task: task) }
         .sheet(isPresented: $showRepeat) { RecurrenceEditor(rule: $task.recurrence, anchor: task.dueDate ?? Date()) }
         .alert("New list", isPresented: $showNewList) {
             TextField("Name", text: $newListName)

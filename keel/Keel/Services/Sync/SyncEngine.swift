@@ -114,6 +114,7 @@ final class SyncEngine {
         try? ctx.save()
         await ClaudeBridge.uploadSnapshot(ctx: ctx)
         WidgetSync.update(ctx)
+        SpotlightIndex.refresh(ctx)
     }
 
     // MARK: Background

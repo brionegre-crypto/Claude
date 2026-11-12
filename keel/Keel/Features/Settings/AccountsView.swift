@@ -351,6 +351,13 @@ struct NotificationSettings: View {
                     else { UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: ["weekly.review"]) }
                 }))
             } footer: { Text("Sundays at 5 PM.") }
+            Section {
+                Toggle("Day in Review", isOn: Binding(get: { !UserDefaults.standard.bool(forKey: "dayReview.off") }, set: { on in
+                    UserDefaults.standard.set(!on, forKey: "dayReview.off")
+                    if on { DayReviewView.scheduleReminder() }
+                    else { UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: ["day.review"]) }
+                }))
+            } footer: { Text("Every evening at 8:30 PM.") }
         }
         .navigationTitle("Notifications")
     }

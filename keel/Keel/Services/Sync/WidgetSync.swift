@@ -51,6 +51,9 @@ final class AppRouter {
     var tab: RootView.Tab = .today
     var showFocus = false
     var showCapture = false
+    var openTaskId: UUID?
+    var openNoteId: UUID?
+    var showSearch = false
 
     func handle(_ url: URL) -> Bool {
         guard url.scheme == "com.keel.app" else { return false }
@@ -62,6 +65,7 @@ final class AppRouter {
         case "notes": tab = .notes
         case "focus": showFocus = true
         case "capture": showCapture = true
+        case "search": showSearch = true
         default: return false
         }
         return true

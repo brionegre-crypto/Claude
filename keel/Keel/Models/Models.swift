@@ -197,6 +197,11 @@ struct MicroStep: Codable, Identifiable, Hashable {
     var actualMinutes: Int?                     // learns your real estimates (time blindness)
     var goalId: UUID?                           // the goal this task moves forward
     var feeling: TaskFeeling?                   // Feel-Good Productivity: how it felt to do
+    // Location reminder (mirrors to Apple Reminders as a location alarm)
+    var locationName: String?
+    var latitude: Double?
+    var longitude: Double?
+    var remindOnArrive: Bool = true             // false = when leaving
     // TickTick-style
     var recurrence: Recurrence?                 // repeating task; completing it moves it to the next date
     var alertOffsetMinutes: Int?                // nil = no Keel alert; 0 = at due time; 15 = 15 min before…
@@ -533,6 +538,22 @@ enum OdysseyKind: String, Codable, CaseIterable, Identifiable {
     }
 
     static let faces = ["😞", "😕", "😐", "🙂", "😄"]
+}
+
+// MARK: - Templates
+
+@Model final class TaskTemplate {
+    var id: UUID = UUID()
+    var name: String
+    var icon: String = "doc.on.doc"
+    var items: [String] = []                    // one task per line; quick-add syntax works (e.g. "Pack charger !high")
+    var listName: String = ""                   // empty = default list
+    var createdAt: Date = Date()
+
+    init(name: String, items: [String] = []) {
+        self.name = name
+        self.items = items
+    }
 }
 
 // MARK: - Follow-ups ("remind me if no reply")

@@ -31,6 +31,9 @@ struct InboxView: View {
     @State private var sent: [EmailMessage] = []
     @State private var loadingSent = false
     @State private var compose: ComposeDraft?
+    @State private var snoozing: EmailMessage?
+    @State private var pickSnoozeDate = false
+    @State private var customSnooze = Date().addingTimeInterval(86_400)
 
     private func inAccount(_ e: EmailMessage) -> Bool { accountFilter == nil || e.accountId == accountFilter }
 
@@ -93,6 +96,32 @@ struct InboxView: View {
                 }
             }
             .sheet(item: $compose) { ComposeView(draft: $0) }
+            .confirmationDialog("Snooze until…", isPresented: Binding(get: { snoozing != nil && !pickSnoozeDate }, set: { if !$0 && !pickSnoozeDate { snoozing = nil } }), titleVisibility: .visible) {
+                ForEach(Self.snoozeOptions(), id: \.0) { option in
+                    Button("\(option.0) · \(option.1.formatted(date: .abbreviated, time: .shortened))") {
+                        if let e = snoozing { snooze(e, until: option.1) }
+                        snoozing = nil
+                    }
+                }
+                Button("Pick a date…") { pickSnoozeDate = true }
+            }
+            .sheet(isPresented: $pickSnoozeDate) {
+                NavigationStack {
+                    DatePicker("Snooze until", selection: $customSnooze, in: Date()..., displayedComponents: [.date, .hourAndMinute])
+                        .datePickerStyle(.graphical).padding()
+                        .navigationTitle("Snooze until")
+                        .toolbar {
+                            ToolbarItem(placement: .cancellationAction) { Button("Cancel") { pickSnoozeDate = false; snoozing = nil } }
+                            ToolbarItem(placement: .confirmationAction) {
+                                Button("Snooze") {
+                                    if let e = snoozing { snooze(e, until: customSnooze) }
+                                    pickSnoozeDate = false; snoozing = nil
+                                }
+                            }
+                        }
+                }
+                .presentationDetents([.medium, .large])
+            }
             .task { wakeSnoozed() }
             .onChange(of: mailbox) { if mailbox == .sent { Task { await loadSent() } } }
         }
@@ -173,7 +202,7 @@ struct InboxView: View {
             .swipeActions(edge: .leading) {
                 Button { toTask(e) } label: { Label("Task", systemImage: "checklist") }.tint(DS.Palette.warmth)
                 if mailbox != .sent {
-                    Button { snooze(e) } label: { Label("Snooze", systemImage: "clock") }.tint(DS.Palette.meeting)
+                    Button { snoozing = e } label: { Label("Snooze", systemImage: "clock") }.tint(DS.Palette.meeting)
                     Button { star(e) } label: { Label(e.isStarred ? "Unstar" : "Star", systemImage: e.isStarred ? "star.slash" : "star") }.tint(.yellow)
                 }
             }
@@ -227,12 +256,27 @@ struct InboxView: View {
     }
 
     /// Snooze hides it on this phone only; it comes back to the inbox at the chosen time.
-    private func snooze(_ e: EmailMessage) {
+    private func snooze(_ e: EmailMessage, until date: Date) {
         withAnimation(DS.spring) {
-            e.snoozedUntil = Calendar.current.date(byAdding: .hour, value: 3, to: Date())
+            e.snoozedUntil = date
             e.isArchived = true
         }
         Haptics.tap()
+    }
+
+    static func snoozeOptions() -> [(String, Date)] {
+        let cal = Calendar.current
+        let now = Date()
+        func at(_ h: Int, days: Int = 0) -> Date {
+            cal.date(bySettingHour: h, minute: 0, second: 0, of: cal.date(byAdding: .day, value: days, to: now)!)!
+        }
+        var out: [(String, Date)] = [("Later today", now.addingTimeInterval(3 * 3600))]
+        if cal.component(.hour, from: now) < 17 { out.append(("This evening", at(18))) }
+        out.append(("Tomorrow morning", at(8, days: 1)))
+        let weekday = cal.component(.weekday, from: now)
+        if weekday != 7 && weekday != 1 { out.append(("This weekend", at(9, days: 7 - weekday))) }
+        out.append(("Next week", at(8, days: (9 - weekday) % 7 == 0 ? 7 : (9 - weekday) % 7)))
+        return out
     }
 
     private func wakeSnoozed() {
