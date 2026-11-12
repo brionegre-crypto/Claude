@@ -59,6 +59,7 @@ enum DirectAI {
         switch task {
         case "plan_day": (8_192, "high")
         case "meeting_notes": (8_192, "medium")
+        case "reorganize_notes": (16_000, "medium")
         case "draft_reply", "break_down": (4_096, "medium")
         default: (1_024, "low")
         }

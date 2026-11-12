@@ -432,6 +432,7 @@ enum HubCatalog {
             t("screenshots", "Tasks from screenshots", "camera.viewfinder", "photo scan") { ScreenshotTasksView() },
             t("brainMap", "Brain map", "brain.head.profile.fill", "notes graph links connections map neurons") { BrainMapView() },
             t("memory", "What Keel knows", "brain", "memory facts about me") { MemoryView() },
+            t("help", "How do I…", "questionmark.bubble.fill", "help how do i guide tutorial instructions learn support stuck confused") { HelpCenterView() },
         ]),
     ]
 }

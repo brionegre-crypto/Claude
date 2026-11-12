@@ -18,6 +18,7 @@ const ROUTES: Record<string, { model: string; effort: "low" | "medium" | "high";
   test: { model: "claude-opus-5-5", effort: "low", maxTokens: 256 },
   meeting_notes: { model: "claude-opus-5-5", effort: "medium", maxTokens: 8192 },
   answer: { model: "claude-opus-5-5", effort: "low", maxTokens: 1024 },
+  reorganize_notes: { model: "claude-opus-5-5", effort: "medium", maxTokens: 16000 },
 };
 // Any newer app task the server doesn't know yet still works, on the cheap setting.
 const DEFAULT_ROUTE = { model: "claude-opus-5-5", effort: "medium" as const, maxTokens: 4096 };

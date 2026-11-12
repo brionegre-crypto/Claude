@@ -201,3 +201,43 @@ extension Schemas {
         ]
     }()
 }
+
+// MARK: - Reorganize notes
+
+struct CloudReorganize: Decodable {
+    struct Workspace: Decodable { let name: String; let emoji: String; let folders: [String] }
+    struct Assignment: Decodable { let index: Int; let workspace: String; let folder: String }
+    let workspaces: [Workspace]
+    let assignments: [Assignment]
+}
+
+extension CloudAI {
+    /// Designs workspaces and folders for a set of notes and places each one (by its number in the list).
+    func reorganize(system: String, user: String) async throws -> CloudReorganize {
+        try await call(task: "reorganize_notes", system: system, user: user, schema: Schemas.reorganize, as: CloudReorganize.self)
+    }
+}
+
+extension Schemas {
+    static let reorganize: [String: Any] = [
+        "type": "object", "additionalProperties": false, "required": ["workspaces", "assignments"],
+        "properties": [
+            "workspaces": ["type": "array", "items": [
+                "type": "object", "additionalProperties": false, "required": ["name", "emoji", "folders"],
+                "properties": [
+                    "name": ["type": "string"],
+                    "emoji": ["type": "string"],
+                    "folders": ["type": "array", "items": ["type": "string"]],
+                ],
+            ]],
+            "assignments": ["type": "array", "description": "One entry for every note, by its number", "items": [
+                "type": "object", "additionalProperties": false, "required": ["index", "workspace", "folder"],
+                "properties": [
+                    "index": ["type": "integer"],
+                    "workspace": ["type": "string"],
+                    "folder": ["type": "string"],
+                ],
+            ]],
+        ],
+    ]
+}

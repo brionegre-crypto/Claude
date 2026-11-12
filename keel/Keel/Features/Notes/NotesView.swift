@@ -59,31 +59,26 @@ struct NotesView: View {
                         Section { ForEach(favorites) { row($0, showSnippet: false) } } header: { sectionHeader("Favorites", nil) }
                     }
                     let summaries = folderSummaries
+                    let groups = workspaceGroups(summaries)
                     let unfiled = summaries.first { $0.name == nil }?.count ?? 0
-                    if unfiled >= 3 {
+                    if !groups.contains(where: { $0.name != nil }) && notes.count >= 6 {
+                        Section { reorganizeBanner }
+                            .listRowInsets(EdgeInsets(top: 10, leading: 16, bottom: 10, trailing: 16))
+                    } else if unfiled >= 3 {
                         Section { organizeBanner(unfiled) }
                             .listRowInsets(EdgeInsets(top: 10, leading: 16, bottom: 10, trailing: 16))
                     }
-                    Section {
-                        FlexGrid(columns: 2, spacing: 12) {
-                            ForEach(summaries) { f in
-                                FolderCard(summary: f) { openFolder = FolderRef(name: f.name); Haptics.tap() }
-                                    .matchedTransitionSource(id: "f" + f.id, in: zoom)
-                                    .contextMenu {
-                                        if let name = f.name {
-                                            Button("Rename", systemImage: "pencil") { newFolderName = name; renamingFolder = name }
-                                            Button("Remove Folder (Keeps Pages)", systemImage: "folder.badge.minus", role: .destructive) { removeFolder(name) }
-                                        } else if f.count > 0 {
-                                            Button("Sort into folders…", systemImage: "wand.and.stars") { showOrganize = true }
-                                        }
-                                    }
+                    ForEach(groups) { g in
+                        Section {
+                            FlexGrid(columns: 2, spacing: 12) {
+                                ForEach(g.folders) { f in folderCard(f) }
+                                NewFolderCard { newFolderName = ""; newFolderWorkspace = g.name; creatingFolder = true }
                             }
-                            NewFolderCard { newFolderName = ""; creatingFolder = true }
-                        }
-                        .padding(.vertical, 4)
-                        .listRowInsets(EdgeInsets(top: 4, leading: 0, bottom: 8, trailing: 0))
-                        .listRowBackground(Color.clear)
-                    } header: { sectionHeader("Folders", "\(notes.count) pages") }
+                            .padding(.vertical, 4)
+                            .listRowInsets(EdgeInsets(top: 4, leading: 0, bottom: 8, trailing: 0))
+                            .listRowBackground(Color.clear)
+                        } header: { workspaceHeader(g) }
+                    }
                     if !templates.isEmpty {
                         Section {
                             DisclosureGroup {
@@ -113,6 +108,14 @@ struct NotesView: View {
                     Button { showBrain = true } label: { Image(systemName: "brain.head.profile") }
                         .accessibilityLabel("Brain map of your notes")
                 }
+                ToolbarItem(placement: .topBarLeading) {
+                    Button { showHelp = true } label: { Image(systemName: "questionmark.circle") }
+                        .accessibilityLabel("Help with notes")
+                }
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button { showReorganize = true } label: { Image(systemName: "sparkles.rectangle.stack") }
+                        .accessibilityLabel("Reorganize everything into workspaces")
+                }
                 ToolbarItem(placement: .topBarTrailing) {
                     Menu {
                         Button("New page", systemImage: "doc") { newPage() }
@@ -127,7 +130,8 @@ struct NotesView: View {
                         Button("Today's note", systemImage: "calendar") { opened = DailyNote.today(ctx) }
                         Button("Daily journal", systemImage: "book") { createJournalPage() }
                         Divider()
-                        Button("Organize my notes…", systemImage: "wand.and.stars") { showOrganize = true }
+                        Button("Reorganize everything…", systemImage: "sparkles.rectangle.stack") { showReorganize = true }
+                        Button("Sort loose pages…", systemImage: "wand.and.stars") { showOrganize = true }
                         Button("Import from another app…", systemImage: "square.and.arrow.down") { showImport = true }
                     } label: { Image(systemName: "square.and.pencil") } primaryAction: { newPage() }
                     .accessibilityLabel("New page. Hold for more")
@@ -140,14 +144,21 @@ struct NotesView: View {
             .navigationDestination(item: $openFolder) { ref in folderPage(ref).navigationTransition(.zoom(sourceID: "f" + ref.id, in: zoom)) }
             .alert("New folder", isPresented: $creatingFolder) {
                 TextField("Name", text: $newFolderName)
-                Button("Create") { addEmptyFolder(newFolderName) }
+                Button("Create") { addEmptyFolder(NotePath.make(newFolderWorkspace, newFolderName)) }
                 Button("Cancel", role: .cancel) {}
             }
             .alert("Rename folder", isPresented: Binding(get: { renamingFolder != nil }, set: { if !$0 { renamingFolder = nil } })) {
                 TextField("Name", text: $newFolderName)
-                Button("Rename") { if let old = renamingFolder { renameFolder(old, to: newFolderName) }; renamingFolder = nil }
+                Button("Rename") { if let old = renamingFolder { renameFolder(old, to: NotePath.make(NotePath.workspace(old), newFolderName)) }; renamingFolder = nil }
                 Button("Cancel", role: .cancel) { renamingFolder = nil }
             }
+            .alert("Rename workspace", isPresented: Binding(get: { renamingWorkspace != nil }, set: { if !$0 { renamingWorkspace = nil } })) {
+                TextField("Name", text: $newFolderName)
+                Button("Rename") { if let old = renamingWorkspace { renameWorkspace(old, to: newFolderName) }; renamingWorkspace = nil }
+                Button("Cancel", role: .cancel) { renamingWorkspace = nil }
+            }
+            .sheet(isPresented: $showReorganize) { ReorganizeNotesView() }
+            .navigationDestination(isPresented: $showHelp) { HelpCenterView(area: .notes) }
             .task { await NotesOrganizer.autoFile(ctx: ctx) }
         }
     }
@@ -160,6 +171,10 @@ struct NotesView: View {
     @Namespace private var zoom          // folder cards grow into the folder
     @State private var renamingFolder: String?
     @State private var creatingFolder = false
+    @State private var newFolderWorkspace: String?
+    @State private var renamingWorkspace: String?
+    @State private var showReorganize = false
+    @State private var showHelp = false
     @AppStorage("notes.emptyFolders") private var emptyFoldersRaw = ""      // folders you made that have no pages yet
 
     // MARK: Pieces
@@ -170,10 +185,9 @@ struct NotesView: View {
                 QuickTile(title: "New page", icon: "square.and.pencil", color: DS.Palette.accent) { newPage() }
                 QuickTile(title: "Today", icon: "calendar", color: .orange) { opened = DailyNote.today(ctx) }
                 QuickTile(title: "Record", icon: "waveform.badge.mic", color: .red) { recording = true }
-                QuickTile(title: "Meeting", icon: "person.2.fill", color: .teal) { createMeetingNote() }
                 QuickTile(title: "Journal", icon: "book.fill", color: .pink) { createJournalPage() }
                 QuickTile(title: "Brain map", icon: "brain.head.profile.fill", color: .pink) { showBrain = true }
-                QuickTile(title: "Organize", icon: "wand.and.stars", color: .indigo) { showOrganize = true }
+                QuickTile(title: "Reorganize", icon: "sparkles.rectangle.stack.fill", color: .indigo) { showReorganize = true }
                 QuickTile(title: "Database", icon: "tablecells.fill", color: .purple) {
                     opened = NotesDatabase.create(title: "Untitled database", parent: nil, ctx: ctx)
                 }
@@ -258,7 +272,7 @@ struct NotesView: View {
             }
             Menu("Move to Folder", systemImage: "folder") {
                 Button("No folder") { n.folder = nil }
-                ForEach(folders, id: \.self) { f in Button(f) { n.folder = f } }
+                ForEach(folders, id: \.self) { f in Button(f.replacingOccurrences(of: "/", with: " › ")) { n.folder = f } }
                 Button("New folder…", systemImage: "folder.badge.plus") { newFolderName = ""; newFolderFor = n }
             }
             Button("Delete", systemImage: "trash", role: .destructive) { deletePage(n) }
@@ -290,7 +304,7 @@ struct NotesView: View {
         var parts = ["Edited " + n.updatedAt.formatted(.relative(presentation: .named))]
         if n.isDatabase { parts.append("\(children) row\(children == 1 ? "" : "s")") }
         else if children > 0 { parts.append("\(children) page\(children == 1 ? "" : "s") inside") }
-        if let f = n.folder, openFolder == nil { parts.append(f) }
+        if let f = n.folder, openFolder == nil { parts.append(f.replacingOccurrences(of: "/", with: " › ")) }
         return parts.joined(separator: " · ")
     }
 
@@ -361,18 +375,107 @@ struct NotesView: View {
                                        description: Text(ref.name == nil ? "Pages without a folder show up here." : "Tap New page, or move pages here from their ⋯ menu."))
             }
         }
-        .navigationTitle(ref.name ?? "Unfiled")
+        .navigationTitle(ref.name.map(NotePath.leaf) ?? "Unfiled")
         .toolbar {
             if let name = ref.name {
                 ToolbarItem(placement: .topBarTrailing) {
                     Menu {
-                        Button("Rename", systemImage: "pencil") { newFolderName = name; renamingFolder = name }
+                        Button("Rename", systemImage: "pencil") { newFolderName = NotePath.leaf(name); renamingFolder = name }
                         Button("Remove Folder (Keeps Pages)", systemImage: "folder.badge.minus", role: .destructive) { removeFolder(name); openFolder = nil }
                     } label: { Image(systemName: "ellipsis.circle") }
                     .accessibilityLabel("Folder options")
                 }
             }
         }
+    }
+
+    // MARK: Workspaces
+
+    struct WorkspaceGroup: Identifiable {
+        let name: String?              // nil = folders that aren't in a workspace, plus Unfiled
+        let folders: [FolderSummary]
+        var id: String { name ?? "\u{0}plain" }
+        var pages: Int { folders.reduce(0) { $0 + $1.count } }
+    }
+
+    private func workspaceGroups(_ summaries: [FolderSummary]) -> [WorkspaceGroup] {
+        let grouped = Dictionary(grouping: summaries, by: { $0.name.flatMap(NotePath.workspace) ?? "" })
+        var out = grouped.keys.filter { !$0.isEmpty }.sorted { $0.localizedCaseInsensitiveCompare($1) == .orderedAscending }
+            .map { WorkspaceGroup(name: $0, folders: grouped[$0] ?? []) }
+        let plain = (grouped[""] ?? []).sorted { a, b in a.name == nil ? false : b.name == nil ? true : (a.name ?? "") < (b.name ?? "") }
+        if !plain.isEmpty || out.isEmpty { out.append(WorkspaceGroup(name: nil, folders: plain)) }
+        return out
+    }
+
+    private func workspaceHeader(_ g: WorkspaceGroup) -> some View {
+        HStack(spacing: 8) {
+            if let name = g.name {
+                Text(NotePath.icon(for: name)).font(.title3)
+                Text(name).font(DS.Font.headline).foregroundStyle(DS.Palette.ink)
+            } else {
+                Text(folders.contains(where: { NotePath.workspace($0) != nil }) ? "Other folders" : "Folders").font(DS.Font.headline).foregroundStyle(DS.Palette.ink)
+            }
+            Spacer()
+            Text("\(g.pages) page\(g.pages == 1 ? "" : "s")").font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
+            if let name = g.name {
+                Menu {
+                    Button("Rename Workspace", systemImage: "pencil") { newFolderName = name; renamingWorkspace = name }
+                    Button("Remove Workspace (Keeps Folders)", systemImage: "rectangle.stack.badge.minus", role: .destructive) { removeWorkspace(name) }
+                } label: { Image(systemName: "ellipsis.circle").foregroundStyle(DS.Palette.inkSoft) }
+                .accessibilityLabel("\(name) workspace options")
+            }
+        }
+        .textCase(nil)
+    }
+
+    private func folderCard(_ f: FolderSummary) -> some View {
+        FolderCard(summary: f) { openFolder = FolderRef(name: f.name); Haptics.tap() }
+            .matchedTransitionSource(id: "f" + f.id, in: zoom)
+            .contextMenu {
+                if let name = f.name {
+                    Button("Rename", systemImage: "pencil") { newFolderName = NotePath.leaf(name); renamingFolder = name }
+                    Button("Remove Folder (Keeps Pages)", systemImage: "folder.badge.minus", role: .destructive) { removeFolder(name) }
+                } else if f.count > 0 {
+                    Button("Sort into folders…", systemImage: "wand.and.stars") { showOrganize = true }
+                }
+            }
+    }
+
+    private var reorganizeBanner: some View {
+        Button { showReorganize = true } label: {
+            HStack(spacing: 12) {
+                Image(systemName: "sparkles.rectangle.stack.fill").font(.title3.weight(.semibold)).foregroundStyle(.white)
+                    .frame(width: 40, height: 40).background(Color.indigo.gradient, in: .rect(cornerRadius: 12))
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Organize everything into workspaces").font(DS.Font.headline).foregroundStyle(DS.Palette.ink)
+                    Text("Keel designs workspaces and folders for your notes. You approve.").font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
+                }
+                Spacer(minLength: 0)
+                Image(systemName: "chevron.right").font(.caption.weight(.semibold)).foregroundStyle(DS.Palette.inkSoft)
+            }
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+    }
+
+    private func renameWorkspace(_ old: String, to raw: String) {
+        let name = raw.trimmingCharacters(in: .whitespacesAndNewlines).replacingOccurrences(of: "/", with: "-")
+        guard !name.isEmpty, name != old else { return }
+        for n in allNotes { if let f = n.folder, NotePath.workspace(f) == old { n.folder = NotePath.make(name, NotePath.leaf(f)) } }
+        emptyFoldersRaw = emptyFolders.map { NotePath.workspace($0) == old ? NotePath.make(name, NotePath.leaf($0)) : $0 }.joined(separator: "\n")
+        var icons = NotePath.icons
+        if let e = icons.removeValue(forKey: old) { icons[name] = e }
+        NotePath.icons = icons
+        try? ctx.save()
+        Haptics.tap()
+    }
+
+    /// The folders stay (without the workspace); no page is deleted.
+    private func removeWorkspace(_ name: String) {
+        for n in allNotes { if let f = n.folder, NotePath.workspace(f) == name { n.folder = NotePath.leaf(f) } }
+        emptyFoldersRaw = emptyFolders.map { NotePath.workspace($0) == name ? NotePath.leaf($0) : $0 }.joined(separator: "\n")
+        try? ctx.save()
+        Haptics.tap()
     }
 
     private func organizeBanner(_ count: Int) -> some View {
@@ -542,7 +645,7 @@ struct FolderSummary: Identifiable {
 
     /// An icon and colour that fit the folder's name, the same every time.
     var style: (icon: String, color: Color) {
-        guard let n = name?.lowercased() else { return ("tray.fill", .gray) }
+        guard let n = name.map(NotePath.leaf)?.lowercased() else { return ("tray.fill", .gray) }
         let map: [(String, String, Color)] = [
             ("work", "briefcase.fill", .blue), ("job", "briefcase.fill", .blue), ("meeting", "person.2.fill", .teal),
             ("health", "heart.fill", .pink), ("food", "fork.knife", .green), ("recipe", "fork.knife", .orange), ("diet", "leaf.fill", .green),
@@ -575,7 +678,7 @@ private struct FolderCard: View {
                     Spacer()
                     Text("\(summary.count)").font(DS.Font.headline.monospacedDigit()).foregroundStyle(DS.Palette.inkSoft)
                 }
-                Text(summary.name ?? "Unfiled").font(DS.Font.headline).foregroundStyle(DS.Palette.ink).lineLimit(1)
+                Text(summary.name.map(NotePath.leaf) ?? "Unfiled").font(DS.Font.headline).foregroundStyle(DS.Palette.ink).lineLimit(1)
                 VStack(alignment: .leading, spacing: 2) {
                     ForEach(Array(summary.recent.enumerated()), id: \.offset) { item in
                         Text(item.element).font(.caption2).foregroundStyle(DS.Palette.inkSoft).lineLimit(1)
@@ -592,7 +695,7 @@ private struct FolderCard: View {
         }
         .buttonStyle(PressStyle())
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("\(summary.name ?? "Unfiled"), \(summary.count) pages")
+        .accessibilityLabel("\(summary.name.map(NotePath.leaf) ?? "Unfiled"), \(summary.count) pages")
         .accessibilityAddTraits(.isButton)
     }
 }

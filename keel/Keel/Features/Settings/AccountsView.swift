@@ -114,6 +114,7 @@ struct AccountsView: View {
                 }
 
                 Section {
+                    SettingsRow(title: "Help: How do I…", symbol: "questionmark.bubble.fill", color: .indigo) { HelpCenterView() }
                     SettingsRow(title: "How Keel Works", symbol: "questionmark", color: .teal) { FeatureGuideView() }
                     Button { showTour = true } label: {
                         HStack(spacing: 12) { SettingsIcon(symbol: "play.fill", color: .teal); Text("Replay Welcome Tour").foregroundStyle(.primary) }
