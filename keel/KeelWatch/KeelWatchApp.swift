@@ -93,6 +93,12 @@ final class WatchStore: NSObject, WCSessionDelegate {
         send(.checkIn(mood))
     }
 
+    func resolve(_ s: WatchPayload.SuggestionRow, accept: Bool) {
+        payload.suggestions?.removeAll { $0.id == s.id }
+        WKInterfaceDevice.current().play(accept ? .success : .click)
+        send(accept ? .acceptSuggestion(s.id) : .dismissSuggestion(s.id))
+    }
+
     func takeMed(_ m: WatchPayload.MedRow) {
         if let i = payload.meds?.firstIndex(of: m) { payload.meds?[i].takenAt = Date() }
         WKInterfaceDevice.current().play(.success)
@@ -159,6 +165,10 @@ struct WatchRoot: View {
             List {
                 NowCard()
                     .listRowBackground(Color.clear)
+
+                if let s = store.payload.suggestions, !s.isEmpty {
+                    link("Keel prepared \(s.count)", "sparkles", accent, nil) { SuggestionsPage() }
+                }
 
                 if store.payload.checkedInMood == nil { CheckInRow() }
 
@@ -732,5 +742,27 @@ struct BoostPage: View {
         }
         .navigationTitle("Boost")
         .onAppear { pick = items.randomElement() }
+    }
+}
+
+/// Autopilot on the wrist: approve or dismiss what Keel prepared.
+struct SuggestionsPage: View {
+    @Environment(WatchStore.self) private var store
+    var body: some View {
+        List {
+            ForEach(store.payload.suggestions ?? []) { s in
+                VStack(alignment: .leading, spacing: 6) {
+                    Label(s.title, systemImage: s.icon).font(.caption.weight(.semibold))
+                    Text(s.detail).font(.caption2).foregroundStyle(.secondary).lineLimit(5)
+                    HStack {
+                        Button(s.accept) { store.resolve(s, accept: true) }.tint(accent)
+                        Button { store.resolve(s, accept: false) } label: { Image(systemName: "xmark") }
+                    }
+                    .font(.caption2)
+                }
+                .padding(.vertical, 2)
+            }
+        }
+        .navigationTitle("Autopilot")
     }
 }

@@ -70,6 +70,7 @@ final class OnDeviceAI {
         let session = LanguageModelSession(instructions: """
         Build a realistic time-blocked plan for the rest of today. Never overlap fixed events. \
         Put deep focus in the longest free gaps, batch email twice, and end with a shutdown block.
+        \(KeelMemory.shared.context)
         """)
         let prompt = """
         Now: \(c.now)
@@ -86,7 +87,7 @@ final class OnDeviceAI {
     }
 
     func draftReply(_ e: EmailMessage, intent: String) async throws -> String {
-        let session = LanguageModelSession(instructions: "Write a concise, friendly email reply. Body only, no subject.")
+        let session = LanguageModelSession(instructions: "Write a concise, friendly email reply in the user's voice. Body only, no subject.\n" + KeelMemory.shared.context)
         return try await session.respond(to: "Original from \(e.fromName): \(e.bodyPlain.prefix(2_500))\n\nMy intent: \(intent)").content
     }
 

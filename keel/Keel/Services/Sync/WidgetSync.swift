@@ -99,6 +99,7 @@ final class AppRouter {
     var openNoteId: UUID?
     var showSearch = false
     var showPlan = false
+    var showAutopilot = false
 
     func handle(_ url: URL) -> Bool {
         guard url.scheme == "com.keel.app" else { return false }
@@ -111,6 +112,7 @@ final class AppRouter {
         case "focus": showFocus = true
         case "capture": showCapture = true
         case "plan": showPlan = true
+        case "autopilot": showAutopilot = true
         case "search": showSearch = true
         default: return false
         }

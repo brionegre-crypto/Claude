@@ -130,6 +130,7 @@ final class SyncEngine {
         BreakReminders.schedule()
         await Briefing.refresh(ctx: ctx)
         await MeetingPrep.scheduleReminders(ctx: ctx)
+        await Autopilot.refresh(ctx: ctx)
         await ClaudeBridge.uploadSnapshot(ctx: ctx)
         WidgetSync.update(ctx)
         SpotlightIndex.refresh(ctx)

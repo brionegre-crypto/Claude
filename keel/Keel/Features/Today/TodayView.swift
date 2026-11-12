@@ -36,6 +36,7 @@ struct TodayView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: DS.Space.l) {
                     greeting
+                    AutopilotTodayCard()
                     MedsTodayCard()
                     if calm {
                         // Calm mode: just the next thing and what's coming. Everything else waits.
@@ -116,6 +117,8 @@ struct TodayView: View {
                         NavigationLink { ProjectsView() } label: { Label("Projects", systemImage: "folder") }
                         NavigationLink { ProcessInboxView() } label: { Label("Sort loose tasks", systemImage: "tray.and.arrow.down") }
                         NavigationLink { HabitsView() } label: { Label("Habit stacks", systemImage: "link") }
+                        NavigationLink { AutopilotView() } label: { Label("Autopilot", systemImage: "sparkles") }
+                        NavigationLink { TalkView() } label: { Label("Talk to Keel", systemImage: "waveform") }
                         Toggle(isOn: $calm) { Label("Calm mode", systemImage: "leaf") }
                         NavigationLink { PlanRitualView() } label: { Label("Plan my day", systemImage: "list.bullet.clipboard") }
                         NavigationLink { HabitLibraryView() } label: { Label("Habit library", systemImage: "books.vertical") }

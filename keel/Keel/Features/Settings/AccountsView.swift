@@ -641,6 +641,13 @@ struct PrivacySettings: View {
                 Text("Keel locks when you leave it and hides its contents in the app switcher. Lock single notes from a note's ⋯ menu.")
             }
             Section {
+                NavigationLink { MemoryView() } label: { LabeledContent("What Keel Knows", value: "\(KeelMemory.shared.facts.count)") }
+                Toggle("Autopilot", isOn: Binding(get: { UserDefaults.standard.object(forKey: "autopilot.on") as? Bool ?? true },
+                                                  set: { UserDefaults.standard.set($0, forKey: "autopilot.on") }))
+            } header: { Text("Personal AI") } footer: {
+                Text("Autopilot prepares replies, rebalances overbooked days, finds focus time and more, and waits for your tap before doing anything.")
+            }
+            Section {
                 Picker("AI Model", selection: $providerRaw) {
                     ForEach(AIProvider.allCases) { Text($0.name).tag($0.rawValue) }
                 }

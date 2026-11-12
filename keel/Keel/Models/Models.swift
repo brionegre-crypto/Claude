@@ -906,3 +906,36 @@ struct StoredAttachment: Codable {
         return t.dueDate != nil || includeNoDate
     }
 }
+
+// MARK: - Autopilot
+
+/// Something Keel prepared for you to approve with one tap.
+@Model final class Suggestion {
+    var id: UUID = UUID()
+    var key: String                             // de-duplication, e.g. "reply:<email id>"
+    var kind: String                            // reply | declutter | overload | focus | stale | promise | bill | prep | followup
+    var title: String
+    var detail: String
+    var acceptLabel: String
+    var refId: String?                          // email / task / event id
+    var payload: String = ""                    // draft text, id list or ISO date, depending on kind
+    var status: String = "pending"              // pending | accepted | dismissed
+    var createdAt: Date = Date()
+
+    init(key: String, kind: String, title: String, detail: String, acceptLabel: String) {
+        self.key = key
+        self.kind = kind
+        self.title = title
+        self.detail = detail
+        self.acceptLabel = acceptLabel
+    }
+
+    var icon: String {
+        switch kind {
+        case "reply": "arrowshape.turn.up.left.fill"; case "declutter": "tray.and.arrow.down.fill"
+        case "overload": "scalemass.fill"; case "focus": "moon.zzz.fill"; case "stale": "arrow.triangle.2.circlepath"
+        case "promise": "hand.raised.fill"; case "bill": "creditcard.fill"; case "prep": "doc.text.magnifyingglass"
+        case "followup": "bubble.left.and.exclamationmark.bubble.right.fill"; default: "sparkles"
+        }
+    }
+}

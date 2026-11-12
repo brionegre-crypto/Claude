@@ -251,6 +251,22 @@ struct LifeInfoTool: Tool {
     }
 }
 
+struct RememberTool: Tool {
+    let name = "remember"
+    let description = "Save a lasting fact about the user, e.g. 'My manager is Dana', 'I prefer meetings after 10am', 'My son is Leo, 7'."
+
+    @Generable
+    struct Arguments {
+        @Guide(description: "The fact, as a short sentence in the user's own terms")
+        var fact: String
+    }
+
+    func call(arguments: Arguments) async throws -> String {
+        await MainActor.run { KeelMemory.shared.add(arguments.fact) }
+        return "Saved to memory: \(arguments.fact)"
+    }
+}
+
 struct MedsTool: Tool {
     let name = "medications"
     let description = "Check whether the user already took their medication today, or log a dose as taken."
@@ -298,11 +314,13 @@ final class KeelAssistant {
     private func makeSession() -> LanguageModelSession {
         let now = Date().formatted(.dateTime.weekday(.wide).month().day().year().hour().minute())
         return LanguageModelSession(
-            tools: [AgendaTool(), AddTaskTool(), CompleteTaskTool(), CreateEventTool(), SearchMailTool(), StartFocusTool(), MedsTool(), SearchNotesTool(), LifeInfoTool()],
+            tools: [AgendaTool(), AddTaskTool(), CompleteTaskTool(), CreateEventTool(), SearchMailTool(), StartFocusTool(), MedsTool(), SearchNotesTool(), LifeInfoTool(), RememberTool()],
             instructions: """
             You are Keel, a warm, concise assistant for someone with ADHD. It is \(now).
             Use the tools to look things up and to take actions. Never invent tasks, events or emails.
+            When the user tells you something lasting about themselves, their people or preferences, save it with the remember tool.
             Keep answers short: one or two sentences, or a tight bullet list. Suggest one clear next step when helpful.
+            \(KeelMemory.shared.context)
             """)
     }
 

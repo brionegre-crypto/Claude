@@ -87,6 +87,9 @@ final class WatchBridge: NSObject, WCSessionDelegate {
         payload.achievementsUnlocked = Momentum.achievements(ctx: ctx).filter(\.unlocked).count
         payload.scheduledMail = ((try? ctx.fetch(FetchDescriptor<ScheduledMail>())) ?? []).count
         payload.briefing = Briefing.latest
+        payload.suggestions = Autopilot.pending(ctx: ctx).prefix(8).map {
+            .init(id: $0.id, title: $0.title, detail: $0.kind == "reply" ? String($0.payload.prefix(240)) : $0.detail, accept: $0.acceptLabel, icon: $0.icon)
+        }
         payload.dopamine = DopamineItem.all.filter { $0.course == "starter" || $0.course == "main" }.map(\.title)
         let doneDays = Set(allTasks.compactMap(\.completedAt).map { cal.startOfDay(for: $0) })
         payload.weekDone = allTasks.filter { ($0.completedAt ?? .distantPast) >= weekStart }.count
@@ -175,6 +178,12 @@ final class WatchBridge: NSObject, WCSessionDelegate {
             let t = TaskItem(title: text)
             t.fromParkingLot = true
             ctx.insert(t)
+        case .acceptSuggestion(let id):
+            if let s = try? ctx.fetch(FetchDescriptor<Suggestion>(predicate: #Predicate { $0.id == id })).first {
+                Task { @MainActor in _ = await Autopilot.accept(s, ctx: ctx); self.push(ctx) }
+            }
+        case .dismissSuggestion(let id):
+            if let s = try? ctx.fetch(FetchDescriptor<Suggestion>(predicate: #Predicate { $0.id == id })).first { Autopilot.dismiss(s) }
         case .addEvent(let text):
             if (try? QuickEvent.create(text)) == nil { QuickAdd.create(text, in: ctx) }   // no time understood: keep it as a task
         case .brainDump(let text):
