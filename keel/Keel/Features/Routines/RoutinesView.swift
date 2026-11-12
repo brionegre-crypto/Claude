@@ -295,8 +295,7 @@ struct RoutinePlayer: View {
         let c = UNMutableNotificationContent()
         c.title = "\(routine.name): time for the next step"
         c.body = index + 1 < steps.count ? "“\(step.title)” is up. Next: \(steps[index + 1].title)." : "Last step: “\(step.title)” is up."
-        c.sound = .default
-        c.interruptionLevel = .timeSensitive
+        KeelAlerts.urgent(c)
         UNUserNotificationCenter.current().add(UNNotificationRequest(identifier: "routine.step", content: c,
                                                                      trigger: UNTimeIntervalNotificationTrigger(timeInterval: left, repeats: false)))
     }

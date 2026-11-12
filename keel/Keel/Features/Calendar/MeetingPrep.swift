@@ -64,6 +64,7 @@ enum MeetingPrep {
             c.title = "Prep: \(e.title ?? "Meeting") in 10 min"
             c.body = bits.joined(separator: ", ").capitalizedFirst + ". Tap to review."
             c.userInfo = ["deeplink": "com.keel.app://today"]
+            KeelAlerts.urgent(c, relevance: 0.9)
             let comps = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute], from: fire)
             try? await center.add(UNNotificationRequest(identifier: "prep.\(e.calendarItemIdentifier)", content: c,
                                                         trigger: UNCalendarNotificationTrigger(dateMatching: comps, repeats: false)))

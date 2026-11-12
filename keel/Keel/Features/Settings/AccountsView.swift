@@ -388,6 +388,8 @@ struct NotificationSettings: View {
     @AppStorage(Briefing.minuteKey) private var briefingMinute = 450
     @AppStorage(Journal.reminderOnKey) private var journalOn = false
     @AppStorage(Journal.reminderTimeKey) private var journalMinute = 21 * 60
+    @AppStorage(KeelAlerts.timeSensitiveKey) private var timeSensitive = true
+    @State private var timeSensitiveBlocked = false
 
     var body: some View {
         List {
@@ -405,12 +407,25 @@ struct NotificationSettings: View {
             } footer: { Text("Your first event, top tasks, meds, important email and weather in one notification, written by Apple Intelligence.") }
             .onChange(of: briefingOn) { Task { await Briefing.refresh(ctx: KeelStore.container.mainContext) } }
             .onChange(of: briefingMinute) { Task { await Briefing.refresh(ctx: KeelStore.container.mainContext) } }
-            Section("Tasks") {
+            Section {
                 Picker("Default Alert", selection: $defaultAlert) {
                     Text("None").tag(-1)
                     ForEach(TaskAlerts.offsets.compactMap { $0.minutes == nil ? nil : $0 }, id: \.label) { Text($0.label).tag($0.minutes ?? 0) }
                 }
+                Toggle("Time Sensitive Reminders", isOn: $timeSensitive)
+                    .onChange(of: timeSensitive) {
+                        TaskAlerts.rescheduleAll((try? KeelStore.container.mainContext.fetch(FetchDescriptor<TaskItem>())) ?? [])
+                    }
+                if timeSensitive && timeSensitiveBlocked {
+                    Button("Allow Time Sensitive for Keel…", systemImage: "exclamationmark.triangle.fill") {
+                        if let url = URL(string: UIApplication.openNotificationSettingsURLString) { UIApplication.shared.open(url) }
+                    }
+                    .foregroundStyle(.orange)
+                }
+            } header: { Text("Tasks & Reminders") } footer: {
+                Text("Task reminders, habit nudges, routine steps, meeting prep, promises and follow-ups pop up right away, stay on your Lock Screen for an hour, and come through Focus modes that allow Time Sensitive alerts. Medication and leave-now alerts are always Time Sensitive.")
             }
+            .task { timeSensitiveBlocked = await UNUserNotificationCenter.current().notificationSettings().timeSensitiveSetting == .disabled }
             Section("Focus") {
                 Toggle("Hyperfocus Check-in", isOn: Binding(get: { !hyperfocusOff }, set: { hyperfocusOff = !$0 }))
             }

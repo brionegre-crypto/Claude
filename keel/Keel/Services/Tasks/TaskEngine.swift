@@ -162,7 +162,7 @@ enum TaskAlerts {
         c.sound = .default
         c.categoryIdentifier = category
         c.userInfo = ["taskId": t.id.uuidString]
-        if t.priority == .high { c.interruptionLevel = .timeSensitive }
+        KeelAlerts.urgent(c, relevance: t.priority == .high ? 1 : 0.8)
         let comps = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute], from: fire)
         UNUserNotificationCenter.current().add(UNNotificationRequest(
             identifier: id, content: c, trigger: UNCalendarNotificationTrigger(dateMatching: comps, repeats: false)))
@@ -178,6 +178,21 @@ enum TaskAlerts {
         let upcoming = tasks.filter { !$0.isDone && $0.alertOffsetMinutes != nil && $0.dueDate != nil }
             .sorted { ($0.dueDate ?? .distantFuture) < ($1.dueDate ?? .distantFuture) }
         for t in upcoming.prefix(40) { schedule(t) }
+    }
+}
+
+/// How Keel's reminders reach you. Tasks and reminders are Time Sensitive by default: they pop up right away,
+/// stay on the Lock Screen for an hour, and break through Focus modes that allow Time Sensitive alerts.
+enum KeelAlerts {
+    static let timeSensitiveKey = "alerts.timeSensitive"
+    static var timeSensitiveOn: Bool { UserDefaults.standard.object(forKey: timeSensitiveKey) as? Bool ?? true }
+
+    /// Marks a reminder as Time Sensitive (or a normal alert if you turned that off), with sound and a high ranking
+    /// so it leads the notification summary instead of being bundled away.
+    static func urgent(_ c: UNMutableNotificationContent, relevance: Double = 1) {
+        c.interruptionLevel = timeSensitiveOn ? .timeSensitive : .active
+        c.relevanceScore = relevance
+        if c.sound == nil { c.sound = .default }
     }
 }
 

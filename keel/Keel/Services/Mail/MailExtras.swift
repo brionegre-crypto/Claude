@@ -91,7 +91,7 @@ enum FollowUps {
         let c = UNMutableNotificationContent()
         c.title = "No reply from \(f.recipientName.isEmpty ? f.recipient : f.recipientName)"
         c.body = "“\(f.subject)” · tap to send a friendly nudge"
-        c.sound = .default
+        KeelAlerts.urgent(c, relevance: 0.6)
         let comps = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute], from: f.remindAt)
         UNUserNotificationCenter.current().add(UNNotificationRequest(
             identifier: "followup.\(f.id.uuidString)", content: c,
