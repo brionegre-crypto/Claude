@@ -20,11 +20,35 @@ enum KeepInTouch {
     }
 }
 
+extension KeepInTouch {
+    struct Suggestion: Identifiable { var id: String { email }; let name: String; let email: String; let count: Int; let last: Date }
+
+    /// Real people you write to back and forth, who aren't on your list yet. Skips newsletters and no-reply senders.
+    static func suggestions(ctx: ModelContext, existing: [Person]) -> [Suggestion] {
+        let known = Set(existing.map { $0.email.lowercased() })
+        let dismissed = Set(UserDefaults.standard.stringArray(forKey: "people.dismissed") ?? [])
+        let accounts = Set(((try? ctx.fetch(FetchDescriptor<MailAccount>())) ?? []).map { $0.address.lowercased() })
+        let since = Date().addingTimeInterval(-120 * 86_400)
+        let mail = ((try? ctx.fetch(FetchDescriptor<EmailMessage>(predicate: #Predicate { $0.receivedAt > since }))) ?? [])
+            .filter { [TriageCategory.important, .actionable, .calendar].contains($0.category ?? .important) }
+        let groups = Dictionary(grouping: mail) { $0.from.lowercased() }
+        return groups.compactMap { addr, msgs -> Suggestion? in
+            guard msgs.count >= 3, !known.contains(addr), !dismissed.contains(addr), !accounts.contains(addr),
+                  !["noreply", "no-reply", "notifications", "newsletter", "support", "info@", "hello@", "team@"].contains(where: addr.contains) else { return nil }
+            let name = msgs.first { !$0.fromName.isEmpty }?.fromName ?? addr
+            return Suggestion(name: name, email: addr, count: msgs.count, last: msgs.map(\.receivedAt).max()!)
+        }
+        .sorted { $0.count > $1.count }
+        .prefix(5).map { $0 }
+    }
+}
+
 struct PeopleView: View {
     @Environment(\.modelContext) private var ctx
     @Query(sort: \Person.name) private var people: [Person]
     @State private var showPicker = false
     @State private var editing: Person?
+    @State private var dismissTick = 0
 
     var body: some View {
         List {
@@ -35,6 +59,33 @@ struct PeopleView: View {
             let fine = people.filter { !$0.isDue }.sorted { $0.nextDue < $1.nextDue }
             if !fine.isEmpty {
                 Section("In touch") { ForEach(fine) { row($0) } }
+            }
+            let suggestions = dismissTick >= 0 ? KeepInTouch.suggestions(ctx: ctx, existing: people) : []
+            if !suggestions.isEmpty {
+                Section {
+                    ForEach(suggestions) { s in
+                        HStack {
+                            VStack(alignment: .leading) {
+                                Text(s.name)
+                                Text("\(s.count) emails · last \(s.last.formatted(.relative(presentation: .named)))")
+                                    .font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
+                            }
+                            Spacer()
+                            Button("Add") {
+                                let p = Person(name: s.name); p.email = s.email; p.lastContact = s.last
+                                ctx.insert(p); editing = p; Haptics.success()
+                            }
+                            .buttonStyle(.bordered).tint(DS.Palette.accent)
+                        }
+                        .swipeActions {
+                            Button("Not now") {
+                                var d = UserDefaults.standard.stringArray(forKey: "people.dismissed") ?? []
+                                d.append(s.email); UserDefaults.standard.set(d, forKey: "people.dismissed")
+                                dismissTick += 1
+                            }
+                        }
+                    }
+                } header: { Text("Suggested") } footer: { Text("People you email with often. Add them to get a nudge when it's been a while.") }
             }
             if people.isEmpty {
                 ContentUnavailableView {

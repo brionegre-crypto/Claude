@@ -175,6 +175,8 @@ final class WatchBridge: NSObject, WCSessionDelegate {
             let t = TaskItem(title: text)
             t.fromParkingLot = true
             ctx.insert(t)
+        case .addEvent(let text):
+            if (try? QuickEvent.create(text)) == nil { QuickAdd.create(text, in: ctx) }   // no time understood: keep it as a task
         case .brainDump(let text):
             Task { @MainActor in
                 let items = await BrainDumpSorter.sort(text)

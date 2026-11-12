@@ -78,6 +78,15 @@ struct SnippetMenu: View {
     @Environment(\.modelContext) private var ctx
     @Query(sort: \Snippet.uses, order: .reverse) private var snippets: [Snippet]
 
+    private func insert(_ body: String) {
+        if let r = text.range(of: "\n\nOn ") ?? text.range(of: "\n\n---------- Forwarded") {
+            text.insert(contentsOf: body, at: r.lowerBound)
+        } else {
+            text = body + text
+        }
+        Haptics.tap()
+    }
+
     var body: some View {
         Menu {
             ForEach(snippets) { s in
@@ -93,6 +102,7 @@ struct SnippetMenu: View {
                 }
             }
             Divider()
+            Button("Insert my availability", systemImage: "calendar.badge.clock") { insert(Availability.text()) }
             NavigationLink { SnippetsView() } label: { Label("Edit snippets", systemImage: "pencil") }
         } label: { Image(systemName: "text.badge.plus") }
         .accessibilityLabel("Insert snippet")

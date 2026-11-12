@@ -255,6 +255,7 @@ struct NoteBlock: Codable, Identifiable, Hashable {
     var updatedAt: Date = Date()
     var aiSummary: String?
     var isTemplate: Bool = false                // a reusable note template, hidden from Notes
+    var folder: String?                         // nil = no folder
     var isLocked: Bool = false                  // needs Face ID to open; hidden from search, Spotlight and AI
 
     init(title: String, blocks: [NoteBlock] = [NoteBlock(kind: .text, text: "")]) {
@@ -393,6 +394,7 @@ enum LifeArea: String, Codable, CaseIterable, Identifiable {
     var emoji: String = "🎯"
     var isArchived: Bool = false
     var createdAt: Date = Date()
+    @Attribute(.externalStorage) var visionImage: Data?     // a picture of what achieving it looks like
 
     init(title: String, area: LifeArea) {
         self.title = title

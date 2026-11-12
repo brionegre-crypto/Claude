@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import PhotosUI
 
 /// Ali Abdaal-style direction: a theme for the year, a few goals per life area, and tasks that move them forward.
 struct GoalsView: View {
@@ -48,6 +49,7 @@ struct GoalsView: View {
             .padding()
         }
         .navigationTitle("Goals")
+        .toolbar { NavigationLink { VisionBoardView() } label: { Label("Vision board", systemImage: "photo.on.rectangle.angled") } }
         .sheet(item: $newGoalArea) { NewGoalSheet(area: $0) }
     }
 }
@@ -89,6 +91,7 @@ struct GoalDetailView: View {
     @Environment(\.dismiss) private var dismiss
     @Query private var allTasks: [TaskItem]
     @State private var newTask = ""
+    @State private var photo: PhotosPickerItem?
 
     private var tasks: [TaskItem] { allTasks.filter { $0.goalId == goal.id }.sorted { !$0.isDone && $1.isDone } }
 
@@ -111,6 +114,24 @@ struct GoalDetailView: View {
             Section {
                 TextField("Why does this matter to you?", text: $goal.why, axis: .vertical)
             } header: { Text("Why") } footer: { Text("Keel shows this on the goal's tasks when motivation dips.") }
+            Section {
+                if let data = goal.visionImage, let img = UIImage(data: data) {
+                    Image(uiImage: img).resizable().scaledToFill().frame(height: 180).clipShape(.rect(cornerRadius: 12))
+                        .listRowInsets(EdgeInsets())
+                }
+                PhotosPicker(selection: $photo, matching: .images) {
+                    Label(goal.visionImage == nil ? "Add a picture" : "Change picture", systemImage: "photo")
+                }
+                if goal.visionImage != nil { Button("Remove picture", role: .destructive) { goal.visionImage = nil } }
+            } header: { Text("Vision") } footer: { Text("A picture of what it looks like when you get there. It appears on your vision board.") }
+                .onChange(of: photo) { _, item in
+                    Task {
+                        if let d = try? await item?.loadTransferable(type: Data.self), let img = UIImage(data: d) {
+                            goal.visionImage = img.jpegData(compressionQuality: 0.75)
+                        }
+                        photo = nil
+                    }
+                }
             Section("Tasks") {
                 ForEach(tasks) { t in NavigationLink { TaskDetailView(task: t) } label: { TaskRow(task: t, showList: false) } }
                 HStack {
@@ -164,5 +185,46 @@ struct NewGoalSheet: View {
             }
         }
         .presentationDetents([.medium])
+    }
+}
+
+/// Every goal's picture in one inspiring grid, with its why.
+struct VisionBoardView: View {
+    @Query(filter: #Predicate<Goal> { !$0.isArchived }, sort: \Goal.createdAt) private var goals: [Goal]
+    @AppStorage("year.theme") private var theme = ""
+
+    var body: some View {
+        ScrollView {
+            if !theme.isEmpty {
+                Text(theme).font(.system(.largeTitle, design: .serif).italic()).frame(maxWidth: .infinity).padding(.top)
+            }
+            let withPictures = goals.filter { $0.visionImage != nil }
+            if withPictures.isEmpty {
+                ContentUnavailableView("Your vision board is empty", systemImage: "photo.on.rectangle.angled",
+                                       description: Text("Open a goal and add a picture of what achieving it looks like."))
+            }
+            LazyVGrid(columns: [GridItem(.flexible(), spacing: 8), GridItem(.flexible(), spacing: 8)], spacing: 8) {
+                ForEach(withPictures) { g in
+                    NavigationLink { GoalDetailView(goal: g) } label: {
+                        ZStack(alignment: .bottomLeading) {
+                            if let img = UIImage(data: g.visionImage!) {
+                                Image(uiImage: img).resizable().scaledToFill().frame(height: 200).clipped()
+                            }
+                            LinearGradient(colors: [.clear, .black.opacity(0.7)], startPoint: .center, endPoint: .bottom)
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text("\(g.emoji) \(g.title)").font(DS.Font.headline).foregroundStyle(.white).lineLimit(2)
+                                if !g.why.isEmpty { Text(g.why).font(.caption2).foregroundStyle(.white.opacity(0.85)).lineLimit(2) }
+                            }
+                            .padding(8)
+                        }
+                        .frame(height: 200)
+                        .clipShape(.rect(cornerRadius: 14))
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+            .padding()
+        }
+        .navigationTitle("Vision Board")
     }
 }

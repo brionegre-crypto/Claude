@@ -509,6 +509,8 @@ struct AddPage: View {
     @State private var added = false
     @State private var dump = ""
     @State private var dumped = false
+    @State private var event = ""
+    @State private var eventSent = false
 
     var body: some View {
         ScrollView { VStack(spacing: 10) {
@@ -517,11 +519,23 @@ struct AddPage: View {
             if added { Label("Added", systemImage: "checkmark.circle.fill").foregroundStyle(calm).font(.caption) }
             Text("Try “Call mom tomorrow 5pm”").font(.caption2).foregroundStyle(.secondary)
             Divider()
+            TextField("New event…", text: $event).onSubmit(sendEvent)
+            if eventSent { Label("Added to Calendar", systemImage: "calendar.badge.checkmark").foregroundStyle(calm).font(.caption) }
+            Text("Try “Lunch with Sam Friday 1pm”").font(.caption2).foregroundStyle(.secondary)
+            Divider()
             TextField("Brain dump…", text: $dump).onSubmit(sendDump)
             if dumped { Label("Sorting on iPhone", systemImage: "brain.head.profile").foregroundStyle(calm).font(.caption) }
             Text("Ramble everything. Keel splits it into tasks, events and notes.").font(.caption2).foregroundStyle(.secondary)
         } }
         .navigationTitle("Capture")
+    }
+
+    private func sendEvent() {
+        guard !event.isEmpty else { return }
+        store.send(.addEvent(event))
+        WKInterfaceDevice.current().play(.success)
+        event = ""
+        eventSent = true
     }
 
     private func sendDump() {

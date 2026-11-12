@@ -124,6 +124,7 @@ enum WatchAction: Codable {
     case parkThought(String)
     case takeMed(UUID, Int)
     case brainDump(String)
+    case addEvent(String)
 }
 
 enum WatchCoding {

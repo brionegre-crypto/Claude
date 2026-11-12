@@ -480,6 +480,8 @@ struct EmailDetailView: View {
     @State private var unsubscribeMessage: String?
     @State private var replyIdeas: [String] = []
     @State private var readingMode = false
+    @State private var eventDraft: EventDraft?
+    @State private var readingEvent = false
     @State private var showTranslate = false
 
     private var provider: MailProvider? {
@@ -511,6 +513,14 @@ struct EmailDetailView: View {
                 Menu {
                     Button("Mark unread", systemImage: "envelope.badge") { email.isRead = false; Task { try? await provider?.markRead(email.providerMessageId, read: false) } }
                     Button("Make it a task", systemImage: "checklist") { makeTask() }
+                    Button(readingEvent ? "Reading…" : "Add to Calendar", systemImage: "calendar.badge.plus") {
+                        Task {
+                            readingEvent = true
+                            let ev = await EmailToEvent.event(from: email)
+                            readingEvent = false
+                            eventDraft = EventDraft(event: ev, start: ev.startDate)
+                        }
+                    }
                     Button(showPlain ? "Show formatted" : "Show plain text", systemImage: "doc.plaintext") { showPlain.toggle() }
                     Button(readingMode ? "Exit reading mode" : "Reading mode", systemImage: "text.book.closed") { withAnimation { readingMode.toggle() } }
                     Button("Translate", systemImage: "translate") { showTranslate = true }
@@ -527,6 +537,7 @@ struct EmailDetailView: View {
         }
         .sheet(item: $compose) { ComposeView(draft: $0) }
         .quickLookPreview($previewURL)
+        .sheet(item: $eventDraft) { d in EventEditor(event: d.event, start: d.start) { eventDraft = nil }.ignoresSafeArea() }
         .translationPresentation(isPresented: $showTranslate, text: email.subject + "\n\n" + email.bodyPlain)
         .task {
             if !email.isRead {

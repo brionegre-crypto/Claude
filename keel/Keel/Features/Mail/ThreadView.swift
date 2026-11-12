@@ -18,6 +18,8 @@ struct ThreadView: View {
     @Query private var accounts: [MailAccount]
     @State private var expanded: Set<String> = []
     @State private var compose: ComposeDraft?
+    @State private var summary: String?
+    @State private var summarizing = false
 
     private var sorted: [EmailMessage] { messages.sorted { $0.receivedAt < $1.receivedAt } }
 
@@ -26,6 +28,20 @@ struct ThreadView: View {
             VStack(alignment: .leading, spacing: DS.Space.m) {
                 Text(sorted.last?.subject ?? "").font(DS.Font.title)
                 Text("\(messages.count) messages").font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
+                GlassCard(tint: DS.Palette.accent) {
+                    VStack(alignment: .leading, spacing: 6) {
+                        if let summary {
+                            Label("Where this stands", systemImage: "sparkles").font(DS.Font.headline)
+                            Text(summary).font(.callout)
+                        } else {
+                            Button { Task { await summarize() } } label: {
+                                Label(summarizing ? "Reading the conversation…" : "Summarize conversation", systemImage: "sparkles")
+                            }
+                            .disabled(summarizing)
+                        }
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                }
                 ForEach(sorted) { m in
                     let open = expanded.contains(m.id) || m.id == sorted.last?.id
                     GlassCard {
@@ -67,6 +83,7 @@ struct ThreadView: View {
         }
         .sheet(item: $compose) { ComposeView(draft: $0) }
         .task {
+            if messages.count >= 4 { await summarize() }      // long threads: summarize straight away
             for m in messages where !m.isRead {
                 m.isRead = true
                 if let a = accounts.first(where: { $0.id == m.accountId }) {
@@ -75,6 +92,19 @@ struct ThreadView: View {
                 }
             }
         }
+    }
+}
+
+extension ThreadView {
+    func summarize() async {
+        guard summary == nil, !summarizing else { return }
+        summarizing = true; defer { summarizing = false }
+        let text = sorted.map { "\($0.fromName.isEmpty ? $0.from : $0.fromName) on \($0.receivedAt.formatted(date: .abbreviated, time: .shortened)): \($0.bodyPlain.prefix(1_200))" }
+            .joined(separator: "\n---\n")
+        summary = await AIRouter.shared.write("""
+        Summarize this email conversation in 3 short sentences: what it's about, what was decided, and what (if anything) is still waiting on me.
+        \(text)
+        """)
     }
 }
 

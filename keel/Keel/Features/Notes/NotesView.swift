@@ -10,14 +10,29 @@ struct NotesView: View {
     private var notes: [Note] { allNotes.filter { !$0.isTemplate } }
     private var templates: [Note] { allNotes.filter(\.isTemplate) }
     @State private var search = ""
+    @AppStorage("notes.folder") private var folderFilter = ""
+    @State private var newFolderFor: Note?
+    @State private var newFolderName = ""
+    private var folders: [String] { Array(Set(notes.compactMap(\.folder))).sorted() }
 
     private var filtered: [Note] {
-        search.isEmpty ? notes : notes.filter { $0.title.localizedCaseInsensitiveContains(search) || (!$0.isLocked && $0.plainText.localizedCaseInsensitiveContains(search)) }
+        let inFolder = folderFilter.isEmpty || !folders.contains(folderFilter) ? notes : notes.filter { $0.folder == folderFilter }
+        return search.isEmpty ? inFolder : inFolder.filter { $0.title.localizedCaseInsensitiveContains(search) || (!$0.isLocked && $0.plainText.localizedCaseInsensitiveContains(search)) }
     }
 
     var body: some View {
         NavigationStack {
             List {
+                if !folders.isEmpty {
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack {
+                            folderChip("All", "")
+                            ForEach(folders, id: \.self) { folderChip($0, $0) }
+                        }
+                    }
+                    .listRowBackground(Color.clear)
+                    .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
+                }
                 let pinned = filtered.filter(\.isPinned)
                 if !pinned.isEmpty { Section("Pinned") { ForEach(pinned) { row($0) } } }
                 Section("All notes") { ForEach(filtered.filter { !$0.isPinned }) { row($0) }.onDelete(perform: delete) }
@@ -28,6 +43,15 @@ struct NotesView: View {
                 }
             }
             .searchable(text: $search, prompt: "Search notes")
+            .alert("New folder", isPresented: Binding(get: { newFolderFor != nil }, set: { if !$0 { newFolderFor = nil } })) {
+                TextField("Name", text: $newFolderName)
+                Button("Create") {
+                    let name = newFolderName.trimmingCharacters(in: .whitespaces)
+                    if !name.isEmpty { newFolderFor?.folder = name; folderFilter = name }
+                    newFolderFor = nil
+                }
+                Button("Cancel", role: .cancel) { newFolderFor = nil }
+            }
             .navigationTitle("Notes")
             .toolbar {
                 Menu {
@@ -59,9 +83,27 @@ struct NotesView: View {
                 Text(n.isLocked ? "Locked" : (n.aiSummary ?? n.plainText)).font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft).lineLimit(2)
             }
         }
+        .contextMenu {
+            Menu("Move to Folder", systemImage: "folder") {
+                Button("No folder") { n.folder = nil }
+                ForEach(folders, id: \.self) { f in Button(f) { n.folder = f } }
+                Button("New folder…", systemImage: "folder.badge.plus") { newFolderName = ""; newFolderFor = n }
+            }
+            Button(n.isPinned ? "Unpin" : "Pin", systemImage: "pin") { n.isPinned.toggle() }
+        }
     }
 
-    private func create(_ n: Note) { ctx.insert(n); Haptics.tap() }
+    private func create(_ n: Note) {
+        if !folderFilter.isEmpty && n.folder == nil { n.folder = folderFilter }     // new notes land in the folder you're viewing
+        ctx.insert(n); Haptics.tap()
+    }
+
+    private func folderChip(_ title: String, _ value: String) -> some View {
+        Button { withAnimation { folderFilter = value }; Haptics.tap() } label: {
+            Chip(text: title, color: folderFilter == value ? DS.Palette.accent : .gray, icon: value.isEmpty ? "tray.full" : "folder")
+        }
+        .buttonStyle(.plain)
+    }
 
     /// A fresh copy of a template, with {{date}} filled in.
     private func create(fromTemplate t: Note) {

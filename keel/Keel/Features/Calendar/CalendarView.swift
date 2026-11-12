@@ -92,6 +92,7 @@ struct CalendarView: View {
                         Button("Choose calendars…", systemImage: "calendar.badge.checkmark") { showCalendars = true }
                         Toggle(isOn: $showTasks) { Label("Show tasks on calendar", systemImage: "checklist") }
                         Divider()
+                        ShareLink(item: Availability.text()) { Label("Share my availability", systemImage: "calendar.badge.clock") }
                         NavigationLink { WorldClockView() } label: { Label("World clock", systemImage: "globe") }
                         NavigationLink { SharedCalendarsView() } label: { Label("Shared calendars", systemImage: "person.3") }
                         NavigationLink { EventTemplatesView() } label: { Label("Event templates", systemImage: "square.on.square") }
