@@ -11,7 +11,7 @@ enum Unsubscribe {
     enum Outcome { case done, openedWebPage, unavailable }
 
     /// Parses `List-Unsubscribe: <mailto:…>, <https://…>`.
-    static func links(_ header: String?) -> (web: URL?, mail: URL?) {
+    nonisolated static func links(_ header: String?) -> (web: URL?, mail: URL?) {
         guard let header else { return (nil, nil) }
         let parts = header.split(separator: ",").map { $0.trimmingCharacters(in: CharacterSet(charactersIn: " <>\t\r\n")) }
         let web = parts.first { $0.lowercased().hasPrefix("https://") || $0.lowercased().hasPrefix("http://") }.flatMap(URL.init(string:))
@@ -19,7 +19,7 @@ enum Unsubscribe {
         return (web, mail)
     }
 
-    static func canUnsubscribe(_ e: EmailMessage) -> Bool {
+    nonisolated static func canUnsubscribe(_ e: EmailMessage) -> Bool {
         let l = links(e.unsubscribeHeader)
         return l.web != nil || l.mail != nil
     }
