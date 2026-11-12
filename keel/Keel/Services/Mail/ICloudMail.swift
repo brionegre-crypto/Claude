@@ -76,8 +76,8 @@ final class IMAPClient {
 
     private init(socket: MailSocket) { self.socket = socket }
 
-    static func connect(user: String, password: String) async throws -> IMAPClient {
-        let c = IMAPClient(socket: MailSocket(host: "imap.mail.me.com", port: 993, tlsNow: true))
+    static func connect(user: String, password: String, server: IMAPServer = .icloud) async throws -> IMAPClient {
+        let c = IMAPClient(socket: MailSocket(host: server.imapHost, port: server.imapPort, tlsNow: true))
         _ = try await c.socket.readLine()                       // server greeting
         do {
             try await c.run("LOGIN \(quote(user)) \(quote(password))")
@@ -202,8 +202,9 @@ final class IMAPClient {
 
 enum SMTPClient {
     /// Sends via iCloud SMTP and returns the exact message bytes (so they can be filed in Sent).
-    static func send(_ mail: OutgoingMail, from: String, password: String) async throws -> Data {
-        let s = MailSocket(host: "smtp.mail.me.com", port: 587, tlsNow: false)
+    static func send(_ mail: OutgoingMail, from: String, password: String, server: IMAPServer = .icloud, user: String? = nil) async throws -> Data {
+        let implicitTLS = server.smtpPort == 465
+        let s = MailSocket(host: server.smtpHost, port: server.smtpPort, tlsNow: implicitTLS)
         defer { s.close() }
 
         func expect(_ code: String) async throws {
@@ -219,10 +220,12 @@ enum SMTPClient {
 
         try await expect("220")
         try await s.write("EHLO keel.app\r\n"); try await expect("250")
-        try await s.write("STARTTLS\r\n"); try await expect("220")
-        s.startTLS()
-        try await s.write("EHLO keel.app\r\n"); try await expect("250")
-        let auth = Data("\u{0}\(from)\u{0}\(password)".utf8).base64EncodedString()
+        if !implicitTLS {                                   // port 587: upgrade to TLS first
+            try await s.write("STARTTLS\r\n"); try await expect("220")
+            s.startTLS()
+            try await s.write("EHLO keel.app\r\n"); try await expect("250")
+        }
+        let auth = Data("\u{0}\(user ?? from)\u{0}\(password)".utf8).base64EncodedString()
         try await s.write("AUTH PLAIN \(auth)\r\n")
         do { try await expect("235") } catch { throw MailNetError.auth }
         try await s.write("MAIL FROM:<\(from)>\r\n"); try await expect("250")
@@ -406,22 +409,36 @@ enum RFC822 {
 
 // MARK: - Provider
 
+/// IMAP mail for iCloud, Yahoo, AOL, Fastmail, Zoho or any other IMAP server.
 struct ICloudMailProvider: MailProvider {
     let accountId: String
     let address: String
+    var server: IMAPServer = .icloud
 
-    static let inbox = "INBOX", sentBox = "Sent Messages", archiveBox = "Archive", trashBox = "Deleted Messages"
+    static let inbox = "INBOX"
+    private var sentBox: String { server.sent }
+    private var archiveBox: String { server.archive }
+    private var trashBox: String { server.trash }
+    private var user: String { server.username ?? address }
 
     private var password: String { KeychainStore.read("imap.\(accountId)") ?? "" }
 
-    /// Checks the address + app-specific password before saving the account.
-    static func verify(address: String, password: String) async throws {
-        let c = try await IMAPClient.connect(user: address, password: password)
+    /// Checks the sign-in before saving the account, and returns the server with its real folder names.
+    @discardableResult
+    static func verify(address: String, password: String, server: IMAPServer = .icloud) async throws -> IMAPServer {
+        let c = try await IMAPClient.connect(user: server.username ?? address, password: password, server: server)
+        var s = server
+        if let found = try? await c.specialFolders() {
+            if let v = found["\\Sent"] { s.sent = v }
+            if let v = found["\\Archive"] ?? found["\\All"] { s.archive = v }
+            if let v = found["\\Trash"] { s.trash = v }
+        }
         await c.logout()
+        return s
     }
 
     private func session<T>(_ work: (IMAPClient) async throws -> T) async throws -> T {
-        let c = try await IMAPClient.connect(user: address, password: password)
+        let c = try await IMAPClient.connect(user: user, password: password, server: server)
         do {
             let result = try await work(c)
             await c.logout()
@@ -434,7 +451,7 @@ struct ICloudMailProvider: MailProvider {
 
     /// Provider ids are the IMAP UID; Sent-folder messages are prefixed "S:".
     private func locate(_ id: String) -> (mailbox: String, uid: Int) {
-        id.hasPrefix("S:") ? (Self.sentBox, Int(id.dropFirst(2)) ?? 0) : (Self.inbox, Int(id) ?? 0)
+        id.hasPrefix("S:") ? (sentBox, Int(id.dropFirst(2)) ?? 0) : (Self.inbox, Int(id) ?? 0)
     }
 
     private func message(_ f: IMAPFetch, prefix: String = "") -> FetchedMessage {
@@ -488,12 +505,12 @@ struct ICloudMailProvider: MailProvider {
 
     func archive(_ id: String) async throws {
         let (box, uid) = locate(id)
-        try await session { c in try await c.select(box); try await c.move(uid, to: Self.archiveBox) }
+        try await session { c in try await c.select(box); try await c.move(uid, to: archiveBox) }
     }
 
     func trash(_ id: String) async throws {
         let (box, uid) = locate(id)
-        try await session { c in try await c.select(box); try await c.move(uid, to: Self.trashBox) }
+        try await session { c in try await c.select(box); try await c.move(uid, to: trashBox) }
     }
 
     func markRead(_ id: String, read: Bool) async throws {
@@ -509,13 +526,13 @@ struct ICloudMailProvider: MailProvider {
     func applyLabel(_ id: String, label: String) async throws {}   // iCloud has no labels; sorting stays in Keel
 
     func send(_ mail: OutgoingMail) async throws {
-        let raw = try await SMTPClient.send(mail, from: address, password: password)
-        try? await session { c in try await c.append(raw, to: Self.sentBox) }
+        let raw = try await SMTPClient.send(mail, from: address, password: password, server: server, user: server.username)
+        if server.saveSentCopy { try? await session { c in try await c.append(raw, to: sentBox) } }
     }
 
     func fetchSent(since date: Date) async throws -> [FetchedMessage] {
         try await session { c in
-            try await c.select(Self.sentBox)
+            try await c.select(sentBox)
             let uids = try await c.search("SINCE \(IMAPClient.searchDate.string(from: date))").sorted().suffix(50)
             return try await c.fetch(Array(uids)).map { f in
                 var m = message(f, prefix: "S:")

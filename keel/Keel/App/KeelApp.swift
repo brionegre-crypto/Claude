@@ -120,7 +120,7 @@ struct RootView: View {
             guard parts.count == 2, let uuid = UUID(uuidString: parts[1]) else { return }
             if parts[0] == "task" { router.openTaskId = uuid } else { router.openNoteId = uuid }
         }
-        .fullScreenCover(isPresented: Binding(get: { !onboarded }, set: { if !$0 { onboarded = true } })) { WelcomeTour() }
+        .fullScreenCover(isPresented: Binding(get: { !onboarded }, set: { if !$0 { onboarded = true } })) { OnboardingFlow() }
         .preferredColorScheme(appearance == "light" ? .light : appearance == "dark" ? .dark : nil)
         .tint(Theme(rawValue: accentName)?.color ?? DS.Palette.accent)
         .id(accentName)          // redraw everything with the new accent

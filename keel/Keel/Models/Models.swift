@@ -4,11 +4,15 @@ import SwiftData
 // MARK: - Mail
 
 enum MailProviderKind: String, Codable, CaseIterable, Identifiable {
-    case gmail, outlook, icloud
+    case gmail, outlook, icloud, yahoo, aol, imap
     var id: String { rawValue }
     var displayName: String {
-        switch self { case .gmail: "Gmail"; case .outlook: "Outlook"; case .icloud: "iCloud Mail" }
+        switch self {
+        case .gmail: "Gmail"; case .outlook: "Outlook"; case .icloud: "iCloud Mail"
+        case .yahoo: "Yahoo Mail"; case .aol: "AOL Mail"; case .imap: "Email (IMAP)"
+        }
     }
+    var usesIMAP: Bool { ![.gmail, .outlook].contains(self) }
 }
 
 @Model final class MailAccount {

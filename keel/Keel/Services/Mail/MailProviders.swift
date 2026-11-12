@@ -82,6 +82,9 @@ enum MailProviderFactory {
         case .gmail: GmailProvider(account: account.id)
         case .outlook: OutlookProvider(account: account.id)
         case .icloud: ICloudMailProvider(accountId: account.id, address: account.address)
+        case .yahoo, .aol, .imap:
+            ICloudMailProvider(accountId: account.id, address: account.address,
+                               server: IMAPServer.load(accountId: account.id) ?? (account.provider == .yahoo ? .yahoo : account.provider == .aol ? .aol : .icloud))
         }
     }
 }

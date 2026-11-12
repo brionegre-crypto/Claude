@@ -146,7 +146,7 @@ struct MailAccountsSettings: View {
     @Environment(\.modelContext) private var ctx
     @Query(sort: \MailAccount.address) private var accounts: [MailAccount]
     @State private var error: String?
-    @State private var showICloud = false
+    @State private var imapKind: MailProviderKind?
     @State private var working = false
 
     var body: some View {
@@ -169,13 +169,16 @@ struct MailAccountsSettings: View {
             Section("Add Account") {
                 Button { Task { await connect(.gmail) } } label: { Label("Gmail", systemImage: "envelope") }
                 Button { Task { await connect(.outlook) } } label: { Label("Outlook / Microsoft 365", systemImage: "envelope") }
-                Button { showICloud = true } label: { Label("iCloud Mail", systemImage: "icloud") }
+                Button { imapKind = .icloud } label: { Label("iCloud Mail", systemImage: "icloud") }
+                Button { imapKind = .yahoo } label: { Label("Yahoo Mail", systemImage: "envelope") }
+                Button { imapKind = .aol } label: { Label("AOL Mail", systemImage: "envelope") }
+                Button { imapKind = .imap } label: { Label("Other (IMAP)", systemImage: "server.rack") }
             }
             if working { Section { ProgressView("Signing in…") } }
             if let error { Section { Text(error).foregroundStyle(.red) } }
         }
         .navigationTitle("Mail Accounts")
-        .sheet(isPresented: $showICloud) { ICloudSetupView() }
+        .sheet(item: $imapKind) { ICloudSetupView(kind: $0) }
     }
 
     private func connect(_ kind: MailProviderKind) async {
@@ -767,34 +770,76 @@ struct DataSettings: View {
     }
 }
 
+/// Sign in to any IMAP account: iCloud, Yahoo, AOL, Fastmail, Zoho or your own server.
 struct ICloudSetupView: View {
+    var kind: MailProviderKind = .icloud
     @Environment(\.modelContext) private var ctx
     @Environment(\.dismiss) private var dismiss
     @State private var email = ""
     @State private var password = ""
     @State private var checking = false
     @State private var error: String?
+    @State private var server = IMAPServer.icloud
+    @State private var showAdvanced = false
+    @State private var username = ""
+
+    private var title: String {
+        switch kind { case .yahoo: "Yahoo Mail"; case .aol: "AOL Mail"; case .imap: "Other Email"; default: "iCloud Mail" }
+    }
+    private var placeholder: String {
+        switch kind { case .yahoo: "you@yahoo.com"; case .aol: "you@aol.com"; case .imap: "you@example.com"; default: "you@icloud.com" }
+    }
+    private var help: String {
+        switch kind {
+        case .yahoo: "Yahoo needs an app password, not your normal one: sign in at login.yahoo.com → Account Security → Generate app password, choose “Other app”, and paste it here."
+        case .aol: "AOL needs an app password, not your normal one: sign in at login.aol.com → Account Security → Generate app password, and paste it here."
+        case .imap: "Most providers need an app password for email apps; check your provider's security settings. Keel fills in the usual server names; change them under Server settings if yours are different."
+        default: "Apple doesn't offer a mail API, so Keel connects to iCloud the standard way (IMAP and SMTP) using an app-specific password, not your Apple Account password. Create one at account.apple.com → Sign-In and Security → App-Specific Passwords."
+        }
+    }
 
     var body: some View {
         NavigationStack {
             Form {
                 Section {
-                    TextField("you@icloud.com", text: $email)
+                    TextField(placeholder, text: $email)
                         .textContentType(.emailAddress).keyboardType(.emailAddress)
                         .textInputAutocapitalization(.never).autocorrectionDisabled()
-                    SecureField("App-specific password (xxxx-xxxx-xxxx-xxxx)", text: $password)
+                        .onChange(of: email) { _, new in if kind == .imap, let g = IMAPServer.guess(for: new) { server = g } }
+                    SecureField(kind == .imap ? "Password or app password" : "App password", text: $password)
                 } footer: {
-                    Text("Apple doesn't offer a mail API, so Keel connects to iCloud the standard way (IMAP and SMTP) using an app-specific password, not your Apple Account password. Create one at account.apple.com → Sign-In and Security → App-Specific Passwords. It's stored only in this iPhone's Keychain.")
+                    Text(help + " It's stored only in this iPhone's Keychain.")
                 }
-                if checking { Section { ProgressView("Checking with iCloud…") } }
+                if kind == .imap {
+                    Section {
+                        DisclosureGroup("Server settings", isExpanded: $showAdvanced) {
+                            TextField("Incoming (IMAP) server", text: $server.imapHost).textInputAutocapitalization(.never).autocorrectionDisabled()
+                            Stepper("IMAP port \(server.imapPort)", value: $server.imapPort, in: 1...65535)
+                            TextField("Outgoing (SMTP) server", text: $server.smtpHost).textInputAutocapitalization(.never).autocorrectionDisabled()
+                            Picker("SMTP security", selection: $server.smtpPort) {
+                                Text("SSL/TLS (465)").tag(465); Text("STARTTLS (587)").tag(587)
+                            }
+                            TextField("Username (if not your email)", text: $username).textInputAutocapitalization(.never).autocorrectionDisabled()
+                        }
+                    }
+                }
+                if checking { Section { ProgressView("Checking your sign-in…") } }
                 if let error { Section { Text(error).foregroundStyle(.red) } }
             }
-            .navigationTitle("iCloud Mail")
+            .navigationTitle(title)
+            .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() } }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Connect") { Task { await connect() } }
                         .disabled(email.isEmpty || password.isEmpty || checking)
+                }
+            }
+            .onAppear {
+                switch kind {
+                case .yahoo: server = .yahoo
+                case .aol: server = .aol
+                default: server = .icloud
                 }
             }
         }
@@ -805,16 +850,21 @@ struct ICloudSetupView: View {
         defer { checking = false }
         let address = email.trimmingCharacters(in: .whitespaces).lowercased()
         let pass = password.trimmingCharacters(in: .whitespaces)
+        var target = server
+        let u = username.trimmingCharacters(in: .whitespaces)
+        target.username = u.isEmpty ? nil : u
         do {
-            try await ICloudMailProvider.verify(address: address, password: pass)
-            let a = MailAccount(provider: .icloud, address: address, displayName: address, colorHex: "#3E8EF7")
+            let verified = try await ICloudMailProvider.verify(address: address, password: pass, server: target)
+            let colors: [MailProviderKind: String] = [.icloud: "#3E8EF7", .yahoo: "#6001D2", .aol: "#2E6BF0", .imap: "#5B8DEF"]
+            let a = MailAccount(provider: kind, address: address, displayName: address, colorHex: colors[kind] ?? "#5B8DEF")
             KeychainStore.save(pass, for: "imap.\(a.id)")
+            if kind != .icloud { verified.save(accountId: a.id) }
             ctx.insert(a)
             Haptics.success()
             dismiss()
             await SyncEngine.shared.syncAll()
         } catch {
-            self.error = error.localizedDescription
+            self.error = "Couldn't sign in. Check the email, the app password\(kind == .imap ? " and the server settings" : ""). (\(error.localizedDescription))"
         }
     }
 }
