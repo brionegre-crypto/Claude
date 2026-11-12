@@ -74,7 +74,7 @@ struct TodayView: View {
                 }
                 ToolbarItem(placement: .topBarTrailing) {
                     NavigationLink { HubView() } label: { Image(systemName: "square.grid.2x2") }
-                        .accessibilityLabel("Everything")
+                        .accessibilityLabel("Compass: every Keel tool")
                 }
                 ToolbarItem(placement: .topBarTrailing) {
                     Button { showSettings = true } label: { Image(systemName: "person.crop.circle") }.accessibilityLabel("Settings")
