@@ -32,7 +32,7 @@ struct TemplatesView: View {
             }
         }
         .navigationTitle("Templates")
-        .toolbar { Button { showNew = true } label: { Image(systemName: "plus") } }
+        .toolbar { Button { showNew = true } label: { Image(systemName: "plus") }.accessibilityLabel("Add") }
         .sheet(isPresented: $showNew) { TemplateEditor(template: nil) }
         .sheet(item: $editing) { TemplateEditor(template: $0) }
         .onAppear { if templates.isEmpty { seed() } }

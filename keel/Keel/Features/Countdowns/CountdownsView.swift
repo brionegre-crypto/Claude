@@ -13,6 +13,11 @@ struct CountdownsView: View {
     var body: some View {
         List {
             if let message { Text(message).font(DS.Font.caption).foregroundStyle(DS.Palette.calm).listRowBackground(Color.clear) }
+            if !countdowns.contains(where: { $0.daysLeft >= 0 }) {
+                ContentUnavailableView("No countdowns yet", systemImage: "hourglass",
+                                       description: Text("Add a trip, launch or deadline with ＋, or import birthdays below."))
+                    .listRowBackground(Color.clear)
+            }
             ForEach(countdowns.filter { $0.daysLeft >= 0 }) { c in
                 HStack(spacing: DS.Space.m) {
                     Text(c.emoji).font(.largeTitle)
@@ -34,7 +39,7 @@ struct CountdownsView: View {
             } footer: { Text("Birthdays roll over to next year automatically.") }
         }
         .navigationTitle("Countdowns")
-        .toolbar { Button { showNew = true } label: { Image(systemName: "plus") } }
+        .toolbar { Button { showNew = true } label: { Image(systemName: "plus") }.accessibilityLabel("Add") }
         .sheet(isPresented: $showNew) { NewCountdownSheet() }
         .onAppear { Countdowns.rollBirthdays(ctx) }
     }

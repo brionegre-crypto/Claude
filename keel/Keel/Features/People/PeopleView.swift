@@ -99,7 +99,7 @@ struct PeopleView: View {
             }
         }
         .navigationTitle("Keep in Touch")
-        .toolbar { Button { showPicker = true } label: { Image(systemName: "person.badge.plus") } }
+        .toolbar { Button { showPicker = true } label: { Image(systemName: "person.badge.plus") }.accessibilityLabel("Add person") }
         .sheet(isPresented: $showPicker) {
             ContactPicker { contact in
                 let p = Person(name: CNContactFormatter.string(from: contact, style: .fullName) ?? contact.givenName)

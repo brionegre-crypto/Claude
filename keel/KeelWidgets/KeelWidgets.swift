@@ -14,6 +14,7 @@ struct KeelWidgetBundle: WidgetBundle {
         MedsWidget()
         MomentumWidget()
         FocusLiveActivity()
+        MeetingLiveActivity()
         CaptureControl()
         FocusControl()
     }
@@ -134,7 +135,7 @@ struct NextEventWidget: Widget {
         StaticConfiguration(kind: "KeelNextEvent", provider: KeelProvider()) { entry in
             NextEventView(entry: entry)
                 .containerBackground(for: .widget) { Color.clear }
-                .widgetURL(URL(string: "com.keel.app://calendar"))
+                .widgetURL(NextEventView.joinLink(entry) ?? URL(string: "com.keel.app://calendar"))
         }
         .configurationDisplayName("Next Event")
         .description("A countdown to what's next, so time doesn't sneak up on you.")
@@ -145,6 +146,13 @@ struct NextEventWidget: Widget {
 struct NextEventView: View {
     let entry: KeelEntry
     @Environment(\.widgetFamily) private var family
+
+    /// Within 15 minutes of a video meeting, tapping the widget joins the call.
+    static func joinLink(_ entry: KeelEntry) -> URL? {
+        guard let e = entry.upcoming.first, let link = e.joinURL, e.start.timeIntervalSince(entry.date) < 900,
+              let q = link.addingPercentEncoding(withAllowedCharacters: .alphanumerics) else { return nil }
+        return URL(string: "com.keel.app://join?url=\(q)")
+    }
 
     var body: some View {
         if let e = entry.upcoming.first {
@@ -163,7 +171,11 @@ struct NextEventView: View {
                     Text(e.title).font(.system(.headline, design: .rounded)).lineLimit(3)
                     Spacer(minLength: 0)
                     Text(e.start, style: .relative).font(.title3.weight(.semibold).monospacedDigit()).foregroundStyle(Color(hex: e.colorHex))
-                    Text(e.start, style: .time).font(.caption).foregroundStyle(.secondary)
+                    if Self.joinLink(entry) != nil {
+                        Label("Tap to join", systemImage: "video.fill").font(.caption.weight(.semibold)).foregroundStyle(Color(hex: e.colorHex))
+                    } else {
+                        Text(e.start, style: .time).font(.caption).foregroundStyle(.secondary)
+                    }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
@@ -214,6 +226,89 @@ struct FocusLiveActivity: Widget {
                 Image(systemName: "moon.zzz.fill").foregroundStyle(focusColor)
             }
             .widgetURL(URL(string: "com.keel.app://focus"))
+        }
+    }
+}
+
+// MARK: - Meeting Live Activity: time left, Join, recording dot
+
+private let meetingColor = Color(red: 0.95, green: 0.55, blue: 0.25)
+
+struct MeetingLiveActivity: Widget {
+    var body: some WidgetConfiguration {
+        ActivityConfiguration(for: MeetingActivityAttributes.self) { context in
+            let s = context.state
+            VStack(alignment: .leading, spacing: 10) {
+                HStack(spacing: 10) {
+                    Image(systemName: s.recording ? "record.circle" : "person.2.fill")
+                        .font(.title3).foregroundStyle(s.recording ? .red : meetingColor)
+                        .symbolEffect(.pulse, isActive: s.recording)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(context.attributes.title).font(.headline).lineLimit(1)
+                        Text(s.recording ? "Recording notes" : (Date() < s.start ? "Starts \(s.start.formatted(date: .omitted, time: .shortened))" : "In progress"))
+                            .font(.caption).foregroundStyle(.secondary)
+                    }
+                    Spacer()
+                    VStack(alignment: .trailing, spacing: 0) {
+                        Text(timerInterval: Date()...max(Date(), s.end), countsDown: true)
+                            .font(.system(.title2, design: .rounded).weight(.semibold).monospacedDigit())
+                            .multilineTextAlignment(.trailing).frame(maxWidth: 96)
+                        Text("left").font(.caption2).foregroundStyle(.secondary)
+                    }
+                }
+                ProgressView(timerInterval: s.start...max(s.start.addingTimeInterval(60), s.end), countsDown: false) { EmptyView() } currentValueLabel: { EmptyView() }
+                    .tint(meetingColor)
+                HStack(spacing: 8) {
+                    if let join = context.attributes.joinDeepLink {
+                        Link(destination: join) {
+                            Label("Join \(context.attributes.service ?? "call")", systemImage: "video.fill")
+                                .font(.caption.weight(.semibold)).frame(maxWidth: .infinity).padding(.vertical, 7)
+                                .background(meetingColor, in: Capsule()).foregroundStyle(.white)
+                        }
+                    }
+                    if !s.recording, let rec = URL(string: "com.keel.app://record") {
+                        Link(destination: rec) {
+                            Label("Record notes", systemImage: "mic.fill")
+                                .font(.caption.weight(.semibold)).frame(maxWidth: .infinity).padding(.vertical, 7)
+                                .background(.white.opacity(0.15), in: Capsule())
+                        }
+                    }
+                }
+            }
+            .padding()
+            .activityBackgroundTint(Color.black.opacity(0.6))
+            .widgetURL(URL(string: "com.keel.app://calendar"))
+        } dynamicIsland: { context in
+            let s = context.state
+            return DynamicIsland {
+                DynamicIslandExpandedRegion(.leading) {
+                    Label(context.attributes.title, systemImage: s.recording ? "record.circle" : "person.2.fill")
+                        .font(.caption).lineLimit(1).foregroundStyle(s.recording ? .red : meetingColor)
+                }
+                DynamicIslandExpandedRegion(.trailing) {
+                    Text(timerInterval: Date()...max(Date(), s.end), countsDown: true)
+                        .monospacedDigit().frame(maxWidth: 70)
+                }
+                DynamicIslandExpandedRegion(.bottom) {
+                    HStack {
+                        if let join = context.attributes.joinDeepLink {
+                            Link(destination: join) { Label("Join", systemImage: "video.fill").font(.caption.weight(.semibold)) }
+                        }
+                        Spacer()
+                        if !s.recording, let rec = URL(string: "com.keel.app://record") {
+                            Link(destination: rec) { Label("Record notes", systemImage: "mic.fill").font(.caption.weight(.semibold)) }
+                        }
+                    }
+                }
+            } compactLeading: {
+                Image(systemName: s.recording ? "record.circle" : "person.2.fill").foregroundStyle(s.recording ? .red : meetingColor)
+            } compactTrailing: {
+                Text(timerInterval: Date()...max(Date(), s.end), countsDown: true)
+                    .monospacedDigit().frame(maxWidth: 44)
+            } minimal: {
+                Image(systemName: "person.2.fill").foregroundStyle(meetingColor)
+            }
+            .widgetURL(URL(string: "com.keel.app://calendar"))
         }
     }
 }

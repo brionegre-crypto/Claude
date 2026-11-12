@@ -21,6 +21,7 @@ struct WatchPayload: Codable {
         var title: String
         var start: Date
         var end: Date
+        var video: String? = nil        // "Zoom", "Teams"… when the event has a call link
     }
     struct MailRow: Codable, Identifiable, Hashable {
         var id: String            // EmailMessage.id

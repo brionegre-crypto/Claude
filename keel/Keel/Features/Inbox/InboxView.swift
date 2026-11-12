@@ -62,9 +62,11 @@ struct InboxView: View {
     private var visible: [EmailMessage] {
         let base = mailboxEmails
         if !search.isEmpty {
-            let q = search.lowercased()
-            return base.filter { [$0.subject, $0.fromName, $0.from, $0.snippet, $0.bodyPlain, $0.toLine]
-                .contains { $0.lowercased().contains(q) } }
+            // Operators like from:sam has:attachment before:friday; plain words work as before.
+            let q = mailQuery
+            let scores = scoreMap
+            let pool = q.inArchive == nil ? base : allEmails.filter(inAccount)
+            return pool.filter { q.matches($0, isVIP: scores[$0.from.lowercased()]?.isVIP == true) }
         }
         guard mailbox == .inbox else { return base }
         let scores = scoreMap
@@ -79,9 +81,30 @@ struct InboxView: View {
             }
     }
 
+    private var mailQuery: MailQuery { MailQueryParser.parse(search) }
+
     private var tab: InboxTab { InboxTab(rawValue: tabRaw) ?? .priority }
     private var scoreMap: [String: SenderScore] {
-        Dictionary(senderScores.map { ($0.sender, $0) }, uniquingKeysWith: { a, _ in a })
+        if let m = memo.scores { return m }
+        let m = Dictionary(senderScores.map { ($0.sender, $0) }, uniquingKeysWith: { a, _ in a })
+        memo.scores = m
+        return m
+    }
+
+    /// Lookups shared by every row in one pass, so a big inbox doesn't rescan all mail for each row.
+    /// Cleared at the start of each body update, so it always reflects the latest mail.
+    private final class Memo {
+        var scores: [String: SenderScore]?
+        var threads: [String: [EmailMessage]]?
+        func reset() { scores = nil; threads = nil }
+    }
+    private let memo = Memo()
+
+    private var threadIndex: [String: [EmailMessage]] {
+        if let t = memo.threads { return t }
+        let t = Dictionary(grouping: mailboxEmails.filter { !$0.threadId.isEmpty }, by: \.threadId)
+        memo.threads = t
+        return t
     }
     private var tabCounts: [InboxTab: Int] {
         let scores = scoreMap
@@ -104,6 +127,7 @@ struct InboxView: View {
     }
 
     var body: some View {
+        let _ = memo.reset()
         NavigationStack {
             Group {
                 if mailbox == .awaiting {
@@ -118,7 +142,18 @@ struct InboxView: View {
                 }
             }
             .navigationTitle(mailbox.rawValue)
-            .searchable(text: $search, prompt: "Search mail")
+            .searchable(text: $search, prompt: "Search mail, or try from: has:attachment")
+            .searchSuggestions {
+                if search.isEmpty {
+                    ForEach(MailQueryParser.help, id: \.0) { h in
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(h.0).font(.system(.callout, design: .monospaced)).foregroundStyle(DS.Palette.ink)
+                            Text(h.1).font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
+                        }
+                        .searchCompletion(h.0.contains(":") ? String(h.0.prefix { $0 != ":" }) + ":" : h.0)
+                    }
+                }
+            }
             .onSubmit(of: .search) { Task { await searchServer() } }
             .onChange(of: search) { if search.isEmpty { serverResults = [] } }
             .toolbar {
@@ -224,6 +259,20 @@ struct InboxView: View {
             }
 
             if mailbox == .sent && loadingSent { ProgressView().frame(maxWidth: .infinity).listRowBackground(Color.clear) }
+
+            if !search.isEmpty && mailQuery.hasOperators {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack {
+                        Image(systemName: "line.3.horizontal.decrease.circle").foregroundStyle(DS.Palette.accent)
+                        ForEach(mailQuery.chips, id: \.self) { Chip(text: $0, color: DS.Palette.accent) }
+                    }
+                }
+                .listRowBackground(Color.clear)
+                .listRowSeparator(.hidden)
+                .selectionDisabled()
+                .accessibilityElement(children: .combine)
+                .accessibilityLabel("Filters: " + mailQuery.chips.joined(separator: ", "))
+            }
 
             if visible.isEmpty && pinned.isEmpty && !loadingSent && serverResults.isEmpty {
                 ContentUnavailableView(search.isEmpty ? "All clear" : "No matches on this phone",
@@ -334,9 +383,7 @@ struct InboxView: View {
 
     // MARK: Conversations
 
-    private var threadCounts: [String: Int] {
-        Dictionary(grouping: mailboxEmails.filter { !$0.threadId.isEmpty }, by: \.threadId).mapValues(\.count)
-    }
+    private func threadCount(_ e: EmailMessage) -> Int { threadIndex[e.threadId]?.count ?? 1 }
 
     /// One row per conversation (its newest message) when threading is on.
     private func collapse(_ list: [EmailMessage]) -> [EmailMessage] {
@@ -347,7 +394,7 @@ struct InboxView: View {
 
     private func conversation(_ e: EmailMessage) -> [EmailMessage] {
         guard threaded, !e.threadId.isEmpty else { return [e] }
-        return mailboxEmails.filter { $0.threadId == e.threadId && $0.accountId == e.accountId }
+        return (threadIndex[e.threadId] ?? [e]).filter { $0.accountId == e.accountId }
     }
 
     // MARK: Swipes (customizable in Settings → Mail)
@@ -368,7 +415,7 @@ struct InboxView: View {
 
     @ViewBuilder
     private func row(_ e: EmailMessage) -> some View {
-        let count = threaded && mailbox != .sent ? (threadCounts[e.threadId] ?? 1) : 1
+        let count = threaded && mailbox != .sent ? threadCount(e) : 1
         NavigationLink {
             if count > 1 { ThreadView(messages: conversation(e)) } else { EmailDetailView(email: e) }
         } label: { EmailRow(email: e, count: count, unreadInThread: count > 1 && conversation(e).contains { !$0.isRead }, score: scoreMap[e.from.lowercased()]) }
@@ -528,8 +575,14 @@ struct InboxView: View {
         var found: [EmailMessage] = []
         let localIds = Set(allEmails.map(\.id))
         for a in accounts where accountFilter == nil || a.id == accountFilter {
-            let results = (try? await MailProviderFactory.make(for: a).search(search)) ?? []
-            found += results.map { EmailMessage(accountId: a.id, fetched: $0) }.filter { !localIds.contains($0.id) }
+            // Gmail understands the operators itself; other providers get the plain words.
+            let text = a.provider == .gmail ? search : mailQuery.serverText
+            guard !text.isEmpty else { continue }
+            var q = mailQuery
+            q.inArchive = nil              // the server already searched every folder
+            let results = (try? await MailProviderFactory.make(for: a).search(text)) ?? []
+            found += results.map { EmailMessage(accountId: a.id, fetched: $0) }
+                .filter { !localIds.contains($0.id) && (a.provider == .gmail || q.matches($0)) }
         }
         serverResults = found.sorted { $0.receivedAt > $1.receivedAt }
     }
@@ -683,7 +736,7 @@ struct EmailDetailView: View {
                     Button(readingMode ? "Exit reading mode" : "Reading mode", systemImage: "text.book.closed") { withAnimation { readingMode.toggle() } }
                     Button("Translate", systemImage: "translate") { showTranslate = true }
                     Button("Move to trash", systemImage: "trash", role: .destructive) { trash() }
-                } label: { Image(systemName: "ellipsis.circle") }
+                } label: { Image(systemName: "ellipsis.circle") }.accessibilityLabel("More")
             }
             ToolbarItemGroup(placement: .bottomBar) {
                 Button { compose = .reply(to: email, all: false, accounts: accounts) } label: { Label("Reply", systemImage: "arrowshape.turn.up.left") }

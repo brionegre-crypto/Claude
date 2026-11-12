@@ -132,7 +132,7 @@ enum TaskAlerts {
         let med = UNNotificationCategory(identifier: MedEngine.category,
                                          actions: [UNNotificationAction(identifier: MedEngine.takenAction, title: "Taken ✓", options: [])],
                                          intentIdentifiers: [])
-        UNUserNotificationCenter.current().setNotificationCategories([task, habit, promise, med])
+        UNUserNotificationCenter.current().setNotificationCategories([task, habit, promise, med, MeetingAutopilot.categoryDefinition])
     }
 
     static func schedule(_ t: TaskItem) {
@@ -194,6 +194,15 @@ final class NotificationHandler: NSObject, UNUserNotificationCenterDelegate {
         let info = response.notification.request.content.userInfo
         if let link = info["deeplink"] as? String, let url = URL(string: link) {
             await MainActor.run { _ = AppRouter.shared.handle(url) }
+            return
+        }
+        if info["meetingEventId"] != nil {
+            let joinURL = info["joinURL"] as? String, eventId = info["meetingEventId"] as? String
+            await MainActor.run {
+                var copy: [AnyHashable: Any] = ["meetingEventId": eventId ?? ""]
+                if let joinURL { copy["joinURL"] = joinURL }
+                MeetingAutopilot.handle(action: action, info: copy)
+            }
             return
         }
         if let medString = info["medId"] as? String, let medId = UUID(uuidString: medString), let slot = info["slot"] as? Int {

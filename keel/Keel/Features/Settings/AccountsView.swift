@@ -227,6 +227,11 @@ struct MailAccountDetail: View {
                     .lineLimit(2...6)
             } header: { Text("Signature") } footer: { Text("Added to emails you send from \(account.address). Leave empty to use the signature in Settings → Mail.") }
             Section {
+                NavigationLink { AliasesView(account: account) } label: {
+                    LabeledContent("Send As", value: MailAliases.list(account.id).isEmpty ? "None" : "\(MailAliases.list(account.id).count)")
+                }
+            } footer: { Text("Other addresses you can send from with this account. Replies go out from the address the email was sent to.") }
+            Section {
                 Button(syncing ? "Syncing…" : "Sync Now") {
                     Task { syncing = true; await SyncEngine.shared.syncAll(); syncing = false }
                 }
@@ -274,6 +279,9 @@ struct CalendarSettings: View {
     @AppStorage(TransitionAlerts.onKey) private var transitions = true
     @AppStorage(TransitionAlerts.minutesKey) private var transitionMinutes = 5
     @AppStorage("leaveBy.transport") private var transport = "driving"
+    @AppStorage("meeting.autopilot.on") private var autopilot = true
+    @AppStorage("meeting.autopilot.lead") private var autopilotLead = 1
+    @AppStorage("meeting.autopilot.live") private var autopilotLive = true
     private var hidden: Set<String> { Set(hiddenRaw.split(separator: ",").map(String.init)) }
 
     var body: some View {
@@ -297,6 +305,21 @@ struct CalendarSettings: View {
                     }
                 }
             } footer: { Text("For events with an address, Keel checks Apple Maps travel time from where you are and alerts you when it's time to leave, with a 10-minute buffer. Needs location access. Transition warnings give you a heads-up before every event so switching gears isn't a jolt. Meeting prep alerts arrive 10 minutes before meetings that have related emails, notes, tasks or promises.") }
+            Section {
+                Toggle("Meeting Autopilot", isOn: $autopilot)
+                if autopilot {
+                    Picker("Nudge Me", selection: $autopilotLead) {
+                        Text("When it starts").tag(0); Text("1 minute before").tag(1)
+                        Text("2 minutes before").tag(2); Text("5 minutes before").tag(5)
+                    }
+                    Toggle("Lock Screen Timer", isOn: $autopilotLive)
+                }
+            } header: { Text("Meetings") } footer: {
+                Text("For meetings with other people or a video link, Keel nudges you with Join and Record notes buttons. The Lock Screen timer shows how long is left, with one-tap Join. Works with Zoom, Google Meet, Teams, Webex, FaceTime and more.")
+            }
+            .onChange(of: autopilot) { Task { await MeetingAutopilot.refresh() }; if !autopilot { MeetingAutopilot.endAll() } }
+            .onChange(of: autopilotLead) { Task { await MeetingAutopilot.refresh() } }
+            .onChange(of: autopilotLive) { if !autopilotLive { MeetingAutopilot.endAll() } }
             ForEach(CalendarService.shared.calendarsBySource, id: \.source) { group in
                 Section(group.source) {
                     ForEach(group.calendars, id: \.calendarIdentifier) { c in
@@ -414,6 +437,7 @@ struct MailSettings: View {
     @AppStorage(Prefs.loadImages) private var loadImages = false
     @AppStorage(Prefs.signature) private var signature = ""
     @AppStorage(Prefs.followUpDefault) private var followUp = 0
+    @AppStorage("profile.name") private var myName = ""
 
     var body: some View {
         List {
@@ -445,7 +469,12 @@ struct MailSettings: View {
                 NavigationLink("Batched Delivery") { BatchSettingsView() }
             } header: { Text("Inbox") } footer: { Text("Keel learns from you: senders you open and reply to rise to Priority, senders you archive unread sink to Updates.") }
             Section { NavigationLink("Rules") { MailRulesView() } } footer: { Text("Auto-archive, star, file or turn mail into tasks as it arrives.") }
-            Section { NavigationLink("Snippets") { SnippetsView() } } footer: { Text("Saved replies you can insert while writing an email.") }
+            Section {
+                NavigationLink("Templates") { SnippetsView() }
+                TextField("Your name", text: $myName).textContentType(.name)
+            } header: { Text("Templates") } footer: {
+                Text("Saved replies you insert while writing. Fill-ins like {name}, {company} and {date} are filled for you; {me} uses your name.")
+            }
             Section("Signature") {
                 TextField("Sent from Keel", text: $signature, axis: .vertical).lineLimit(2...5)
             }
@@ -1099,5 +1128,46 @@ struct BatchSettingsView: View {
             }
         }
         .navigationTitle("Batched Delivery")
+    }
+}
+
+// MARK: - Send-as aliases
+
+struct AliasesView: View {
+    let account: MailAccount
+    @State private var list: [String] = []
+    @State private var new = ""
+
+    var body: some View {
+        List {
+            Section {
+                ForEach(list, id: \.self) { Text($0) }
+                    .onDelete { list.remove(atOffsets: $0); MailAliases.save(list, for: account.id) }
+                HStack {
+                    TextField("alias@example.com", text: $new)
+                        .keyboardType(.emailAddress).textInputAutocapitalization(.never).autocorrectionDisabled()
+                        .onSubmit(add)
+                    Button("Add", action: add).disabled(!new.contains("@"))
+                }
+            } header: { Text("Addresses") } footer: { Text(help) }
+        }
+        .navigationTitle("Send As")
+        .onAppear { list = MailAliases.list(account.id) }
+    }
+
+    private var help: String {
+        switch account.provider {
+        case .gmail: "Add addresses you've already set up in Gmail's settings under “Send mail as”. Gmail uses your main address for any it doesn't recognize."
+        case .outlook: "Your mail admin must give this account “send as” permission for the address, or the email won't send."
+        default: "Use aliases your email provider lets this account send from, such as iCloud+ custom domain addresses."
+        }
+    }
+
+    private func add() {
+        let a = new.trimmingCharacters(in: .whitespaces).lowercased()
+        guard a.contains("@"), a != account.address.lowercased(), !list.contains(a) else { return }
+        list.append(a); new = ""
+        MailAliases.save(list, for: account.id)
+        Haptics.tap()
     }
 }

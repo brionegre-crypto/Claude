@@ -17,6 +17,8 @@ enum SendLater {
         if !mail.attachments.isEmpty {
             s.attachmentsJSON = try? JSONEncoder().encode(mail.attachments.map { StoredAttachment(filename: $0.filename, mimeType: $0.mimeType, data: $0.data) })
         }
+        // Remember the alias without changing the stored model (kept beside it in settings).
+        if let a = mail.fromAlias { UserDefaults.standard.set(a, forKey: "sendlater.alias.\(s.id)") }
         ctx.insert(s)
         try? ctx.save()
         SyncEngine.scheduleRefresh(at: date)
@@ -25,10 +27,12 @@ enum SendLater {
 
     static func outgoing(_ s: ScheduledMail) -> OutgoingMail {
         let files = s.attachmentsJSON.flatMap { try? JSONDecoder().decode([StoredAttachment].self, from: $0) } ?? []
-        return OutgoingMail(
+        var m = OutgoingMail(
             to: s.to, cc: s.cc, bcc: s.bcc, subject: s.subject, body: s.body,
             replyTo: s.replyProviderId.map { ReplyContext(providerMessageId: $0, threadId: s.replyThreadId ?? "", messageIdHeader: s.replyMessageIdHeader, replyAll: s.replyAll) },
             attachments: files.map { OutgoingAttachment(filename: $0.filename, mimeType: $0.mimeType, data: $0.data) })
+        m.fromAlias = UserDefaults.standard.string(forKey: "sendlater.alias.\(s.id)")
+        return m
     }
 
     /// Sends everything that's due. Called at the start of every sync.
@@ -41,6 +45,7 @@ enum SendLater {
             guard let account = accounts.first(where: { $0.id == s.accountId }) else { s.lastError = "Account removed"; continue }
             do {
                 try await MailProviderFactory.make(for: account).send(outgoing(s))
+                UserDefaults.standard.removeObject(forKey: "sendlater.alias.\(s.id)")
                 ctx.delete(s)
             } catch {
                 s.lastError = error.localizedDescription

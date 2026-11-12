@@ -123,12 +123,12 @@ struct TimeAuditView: View {
                 TimerCard()
 
                 HStack {
-                    Button { weekOffset -= 1 } label: { Image(systemName: "chevron.left") }
+                    Button { weekOffset -= 1 } label: { Image(systemName: "chevron.left") }.accessibilityLabel("Previous week")
                     Spacer()
                     Text(weekOffset == 0 ? "This week" : weekOffset == -1 ? "Last week" : weekStart.formatted(.dateTime.month().day()))
                         .font(DS.Font.headline)
                     Spacer()
-                    Button { weekOffset += 1 } label: { Image(systemName: "chevron.right") }.disabled(weekOffset >= 0)
+                    Button { weekOffset += 1 } label: { Image(systemName: "chevron.right") }.accessibilityLabel("Next week").disabled(weekOffset >= 0)
                 }
 
                 GlassCard {
@@ -245,7 +245,7 @@ struct IdealWeekView: View {
             }
         }
         .navigationTitle("Ideal Week")
-        .toolbar { Button { showNew = true } label: { Image(systemName: "plus") } }
+        .toolbar { Button { showNew = true } label: { Image(systemName: "plus") }.accessibilityLabel("Add") }
         .sheet(isPresented: $showNew) { IdealBlockEditor(block: nil) }
         .sheet(item: $editing) { IdealBlockEditor(block: $0) }
     }

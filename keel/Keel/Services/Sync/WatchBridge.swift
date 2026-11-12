@@ -35,7 +35,8 @@ final class WatchBridge: NSObject, WCSessionDelegate {
         }
 
         let events = CalendarService.shared.events(from: Date(), to: endOfDay).filter { !$0.isAllDay }.prefix(5)
-            .map { WatchPayload.EventRow(title: $0.title ?? "Event", start: $0.startDate, end: $0.endDate) }
+            .map { WatchPayload.EventRow(title: $0.title ?? "Event", start: $0.startDate, end: $0.endDate,
+                                         video: MeetingLink.find($0).flatMap(MeetingLink.service)) }
 
         var payload = WatchPayload(
             nextThing: next?.title, nextThingStep: next?.microSteps.first { !$0.done }?.text,

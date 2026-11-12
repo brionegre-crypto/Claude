@@ -245,6 +245,8 @@ enum MeetingAI {
 
 struct MeetingRecorderView: View {
     var target: Note? = nil
+    /// Opened from the meeting nudge or Today's Record button: start listening right away.
+    var autoStart = false
     @Environment(\.modelContext) private var ctx
     @Environment(\.dismiss) private var dismiss
     @Query private var accounts: [MailAccount]
@@ -329,12 +331,17 @@ struct MeetingRecorderView: View {
                 event = CalendarService.shared.events(from: now.addingTimeInterval(-3_600), to: now.addingTimeInterval(3_600))
                     .first { !$0.isAllDay && $0.startDate <= now.addingTimeInterval(900) && $0.endDate >= now }
             }
+            if autoStart && !recorder.isRecording && recorder.transcript.isEmpty {
+                if let event { MeetingAutopilot.startActivity(for: event) }
+                await recorder.start()
+            }
             sources = MeetingContext.build(event: event, title: title, ctx: ctx).sources
             // A quick look at the web (company sites, invite links) so you can see what Keel will use.
             let web = await WebContext.gather(event: event, title: title, transcript: "", deep: false)
             sources += web.sources
         }
-        .onDisappear { if recorder.isRecording { recorder.stop() } }
+        .onDisappear { if recorder.isRecording { recorder.stop() }; MeetingAutopilot.setRecording(false) }
+        .onChange(of: recorder.isRecording) { _, on in MeetingAutopilot.setRecording(on) }
     }
 
     private var controls: some View {

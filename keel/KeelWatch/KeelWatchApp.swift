@@ -322,7 +322,18 @@ struct AgendaPage: View {
                     Text(e.title).font(.headline).lineLimit(2)
                     Text("\(e.start.formatted(date: .omitted, time: .shortened)) – \(e.end.formatted(date: .omitted, time: .shortened))")
                         .font(.caption2).foregroundStyle(.secondary)
-                    if e.start > Date() { Text(e.start, style: .relative).font(.caption2).foregroundStyle(accent) }
+                    if let v = e.video { Label(v, systemImage: "video.fill").font(.caption2).foregroundStyle(.orange) }
+                    if e.start > Date() {
+                        Text(e.start, style: .relative).font(.caption2).foregroundStyle(accent)
+                    } else {
+                        // In progress: how long is left (time blindness aid)
+                        HStack(spacing: 4) {
+                            Text("Now ·")
+                            Text(timerInterval: Date()...max(Date(), e.end), countsDown: true).monospacedDigit()
+                            Text("left")
+                        }
+                        .font(.caption2).foregroundStyle(.orange)
+                    }
                 }
             }
         }

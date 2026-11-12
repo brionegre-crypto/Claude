@@ -1,3 +1,4 @@
+import UIKit
 import Foundation
 import SwiftData
 import WidgetKit
@@ -23,7 +24,8 @@ enum WidgetSync {
         let events = CalendarService.shared.events(from: now, to: now.addingTimeInterval(36 * 3600))
             .filter { !$0.isAllDay }
             .prefix(6)
-            .map { WidgetSnapshot.Event(title: $0.title ?? "Event", start: $0.startDate, end: $0.endDate, colorHex: hex($0.calendar.cgColor)) }
+            .map { WidgetSnapshot.Event(title: $0.title ?? "Event", start: $0.startDate, end: $0.endDate, colorHex: hex($0.calendar.cgColor),
+                                        joinURL: MeetingLink.find($0)?.absoluteString) }
 
         WidgetSnapshot(
             nextThing: next?.title,
@@ -100,6 +102,7 @@ final class AppRouter {
     var showSearch = false
     var showPlan = false
     var showAutopilot = false
+    var showRecorder = false
 
     func handle(_ url: URL) -> Bool {
         guard url.scheme == "com.keel.app" else { return false }
@@ -114,6 +117,13 @@ final class AppRouter {
         case "plan": showPlan = true
         case "autopilot": showAutopilot = true
         case "search": showSearch = true
+        case "record": showRecorder = true
+        case "join":
+            // From the meeting Live Activity or widget: open the call itself.
+            let link = URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems?.first { $0.name == "url" }?.value
+            if let link, let target = URL(string: link), target.scheme == "https" || target.scheme == "http" {
+                UIApplication.shared.open(target)
+            }
         default: return false
         }
         return true

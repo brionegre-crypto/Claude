@@ -29,7 +29,7 @@ struct ImageBlockView: View {
                     ZStack(alignment: .topTrailing) {
                         Color.black.ignoresSafeArea()
                         Image(uiImage: img).resizable().scaledToFit()
-                        Button { expanded = false } label: { Image(systemName: "xmark.circle.fill").font(.title).foregroundStyle(.white) }
+                        Button { expanded = false } label: { Image(systemName: "xmark.circle.fill").font(.title).foregroundStyle(.white) }.accessibilityLabel("Close")
                             .padding()
                     }
                 }

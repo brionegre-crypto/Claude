@@ -138,7 +138,8 @@ enum InboxBrain {
     static func notify(_ fresh: [EmailMessage], ctx: ModelContext) async {
         guard notifyMode != "off", !fresh.isEmpty else { return }
         let known = scores(ctx)
-        var sent = Set(UserDefaults.standard.stringArray(forKey: "mail.notified") ?? [])
+        var order = UserDefaults.standard.stringArray(forKey: "mail.notified") ?? []      // oldest first
+        var sent = Set(order)
         let center = UNUserNotificationCenter.current()
         for e in fresh where !e.isRead && !e.isArchived && e.receivedAt > Date().addingTimeInterval(-3 * 3600) && !sent.contains(e.id) {
             let score = known[e.from.lowercased()]
@@ -153,8 +154,10 @@ enum InboxBrain {
             c.userInfo = ["deeplink": "com.keel.app://inbox"]
             try? await center.add(UNNotificationRequest(identifier: "mail.\(e.id)", content: c, trigger: nil))
             sent.insert(e.id)
+            order.append(e.id)
         }
-        UserDefaults.standard.set(Array(sent.suffix(500)), forKey: "mail.notified")
+        // Keep the newest 500, in order, so recent emails are never announced twice.
+        UserDefaults.standard.set(Array(order.suffix(500)), forKey: "mail.notified")
     }
 
     // MARK: Sections

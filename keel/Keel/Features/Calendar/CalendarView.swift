@@ -112,7 +112,7 @@ struct CalendarView: View {
                             }
                         }
                         Button("New task", systemImage: "checklist") { newTaskDate = defaultNewStart() }
-                    } label: { Image(systemName: "plus") }
+                    } label: { Image(systemName: "plus") }.accessibilityLabel("Add")
                 }
             }
             .task { await CalendarService.shared.requestAccess(); load() }
@@ -811,7 +811,7 @@ struct DayAgenda: View {
             ForEach(dayTasks) { t in
                 HStack {
                     TaskRow(task: t)
-                    Button { onTapTask(t) } label: { Image(systemName: "chevron.right").foregroundStyle(DS.Palette.inkSoft) }
+                    Button { onTapTask(t) } label: { Image(systemName: "chevron.right").foregroundStyle(DS.Palette.inkSoft) }.accessibilityLabel("Open task")
                         .buttonStyle(.plain)
                 }
             }

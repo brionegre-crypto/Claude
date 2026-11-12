@@ -77,7 +77,7 @@ struct TodayView: View {
                         .accessibilityLabel("Everything")
                 }
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button { showSettings = true } label: { Image(systemName: "person.crop.circle") }
+                    Button { showSettings = true } label: { Image(systemName: "person.crop.circle") }.accessibilityLabel("Settings")
                 }
             }
             .sheet(isPresented: $showSettings) { AccountsView() }
@@ -213,6 +213,34 @@ struct TodayView: View {
                         if e.attendees?.isEmpty == false {
                             NavigationLink { MeetingPrepView(event: e) } label: {
                                 Label("Prep", systemImage: "doc.text.magnifyingglass").font(DS.Font.caption)
+                            }
+                        }
+                        // Meeting autopilot: one-tap Join and Record when it's about to start.
+                        TimelineView(.everyMinute) { tl in
+                            let soon = e.startDate.timeIntervalSince(tl.date) < 15 * 60 && e.endDate > tl.date
+                            if soon && MeetingAutopilot.isMeeting(e) {
+                                HStack(spacing: DS.Space.s) {
+                                    if let link = MeetingLink.find(e) {
+                                        Button {
+                                            MeetingAutopilot.startActivity(for: e)
+                                            UIApplication.shared.open(link)
+                                            Haptics.tap()
+                                        } label: {
+                                            Label("Join \(MeetingLink.service(link) ?? "")", systemImage: "video.fill")
+                                                .font(DS.Font.caption.weight(.semibold))
+                                                .padding(.horizontal, 10).padding(.vertical, 5)
+                                                .background(DS.Palette.meeting, in: Capsule()).foregroundStyle(.white)
+                                        }
+                                    }
+                                    Button { AppRouter.shared.showRecorder = true } label: {
+                                        Label("Record", systemImage: "mic.fill")
+                                            .font(DS.Font.caption.weight(.semibold))
+                                            .padding(.horizontal, 10).padding(.vertical, 5)
+                                            .background(DS.Palette.meeting.opacity(0.15), in: Capsule()).foregroundStyle(DS.Palette.meeting)
+                                    }
+                                    .accessibilityLabel("Record AI meeting notes")
+                                }
+                                .buttonStyle(.borderless)
                             }
                         }
                         if let leave = LeaveBy.times[e.calendarItemIdentifier] {

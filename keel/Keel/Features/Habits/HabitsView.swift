@@ -28,8 +28,8 @@ struct HabitsView: View {
             }
             .navigationTitle("Habits")
             .toolbar {
-                NavigationLink { HabitLibraryView() } label: { Image(systemName: "books.vertical") }
-                Button { showNew = true } label: { Image(systemName: "plus") }
+                NavigationLink { HabitLibraryView() } label: { Image(systemName: "books.vertical") }.accessibilityLabel("Habit library")
+                Button { showNew = true } label: { Image(systemName: "plus") }.accessibilityLabel("Add")
             }
             .sheet(isPresented: $showNew) { NewStackView() }
             .onAppear { HabitEngine.scheduleEventAnchoredStacks(stacks, habits: habits) }

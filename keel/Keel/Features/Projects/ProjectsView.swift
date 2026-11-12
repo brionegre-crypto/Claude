@@ -25,7 +25,7 @@ struct ProjectsView: View {
             }
         }
         .navigationTitle("Projects")
-        .toolbar { Button { showNew = true } label: { Image(systemName: "plus") } }
+        .toolbar { Button { showNew = true } label: { Image(systemName: "plus") }.accessibilityLabel("Add") }
         .sheet(isPresented: $showNew) { NewProjectSheet() }
     }
 }

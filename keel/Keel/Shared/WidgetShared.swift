@@ -9,6 +9,7 @@ struct WidgetSnapshot: Codable {
         var start: Date
         var end: Date
         var colorHex: String
+        var joinURL: String? = nil          // video-call link, if the event has one
     }
     struct TaskLine: Codable, Hashable {
         var title: String
@@ -76,4 +77,23 @@ struct FocusActivityAttributes: ActivityAttributes {
         var taskTitle: String?
     }
     var startedAt: Date
+}
+
+/// Live Activity for a meeting in progress: time left, Join, and whether Keel is recording notes.
+struct MeetingActivityAttributes: ActivityAttributes {
+    struct ContentState: Codable, Hashable {
+        var start: Date
+        var end: Date
+        var recording: Bool
+    }
+    var eventId: String
+    var title: String
+    var joinURL: String?
+    var service: String?
+
+    /// Opens Keel, which opens the call (Live Activity links must go through the app).
+    var joinDeepLink: URL? {
+        guard let joinURL, let q = joinURL.addingPercentEncoding(withAllowedCharacters: .alphanumerics) else { return nil }
+        return URL(string: "com.keel.app://join?url=\(q)")
+    }
 }

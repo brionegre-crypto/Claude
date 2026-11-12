@@ -526,7 +526,9 @@ struct ICloudMailProvider: MailProvider {
     func applyLabel(_ id: String, label: String) async throws {}   // iCloud has no labels; sorting stays in Keel
 
     func send(_ mail: OutgoingMail) async throws {
-        let raw = try await SMTPClient.send(mail, from: address, password: password, server: server, user: server.username)
+        // An alias changes the sender, never the login.
+        let raw = try await SMTPClient.send(mail, from: mail.fromAlias ?? address, password: password, server: server,
+                                            user: server.username ?? address)
         if server.saveSentCopy { try? await session { c in try await c.append(raw, to: sentBox) } }
     }
 

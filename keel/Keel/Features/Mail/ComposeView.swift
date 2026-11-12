@@ -94,6 +94,7 @@ struct ComposeView: View {
     @Query private var accounts: [MailAccount]
     @State var draft: ComposeDraft
     @State private var accountId = ""
+    @State private var alias = ""                 // "" = the account's own address
     @State private var attachments: [OutgoingAttachment] = []
     @State private var showCcBcc = false
     @State private var photoItems: [PhotosPickerItem] = []
@@ -115,9 +116,12 @@ struct ComposeView: View {
         NavigationStack {
             Form {
                 Section {
-                    if accounts.count > 1 {
-                        Picker("From", selection: $accountId) {
-                            ForEach(accounts) { Text($0.address).tag($0.id) }
+                    if accounts.count > 1 || !MailAliases.list(accountId).isEmpty {
+                        Picker("From", selection: identity) {
+                            ForEach(accounts) { a in
+                                Text(a.address).tag(a.id + "\n")
+                                ForEach(MailAliases.list(a.id), id: \.self) { Text($0).tag(a.id + "\n" + $0) }
+                            }
                         }
                     }
                     field("To", text: $draft.to)
@@ -175,7 +179,8 @@ struct ComposeView: View {
                     PhotosPicker(selection: $photoItems, maxSelectionCount: 10, matching: .images) { Image(systemName: "photo") }
                         .accessibilityLabel("Attach photos")
                     Button { showFiles = true } label: { Image(systemName: "paperclip") }.accessibilityLabel("Attach files")
-                    SnippetMenu(text: $draft.body)
+                    SnippetMenu(text: $draft.body, to: draft.to,
+                                recipientName: draft.original?.fromName ?? "", subject: draft.subject)
                     Spacer()
                     Button { showAI = true } label: { Label("Write with AI", systemImage: "sparkles") }
                 }
@@ -215,6 +220,7 @@ struct ComposeView: View {
             }
             .task {
                 accountId = draft.accountId ?? accounts.first?.id ?? ""
+                if let o = draft.original, alias.isEmpty, let a = MailAliases.match(o, accountId: accountId) { alias = a }
                 let signature = signature(for: accountId)
                 if !signature.isEmpty && !draft.body.contains(signature) { draft.body = "\n\n" + signature + draft.body }
                 let defaultFollowUp = UserDefaults.standard.integer(forKey: Prefs.followUpDefault)
@@ -223,6 +229,24 @@ struct ComposeView: View {
                 await loadForwardedAttachments()
             }
         }
+    }
+
+    /// One picker for every address you can send from: each account, then its aliases.
+    private var identity: Binding<String> {
+        Binding(get: { accountId + "\n" + alias }, set: { v in
+            let parts = v.split(separator: "\n", maxSplits: 1, omittingEmptySubsequences: false).map(String.init)
+            accountId = parts.first ?? accountId
+            alias = parts.count > 1 ? parts[1] : ""
+        })
+    }
+
+    private func outgoing(for account: MailAccount) -> OutgoingMail {
+        var m = OutgoingMail(to: recipients(draft.to), cc: recipients(draft.cc), bcc: recipients(draft.bcc),
+                             subject: draft.subject, body: draft.body,
+                             replyTo: account.id == draft.accountId ? draft.replyTo : nil,
+                             attachments: attachments)
+        if !alias.isEmpty && account.id == accountId && alias.lowercased() != account.address.lowercased() { m.fromAlias = alias }
+        return m
     }
 
     /// The sending account's own signature, or the shared one.
@@ -279,10 +303,7 @@ struct ComposeView: View {
         guard let account = accounts.first(where: { $0.id == accountId }) ?? accounts.first else {
             error = "Add an email account first (Today → profile icon)."; return
         }
-        let mail = OutgoingMail(to: recipients(draft.to), cc: recipients(draft.cc), bcc: recipients(draft.bcc),
-                                subject: draft.subject, body: draft.body,
-                                replyTo: account.id == draft.accountId ? draft.replyTo : nil,
-                                attachments: attachments)
+        let mail = outgoing(for: account)
         let scheduled = SendLater.schedule(mail, accountId: account.id, at: date, ctx: ctx)
         if let days = followUpDays, let to = mail.to.first {
             FollowUps.create(account: account.id, to: to, name: draft.original?.fromName ?? "", subject: draft.subject, days: days, ctx: ctx)
@@ -296,10 +317,7 @@ struct ComposeView: View {
         guard let account = accounts.first(where: { $0.id == accountId }) ?? accounts.first else {
             error = "Add an email account first (Today → profile icon)."; sendCountdown = nil; return
         }
-        let mail = OutgoingMail(to: recipients(draft.to), cc: recipients(draft.cc), bcc: recipients(draft.bcc),
-                                subject: draft.subject, body: draft.body,
-                                replyTo: account.id == draft.accountId ? draft.replyTo : nil,
-                                attachments: attachments)
+        let mail = outgoing(for: account)
         do {
             try await MailProviderFactory.make(for: account).send(mail)
             if mail.replyTo != nil, let o = draft.original { InboxBrain.record(.reply, sender: o.from, name: o.fromName, ctx: ctx) }

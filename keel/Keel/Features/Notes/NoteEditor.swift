@@ -146,7 +146,7 @@ struct NoteEditor: View {
                         Menu {
                             PhotosPicker(selection: $coverItem, matching: .images) { Label("Change cover", systemImage: "photo") }
                             Button("Remove cover", systemImage: "trash", role: .destructive) { note.cover = nil }
-                        } label: { Image(systemName: "photo").padding(8).background(.ultraThinMaterial, in: Circle()) }
+                        } label: { Image(systemName: "photo").padding(8).background(.ultraThinMaterial, in: Circle()) }.accessibilityLabel("Change cover")
                         .padding(8)
                     }
             }
@@ -620,7 +620,7 @@ struct NoteEditor: View {
                 Button("Summarize", systemImage: "text.line.first.and.arrowtriangle.forward") { Task { await summarize() } }
                 Button("Ask this page", systemImage: "questionmark.bubble") { answer = nil; question = ""; asking = true }
                 Button("Turn to-dos into tasks", systemImage: "checklist") { extractTasks() }
-            } label: { Image(systemName: "sparkles") }
+            } label: { Image(systemName: "sparkles") }.accessibilityLabel("AI tools")
             .disabled(note.isLocked)
             Menu {
                 Button(reordering ? "Done reordering" : "Reorder blocks", systemImage: "arrow.up.arrow.down") { withAnimation { reordering.toggle() } }
@@ -635,17 +635,17 @@ struct NoteEditor: View {
                 Divider()
                 Button("Export as Markdown", systemImage: "doc.plaintext") { exportURL = NoteExport.markdownFile(note) }
                 Button("Export as PDF", systemImage: "doc.richtext") { exportURL = NoteExport.pdfFile(note) }
-            } label: { Image(systemName: "ellipsis.circle") }
+            } label: { Image(systemName: "ellipsis.circle") }.accessibilityLabel("More")
         }
         ToolbarItemGroup(placement: .keyboard) {
             if let id = focused, let i = note.blocks.firstIndex(where: { $0.id == id }) {
-                Button { RichText.wrap(&note.blocks[i].text, selection: selection, left: "**", right: "**") } label: { Image(systemName: "bold") }
-                Button { RichText.wrap(&note.blocks[i].text, selection: selection, left: "*", right: "*") } label: { Image(systemName: "italic") }
-                Button { RichText.wrap(&note.blocks[i].text, selection: selection, left: "==", right: "==") } label: { Image(systemName: "highlighter") }
-                Button { RichText.wrap(&note.blocks[i].text, selection: selection, left: "`", right: "`") } label: { Image(systemName: "chevron.left.forwardslash.chevron.right") }
-                Button { RichText.wrap(&note.blocks[i].text, selection: selection, left: "[", right: "](https://)") } label: { Image(systemName: "link") }
-                Button { note.blocks[i].text += (note.blocks[i].text.isEmpty || note.blocks[i].text.hasSuffix(" ") ? "@" : " @") } label: { Image(systemName: "at") }
-                Button { if note.blocks[i].text.isEmpty { note.blocks[i].text = "/" } else { insertBlock(after: id, kind: .text, text: "/") } } label: { Image(systemName: "plus.square") }
+                Button { RichText.wrap(&note.blocks[i].text, selection: selection, left: "**", right: "**") } label: { Image(systemName: "bold") }.accessibilityLabel("Bold")
+                Button { RichText.wrap(&note.blocks[i].text, selection: selection, left: "*", right: "*") } label: { Image(systemName: "italic") }.accessibilityLabel("Italic")
+                Button { RichText.wrap(&note.blocks[i].text, selection: selection, left: "==", right: "==") } label: { Image(systemName: "highlighter") }.accessibilityLabel("Highlight")
+                Button { RichText.wrap(&note.blocks[i].text, selection: selection, left: "`", right: "`") } label: { Image(systemName: "chevron.left.forwardslash.chevron.right") }.accessibilityLabel("Code")
+                Button { RichText.wrap(&note.blocks[i].text, selection: selection, left: "[", right: "](https://)") } label: { Image(systemName: "link") }.accessibilityLabel("Add link")
+                Button { note.blocks[i].text += (note.blocks[i].text.isEmpty || note.blocks[i].text.hasSuffix(" ") ? "@" : " @") } label: { Image(systemName: "at") }.accessibilityLabel("Mention")
+                Button { if note.blocks[i].text.isEmpty { note.blocks[i].text = "/" } else { insertBlock(after: id, kind: .text, text: "/") } } label: { Image(systemName: "plus.square") }.accessibilityLabel("Insert block")
             }
             Spacer()
             Button("Done") { focused = nil; editing = nil; slashFor = nil; mentionFor = nil }

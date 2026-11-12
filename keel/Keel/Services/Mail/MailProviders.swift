@@ -45,6 +45,26 @@ struct OutgoingMail {
     var body: String
     var replyTo: ReplyContext? = nil
     var attachments: [OutgoingAttachment] = []
+    /// Send as one of the account's aliases (e.g. hello@yourdomain.com) instead of its main address.
+    var fromAlias: String? = nil
+}
+
+/// Extra addresses you can send from, per account. The provider must already allow sending as them
+/// (Gmail "Send mail as", Outlook "send as" permission, iCloud+ custom domain or alias).
+enum MailAliases {
+    static func key(_ accountId: String) -> String { "mail.aliases.\(accountId)" }
+    static func list(_ accountId: String) -> [String] {
+        UserDefaults.standard.stringArray(forKey: key(accountId)) ?? []
+    }
+    static func save(_ list: [String], for accountId: String) {
+        let clean = list.map { $0.trimmingCharacters(in: .whitespaces).lowercased() }.filter { $0.contains("@") }.uniqued
+        UserDefaults.standard.set(clean, forKey: key(accountId))
+    }
+    /// When replying, answer from whichever of your addresses the email was sent to.
+    static func match(_ e: EmailMessage, accountId: String) -> String? {
+        let rcpt = (e.toLine + " " + e.ccLine).lowercased()
+        return list(accountId).first { rcpt.contains($0) }
+    }
 }
 
 protocol MailProvider {
@@ -231,7 +251,8 @@ struct GmailProvider: MailProvider {
     }
 
     func send(_ mail: OutgoingMail) async throws {
-        var body: [String: Any] = ["raw": MIME.build(mail).base64URL]
+        // With an alias, the From header asks Gmail to send as it (it must be set up under "Send mail as").
+        var body: [String: Any] = ["raw": MIME.build(mail, from: mail.fromAlias).base64URL]
         if let r = mail.replyTo { body["threadId"] = r.threadId }
         _ = try await api.json(URL(string: "\(base)/messages/send")!, method: "POST", body: body)
     }
@@ -354,6 +375,7 @@ struct OutlookProvider: MailProvider {
             "bccRecipients": Self.recipients(mail.bcc),
             "attachments": Self.attachmentsJSON(mail.attachments),
         ]
+        if let alias = mail.fromAlias { message["from"] = ["emailAddress": ["address": alias]] }
         if let r = mail.replyTo {
             // /reply keeps the conversation threaded on the server.
             let action = r.replyAll ? "replyAll" : "reply"

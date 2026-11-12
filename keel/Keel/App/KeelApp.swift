@@ -49,6 +49,7 @@ struct KeelApp: App {
                 Task { await KeelFocusFilter.syncCurrent() }
                 LinkSaver.importShared(into: container.mainContext)     // links saved from Safari's share sheet
                 LinkSaver.importSharedNotes(into: container.mainContext) // text/images shared from Notes, Messages, Photos…
+                MeetingAutopilot.syncActivity()                         // Lock Screen timer for a meeting in progress
             }
             if phase == .background {
                 WidgetSync.update(container.mainContext)
@@ -107,6 +108,7 @@ struct RootView: View {
         .sheet(isPresented: $router.showSearch) { NavigationStack { SearchView() } }
         .sheet(isPresented: $router.showPlan) { PlanRitualView() }
         .sheet(isPresented: $router.showAutopilot) { NavigationStack { AutopilotView() } }
+        .sheet(isPresented: $router.showRecorder) { NavigationStack { MeetingRecorderView(autoStart: true) } }
         .sheet(item: Binding(get: { router.openTaskId.flatMap { id in openTask(id) } }, set: { if $0 == nil { router.openTaskId = nil } })) { t in
             NavigationStack { TaskDetailView(task: t) }
         }

@@ -40,8 +40,8 @@ struct ReadingModeText: View {
             HStack {
                 Toggle(isOn: $bionic) { Label("Bold word starts", systemImage: "bold") }.toggleStyle(.button)
                 Spacer()
-                Button { size = max(14, size - 2) } label: { Image(systemName: "textformat.size.smaller") }
-                Button { size = min(30, size + 2) } label: { Image(systemName: "textformat.size.larger") }
+                Button { size = max(14, size - 2) } label: { Image(systemName: "textformat.size.smaller") }.accessibilityLabel("Smaller text")
+                Button { size = min(30, size + 2) } label: { Image(systemName: "textformat.size.larger") }.accessibilityLabel("Larger text")
             }
             .font(DS.Font.caption).buttonStyle(.bordered)
             Group {

@@ -88,7 +88,7 @@ struct NotesView: View {
                         .init(kind: .heading, text: "Wins"), .init(kind: .bullet, text: ""),
                         .init(kind: .heading, text: "On my mind"), .init(kind: .bullet, text: ""),
                     ])) }
-                } label: { Image(systemName: "square.and.pencil") }
+                } label: { Image(systemName: "square.and.pencil") }.accessibilityLabel("New page")
             }
         }
     }

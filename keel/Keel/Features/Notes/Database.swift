@@ -111,7 +111,7 @@ struct DatabaseView: View {
                         ForEach(db.schema) { Text($0.name).tag($0.id) }
                     }
                     Toggle("Ascending", isOn: $db.dbSortAscending)
-                } label: { Image(systemName: "arrow.up.arrow.down").padding(6) }
+                } label: { Image(systemName: "arrow.up.arrow.down").padding(6) }.accessibilityLabel("Sort")
                 Menu {
                     Button("No filter") { db.dbFilterProp = nil; db.dbFilterValue = nil }
                     ForEach(db.schema.filter { [.select, .status, .multiSelect].contains($0.kind) }) { p in
@@ -277,11 +277,11 @@ struct DatabaseView: View {
         let lead = (cal.component(.weekday, from: month) - cal.firstWeekday + 7) % 7
         return VStack(spacing: 6) {
             HStack {
-                Button { month = cal.date(byAdding: .month, value: -1, to: month)! } label: { Image(systemName: "chevron.left") }
+                Button { month = cal.date(byAdding: .month, value: -1, to: month)! } label: { Image(systemName: "chevron.left") }.accessibilityLabel("Previous month")
                 Spacer()
                 Text(month.formatted(.dateTime.month(.wide).year())).font(DS.Font.headline)
                 Spacer()
-                Button { month = cal.date(byAdding: .month, value: 1, to: month)! } label: { Image(systemName: "chevron.right") }
+                Button { month = cal.date(byAdding: .month, value: 1, to: month)! } label: { Image(systemName: "chevron.right") }.accessibilityLabel("Next month")
             }
             .buttonStyle(.plain)
             if let dp = dateProp {
