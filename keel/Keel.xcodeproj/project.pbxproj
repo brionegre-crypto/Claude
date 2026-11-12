@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		005C6DEC7CE6E0CD912093F5 /* GoalsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DEEBF528E3474894C68514F /* GoalsView.swift */; };
 		06A84DCFD13EB3F46659AF4E /* ShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87BA63B48C9EAC76390B2DFC /* ShareViewController.swift */; };
+		09ED24286683B1A544F3DC42 /* ProcessView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E3B6C3F585BA2ECD469056E /* ProcessView.swift */; };
 		0CB8CC7C6A063A60B55F0EE7 /* QuickEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67BC7353E16645BC121A2954 /* QuickEvent.swift */; };
 		1353B8274DDFC4B7A2987991 /* KeelShare.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 6A713FF0E72F2CE1AEE80CC5 /* KeelShare.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		19939B111F68D031B8D6B042 /* MailExtras.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42A27BFD8A306D1105C6A257 /* MailExtras.swift */; };
@@ -53,16 +54,19 @@
 		871C6890757E8ED622D68AD9 /* PeopleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF6AC0B3A60E1BC2BBE5DBE8 /* PeopleView.swift */; };
 		8CC07EFCA332B8907BB3E65A /* SyncEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BE33F801FFD619712E382CF /* SyncEngine.swift */; };
 		8F340F1DFFF169BC050B645A /* AccountsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F2B871E95739B31F6282566 /* AccountsView.swift */; };
+		96BEB15631A34FF57793C9E4 /* SnippetsDigest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21B7B5EAC4BC0C0D34D5C011 /* SnippetsDigest.swift */; };
 		9A581C99346C85844710CEE0 /* ReadLaterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACDFE0D60FED0CACCB9E5602 /* ReadLaterView.swift */; };
 		A00AF67D479B619AB15E2F91 /* ShutdownManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBDA564035648255534FDF98 /* ShutdownManager.swift */; };
 		A4458C60361DA75F59A0693F /* KeelWatchWidgets.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 9CEFD40EA6635DD508CB76E5 /* KeelWatchWidgets.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		A446D4963BFA2F12EA7524DA /* TaskEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F965AFDF10B5B9C9369DA47 /* TaskEngine.swift */; };
 		A61B0FCCB0C3EA27DB241781 /* WidgetSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D0B9D5FF32ED24F051A1187 /* WidgetSync.swift */; };
+		A78E54C4A7E587196BFD08AF /* ProjectsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F185BAE437D06D559B87D87A /* ProjectsView.swift */; };
 		A8C7BE58B4695E0FD7896EFA /* KeelServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F49A27B3A7F949D494C1BC /* KeelServer.swift */; };
 		AAC7391ADF2DE920FDD6E21C /* WatchShared.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FAE3DDA9D4006FAEA5CA68D /* WatchShared.swift */; };
 		AEA0B8BD83287B5BABEDB968 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17C252D173987B00D25462AF /* Models.swift */; };
 		B233DE87669458B1A69389CF /* WatchShared.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FAE3DDA9D4006FAEA5CA68D /* WatchShared.swift */; };
 		B37C9261974F622FD2EDA1B1 /* DesignSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AAD56951A8EABC3E1B4B1E0 /* DesignSystem.swift */; };
+		B7A811C0FB9CFB42AC66B5CC /* NoteLinks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47163DA2340999614E35B9E3 /* NoteLinks.swift */; };
 		B8946017BBDBD5711481973F /* SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58E79F9408839A0BF9F0CA36 /* SearchView.swift */; };
 		BB37D6D301743E3B3EA1EBF5 /* DayReviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1015BE0618176262791A788 /* DayReviewView.swift */; };
 		C28C083DEC4DD5EB94FD7905 /* ScreenshotTasksView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AFFF4EF2CEEC4C6D73C2F2B /* ScreenshotTasksView.swift */; };
@@ -167,11 +171,13 @@
 		2158A7A622BDADF4767554DB /* CalendarService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarService.swift; sourceTree = "<group>"; };
 		217E1E36CFDF363BEF82111D /* HTMLMailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTMLMailView.swift; sourceTree = "<group>"; };
 		21AF6207B47AC699EA0EA550 /* FocusSound.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FocusSound.swift; sourceTree = "<group>"; };
+		21B7B5EAC4BC0C0D34D5C011 /* SnippetsDigest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnippetsDigest.swift; sourceTree = "<group>"; };
 		22E48155AD3E227568F68D4B /* NoteMedia.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteMedia.swift; sourceTree = "<group>"; };
 		24484F9F7D98891FB9522296 /* Keel.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Keel.entitlements; sourceTree = "<group>"; };
 		27321CB5159F42C3BDECDA23 /* KeelWidgets.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = KeelWidgets.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		285646C7689519D8ACD6E589 /* KeelWidgets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeelWidgets.swift; sourceTree = "<group>"; };
 		2AAD56951A8EABC3E1B4B1E0 /* DesignSystem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DesignSystem.swift; sourceTree = "<group>"; };
+		2E3B6C3F585BA2ECD469056E /* ProcessView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessView.swift; sourceTree = "<group>"; };
 		2E45C1FD390432029BC9DFF4 /* KeelApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeelApp.swift; sourceTree = "<group>"; };
 		2F131CFE216CA3EC54D8EF3B /* WatchBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchBridge.swift; sourceTree = "<group>"; };
 		32A593EB422BAE80F976F776 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -179,6 +185,7 @@
 		3872D74D620C536806E02BB9 /* TemplatesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemplatesView.swift; sourceTree = "<group>"; };
 		42A27BFD8A306D1105C6A257 /* MailExtras.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MailExtras.swift; sourceTree = "<group>"; };
 		430FEBA07DBE819D0BEA460D /* HabitsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HabitsView.swift; sourceTree = "<group>"; };
+		47163DA2340999614E35B9E3 /* NoteLinks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteLinks.swift; sourceTree = "<group>"; };
 		4D0B9D5FF32ED24F051A1187 /* WidgetSync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetSync.swift; sourceTree = "<group>"; };
 		4E72459AFB8B89A1509AB72D /* OAuthManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OAuthManager.swift; sourceTree = "<group>"; };
 		4FAE3DDA9D4006FAEA5CA68D /* WatchShared.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchShared.swift; sourceTree = "<group>"; };
@@ -237,6 +244,7 @@
 		EB9F51008F5680B7967B16CD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		ECB947CEC5E491E34C4572D7 /* FocusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FocusView.swift; sourceTree = "<group>"; };
 		EEEF875AF588BEBAFBC9AC65 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		F185BAE437D06D559B87D87A /* ProjectsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectsView.swift; sourceTree = "<group>"; };
 		F8F49A27B3A7F949D494C1BC /* KeelServer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeelServer.swift; sourceTree = "<group>"; };
 		FA81AC76EFE4BD69EB166CBE /* CalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -268,6 +276,7 @@
 				2E86A7F00027CA613FA36EF4 /* Notes */,
 				A73A3D32181D413C040E158F /* Odyssey */,
 				5683BC358FC26AFE7ECC3C63 /* People */,
+				B57BD95EC1914113D7DB5E0A /* Projects */,
 				933A492221CD1618E20868AC /* Promises */,
 				65D29B86A2558A59A8EB4731 /* ReadLater */,
 				9E950D5C378FD6C0413C2C50 /* Review */,
@@ -303,6 +312,7 @@
 			children = (
 				A68CB820BC990AAC67C8C1D4 /* BoardView.swift */,
 				9A1202F5070BFCEBA13A09EA /* LocationPicker.swift */,
+				2E3B6C3F585BA2ECD469056E /* ProcessView.swift */,
 				0AFFF4EF2CEEC4C6D73C2F2B /* ScreenshotTasksView.swift */,
 				52D02FDBC427DF0317C4A4E9 /* TasksView.swift */,
 				3872D74D620C536806E02BB9 /* TemplatesView.swift */,
@@ -314,6 +324,7 @@
 			isa = PBXGroup;
 			children = (
 				D14F2099627ADCE0C958846B /* MeetingRecorder.swift */,
+				47163DA2340999614E35B9E3 /* NoteLinks.swift */,
 				22E48155AD3E227568F68D4B /* NoteMedia.swift */,
 				EAAF02252EE2C633D8BD47D5 /* NotesView.swift */,
 			);
@@ -512,6 +523,14 @@
 			path = Models;
 			sourceTree = "<group>";
 		};
+		B57BD95EC1914113D7DB5E0A /* Projects */ = {
+			isa = PBXGroup;
+			children = (
+				F185BAE437D06D559B87D87A /* ProjectsView.swift */,
+			);
+			path = Projects;
+			sourceTree = "<group>";
+		};
 		B5897004239AF434AC299F8E /* Time */ = {
 			isa = PBXGroup;
 			children = (
@@ -632,6 +651,7 @@
 			children = (
 				7FD2977BFF93D2B3A4B40E78 /* ComposeView.swift */,
 				217E1E36CFDF363BEF82111D /* HTMLMailView.swift */,
+				21B7B5EAC4BC0C0D34D5C011 /* SnippetsDigest.swift */,
 			);
 			path = Mail;
 			sourceTree = "<group>";
@@ -847,12 +867,15 @@
 				6980E570787EF9BEDB79A4ED /* MeetingRecorder.swift in Sources */,
 				AEA0B8BD83287B5BABEDB968 /* Models.swift in Sources */,
 				7D834D0CB8AAD11D6CD9A1BD /* MonthlyReviewView.swift in Sources */,
+				B7A811C0FB9CFB42AC66B5CC /* NoteLinks.swift in Sources */,
 				2E08B62C0DC991438F333369 /* NoteMedia.swift in Sources */,
 				E2B8FEF02893FAD636AE6E23 /* NotesView.swift in Sources */,
 				21E7562BDD0EF8DF74F200A4 /* OAuthManager.swift in Sources */,
 				D5DDC2EB0B49D716B4921496 /* OdysseyView.swift in Sources */,
 				348F61E75CBF91977C2EAF03 /* OnDeviceAI.swift in Sources */,
 				871C6890757E8ED622D68AD9 /* PeopleView.swift in Sources */,
+				09ED24286683B1A544F3DC42 /* ProcessView.swift in Sources */,
+				A78E54C4A7E587196BFD08AF /* ProjectsView.swift in Sources */,
 				1E9022913FF88A6EADC00068 /* PromiseTracker.swift in Sources */,
 				C47D427217918E8C75B2B94D /* PromisesView.swift in Sources */,
 				0CB8CC7C6A063A60B55F0EE7 /* QuickEvent.swift in Sources */,
@@ -862,6 +885,7 @@
 				B8946017BBDBD5711481973F /* SearchView.swift in Sources */,
 				A00AF67D479B619AB15E2F91 /* ShutdownManager.swift in Sources */,
 				84AC9B33386018120AADB576 /* SiriIntents.swift in Sources */,
+				96BEB15631A34FF57793C9E4 /* SnippetsDigest.swift in Sources */,
 				8CC07EFCA332B8907BB3E65A /* SyncEngine.swift in Sources */,
 				A446D4963BFA2F12EA7524DA /* TaskEngine.swift in Sources */,
 				282F1904CC270F67AFA1B981 /* TasksView.swift in Sources */,
@@ -1006,7 +1030,9 @@
 		3BD010658370695CD8ACA588 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES = "AppIcon-Steady AppIcon-OneThing AppIcon-CheckK AppIcon-Sunset";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_ENTITLEMENTS = Keel/Keel.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
@@ -1064,7 +1090,9 @@
 		68DFE817D555140150A10467 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES = "AppIcon-Steady AppIcon-OneThing AppIcon-CheckK AppIcon-Sunset";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_ENTITLEMENTS = Keel/Keel.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
