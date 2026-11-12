@@ -22,6 +22,7 @@ struct TodayView: View {
     @State private var planning = false
     @State private var showSettings = false
     @State private var showBrainDump = false
+    @State private var showSOS = false
     @AppStorage(Prefs.calm) private var calm = false
 
     private var energy: EnergyLevel { EnergyLevel(rawValue: energyRaw) ?? .medium }
@@ -98,6 +99,10 @@ struct TodayView: View {
             }
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
+                    Button { showSOS = true } label: { Image(systemName: "lifepreserver") }
+                        .accessibilityLabel("I'm overwhelmed")
+                }
+                ToolbarItem(placement: .topBarLeading) {
                     Button { showBrainDump = true } label: { Image(systemName: "brain.head.profile") }
                         .accessibilityLabel("Brain dump")
                 }
@@ -115,6 +120,7 @@ struct TodayView: View {
                         NavigationLink { PlanRitualView() } label: { Label("Plan my day", systemImage: "list.bullet.clipboard") }
                         NavigationLink { HabitLibraryView() } label: { Label("Habit library", systemImage: "books.vertical") }
                         NavigationLink { MedsView() } label: { Label("Medications", systemImage: "pills") }
+                        NavigationLink { DopamineMenuView() } label: { Label("Dopamine menu", systemImage: "fork.knife") }
                         NavigationLink { SubscriptionsView() } label: { Label("Subscriptions & bills", systemImage: "creditcard") }
                         NavigationLink { DeliveriesView() } label: { Label("Deliveries", systemImage: "shippingbox") }
                         NavigationLink { TripsView() } label: { Label("Trips", systemImage: "airplane") }
@@ -143,6 +149,7 @@ struct TodayView: View {
             }
             .sheet(isPresented: $showSettings) { AccountsView() }
             .sheet(isPresented: $showBrainDump) { BrainDumpView() }
+            .fullScreenCover(isPresented: $showSOS) { OverwhelmedView() }
         }
     }
 

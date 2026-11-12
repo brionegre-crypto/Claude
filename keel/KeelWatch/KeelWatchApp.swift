@@ -172,6 +172,8 @@ struct WatchRoot: View {
                 Section {
                     link("Ask Keel", "sparkles", .cyan, nil) { AskPage() }
                     link("Capture", "plus.circle.fill", calm, nil) { AddPage() }
+                    link("Breathe", "lungs.fill", .mint, nil) { BreathePage() }
+                    if let d = store.payload.dopamine, !d.isEmpty { link("Need a boost?", "dice.fill", .orange, nil) { BoostPage(items: d) } }
                 }
                 if store.payload.calm != true {
                     Section {
@@ -662,5 +664,59 @@ struct WorldClockPage: View {
             }
         }
         .navigationTitle("World Clock")
+    }
+}
+
+/// One minute of box breathing with a tap on the wrist at each change, for overwhelming moments.
+struct BreathePage: View {
+    @State private var expanded = false
+    @State private var phase = "Ready"
+    @State private var round = 0
+
+    var body: some View {
+        VStack(spacing: 8) {
+            ZStack {
+                Circle().fill(calm.opacity(0.2))
+                Circle().fill(calm.opacity(0.6)).scaleEffect(expanded ? 1 : 0.4)
+                Text(phase).font(.headline)
+            }
+            .frame(width: 120, height: 120)
+            Text(round > 0 ? "Round \(round) of 4" : "In 4 · hold 4 · out 4 · hold 4").font(.caption2).foregroundStyle(.secondary)
+        }
+        .navigationTitle("Breathe")
+        .task {
+            for r in 1...4 {
+                round = r
+                phase = "In"; WKInterfaceDevice.current().play(.start)
+                withAnimation(.easeInOut(duration: 4)) { expanded = true }
+                try? await Task.sleep(for: .seconds(4))
+                phase = "Hold"; WKInterfaceDevice.current().play(.click)
+                try? await Task.sleep(for: .seconds(4))
+                phase = "Out"; WKInterfaceDevice.current().play(.stop)
+                withAnimation(.easeInOut(duration: 4)) { expanded = false }
+                try? await Task.sleep(for: .seconds(4))
+                phase = "Hold"; WKInterfaceDevice.current().play(.click)
+                try? await Task.sleep(for: .seconds(4))
+                if Task.isCancelled { return }
+            }
+            phase = "Done"; WKInterfaceDevice.current().play(.success)
+        }
+    }
+}
+
+/// A random healthy boost from the iPhone dopamine menu.
+struct BoostPage: View {
+    let items: [String]
+    @State private var pick: String?
+    var body: some View {
+        VStack(spacing: 10) {
+            Text(pick ?? "Bored or stuck?").font(.headline).multilineTextAlignment(.center)
+            Button(pick == nil ? "Pick one for me" : "Another") {
+                pick = items.randomElement(); WKInterfaceDevice.current().play(.click)
+            }
+            .tint(accent)
+        }
+        .navigationTitle("Boost")
+        .onAppear { pick = items.randomElement() }
     }
 }

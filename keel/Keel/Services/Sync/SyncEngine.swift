@@ -55,6 +55,7 @@ final class SyncEngine {
         await SendLater.sendDue(ctx: ctx)
         await CalendarService.shared.requestAccess()
         await LeaveBy.refresh()
+        await TransitionAlerts.refresh()
 
         // 1. Mail, all accounts in parallel-ish (sequential per account keeps rate limits sane)
         let accounts = (try? ctx.fetch(FetchDescriptor<MailAccount>())) ?? []

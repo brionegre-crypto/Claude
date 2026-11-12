@@ -45,6 +45,8 @@ struct TasksView: View {
     @Query(sort: \TaskItem.createdAt, order: .reverse) private var tasks: [TaskItem]
     @Query(sort: \SmartList.createdAt) private var smartLists: [SmartList]
     @State private var editingSmart: SmartList?
+    @State private var selecting = false
+    @State private var selectedTasks = Set<UUID>()
     @State private var newSmart = false
     @AppStorage("tasks.filter") private var filterKey = "today"
     @State private var newTitle = ""
@@ -84,6 +86,42 @@ struct TasksView: View {
         Array(Set(tasks.map(\.listName) + CalendarService.shared.reminderLists.map(\.title))).sorted()
     }
     private var tags: [String] { Array(Set(tasks.flatMap(\.tags))).sorted() }
+
+    private var chosen: [TaskItem] { tasks.filter { selectedTasks.contains($0.id) } }
+
+    private var taskBulkBar: some View {
+        HStack(spacing: DS.Space.l) {
+            Button { chosen.forEach { TaskActions.setDone($0, true) }; finishBulk("Completed") } label: { Label("Complete", systemImage: "checkmark.circle") }
+            Button {
+                let t = cal.date(byAdding: .day, value: 1, to: cal.startOfDay(for: Date()))!
+                chosen.forEach { TaskActions.reschedule($0, to: t) }; finishBulk("Moved to tomorrow")
+            } label: { Label("Tomorrow", systemImage: "sunrise") }
+            Menu {
+                ForEach(TaskPriority.allCases.reversed(), id: \.self) { p in
+                    Button(p.label) { chosen.forEach { $0.priority = p; $0.updatedAt = Date(); try? CalendarService.shared.push($0) }; finishBulk("Priority set") }
+                }
+            } label: { Label("Priority", systemImage: "flag") }
+            Menu {
+                ForEach(lists, id: \.self) { l in
+                    Button(l) { chosen.forEach { $0.listName = l; $0.updatedAt = Date(); try? CalendarService.shared.push($0) }; finishBulk("Moved to \(l)") }
+                }
+            } label: { Label("Move", systemImage: "folder") }
+            Button(role: .destructive) { chosen.forEach { TaskActions.delete($0, ctx: ctx) }; finishBulk("Deleted") } label: { Label("Delete", systemImage: "trash") }
+        }
+        .labelStyle(.iconOnly).font(.title3)
+        .disabled(selectedTasks.isEmpty)
+        .padding(.horizontal, DS.Space.l).padding(.vertical, DS.Space.m)
+        .glassEffect(.regular, in: Capsule())
+        .padding(.bottom, DS.Space.s)
+    }
+
+    private func finishBulk(_ what: String) {
+        let n = selectedTasks.count
+        Haptics.success()
+        UndoCenter.shared.notify("\(what): \(n) task\(n == 1 ? "" : "s")")
+        selectedTasks = []
+        withAnimation { selecting = false }
+    }
 
     private var screenTitle: String {
         if case .smart(let id) = filter { return smartLists.first { $0.id == id }?.name ?? "Smart list" }
@@ -141,6 +179,9 @@ struct TasksView: View {
                 }
                 ToolbarItem(placement: .topBarTrailing) {
                     Menu {
+                        Button(selecting ? "Done Selecting" : "Select Tasks", systemImage: "checkmark.circle") {
+                            withAnimation { selecting.toggle(); selectedTasks = [] }
+                        }
                         Button("Auto-schedule today", systemImage: "wand.and.stars") {
                             let r = AutoScheduler.scheduleToday(tasks: tasks)
                             withAnimation { toast = r.scheduled == 0 ? "Nothing fit today" : "Scheduled \(r.scheduled) on your calendar" }
@@ -214,8 +255,8 @@ struct TasksView: View {
     }
 
     private var list: some View {
-        List {
-            if filter != .completed {
+        List(selection: $selectedTasks) {
+            if filter != .completed && !selecting {
                 Section {
                     HStack {
                         Image(systemName: "plus.circle.fill").foregroundStyle(DS.Palette.accent)
@@ -252,6 +293,8 @@ struct TasksView: View {
             }
         }
         .listStyle(.insetGrouped)
+        .environment(\.editMode, .constant(selecting ? .active : .inactive))
+        .safeAreaInset(edge: .bottom) { if selecting { taskBulkBar } }
     }
 
     /// Board shows the current list's open tasks plus recently done ones.

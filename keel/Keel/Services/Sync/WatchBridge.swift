@@ -87,6 +87,7 @@ final class WatchBridge: NSObject, WCSessionDelegate {
         payload.achievementsUnlocked = Momentum.achievements(ctx: ctx).filter(\.unlocked).count
         payload.scheduledMail = ((try? ctx.fetch(FetchDescriptor<ScheduledMail>())) ?? []).count
         payload.briefing = Briefing.latest
+        payload.dopamine = DopamineItem.all.filter { $0.course == "starter" || $0.course == "main" }.map(\.title)
         let doneDays = Set(allTasks.compactMap(\.completedAt).map { cal.startOfDay(for: $0) })
         payload.weekDone = allTasks.filter { ($0.completedAt ?? .distantPast) >= weekStart }.count
         var streakDay = doneDays.contains(today) ? today : cal.date(byAdding: .day, value: -1, to: today)!

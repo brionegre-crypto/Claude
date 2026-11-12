@@ -34,6 +34,11 @@ struct InboxView: View {
     @State private var compose: ComposeDraft?
     @State private var snoozing: EmailMessage?
     @State private var ruleFrom: EmailMessage?
+    @State private var selecting = false
+    @State private var selected = Set<String>()
+    @AppStorage(MailSwipe.threadsKey) private var threaded = true
+    @AppStorage(MailSwipe.leadingKey) private var leadingRaw = MailSwipe.defaultLeading
+    @AppStorage(MailSwipe.trailingKey) private var trailingRaw = MailSwipe.defaultTrailing
     @State private var pickSnoozeDate = false
     @State private var customSnooze = Date().addingTimeInterval(86_400)
 
@@ -103,6 +108,9 @@ struct InboxView: View {
                 }
                 ToolbarItem(placement: .topBarTrailing) {
                     Menu {
+                        Button(selecting ? "Done Selecting" : "Select Messages", systemImage: "checkmark.circle") {
+                            withAnimation { selecting.toggle(); selected = [] }
+                        }
                         NavigationLink { ScheduledMailView() } label: { Label("Scheduled", systemImage: "clock.arrow.circlepath") }
                         NavigationLink { DigestView() } label: { Label("Newsletter digest", systemImage: "newspaper") }
                         NavigationLink { AttachmentsView() } label: { Label("Attachments", systemImage: "paperclip") }
@@ -151,7 +159,7 @@ struct InboxView: View {
     }
 
     private var list: some View {
-        List {
+        List(selection: $selected) {
             if mailbox == .inbox && search.isEmpty && Screener.enabled {
                 let newSenders = Screener.pending(emails: allEmails, rules: rules).count
                 if newSenders > 0 {
@@ -191,7 +199,7 @@ struct InboxView: View {
             if !pinned.isEmpty {
                 Section("Pinned") { ForEach(pinned) { e in row(e) } }
             }
-            ForEach(visible) { e in row(e) }
+            ForEach(collapse(visible)) { e in row(e) }
 
             if !search.isEmpty {
                 Section {
@@ -209,6 +217,8 @@ struct InboxView: View {
             }
         }
         .listStyle(.plain)
+        .environment(\.editMode, .constant(selecting ? .active : .inactive))
+        .safeAreaInset(edge: .bottom) { if selecting { bulkBar } }
         .refreshable {
             await SyncEngine.shared.syncAll()
             wakeSnoozed()
@@ -216,21 +226,51 @@ struct InboxView: View {
         }
     }
 
+    // MARK: Conversations
+
+    private var threadCounts: [String: Int] {
+        Dictionary(grouping: mailboxEmails.filter { !$0.threadId.isEmpty }, by: \.threadId).mapValues(\.count)
+    }
+
+    /// One row per conversation (its newest message) when threading is on.
+    private func collapse(_ list: [EmailMessage]) -> [EmailMessage] {
+        guard threaded, mailbox != .sent, search.isEmpty else { return list }
+        var seen = Set<String>()
+        return list.sorted { $0.receivedAt > $1.receivedAt }.filter { seen.insert($0.threadId.isEmpty ? $0.id : $0.threadId).inserted }
+    }
+
+    private func conversation(_ e: EmailMessage) -> [EmailMessage] {
+        guard threaded, !e.threadId.isEmpty else { return [e] }
+        return mailboxEmails.filter { $0.threadId == e.threadId && $0.accountId == e.accountId }
+    }
+
+    // MARK: Swipes (customizable in Settings → Mail)
+
+    @ViewBuilder
+    private func swipeButton(_ action: String, _ e: EmailMessage) -> some View {
+        switch action {
+        case "archive": Button { archive(e) } label: { Label("Done", systemImage: "checkmark") }.tint(DS.Palette.calm)
+        case "trash": Button(role: .destructive) { trash(e) } label: { Label("Trash", systemImage: "trash") }
+        case "task": Button { toTask(e) } label: { Label("Task", systemImage: "checklist") }.tint(DS.Palette.warmth)
+        case "snooze": Button { snoozing = e } label: { Label("Snooze", systemImage: "clock") }.tint(DS.Palette.meeting)
+        case "star": Button { star(e) } label: { Label(e.isStarred ? "Unstar" : "Star", systemImage: e.isStarred ? "star.slash" : "star") }.tint(.yellow)
+        case "read": Button { toggleRead(e) } label: { Label(e.isRead ? "Unread" : "Read", systemImage: e.isRead ? "envelope.badge" : "envelope.open") }.tint(.blue)
+        case "pin": Button { e.isPinned.toggle(); Haptics.tap() } label: { Label(e.isPinned ? "Unpin" : "Pin", systemImage: "pin") }.tint(.orange)
+        default: EmptyView()
+        }
+    }
+
     @ViewBuilder
     private func row(_ e: EmailMessage) -> some View {
-        NavigationLink { EmailDetailView(email: e) } label: { EmailRow(email: e) }
+        let count = threaded && mailbox != .sent ? (threadCounts[e.threadId] ?? 1) : 1
+        NavigationLink {
+            if count > 1 { ThreadView(messages: conversation(e)) } else { EmailDetailView(email: e) }
+        } label: { EmailRow(email: e, count: count, unreadInThread: count > 1 && conversation(e).contains { !$0.isRead }) }
             .swipeActions(edge: .trailing) {
-                if mailbox != .sent {
-                    Button { archive(e) } label: { Label("Done", systemImage: "checkmark") }.tint(DS.Palette.calm)
-                    Button(role: .destructive) { trash(e) } label: { Label("Trash", systemImage: "trash") }
-                }
+                ForEach(MailSwipe.actions(trailingRaw).filter { mailbox != .sent || $0 == "task" }, id: \.self) { swipeButton($0, e) }
             }
             .swipeActions(edge: .leading) {
-                Button { toTask(e) } label: { Label("Task", systemImage: "checklist") }.tint(DS.Palette.warmth)
-                if mailbox != .sent {
-                    Button { snoozing = e } label: { Label("Snooze", systemImage: "clock") }.tint(DS.Palette.meeting)
-                    Button { star(e) } label: { Label(e.isStarred ? "Unstar" : "Star", systemImage: e.isStarred ? "star.slash" : "star") }.tint(.yellow)
-                }
+                ForEach(MailSwipe.actions(leadingRaw).filter { mailbox != .sent || $0 == "task" }, id: \.self) { swipeButton($0, e) }
             }
             .contextMenu {
                 Button("Reply", systemImage: "arrowshape.turn.up.left") { compose = .reply(to: e, all: false, accounts: accounts) }
@@ -258,14 +298,46 @@ struct InboxView: View {
     }
 
     private func archive(_ e: EmailMessage) {
-        withAnimation(DS.spring) { e.isArchived = true; e.snoozedUntil = nil }
+        let group = conversation(e)
+        withAnimation(DS.spring) { for m in group { m.isArchived = true; m.snoozedUntil = nil } }
         Haptics.success()
         let p = provider(for: e)
-        let id = e.providerMessageId
+        let ids = group.map(\.providerMessageId)
         // The server archive waits for the undo window to close.
-        UndoCenter.shared.offer("Archived", undo: { withAnimation { e.isArchived = false } },
-                                commit: { Task { try? await p?.archive(id) } })
+        UndoCenter.shared.offer(group.count > 1 ? "Archived conversation" : "Archived",
+                                undo: { withAnimation { for m in group { m.isArchived = false } } },
+                                commit: { Task { for id in ids { try? await p?.archive(id) } } })
         checkInboxZero()
+    }
+
+    // MARK: Multi-select
+
+    private var selectedEmails: [EmailMessage] {
+        mailboxEmails.filter { selected.contains($0.id) }.flatMap(conversation)
+    }
+
+    private var bulkBar: some View {
+        HStack(spacing: DS.Space.l) {
+            Button { bulk { m, p in m.isArchived = true; try? await p?.archive(m.providerMessageId) } } label: { Label("Archive", systemImage: "archivebox") }
+            Button { bulk { m, p in m.isRead = true; try? await p?.markRead(m.providerMessageId, read: true) } } label: { Label("Read", systemImage: "envelope.open") }
+            Button { bulk { m, p in m.isStarred = true; try? await p?.setStarred(m.providerMessageId, starred: true) } } label: { Label("Star", systemImage: "star") }
+            Button(role: .destructive) { bulk { m, p in try? await p?.trash(m.providerMessageId); ctx.delete(m) } } label: { Label("Trash", systemImage: "trash") }
+        }
+        .labelStyle(.iconOnly).font(.title3)
+        .disabled(selected.isEmpty)
+        .padding(.horizontal, DS.Space.l).padding(.vertical, DS.Space.m)
+        .glassEffect(.regular, in: Capsule())
+        .padding(.bottom, DS.Space.s)
+    }
+
+    private func bulk(_ action: @escaping (EmailMessage, MailProvider?) async -> Void) {
+        let items = selectedEmails
+        let pairs = items.map { ($0, provider(for: $0)) }
+        Task { for (m, p) in pairs { await action(m, p) } }
+        Haptics.success()
+        UndoCenter.shared.notify("Updated \(items.count) email\(items.count == 1 ? "" : "s")")
+        selected = []
+        withAnimation { selecting = false }
     }
 
     private func trash(_ e: EmailMessage) {
@@ -364,12 +436,15 @@ struct InboxView: View {
 
 struct EmailRow: View {
     let email: EmailMessage
+    var count: Int = 1
+    var unreadInThread = false
     var body: some View {
         HStack(alignment: .top, spacing: DS.Space.m) {
-            Circle().fill(email.isRead ? .clear : DS.Palette.accent).frame(width: 8, height: 8).padding(.top, 6)
+            Circle().fill(email.isRead && !unreadInThread ? .clear : DS.Palette.accent).frame(width: 8, height: 8).padding(.top, 6)
             VStack(alignment: .leading, spacing: 3) {
                 HStack(spacing: 4) {
                     Text(email.fromName.isEmpty ? email.from : email.fromName).font(DS.Font.headline).lineLimit(1)
+                    if count > 1 { Text("\(count)").font(.caption2.weight(.semibold)).foregroundStyle(DS.Palette.inkSoft) }
                     if email.isStarred { Image(systemName: "star.fill").font(.caption2).foregroundStyle(.yellow) }
                     if email.hasAttachments { Image(systemName: "paperclip").font(.caption2).foregroundStyle(DS.Palette.inkSoft) }
                     Spacer()

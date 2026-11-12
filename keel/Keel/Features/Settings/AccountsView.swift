@@ -268,6 +268,8 @@ struct CalendarSettings: View {
     @AppStorage("calendar.mode") private var mode = CalendarMode.week.rawValue
     @AppStorage("leaveBy.on") private var leaveBy = true
     @AppStorage("prep.on") private var prepOn = true
+    @AppStorage(TransitionAlerts.onKey) private var transitions = true
+    @AppStorage(TransitionAlerts.minutesKey) private var transitionMinutes = 5
     @AppStorage("leaveBy.transport") private var transport = "driving"
     private var hidden: Set<String> { Set(hiddenRaw.split(separator: ",").map(String.init)) }
 
@@ -278,6 +280,12 @@ struct CalendarSettings: View {
                 Toggle("Show Tasks on Calendar", isOn: $showTasks)
             }
             Section {
+                Toggle("Transition Warnings", isOn: $transitions)
+                if transitions {
+                    Picker("Warn Me", selection: $transitionMinutes) {
+                        Text("5 minutes before").tag(5); Text("10 minutes before").tag(10); Text("15 minutes before").tag(15)
+                    }
+                }
                 Toggle("Meeting Prep Alerts", isOn: $prepOn)
                 Toggle("Time to Leave Alerts", isOn: $leaveBy)
                 if leaveBy {
@@ -285,7 +293,7 @@ struct CalendarSettings: View {
                         Text("Car").tag("driving"); Text("Transit").tag("transit"); Text("Walking").tag("walking")
                     }
                 }
-            } footer: { Text("For events with an address, Keel checks Apple Maps travel time from where you are and alerts you when it's time to leave, with a 10-minute buffer. Needs location access. Meeting prep alerts arrive 10 minutes before meetings that have related emails, notes, tasks or promises.") }
+            } footer: { Text("For events with an address, Keel checks Apple Maps travel time from where you are and alerts you when it's time to leave, with a 10-minute buffer. Needs location access. Transition warnings give you a heads-up before every event so switching gears isn't a jolt. Meeting prep alerts arrive 10 minutes before meetings that have related emails, notes, tasks or promises.") }
             ForEach(CalendarService.shared.calendarsBySource, id: \.source) { group in
                 Section(group.source) {
                     ForEach(group.calendars, id: \.calendarIdentifier) { c in
@@ -423,6 +431,11 @@ struct MailSettings: View {
                 Toggle("Screener", isOn: Binding(get: { !UserDefaults.standard.bool(forKey: "screener.off") },
                                                  set: { UserDefaults.standard.set(!$0, forKey: "screener.off") }))
             } footer: { Text("The first time someone emails you, decide whether they get into your inbox. Blocked senders are archived automatically.") }
+            Section {
+                Toggle("Group by Conversation", isOn: Binding(get: { UserDefaults.standard.object(forKey: MailSwipe.threadsKey) as? Bool ?? true },
+                                                               set: { UserDefaults.standard.set($0, forKey: MailSwipe.threadsKey) }))
+                NavigationLink("Swipe Actions") { SwipeSettingsView() }
+            } header: { Text("Inbox") }
             Section { NavigationLink("Rules") { MailRulesView() } } footer: { Text("Auto-archive, star, file or turn mail into tasks as it arrives.") }
             Section { NavigationLink("Snippets") { SnippetsView() } } footer: { Text("Saved replies you can insert while writing an email.") }
             Section("Signature") {
