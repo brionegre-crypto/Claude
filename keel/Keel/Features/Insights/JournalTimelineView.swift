@@ -4,9 +4,11 @@ import Charts
 
 /// Mood, energy and sleep over time, with every highlight. Spots patterns like "bad sleep → low mood".
 struct JournalTimelineView: View {
+    @Environment(\.modelContext) private var ctx
     @Query(sort: \CheckIn.day, order: .reverse) private var checkIns: [CheckIn]
     @State private var range = 30
     @State private var writing = false
+    @State private var summaries: [Date: String] = [:]
 
     private var shown: [CheckIn] {
         let since = Calendar.current.date(byAdding: .day, value: -range, to: Date())!
@@ -43,6 +45,16 @@ struct JournalTimelineView: View {
                     Text("Check in on Today for a few days to see your trends.").foregroundStyle(DS.Palette.inkSoft)
                 }
             }
+            Section {
+                NavigationLink { DayLogView() } label: {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Label("Today's log", systemImage: "list.bullet.rectangle").font(DS.Font.headline)
+                        let s = DailyLog.summary(for: Date(), ctx: ctx)
+                        Text(s.isEmpty ? "Breathing, focus, tasks, meds and more, as they happen." : s)
+                            .font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
+                    }
+                }
+            }
             MoodPatternsSection(checkIns: shown)
             Section("Entries") {
                 ForEach(shown) { c in
@@ -60,6 +72,11 @@ struct JournalTimelineView: View {
                                 if !c.prompt.isEmpty { Text(c.prompt).font(DS.Font.caption.weight(.semibold)).foregroundStyle(DS.Palette.inkSoft) }
                                 Text(c.journal).font(.callout)
                             }
+                            if let log = summaries[c.day], !log.isEmpty {
+                                NavigationLink { DayLogView(day: c.day) } label: {
+                                    Label(log, systemImage: "list.bullet.rectangle").font(DS.Font.caption).foregroundStyle(DS.Palette.accent)
+                                }
+                            }
                         }
                     }
                 }
@@ -70,6 +87,12 @@ struct JournalTimelineView: View {
             Button { writing = true } label: { Label("Write today's journal", systemImage: "square.and.pencil") }
         }
         .sheet(isPresented: $writing) { JournalEntryView() }
+        .task(id: shown.count) {
+            // Built once per change, not on every redraw.
+            var d: [Date: String] = [:]
+            for c in shown.prefix(45) { d[c.day] = DailyLog.summary(for: c.day, ctx: ctx) }
+            summaries = d
+        }
     }
 
     /// A simple, honest correlation note: mood after short vs long sleep.

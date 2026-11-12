@@ -435,6 +435,8 @@ struct DreadFixView: View {
             Button {
                 if let a = actual { Dread.rateActual(item.id, a) }
                 markDone()
+                let guessText = predicted.map { p in "Guessed \(Dread.faces[p - 1]) \(p)" + (actual.map { ", was \(Dread.faces[$0 - 1]) \($0)" } ?? "") }
+                DailyLog.add(LogEvent(date: Date(), kind: .dread, title: "Faced: \(item.title)", detail: guessText ?? item.reason.label))
                 withAnimation(DS.spring) { stage = 3 }
                 Haptics.milestone()
             } label: { Text("Done").frame(maxWidth: .infinity) }

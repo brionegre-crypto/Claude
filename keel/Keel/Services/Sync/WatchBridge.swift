@@ -205,6 +205,10 @@ final class WatchBridge: NSObject, WCSessionDelegate {
                 BrainDumpSorter.save(items, ctx: ctx)
                 WidgetSync.update(ctx)
             }
+        case .loggedBreath(let seconds, let at):
+            DailyLog.logBreath(seconds: seconds, at: at, source: "Apple Watch")
+        case .loggedRoutine(let name, let steps, let minutes, let at):
+            DailyLog.logRoutine(name, steps: steps, minutes: minutes, at: at, source: "Apple Watch")
         case .takeMed(let id, let slot):
             if let m = try? ctx.fetch(FetchDescriptor<Medication>(predicate: #Predicate { $0.id == id })).first {
                 MedEngine.take(m, slot: slot, ctx: ctx)

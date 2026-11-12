@@ -66,6 +66,16 @@ struct JournalEntryView: View {
                         Text("One good thing from today").font(DS.Font.headline)
                         TextField("Even tiny. Especially tiny.", text: $good).textFieldStyle(.roundedBorder)
                     }
+
+                    let log = DailyLog.summary(for: Date(), ctx: ctx)
+                    if !log.isEmpty {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("Your day so far").font(DS.Font.caption.weight(.semibold)).foregroundStyle(DS.Palette.inkSoft)
+                            Label(log, systemImage: "list.bullet.rectangle").font(DS.Font.caption)
+                        }
+                        .padding(DS.Space.m).frame(maxWidth: .infinity, alignment: .leading)
+                        .background(DS.Palette.elevated, in: .rect(cornerRadius: DS.Radius.card))
+                    }
                 }
                 .padding()
             }

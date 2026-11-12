@@ -176,6 +176,7 @@ struct RoutinePlayer: View {
     @State private var extra = 0                // minutes added to this step
     @State private var now = Date()
     @State private var buzzed = false
+    @State private var begun = Date()
     private let tick = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
 
     private var current: Routine.Step? { index < steps.count ? steps[index] : nil }
@@ -281,7 +282,10 @@ struct RoutinePlayer: View {
         skipped ? Haptics.tap() : Haptics.success()
         withAnimation(DS.spring) { index += 1 }
         stepStarted = Date(); extra = 0; buzzed = false
-        if current == nil { cancelStepEnd() } else { scheduleStepEnd() }
+        if current == nil {
+            cancelStepEnd()
+            DailyLog.logRoutine(routine.name, steps: steps.count, minutes: max(1, Int(Date().timeIntervalSince(begun) / 60)))
+        } else { scheduleStepEnd() }
     }
 
     /// If you leave Keel, a notification says when this step's time is up.

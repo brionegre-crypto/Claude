@@ -711,9 +711,21 @@ struct WorldClockPage: View {
 
 /// One minute of box breathing with a tap on the wrist at each change, for overwhelming moments.
 struct BreathePage: View {
+    @Environment(WatchStore.self) private var store
     @State private var expanded = false
     @State private var phase = "Ready"
     @State private var round = 0
+    @State private var startedAt = Date()
+    @State private var logged = false
+
+    /// Every session (even a short one) goes into today's log on the iPhone.
+    private func logSession() {
+        guard !logged else { return }
+        let seconds = Int(Date().timeIntervalSince(startedAt))
+        guard seconds >= 20 else { return }
+        logged = true
+        store.send(.loggedBreath(seconds, startedAt))
+    }
 
     var body: some View {
         VStack(spacing: 8) {
@@ -726,7 +738,9 @@ struct BreathePage: View {
             Text(round > 0 ? "Round \(round) of 4" : "In 4 · hold 4 · out 4 · hold 4").font(.caption2).foregroundStyle(.secondary)
         }
         .navigationTitle("Breathe")
+        .onDisappear { logSession() }
         .task {
+            startedAt = Date()
             for r in 1...4 {
                 round = r
                 phase = "In"; WKInterfaceDevice.current().play(.start)
@@ -742,6 +756,7 @@ struct BreathePage: View {
                 if Task.isCancelled { return }
             }
             phase = "Done"; WKInterfaceDevice.current().play(.success)
+            logSession()
         }
     }
 }
@@ -806,6 +821,8 @@ struct RoutinesPage: View {
 
 struct RoutineWatchPlayer: View {
     let routine: Routine
+    @Environment(WatchStore.self) private var store
+    @State private var begun = Date()
     @State private var steps: [Routine.Step] = []
     @State private var index = 0
     @State private var started = Date()
@@ -830,6 +847,9 @@ struct RoutineWatchPlayer: View {
                         Button(index + 1 == steps.count ? "Finish" : "Next") {
                             WKInterfaceDevice.current().play(.success)
                             index += 1; started = Date(); buzzed = false
+                            if index == steps.count {
+                                store.send(.loggedRoutine(routine.name, steps.count, Int(Date().timeIntervalSince(begun) / 60), Date()))
+                            }
                         }
                         .tint(.orange)
                         if let skip = steps.dropFirst(index + 1).first(where: \.optional) {

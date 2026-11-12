@@ -129,6 +129,8 @@ struct HubView: View {
                 link("Medications", "pills") { MedsView() }
                 link("Habit stacks", "link") { HabitsView() }
                 link("Habit library", "books.vertical") { HabitLibraryView() }
+                link("Daily log", "list.bullet.rectangle") { DayLogView() }
+                link("Breathe", "wind") { BreatheView() }
                 link("Mood journal & patterns", "face.smiling") { JournalTimelineView() }
                 link("Focus room", "person.2.wave.2") { FocusRoomView() }
                 link("Focus forecast", "waveform.path.ecg") { FocusForecastView() }

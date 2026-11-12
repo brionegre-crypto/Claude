@@ -50,6 +50,8 @@ struct OverwhelmedView: View {
                 Text(phase).font(DS.Font.headline)
             }
             .task {
+                let began = Date()
+                defer { DailyLog.logBreath(seconds: Int(Date().timeIntervalSince(began)), at: began) }   // into today's log
                 for _ in 0..<4 {                                    // 4 rounds × 16 s ≈ 1 minute
                     phase = "Breathe in"; withAnimation(.easeInOut(duration: 4)) { breathing = true }
                     try? await Task.sleep(for: .seconds(4)); phase = "Hold"

@@ -167,6 +167,8 @@ enum WatchAction: Codable {
     case addEvent(String)
     case acceptSuggestion(UUID)
     case dismissSuggestion(UUID)
+    case loggedBreath(Int, Date)                 // seconds, when it started: goes into the daily log
+    case loggedRoutine(String, Int, Int, Date)   // name, steps, minutes, when it finished
 }
 
 enum WatchCoding {

@@ -27,6 +27,8 @@ struct CheckInCard: View {
                         Text("\(streak) day\(streak == 1 ? "" : "s") 🔥").font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
                         Button(t.journal.isEmpty ? "1-min journal" : "Journal ✓") { showJournal = true }
                             .font(DS.Font.caption).buttonStyle(.borderless)
+                        NavigationLink("Day log") { DayLogView() }
+                            .font(DS.Font.caption).buttonStyle(.borderless)
                     }
                 }
                 .sheet(isPresented: $showJournal) { JournalEntryView() }
