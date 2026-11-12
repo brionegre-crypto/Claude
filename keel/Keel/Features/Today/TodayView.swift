@@ -36,59 +36,20 @@ struct TodayView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: DS.Space.l) {
                     greeting
-                    AutopilotTodayCard()
-                    MedsTodayCard()
+                    ForEach(calm ? TodayCard.calm : TodayCard.current(phase: DayPhase.now)) { card($0) }
                     if calm {
-                        // Calm mode: just the next thing and what's coming. Everything else waits.
-                        justOneThing
-                        if !upNextEvents.isEmpty { upNext }
                         Label("Calm mode is on. Everything else is still here when you want it.", systemImage: "leaf")
                             .font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
-                    } else {
-                        PinnedTasksCard()
-                        FoundInMailTodayCard()
-                        TripTodayCard()
-                        // Today reshapes itself through the day: plan in the morning, do in the day, wind down at night.
-                        switch DayPhase.now {
-                        case .morning:
-                            PlanRitualPrompt()
-                            CheckInCard()
-                            energyPicker
-                            justOneThing
-                            planCard
-                            if !upNextEvents.isEmpty { upNext }
-                        case .day:
-                            energyPicker
-                            justOneThing
-                            if !upNextEvents.isEmpty { upNext }
-                            planCard
-                            CheckInCard()
-                        case .evening:
-                            NavigationLink { DayReviewView() } label: { dayReviewTeaser }.buttonStyle(.plain)
-                            CheckInCard()
-                            if !upNextEvents.isEmpty { upNext }
-                            justOneThing
-                        }
-                        countdownCard
-                        promisesCard
-                        followUpsCard
-                        keepInTouchCard
-                        if WeeklyReview.isDue {
-                            NavigationLink { WeeklyReviewView() } label: {
-                                GlassCard(tint: .purple) {
-                                    Label("Your weekly review is ready · 10 min", systemImage: "chart.bar.doc.horizontal")
-                                        .font(DS.Font.headline).foregroundStyle(DS.Palette.ink)
-                                }
-                            }
-                            .buttonStyle(.plain)
-                        }
-                        attentionCard
-                        avoidedCard
                     }
+                    NavigationLink { CustomizeTodayView() } label: {
+                        Label("Customize Today", systemImage: "slider.horizontal.3").font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
+                    }
+                    .frame(maxWidth: .infinity)
                 }
                 .padding(DS.Space.m)
             }
             .background(DS.Palette.canvas)
+            .scrollEdgeEffectStyle(.hard, for: .top)          // content no longer smears under the top buttons
             .refreshable { await SyncEngine.shared.syncAll() }
             .task {
                 // Short night → suggest a gentler day, unless you've already picked your energy today.
@@ -107,44 +68,13 @@ struct TodayView: View {
                     Button { showBrainDump = true } label: { Image(systemName: "brain.head.profile") }
                         .accessibilityLabel("Brain dump")
                 }
-                ToolbarItem(placement: .topBarLeading) {
+                ToolbarItem(placement: .topBarTrailing) {
                     NavigationLink { SearchView() } label: { Image(systemName: "magnifyingglass") }
                         .accessibilityLabel("Search everything")
                 }
                 ToolbarItem(placement: .topBarTrailing) {
-                    Menu {
-                        NavigationLink { GoalsView() } label: { Label("Goals", systemImage: "target") }
-                        NavigationLink { ProjectsView() } label: { Label("Projects", systemImage: "folder") }
-                        NavigationLink { ProcessInboxView() } label: { Label("Sort loose tasks", systemImage: "tray.and.arrow.down") }
-                        NavigationLink { HabitsView() } label: { Label("Habit stacks", systemImage: "link") }
-                        NavigationLink { AutopilotView() } label: { Label("Autopilot", systemImage: "sparkles") }
-                        NavigationLink { TalkView() } label: { Label("Talk to Keel", systemImage: "waveform") }
-                        Toggle(isOn: $calm) { Label("Calm mode", systemImage: "leaf") }
-                        NavigationLink { PlanRitualView() } label: { Label("Plan my day", systemImage: "list.bullet.clipboard") }
-                        NavigationLink { HabitLibraryView() } label: { Label("Habit library", systemImage: "books.vertical") }
-                        NavigationLink { MedsView() } label: { Label("Medications", systemImage: "pills") }
-                        NavigationLink { DopamineMenuView() } label: { Label("Dopamine menu", systemImage: "fork.knife") }
-                        NavigationLink { SubscriptionsView() } label: { Label("Subscriptions & bills", systemImage: "creditcard") }
-                        NavigationLink { DeliveriesView() } label: { Label("Deliveries", systemImage: "shippingbox") }
-                        NavigationLink { TripsView() } label: { Label("Trips", systemImage: "airplane") }
-                        NavigationLink { AchievementsView() } label: { Label("Achievements", systemImage: "trophy") }
-                        NavigationLink { FocusHistoryView() } label: { Label("Focus history", systemImage: "chart.bar.xaxis") }
-                        NavigationLink { JournalTimelineView() } label: { Label("Mood journal", systemImage: "face.smiling") }
-                        NavigationLink { SharedCalendarsView() } label: { Label("Shared calendars", systemImage: "person.3") }
-                        NavigationLink { WeeklyReviewView() } label: { Label("Weekly review", systemImage: "chart.bar.doc.horizontal") }
-                        NavigationLink { MonthlyReviewView() } label: { Label("Monthly review", systemImage: "calendar.badge.checkmark") }
-                        NavigationLink { PeopleView() } label: { Label("Keep in touch", systemImage: "person.2") }
-                        NavigationLink { CountdownsView() } label: { Label("Countdowns", systemImage: "hourglass") }
-                        NavigationLink { ScreenshotTasksView() } label: { Label("Tasks from screenshots", systemImage: "camera.viewfinder") }
-                        NavigationLink { TimeAuditView() } label: { Label("Time audit", systemImage: "chart.pie") }
-                        NavigationLink { IdealWeekView() } label: { Label("Ideal week", systemImage: "calendar.badge.clock") }
-                        NavigationLink { ReadLaterView() } label: { Label("Read later", systemImage: "books.vertical") }
-                        NavigationLink { MeetingRecorderView() } label: { Label("Record a meeting", systemImage: "mic") }
-                        NavigationLink { OdysseyView() } label: { Label("Odyssey plan", systemImage: "point.3.filled.connected.trianglepath.dotted") }
-                        NavigationLink { AssistantView() } label: { Label("Ask Keel", systemImage: "sparkles") }
-                        NavigationLink { FeatureGuideView() } label: { Label("How Keel works", systemImage: "questionmark.circle") }
-                    } label: { Image(systemName: "square.grid.2x2") }
-                    .accessibilityLabel("More")
+                    NavigationLink { HubView() } label: { Image(systemName: "square.grid.2x2") }
+                        .accessibilityLabel("Everything")
                 }
                 ToolbarItem(placement: .topBarTrailing) {
                     Button { showSettings = true } label: { Image(systemName: "person.crop.circle") }
@@ -153,6 +83,46 @@ struct TodayView: View {
             .sheet(isPresented: $showSettings) { AccountsView() }
             .sheet(isPresented: $showBrainDump) { BrainDumpView() }
             .fullScreenCover(isPresented: $showSOS) { OverwhelmedView() }
+        }
+    }
+
+    /// "in 44 min", "in 2 hr 10 min": calm, readable, no ticking seconds.
+    static func untilLabel(_ d: Date) -> String {
+        let m = max(1, Int(d.timeIntervalSinceNow / 60))
+        return m < 60 ? "in \(m) min" : m % 60 == 0 ? "in \(m / 60) hr" : "in \(m / 60) hr \(m % 60) min"
+    }
+
+    @ViewBuilder
+    private func card(_ c: TodayCard) -> some View {
+        switch c {
+        case .autopilot: AutopilotTodayCard()
+        case .meds: MedsTodayCard()
+        case .planRitual: PlanRitualPrompt()
+        case .checkIn: CheckInCard()
+        case .energy: energyPicker
+        case .oneThing: justOneThing
+        case .aiPlan: planCard
+        case .upNext: if !upNextEvents.isEmpty { upNext }
+        case .needsYou: attentionCard
+        case .pinned: PinnedTasksCard()
+        case .mail: FoundInMailTodayCard()
+        case .trip: TripTodayCard()
+        case .dayReview: if DayPhase.now == .evening { NavigationLink { DayReviewView() } label: { dayReviewTeaser }.buttonStyle(.plain) }
+        case .countdown: countdownCard
+        case .promises: promisesCard
+        case .followUps: followUpsCard
+        case .keepInTouch: keepInTouchCard
+        case .weeklyReview:
+            if WeeklyReview.isDue {
+                NavigationLink { WeeklyReviewView() } label: {
+                    GlassCard(tint: .purple) {
+                        Label("Your weekly review is ready · 10 min", systemImage: "chart.bar.doc.horizontal")
+                            .font(DS.Font.headline).foregroundStyle(DS.Palette.ink)
+                    }
+                }
+                .buttonStyle(.plain)
+            }
+        case .avoided: avoidedCard
         }
     }
 
@@ -253,7 +223,7 @@ struct TodayView: View {
                     Spacer()
                     // Time-blindness aid: countdown, not a timestamp ("Now" once it has started)
                     Group {
-                        if e.startDate <= Date() { Text("Now") } else { Text(e.startDate, style: .relative) }
+                        TimelineView(.everyMinute) { _ in Text(e.startDate <= Date() ? "Now" : Self.untilLabel(e.startDate)) }
                     }.font(DS.Font.caption).foregroundStyle(DS.Palette.meeting)
                 }
             }
