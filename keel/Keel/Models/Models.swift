@@ -258,7 +258,8 @@ struct NoteBlock: Codable, Identifiable, Hashable {
     var icon: String?                           // callout emoji
     var lang: String?                           // code language
     var rows: [[String]]?                       // table cells, first row is the header
-    var color: String?                          // gray | red | orange | yellow | green | blue | purple | pink (+ "bg:" prefix for background)
+    var color: String?                          // gray | brown | red | orange | yellow | green | blue | purple | pink (+ "bg:" prefix for background)
+    var indent: Int?                            // nesting level: 0 (or nil) is the left edge; children of lists and toggles are 1, 2…
 }
 
 /// A column in a notes database: Status, Due, Tags…
@@ -305,7 +306,7 @@ struct DBProperty: Codable, Identifiable, Hashable {
 
     var plainText: String {
         blocks.map { b in
-            [b.text, b.body ?? "", (b.rows ?? []).map { $0.joined(separator: " ") }.joined(separator: "\n")]
+            [RichText.plain(b.text), b.body ?? "", (b.rows ?? []).map { $0.joined(separator: " ") }.joined(separator: "\n")]
                 .filter { !$0.isEmpty }.joined(separator: "\n")
         }.joined(separator: "\n")
     }

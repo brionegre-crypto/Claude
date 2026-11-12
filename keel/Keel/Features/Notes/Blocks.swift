@@ -40,12 +40,23 @@ struct SlashCommand: Identifiable {
 // MARK: - Colors
 
 enum BlockColor: String, CaseIterable {
-    case gray, red, orange, yellow, green, blue, purple, pink
+    case gray, brown, red, orange, yellow, green, blue, purple, pink
     var color: Color {
         switch self {
-        case .gray: .gray; case .red: .red; case .orange: .orange; case .yellow: .yellow
+        case .gray: .gray; case .brown: .brown; case .red: .red; case .orange: .orange; case .yellow: .yellow
         case .green: .green; case .blue: .blue; case .purple: .purple; case .pink: .pink
         }
+    }
+
+    /// Workspace colour names ("blue", "red_background", "teal") → Keel's ("blue", "bg:red", "green").
+    static func fromWorkspace(_ raw: String?) -> String? {
+        guard var r = raw?.lowercased(), r != "default", !r.isEmpty else { return nil }
+        let bg = r.hasSuffix("_background")
+        r = r.replacingOccurrences(of: "_background", with: "")
+        let map = ["teal": "green", "grey": "gray", "default": ""]
+        r = map[r] ?? r
+        guard BlockColor(rawValue: r) != nil else { return nil }
+        return bg ? "bg:" + r : r
     }
     /// "blue" → text color; "bg:blue" → background.
     static func parse(_ raw: String?) -> (text: Color?, background: Color?) {
@@ -60,6 +71,37 @@ enum BlockColor: String, CaseIterable {
 /// Renders inline markdown (**bold**, *italic*, `code`, [link](url), ~~strike~~) plus ==highlight==.
 enum RichText {
     static func render(_ text: String) -> AttributedString {
+        guard text.contains("{") else { return renderBasic(text) }
+        // Coloured and underlined spans: {c:red}text{/}, {b:yellow}text{/}, {u}text{/}
+        guard let re = try? NSRegularExpression(pattern: #"\{(c|b):([a-z]+)\}(.*?)\{/\}|\{u\}(.*?)\{/\}"#) else { return renderBasic(text) }
+        let ns = text as NSString
+        var out = AttributedString()
+        var last = 0
+        for m in re.matches(in: text, range: NSRange(location: 0, length: ns.length)) {
+            if m.range.location > last { out += renderBasic(ns.substring(with: NSRange(location: last, length: m.range.location - last))) }
+            if m.range(at: 4).location != NSNotFound {
+                var seg = render(ns.substring(with: m.range(at: 4)))
+                seg.underlineStyle = .single
+                out += seg
+            } else {
+                var seg = render(ns.substring(with: m.range(at: 3)))
+                let c = BlockColor(rawValue: ns.substring(with: m.range(at: 2)))?.color
+                if ns.substring(with: m.range(at: 1)) == "c" { seg.foregroundColor = c } else { seg.backgroundColor = c?.opacity(0.25) }
+                out += seg
+            }
+            last = m.range.location + m.range.length
+        }
+        if last < ns.length { out += renderBasic(ns.substring(from: last)) }
+        return out
+    }
+
+    /// Text without Keel's colour and underline markers (for search, AI and exports).
+    static func plain(_ text: String) -> String {
+        guard text.contains("{") else { return text }
+        return text.replacingOccurrences(of: #"\{(c|b):[a-z]+\}|\{u\}|\{/\}"#, with: "", options: .regularExpression)
+    }
+
+    private static func renderBasic(_ text: String) -> AttributedString {
         // "a ==b== c" → segments [a, b, c]; odd segments are highlighted.
         let parts = text.components(separatedBy: "==")
         var out = AttributedString()

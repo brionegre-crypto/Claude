@@ -6,12 +6,17 @@ import SwiftUI
 enum NoteExport {
     static func markdown(_ n: Note) -> String {
         var out = "# \(n.title)\n\n"
-        for b in n.blocks {
+        for raw in n.blocks {
+            var b = raw
+            // Underline stays (<u>), colour markers go, line breaks inside a block become markdown line breaks.
+            b.text = RichText.plain(raw.text.replacingOccurrences(of: #"\{u\}(.*?)\{/\}"#, with: "<u>$1</u>", options: .regularExpression))
+                .replacingOccurrences(of: MarkdownImport.softBreak, with: "  \n")
+            let pad = String(repeating: "    ", count: raw.indent ?? 0)
             switch b.kind {
             case .heading: out += "## \(b.text)\n\n"
             case .heading2: out += "### \(b.text)\n\n"
             case .heading3: out += "#### \(b.text)\n\n"
-            case .numbered: out += "1. \(b.text)\n"
+            case .numbered: out += "\(pad)1. \(b.text)\n"
             case .toggle: out += "<details><summary>\(b.text)</summary>\n\n\(b.body ?? "")\n\n</details>\n\n"
             case .callout: out += "> \(b.icon ?? "💡") \(b.text)\n\n"
             case .code: out += "```\(b.lang ?? "")\n\(b.text)\n```\n\n"
@@ -22,8 +27,8 @@ enum NoteExport {
                     for r in rows.dropFirst() { out += "| " + r.joined(separator: " | ") + " |\n" }
                     out += "\n"
                 }
-            case .todo: out += "- [\(b.checked ? "x" : " ")] \(b.text)\n"
-            case .bullet: out += "- \(b.text)\n"
+            case .todo: out += "\(pad)- [\(b.checked ? "x" : " ")] \(b.text)\n"
+            case .bullet: out += "\(pad)- \(b.text)\n"
             case .quote: out += "> \(b.text)\n\n"
             case .divider: out += "\n---\n\n"
             case .image: if !b.text.isEmpty { out += "_[Image: \(b.text)]_\n\n" }
@@ -51,7 +56,10 @@ enum NoteExport {
         }
         add(n.title, .systemFont(ofSize: 24, weight: .bold), after: 12)
         add(n.updatedAt.formatted(date: .long, time: .shortened), .systemFont(ofSize: 10), color: .secondaryLabel, after: 14)
-        for b in n.blocks {
+        for raw in n.blocks {
+            var b = raw
+            b.text = String(repeating: "    ", count: raw.indent ?? 0)
+                + RichText.plain(raw.text).replacingOccurrences(of: MarkdownImport.softBreak, with: "\n")
             switch b.kind {
             case .heading: add(b.text, .systemFont(ofSize: 17, weight: .semibold), after: 8)
             case .heading2: add(b.text, .systemFont(ofSize: 15, weight: .semibold), after: 6)

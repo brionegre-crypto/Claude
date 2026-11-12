@@ -71,6 +71,8 @@ enum ImportEngine {
             let n = Note(title: p.title, blocks: [])
             n.icon = p.icon
             n.isPinned = p.pinned
+            if let c = p.coverData { n.cover = c }
+            else if let path = p.coverPath, let d = archive?.data(path) { n.cover = d }
             n.createdAt = p.created ?? Date()
             n.updatedAt = p.updated ?? p.created ?? Date()
             n.sortIndex = Double(i)

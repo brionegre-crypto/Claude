@@ -73,7 +73,10 @@ struct NoteEditor: View {
                     .listRowSeparator(.hidden)
                     .listRowInsets(EdgeInsets(top: 0, leading: 8, bottom: 0, trailing: 8))
             } else {
-                ForEach($note.blocks) { $b in row($b) }
+                let hidden = hiddenBlocks
+                ForEach($note.blocks) { $b in
+                    if !hidden.contains(b.id) { row($b) }      // inside a closed toggle
+                }
                     .onMove { note.blocks.move(fromOffsets: $0, toOffset: $1) }
                     .onDelete { note.blocks.remove(atOffsets: $0) }
                 Button { appendBlock(.text) } label: {
@@ -211,6 +214,7 @@ struct NoteEditor: View {
                 prefix(b)
                 content(b)
             }
+            .padding(.leading, CGFloat(min(blk.indent ?? 0, 8)) * 24)
             .foregroundStyle(colors.text ?? DS.Palette.ink)
             .padding(.vertical, blk.kind == .callout || colors.background != nil ? 8 : 2)
             .padding(.horizontal, blk.kind == .callout || colors.background != nil ? 10 : 0)
@@ -228,8 +232,8 @@ struct NoteEditor: View {
     private func prefix(_ b: Binding<NoteBlock>) -> some View {
         switch b.wrappedValue.kind {
         case .todo: CompletionCheck(isDone: b.checked)
-        case .bullet: Text("•").font(DS.Font.body)
-        case .numbered: Text("\(number(for: b.wrappedValue.id)).").font(DS.Font.body).monospacedDigit()
+        case .bullet: Text(["•", "◦", "▪︎"][(b.wrappedValue.indent ?? 0) % 3]).font(DS.Font.body)
+        case .numbered: Text(numberLabel(for: b.wrappedValue)).font(DS.Font.body).monospacedDigit()
         case .toggle:
             Button { withAnimation(DS.spring) { b.wrappedValue.collapsed = !(b.wrappedValue.collapsed ?? false) } } label: {
                 Image(systemName: "chevron.right").rotationEffect(.degrees((b.wrappedValue.collapsed ?? false) ? 0 : 90))
@@ -300,7 +304,7 @@ struct NoteEditor: View {
         case .toggle:
             VStack(alignment: .leading, spacing: 4) {
                 editableText(b, font: DS.Font.body)
-                if !(blk.collapsed ?? false) {
+                if !(blk.collapsed ?? false) && (blk.body != nil || !hasChildren(blk)) {
                     TextField("Empty toggle. Write inside it.", text: Binding(get: { blk.body ?? "" }, set: { b.wrappedValue.body = $0 }), axis: .vertical)
                         .font(DS.Font.body).foregroundStyle(DS.Palette.inkSoft)
                 }
@@ -355,11 +359,64 @@ struct NoteEditor: View {
         }
     }
 
+    /// Position in its list at its own level; deeper items in between don't break the count.
     private func number(for id: UUID) -> Int {
         guard let i = note.blocks.firstIndex(where: { $0.id == id }) else { return 1 }
+        let level = note.blocks[i].indent ?? 0
         var n = 1, j = i - 1
-        while j >= 0 && note.blocks[j].kind == .numbered { n += 1; j -= 1 }
+        while j >= 0 {
+            let b = note.blocks[j], l = b.indent ?? 0
+            if l > level { j -= 1; continue }
+            guard l == level, b.kind == .numbered else { break }
+            n += 1; j -= 1
+        }
         return n
+    }
+
+    /// 1. 2. 3. at the top level, then a. b. c., then i. ii. iii., like the apps you import from.
+    private func numberLabel(for b: NoteBlock) -> String {
+        let n = number(for: b.id)
+        switch (b.indent ?? 0) % 3 {
+        case 1:
+            var s = "", x = n
+            repeat { x -= 1; s = String(UnicodeScalar(97 + x % 26)!) + s; x /= 26 } while x > 0
+            return s + "."
+        case 2:
+            let numerals = [(10, "x"), (9, "ix"), (5, "v"), (4, "iv"), (1, "i")]
+            var x = n, s = ""
+            for (v, r) in numerals { while x >= v { s += r; x -= v } }
+            return s + "."
+        default: return "\(n)."
+        }
+    }
+
+    /// Blocks hidden inside closed toggles (anything indented deeper right after one).
+    private var hiddenBlocks: Set<UUID> {
+        var hidden = Set<UUID>()
+        var closedAt: Int?
+        for b in note.blocks {
+            let l = b.indent ?? 0
+            if let c = closedAt {
+                if l > c { hidden.insert(b.id); continue }
+                closedAt = nil
+            }
+            if b.kind == .toggle && (b.collapsed ?? false) { closedAt = l }
+        }
+        return hidden
+    }
+
+    private func hasChildren(_ b: NoteBlock) -> Bool {
+        guard let i = note.blocks.firstIndex(where: { $0.id == b.id }), i + 1 < note.blocks.count else { return false }
+        return (note.blocks[i + 1].indent ?? 0) > (b.indent ?? 0)
+    }
+
+    private func setIndent(_ i: Int, by delta: Int) {
+        let current = note.blocks[i].indent ?? 0
+        // Can't indent deeper than one level under the block above.
+        let maxLevel = i > 0 ? (note.blocks[i - 1].indent ?? 0) + 1 : 0
+        let next = max(0, min(maxLevel, current + delta))
+        note.blocks[i].indent = next == 0 ? nil : next
+        Haptics.tap()
     }
 
     private func beginEdit(_ id: UUID) {
@@ -378,13 +435,20 @@ struct NoteEditor: View {
             let before = String(parts.first ?? ""), after = parts.count > 1 ? String(parts[1]) : ""
             let kind = b.wrappedValue.kind
             if before.isEmpty && [.bullet, .todo, .numbered].contains(kind) {
+                if let level = b.wrappedValue.indent, level > 0 {
+                    b.wrappedValue.indent = level == 1 ? nil : level - 1
+                    b.wrappedValue.text = after
+                    return
+                }
                 b.wrappedValue.kind = .text
                 b.wrappedValue.text = after
                 return
             }
             b.wrappedValue.text = before
             let next: BlockKind = [.bullet, .todo, .numbered].contains(kind) ? kind : .text
-            insertBlock(after: id, kind: next, text: after)
+            // Inside a toggle, the next line goes inside it too.
+            let level = kind == .toggle ? (b.wrappedValue.indent ?? 0) + 1 : b.wrappedValue.indent
+            insertBlock(after: id, kind: next, text: after, indent: level)
             return
         }
         // Markdown shortcuts at the start of a block.
@@ -409,8 +473,9 @@ struct NoteEditor: View {
         } else if mentionFor == id { mentionFor = nil }
     }
 
-    private func insertBlock(after id: UUID, kind: BlockKind, text: String) {
-        let nb = NoteBlock(kind: kind, text: text)
+    private func insertBlock(after id: UUID, kind: BlockKind, text: String, indent: Int? = nil) {
+        var nb = NoteBlock(kind: kind, text: text)
+        nb.indent = (indent ?? 0) > 0 ? indent : nil
         if let i = note.blocks.firstIndex(where: { $0.id == id }) { note.blocks.insert(nb, at: i + 1) } else { note.blocks.append(nb) }
         beginEdit(nb.id)
     }
@@ -650,6 +715,9 @@ struct NoteEditor: View {
                 Button { RichText.wrap(&note.blocks[i].text, selection: selection, left: "[", right: "](https://)") } label: { Image(systemName: "link") }.accessibilityLabel("Add link")
                 Button { note.blocks[i].text += (note.blocks[i].text.isEmpty || note.blocks[i].text.hasSuffix(" ") ? "@" : " @") } label: { Image(systemName: "at") }.accessibilityLabel("Mention")
                 Button { if note.blocks[i].text.isEmpty { note.blocks[i].text = "/" } else { insertBlock(after: id, kind: .text, text: "/") } } label: { Image(systemName: "plus.square") }.accessibilityLabel("Insert block")
+                Button { setIndent(i, by: -1) } label: { Image(systemName: "decrease.indent") }.accessibilityLabel("Outdent")
+                    .disabled((note.blocks[i].indent ?? 0) == 0)
+                Button { setIndent(i, by: 1) } label: { Image(systemName: "increase.indent") }.accessibilityLabel("Indent")
             }
             Spacer()
             Button("Done") { focused = nil; editing = nil; slashFor = nil; mentionFor = nil }

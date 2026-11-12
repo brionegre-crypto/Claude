@@ -21,6 +21,7 @@ struct ImportedPage {
     var imagePaths: [UUID: String] = [:]    // image block → file in the import
     var imageData: [UUID: Data] = [:]       // image block → bytes we already have
     var coverPath: String? = nil
+    var coverData: Data? = nil
     var dir: String = ""                    // folder the page came from, for relative links
 }
 
@@ -83,6 +84,10 @@ enum MarkdownImport {
         var frontMatter: [(String, String)]
     }
 
+    /// A line break inside a paragraph. Keel shows it as a new line, but it doesn't split the block
+    /// when you edit it (Return does that).
+    static let softBreak = "\u{2028}"
+
     static func parse(_ raw: String, dir: String) -> Result {
         var text = raw.replacingOccurrences(of: "\r\n", with: "\n")
         var front: [(String, String)] = []
@@ -97,14 +102,71 @@ enum MarkdownImport {
         var images: [UUID: String] = [:]
         let lines = text.components(separatedBy: "\n")
         var i = 0
+        var listStack: [Int] = []          // leading widths of open list levels (markdown indentation)
+        var htmlLists: [Bool] = []         // open <ul>/<ol> from HTML: true = numbered
+        var toggleDepth = 0                // inside toggles (<details>)
+        var blankRun = 0
 
-        func add(_ b: NoteBlock) { blocks.append(b) }
+        func width(_ l: String) -> Int {
+            var w = 0
+            for ch in l { if ch == " " { w += 1 } else if ch == "\t" { w += 4 } else { break } }
+            return w
+        }
+        func listLevel(_ w: Int) -> Int {
+            while let last = listStack.last, last > w { listStack.removeLast() }
+            if listStack.last != w { listStack.append(w) }
+            return listStack.count - 1
+        }
+        func nestedLevel(_ w: Int) -> Int {
+            // Content under a list item (an indented paragraph, code, image) sits one level inside it.
+            guard w > 0 else { listStack = []; return 0 }
+            return listStack.filter { $0 < w }.count
+        }
+        func add(_ block: NoteBlock, level: Int = 0) {
+            var b = block
+            // Block colours carried from HTML: ⟪bc:blue_background⟫ at the start.
+            if b.text.hasPrefix("⟪bc:"), let close = b.text.firstIndex(of: "⟫") {
+                b.color = BlockColor.fromWorkspace(String(b.text[b.text.index(b.text.startIndex, offsetBy: 4)..<close]))
+                b.text = String(b.text[b.text.index(after: close)...]).trimmingCharacters(in: .whitespaces)
+            }
+            let htmlLevel = max(0, htmlLists.count - 1)
+            let listy = [BlockKind.bullet, .numbered, .todo, .toggle].contains(b.kind)
+            let total = level + toggleDepth + (listy ? htmlLevel : (htmlLists.isEmpty ? 0 : htmlLists.count))
+            b.indent = total > 0 ? min(total, 8) : nil
+            // Extra blank lines between blocks are deliberate spacing: keep them.
+            if blankRun >= 2 && !blocks.isEmpty {
+                for _ in 0..<min(3, blankRun - 1) { blocks.append(NoteBlock(kind: .text, text: "")) }
+            }
+            blankRun = 0
+            blocks.append(b)
+        }
 
         while i < lines.count {
             let rawLine = lines[i]
             let line = rawLine.trimmingCharacters(in: .whitespaces)
+            let w = width(rawLine)
             defer { i += 1 }
-            if line.isEmpty { continue }
+            if line.isEmpty { blankRun += 1; continue }
+            if line == "-" || line == "*" || line == "+" { continue }        // an empty list marker (e.g. around a toggle)
+
+            // Structure markers from HTML conversion.
+            if line == "⟪ul⟫" || line == "⟪ol⟫" { htmlLists.append(line == "⟪ol⟫"); continue }
+            if line == "⟪/ul⟫" || line == "⟪/ol⟫" { if !htmlLists.isEmpty { htmlLists.removeLast() }; continue }
+            if line.hasPrefix("<details") || line == "⟪details⟫" {
+                if let r = line.range(of: #"<summary>(.*?)</summary>"#, options: .regularExpression) {
+                    let summary = String(line[r]).replacingOccurrences(of: "<summary>", with: "").replacingOccurrences(of: "</summary>", with: "")
+                    var t = NoteBlock(kind: .toggle, text: inline(summary)); t.collapsed = true
+                    add(t, level: nestedLevel(w)); toggleDepth += 1
+                }
+                continue
+            }
+            if line.hasPrefix("<summary>") || line.hasPrefix("⟪summary⟫") {
+                let summary = line.replacingOccurrences(of: "<summary>", with: "").replacingOccurrences(of: "</summary>", with: "").replacingOccurrences(of: "⟪summary⟫", with: "")
+                var t = NoteBlock(kind: .toggle, text: inline(summary)); t.collapsed = true
+                add(t, level: nestedLevel(w)); toggleDepth += 1
+                continue
+            }
+            if line.hasPrefix("</details>") || line == "⟪/details⟫" { toggleDepth = max(0, toggleDepth - 1); continue }
 
             // Fenced code
             if line.hasPrefix("```") || line.hasPrefix("~~~") {
@@ -112,10 +174,16 @@ enum MarkdownImport {
                 let lang = String(line.dropFirst(3)).trimmingCharacters(in: .whitespaces)
                 var code: [String] = []
                 i += 1
-                while i < lines.count && !lines[i].trimmingCharacters(in: .whitespaces).hasPrefix(fence) { code.append(lines[i]); i += 1 }
+                while i < lines.count && !lines[i].trimmingCharacters(in: .whitespaces).hasPrefix(fence) {
+                    // Remove the fence's own indentation, keep the code's.
+                    var l = lines[i]
+                    var drop = w
+                    while drop > 0, let f = l.first, f == " " { l.removeFirst(); drop -= 1 }
+                    code.append(l); i += 1
+                }
                 var b = NoteBlock(kind: .code, text: code.joined(separator: "\n"))
                 b.lang = lang.isEmpty ? nil : lang
-                add(b); continue
+                add(b, level: nestedLevel(w)); continue
             }
             // Math block
             if line.hasPrefix("$$") {
@@ -125,7 +193,7 @@ enum MarkdownImport {
                     while i < lines.count && !lines[i].contains("$$") { math.append(lines[i]); i += 1 }
                 }
                 var b = NoteBlock(kind: .code, text: math.joined(separator: "\n").replacingOccurrences(of: "$$", with: "").trimmingCharacters(in: .whitespacesAndNewlines))
-                b.lang = "latex"; add(b); continue
+                b.lang = "latex"; add(b, level: nestedLevel(w)); continue
             }
             // Callouts written as <aside> (workspace exports)
             if line.hasPrefix("<aside") {
@@ -135,32 +203,14 @@ enum MarkdownImport {
                 i += 1
                 while i < lines.count && !lines[i].contains("</aside>") { body.append(lines[i].trimmingCharacters(in: .whitespaces)); i += 1 }
                 if i < lines.count { body.append(lines[i].replacingOccurrences(of: "</aside>", with: "").trimmingCharacters(in: .whitespaces)) }
-                var joined = body.filter { !$0.isEmpty }.joined(separator: "\n")
+                var joined = body.filter { !$0.isEmpty }.joined(separator: softBreak)
                 var b = NoteBlock(kind: .callout, text: "")
                 if let f = joined.first, f.unicodeScalars.first?.properties.isEmojiPresentation == true {
                     b.icon = String(f); joined = String(joined.dropFirst()).trimmingCharacters(in: .whitespaces)
                 }
-                b.text = inline(joined); add(b); continue
-            }
-            // Toggles written as <details>
-            if line.hasPrefix("<details") {
-                var summary = "", body: [String] = []
-                var j = i
-                while j < lines.count {
-                    let l = lines[j]
-                    if let r = l.range(of: #"<summary>(.*?)</summary>"#, options: .regularExpression) {
-                        summary = String(l[r]).replacingOccurrences(of: "<summary>", with: "").replacingOccurrences(of: "</summary>", with: "")
-                    } else if !l.contains("<details") && !l.contains("</details>") {
-                        let t = l.trimmingCharacters(in: .whitespaces)
-                        if !t.isEmpty { body.append(t) }
-                    }
-                    if l.contains("</details>") { break }
-                    j += 1
-                }
-                i = j
-                var b = NoteBlock(kind: .toggle, text: inline(summary))
-                b.body = body.map(inline).joined(separator: "\n"); b.collapsed = true
-                add(b); continue
+                b.text = inline(joined)
+                b.color = "bg:gray"
+                add(b, level: nestedLevel(w)); continue
             }
             // Tables
             if line.hasPrefix("|") {
@@ -173,31 +223,36 @@ enum MarkdownImport {
                     j += 1
                 }
                 i = j - 1
-                let width = rows.map(\.count).max() ?? 0
+                let widthCols = rows.map(\.count).max() ?? 0
                 var b = NoteBlock(kind: .table, text: "")
-                b.rows = rows.map { $0 + Array(repeating: "", count: max(0, width - $0.count)) }
-                add(b); continue
+                b.rows = rows.map { $0 + Array(repeating: "", count: max(0, widthCols - $0.count)) }
+                add(b, level: nestedLevel(w)); continue
             }
-            // Obsidian-style callout: > [!note] Title
+            // Vault-style callout: > [!note] Title
             if line.hasPrefix("> [!"), let close = line.firstIndex(of: "]") {
                 let type = line[line.index(line.startIndex, offsetBy: 4)..<close].lowercased()
-                var body = [String(line[line.index(after: close)...]).trimmingCharacters(in: .whitespaces)]
+                var body = [String(line[line.index(after: close)...]).trimmingCharacters(in: CharacterSet(charactersIn: " +-"))]
                 while i + 1 < lines.count, lines[i + 1].trimmingCharacters(in: .whitespaces).hasPrefix(">") {
                     i += 1; body.append(String(lines[i].trimmingCharacters(in: .whitespaces).dropFirst()).trimmingCharacters(in: .whitespaces))
                 }
-                var b = NoteBlock(kind: .callout, text: inline(body.filter { !$0.isEmpty }.joined(separator: "\n")))
-                b.icon = ["warning": "⚠️", "danger": "🚨", "tip": "💡", "info": "ℹ️", "question": "❓", "success": "✅", "quote": "💬", "todo": "☑️", "bug": "🐞", "example": "📋"][String(type)] ?? "📝"
-                add(b); continue
+                var b = NoteBlock(kind: .callout, text: inline(body.filter { !$0.isEmpty }.joined(separator: softBreak)))
+                let style: [String: (String, String)] = ["warning": ("⚠️", "bg:orange"), "caution": ("⚠️", "bg:orange"), "danger": ("🚨", "bg:red"), "error": ("🚨", "bg:red"),
+                                                         "tip": ("💡", "bg:green"), "hint": ("💡", "bg:green"), "info": ("ℹ️", "bg:blue"), "note": ("📝", "bg:blue"),
+                                                         "question": ("❓", "bg:yellow"), "success": ("✅", "bg:green"), "quote": ("💬", "bg:gray"),
+                                                         "todo": ("☑️", "bg:blue"), "bug": ("🐞", "bg:red"), "example": ("📋", "bg:purple"), "abstract": ("📄", "bg:blue")]
+                let st = style[String(type)] ?? ("📝", "bg:gray")
+                b.icon = st.0; b.color = st.1
+                add(b, level: nestedLevel(w)); continue
             }
             // Images on their own line
             if let m = firstMatch(#"^!\[([^\]]*)\]\(([^)]+)\)$"#, line) {
                 let target = m[2].components(separatedBy: " \"").first ?? m[2]
                 if target.hasPrefix("http") {
-                    var b = NoteBlock(kind: .bookmark, text: m[1].isEmpty ? target : m[1]); b.refId = target; add(b)
+                    var b = NoteBlock(kind: .bookmark, text: m[1].isEmpty ? target : m[1]); b.refId = target; add(b, level: nestedLevel(w))
                 } else {
                     let b = NoteBlock(kind: .image, text: m[1])
                     images[b.id] = target.hasPrefix("enmedia:") ? target : ImportPaths.resolve(target, from: dir)
-                    add(b)
+                    add(b, level: nestedLevel(w))
                 }
                 continue
             }
@@ -206,58 +261,74 @@ enum MarkdownImport {
                 if ImportPaths.imageExts.contains(ImportPaths.ext(name)) {
                     let b = NoteBlock(kind: .image, text: "")
                     images[b.id] = "find:" + name
-                    add(b)
+                    add(b, level: nestedLevel(w))
                 } else {
-                    var b = NoteBlock(kind: .page, text: ImportPaths.stem(name)); b.refId = "title:" + ImportPaths.stem(name); add(b)
+                    var b = NoteBlock(kind: .page, text: ImportPaths.stem(name)); b.refId = "title:" + ImportPaths.stem(name); add(b, level: nestedLevel(w))
                 }
                 continue
             }
             // A line that's only a link to another page becomes a page block.
             if let m = firstMatch(#"^\[([^\]]+)\]\(([^)]+\.(md|html))\)$"#, line), !m[2].hasPrefix("http") {
-                var b = NoteBlock(kind: .page, text: m[1]); b.refId = "path:" + ImportPaths.resolve(m[2], from: dir); add(b); continue
+                var b = NoteBlock(kind: .page, text: m[1]); b.refId = "path:" + ImportPaths.resolve(m[2], from: dir); add(b, level: nestedLevel(w)); continue
             }
             // Headings
             if line.hasPrefix("#") {
-                let level = line.prefix { $0 == "#" }.count
-                let rest = String(line.dropFirst(level)).trimmingCharacters(in: .whitespaces)
-                if level <= 6, line.dropFirst(level).first == " " {
-                    if level == 1 && title == nil && blocks.isEmpty { title = rest; continue }
-                    add(NoteBlock(kind: level == 1 ? .heading : level == 2 ? .heading2 : .heading3, text: inline(rest))); continue
+                let hashes = line.prefix { $0 == "#" }.count
+                let rest = String(line.dropFirst(hashes)).trimmingCharacters(in: .whitespaces)
+                if hashes <= 6, line.dropFirst(hashes).first == " " {
+                    listStack = []
+                    if hashes == 1 && title == nil && blocks.isEmpty { title = rest; continue }
+                    add(NoteBlock(kind: hashes == 1 ? .heading : hashes == 2 ? .heading2 : .heading3, text: inline(rest)))
+                    continue
                 }
             }
-            // Lists and to-dos (any indent; Keel's blocks are flat)
-            if let m = firstMatch(#"^[-*+]\s+\[([ xX])\]\s+(.*)$"#, line) {
-                add(NoteBlock(kind: .todo, text: inline(m[2]), checked: m[1] != " ")); continue
+            // Lists and to-dos, with their nesting.
+            if let m = firstMatch(#"^[-*+]\s+\[([ xX])\]\s?(.*)$"#, line) {
+                add(NoteBlock(kind: .todo, text: inline(m[2]), checked: m[1] != " "), level: listLevel(w)); continue
             }
             if let m = firstMatch(#"^[-*+]\s+(.*)$"#, line), !(line == "---" || line == "***" || line == "* * *") {
-                add(NoteBlock(kind: .bullet, text: inline(m[1]))); continue
+                let numbered = htmlLists.last == true
+                add(NoteBlock(kind: numbered ? .numbered : .bullet, text: inline(m[1])), level: listLevel(w)); continue
             }
-            if let m = firstMatch(#"^\d+[.)]\s+(.*)$"#, line) { add(NoteBlock(kind: .numbered, text: inline(m[1]))); continue }
+            if let m = firstMatch(#"^\d+[.)]\s+(.*)$"#, line) {
+                add(NoteBlock(kind: .numbered, text: inline(m[1])), level: listLevel(w)); continue
+            }
+            // Quotes: consecutive lines stay one quote.
             if line.hasPrefix(">") {
-                add(NoteBlock(kind: .quote, text: inline(String(line.dropFirst()).trimmingCharacters(in: .whitespaces)))); continue
+                var q = [String(line.dropFirst()).trimmingCharacters(in: .whitespaces)]
+                while i + 1 < lines.count, lines[i + 1].trimmingCharacters(in: .whitespaces).hasPrefix(">"),
+                      !lines[i + 1].trimmingCharacters(in: .whitespaces).hasPrefix("> [!") {
+                    i += 1; q.append(String(lines[i].trimmingCharacters(in: .whitespaces).dropFirst()).trimmingCharacters(in: .whitespaces))
+                }
+                add(NoteBlock(kind: .quote, text: inline(q.joined(separator: softBreak))), level: nestedLevel(w)); continue
             }
-            if line == "---" || line == "***" || line == "___" || line == "* * *" { add(NoteBlock(kind: .divider, text: "")); continue }
-            // Paragraph: join soft-wrapped lines.
+            if line == "---" || line == "***" || line == "___" || line == "* * *" { listStack = []; add(NoteBlock(kind: .divider, text: "")); continue }
+            // Paragraph: lines that belong together keep their line breaks.
             var para = [line]
             while i + 1 < lines.count {
                 let next = lines[i + 1].trimmingCharacters(in: .whitespaces)
                 if next.isEmpty || startsBlock(next) { break }
                 para.append(next); i += 1
             }
-            add(NoteBlock(kind: .text, text: inline(para.joined(separator: " "))))
+            let joined = para.map { $0.hasSuffix("\\") ? String($0.dropLast()) : $0 }.joined(separator: softBreak)
+            add(NoteBlock(kind: .text, text: inline(joined)), level: nestedLevel(w))
         }
         return Result(title: title, blocks: blocks, images: images, frontMatter: front)
     }
 
     private static func startsBlock(_ l: String) -> Bool {
         l.hasPrefix("#") || l.hasPrefix("-") || l.hasPrefix("*") || l.hasPrefix("+") || l.hasPrefix(">") || l.hasPrefix("|")
-            || l.hasPrefix("```") || l.hasPrefix("<") || l.hasPrefix("!") || l.range(of: #"^\d+[.)]\s"#, options: .regularExpression) != nil
+            || l.hasPrefix("```") || l.hasPrefix("<") || l.hasPrefix("!") || l.hasPrefix("⟪") || l.range(of: #"^\d+[.)]\s"#, options: .regularExpression) != nil
     }
 
     /// Inline clean-up: HTML bits to markdown Keel understands.
     static func inline(_ s: String) -> String {
         var t = s
-        t = t.replacingOccurrences(of: #"<br\s*/?>"#, with: " ", options: .regularExpression)
+        t = t.replacingOccurrences(of: #"<br\s*/?>"#, with: softBreak, options: .regularExpression)
+        // Workspace colours: <mark class="highlight-red">, <mark class="highlight-yellow_background">, <span style="color:…">
+        t = colorSpans(t)
+        t = t.replacingOccurrences(of: #"<u>(.*?)</u>"#, with: "{u}$1{/}", options: .regularExpression)
+        t = t.replacingOccurrences(of: #"</?(s|del|strike)>"#, with: "~~", options: .regularExpression)
         t = t.replacingOccurrences(of: #"</?(strong|b)>"#, with: "**", options: .regularExpression)
         t = t.replacingOccurrences(of: #"</?(em|i)>"#, with: "*", options: .regularExpression)
         t = t.replacingOccurrences(of: #"</?mark[^>]*>"#, with: "==", options: .regularExpression)
@@ -265,6 +336,30 @@ enum MarkdownImport {
         t = t.replacingOccurrences(of: #"<a [^>]*href="([^"]*)"[^>]*>(.*?)</a>"#, with: "[$2]($1)", options: .regularExpression)
         t = t.replacingOccurrences(of: #"<[^>]+>"#, with: "", options: .regularExpression)
         return HTMLImport.entities(t)
+    }
+
+    private static func colorSpans(_ s: String) -> String {
+        guard s.contains("highlight-") || s.contains("color:"),
+              let re = try? NSRegularExpression(pattern: #"<(mark|span)[^>]*?(?:class="[^"]*?highlight-([a-z_]+)[^"]*"|style="[^"]*?(background-)?color:\s*([a-z]+)[^"]*")[^>]*>(.*?)</(?:mark|span)>"#) else { return s }
+        let ns = s as NSString
+        var out = "", last = 0
+        for m in re.matches(in: s, range: NSRange(location: 0, length: ns.length)) {
+            out += ns.substring(with: NSRange(location: last, length: m.range.location - last))
+            let inner = ns.substring(with: m.range(at: 5))
+            var raw: String?
+            if m.range(at: 2).location != NSNotFound { raw = ns.substring(with: m.range(at: 2)) }
+            else if m.range(at: 4).location != NSNotFound {
+                raw = ns.substring(with: m.range(at: 4)) + (m.range(at: 3).location != NSNotFound ? "_background" : "")
+            }
+            if let c = BlockColor.fromWorkspace(raw) {
+                out += c.hasPrefix("bg:") ? "{b:\(c.dropFirst(3))}\(inner){/}" : "{c:\(c)}\(inner){/}"
+            } else {
+                out += inner
+            }
+            last = m.range.location + m.range.length
+        }
+        out += ns.substring(from: last)
+        return out
     }
 
     static func firstMatch(_ pattern: String, _ s: String) -> [String]? {
@@ -301,6 +396,14 @@ enum HTMLImport {
             t = t.replacingOccurrences(of: "<\(tag)[\\s\\S]*?</\(tag)>", with: "", options: [.regularExpression, .caseInsensitive])
         }
         t = t.replacingOccurrences(of: "\n", with: " ")
+        // Block colours: a marker the markdown reader turns back into the block's colour.
+        t = t.replacingOccurrences(of: #"(<(?:p|h1|h2|h3|li|blockquote|div|summary)\b[^>]*class="[^"]*block-color-([a-z_]+)[^"]*"[^>]*>)"#,
+                                   with: "$1⟪bc:$2⟫", options: [.regularExpression, .caseInsensitive])
+        let structure: [(String, String)] = [
+            (#"<ul[^>]*>"#, "\n⟪ul⟫\n"), (#"</ul>"#, "\n⟪/ul⟫\n"), (#"<ol[^>]*>"#, "\n⟪ol⟫\n"), (#"</ol>"#, "\n⟪/ol⟫\n"),
+            (#"<details[^>]*>"#, "\n"), (#"<summary[^>]*>"#, "\n⟪summary⟫"), (#"</summary>"#, "\n"), (#"</details>"#, "\n⟪/details⟫\n"),
+        ]
+        for (p, r) in structure { t = t.replacingOccurrences(of: p, with: r, options: [.regularExpression, .caseInsensitive]) }
         let rules: [(String, String)] = [
             (#"<h1[^>]*>"#, "\n# "), (#"<h2[^>]*>"#, "\n## "), (#"<h[3-6][^>]*>"#, "\n### "), (#"</h[1-6]>"#, "\n"),
             (#"<li[^>]*>\s*<input[^>]*checked[^>]*>"#, "\n- [x] "), (#"<li[^>]*>\s*<input[^>]*type="checkbox"[^>]*>"#, "\n- [ ] "),

@@ -97,10 +97,7 @@ struct NotionConnector: Sendable {
                 page.imageData = images
             }
             if let cover = o["cover"] as? [String: Any], let url = fileURL(cover), let d = await download(url) {
-                // Covers come in as an image at the top.
-                let b = NoteBlock(kind: .image, text: "")
-                page.blocks.insert(b, at: 0)
-                page.imageData[b.id] = d
+                page.coverData = d                     // the page's cover, just like the original
             }
             pages.append(page)
             await progress("Reading “\(page.title)”", 0.05 + 0.9 * Double(i + 1) / Double(objects.count))
@@ -121,6 +118,8 @@ struct NotionConnector: Sendable {
         return out
     }
 
+    /// Blocks keep their nesting (`indent`), colours, line breaks and empty spacing lines, so the page
+    /// looks the way it did. Toggles keep their contents as real blocks inside them.
     private func blocks(of id: String, depth: Int, images: inout [UUID: Data], warnings: inout Set<String>) async throws -> [NoteBlock] {
         var out: [NoteBlock] = []
         for b in try await children(id) {
@@ -128,67 +127,73 @@ struct NotionConnector: Sendable {
             let text = rich(v["rich_text"])
             let hasKids = b["has_children"] as? Bool == true
             let bid = b["id"] as? String ?? ""
+            var made: NoteBlock?
+            var childDepth = depth + 1                 // where this block's children go
             switch type {
-            case "paragraph": if !text.isEmpty { out.append(NoteBlock(kind: .text, text: text)) }
-            case "heading_1": out.append(NoteBlock(kind: .heading, text: text))
-            case "heading_2": out.append(NoteBlock(kind: .heading2, text: text))
-            case "heading_3": out.append(NoteBlock(kind: .heading3, text: text))
-            case "bulleted_list_item": out.append(NoteBlock(kind: .bullet, text: text))
-            case "numbered_list_item": out.append(NoteBlock(kind: .numbered, text: text))
-            case "to_do": out.append(NoteBlock(kind: .todo, text: text, checked: v["checked"] as? Bool ?? false))
-            case "quote": out.append(NoteBlock(kind: .quote, text: text))
-            case "divider": out.append(NoteBlock(kind: .divider, text: ""))
+            case "paragraph": made = NoteBlock(kind: .text, text: text)          // empty ones are spacing: keep them
+            case "heading_1": made = NoteBlock(kind: .heading, text: text)
+            case "heading_2": made = NoteBlock(kind: .heading2, text: text)
+            case "heading_3": made = NoteBlock(kind: .heading3, text: text)
+            case "bulleted_list_item": made = NoteBlock(kind: .bullet, text: text)
+            case "numbered_list_item": made = NoteBlock(kind: .numbered, text: text)
+            case "to_do": made = NoteBlock(kind: .todo, text: text, checked: v["checked"] as? Bool ?? false)
+            case "quote": made = NoteBlock(kind: .quote, text: text)
+            case "divider": made = NoteBlock(kind: .divider, text: "")
             case "callout":
                 var c = NoteBlock(kind: .callout, text: text)
                 c.icon = icon(v["icon"]) ?? "💡"
-                out.append(c)
+                made = c
             case "code", "equation":
                 var c = NoteBlock(kind: .code, text: type == "equation" ? (v["expression"] as? String ?? "") : plain(v["rich_text"]))
                 c.lang = type == "equation" ? "latex" : v["language"] as? String
-                out.append(c)
+                made = c
             case "toggle":
                 var t = NoteBlock(kind: .toggle, text: text)
-                if hasKids, depth < 4 {
-                    var sub: [UUID: Data] = [:]
-                    t.body = try await blocks(of: bid, depth: depth + 1, images: &sub, warnings: &warnings).map(\.text).filter { !$0.isEmpty }.joined(separator: "\n")
-                }
                 t.collapsed = true
-                out.append(t)
-                continue
+                made = t
             case "image":
-                let b2 = NoteBlock(kind: .image, text: plain(v["caption"]))
-                if let url = fileURL(v), let d = await download(url) { images[b2.id] = d; out.append(b2) }
+                let b2 = NoteBlock(kind: .image, text: rich(v["caption"]))
+                if let url = fileURL(v), let d = await download(url) { images[b2.id] = d; made = b2 }
                 else { warnings.insert("Some images couldn't be downloaded.") }
             case "bookmark", "embed", "link_preview", "video", "file", "pdf", "audio":
                 if let url = (v["url"] as? String) ?? fileURL(v)?.absoluteString {
                     var bk = NoteBlock(kind: .bookmark, text: plain(v["caption"]).isEmpty ? url : plain(v["caption"]))
                     bk.refId = url
-                    out.append(bk)
+                    made = bk
                     if ["file", "pdf", "audio", "video"].contains(type) { warnings.insert("Files, PDFs and videos come in as links.") }
                 }
             case "child_page":
                 var pb = NoteBlock(kind: .page, text: v["title"] as? String ?? "Page"); pb.refId = "key:" + bid
-                out.append(pb); continue
+                made = pb
             case "child_database":
                 var pb = NoteBlock(kind: .page, text: v["title"] as? String ?? "Database"); pb.refId = "key:" + bid
-                out.append(pb); continue
+                made = pb
             case "table":
                 var rows: [[String]] = []
                 for r in try await children(bid) {
                     if let cells = (r["table_row"] as? [String: Any])?["cells"] as? [Any] { rows.append(cells.map { rich($0) }) }
                 }
                 var t = NoteBlock(kind: .table, text: ""); t.rows = rows
-                out.append(t); continue
+                made = t
             case "column_list", "column", "synced_block", "template":
-                break                                  // their content is in the children, below
+                childDepth = depth                     // their contents sit at the same level
             case "table_of_contents", "breadcrumb", "unsupported":
                 continue
             default:
-                if !text.isEmpty { out.append(NoteBlock(kind: .text, text: text)) }
+                if !text.isEmpty { made = NoteBlock(kind: .text, text: text) }
             }
-            // Nested content (indented list items, columns, synced blocks) flattens in place.
-            if hasKids, depth < 4, !["child_page", "child_database", "table", "toggle"].contains(type) {
-                out += try await blocks(of: bid, depth: depth + 1, images: &images, warnings: &warnings)
+            if var m = made {
+                m.indent = depth > 0 ? min(depth, 8) : nil
+                if m.kind == .callout {
+                    m.color = BlockColor.fromWorkspace(v["color"] as? String) ?? "bg:gray"
+                } else {
+                    m.color = BlockColor.fromWorkspace(v["color"] as? String)
+                }
+                out.append(m)
+            }
+            // Nested content keeps its nesting.
+            if hasKids, depth < 8, !["child_page", "child_database", "table"].contains(type) {
+                out += try await blocks(of: bid, depth: childDepth, images: &images, warnings: &warnings)
             }
         }
         return out
@@ -203,11 +208,18 @@ struct NotionConnector: Sendable {
     /// Rich text → Keel's inline markdown (bold, italic, code, strikethrough, links, page mentions).
     private func rich(_ any: Any?) -> String {
         ((any as? [[String: Any]]) ?? []).map { r -> String in
-            var t = r["plain_text"] as? String ?? ""
+            var t = (r["plain_text"] as? String ?? "").replacingOccurrences(of: "\n", with: MarkdownImport.softBreak)
             guard !t.isEmpty else { return "" }
             let a = r["annotations"] as? [String: Any] ?? [:]
+            // Colour wins over underline when both are set (they can't nest).
+            func styled(_ s: String) -> String {
+                if let c = BlockColor.fromWorkspace(a["color"] as? String) {
+                    return c.hasPrefix("bg:") ? "{b:\(c.dropFirst(3))}\(s){/}" : "{c:\(c)}\(s){/}"
+                }
+                return a["underline"] as? Bool == true ? "{u}\(s){/}" : s
+            }
             if let mention = r["mention"] as? [String: Any], let page = mention["page"] as? [String: Any], let id = page["id"] as? String {
-                return "[\(t)](key:\(id))"
+                return styled("[\(t)](key:\(id))")
             }
             if a["code"] as? Bool == true { t = "`\(t)`" }
             if a["bold"] as? Bool == true { t = "**\(t)**" }
@@ -215,11 +227,11 @@ struct NotionConnector: Sendable {
             if a["strikethrough"] as? Bool == true { t = "~~\(t)~~" }
             if let href = r["href"] as? String {
                 if let id = href.range(of: #"[0-9a-f]{32}"#, options: .regularExpression).map({ String(href[$0]) }), href.contains("notion.so") || href.hasPrefix("/") {
-                    return "[\(t)](key:\(dashed(id)))"
+                    return styled("[\(t)](key:\(dashed(id)))")
                 }
-                return "[\(t)](\(href))"
+                return styled("[\(t)](\(href))")
             }
-            return t
+            return styled(t)
         }.joined()
     }
 
