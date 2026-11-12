@@ -27,6 +27,7 @@ struct NotesView: View {
                     Button("Blank page") { create(Note(title: "Untitled")) }
                     Button("Meeting notes for next event") { createMeetingNote() }
                     NavigationLink { MeetingRecorderView() } label: { Label("Record a meeting", systemImage: "mic") }
+                    NavigationLink { NoteEditor(note: DailyNote.today(ctx)) } label: { Label("Today's note", systemImage: "calendar") }
                     Button("Daily journal") { create(Note(title: Date().formatted(date: .complete, time: .omitted), blocks: [
                         .init(kind: .heading, text: "Wins"), .init(kind: .bullet, text: ""),
                         .init(kind: .heading, text: "On my mind"), .init(kind: .bullet, text: ""),
@@ -77,6 +78,7 @@ struct NoteEditor: View {
                 ForEach($note.blocks) { $block in blockView($block) }
                 Button { add(.text) } label: { Label("Add block", systemImage: "plus").font(DS.Font.caption) }
                     .foregroundStyle(DS.Palette.inkSoft)
+                NoteLinksSection(note: note)
             }
             .padding()
         }
@@ -140,7 +142,7 @@ struct NoteEditor: View {
             ImageBlockView(attachmentId: block.wrappedValue.refId)
         default:
             // Slash-commands: type "/todo", "/h", "/quote" at the start of a line to convert the block
-            TextField("Type / for commands", text: block.text, axis: .vertical)
+            TextField("Type / for commands, [[ to link a note", text: block.text, axis: .vertical)
                 .focused($focused, equals: block.wrappedValue.id)
                 .onChange(of: block.wrappedValue.text) { _, new in slash(block, new) }
         }

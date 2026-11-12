@@ -70,6 +70,11 @@ final class WatchStore: NSObject, WCSessionDelegate {
         send(.addTask(text))
     }
 
+    func park(_ text: String) {
+        WKInterfaceDevice.current().play(.click)
+        send(.parkThought(text))
+    }
+
     func moveTomorrow(_ task: WatchPayload.TaskRow) {
         payload.tasks.removeAll { $0.id == task.id }
         WKInterfaceDevice.current().play(.click)
@@ -167,6 +172,7 @@ struct WatchRoot: View {
                     if let p = store.payload.promises, !p.isEmpty { link("Promises", "hand.raised.fill", .orange, "\(p.count)") { ListPage(title: "Promises", items: p) } }
                     if let f = store.payload.followUps, !f.isEmpty { link("Awaiting reply", "bubble.left.and.exclamationmark.bubble.right", .teal, "\(f.count)") { ListPage(title: "Awaiting reply", items: f) } }
                     if let c = store.payload.countdowns, !c.isEmpty { link("Countdowns", "hourglass", .yellow, nil) { CountdownsPage() } }
+                    if let p = store.payload.projects, !p.isEmpty { link("Projects", "folder.fill", .blue, "\(p.count)") { ProjectsPage() } }
                     link("Day in review", "moon.stars.fill", .indigo, nil) { DayReviewPage() }
                 }
             }
@@ -325,6 +331,7 @@ struct FocusPage: View {
                     Text(timerInterval: Date()...end, countsDown: true)
                         .font(.system(size: 40, weight: .semibold, design: .rounded).monospacedDigit())
                     Button("End focus", role: .destructive) { store.endFocus() }
+                    ParkPage()
                 } else {
                     ForEach([15, 25, 50, 90], id: \.self) { m in
                         Button("\(m) minutes") { store.startFocus(m) }.tint(accent)
@@ -460,5 +467,37 @@ struct AddPage: View {
         store.add(text)
         text = ""
         added = true
+    }
+}
+
+struct ProjectsPage: View {
+    @Environment(WatchStore.self) private var store
+    var body: some View {
+        List {
+            ForEach(store.payload.projects ?? [], id: \.self) { p in
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("\(p.emoji) \(p.name)").lineLimit(2)
+                    ProgressView(value: p.total == 0 ? 0 : Double(p.done) / Double(p.total)).tint(calm)
+                    Text("\(p.done)/\(p.total) done").font(.caption2).foregroundStyle(.secondary)
+                }
+            }
+        }
+        .navigationTitle("Projects")
+    }
+}
+
+/// During focus on the watch: park a distracting thought without stopping.
+struct ParkPage: View {
+    @Environment(WatchStore.self) private var store
+    @State private var text = ""
+    @State private var parked = 0
+    var body: some View {
+        VStack(spacing: 4) {
+            TextField("Park a thought…", text: $text).onSubmit {
+                guard !text.isEmpty else { return }
+                store.park(text); text = ""; parked += 1
+            }
+            if parked > 0 { Text("\(parked) parked for later").font(.caption2).foregroundStyle(.secondary) }
+        }
     }
 }

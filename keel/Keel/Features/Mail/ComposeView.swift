@@ -166,6 +166,7 @@ struct ComposeView: View {
                     PhotosPicker(selection: $photoItems, maxSelectionCount: 10, matching: .images) { Image(systemName: "photo") }
                         .accessibilityLabel("Attach photos")
                     Button { showFiles = true } label: { Image(systemName: "paperclip") }.accessibilityLabel("Attach files")
+                    SnippetMenu(text: $draft.body)
                     Spacer()
                     Button { showAI = true } label: { Label("Write with AI", systemImage: "sparkles") }
                 }

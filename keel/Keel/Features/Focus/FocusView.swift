@@ -124,6 +124,7 @@ struct FocusView: View {
                 TimeRing(progress: left / total).frame(width: 260, height: 260)
                 Text(Duration.seconds(left).formatted(.time(pattern: .minuteSecond))).font(DS.Font.timer)
             }
+            ParkingLotField()
             if left == 0 {
                 Button("I'm done — log it") { finish(early: false) }.buttonStyle(.borderedProminent).tint(DS.Palette.calm)
             } else if shutdown.level == .locked {

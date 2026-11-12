@@ -203,6 +203,9 @@ struct MicroStep: Codable, Identifiable, Hashable {
     var longitude: Double?
     var remindOnArrive: Bool = true             // false = when leaving
     var stage: String = "todo"                  // board view: todo | doing | done
+    var projectId: UUID?                        // project this task belongs to
+    var isSomeday: Bool = false                 // parked for later, out of today's lists
+    var fromParkingLot: Bool = false            // captured during focus, reviewed after
     // TickTick-style
     var recurrence: Recurrence?                 // repeating task; completing it moves it to the next date
     var alertOffsetMinutes: Int?                // nil = no Keel alert; 0 = at due time; 15 = 15 min before…
@@ -574,6 +577,37 @@ enum OdysseyKind: String, Codable, CaseIterable, Identifiable {
 
     var daysLeft: Int {
         Calendar.current.dateComponents([.day], from: Calendar.current.startOfDay(for: Date()), to: Calendar.current.startOfDay(for: date)).day ?? 0
+    }
+}
+
+// MARK: - Projects
+
+@Model final class Project {
+    var id: UUID = UUID()
+    var name: String
+    var emoji: String = "📁"
+    var area: LifeArea = LifeArea.work
+    var goalId: UUID?
+    var deadline: Date?
+    var notes: String = ""
+    var milestones: [String] = []               // ordered milestone names; tasks can be tagged with one
+    var isArchived: Bool = false
+    var createdAt: Date = Date()
+
+    init(name: String) { self.name = name }
+}
+
+// MARK: - Email snippets
+
+@Model final class Snippet {
+    var id: UUID = UUID()
+    var name: String
+    var body: String
+    var uses: Int = 0
+
+    init(name: String, body: String) {
+        self.name = name
+        self.body = body
     }
 }
 

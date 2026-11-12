@@ -391,6 +391,7 @@ struct MailSettings: View {
                 Toggle("Screener", isOn: Binding(get: { !UserDefaults.standard.bool(forKey: "screener.off") },
                                                  set: { UserDefaults.standard.set(!$0, forKey: "screener.off") }))
             } footer: { Text("The first time someone emails you, decide whether they get into your inbox. Blocked senders are archived automatically.") }
+            Section { NavigationLink("Snippets") { SnippetsView() } } footer: { Text("Saved replies you can insert while writing an email.") }
             Section("Signature") {
                 TextField("Sent from Keel", text: $signature, axis: .vertical).lineLimit(2...5)
             }
@@ -459,9 +460,47 @@ struct FocusSettings: View {
 struct AppearanceSettings: View {
     @AppStorage(Prefs.appearance) private var appearance = "system"
     @AppStorage(Prefs.hapticsOff) private var hapticsOff = false
+    @AppStorage("accent") private var accent = "indigo"
+    @State private var icon = AppIconChoice.allCases.first { $0.iconName == UIApplication.shared.alternateIconName } ?? .standard
 
     var body: some View {
         List {
+            Section("App Icon") {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 14) {
+                        ForEach(AppIconChoice.allCases) { choice in
+                            Button {
+                                icon = choice
+                                UIApplication.shared.setAlternateIconName(choice.iconName)
+                            } label: {
+                                VStack(spacing: 6) {
+                                    Image(choice.preview).resizable().frame(width: 60, height: 60)
+                                        .clipShape(.rect(cornerRadius: 14))
+                                        .overlay(RoundedRectangle(cornerRadius: 14).strokeBorder(icon == choice ? DS.Palette.accent : .clear, lineWidth: 3))
+                                    Text(choice.label).font(.caption2).foregroundStyle(.primary)
+                                }
+                            }
+                            .buttonStyle(.plain)
+                        }
+                    }
+                    .padding(.vertical, 6)
+                }
+            }
+            Section("Accent Color") {
+                HStack {
+                    ForEach(Theme.allCases) { t in
+                        Button { accent = t.rawValue; Haptics.tap() } label: {
+                            Circle().fill(t.color).frame(width: 34, height: 34)
+                                .overlay(Circle().strokeBorder(.white, lineWidth: accent == t.rawValue ? 3 : 0))
+                                .overlay { if accent == t.rawValue { Image(systemName: "checkmark").font(.caption.bold()).foregroundStyle(.white) } }
+                        }
+                        .buttonStyle(.plain)
+                        .frame(maxWidth: .infinity)
+                        .accessibilityLabel(t.name)
+                    }
+                }
+                .padding(.vertical, 4)
+            }
             Section("Appearance") {
                 Picker("Appearance", selection: $appearance) {
                     Text("Automatic").tag("system"); Text("Light").tag("light"); Text("Dark").tag("dark")

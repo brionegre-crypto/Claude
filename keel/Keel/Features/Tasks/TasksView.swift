@@ -4,7 +4,7 @@ import SwiftData
 /// TickTick-style tasks, synced two-way with Apple Reminders:
 /// smart lists, your lists and #tags, an Eisenhower matrix, repeating tasks, alerts and subtasks.
 enum TaskFilter: Hashable {
-    case today, next7, inbox, all, matrix, completed
+    case today, next7, inbox, all, matrix, completed, someday
     case list(String)
     case tag(String)
 
@@ -16,6 +16,7 @@ enum TaskFilter: Hashable {
         case .all: "All"
         case .matrix: "Matrix"
         case .completed: "Completed"
+        case .someday: "Someday"
         case .list(let l): l
         case .tag(let t): "#\(t)"
         }
@@ -29,6 +30,7 @@ enum TaskFilter: Hashable {
         case .all: "list.bullet"
         case .matrix: "square.grid.2x2"
         case .completed: "checkmark.circle"
+        case .someday: "moon.zzz"
         case .list: "list.bullet.rectangle"
         case .tag: "number"
         }
@@ -56,6 +58,7 @@ struct TasksView: View {
         case "all": .all
         case "matrix": .matrix
         case "completed": .completed
+        case "someday": .someday
         default:
             filterKey.hasPrefix("list:") ? .list(String(filterKey.dropFirst(5)))
                 : filterKey.hasPrefix("tag:") ? .tag(String(filterKey.dropFirst(4))) : .today
@@ -65,7 +68,7 @@ struct TasksView: View {
     private func key(_ f: TaskFilter) -> String {
         switch f {
         case .today: "today"; case .next7: "next7"; case .inbox: "inbox"; case .all: "all"
-        case .matrix: "matrix"; case .completed: "completed"
+        case .matrix: "matrix"; case .completed: "completed"; case .someday: "someday"
         case .list(let l): "list:\(l)"; case .tag(let t): "tag:\(t)"
         }
     }
@@ -75,7 +78,7 @@ struct TasksView: View {
     }
     private var tags: [String] { Array(Set(tasks.flatMap(\.tags))).sorted() }
 
-    private var open: [TaskItem] { tasks.filter { !$0.isDone } }
+    private var open: [TaskItem] { tasks.filter { !$0.isDone && !$0.isSomeday } }
 
     private var filtered: [TaskItem] {
         let endToday = cal.date(byAdding: .day, value: 1, to: cal.startOfDay(for: Date()))!
@@ -87,6 +90,7 @@ struct TasksView: View {
         case .inbox: base = open.filter { $0.dueDate == nil && $0.listName == "Inbox" }
         case .all, .matrix: base = open
         case .completed: base = tasks.filter(\.isDone).sorted { ($0.completedAt ?? .distantPast) > ($1.completedAt ?? .distantPast) }
+        case .someday: base = tasks.filter { !$0.isDone && $0.isSomeday }
         case .list(let l): base = open.filter { $0.listName == l }
         case .tag(let t): base = open.filter { $0.tags.contains(t) }
         }
@@ -114,6 +118,13 @@ struct TasksView: View {
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     NavigationLink { PromisesView() } label: { Label("Promises", systemImage: "hand.raised.fingers.spread") }
+                }
+                ToolbarItem(placement: .topBarLeading) {
+                    NavigationLink { ProjectsView() } label: { Label("Projects", systemImage: "folder") }
+                }
+                ToolbarItem(placement: .topBarLeading) {
+                    NavigationLink { ProcessInboxView() } label: { Label("Sort", systemImage: "tray.and.arrow.down") }
+                        .accessibilityLabel("Sort loose tasks")
                 }
                 ToolbarItem(placement: .topBarTrailing) {
                     Menu {
@@ -158,7 +169,7 @@ struct TasksView: View {
     private var filterBar: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: DS.Space.s) {
-                ForEach([TaskFilter.today, .next7, .inbox, .all, .matrix, .completed], id: \.self) { chip($0) }
+                ForEach([TaskFilter.today, .next7, .inbox, .all, .matrix, .someday, .completed], id: \.self) { chip($0) }
                 ForEach(lists, id: \.self) { chip(.list($0)) }
                 ForEach(tags, id: \.self) { chip(.tag($0)) }
             }
@@ -412,6 +423,7 @@ struct TaskDetailView: View {
     @State private var confirmDelete = false
     @Query(filter: #Predicate<Goal> { !$0.isArchived }) private var goals: [Goal]
     @State private var showLocation = false
+    @Query(filter: #Predicate<Project> { !$0.isArchived }) private var projects: [Project]
 
     private let cal = Calendar.current
 
@@ -484,6 +496,11 @@ struct TaskDetailView: View {
                 Picker("List", selection: $task.listName) {
                     ForEach(lists, id: \.self) { Text($0).tag($0) }
                 }
+                Picker("Project", selection: $task.projectId) {
+                    Text("None").tag(UUID?.none)
+                    ForEach(projects) { p in Text("\(p.emoji) \(p.name)").tag(Optional(p.id)) }
+                }
+                Toggle("Someday", isOn: $task.isSomeday)
                 Picker("Goal", selection: $task.goalId) {
                     Text("None").tag(UUID?.none)
                     ForEach(goals) { g in Text("\(g.emoji) \(g.title)").tag(Optional(g.id)) }

@@ -91,6 +91,10 @@ struct InboxView: View {
                     .accessibilityLabel("Mailboxes and accounts")
                 }
                 ToolbarItem(placement: .topBarTrailing) {
+                    NavigationLink { DigestView() } label: { Image(systemName: "newspaper") }
+                        .accessibilityLabel("Newsletter digest")
+                }
+                ToolbarItem(placement: .topBarTrailing) {
                     Button { compose = ComposeDraft(accountId: accountFilter) } label: { Image(systemName: "square.and.pencil") }
                         .accessibilityLabel("New message")
                 }

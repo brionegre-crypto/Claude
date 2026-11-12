@@ -6,7 +6,8 @@ import SwiftUI
 enum DS {
     // MARK: Color — muted base, a single accent, semantic hues for time/energy
     enum Palette {
-        static let accent = Color(red: 0.36, green: 0.42, blue: 0.98)       // Keel indigo
+        /// Accent follows Settings → Appearance (Keel indigo by default).
+        static var accent: Color { Theme.current.color }
         static let canvas = Color(uiColor: .systemBackground)
         static let elevated = Color(uiColor: .secondarySystemBackground)
         static let ink = Color.primary
@@ -140,4 +141,33 @@ struct SectionHeader: View {
         }
         .padding(.horizontal, DS.Space.xs)
     }
+}
+
+/// Accent color choices (Settings → Appearance).
+enum Theme: String, CaseIterable, Identifiable {
+    case indigo, ocean, forest, sunset, rose, graphite
+    var id: String { rawValue }
+    var name: String { rawValue.capitalized }
+    var color: Color {
+        switch self {
+        case .indigo: Color(red: 0.36, green: 0.42, blue: 0.98)
+        case .ocean: Color(red: 0.12, green: 0.55, blue: 0.86)
+        case .forest: Color(red: 0.20, green: 0.62, blue: 0.42)
+        case .sunset: Color(red: 0.96, green: 0.50, blue: 0.25)
+        case .rose: Color(red: 0.90, green: 0.33, blue: 0.52)
+        case .graphite: Color(red: 0.38, green: 0.40, blue: 0.46)
+        }
+    }
+    static var current: Theme { Theme(rawValue: UserDefaults.standard.string(forKey: "accent") ?? "") ?? .indigo }
+}
+
+/// Alternate app icons (Settings → Appearance).
+enum AppIconChoice: String, CaseIterable, Identifiable {
+    case standard = "Default", steady = "Steady", oneThing = "OneThing", checkK = "CheckK", sunset = "Sunset"
+    var id: String { rawValue }
+    var label: String {
+        switch self { case .standard: "Sailboat"; case .steady: "Steady keel"; case .oneThing: "One thing"; case .checkK: "Check-K"; case .sunset: "Shutdown sun" }
+    }
+    var iconName: String? { self == .standard ? nil : "AppIcon-\(rawValue)" }
+    var preview: String { "IconPreview-\(rawValue)" }
 }

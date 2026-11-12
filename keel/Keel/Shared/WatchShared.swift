@@ -34,6 +34,12 @@ struct WatchPayload: Codable {
         var phone: String
         var lastContact: Date?
     }
+    struct ProjectRow: Codable, Hashable {
+        var name: String
+        var emoji: String
+        var done: Int
+        var total: Int
+    }
     struct CountdownRow: Codable, Hashable {
         var title: String
         var emoji: String
@@ -58,6 +64,7 @@ struct WatchPayload: Codable {
     var countdowns: [CountdownRow]? = nil
     var doneToday: Int? = nil
     var focusMinutesWeek: Int? = nil
+    var projects: [ProjectRow]? = nil
 }
 
 /// What Apple Watch asks the iPhone to do.
@@ -73,6 +80,7 @@ enum WatchAction: Codable {
     case archiveMail(String)
     case loggedContact(UUID)
     case carryOverToday
+    case parkThought(String)
 }
 
 enum WatchCoding {

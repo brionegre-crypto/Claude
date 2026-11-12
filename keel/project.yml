@@ -25,6 +25,8 @@ targets:
         MARKETING_VERSION: "0.1.0"          # the version people see
         CURRENT_PROJECT_VERSION: "1"        # build number; Xcode Cloud overrides it on every build
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES: "AppIcon-Steady AppIcon-OneThing AppIcon-CheckK AppIcon-Sunset"
+        ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS: YES
         CODE_SIGN_STYLE: Automatic
         TARGETED_DEVICE_FAMILY: "1"          # iPhone only (an iPad build would need every rotation supported)
     entitlements:

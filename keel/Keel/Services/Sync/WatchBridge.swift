@@ -60,6 +60,10 @@ final class WatchBridge: NSObject, WCSessionDelegate {
             .filter { $0.daysLeft >= 0 }.prefix(6).map { .init(title: $0.title, emoji: $0.emoji, date: $0.date) }
         let allTasks = (try? ctx.fetch(FetchDescriptor<TaskItem>())) ?? []
         payload.doneToday = allTasks.filter { ($0.completedAt.map { cal.isDateInToday($0) } ?? false) || ($0.lastCompletedOccurrence.map { cal.isDateInToday($0) } ?? false) }.count
+        payload.projects = ((try? ctx.fetch(FetchDescriptor<Project>())) ?? []).filter { !$0.isArchived }.map { p in
+            let pt = allTasks.filter { $0.projectId == p.id }
+            return .init(name: p.name, emoji: p.emoji, done: pt.filter(\.isDone).count, total: pt.count)
+        }
         let weekStart = cal.date(byAdding: .day, value: -6, to: today)!
         payload.focusMinutesWeek = ((try? ctx.fetch(FetchDescriptor<FocusSession>())) ?? [])
             .filter { ($0.endedAt ?? .distantPast) >= weekStart }
@@ -111,6 +115,10 @@ final class WatchBridge: NSObject, WCSessionDelegate {
             }
         case .loggedContact(let id):
             if let p = try? ctx.fetch(FetchDescriptor<Person>(predicate: #Predicate { $0.id == id })).first { p.lastContact = Date() }
+        case .parkThought(let text):
+            let t = TaskItem(title: text)
+            t.fromParkingLot = true
+            ctx.insert(t)
         case .carryOverToday:
             let cal = Calendar.current
             let end = cal.date(byAdding: .day, value: 1, to: cal.startOfDay(for: Date()))!

@@ -94,6 +94,8 @@ struct TodayView: View {
                 ToolbarItem(placement: .topBarTrailing) {
                     Menu {
                         NavigationLink { GoalsView() } label: { Label("Goals", systemImage: "target") }
+                        NavigationLink { ProjectsView() } label: { Label("Projects", systemImage: "folder") }
+                        NavigationLink { ProcessInboxView() } label: { Label("Sort loose tasks", systemImage: "tray.and.arrow.down") }
                         NavigationLink { HabitsView() } label: { Label("Habit stacks", systemImage: "link") }
                         NavigationLink { WeeklyReviewView() } label: { Label("Weekly review", systemImage: "chart.bar.doc.horizontal") }
                         NavigationLink { MonthlyReviewView() } label: { Label("Monthly review", systemImage: "calendar.badge.checkmark") }
