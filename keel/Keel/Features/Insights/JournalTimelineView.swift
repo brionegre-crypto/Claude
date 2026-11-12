@@ -6,6 +6,7 @@ import Charts
 struct JournalTimelineView: View {
     @Query(sort: \CheckIn.day, order: .reverse) private var checkIns: [CheckIn]
     @State private var range = 30
+    @State private var writing = false
 
     private var shown: [CheckIn] {
         let since = Calendar.current.date(byAdding: .day, value: -range, to: Date())!
@@ -42,6 +43,7 @@ struct JournalTimelineView: View {
                     Text("Check in on Today for a few days to see your trends.").foregroundStyle(DS.Palette.inkSoft)
                 }
             }
+            MoodPatternsSection(checkIns: shown)
             Section("Entries") {
                 ForEach(shown) { c in
                     HStack(alignment: .top, spacing: DS.Space.m) {
@@ -54,12 +56,20 @@ struct JournalTimelineView: View {
                             }.font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
                             if !c.highlight.isEmpty { Text("“\(c.highlight)”").font(.callout) }
                             if !c.gratitude.isEmpty { Text("Grateful for: \(c.gratitude)").font(.callout).foregroundStyle(DS.Palette.inkSoft) }
+                            if !c.journal.isEmpty {
+                                if !c.prompt.isEmpty { Text(c.prompt).font(DS.Font.caption.weight(.semibold)).foregroundStyle(DS.Palette.inkSoft) }
+                                Text(c.journal).font(.callout)
+                            }
                         }
                     }
                 }
             }
         }
         .navigationTitle("Mood Journal")
+        .toolbar {
+            Button { writing = true } label: { Label("Write today's journal", systemImage: "square.and.pencil") }
+        }
+        .sheet(isPresented: $writing) { JournalEntryView() }
     }
 
     /// A simple, honest correlation note: mood after short vs long sleep.

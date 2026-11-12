@@ -42,6 +42,11 @@ struct FocusView: View {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button { showRitual = true } label: { Label("Shutdown ritual", systemImage: "moon.stars") }
                 }
+                ToolbarItem(placement: .topBarLeading) {
+                    if shutdown.active == nil {
+                        NavigationLink { FocusRoomView(task: preselected) } label: { Label("Focus Room", systemImage: "person.2.wave.2") }
+                    }
+                }
             }
             .sheet(isPresented: $showRitual) { ShutdownRitualView() }
             .familyActivityPicker(isPresented: $showPicker, selection: Binding(get: { shutdown.selection }, set: { shutdown.selection = $0 }))

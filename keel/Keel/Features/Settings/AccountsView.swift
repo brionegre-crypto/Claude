@@ -385,6 +385,8 @@ struct NotificationSettings: View {
     @AppStorage(Prefs.hyperfocusCheck) private var hyperfocusOff = false
     @AppStorage(Briefing.onKey) private var briefingOn = true
     @AppStorage(Briefing.minuteKey) private var briefingMinute = 450
+    @AppStorage(Journal.reminderOnKey) private var journalOn = false
+    @AppStorage(Journal.reminderTimeKey) private var journalMinute = 21 * 60
 
     var body: some View {
         List {
@@ -425,6 +427,17 @@ struct NotificationSettings: View {
                     else { UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: ["day.review"]) }
                 }))
             } footer: { Text("Every evening at 8:30 PM.") }
+            Section {
+                Toggle("One-Minute Journal", isOn: $journalOn)
+                if journalOn {
+                    DatePicker("Time", selection: Binding(
+                        get: { Calendar.current.date(bySettingHour: journalMinute / 60, minute: journalMinute % 60, second: 0, of: Date())! },
+                        set: { journalMinute = Calendar.current.component(.hour, from: $0) * 60 + Calendar.current.component(.minute, from: $0) }),
+                        displayedComponents: .hourAndMinute)
+                }
+            } footer: { Text("A nightly question to answer in a minute. Keel finds mood patterns from your entries.") }
+            .onChange(of: journalOn) { Journal.scheduleReminder() }
+            .onChange(of: journalMinute) { Journal.scheduleReminder() }
         }
         .navigationTitle("Notifications")
     }
@@ -438,6 +451,7 @@ struct MailSettings: View {
     @AppStorage(Prefs.signature) private var signature = ""
     @AppStorage(Prefs.followUpDefault) private var followUp = 0
     @AppStorage("profile.name") private var myName = ""
+    @AppStorage("style.on") private var styleOn = true
 
     var body: some View {
         List {
@@ -478,6 +492,12 @@ struct MailSettings: View {
             Section("Signature") {
                 TextField("Sent from Keel", text: $signature, axis: .vertical).lineLimit(2...5)
             }
+            Section {
+                Toggle("Write Replies in My Style", isOn: $styleOn)
+                NavigationLink("What Keel Learned") { WritingStyleView() }
+            } header: { Text("Your Writing Style") } footer: {
+                Text("Keel learns your usual greeting, sign-off and length from your sent mail, so AI drafts sound like you. It stays on this iPhone.")
+            }
         }
         .navigationTitle("Mail")
     }
@@ -506,6 +526,10 @@ struct TaskSettings: View {
                     ForEach(TaskAlerts.offsets.compactMap { $0.minutes == nil ? nil : $0 }, id: \.label) { Text($0.label).tag($0.minutes ?? 0) }
                 }
             } footer: { Text("Applies to new tasks that have a time.") }
+            Section {
+                NavigationLink { PlacesView() } label: { Label("Places & Leaving Home", systemImage: "mappin.and.ellipse") }
+                NavigationLink { RoutinesView() } label: { Label("Routines", systemImage: "list.number") }
+            } footer: { Text("Location reminders fire when you arrive at or leave a place, even when Keel is closed.") }
             Section {
                 VStack(alignment: .leading, spacing: 6) {
                     Text("Quick add understands:").font(.subheadline.weight(.semibold))
@@ -1169,5 +1193,47 @@ struct AliasesView: View {
         list.append(a); new = ""
         MailAliases.save(list, for: account.id)
         Haptics.tap()
+    }
+}
+
+// MARK: - Writing style
+
+struct WritingStyleView: View {
+    @Query private var accounts: [MailAccount]
+    @State private var profile = WritingStyle.profile
+    @State private var learning = false
+
+    var body: some View {
+        List {
+            if profile.samples < 3 {
+                Section {
+                    Text("Keel hasn't seen enough of your sent mail yet. Tap Learn Now, or keep using Keel and it learns as you send.")
+                        .foregroundStyle(DS.Palette.inkSoft)
+                }
+            } else {
+                Section {
+                    LabeledContent("Greeting", value: profile.greeting.isEmpty ? "Usually none" : profile.greeting.replacingOccurrences(of: "{name}", with: "Sam"))
+                    LabeledContent("Sign-off", value: profile.signoff.isEmpty ? "Varies" : profile.signoff)
+                    LabeledContent("Typical length", value: "\(profile.medianWords) words")
+                    LabeledContent("Exclamation marks", value: profile.exclamationRate > 0.4 ? "Often" : profile.exclamationRate < 0.1 ? "Rarely" : "Sometimes")
+                    LabeledContent("Emoji", value: profile.emojiRate > 0.3 ? "Often" : profile.emojiRate > 0.05 ? "Sometimes" : "Rarely")
+                } header: { Text("From \(profile.samples) emails you sent") } footer: {
+                    if let d = profile.learnedAt { Text("Updated \(d.formatted(.relative(presentation: .named))).") }
+                }
+            }
+            Section {
+                Button(learning ? "Learning…" : "Learn Now") {
+                    Task {
+                        learning = true
+                        await WritingStyle.relearn(accounts: accounts)
+                        profile = WritingStyle.profile
+                        learning = false
+                    }
+                }
+                .disabled(learning || accounts.isEmpty)
+                Button("Forget My Style", role: .destructive) { WritingStyle.reset(); profile = WritingStyle.profile }
+            } footer: { Text("Learn Now reads the last 30 days of mail you sent. Only short statistics are kept.") }
+        }
+        .navigationTitle("Writing Style")
     }
 }

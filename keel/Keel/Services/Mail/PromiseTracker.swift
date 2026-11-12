@@ -13,6 +13,7 @@ enum PromiseTracker {
         for account in accounts where account.isEnabled {
             let since = account.lastSentScanAt ?? Date().addingTimeInterval(-initialLookback)
             guard let sent = try? await MailProviderFactory.make(for: account).fetchSent(since: since) else { continue }
+            WritingStyle.observe(sent.map(\.body))          // learns your greeting, sign-off and length
 
             for m in sent.sorted(by: { $0.date < $1.date }) {
                 markLikelyKept(by: m, accountId: account.id, ctx: ctx)

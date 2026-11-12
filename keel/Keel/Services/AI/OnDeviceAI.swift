@@ -87,7 +87,7 @@ final class OnDeviceAI {
     }
 
     func draftReply(_ e: EmailMessage, intent: String) async throws -> String {
-        let session = LanguageModelSession(instructions: "Write a concise, friendly email reply in the user's voice. Body only, no subject.\n" + KeelMemory.shared.context)
+        let session = LanguageModelSession(instructions: "Write a concise, friendly email reply in the user's voice. Body only, no subject.\n" + WritingStyle.instruction + "\n" + KeelMemory.shared.context)
         return try await session.respond(to: "Original from \(e.fromName): \(e.bodyPlain.prefix(2_500))\n\nMy intent: \(intent)").content
     }
 

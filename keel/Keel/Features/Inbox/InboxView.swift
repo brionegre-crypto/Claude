@@ -179,10 +179,11 @@ struct InboxView: View {
                         Button(selecting ? "Done Selecting" : "Select Messages", systemImage: "checkmark.circle") {
                             withAnimation { selecting.toggle(); selected = [] }
                         }
+                        NavigationLink { QuickRepliesView() } label: { Label("Clear 5 quick replies", systemImage: "bolt.horizontal.circle") }
                         NavigationLink { ScheduledMailView() } label: { Label("Scheduled", systemImage: "clock.arrow.circlepath") }
                         NavigationLink { DigestView() } label: { Label("Newsletter digest", systemImage: "newspaper") }
                         NavigationLink { AttachmentsView() } label: { Label("Attachments", systemImage: "paperclip") }
-                        NavigationLink { SubscriptionsView() } label: { Label("Subscriptions & bills", systemImage: "creditcard") }
+                        NavigationLink { SubscriptionsView() } label: { Label("Bills & money", systemImage: "creditcard") }
                         NavigationLink { DeliveriesView() } label: { Label("Deliveries", systemImage: "shippingbox") }
                         NavigationLink { TripsView() } label: { Label("Trips", systemImage: "airplane") }
                     } label: { Image(systemName: "ellipsis.circle") }
@@ -351,6 +352,11 @@ struct InboxView: View {
             }
         case .quick:
             if !visible.isEmpty {
+                NavigationLink { QuickRepliesView() } label: {
+                    Label("Clear 5 quick replies, one at a time", systemImage: "bolt.horizontal.circle.fill")
+                        .font(DS.Font.headline).foregroundStyle(DS.Palette.accent)
+                }
+                .selectionDisabled()
                 Section {
                     ForEach(collapse(visible)) { e in row(e) }
                 } header: { Text("Each of these takes about 2 minutes. Clear a few for momentum.") }
@@ -856,6 +862,10 @@ struct EmailDetailView: View {
                         Button { intent = idea; Task { await makeDraft() } } label: { Label(idea, systemImage: "sparkles") }
                             .font(DS.Font.caption).buttonStyle(.bordered).tint(DS.Palette.accent)
                     }
+                    Button { draft = WritingStyle.availabilityReply(to: email.fromName) } label: {
+                        Label("Offer my times", systemImage: "calendar.badge.clock")
+                    }
+                    .font(DS.Font.caption).buttonStyle(.bordered).tint(DS.Palette.meeting)
                     ForEach(["Yes, sounds good", "Can't make it", "Need more time", "Thanks!"], id: \.self) { quick in
                         Button(quick) { intent = quick; Task { await makeDraft() } }.font(DS.Font.caption).buttonStyle(.bordered)
                     }

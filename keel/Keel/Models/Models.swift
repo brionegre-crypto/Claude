@@ -595,6 +595,8 @@ enum OdysseyKind: String, Codable, CaseIterable, Identifiable {
     var energy: Int?                            // 1…3, captured with the check-in
     var sleepHours: Double?
     var createdAt: Date = Date()
+    var journal: String = ""                    // the 1-minute evening journal
+    var prompt: String = ""                     // the question it answered
 
     init(day: Date, mood: Int) {
         self.day = day

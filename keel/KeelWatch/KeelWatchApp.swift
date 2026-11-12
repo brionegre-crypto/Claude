@@ -183,6 +183,7 @@ struct WatchRoot: View {
                     link("Ask Keel", "sparkles", .cyan, nil) { AskPage() }
                     link("Capture", "plus.circle.fill", calm, nil) { AddPage() }
                     link("Breathe", "lungs.fill", .mint, nil) { BreathePage() }
+                    if let r = store.payload.routines, !r.isEmpty { link("Routines", "list.number", .orange, nil) { RoutinesPage(routines: r) } }
                     if let d = store.payload.dopamine, !d.isEmpty { link("Need a boost?", "dice.fill", .orange, nil) { BoostPage(items: d) } }
                 }
                 if store.payload.calm != true {
@@ -775,5 +776,70 @@ struct SuggestionsPage: View {
             }
         }
         .navigationTitle("Autopilot")
+    }
+}
+
+// MARK: - Routines (step timers on the wrist)
+
+struct RoutinesPage: View {
+    let routines: [Routine]
+    var body: some View {
+        List(routines) { r in
+            NavigationLink { RoutineWatchPlayer(routine: r) } label: {
+                Label {
+                    VStack(alignment: .leading) {
+                        Text(r.name).font(.headline)
+                        Text("\(r.steps.count) steps · \(r.totalMinutes) min").font(.caption2).foregroundStyle(.secondary)
+                    }
+                } icon: { Image(systemName: r.icon).foregroundStyle(.orange) }
+            }
+        }
+        .navigationTitle("Routines")
+    }
+}
+
+struct RoutineWatchPlayer: View {
+    let routine: Routine
+    @State private var steps: [Routine.Step] = []
+    @State private var index = 0
+    @State private var started = Date()
+    @State private var buzzed = false
+
+    var body: some View {
+        TimelineView(.periodic(from: .now, by: 1)) { tl in
+            let step = index < steps.count ? steps[index] : nil
+            let left = max(0, Double((step?.minutes ?? 0) * 60) - tl.date.timeIntervalSince(started))
+            ScrollView {
+                VStack(spacing: 6) {
+                    if let step {
+                        let live = Routine(name: routine.name, icon: routine.icon, steps: steps, finishBy: routine.finishBy)
+                        if let late = live.slack(at: index, stepStarted: started, now: tl.date), late > 0 {
+                            Text("\(late) min late").font(.caption2.weight(.bold)).foregroundStyle(.red)
+                        }
+                        Text("\(index + 1)/\(steps.count)").font(.caption2).foregroundStyle(.secondary)
+                        Text(step.title).font(.headline).multilineTextAlignment(.center)
+                        Text(Duration.seconds(left).formatted(.time(pattern: .minuteSecond)))
+                            .font(.system(.title, design: .rounded).monospacedDigit())
+                            .foregroundStyle(left == 0 ? .orange : .primary)
+                        Button(index + 1 == steps.count ? "Finish" : "Next") {
+                            WKInterfaceDevice.current().play(.success)
+                            index += 1; started = Date(); buzzed = false
+                        }
+                        .tint(.orange)
+                        if let skip = steps.dropFirst(index + 1).first(where: \.optional) {
+                            Button("Skip “\(skip.title)”") { steps.removeAll { $0.id == skip.id } }.font(.caption2)
+                        }
+                    } else {
+                        Image(systemName: "checkmark.seal.fill").font(.largeTitle).foregroundStyle(.green)
+                        Text("\(routine.name) done").font(.headline)
+                    }
+                }
+            }
+            .onChange(of: left == 0) { _, up in
+                if up && !buzzed && step != nil { buzzed = true; WKInterfaceDevice.current().play(.notification) }
+            }
+        }
+        .navigationTitle(routine.name)
+        .onAppear { if steps.isEmpty { steps = routine.steps; started = Date() } }
     }
 }

@@ -410,7 +410,7 @@ struct TodayView: View {
                         HStack {
                             NavigationLink("Shrink it") { TaskDetailView(task: t) }
                             Spacer()
-                            NavigationLink("Body double") { FocusView(preselected: t, bodyDouble: true) }
+                            NavigationLink("Body double") { FocusRoomView(task: t) }
                             Spacer()
                             Button("Let it go") { t.listName = "Someday"; t.dueDate = nil }
                         }.font(DS.Font.caption)

@@ -75,6 +75,8 @@ struct WeeklyReviewView: View {
                 Text("\(start.formatted(.dateTime.month(.abbreviated).day())) – \(Date().formatted(.dateTime.month(.abbreviated).day()))")
                     .font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft).textCase(.uppercase)
 
+                WeeklyRecapSection()
+
                 weekLetter
 
                 LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: DS.Space.s) {
@@ -294,9 +296,10 @@ enum WeeklyReview {
     /// A gentle Sunday 5pm nudge, every week.
     static func scheduleReminder() {
         let c = UNMutableNotificationContent()
-        c.title = "Weekly review"
-        c.body = "10 minutes to look back, notice what gave you energy, and pick next week's top 3."
+        c.title = "Your week, recapped"
+        c.body = "See what you finished, what slipped, who's waiting on you, and approve next week's plan in one tap."
         c.sound = .default
+        c.userInfo = ["deeplink": "com.keel.app://review"]
         UNUserNotificationCenter.current().add(UNNotificationRequest(
             identifier: "weekly.review", content: c,
             trigger: UNCalendarNotificationTrigger(dateMatching: DateComponents(hour: 17, weekday: 1), repeats: true)))

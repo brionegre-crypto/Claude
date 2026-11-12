@@ -88,6 +88,7 @@ final class WatchBridge: NSObject, WCSessionDelegate {
         payload.achievementsUnlocked = Momentum.achievements(ctx: ctx).filter(\.unlocked).count
         payload.scheduledMail = ((try? ctx.fetch(FetchDescriptor<ScheduledMail>())) ?? []).count
         payload.briefing = Briefing.latest
+        payload.routines = RoutineStore.all
         payload.suggestions = Autopilot.pending(ctx: ctx).prefix(8).map {
             .init(id: $0.id, title: $0.title, detail: $0.kind == "reply" ? String($0.payload.prefix(240)) : $0.detail, accept: $0.acceptLabel, icon: $0.icon)
         }

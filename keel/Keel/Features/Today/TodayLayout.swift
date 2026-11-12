@@ -112,6 +112,8 @@ struct HubView: View {
                 link("Ideal week", "calendar.badge.clock") { IdealWeekView() }
                 link("Odyssey plan", "point.3.filled.connected.trianglepath.dotted") { OdysseyView() }
                 link("Sort loose tasks", "tray.and.arrow.down") { ProcessInboxView() }
+                link("Routines", "list.number") { RoutinesView() }
+                link("Places & leaving home", "mappin.and.ellipse") { PlacesView() }
             }
             Section("Review") {
                 link("Weekly review", "chart.bar.doc.horizontal") { WeeklyReviewView() }
@@ -125,11 +127,13 @@ struct HubView: View {
                 link("Medications", "pills") { MedsView() }
                 link("Habit stacks", "link") { HabitsView() }
                 link("Habit library", "books.vertical") { HabitLibraryView() }
-                link("Mood journal", "face.smiling") { JournalTimelineView() }
+                link("Mood journal & patterns", "face.smiling") { JournalTimelineView() }
+                link("Focus room", "person.2.wave.2") { FocusRoomView() }
                 link("Dopamine menu", "fork.knife") { DopamineMenuView() }
             }
             Section("From your email") {
-                link("Subscriptions & bills", "creditcard") { SubscriptionsView() }
+                link("Bills & money", "creditcard") { SubscriptionsView() }
+                link("Clear 5 quick replies", "bolt.horizontal.circle") { QuickRepliesView() }
                 link("Deliveries", "shippingbox") { DeliveriesView() }
                 link("Trips", "airplane") { TripsView() }
                 link("Promises", "hand.raised") { PromisesView() }

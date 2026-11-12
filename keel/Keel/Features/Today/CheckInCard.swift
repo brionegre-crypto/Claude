@@ -8,6 +8,7 @@ struct CheckInCard: View {
     @State private var highlight = ""
     @State private var picked: Int?
     @State private var energy: Int?
+    @State private var showJournal = false
 
     private var today: CheckIn? { checkIns.first { Calendar.current.isDateInToday($0.day) } }
 
@@ -22,8 +23,13 @@ struct CheckInCard: View {
                             .font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft).lineLimit(2)
                     }
                     Spacer()
-                    Text("\(streak) day\(streak == 1 ? "" : "s") 🔥").font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
+                    VStack(alignment: .trailing, spacing: 4) {
+                        Text("\(streak) day\(streak == 1 ? "" : "s") 🔥").font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
+                        Button(t.journal.isEmpty ? "1-min journal" : "Journal ✓") { showJournal = true }
+                            .font(DS.Font.caption).buttonStyle(.borderless)
+                    }
                 }
+                .sheet(isPresented: $showJournal) { JournalEntryView() }
             } else {
                 VStack(alignment: .leading, spacing: DS.Space.s) {
                     Text("How are you, really?").font(DS.Font.headline)

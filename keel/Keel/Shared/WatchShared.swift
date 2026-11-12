@@ -115,6 +115,35 @@ struct WatchPayload: Codable {
     var doneStreak: Int? = nil            // days in a row with something done
     var dopamine: [String]? = nil         // quick boosts from the dopamine menu
     var suggestions: [SuggestionRow]? = nil   // Autopilot, waiting for approval
+    var routines: [Routine]? = nil            // step-by-step routines with timers
+}
+
+/// A step-by-step routine (morning, evening, leaving the house). Shared by iPhone and Apple Watch.
+struct Routine: Codable, Hashable, Identifiable {
+    struct Step: Codable, Hashable, Identifiable {
+        var id = UUID()
+        var title: String
+        var minutes: Int
+        var optional = false          // can be skipped when you're running late
+    }
+    var id = UUID()
+    var name: String
+    var icon: String
+    var steps: [Step]
+    var finishBy: Int? = nil          // minutes after midnight, e.g. 510 = out the door by 8:30
+
+    var totalMinutes: Int { steps.reduce(0) { $0 + $1.minutes } }
+
+    /// Minutes late (positive) or spare (negative) if you start the step at `index` now.
+    func slack(at index: Int, stepStarted: Date, now: Date = Date()) -> Int? {
+        guard let finishBy, index < steps.count else { return nil }
+        let cal = Calendar.current
+        guard let deadline = cal.date(bySettingHour: finishBy / 60, minute: finishBy % 60, second: 0, of: now) else { return nil }
+        let currentLeft = max(0, Double(steps[index].minutes * 60) - now.timeIntervalSince(stepStarted))
+        let rest = steps.dropFirst(index + 1).reduce(0) { $0 + $1.minutes * 60 }
+        let projected = now.addingTimeInterval(currentLeft + Double(rest))
+        return Int((projected.timeIntervalSince(deadline) / 60).rounded(.up))
+    }
 }
 
 /// What Apple Watch asks the iPhone to do.

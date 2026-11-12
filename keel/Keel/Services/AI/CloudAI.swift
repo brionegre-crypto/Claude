@@ -54,8 +54,9 @@ final class CloudAI {
 
     func draftReply(_ e: EmailMessage, intent: String) async throws -> String {
         struct D: Decodable { let body: String }
+        let style = WritingStyle.instruction
         return try await call(task: "draft_reply",
-                              system: "Write a concise reply in the user's voice. Body only.",
+                              system: "Write a concise reply in the user's voice. Body only. " + style,
                               user: "Original from \(e.fromName):\n\(e.bodyPlain.prefix(10_000))\n\nIntent: \(intent)",
                               schema: Schemas.draft, as: D.self).body
     }

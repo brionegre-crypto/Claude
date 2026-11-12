@@ -2,10 +2,11 @@ import SwiftUI
 import MapKit
 
 /// "Remind me when I get to…": search Apple Maps for a place and attach it to a task.
-/// The reminder fires through Apple Reminders' location alerts, so it works even when Keel is closed.
+/// It fires through iPhone's location alerts (or Apple Reminders' if the task syncs there), even when Keel is closed.
 struct LocationPicker: View {
     @Bindable var task: TaskItem
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.modelContext) private var ctx
     @State private var query = ""
     @State private var results: [MKMapItem] = []
     @State private var searching = false
@@ -20,6 +21,19 @@ struct LocationPicker: View {
                     }
                     .pickerStyle(.segmented)
                 }
+                let places = LocationReminders.places
+                if !places.isEmpty && query.isEmpty {
+                    Section("Your places") {
+                        ForEach(places) { p in
+                            Button { pick(name: p.name, latitude: p.latitude, longitude: p.longitude) } label: {
+                                Label(p.name, systemImage: p.icon).foregroundStyle(DS.Palette.ink)
+                            }
+                        }
+                    }
+                }
+                Section {
+                    NavigationLink { PlacesView() } label: { Label("Manage places", systemImage: "mappin.and.ellipse") }
+                }
                 if searching { ProgressView() }
                 ForEach(results, id: \.self) { item in
                     Button { pick(item) } label: {
@@ -33,6 +47,7 @@ struct LocationPicker: View {
                     Section {
                         Button("Remove location", role: .destructive) {
                             task.locationName = nil; task.latitude = nil; task.longitude = nil
+                            Task { await LocationReminders.refresh(ctx: ctx) }
                             dismiss()
                         }
                     }
@@ -55,11 +70,17 @@ struct LocationPicker: View {
 
     private func pick(_ item: MKMapItem) {
         let c = item.placemark.coordinate
-        task.locationName = item.name ?? query
-        task.latitude = c.latitude
-        task.longitude = c.longitude
+        pick(name: item.name ?? query, latitude: c.latitude, longitude: c.longitude)
+    }
+
+    private func pick(name: String, latitude: Double, longitude: Double) {
+        task.locationName = name
+        task.latitude = latitude
+        task.longitude = longitude
         task.updatedAt = Date()
         try? CalendarService.shared.push(task)
+        LocationReminders.authorize()
+        Task { await LocationReminders.refresh(ctx: ctx) }       // Keel's own alert, if it isn't in Reminders
         Haptics.success()
         dismiss()
     }

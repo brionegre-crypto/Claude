@@ -103,6 +103,10 @@ final class AppRouter {
     var showPlan = false
     var showAutopilot = false
     var showRecorder = false
+    var showReview = false
+    var showMoney = false
+    var showLeaving = false
+    var showJournal = false
 
     func handle(_ url: URL) -> Bool {
         guard url.scheme == "com.keel.app" else { return false }
@@ -118,6 +122,10 @@ final class AppRouter {
         case "autopilot": showAutopilot = true
         case "search": showSearch = true
         case "record": showRecorder = true
+        case "review": showReview = true
+        case "money": showMoney = true
+        case "leaving": showLeaving = true
+        case "journal": showJournal = true
         case "join":
             // From the meeting Live Activity or widget: open the call itself.
             let link = URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems?.first { $0.name == "url" }?.value

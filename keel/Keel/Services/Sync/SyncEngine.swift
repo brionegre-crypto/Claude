@@ -56,6 +56,7 @@ final class SyncEngine {
         await CalendarService.shared.requestAccess()
         await LeaveBy.refresh()
         await MeetingAutopilot.refresh()
+        await LocationReminders.refresh(ctx: ctx)
         await TransitionAlerts.refresh()
 
         // 1. Mail, all accounts in parallel-ish (sequential per account keeps rate limits sane)

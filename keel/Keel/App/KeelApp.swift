@@ -15,6 +15,7 @@ struct KeelApp: App {
         WatchBridge.shared.activate()
         if !UserDefaults.standard.bool(forKey: Prefs.reviewReminderOff) { WeeklyReview.scheduleReminder() }
         if !UserDefaults.standard.bool(forKey: "dayReview.off") { DayReviewView.scheduleReminder() }
+        Journal.scheduleReminder()
     }
 
     var body: some Scene {
@@ -109,6 +110,10 @@ struct RootView: View {
         .sheet(isPresented: $router.showPlan) { PlanRitualView() }
         .sheet(isPresented: $router.showAutopilot) { NavigationStack { AutopilotView() } }
         .sheet(isPresented: $router.showRecorder) { NavigationStack { MeetingRecorderView(autoStart: true) } }
+        .sheet(isPresented: $router.showReview) { NavigationStack { WeeklyReviewView() } }
+        .sheet(isPresented: $router.showMoney) { NavigationStack { SubscriptionsView() } }
+        .sheet(isPresented: $router.showLeaving) { LeavingChecklistView() }
+        .sheet(isPresented: $router.showJournal) { JournalEntryView() }
         .sheet(item: Binding(get: { router.openTaskId.flatMap { id in openTask(id) } }, set: { if $0 == nil { router.openTaskId = nil } })) { t in
             NavigationStack { TaskDetailView(task: t) }
         }
