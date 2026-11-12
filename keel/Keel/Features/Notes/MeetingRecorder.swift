@@ -45,6 +45,7 @@ final class MeetingRecorder {
     private var segment = ""               // the current segment's latest text
     private var generation = 0             // ignores late results from a recognition task we already replaced
     private var segmentStarted = Date()
+    private var segmentStamp = ""          // "[04:12]" where the current segment began
     private let engine = AVAudioEngine()
     private let feed = AudioFeed()
     private var task: SFSpeechRecognitionTask?
@@ -61,7 +62,7 @@ final class MeetingRecorder {
     /// Clears the last meeting so the next one starts fresh.
     func reset() {
         guard !isRecording else { return }
-        transcript = ""; finalized = ""; segment = ""
+        transcript = ""; finalized = ""; segment = ""; segmentStamp = ""
         startedAt = nil; recordedSeconds = 0; error = nil
         audioParts = []
     }
@@ -104,8 +105,8 @@ final class MeetingRecorder {
             return
         }
         if resume {
-            finalized = transcript.isEmpty ? "" : transcript + " "
-            segment = ""
+            finalized = transcript.isEmpty ? "" : transcript + "\n"
+            segment = ""; segmentStamp = ""
         }
         isRecording = true
         if startedAt == nil { startedAt = Date() }
@@ -151,17 +152,26 @@ final class MeetingRecorder {
         let t = text.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !t.isEmpty else { return }
         if !segment.isEmpty && !Self.continues(segment, with: t) {
-            finalized += segment + " "
+            finalized += segmentStamp + segment + "\n"
+            segmentStamp = ""
         }
+        if segmentStamp.isEmpty { segmentStamp = stamp() }
         segment = t
-        transcript = finalized + segment
+        transcript = finalized + segmentStamp + segment
     }
 
     private func commitSegment() {
-        if !segment.isEmpty { finalized += segment + " " }
+        if !segment.isEmpty { finalized += segmentStamp + segment + "\n" }
         segment = ""
-        transcript = finalized.trimmingCharacters(in: .whitespaces)
-        if !transcript.isEmpty { finalized = transcript + " " }
+        segmentStamp = ""
+        transcript = finalized.trimmingCharacters(in: .whitespacesAndNewlines)
+        if !transcript.isEmpty { finalized = transcript + "\n" }
+    }
+
+    /// "[mm:ss] " from the start of the meeting, like a transcript in a meeting app.
+    private func stamp() -> String {
+        let secs = Int(Date().timeIntervalSince(startedAt ?? Date()))
+        return String(format: "[%02d:%02d] ", secs / 60, secs % 60)
     }
 
     /// True when `new` is a revision of `old` (same beginning), false when the recognizer started over.
@@ -173,7 +183,7 @@ final class MeetingRecorder {
         return a.first == b.first || Array(a) == Array(b)
     }
 
-    func stop() {
+    func stop(repair: Bool = true) {
         guard isRecording else { return }
         isRecording = false
         generation += 1
@@ -188,7 +198,7 @@ final class MeetingRecorder {
         UIApplication.shared.isIdleTimerDisabled = false
         if let o = interruptionObserver { NotificationCenter.default.removeObserver(o); interruptionObserver = nil }
         try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
-        Task { await repairIfShort() }
+        if repair { Task { await repairIfShort() } }
     }
 
     /// The meeting is saved as a note: delete the temporary audio and start clean next time.
@@ -219,7 +229,7 @@ final class MeetingRecorder {
     func repairIfShort() async {
         let parts = audioParts.filter { FileManager.default.fileExists(atPath: $0.path) }
         guard !parts.isEmpty, let recognizer else { return }
-        let words = transcript.split(separator: " ").count
+        let words = transcript.split(whereSeparator: { $0 == " " || $0 == "\n" }).count
         let seconds = recordedSeconds
         guard seconds > 30, Double(words) < seconds * 0.6 else { return }
         repairing = true
@@ -229,7 +239,7 @@ final class MeetingRecorder {
         let full = pieces.filter { !$0.isEmpty }.joined(separator: " ")
         if !isRecording, full.split(separator: " ").count > words {
             transcript = full
-            finalized = full + " "
+            finalized = full + "\n"
         }
     }
 
@@ -349,22 +359,58 @@ enum MeetingContext {
     }
 }
 
+/// What kind of meeting it was, so the notes focus on what matters for it.
+enum MeetingTemplate: String, CaseIterable, Identifiable {
+    case general, oneOnOne, standup, sales, interview, brainstorm, lecture
+    var id: String { rawValue }
+    static let key = "meeting.template"
+
+    var title: String {
+        switch self {
+        case .general: "General"; case .oneOnOne: "1:1"; case .standup: "Standup"; case .sales: "Sales or client call"
+        case .interview: "Interview"; case .brainstorm: "Brainstorm"; case .lecture: "Class or lecture"
+        }
+    }
+    var icon: String {
+        switch self {
+        case .general: "person.2"; case .oneOnOne: "person.line.dotted.person"; case .standup: "figure.stand"; case .sales: "briefcase"
+        case .interview: "person.crop.rectangle.badge.plus"; case .brainstorm: "lightbulb"; case .lecture: "graduationcap"
+        }
+    }
+    /// Extra direction for the writer.
+    var focus: String {
+        switch self {
+        case .general: "Cover what was discussed, what was decided, and who is doing what next."
+        case .oneOnOne: "Focus on wins, blockers, feedback given in both directions, growth and career topics, and commitments each person made."
+        case .standup: "For each person: what they did, what they'll do next, and anything blocking them. Topics are people."
+        case .sales: "Capture the customer's needs and pain points, current tools, objections, budget, decision makers, timeline, competitors mentioned, and agreed next steps."
+        case .interview: "Capture the candidate's background, strongest answers, concerns or gaps, questions they asked, and an overall signal. Stay factual."
+        case .brainstorm: "Group the ideas into themes, note which ideas got the most support, and capture open questions and next experiments."
+        case .lecture: "Capture the key concepts with definitions, examples given, anything the speaker said will be tested or is important, and assignments with due dates."
+        }
+    }
+}
+
 enum MeetingAI {
-    /// Context-aware write-up. Long transcripts are read in parts, then merged, so nothing at the end is lost.
+    /// Context-aware write-up. With Claude connected the whole meeting is read at once; otherwise Apple Intelligence
+    /// reads long transcripts in parts, then merges them, so nothing at the end is lost.
     @MainActor
-    static func writeUp(_ transcript: String, context: String, myNotes: String) async -> MeetingWriteUp {
+    static func writeUp(_ transcript: String, context: String, myNotes: String, template: MeetingTemplate = .general) async -> MeetingWriteUp {
         let text = transcript.trimmingCharacters(in: .whitespacesAndNewlines)
         let mine = myNotes.split(separator: "\n").map { $0.trimmingCharacters(in: .whitespaces).trimmingCharacters(in: CharacterSet(charactersIn: "-•* ")) }.filter { !$0.isEmpty }
-        guard AIRouter.shared.onDeviceAvailable, text.count > 40 else {
-            return MeetingWriteUp(summary: String(text.prefix(400)), enhancedNotes: mine)
-        }
         let instructions = """
         You write meeting notes like an excellent chief of staff. Use the context to understand names, projects and acronyms, \
         and to notice follow-ups from last time, but only report what was said in this transcript. Be specific: keep numbers, \
-        names, dates and reasons. Never invent.
+        names, dates and reasons. Never invent. Meeting type: \(template.title). \(template.focus)
         CONTEXT:
         \(context)
         """
+        if text.count > 40, AIRouter.shared.cloudEnabled, let w = await cloudWriteUp(text, instructions: instructions, mine: mine) {
+            return w
+        }
+        guard AIRouter.shared.onDeviceAvailable, text.count > 40 else {
+            return MeetingWriteUp(summary: String(text.prefix(400)), enhancedNotes: mine)
+        }
         // 1. Read the transcript in parts.
         var parts: [MeetingPartOut] = []
         var i = text.startIndex
@@ -394,11 +440,40 @@ enum MeetingAI {
         }
         // 3. Enhance the user's own notes with detail from the transcript.
         if !mine.isEmpty {
-            let session = LanguageModelSession(instructions: instructions)
+            let session = LanguageModelSession(instructions: String(instructions.prefix(3_000)))
             let prompt = "MY NOTES:\n" + mine.map { "- \($0)" }.joined(separator: "\n") + "\n\nTRANSCRIPT:\n\(text.suffix(4_000))"
             w.enhancedNotes = (try? await session.respond(to: prompt, generating: EnhancedNotesOut.self).content.notes) ?? mine
         }
         return w
+    }
+
+    /// One pass over the whole meeting with Claude (through your Keel server or your own key).
+    @MainActor
+    private static func cloudWriteUp(_ text: String, instructions: String, mine: [String]) async -> MeetingWriteUp? {
+        let user = (mine.isEmpty ? "" : "MY NOTES (rewrite each into a fuller sentence using the transcript, same order):\n" + mine.map { "- \($0)" }.joined(separator: "\n") + "\n\n")
+            + "TRANSCRIPT ([mm:ss] marks when each part was said):\n" + String(text.prefix(150_000))
+        guard let r = try? await AIRouter.shared.cloud.meetingNotes(system: instructions, user: user) else { return nil }
+        var w = MeetingWriteUp(summary: r.summary)
+        w.topics = r.topics.map { .init(title: $0.title, points: $0.points) }
+        w.decisions = r.decisions
+        w.questions = r.questions
+        w.actions = r.actions.map { .init(task: $0.task, owner: $0.owner, due: try? Date($0.due, strategy: .iso8601.year().month().day())) }
+        w.enhancedNotes = mine.isEmpty ? [] : (r.enhancedNotes.isEmpty ? mine : r.enhancedNotes)
+        return w
+    }
+
+    /// "Ask about this meeting": answers only from the transcript.
+    @MainActor
+    static func ask(_ question: String, transcript: String) async -> String {
+        let prompt = """
+        Answer the question using only this meeting transcript. Quote names, numbers and dates exactly. \
+        If the transcript doesn't say, answer "That wasn't discussed." Keep it to a few sentences.
+        QUESTION: \(question)
+        TRANSCRIPT:
+        \(transcript.suffix(AIRouter.shared.cloudEnabled ? 120_000 : 8_000))
+        """
+        if AIRouter.shared.cloudEnabled, let a = try? await AIRouter.shared.cloud.answer(prompt) { return a }
+        return await AIRouter.shared.write(prompt) ?? "Keel couldn't answer that right now."
     }
 }
 
@@ -422,7 +497,12 @@ struct MeetingRecorderView: View {
     @State private var sources: [String] = []
     @State private var compose: ComposeDraft?
     @State private var openNote: Note?
+    @AppStorage(MeetingTemplate.key) private var templateRaw = MeetingTemplate.general.rawValue
+    @State private var question = ""
+    @State private var answers: [(q: String, a: String)] = []
+    @State private var asking = false
 
+    private var template: MeetingTemplate { MeetingTemplate(rawValue: templateRaw) ?? .general }
     private var title: String { event?.title ?? (target?.title.isEmpty == false ? target!.title : "Meeting") }
 
     var body: some View {
@@ -432,6 +512,18 @@ struct MeetingRecorderView: View {
                 if let e = event {
                     Text("\(e.startDate.formatted(date: .omitted, time: .shortened)) · \((e.attendees ?? []).compactMap(\.name).prefix(4).joined(separator: ", "))")
                         .font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft).lineLimit(1)
+                }
+                if result == nil {
+                    Menu {
+                        Picker("Meeting type", selection: $templateRaw) {
+                            ForEach(MeetingTemplate.allCases) { Label($0.title, systemImage: $0.icon).tag($0.rawValue) }
+                        }
+                    } label: {
+                        Label(template.title, systemImage: template.icon).font(DS.Font.caption.weight(.semibold))
+                            .padding(.horizontal, 10).padding(.vertical, 5)
+                            .background(DS.Palette.accent.opacity(0.12), in: Capsule())
+                    }
+                    .accessibilityLabel("Meeting type: \(template.title). Changes how the notes are written")
                 }
                 if !sources.isEmpty {
                     Label("Using context: " + sources.joined(separator: ", "), systemImage: "sparkles")
@@ -526,11 +618,27 @@ struct MeetingRecorderView: View {
                 .buttonStyle(.plain)
                 .symbolEffect(.pulse, isActive: recorder.isRecording)
                 .accessibilityLabel(recorder.isRecording ? "Pause recording" : (recorder.transcript.isEmpty ? "Start recording" : "Resume recording"))
+
+                if !recorder.transcript.isEmpty || recorder.isRecording {
+                    Button { Task { await endMeeting() } } label: {
+                        VStack(spacing: 4) {
+                            ZStack {
+                                Circle().fill(DS.Palette.ink).frame(width: 60, height: 60)
+                                Image(systemName: "stop.fill").font(.title2).foregroundStyle(DS.Palette.canvas)
+                            }
+                            Text("End").font(DS.Font.caption.weight(.semibold))
+                        }
+                    }
+                    .buttonStyle(.plain)
+                    .disabled(writing || recorder.repairing)
+                    .accessibilityLabel("End meeting and write the notes")
+                }
             }
             if let start = recorder.startedAt, recorder.isRecording {
                 Text(start, style: .timer).font(DS.Font.headline.monospacedDigit()).foregroundStyle(.red)
             } else if !recorder.transcript.isEmpty {
-                Text("Paused. Tap play to keep going, or write up the notes.").font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
+                Text(recorder.repairing ? "Recovering the full transcript from the recording…" : writing ? "Writing your notes…" : "Paused. Tap play to keep going, or End to write the notes.")
+                    .font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
             }
             if let err = recorder.error { Text(err).font(DS.Font.caption).foregroundStyle(.red).multilineTextAlignment(.center) }
         }
@@ -546,10 +654,22 @@ struct MeetingRecorderView: View {
                         Label(Self.actionLine(a), systemImage: "checkmark.circle").font(.callout)
                     }
                 }
+                if !r.topics.isEmpty {
+                    Text("Key discussion points").font(DS.Font.headline)
+                    ForEach(Array(r.topics.enumerated()), id: \.offset) { _, t in
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(t.title).font(.callout.weight(.semibold))
+                            ForEach(Array(t.points.enumerated()), id: \.offset) { _, p in
+                                Text("• " + p).font(.callout).foregroundStyle(DS.Palette.inkSoft)
+                            }
+                        }
+                    }
+                }
                 if !r.decisions.isEmpty {
                     Text("Decisions").font(DS.Font.headline)
                     ForEach(r.decisions, id: \.self) { Label($0, systemImage: "checkmark.seal").font(.callout) }
                 }
+                askSection
                 HStack {
                     if let n = savedNote { Button { openNote = n } label: { Label("Open notes", systemImage: "doc.text") }.buttonStyle(.borderedProminent).tint(DS.Palette.accent) }
                     Button { compose = followUpDraft(r) } label: { Label("Email recap", systemImage: "envelope") }.buttonStyle(.bordered)
@@ -557,6 +677,41 @@ struct MeetingRecorderView: View {
                 .padding(.top, DS.Space.s)
             }
         }
+    }
+
+    /// Ask about this meeting: answers come only from what was said.
+    private var askSection: some View {
+        VStack(alignment: .leading, spacing: DS.Space.s) {
+            Text("Ask about this meeting").font(DS.Font.headline)
+            ForEach(Array(answers.enumerated()), id: \.offset) { _, qa in
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(qa.q).font(.callout.weight(.semibold))
+                    Text(qa.a).font(.callout).foregroundStyle(DS.Palette.inkSoft).textSelection(.enabled)
+                }
+                .padding(12).frame(maxWidth: .infinity, alignment: .leading)
+                .background(DS.Palette.elevated, in: .rect(cornerRadius: 14))
+            }
+            HStack {
+                TextField("What did we decide about…?", text: $question, axis: .vertical).lineLimit(1...3)
+                    .textFieldStyle(.roundedBorder)
+                    .onSubmit { Task { await askQuestion() } }
+                Button { Task { await askQuestion() } } label: {
+                    if asking { ProgressView() } else { Image(systemName: "arrow.up.circle.fill").font(.title2) }
+                }
+                .disabled(question.trimmingCharacters(in: .whitespaces).isEmpty || asking)
+                .accessibilityLabel("Ask")
+            }
+        }
+        .padding(.top, DS.Space.s)
+    }
+
+    private func askQuestion() async {
+        let q = question.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !q.isEmpty, let text = savedNote?.blocks.first(where: { $0.kind == .toggle && $0.text == "Transcript" })?.body else { return }
+        asking = true; defer { asking = false }
+        question = ""
+        let a = await MeetingAI.ask(q, transcript: text)
+        withAnimation(DS.spring) { answers.append((q, a)) }
     }
 
     static func actionLine(_ a: MeetingWriteUp.Action) -> String {
@@ -573,6 +728,16 @@ struct MeetingRecorderView: View {
         return !myName.isEmpty && owner.contains(myName.trimmingCharacters(in: .whitespaces))
     }
 
+    /// Like ending a meeting in a meeting-notes app: stop, recover anything the live transcript missed, then write the notes.
+    private func endMeeting() async {
+        writing = true
+        if recorder.isRecording { recorder.stop(repair: false) }
+        await recorder.repairIfShort()
+        writing = false
+        guard !recorder.transcript.isEmpty else { return }
+        await writeUp()
+    }
+
     private func writeUp() async {
         writing = true; defer { writing = false }
         let context = MeetingContext.build(event: event, title: title, ctx: ctx)
@@ -580,20 +745,26 @@ struct MeetingRecorderView: View {
         let web = await WebContext.gather(event: event, title: title, transcript: recorder.transcript, deep: true)
         sources = context.sources + web.sources
         let fullContext = web.text.isEmpty ? context.text : context.text + "\nFROM THE WEB (background only; the meeting itself is the source of truth):\n" + web.text
-        let w = await MeetingAI.writeUp(recorder.transcript, context: fullContext, myNotes: myNotes)
+        let w = await MeetingAI.writeUp(recorder.transcript, context: fullContext, myNotes: myNotes, template: template)
 
         var blocks: [NoteBlock] = []
-        if let e = event {
-            blocks.append(.init(kind: .text, text: "\(e.startDate.formatted(date: .abbreviated, time: .shortened)) · \((e.attendees ?? []).compactMap(\.name).joined(separator: ", "))"))
-        }
-        var summary = NoteBlock(kind: .callout, text: w.summary); summary.icon = "✨"
-        blocks.append(summary)
-        if !w.enhancedNotes.isEmpty {
-            blocks.append(.init(kind: .heading2, text: "Your notes"))
-            blocks += w.enhancedNotes.map { NoteBlock(kind: .bullet, text: $0) }
+        // Header: when, who, how long, what kind of meeting.
+        var meta: [String] = [(event?.startDate ?? recorder.startedAt ?? Date()).formatted(date: .abbreviated, time: .shortened)]
+        let minutes = Int((recorder.recordedSeconds > 0 ? recorder.recordedSeconds : Date().timeIntervalSince(recorder.startedAt ?? Date())) / 60)
+        if minutes > 0 { meta.append("\(minutes) min") }
+        meta.append(template.title)
+        if let names = event?.attendees?.compactMap(\.name), !names.isEmpty { meta.append(names.joined(separator: ", ")) }
+        var header = NoteBlock(kind: .callout, text: meta.joined(separator: " · ")); header.icon = "🎙️"
+        blocks.append(header)
+
+        blocks.append(.init(kind: .heading2, text: "Summary"))
+        blocks.append(.init(kind: .text, text: w.summary))
+        if !w.actions.isEmpty {
+            blocks.append(.init(kind: .heading2, text: "Action items"))
+            blocks += w.actions.map { a in NoteBlock(kind: .todo, text: a.owner.isEmpty ? Self.actionLine(a) : "**\(a.owner)**: " + Self.actionLine(.init(task: a.task, owner: "", due: a.due))) }
         }
         if !w.topics.isEmpty {
-            blocks.append(.init(kind: .heading2, text: "Discussion"))
+            blocks.append(.init(kind: .heading2, text: "Key discussion points"))
             for t in w.topics {
                 blocks.append(.init(kind: .heading3, text: t.title))
                 blocks += t.points.map { NoteBlock(kind: .bullet, text: $0) }
@@ -603,13 +774,13 @@ struct MeetingRecorderView: View {
             blocks.append(.init(kind: .heading2, text: "Decisions"))
             blocks += w.decisions.map { NoteBlock(kind: .bullet, text: $0) }
         }
-        if !w.actions.isEmpty {
-            blocks.append(.init(kind: .heading2, text: "Action items"))
-            blocks += w.actions.map { a in NoteBlock(kind: .todo, text: a.owner.isEmpty ? Self.actionLine(a) : "**\(a.owner)**: " + Self.actionLine(.init(task: a.task, owner: "", due: a.due))) }
-        }
         if !w.questions.isEmpty {
             blocks.append(.init(kind: .heading2, text: "Open questions"))
             blocks += w.questions.map { NoteBlock(kind: .bullet, text: $0) }
+        }
+        if !w.enhancedNotes.isEmpty {
+            blocks.append(.init(kind: .heading2, text: "Your notes"))
+            blocks += w.enhancedNotes.map { NoteBlock(kind: .bullet, text: $0) }
         }
         var transcriptBlock = NoteBlock(kind: .toggle, text: "Transcript")
         transcriptBlock.body = recorder.transcript

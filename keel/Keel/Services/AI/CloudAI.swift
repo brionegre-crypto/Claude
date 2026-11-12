@@ -146,3 +146,58 @@ enum Schemas {
         ],
     ]
 }
+
+// MARK: - Meeting notes
+
+struct CloudMeetingNotes: Decodable {
+    struct Topic: Decodable { let title: String; let points: [String] }
+    struct Action: Decodable { let task: String; let owner: String; let due: String }
+    let summary: String
+    let topics: [Topic]
+    let decisions: [String]
+    let actions: [Action]
+    let questions: [String]
+    let enhancedNotes: [String]
+}
+
+extension CloudAI {
+    /// The whole meeting in one pass: summary, topics, decisions, action items with owners, open questions, your notes filled in.
+    func meetingNotes(system: String, user: String) async throws -> CloudMeetingNotes {
+        try await call(task: "meeting_notes", system: system, user: user, schema: Schemas.meetingNotes, as: CloudMeetingNotes.self)
+    }
+
+    /// A short, direct answer that follows the prompt's own instructions.
+    func answer(_ prompt: String) async throws -> String {
+        struct A: Decodable { let summary: String }
+        return try await call(task: "answer", system: "Follow the request exactly. Reply in plain sentences.", user: prompt,
+                              schema: Schemas.summary, as: A.self).summary
+    }
+}
+
+extension Schemas {
+    static let meetingNotes: [String: Any] = {
+        let strings: [String: Any] = ["type": "array", "items": ["type": "string"]]
+        return [
+            "type": "object", "additionalProperties": false,
+            "required": ["summary", "topics", "decisions", "actions", "questions", "enhancedNotes"],
+            "properties": [
+                "summary": ["type": "string", "description": "3 to 5 sentences: the purpose, the outcome, and what happens next"],
+                "topics": ["type": "array", "description": "Key discussion points in the order they came up", "items": [
+                    "type": "object", "additionalProperties": false, "required": ["title", "points"],
+                    "properties": ["title": ["type": "string"], "points": strings],
+                ]],
+                "decisions": strings,
+                "actions": ["type": "array", "items": [
+                    "type": "object", "additionalProperties": false, "required": ["task", "owner", "due"],
+                    "properties": [
+                        "task": ["type": "string", "description": "Starts with a verb"],
+                        "owner": ["type": "string", "description": "Who will do it, or empty"],
+                        "due": ["type": "string", "description": "YYYY-MM-DD if a date was said, else empty"],
+                    ],
+                ]],
+                "questions": strings,
+                "enhancedNotes": strings,
+            ],
+        ]
+    }()
+}
