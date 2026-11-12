@@ -18,6 +18,7 @@
 		27E9B13DE7B45A5FF13DE173 /* FocusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECB947CEC5E491E34C4572D7 /* FocusView.swift */; };
 		282F1904CC270F67AFA1B981 /* TasksView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52D02FDBC427DF0317C4A4E9 /* TasksView.swift */; };
 		2C6CBAF044E966ABBB73E086 /* CloudAI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 035015EE8266684EFC26E2B0 /* CloudAI.swift */; };
+		2D64B29A8AE05298026C1B41 /* CheckInCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDE261303178128DC2353530 /* CheckInCard.swift */; };
 		2F403D9867E4E01BEF8FF755 /* CalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA81AC76EFE4BD69EB166CBE /* CalendarView.swift */; };
 		2FB0264F83E51060C69E9807 /* WidgetShared.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CD836265E2BB9D895940B33 /* WidgetShared.swift */; };
 		348F61E75CBF91977C2EAF03 /* OnDeviceAI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50AE0EC551C0F0F9AD8C3B78 /* OnDeviceAI.swift */; };
@@ -32,6 +33,7 @@
 		4D305CCEC66744E4697BBF64 /* KeelApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E45C1FD390432029BC9DFF4 /* KeelApp.swift */; };
 		564E1BA5AB1AB64EA1E57121 /* CommandBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC81D332BB367C4D33D8162 /* CommandBar.swift */; };
 		5C9EF6DEF57B27F8B080D415 /* ADHDCoach.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5295CB657E143BD9EE26423B /* ADHDCoach.swift */; };
+		62C71612EEA9C66196B97390 /* ScreenerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 818D11DE3B79249650356CFA /* ScreenerView.swift */; };
 		68A171A776915882DE934EA3 /* WidgetShared.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CD836265E2BB9D895940B33 /* WidgetShared.swift */; };
 		6980E570787EF9BEDB79A4ED /* MeetingRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = D14F2099627ADCE0C958846B /* MeetingRecorder.swift */; };
 		69A422EA27F2394695556562 /* KeelWatch.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = D643583982242DEBB8CC3170 /* KeelWatch.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -41,6 +43,7 @@
 		80C1732E25762B099E8A0E79 /* DirectAI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D9CA989D51530DCB2F0A48B /* DirectAI.swift */; };
 		84AC9B33386018120AADB576 /* SiriIntents.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE963CAEA71107BBBA1C2EB0 /* SiriIntents.swift */; };
 		84ACF02D41CCACD6D7F72F3E /* InboxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DF811CE33148A8C868866BD /* InboxView.swift */; };
+		871C6890757E8ED622D68AD9 /* PeopleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF6AC0B3A60E1BC2BBE5DBE8 /* PeopleView.swift */; };
 		8CC07EFCA332B8907BB3E65A /* SyncEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BE33F801FFD619712E382CF /* SyncEngine.swift */; };
 		8F340F1DFFF169BC050B645A /* AccountsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F2B871E95739B31F6282566 /* AccountsView.swift */; };
 		9A581C99346C85844710CEE0 /* ReadLaterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACDFE0D60FED0CACCB9E5602 /* ReadLaterView.swift */; };
@@ -63,6 +66,7 @@
 		E81410121036D3D7149D29FC /* WatchShared.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FAE3DDA9D4006FAEA5CA68D /* WatchShared.swift */; };
 		F27CF0E2C2C4EB6507312277 /* HabitEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACB5B7727DBF2E63305F51B2 /* HabitEngine.swift */; };
 		F304617DA73BBE103CD6AD4A /* Assistant.swift in Sources */ = {isa = PBXBuildFile; fileRef = C582D11F72C1D13929026FAA /* Assistant.swift */; };
+		FA074A35DED1741317CE2E20 /* AutoScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EBC0FF28B7428993634313A /* AutoScheduler.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -121,6 +125,7 @@
 		14D1D78C56734503A909291D /* ClaudeBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeBridge.swift; sourceTree = "<group>"; };
 		17C252D173987B00D25462AF /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
 		1CD836265E2BB9D895940B33 /* WidgetShared.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetShared.swift; sourceTree = "<group>"; };
+		1EBC0FF28B7428993634313A /* AutoScheduler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoScheduler.swift; sourceTree = "<group>"; };
 		2158A7A622BDADF4767554DB /* CalendarService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarService.swift; sourceTree = "<group>"; };
 		217E1E36CFDF363BEF82111D /* HTMLMailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTMLMailView.swift; sourceTree = "<group>"; };
 		24484F9F7D98891FB9522296 /* Keel.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Keel.entitlements; sourceTree = "<group>"; };
@@ -146,6 +151,7 @@
 		78237D2D1B52767F80C02274 /* KeelWatchApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeelWatchApp.swift; sourceTree = "<group>"; };
 		7F33FF829DF51CECA667C28C /* KeelShare.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = KeelShare.entitlements; sourceTree = "<group>"; };
 		7FD2977BFF93D2B3A4B40E78 /* ComposeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComposeView.swift; sourceTree = "<group>"; };
+		818D11DE3B79249650356CFA /* ScreenerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenerView.swift; sourceTree = "<group>"; };
 		83A06C580A0352DA59548C19 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		87BA63B48C9EAC76390B2DFC /* ShareViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareViewController.swift; sourceTree = "<group>"; };
 		8DEEBF528E3474894C68514F /* GoalsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalsView.swift; sourceTree = "<group>"; };
@@ -164,11 +170,13 @@
 		C3D6C65D586B3C3032BDE5C6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		C582D11F72C1D13929026FAA /* Assistant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Assistant.swift; sourceTree = "<group>"; };
 		C6BC64A281F313E34B666753 /* PromisesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromisesView.swift; sourceTree = "<group>"; };
+		CDE261303178128DC2353530 /* CheckInCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckInCard.swift; sourceTree = "<group>"; };
 		CEC81D332BB367C4D33D8162 /* CommandBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandBar.swift; sourceTree = "<group>"; };
 		D14F2099627ADCE0C958846B /* MeetingRecorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingRecorder.swift; sourceTree = "<group>"; };
 		D643583982242DEBB8CC3170 /* KeelWatch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = KeelWatch.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D7FE3315D85E763A9DA6C891 /* OdysseyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OdysseyView.swift; sourceTree = "<group>"; };
 		DE657C753B3F4DF69C245D83 /* WeeklyReviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeeklyReviewView.swift; sourceTree = "<group>"; };
+		DF6AC0B3A60E1BC2BBE5DBE8 /* PeopleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeopleView.swift; sourceTree = "<group>"; };
 		DFFC4DBF7D60E11E05E9A292 /* Keel.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Keel.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E3BE193F1FF25E6760C6616E /* TimeViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeViews.swift; sourceTree = "<group>"; };
 		EAAF02252EE2C633D8BD47D5 /* NotesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotesView.swift; sourceTree = "<group>"; };
@@ -203,6 +211,7 @@
 				F715676E24FF7E781FDE906F /* Mail */,
 				2E86A7F00027CA613FA36EF4 /* Notes */,
 				A73A3D32181D413C040E158F /* Odyssey */,
+				5683BC358FC26AFE7ECC3C63 /* People */,
 				933A492221CD1618E20868AC /* Promises */,
 				65D29B86A2558A59A8EB4731 /* ReadLater */,
 				9E950D5C378FD6C0413C2C50 /* Review */,
@@ -269,6 +278,14 @@
 			path = Assistant;
 			sourceTree = "<group>";
 		};
+		5683BC358FC26AFE7ECC3C63 /* People */ = {
+			isa = PBXGroup;
+			children = (
+				DF6AC0B3A60E1BC2BBE5DBE8 /* PeopleView.swift */,
+			);
+			path = People;
+			sourceTree = "<group>";
+		};
 		572270023A6BECED45C5D42E /* Calendar */ = {
 			isa = PBXGroup;
 			children = (
@@ -281,6 +298,7 @@
 			isa = PBXGroup;
 			children = (
 				8DF811CE33148A8C868866BD /* InboxView.swift */,
+				818D11DE3B79249650356CFA /* ScreenerView.swift */,
 			);
 			path = Inbox;
 			sourceTree = "<group>";
@@ -304,6 +322,7 @@
 		6ABDAB05530105AC61BCFA95 /* Today */ = {
 			isa = PBXGroup;
 			children = (
+				CDE261303178128DC2353530 /* CheckInCard.swift */,
 				9552312DA272B5919FCC5388 /* TodayView.swift */,
 			);
 			path = Today;
@@ -312,6 +331,7 @@
 		6CF143E8847BC3F93B126920 /* Tasks */ = {
 			isa = PBXGroup;
 			children = (
+				1EBC0FF28B7428993634313A /* AutoScheduler.swift */,
 				6F965AFDF10B5B9C9369DA47 /* TaskEngine.swift */,
 			);
 			path = Tasks;
@@ -674,8 +694,10 @@
 				7F7C5048642D0317A17D3A5C /* AIRouter.swift in Sources */,
 				8F340F1DFFF169BC050B645A /* AccountsView.swift in Sources */,
 				F304617DA73BBE103CD6AD4A /* Assistant.swift in Sources */,
+				FA074A35DED1741317CE2E20 /* AutoScheduler.swift in Sources */,
 				CF1624DA4B3A66E317B98BEF /* CalendarService.swift in Sources */,
 				2F403D9867E4E01BEF8FF755 /* CalendarView.swift in Sources */,
+				2D64B29A8AE05298026C1B41 /* CheckInCard.swift in Sources */,
 				E053C585567DDC029FB720D8 /* ClaudeBridge.swift in Sources */,
 				2C6CBAF044E966ABBB73E086 /* CloudAI.swift in Sources */,
 				564E1BA5AB1AB64EA1E57121 /* CommandBar.swift in Sources */,
@@ -700,9 +722,11 @@
 				21E7562BDD0EF8DF74F200A4 /* OAuthManager.swift in Sources */,
 				D5DDC2EB0B49D716B4921496 /* OdysseyView.swift in Sources */,
 				348F61E75CBF91977C2EAF03 /* OnDeviceAI.swift in Sources */,
+				871C6890757E8ED622D68AD9 /* PeopleView.swift in Sources */,
 				1E9022913FF88A6EADC00068 /* PromiseTracker.swift in Sources */,
 				C47D427217918E8C75B2B94D /* PromisesView.swift in Sources */,
 				9A581C99346C85844710CEE0 /* ReadLaterView.swift in Sources */,
+				62C71612EEA9C66196B97390 /* ScreenerView.swift in Sources */,
 				A00AF67D479B619AB15E2F91 /* ShutdownManager.swift in Sources */,
 				84AC9B33386018120AADB576 /* SiriIntents.swift in Sources */,
 				8CC07EFCA332B8907BB3E65A /* SyncEngine.swift in Sources */,
