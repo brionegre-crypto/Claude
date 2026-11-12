@@ -37,10 +37,33 @@ final class WatchBridge: NSObject, WCSessionDelegate {
         let events = CalendarService.shared.events(from: Date(), to: endOfDay).filter { !$0.isAllDay }.prefix(5)
             .map { WatchPayload.EventRow(title: $0.title ?? "Event", start: $0.startDate, end: $0.endDate) }
 
-        let payload = WatchPayload(
+        var payload = WatchPayload(
             nextThing: next?.title, nextThingStep: next?.microSteps.first { !$0.done }?.text,
             tasks: dueToday.prefix(20).map { .init(id: $0.id, title: $0.title, due: $0.dueDate, hasTime: $0.hasDueTime, priority: $0.priority.rawValue) },
             habits: habitRows, events: Array(events), focusEndsAt: ShutdownManager.shared.endsAt)
+
+        // Everything else the watch shows
+        payload.energy = energy.rawValue
+        payload.checkedInMood = ((try? ctx.fetch(FetchDescriptor<CheckIn>())) ?? []).first { cal.isDateInToday($0.day) }?.mood
+        payload.mail = ((try? ctx.fetch(FetchDescriptor<EmailMessage>(sortBy: [SortDescriptor(\.priorityScore, order: .reverse)]))) ?? [])
+            .filter { !$0.isRead && !$0.isArchived && ($0.category == .important || $0.category == .actionable) }
+            .prefix(8)
+            .map { .init(id: $0.id, from: $0.fromName.isEmpty ? $0.from : $0.fromName, subject: $0.subject, summary: $0.aiSummary ?? $0.snippet) }
+        payload.promises = ((try? ctx.fetch(FetchDescriptor<Commitment>())) ?? [])
+            .filter { $0.status == .open && !$0.likelyKept && $0.effectiveDue < endOfDay }
+            .map { "\($0.promise) · \($0.displayName)" }
+        payload.followUps = ((try? ctx.fetch(FetchDescriptor<FollowUp>())) ?? []).filter(\.isDue)
+            .map { $0.recipientName.isEmpty ? $0.recipient : $0.recipientName }
+        payload.people = ((try? ctx.fetch(FetchDescriptor<Person>())) ?? []).filter(\.isDue)
+            .map { .init(id: $0.id, name: $0.name, phone: $0.phone, lastContact: $0.lastContact) }
+        payload.countdowns = ((try? ctx.fetch(FetchDescriptor<Countdown>(sortBy: [SortDescriptor(\.date)]))) ?? [])
+            .filter { $0.daysLeft >= 0 }.prefix(6).map { .init(title: $0.title, emoji: $0.emoji, date: $0.date) }
+        let allTasks = (try? ctx.fetch(FetchDescriptor<TaskItem>())) ?? []
+        payload.doneToday = allTasks.filter { ($0.completedAt.map { cal.isDateInToday($0) } ?? false) || ($0.lastCompletedOccurrence.map { cal.isDateInToday($0) } ?? false) }.count
+        let weekStart = cal.date(byAdding: .day, value: -6, to: today)!
+        payload.focusMinutesWeek = ((try? ctx.fetch(FetchDescriptor<FocusSession>())) ?? [])
+            .filter { ($0.endedAt ?? .distantPast) >= weekStart }
+            .reduce(0) { $0 + Int((($1.endedAt ?? $1.startedAt).timeIntervalSince($1.startedAt)) / 60) }
         if let data = WatchCoding.encode(payload) {
             try? WCSession.default.updateApplicationContext(["payload": data])
         }
@@ -66,6 +89,34 @@ final class WatchBridge: NSObject, WCSessionDelegate {
             ctx.insert(ShutdownManager.shared.start(minutes: minutes, level: .soft, task: nil))
         case .endFocus:
             ShutdownManager.shared.end(early: true)
+        case .moveTaskTomorrow(let id):
+            if let t = try? ctx.fetch(FetchDescriptor<TaskItem>(predicate: #Predicate { $0.id == id })).first {
+                TaskActions.reschedule(t, to: Calendar.current.date(byAdding: .day, value: 1, to: Calendar.current.startOfDay(for: Date()))!)
+            }
+        case .setEnergy(let level):
+            UserDefaults.standard.set(level, forKey: "energy")
+            UserDefaults.standard.set(Date().formatted(.iso8601.year().month().day()), forKey: "energy.day")
+        case .checkIn(let mood):
+            let day = Calendar.current.startOfDay(for: Date())
+            if ((try? ctx.fetch(FetchDescriptor<CheckIn>())) ?? []).first(where: { $0.day == day }) == nil {
+                ctx.insert(CheckIn(day: day, mood: mood))
+            }
+        case .archiveMail(let id):
+            if let e = try? ctx.fetch(FetchDescriptor<EmailMessage>(predicate: #Predicate { $0.id == id })).first {
+                e.isArchived = true
+                if let a = ((try? ctx.fetch(FetchDescriptor<MailAccount>())) ?? []).first(where: { $0.id == e.accountId }) {
+                    let pid = e.providerMessageId
+                    Task { try? await MailProviderFactory.make(for: a).archive(pid) }
+                }
+            }
+        case .loggedContact(let id):
+            if let p = try? ctx.fetch(FetchDescriptor<Person>(predicate: #Predicate { $0.id == id })).first { p.lastContact = Date() }
+        case .carryOverToday:
+            let cal = Calendar.current
+            let end = cal.date(byAdding: .day, value: 1, to: cal.startOfDay(for: Date()))!
+            for t in ((try? ctx.fetch(FetchDescriptor<TaskItem>())) ?? []) where !t.isDone && (t.dueDate ?? .distantFuture) < end {
+                TaskActions.reschedule(t, to: end)
+            }
         }
         try? ctx.save()
         push(ctx)
@@ -79,6 +130,21 @@ final class WatchBridge: NSObject, WCSessionDelegate {
     }
     func sessionDidBecomeInactive(_ session: WCSession) {}
     func sessionDidDeactivate(_ session: WCSession) { WCSession.default.activate() }
+
+    /// "Ask Keel" from the watch: answered on the iPhone with Apple Intelligence, reply sent back.
+    func session(_ session: WCSession, didReceiveMessage message: [String: Any], replyHandler: @escaping ([String: Any]) -> Void) {
+        if let question = message["ask"] as? String {
+            Task { @MainActor in
+                let answer = await KeelAssistant.shared.ask(question)
+                replyHandler(["answer": answer])
+            }
+        } else if let data = message["action"] as? Data {
+            Task { @MainActor in self.handle(data) }
+            replyHandler([:])
+        } else {
+            replyHandler([:])
+        }
+    }
 
     func session(_ session: WCSession, didReceiveMessage message: [String: Any]) {
         guard let data = message["action"] as? Data else { return }

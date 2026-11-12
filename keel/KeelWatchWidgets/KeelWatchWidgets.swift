@@ -8,6 +8,7 @@ struct KeelWatchWidgetBundle: WidgetBundle {
         OneThingComplication()
         NextEventComplication()
         TasksLeftComplication()
+        CountdownComplication()
     }
 }
 
@@ -130,6 +131,42 @@ struct TasksLeftFace: View {
                     Text("left").font(.system(size: 9))
                 }
             }
+        }
+    }
+}
+
+struct CountdownComplication: Widget {
+    var body: some WidgetConfiguration {
+        StaticConfiguration(kind: "KeelWatchCountdown", provider: WatchProvider()) { entry in
+            CountdownFace(entry: entry).containerBackground(for: .widget) { Color.clear }
+        }
+        .configurationDisplayName("Countdown")
+        .description("Days until your next big date.")
+        .supportedFamilies([.accessoryCircular, .accessoryRectangular, .accessoryInline])
+    }
+}
+
+struct CountdownFace: View {
+    let entry: WatchEntry
+    @Environment(\.widgetFamily) private var family
+    var body: some View {
+        if let c = entry.payload.countdowns?.first(where: { $0.date >= Calendar.current.startOfDay(for: entry.date) }) {
+            let days = Calendar.current.dateComponents([.day], from: Calendar.current.startOfDay(for: entry.date), to: Calendar.current.startOfDay(for: c.date)).day ?? 0
+            switch family {
+            case .accessoryInline: Text("\(c.emoji) \(days)d \(c.title)")
+            case .accessoryCircular:
+                ZStack {
+                    AccessoryWidgetBackground()
+                    VStack(spacing: 0) { Text(c.emoji).font(.system(size: 12)); Text("\(days)").font(.system(size: 18, weight: .bold, design: .rounded)) }
+                }
+            default:
+                VStack(alignment: .leading, spacing: 1) {
+                    Text("\(c.emoji) \(c.title)").font(.headline).lineLimit(1)
+                    Text(days == 0 ? "Today!" : "\(days) days to go").font(.caption)
+                }
+            }
+        } else {
+            Text("No countdowns").font(.caption2)
         }
     }
 }

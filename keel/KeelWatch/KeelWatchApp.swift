@@ -70,6 +70,53 @@ final class WatchStore: NSObject, WCSessionDelegate {
         send(.addTask(text))
     }
 
+    func moveTomorrow(_ task: WatchPayload.TaskRow) {
+        payload.tasks.removeAll { $0.id == task.id }
+        WKInterfaceDevice.current().play(.click)
+        send(.moveTaskTomorrow(task.id))
+    }
+
+    func setEnergy(_ level: Int) {
+        payload.energy = level
+        WKInterfaceDevice.current().play(.click)
+        send(.setEnergy(level))
+    }
+
+    func checkIn(_ mood: Int) {
+        payload.checkedInMood = mood
+        WKInterfaceDevice.current().play(.success)
+        send(.checkIn(mood))
+    }
+
+    func archive(_ mail: WatchPayload.MailRow) {
+        payload.mail?.removeAll { $0.id == mail.id }
+        WKInterfaceDevice.current().play(.success)
+        send(.archiveMail(mail.id))
+    }
+
+    func contacted(_ person: WatchPayload.PersonRow) {
+        payload.people?.removeAll { $0.id == person.id }
+        send(.loggedContact(person.id))
+    }
+
+    func carryOver() {
+        payload.tasks = []
+        WKInterfaceDevice.current().play(.success)
+        send(.carryOverToday)
+    }
+
+    /// Ask Keel: the iPhone answers with Apple Intelligence (needs the iPhone nearby).
+    func ask(_ question: String) async -> String {
+        guard WCSession.default.isReachable else { return "Your iPhone needs to be nearby to answer." }
+        return await withCheckedContinuation { cont in
+            WCSession.default.sendMessage(["ask": question], replyHandler: { reply in
+                cont.resume(returning: reply["answer"] as? String ?? "No answer.")
+            }, errorHandler: { _ in
+                cont.resume(returning: "Couldn't reach your iPhone.")
+            })
+        }
+    }
+
     // MARK: WCSessionDelegate
 
     nonisolated func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: Error?) {
@@ -91,64 +138,105 @@ final class WatchStore: NSObject, WCSessionDelegate {
     }
 }
 
-struct WatchRoot: View {
-    var body: some View {
-        TabView {
-            NowPage()
-            TasksPage()
-            HabitsPage()
-            AddPage()
-        }
-        .tabViewStyle(.verticalPage)
-    }
-}
+// MARK: - Screens
 
-struct NowPage: View {
+struct WatchRoot: View {
     @Environment(WatchStore.self) private var store
 
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 8) {
-                if let end = store.payload.focusEndsAt, end > Date() {
-                    VStack(alignment: .leading, spacing: 4) {
-                        Label("Focusing", systemImage: "moon.zzz.fill").font(.caption).foregroundStyle(accent)
-                        Text(timerInterval: Date()...end, countsDown: true)
-                            .font(.system(size: 40, weight: .semibold, design: .rounded).monospacedDigit())
-                        Button("End focus", role: .destructive) { store.endFocus() }
-                    }
-                } else {
-                    Text("JUST ONE THING").font(.caption2.weight(.bold)).foregroundStyle(accent)
-                    Text(store.payload.nextThing ?? "Nothing urgent").font(.headline)
-                    if let step = store.payload.nextThingStep {
-                        Text("Start: \(step)").font(.caption).foregroundStyle(.secondary)
-                    }
-                    if let e = store.payload.events.first(where: { $0.end > Date() }) {
-                        Divider()
-                        Text(e.title).font(.caption.weight(.semibold))
-                        Text(e.start, style: .relative).font(.caption2).foregroundStyle(.secondary)
-                    }
-                    HStack {
-                        ForEach([15, 25, 50], id: \.self) { m in
-                            Button("\(m)") { store.startFocus(m) }.tint(accent)
-                        }
-                    }
-                    .font(.caption)
-                    Text("Start focus (min)").font(.caption2).foregroundStyle(.secondary)
+        NavigationStack {
+            List {
+                NowCard()
+                    .listRowBackground(Color.clear)
+
+                if store.payload.checkedInMood == nil { CheckInRow() }
+
+                Section {
+                    link("Today", "checklist", accent, "\(store.payload.tasks.count)") { TasksPage() }
+                    link("Calendar", "calendar", .red, store.payload.events.first(where: { $0.end > Date() }).map { $0.start.formatted(date: .omitted, time: .shortened) }) { AgendaPage() }
+                    link("Inbox", "tray.fill", .blue, (store.payload.mail?.count ?? 0) > 0 ? "\(store.payload.mail!.count)" : nil) { InboxPage() }
+                    link("Habits", "link", .purple, "\(store.payload.habits.filter(\.doneToday).count)/\(store.payload.habits.count)") { HabitsPage() }
+                    link("Focus", "moon.zzz.fill", .indigo, nil) { FocusPage() }
+                }
+                Section {
+                    link("Ask Keel", "sparkles", .cyan, nil) { AskPage() }
+                    link("Capture", "plus.circle.fill", calm, nil) { AddPage() }
+                }
+                Section {
+                    if let p = store.payload.people, !p.isEmpty { link("Keep in touch", "person.2.fill", .pink, "\(p.count)") { PeoplePage() } }
+                    if let p = store.payload.promises, !p.isEmpty { link("Promises", "hand.raised.fill", .orange, "\(p.count)") { ListPage(title: "Promises", items: p) } }
+                    if let f = store.payload.followUps, !f.isEmpty { link("Awaiting reply", "bubble.left.and.exclamationmark.bubble.right", .teal, "\(f.count)") { ListPage(title: "Awaiting reply", items: f) } }
+                    if let c = store.payload.countdowns, !c.isEmpty { link("Countdowns", "hourglass", .yellow, nil) { CountdownsPage() } }
+                    link("Day in review", "moon.stars.fill", .indigo, nil) { DayReviewPage() }
                 }
             }
+            .navigationTitle("Keel")
         }
-        .navigationTitle("Keel")
+    }
+
+    private func link<D: View>(_ title: String, _ icon: String, _ color: Color, _ badge: String?, @ViewBuilder _ dest: () -> D) -> some View {
+        NavigationLink { dest() } label: {
+            HStack {
+                Image(systemName: icon).foregroundStyle(color).frame(width: 22)
+                Text(title)
+                Spacer()
+                if let badge { Text(badge).font(.caption2).foregroundStyle(.secondary) }
+            }
+        }
+    }
+}
+
+/// Top of the home screen: focus countdown, or your one thing and energy.
+struct NowCard: View {
+    @Environment(WatchStore.self) private var store
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            if let end = store.payload.focusEndsAt, end > Date() {
+                Label("Focusing", systemImage: "moon.zzz.fill").font(.caption).foregroundStyle(accent)
+                Text(timerInterval: Date()...end, countsDown: true)
+                    .font(.system(size: 34, weight: .semibold, design: .rounded).monospacedDigit())
+            } else {
+                Text("JUST ONE THING").font(.caption2.weight(.bold)).foregroundStyle(accent)
+                Text(store.payload.nextThing ?? "Nothing urgent").font(.headline).lineLimit(3)
+                if let step = store.payload.nextThingStep { Text("Start: \(step)").font(.caption2).foregroundStyle(.secondary) }
+                HStack(spacing: 4) {
+                    ForEach([(1, "battery.25"), (2, "battery.50"), (3, "battery.100.bolt")], id: \.0) { level, icon in
+                        Button { store.setEnergy(level) } label: {
+                            Image(systemName: icon).font(.caption)
+                                .foregroundStyle(store.payload.energy == level ? accent : .secondary)
+                                .frame(maxWidth: .infinity)
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+                .padding(.top, 2)
+            }
+        }
+    }
+}
+
+struct CheckInRow: View {
+    @Environment(WatchStore.self) private var store
+    private let faces = ["😞", "😕", "😐", "🙂", "😄"]
+    var body: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text("How are you?").font(.caption)
+            HStack(spacing: 2) {
+                ForEach(1...5, id: \.self) { m in
+                    Button(faces[m - 1]) { store.checkIn(m) }.buttonStyle(.plain).frame(maxWidth: .infinity)
+                }
+            }
+            .font(.title3)
+        }
     }
 }
 
 struct TasksPage: View {
     @Environment(WatchStore.self) private var store
-
     var body: some View {
         List {
-            if store.payload.tasks.isEmpty {
-                Text("All done for today 🎉").foregroundStyle(.secondary)
-            }
+            if store.payload.tasks.isEmpty { Text("All done for today 🎉").foregroundStyle(.secondary) }
             ForEach(store.payload.tasks) { t in
                 Button { store.complete(t) } label: {
                     HStack {
@@ -159,23 +247,63 @@ struct TasksPage: View {
                         }
                     }
                 }
+                .swipeActions {
+                    Button { store.moveTomorrow(t) } label: { Label("Tomorrow", systemImage: "sunrise") }.tint(.orange)
+                }
             }
         }
         .navigationTitle("Today")
     }
 }
 
+struct AgendaPage: View {
+    @Environment(WatchStore.self) private var store
+    var body: some View {
+        List {
+            let upcoming = store.payload.events.filter { $0.end > Date() }
+            if upcoming.isEmpty { Text("Nothing else today").foregroundStyle(.secondary) }
+            ForEach(upcoming, id: \.self) { e in
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(e.title).font(.headline).lineLimit(2)
+                    Text("\(e.start.formatted(date: .omitted, time: .shortened)) – \(e.end.formatted(date: .omitted, time: .shortened))")
+                        .font(.caption2).foregroundStyle(.secondary)
+                    if e.start > Date() { Text(e.start, style: .relative).font(.caption2).foregroundStyle(accent) }
+                }
+            }
+        }
+        .navigationTitle("Calendar")
+    }
+}
+
+struct InboxPage: View {
+    @Environment(WatchStore.self) private var store
+    var body: some View {
+        List {
+            let mail = store.payload.mail ?? []
+            if mail.isEmpty { Text("Nothing important waiting").foregroundStyle(.secondary) }
+            ForEach(mail) { m in
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(m.from).font(.headline).lineLimit(1)
+                    Text(m.summary).font(.caption2).foregroundStyle(.secondary).lineLimit(3)
+                }
+                .swipeActions {
+                    Button { store.archive(m) } label: { Label("Done", systemImage: "checkmark") }.tint(calm)
+                }
+            }
+        }
+        .navigationTitle("Inbox")
+    }
+}
+
 struct HabitsPage: View {
     @Environment(WatchStore.self) private var store
-
     var body: some View {
         List {
             if store.payload.habits.isEmpty { Text("No habit stacks yet").foregroundStyle(.secondary) }
             ForEach(store.payload.habits) { h in
                 Button { if !h.doneToday { store.complete(h) } } label: {
                     HStack {
-                        Image(systemName: h.doneToday ? "checkmark.circle.fill" : h.icon)
-                            .foregroundStyle(h.doneToday ? calm : accent)
+                        Image(systemName: h.doneToday ? "checkmark.circle.fill" : h.icon).foregroundStyle(h.doneToday ? calm : accent)
                         VStack(alignment: .leading) {
                             Text(h.name).strikethrough(h.doneToday)
                             Text(h.stack).font(.caption2).foregroundStyle(.secondary)
@@ -188,6 +316,130 @@ struct HabitsPage: View {
     }
 }
 
+struct FocusPage: View {
+    @Environment(WatchStore.self) private var store
+    var body: some View {
+        ScrollView {
+            VStack(spacing: 8) {
+                if let end = store.payload.focusEndsAt, end > Date() {
+                    Text(timerInterval: Date()...end, countsDown: true)
+                        .font(.system(size: 40, weight: .semibold, design: .rounded).monospacedDigit())
+                    Button("End focus", role: .destructive) { store.endFocus() }
+                } else {
+                    ForEach([15, 25, 50, 90], id: \.self) { m in
+                        Button("\(m) minutes") { store.startFocus(m) }.tint(accent)
+                    }
+                }
+                if let mins = store.payload.focusMinutesWeek {
+                    Text("This week: \(mins / 60)h \(mins % 60)m focused").font(.caption2).foregroundStyle(.secondary)
+                }
+            }
+        }
+        .navigationTitle("Focus")
+    }
+}
+
+struct AskPage: View {
+    @Environment(WatchStore.self) private var store
+    @State private var question = ""
+    @State private var answer: String?
+    @State private var thinking = false
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 8) {
+                TextField("Ask Keel…", text: $question).onSubmit { Task { await ask() } }
+                if thinking { ProgressView() }
+                if let answer { Text(answer).font(.body) }
+                if answer == nil && !thinking {
+                    Text("Try “What's next?” or “Add call mom at 5”").font(.caption2).foregroundStyle(.secondary)
+                }
+            }
+        }
+        .navigationTitle("Ask Keel")
+    }
+    private func ask() async {
+        guard !question.isEmpty else { return }
+        thinking = true
+        answer = await store.ask(question)
+        thinking = false
+        WKInterfaceDevice.current().play(.notification)
+    }
+}
+
+struct PeoplePage: View {
+    @Environment(WatchStore.self) private var store
+    var body: some View {
+        List {
+            ForEach(store.payload.people ?? []) { p in
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(p.name).font(.headline)
+                    if let last = p.lastContact { Text("Last: \(last.formatted(.relative(presentation: .named)))").font(.caption2).foregroundStyle(.secondary) }
+                    let digits = p.phone.filter { $0.isNumber || $0 == "+" }
+                    HStack {
+                        if !digits.isEmpty {
+                            Button { open("tel:\(digits)", p) } label: { Image(systemName: "phone.fill") }.tint(calm)
+                            Button { open("sms:\(digits)", p) } label: { Image(systemName: "message.fill") }.tint(accent)
+                        }
+                        Button { store.contacted(p) } label: { Image(systemName: "checkmark") }
+                    }
+                }
+            }
+        }
+        .navigationTitle("Keep in touch")
+    }
+    private func open(_ s: String, _ p: WatchPayload.PersonRow) {
+        if let url = URL(string: s) { WKApplication.shared().openSystemURL(url) }
+        store.contacted(p)
+    }
+}
+
+struct CountdownsPage: View {
+    @Environment(WatchStore.self) private var store
+    var body: some View {
+        List {
+            ForEach(store.payload.countdowns ?? [], id: \.self) { c in
+                let days = Calendar.current.dateComponents([.day], from: Calendar.current.startOfDay(for: Date()), to: Calendar.current.startOfDay(for: c.date)).day ?? 0
+                HStack {
+                    Text(c.emoji)
+                    Text(c.title).lineLimit(2)
+                    Spacer()
+                    Text(days == 0 ? "Today" : "\(days)d").font(.headline).foregroundStyle(accent)
+                }
+            }
+        }
+        .navigationTitle("Countdowns")
+    }
+}
+
+struct ListPage: View {
+    let title: String
+    let items: [String]
+    var body: some View {
+        List { ForEach(items, id: \.self) { Text($0).font(.caption) } }.navigationTitle(title)
+    }
+}
+
+struct DayReviewPage: View {
+    @Environment(WatchStore.self) private var store
+    @State private var carried = false
+    var body: some View {
+        ScrollView {
+            VStack(spacing: 8) {
+                Text("\(store.payload.doneToday ?? 0)").font(.system(size: 44, weight: .bold, design: .rounded)).foregroundStyle(calm)
+                Text("done today").font(.caption).foregroundStyle(.secondary)
+                if !store.payload.tasks.isEmpty {
+                    Button(carried ? "Moved to tomorrow" : "Move \(store.payload.tasks.count) left to tomorrow") {
+                        store.carryOver(); carried = true
+                    }
+                    .disabled(carried)
+                }
+                Text("Work is done. You're allowed to rest.").font(.caption2).foregroundStyle(.secondary).multilineTextAlignment(.center)
+            }
+        }
+        .navigationTitle("Day in review")
+    }
+}
+
 struct AddPage: View {
     @Environment(WatchStore.self) private var store
     @State private var text = ""
@@ -195,8 +447,7 @@ struct AddPage: View {
 
     var body: some View {
         VStack(spacing: 10) {
-            TextField("Add a task…", text: $text)    // dictation or Scribble
-                .onSubmit(add)
+            TextField("Add a task…", text: $text).onSubmit(add)    // dictation or Scribble
             Button("Add", action: add).tint(accent).disabled(text.isEmpty)
             if added { Label("Added", systemImage: "checkmark.circle.fill").foregroundStyle(calm).font(.caption) }
             Text("Try “Call mom tomorrow 5pm”").font(.caption2).foregroundStyle(.secondary)
