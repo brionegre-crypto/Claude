@@ -10,20 +10,13 @@ struct NotesView: View {
     private var notes: [Note] { allNotes.filter { !$0.isTemplate } }
     private var templates: [Note] { allNotes.filter(\.isTemplate) }
     @State private var search = ""
-    @AppStorage("notes.folder") private var folderFilter = ""
     @State private var newFolderFor: Note?
     @State private var newFolderName = ""
     @State private var opened: Note?
-    private var folders: [String] { Array(Set(notes.compactMap(\.folder))).sorted() }
+    private var emptyFolders: [String] { emptyFoldersRaw.split(separator: "\n").map(String.init) }
+    private var folders: [String] { Array(Set(notes.compactMap(\.folder) + emptyFolders)).sorted { $0.localizedCaseInsensitiveCompare($1) == .orderedAscending } }
 
     private var ids: Set<UUID> { Set(notes.map(\.id)) }
-    /// Top-level pages: no parent (or a parent that no longer exists), in the folder you're viewing.
-    private var roots: [Note] {
-        let all = ids
-        let base = notes.filter { $0.parentId == nil || !all.contains($0.parentId!) }
-        let inFolder = folderFilter.isEmpty || !folders.contains(folderFilter) ? base : base.filter { $0.folder == folderFilter }
-        return inFolder.sorted { ($0.sortIndex, $1.updatedAt) < ($1.sortIndex, $0.updatedAt) }
-    }
     private var results: [Note] {
         notes.filter { $0.title.localizedCaseInsensitiveContains(search) || (!$0.isLocked && $0.plainText.localizedCaseInsensitiveContains(search)) }
     }
@@ -31,14 +24,7 @@ struct NotesView: View {
     enum SortMode: String, CaseIterable { case manual = "Manual", recent = "Recently edited", alpha = "A to Z" }
     @AppStorage("notes.sort") private var sortRaw = SortMode.manual.rawValue
     private var sortMode: SortMode { SortMode(rawValue: sortRaw) ?? .manual }
-    private var sortedRoots: [Note] {
-        switch sortMode {
-        case .manual: roots
-        case .recent: roots.sorted { $0.updatedAt > $1.updatedAt }
-        case .alpha: roots.sorted { $0.title.localizedCaseInsensitiveCompare($1.title) == .orderedAscending }
-        }
-    }
-    private var recent: [Note] { Array(notes.filter { !$0.title.isEmpty || !$0.plainText.isEmpty }.prefix(8)) }
+    private var recent: [Note] { Array(notes.lazy.filter { !$0.title.isEmpty || $0.blocks.contains { !$0.text.isEmpty } }.prefix(8)) }
     private var editedToday: Int { notes.filter { Calendar.current.isDateInToday($0.updatedAt) }.count }
 
     var body: some View {
@@ -72,38 +58,31 @@ struct NotesView: View {
                     if !favorites.isEmpty {
                         Section { ForEach(favorites) { row($0, showSnippet: false) } } header: { sectionHeader("Favorites", nil) }
                     }
-                    Section {
-                        let folderList = folders
-                        if !folderList.isEmpty {
-                            let counts = Dictionary(notes.compactMap { n in n.folder.map { ($0, 1) } }, uniquingKeysWith: +)
-                            ScrollView(.horizontal, showsIndicators: false) {
-                                HStack(spacing: 8) {
-                                    folderChip("All", "", count: notes.filter { $0.parentId == nil }.count)
-                                    ForEach(folderList, id: \.self) { f in folderChip(f, f, count: counts[f] ?? 0) }
-                                }
-                                .padding(.vertical, 2)
-                            }
+                    let summaries = folderSummaries
+                    let unfiled = summaries.first { $0.name == nil }?.count ?? 0
+                    if unfiled >= 3 {
+                        Section { organizeBanner(unfiled) }
                             .listRowInsets(EdgeInsets(top: 6, leading: 16, bottom: 6, trailing: 16))
-                        }
-                        ForEach(sortedRoots) { root in PageTreeNode(note: root, all: notes, depth: 0, row: { page in row(page, showSnippet: false) }) }
-                        Button { newPage() } label: {
-                            Label("New page", systemImage: "plus").font(DS.Font.body).foregroundStyle(DS.Palette.inkSoft)
-                        }
-                    } header: {
-                        HStack {
-                            sectionHeader(folderFilter.isEmpty || !folders.contains(folderFilter) ? "All pages" : folderFilter, nil)
-                            Spacer()
-                            Menu {
-                                Picker("Sort", selection: $sortRaw) {
-                                    ForEach(SortMode.allCases, id: \.rawValue) { Text($0.rawValue).tag($0.rawValue) }
-                                }
-                            } label: {
-                                Label(sortMode.rawValue, systemImage: "arrow.up.arrow.down").font(DS.Font.caption).labelStyle(.titleAndIcon)
-                            }
-                            .textCase(nil)
-                            .accessibilityLabel("Sort pages")
-                        }
                     }
+                    Section {
+                        LazyVGrid(columns: [GridItem(.flexible(), spacing: 12), GridItem(.flexible(), spacing: 12)], spacing: 12) {
+                            ForEach(summaries) { f in
+                                FolderCard(summary: f) { openFolder = FolderRef(name: f.name); Haptics.tap() }
+                                    .contextMenu {
+                                        if let name = f.name {
+                                            Button("Rename", systemImage: "pencil") { newFolderName = name; renamingFolder = name }
+                                            Button("Remove Folder (Keeps Pages)", systemImage: "folder.badge.minus", role: .destructive) { removeFolder(name) }
+                                        } else if f.count > 0 {
+                                            Button("Sort into folders…", systemImage: "wand.and.stars") { showOrganize = true }
+                                        }
+                                    }
+                            }
+                            NewFolderCard { newFolderName = ""; creatingFolder = true }
+                        }
+                        .padding(.vertical, 4)
+                        .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
+                        .listRowBackground(Color.clear)
+                    } header: { sectionHeader("Folders", "\(notes.count) pages") }
                     if !templates.isEmpty {
                         Section {
                             DisclosureGroup {
@@ -122,7 +101,7 @@ struct NotesView: View {
                 TextField("Name", text: $newFolderName)
                 Button("Create") {
                     let name = newFolderName.trimmingCharacters(in: .whitespaces)
-                    if !name.isEmpty { newFolderFor?.folder = name; folderFilter = name }
+                    if !name.isEmpty { newFolderFor?.folder = name; removeEmptyMarker(name) }
                     newFolderFor = nil
                 }
                 Button("Cancel", role: .cancel) { newFolderFor = nil }
@@ -157,6 +136,17 @@ struct NotesView: View {
             .navigationDestination(isPresented: $showBrain) { BrainMapView() }
             .navigationDestination(isPresented: $showImport) { ImportView() }
             .sheet(isPresented: $showOrganize) { OrganizeNotesView() }
+            .navigationDestination(item: $openFolder) { folderPage($0) }
+            .alert("New folder", isPresented: $creatingFolder) {
+                TextField("Name", text: $newFolderName)
+                Button("Create") { addEmptyFolder(newFolderName) }
+                Button("Cancel", role: .cancel) {}
+            }
+            .alert("Rename folder", isPresented: Binding(get: { renamingFolder != nil }, set: { if !$0 { renamingFolder = nil } })) {
+                TextField("Name", text: $newFolderName)
+                Button("Rename") { if let old = renamingFolder { renameFolder(old, to: newFolderName) }; renamingFolder = nil }
+                Button("Cancel", role: .cancel) { renamingFolder = nil }
+            }
             .task { await NotesOrganizer.autoFile(ctx: ctx) }
         }
     }
@@ -165,6 +155,10 @@ struct NotesView: View {
     @State private var showBrain = false
     @State private var showImport = false
     @State private var showOrganize = false
+    @State private var openFolder: FolderRef?
+    @State private var renamingFolder: String?
+    @State private var creatingFolder = false
+    @AppStorage("notes.emptyFolders") private var emptyFoldersRaw = ""      // folders you made that have no pages yet
 
     // MARK: Pieces
 
@@ -286,7 +280,6 @@ struct NotesView: View {
     }
 
     private func create(_ n: Note) {
-        if !folderFilter.isEmpty && n.folder == nil { n.folder = folderFilter }     // new notes land in the folder you're viewing
         ctx.insert(n); Haptics.tap()
         opened = n
     }
@@ -295,24 +288,134 @@ struct NotesView: View {
         var parts = ["Edited " + n.updatedAt.formatted(.relative(presentation: .named))]
         if n.isDatabase { parts.append("\(children) row\(children == 1 ? "" : "s")") }
         else if children > 0 { parts.append("\(children) page\(children == 1 ? "" : "s") inside") }
-        if let f = n.folder, folderFilter.isEmpty { parts.append(f) }
+        if let f = n.folder, openFolder == nil { parts.append(f) }
         return parts.joined(separator: " · ")
     }
 
-    private func folderChip(_ title: String, _ value: String, count: Int) -> some View {
-        let on = folderFilter == value || (value.isEmpty && !folders.contains(folderFilter))
-        return Button { withAnimation(DS.spring) { folderFilter = value }; Haptics.tap() } label: {
-            HStack(spacing: 5) {
-                Image(systemName: value.isEmpty ? "tray.full" : "folder.fill").font(.caption)
-                Text(title).font(DS.Font.caption.weight(.medium))
-                Text("\(count)").font(.caption2.monospacedDigit()).opacity(0.7)
+    // MARK: Folders
+
+    private var folderSummaries: [FolderSummary] {
+        let all = ids
+        let tops = notes.filter { $0.parentId == nil || !all.contains($0.parentId!) }
+        let grouped = Dictionary(grouping: tops, by: { $0.folder ?? "" })
+        var out = folders.map { f -> FolderSummary in
+            let pages = (grouped[f] ?? []).sorted { $0.updatedAt > $1.updatedAt }
+            return FolderSummary(name: f, count: pages.count, updated: pages.first?.updatedAt, recent: pages.prefix(2).map { $0.title.isEmpty ? "Untitled" : $0.title })
+        }
+        let loose = (grouped[""] ?? []).sorted { $0.updatedAt > $1.updatedAt }
+        if !loose.isEmpty || folders.isEmpty {
+            out.append(FolderSummary(name: nil, count: loose.count, updated: loose.first?.updatedAt, recent: loose.prefix(2).map { $0.title.isEmpty ? "Untitled" : $0.title }))
+        }
+        return out
+    }
+
+    private func pages(in folder: String?) -> [Note] {
+        let all = ids
+        let base = notes.filter { ($0.parentId == nil || !all.contains($0.parentId!)) && $0.folder == folder }
+        switch sortMode {
+        case .manual: return base.sorted { ($0.sortIndex, $1.updatedAt) < ($1.sortIndex, $0.updatedAt) }
+        case .recent: return base.sorted { $0.updatedAt > $1.updatedAt }
+        case .alpha: return base.sorted { $0.title.localizedCaseInsensitiveCompare($1.title) == .orderedAscending }
+        }
+    }
+
+    @ViewBuilder private func folderPage(_ ref: FolderRef) -> some View {
+        let list = pages(in: ref.name)
+        List {
+            if ref.name == nil && list.count >= 2 {
+                Section { organizeBanner(list.count) }
+                    .listRowInsets(EdgeInsets(top: 6, leading: 16, bottom: 6, trailing: 16))
             }
-            .padding(.horizontal, 12).padding(.vertical, 7)
-            .background(on ? DS.Palette.accent : DS.Palette.elevated, in: Capsule())
-            .foregroundStyle(on ? Color.white : DS.Palette.ink)
+            Section {
+                ForEach(list) { root in PageTreeNode(note: root, all: notes, depth: 0, row: { page in row(page, showSnippet: true) }) }
+                Button {
+                    let n = Note(title: "")
+                    n.folder = ref.name
+                    if let f = ref.name { removeEmptyMarker(f) }
+                    create(n)
+                } label: {
+                    Label("New page", systemImage: "plus").font(DS.Font.body).foregroundStyle(DS.Palette.inkSoft)
+                }
+            } header: {
+                HStack {
+                    sectionHeader("\(list.count) page\(list.count == 1 ? "" : "s")", nil)
+                    Spacer()
+                    Menu {
+                        Picker("Sort", selection: $sortRaw) {
+                            ForEach(SortMode.allCases, id: \.rawValue) { Text($0.rawValue).tag($0.rawValue) }
+                        }
+                    } label: {
+                        Label(sortMode.rawValue, systemImage: "arrow.up.arrow.down").font(DS.Font.caption).labelStyle(.titleAndIcon)
+                    }
+                    .textCase(nil)
+                    .accessibilityLabel("Sort pages")
+                }
+            }
+        }
+        .listStyle(.insetGrouped)
+        .overlay {
+            if list.isEmpty {
+                ContentUnavailableView(ref.name == nil ? "Everything's filed" : "Empty folder", systemImage: "folder",
+                                       description: Text(ref.name == nil ? "Pages without a folder show up here." : "Tap New page, or move pages here from their ⋯ menu."))
+            }
+        }
+        .navigationTitle(ref.name ?? "Unfiled")
+        .toolbar {
+            if let name = ref.name {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Menu {
+                        Button("Rename", systemImage: "pencil") { newFolderName = name; renamingFolder = name }
+                        Button("Remove Folder (Keeps Pages)", systemImage: "folder.badge.minus", role: .destructive) { removeFolder(name); openFolder = nil }
+                    } label: { Image(systemName: "ellipsis.circle") }
+                    .accessibilityLabel("Folder options")
+                }
+            }
+        }
+    }
+
+    private func organizeBanner(_ count: Int) -> some View {
+        Button { showOrganize = true } label: {
+            HStack(spacing: 12) {
+                Image(systemName: "wand.and.stars").font(.title3.weight(.semibold)).foregroundStyle(.white)
+                    .frame(width: 40, height: 40).background(Color.indigo.gradient, in: .rect(cornerRadius: 12))
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Sort \(count) loose page\(count == 1 ? "" : "s")").font(DS.Font.headline).foregroundStyle(DS.Palette.ink)
+                    Text("Keel suggests a folder for each. You approve.").font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
+                }
+                Spacer(minLength: 0)
+                Image(systemName: "chevron.right").font(.caption.weight(.semibold)).foregroundStyle(DS.Palette.inkSoft)
+            }
+            .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        .accessibilityAddTraits(on ? .isSelected : [])
+    }
+
+    private func addEmptyFolder(_ raw: String) {
+        let name = raw.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !name.isEmpty, !folders.contains(name) else { return }
+        emptyFoldersRaw = (emptyFolders + [name]).joined(separator: "\n")
+        Haptics.tap()
+    }
+
+    private func removeEmptyMarker(_ name: String) {
+        emptyFoldersRaw = emptyFolders.filter { $0 != name }.joined(separator: "\n")
+    }
+
+    private func renameFolder(_ old: String, to raw: String) {
+        let name = raw.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !name.isEmpty, name != old else { return }
+        for n in allNotes where n.folder == old { n.folder = name }
+        emptyFoldersRaw = emptyFolders.map { $0 == old ? name : $0 }.joined(separator: "\n")
+        if openFolder?.name == old { openFolder = FolderRef(name: name) }
+        try? ctx.save()
+        Haptics.tap()
+    }
+
+    private func removeFolder(_ name: String) {
+        for n in allNotes where n.folder == name { n.folder = nil }
+        removeEmptyMarker(name)
+        try? ctx.save()
+        Haptics.tap()
     }
 
     /// A fresh copy of a template, with {{date}} filled in.
@@ -420,5 +523,90 @@ private struct NoteCard: View {
         .buttonStyle(.plain)
         .accessibilityElement(children: .combine)
         .accessibilityHint("Opens the page")
+    }
+}
+
+struct FolderRef: Hashable, Identifiable {
+    let name: String?             // nil = Unfiled
+    var id: String { name ?? "\u{0}unfiled" }
+}
+
+struct FolderSummary: Identifiable {
+    let name: String?
+    let count: Int
+    let updated: Date?
+    let recent: [String]
+    var id: String { name ?? "\u{0}unfiled" }
+
+    /// An icon and colour that fit the folder's name, the same every time.
+    var style: (icon: String, color: Color) {
+        guard let n = name?.lowercased() else { return ("tray.fill", .gray) }
+        let map: [(String, String, Color)] = [
+            ("work", "briefcase.fill", .blue), ("job", "briefcase.fill", .blue), ("meeting", "person.2.fill", .teal),
+            ("health", "heart.fill", .pink), ("food", "fork.knife", .green), ("recipe", "fork.knife", .orange), ("diet", "leaf.fill", .green),
+            ("journal", "book.fill", .purple), ("diary", "book.fill", .purple), ("idea", "lightbulb.fill", .yellow),
+            ("money", "dollarsign.circle.fill", .green), ("finance", "dollarsign.circle.fill", .green), ("bill", "creditcard.fill", .green),
+            ("travel", "airplane", .cyan), ("trip", "airplane", .cyan), ("family", "house.fill", .orange), ("home", "house.fill", .orange),
+            ("school", "graduationcap.fill", .indigo), ("class", "graduationcap.fill", .indigo), ("church", "book.closed.fill", .brown),
+            ("bible", "book.closed.fill", .brown), ("faith", "book.closed.fill", .brown), ("project", "folder.fill.badge.gearshape", .indigo),
+            ("read", "books.vertical.fill", .brown), ("book", "books.vertical.fill", .brown), ("personal", "person.fill", .mint),
+        ]
+        if let hit = map.first(where: { n.contains($0.0) }) { return (hit.1, hit.2) }
+        let palette: [Color] = [.blue, .indigo, .purple, .pink, .orange, .teal, .green, .mint, .cyan]
+        let seed = n.unicodeScalars.reduce(0) { ($0 &* 31 &+ Int($1.value)) & 0xFFFF }
+        return ("folder.fill", palette[seed % palette.count])
+    }
+}
+
+/// A folder on the Notes home: icon, name, page count and the latest pages inside.
+private struct FolderCard: View {
+    let summary: FolderSummary
+    let open: () -> Void
+
+    var body: some View {
+        let style = summary.style
+        Button(action: open) {
+            VStack(alignment: .leading, spacing: 8) {
+                HStack {
+                    Image(systemName: style.icon).font(.title3.weight(.semibold)).foregroundStyle(.white)
+                        .frame(width: 38, height: 38).background(style.color.gradient, in: .rect(cornerRadius: 11))
+                    Spacer()
+                    Text("\(summary.count)").font(DS.Font.headline.monospacedDigit()).foregroundStyle(DS.Palette.inkSoft)
+                }
+                Text(summary.name ?? "Unfiled").font(DS.Font.headline).foregroundStyle(DS.Palette.ink).lineLimit(1)
+                VStack(alignment: .leading, spacing: 2) {
+                    ForEach(Array(summary.recent.enumerated()), id: \.offset) { item in
+                        Text(item.element).font(.caption2).foregroundStyle(DS.Palette.inkSoft).lineLimit(1)
+                    }
+                    if summary.recent.isEmpty { Text("Empty").font(.caption2).foregroundStyle(DS.Palette.inkSoft) }
+                }
+                .frame(height: 30, alignment: .topLeading)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(14)
+            .background(DS.Palette.elevated, in: .rect(cornerRadius: 18))
+            .overlay(RoundedRectangle(cornerRadius: 18).strokeBorder(style.color.opacity(0.18)))
+            .contentShape(.rect(cornerRadius: 18))
+        }
+        .buttonStyle(PressStyle())
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("\(summary.name ?? "Unfiled"), \(summary.count) pages")
+        .accessibilityAddTraits(.isButton)
+    }
+}
+
+private struct NewFolderCard: View {
+    let action: () -> Void
+    var body: some View {
+        Button(action: action) {
+            VStack(spacing: 8) {
+                Image(systemName: "folder.badge.plus").font(.title2).foregroundStyle(DS.Palette.accent)
+                Text("New folder").font(DS.Font.caption.weight(.semibold)).foregroundStyle(DS.Palette.ink)
+            }
+            .frame(maxWidth: .infinity, minHeight: 118)
+            .background(RoundedRectangle(cornerRadius: 18).strokeBorder(DS.Palette.inkSoft.opacity(0.3), style: StrokeStyle(lineWidth: 1.5, dash: [6, 5])))
+            .contentShape(.rect(cornerRadius: 18))
+        }
+        .buttonStyle(PressStyle())
     }
 }

@@ -40,7 +40,8 @@ enum NotesOrganizer {
     }
 
     static func propose(for loose: [Note], all: [Note], allowNew: Bool, progress: (Int, Int) -> Void) async -> [Proposal] {
-        let folders = Array(Set(all.compactMap(\.folder))).sorted()
+        let empty = (UserDefaults.standard.string(forKey: "notes.emptyFolders") ?? "").split(separator: "\n").map(String.init)
+        let folders = Array(Set(all.compactMap(\.folder) + empty)).sorted()
         let profiles = profile(all)
         var out: [Proposal] = []
         let batch = Array(loose.prefix(60))
