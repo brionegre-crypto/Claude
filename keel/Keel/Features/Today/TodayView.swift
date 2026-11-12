@@ -13,6 +13,8 @@ struct TodayView: View {
     @AppStorage("year.theme") private var yearTheme = ""
     @Query(sort: \FollowUp.remindAt) private var followUps: [FollowUp]
     @Query private var idealBlocks: [IdealBlock]
+    @Query(sort: \Person.name) private var people: [Person]
+    @State private var scheduleMessage: String?
     @State private var plan: DayPlan?
     @State private var planning = false
     @State private var showSettings = false
@@ -31,8 +33,10 @@ struct TodayView: View {
                     justOneThing
                     if !events.isEmpty { upNext }
                     planCard
+                    CheckInCard()
                     promisesCard
                     followUpsCard
+                    keepInTouchCard
                     if WeeklyReview.isDue {
                         NavigationLink { WeeklyReviewView() } label: {
                             GlassCard(tint: .purple) {
@@ -59,6 +63,7 @@ struct TodayView: View {
                         NavigationLink { GoalsView() } label: { Label("Goals", systemImage: "target") }
                         NavigationLink { HabitsView() } label: { Label("Habit stacks", systemImage: "link") }
                         NavigationLink { WeeklyReviewView() } label: { Label("Weekly review", systemImage: "chart.bar.doc.horizontal") }
+                        NavigationLink { PeopleView() } label: { Label("Keep in touch", systemImage: "person.2") }
                         NavigationLink { TimeAuditView() } label: { Label("Time audit", systemImage: "chart.pie") }
                         NavigationLink { IdealWeekView() } label: { Label("Ideal week", systemImage: "calendar.badge.clock") }
                         NavigationLink { ReadLaterView() } label: { Label("Read later", systemImage: "books.vertical") }
@@ -166,11 +171,17 @@ struct TodayView: View {
                 HStack {
                     Text("Today's plan").font(DS.Font.headline)
                     Spacer()
+                    Button("Auto-schedule") {
+                        let r = AutoScheduler.scheduleToday(tasks: tasks)
+                        scheduleMessage = r.scheduled == 0 ? "No free time left today, or nothing to schedule."
+                            : "Scheduled \(r.scheduled) task\(r.scheduled == 1 ? "" : "s") on your calendar" + (r.unscheduled.isEmpty ? "." : "; \(r.unscheduled.count) didn't fit.")
+                    }.font(DS.Font.caption)
                     Button("Reset my day") {
                         ADHDCoach.resetDay(tasks: tasks); Haptics.success()
                         Task { await makePlan() }
                     }.font(DS.Font.caption)
                 }
+                if let scheduleMessage { Text(scheduleMessage).font(DS.Font.caption).foregroundStyle(DS.Palette.calm) }
                 if planning { ProgressView().frame(maxWidth: .infinity) }
                 else if let plan {
                     Text(plan.headline).font(DS.Font.body).foregroundStyle(DS.Palette.inkSoft)
@@ -229,6 +240,26 @@ struct TodayView: View {
                     }
                 }
                 .buttonStyle(.plain)
+            }
+        }
+    }
+
+    private var keepInTouchCard: some View {
+        let due = people.filter(\.isDue).sorted { $0.nextDue < $1.nextDue }
+        return Group {
+            if let p = due.first {
+                GlassCard(tint: .pink) {
+                    HStack(spacing: DS.Space.m) {
+                        Image(systemName: "heart.text.square").font(.title2).foregroundStyle(.pink)
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("Reach out to \(p.name)").font(DS.Font.headline)
+                            Text(p.lastContact.map { "Last in touch \($0.formatted(.relative(presentation: .named)))" } ?? "It's been a while")
+                                .font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
+                        }
+                        Spacer()
+                        ReachOutButtons(person: p)
+                    }
+                }
             }
         }
     }

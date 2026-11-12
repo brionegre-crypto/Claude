@@ -53,7 +53,7 @@ struct KeelApp: App {
     static let container: ModelContainer = {
         let schema = Schema([
             MailAccount.self, EmailMessage.self, TaskItem.self, Note.self,
-            Habit.self, HabitStack.self, HabitLog.self, FocusSession.self, Commitment.self, Goal.self, FollowUp.self, SavedLink.self, TimeEntry.self, IdealBlock.self, OdysseyPath.self,
+            Habit.self, HabitStack.self, HabitLog.self, FocusSession.self, Commitment.self, Goal.self, FollowUp.self, SavedLink.self, TimeEntry.self, IdealBlock.self, OdysseyPath.self, SenderRule.self, Person.self, CheckIn.self,
         ])
         // Lives in the App Group so widgets / intents extensions can read it too.
         let config = ModelConfiguration(schema: schema, groupContainer: .identifier("group.com.briangreenejr.keel"))
@@ -86,7 +86,10 @@ struct RootView: View {
         .preferredColorScheme(appearance == "light" ? .light : appearance == "dark" ? .dark : nil)
         // Superhuman-style universal command bar: ⌘K on a keyboard
         .overlay(alignment: .top) {
-            if showCommandBar { CommandBar(isPresented: $showCommandBar) }
+            if showCommandBar || router.showCapture {
+                CommandBar(isPresented: Binding(get: { showCommandBar || router.showCapture },
+                                                set: { if !$0 { showCommandBar = false; router.showCapture = false } }))
+            }
         }
         .background(
             Button("") { showCommandBar.toggle() }

@@ -484,6 +484,57 @@ enum OdysseyKind: String, Codable, CaseIterable, Identifiable {
     init(kind: OdysseyKind) { self.kind = kind }
 }
 
+// MARK: - Screener (approve first-time senders)
+
+@Model final class SenderRule {
+    @Attribute(.unique) var address: String     // lowercased email address
+    var allowed: Bool
+    var name: String = ""
+    var decidedAt: Date = Date()
+
+    init(address: String, allowed: Bool, name: String = "") {
+        self.address = address.lowercased()
+        self.allowed = allowed
+        self.name = name
+    }
+}
+
+// MARK: - Keep in touch
+
+@Model final class Person {
+    var id: UUID = UUID()
+    var name: String
+    var email: String = ""
+    var phone: String = ""
+    var cadenceDays: Int = 14                   // how often you want to be in touch
+    var lastContact: Date?
+    var notes: String = ""
+    var createdAt: Date = Date()
+
+    init(name: String) { self.name = name }
+
+    var nextDue: Date { (lastContact ?? createdAt).addingTimeInterval(Double(cadenceDays) * 86_400) }
+    var isDue: Bool { nextDue <= Date() }
+}
+
+// MARK: - Daily check-in
+
+@Model final class CheckIn {
+    var id: UUID = UUID()
+    var day: Date                               // start of day
+    var mood: Int                               // 1…5
+    var highlight: String = ""
+    var gratitude: String = ""
+    var createdAt: Date = Date()
+
+    init(day: Date, mood: Int) {
+        self.day = day
+        self.mood = mood
+    }
+
+    static let faces = ["😞", "😕", "😐", "🙂", "😄"]
+}
+
 // MARK: - Follow-ups ("remind me if no reply")
 
 @Model final class FollowUp {

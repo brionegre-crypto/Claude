@@ -50,6 +50,7 @@ final class AppRouter {
     static let shared = AppRouter()
     var tab: RootView.Tab = .today
     var showFocus = false
+    var showCapture = false
 
     func handle(_ url: URL) -> Bool {
         guard url.scheme == "com.keel.app" else { return false }
@@ -60,6 +61,7 @@ final class AppRouter {
         case "tasks": tab = .tasks
         case "notes": tab = .notes
         case "focus": showFocus = true
+        case "capture": showCapture = true
         default: return false
         }
         return true

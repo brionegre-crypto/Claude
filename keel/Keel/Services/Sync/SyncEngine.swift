@@ -95,8 +95,11 @@ final class SyncEngine {
             }
         }
 
-        // 2a. Replies close "remind me if no reply" follow-ups
+        // 2a. Replies close "remind me if no reply" follow-ups; blocked senders are archived;
+        //     mail from people on your Keep in touch list counts as contact.
         FollowUps.check(ctx: ctx)
+        Screener.archiveBlocked(ctx: ctx)
+        KeepInTouch.updateFromMail(ctx: ctx)
 
         // 2b. Promise tracker: commitments you made in sent mail
         await PromiseTracker.scan(accounts: accounts, ctx: ctx)

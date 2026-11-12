@@ -1,6 +1,7 @@
 import WidgetKit
 import SwiftUI
 import ActivityKit
+import AppIntents
 
 @main
 struct KeelWidgetBundle: WidgetBundle {
@@ -8,6 +9,8 @@ struct KeelWidgetBundle: WidgetBundle {
         TodayWidget()
         NextEventWidget()
         FocusLiveActivity()
+        CaptureControl()
+        FocusControl()
     }
 }
 
@@ -207,5 +210,31 @@ struct FocusLiveActivity: Widget {
             }
             .widgetURL(URL(string: "com.keel.app://focus"))
         }
+    }
+}
+
+// MARK: - Control Center / Lock Screen / Action button controls
+
+struct CaptureControl: ControlWidget {
+    var body: some ControlWidgetConfiguration {
+        StaticControlConfiguration(kind: "KeelCapture") {
+            ControlWidgetButton(action: OpenURLIntent(URL(string: "com.keel.app://capture")!)) {
+                Label("Capture", systemImage: "plus.circle")
+            }
+        }
+        .displayName("Keel Capture")
+        .description("Jot down a task in one tap.")
+    }
+}
+
+struct FocusControl: ControlWidget {
+    var body: some ControlWidgetConfiguration {
+        StaticControlConfiguration(kind: "KeelFocus") {
+            ControlWidgetButton(action: OpenURLIntent(URL(string: "com.keel.app://focus")!)) {
+                Label("Focus", systemImage: "moon.zzz.fill")
+            }
+        }
+        .displayName("Keel Focus")
+        .description("Start a focus session.")
     }
 }

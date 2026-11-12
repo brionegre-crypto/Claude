@@ -1,6 +1,7 @@
 import SwiftUI
 import SwiftData
 import FamilyControls
+import UserNotifications
 
 /// Deep work with escalating Shutdown, a visual time ring, optional body-double mode,
 /// and the end-of-day Shutdown Ritual.
@@ -18,11 +19,16 @@ struct FocusView: View {
     @State private var confirmQuit = false
     @State private var coolDownLeft = 0
     @State private var now = Date()
+    @AppStorage("focus.rounds") private var roundsOn = false
+    @State private var round = 1
+    @State private var breakEndsAt: Date?
     private let tick = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
 
     var body: some View {
             VStack(spacing: DS.Space.l) {
-                if let session = shutdown.active { running(session) } else { setup }
+                if let session = shutdown.active { running(session) }
+                else if let end = breakEndsAt { breakView(end) }
+                else { setup }
             }
             .padding()
             .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -44,6 +50,13 @@ struct FocusView: View {
     private var setup: some View {
         VStack(spacing: DS.Space.l) {
             FocusStatsStrip()
+            Toggle(isOn: $roundsOn) {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Focus rounds").font(DS.Font.headline)
+                    Text("Short breaks between rounds, a longer one every 4th").font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
+                }
+            }
+            .tint(DS.Palette.focus)
             if let t = preselected {
                 Text(t.title).font(DS.Font.title).multilineTextAlignment(.center)
                 if bodyDouble { Label("Body-double mode: Keel checks in with you every 10 min", systemImage: "person.2.wave.2").font(DS.Font.caption) }
@@ -123,6 +136,47 @@ struct FocusView: View {
         shutdown.end(early: early)
         confirmQuit = false
         early ? Haptics.tap() : Haptics.milestone()
+        if roundsOn && !early {
+            let breakMinutes = round % 4 == 0 ? 15 : 5
+            breakEndsAt = Date().addingTimeInterval(Double(breakMinutes * 60))
+            scheduleBreakEnd(minutes: breakMinutes)
+        } else if early {
+            round = 1
+        }
+    }
+
+    private func breakView(_ end: Date) -> some View {
+        let left = max(0, end.timeIntervalSince(now))
+        let total = Double((round % 4 == 0 ? 15 : 5) * 60)
+        return VStack(spacing: DS.Space.xl) {
+            Text(round % 4 == 0 ? "Long break" : "Break").font(DS.Font.title)
+            Text("Round \(round) done. Stand up, water, look out a window.").font(DS.Font.body).foregroundStyle(DS.Palette.inkSoft)
+                .multilineTextAlignment(.center)
+            ZStack {
+                TimeRing(progress: left / total, color: DS.Palette.calm).frame(width: 220, height: 220)
+                Text(Duration.seconds(left).formatted(.time(pattern: .minuteSecond))).font(DS.Font.timer)
+            }
+            Button {
+                breakEndsAt = nil
+                round += 1
+                ctx.insert(shutdown.start(minutes: minutes, level: level, task: preselected))
+            } label: {
+                Text(left > 0 ? "Skip break · start round \(round + 1)" : "Start round \(round + 1)")
+                    .font(DS.Font.headline).frame(maxWidth: .infinity).padding(.vertical, DS.Space.m)
+                    .background(DS.Palette.focus, in: Capsule()).foregroundStyle(.white)
+            }
+            Button("Done for now") { breakEndsAt = nil; round = 1 }.foregroundStyle(DS.Palette.inkSoft)
+        }
+    }
+
+    private func scheduleBreakEnd(minutes: Int) {
+        let c = UNMutableNotificationContent()
+        c.title = "Break's over"
+        c.body = "Ready for round \(round + 1)? Open Keel to start."
+        c.sound = .default
+        UNUserNotificationCenter.current().add(UNNotificationRequest(
+            identifier: "focus.break", content: c,
+            trigger: UNTimeIntervalNotificationTrigger(timeInterval: Double(minutes * 60), repeats: false)))
     }
 }
 

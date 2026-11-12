@@ -13,6 +13,7 @@ struct WeeklyReviewView: View {
     @Query private var habitLogs: [HabitLog]
     @Query private var promises: [Commitment]
     @Query(filter: #Predicate<Goal> { !$0.isArchived }) private var goals: [Goal]
+    @Query(sort: \CheckIn.day) private var checkIns: [CheckIn]
 
     @State private var wentWell = ""
     @State private var didnt = ""
@@ -73,6 +74,7 @@ struct WeeklyReviewView: View {
                     }
                 }
 
+                moodSection
                 energySection
                 goalsSection
                 reflection
@@ -108,7 +110,30 @@ struct WeeklyReviewView: View {
         }.count
     }
 
-    // Feel-Good Productivity: what energized vs drained you
+    private var moodSection: some View {
+        let week = checkIns.filter { $0.day >= start }
+        return Group {
+            if !week.isEmpty {
+                VStack(alignment: .leading, spacing: DS.Space.s) {
+                    SectionHeader(title: "Mood", trailing: "\(week.count) check-ins")
+                    Chart(week) { c in
+                        LineMark(x: .value("Day", c.day, unit: .day), y: .value("Mood", c.mood))
+                            .interpolationMethod(.catmullRom).foregroundStyle(.pink)
+                        PointMark(x: .value("Day", c.day, unit: .day), y: .value("Mood", c.mood)).foregroundStyle(.pink)
+                    }
+                    .chartYScale(domain: 1...5)
+                    .chartYAxis { AxisMarks(values: [1, 3, 5]) { v in AxisValueLabel { Text(CheckIn.faces[(v.as(Int.self) ?? 3) - 1]) } } }
+                    .frame(height: 110)
+                    let highlights = week.map(\.highlight).filter { !$0.isEmpty }
+                    if !highlights.isEmpty {
+                        Text("Highlights: " + highlights.prefix(4).joined(separator: " · ")).font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
+                    }
+                }
+            }
+        }
+    }
+
+    // What energized vs drained you
     private var energySection: some View {
         let rated = completed.filter { $0.feeling != nil }
         let unrated = completed.filter { $0.feeling == nil }.prefix(6)

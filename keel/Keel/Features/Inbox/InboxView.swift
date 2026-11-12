@@ -6,11 +6,11 @@ import QuickLook
 /// AI split inbox, Starred / Snoozed / Sent / Archive mailboxes, search (on-phone and all-mail),
 /// compose, swipe actions, formatted emails and attachments.
 enum Mailbox: String, CaseIterable, Identifiable {
-    case inbox = "Inbox", starred = "Starred", snoozed = "Snoozed", awaiting = "Awaiting reply", sent = "Sent", archive = "Archive"
+    case inbox = "Inbox", screener = "Screener", starred = "Starred", snoozed = "Snoozed", awaiting = "Awaiting reply", sent = "Sent", archive = "Archive"
     var id: String { rawValue }
     var icon: String {
         switch self {
-        case .inbox: "tray"; case .starred: "star"; case .snoozed: "clock"; case .awaiting: "bubble.left.and.exclamationmark.bubble.right"
+        case .inbox: "tray"; case .screener: "person.crop.circle.badge.questionmark"; case .starred: "star"; case .snoozed: "clock"; case .awaiting: "bubble.left.and.exclamationmark.bubble.right"
         case .sent: "paperplane"; case .archive: "archivebox"
         }
     }
@@ -20,6 +20,7 @@ struct InboxView: View {
     @Environment(\.modelContext) private var ctx
     @Query(sort: \EmailMessage.receivedAt, order: .reverse) private var allEmails: [EmailMessage]
     @Query private var accounts: [MailAccount]
+    @Query private var rules: [SenderRule]
     @AppStorage("focus.hideInbox") private var hiddenByFocus = false
     @State private var mailbox: Mailbox = .inbox
     @State private var split: TriageCategory = .important
@@ -40,7 +41,7 @@ struct InboxView: View {
         case .snoozed: allEmails.filter { $0.snoozedUntil != nil && inAccount($0) }
         case .archive: allEmails.filter { $0.isArchived && $0.snoozedUntil == nil && inAccount($0) }
         case .sent: sent.filter(inAccount)
-        case .awaiting: []
+        case .awaiting, .screener: []
         }
     }
 
@@ -59,6 +60,8 @@ struct InboxView: View {
             Group {
                 if mailbox == .awaiting {
                     FollowUpsView()
+                } else if mailbox == .screener {
+                    ScreenerView()
                 } else if mailbox == .inbox && (hiddenByFocus || ShutdownManager.shared.active != nil) {
                     ContentUnavailableView("Inbox is resting", systemImage: "moon.zzz",
                                            description: Text("You're in focus mode. Email will be here when you're done."))
@@ -97,6 +100,16 @@ struct InboxView: View {
 
     private var list: some View {
         List {
+            if mailbox == .inbox && search.isEmpty && Screener.enabled {
+                let newSenders = Screener.pending(emails: allEmails, rules: rules).count
+                if newSenders > 0 {
+                    Button { mailbox = .screener } label: {
+                        Label("\(newSenders) new sender\(newSenders == 1 ? "" : "s") to screen", systemImage: "person.crop.circle.badge.questionmark")
+                            .font(DS.Font.caption)
+                    }
+                    .listRowBackground(Color.clear)
+                }
+            }
             if mailbox == .inbox && search.isEmpty {
                 Section {
                     ScrollView(.horizontal, showsIndicators: false) {

@@ -111,6 +111,17 @@ struct TasksView: View {
                 ToolbarItem(placement: .topBarLeading) {
                     NavigationLink { PromisesView() } label: { Label("Promises", systemImage: "hand.raised.fingers.spread") }
                 }
+                ToolbarItem(placement: .topBarTrailing) {
+                    Menu {
+                        Button("Auto-schedule today", systemImage: "wand.and.stars") {
+                            let r = AutoScheduler.scheduleToday(tasks: tasks)
+                            withAnimation { toast = r.scheduled == 0 ? "Nothing fit today" : "Scheduled \(r.scheduled) on your calendar" }
+                            Task { try? await Task.sleep(for: .seconds(2.5)); withAnimation { toast = nil } }
+                        }
+                        Button("Clear today's time blocks", systemImage: "calendar.badge.minus") { AutoScheduler.clearToday(tasks: tasks) }
+                    } label: { Image(systemName: "wand.and.stars") }
+                    .accessibilityLabel("Schedule")
+                }
             }
             .refreshable { await SyncEngine.shared.syncAll() }
             .overlay(alignment: .bottom) {

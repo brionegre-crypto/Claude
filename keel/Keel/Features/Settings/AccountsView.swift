@@ -379,6 +379,10 @@ struct MailSettings: View {
             } header: { Text("Privacy") } footer: {
                 Text("When off, images that could tell senders you opened their email are blocked until you tap “Load images”.")
             }
+            Section {
+                Toggle("Screener", isOn: Binding(get: { !UserDefaults.standard.bool(forKey: "screener.off") },
+                                                 set: { UserDefaults.standard.set(!$0, forKey: "screener.off") }))
+            } footer: { Text("The first time someone emails you, decide whether they get into your inbox. Blocked senders are archived automatically.") }
             Section("Signature") {
                 TextField("Sent from Keel", text: $signature, axis: .vertical).lineLimit(2...5)
             }
