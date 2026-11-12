@@ -16,6 +16,21 @@ if [ "${KEEL_FAMILY_CONTROLS:-0}" != "1" ]; then
   echo "FamilyControls entitlement left out of this build (set KEEL_FAMILY_CONTROLS=1 to include it)."
 fi
 
+# Apple Weather (WeatherKit) and Apple Health (HealthKit): the export fails if the App ID doesn't have these
+# capabilities turned on yet, because the provisioning profile won't carry them. Cloud builds leave them out
+# unless enabled; the app hides weather and Health features gracefully without them.
+# After enabling each capability on the App ID com.briangreenejr.keel, add to the workflow's environment variables:
+#   KEEL_WEATHERKIT=1   (Capabilities AND App Services tabs → WeatherKit)
+#   KEEL_HEALTHKIT=1    (Capabilities tab → HealthKit)
+if [ "${KEEL_WEATHERKIT:-0}" != "1" ]; then
+  sed -i '' '/com.apple.developer.weatherkit/d' project.yml
+  echo "WeatherKit entitlement left out of this build (set KEEL_WEATHERKIT=1 to include it)."
+fi
+if [ "${KEEL_HEALTHKIT:-0}" != "1" ]; then
+  sed -i '' '/com.apple.developer.healthkit/d' project.yml
+  echo "HealthKit entitlements left out of this build (set KEEL_HEALTHKIT=1 to include them)."
+fi
+
 # Default mail app: Apple must grant the com.apple.developer.mail-client entitlement first.
 # Once it's granted, add KEEL_MAIL_CLIENT=1 to the Xcode Cloud workflow's environment variables.
 if [ "${KEEL_MAIL_CLIENT:-0}" = "1" ]; then
