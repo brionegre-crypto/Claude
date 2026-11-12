@@ -52,7 +52,7 @@
 	<key>NSFaceIDUsageDescription</key>
 	<string>Keel uses Face ID to unlock the app and your locked notes.</string>
 	<key>NSHealthShareUsageDescription</key>
-	<string>Keel reads last night's sleep to suggest how much energy you have today. Nothing is written to Health.</string>
+	<string>Keel reads your sleep to suggest today's energy, and steps, exercise and mindful minutes to tick off habits for you. Nothing is written to Health.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Keel uses your location for today's weather, time-to-leave alerts for events, and finding places for location reminders.</string>
 	<key>NSMicrophoneUsageDescription</key>
