@@ -118,6 +118,12 @@ targets:
     type: application
     platform: watchOS
     sources: [KeelWatch, Keel/Shared/WatchShared.swift]
+    dependencies:
+      - target: KeelWatchWidgets          # watch-face complications
+    entitlements:
+      path: KeelWatch/KeelWatch.entitlements
+      properties:
+        com.apple.security.application-groups: [group.com.briangreenejr.keel]
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.briangreenejr.keel.watchkitapp
@@ -133,6 +139,29 @@ targets:
         CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         WKApplication: true
         WKCompanionAppBundleIdentifier: com.briangreenejr.keel
+
+  KeelWatchWidgets:
+    type: app-extension
+    platform: watchOS
+    sources: [KeelWatchWidgets, Keel/Shared/WatchShared.swift]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.briangreenejr.keel.watchkitapp.widgets
+        MARKETING_VERSION: "0.1.0"
+        CURRENT_PROJECT_VERSION: "1"
+        CODE_SIGN_STYLE: Automatic
+    entitlements:
+      path: KeelWatchWidgets/KeelWatchWidgets.entitlements
+      properties:
+        com.apple.security.application-groups: [group.com.briangreenejr.keel]
+    info:
+      path: KeelWatchWidgets/Info.plist
+      properties:
+        CFBundleDisplayName: Keel
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
 
 schemes:
   Keel:   # shared scheme, committed to the repo; Xcode Cloud only sees shared schemes

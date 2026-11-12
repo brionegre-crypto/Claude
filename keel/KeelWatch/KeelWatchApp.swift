@@ -1,6 +1,7 @@
 import SwiftUI
 import WatchConnectivity
 import WatchKit
+import WidgetKit
 
 @main
 struct KeelWatchApp: App {
@@ -84,6 +85,9 @@ final class WatchStore: NSObject, WCSessionDelegate {
         guard let data = context["payload"] as? Data, let p = WatchCoding.decode(WatchPayload.self, data) else { return }
         payload = p
         UserDefaults.standard.set(data, forKey: "payload")
+        // Share with the watch-face complications and refresh them.
+        UserDefaults(suiteName: "group.com.briangreenejr.keel")?.set(data, forKey: "watch.payload")
+        WidgetCenter.shared.reloadAllTimelines()
     }
 }
 
