@@ -42,6 +42,8 @@ struct TasksView: View {
     @State private var newTitle = ""
     @State private var search = ""
     @State private var toast: String?
+    @AppStorage("tasks.board") private var boardMode = false
+    @State private var sharingList: String?
     @FocusState private var addFocused: Bool
 
     private let cal = Calendar.current
@@ -101,6 +103,8 @@ struct TasksView: View {
                 filterBar
                 if filter == .matrix {
                     MatrixView(tasks: filtered.filter { !$0.isWaitingOn }, onRolled: showRolled)
+                } else if boardMode && filter != .completed {
+                    BoardView(tasks: boardTasks)
                 } else {
                     list
                 }
@@ -120,6 +124,12 @@ struct TasksView: View {
                         }
                         Button("Clear today's time blocks", systemImage: "calendar.badge.minus") { AutoScheduler.clearToday(tasks: tasks) }
                         Divider()
+                        Button(boardMode ? "Show as list" : "Show as board", systemImage: boardMode ? "list.bullet" : "rectangle.split.3x1") {
+                            withAnimation { boardMode.toggle() }
+                        }
+                        if case .list(let name) = filter {
+                            Button("Share “\(name)”…", systemImage: "person.2") { sharingList = name }
+                        }
                         NavigationLink { TemplatesView() } label: { Label("Templates", systemImage: "doc.on.doc") }
                         if case .list(let name) = filter {
                             Button("Save “\(name)” as a template", systemImage: "square.and.arrow.down") {
@@ -133,6 +143,7 @@ struct TasksView: View {
                 }
             }
             .refreshable { await SyncEngine.shared.syncAll() }
+            .sheet(item: Binding(get: { sharingList.map { ListName(name: $0) } }, set: { sharingList = $0?.name })) { ShareListSheet(listName: $0.name) }
             .overlay(alignment: .bottom) {
                 if let toast {
                     Text(toast).font(DS.Font.caption).padding(.horizontal, DS.Space.m).padding(.vertical, DS.Space.s)
@@ -200,6 +211,16 @@ struct TasksView: View {
             }
         }
         .listStyle(.insetGrouped)
+    }
+
+    /// Board shows the current list's open tasks plus recently done ones.
+    private var boardTasks: [TaskItem] {
+        let done = tasks.filter(\.isDone)
+        switch filter {
+        case .list(let l): return filtered + done.filter { $0.listName == l }
+        case .tag(let t): return filtered + done.filter { $0.tags.contains(t) }
+        default: return filtered + done.filter { $0.completedAt.map { Calendar.current.isDateInToday($0) } ?? false }
+        }
     }
 
     private var groups: [(title: String, items: [TaskItem])] {
@@ -640,3 +661,5 @@ enum NaturalDate {
         return (title.isEmpty ? s : title, m.date)
     }
 }
+
+private struct ListName: Identifiable { var name: String; var id: String { name } }

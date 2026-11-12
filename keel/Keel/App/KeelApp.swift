@@ -55,7 +55,7 @@ struct KeelApp: App {
     static let container: ModelContainer = {
         let schema = Schema([
             MailAccount.self, EmailMessage.self, TaskItem.self, Note.self,
-            Habit.self, HabitStack.self, HabitLog.self, FocusSession.self, Commitment.self, Goal.self, FollowUp.self, SavedLink.self, TimeEntry.self, IdealBlock.self, OdysseyPath.self, SenderRule.self, Person.self, CheckIn.self, TaskTemplate.self,
+            Habit.self, HabitStack.self, HabitLog.self, FocusSession.self, Commitment.self, Goal.self, FollowUp.self, SavedLink.self, TimeEntry.self, IdealBlock.self, OdysseyPath.self, SenderRule.self, Person.self, CheckIn.self, TaskTemplate.self, NoteAttachment.self, Countdown.self,
         ])
         // Lives in the App Group so widgets / intents extensions can read it too.
         let config = ModelConfiguration(schema: schema, groupContainer: .identifier("group.com.briangreenejr.keel"))
@@ -89,6 +89,7 @@ struct RootView: View {
         }
         // Focus lives above the tab bar (like Music's mini-player): always one tap away, shows the live timer.
         .tabViewBottomAccessory { FocusAccessory { router.showFocus = true } }
+        .overlay(alignment: .bottom) { UndoToast() }
         .sheet(isPresented: $router.showFocus) { NavigationStack { FocusView() } }
         .sheet(item: $mailRouter.pending) { ComposeView(draft: $0) }
         .sheet(isPresented: $router.showSearch) { NavigationStack { SearchView() } }

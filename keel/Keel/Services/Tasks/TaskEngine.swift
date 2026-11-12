@@ -37,9 +37,20 @@ enum TaskActions {
     }
 
     static func delete(_ t: TaskItem, ctx: ModelContext) {
+        // Keep enough to bring it back if you tap Undo.
+        let title = t.title, notes = t.notes, due = t.dueDate, priority = t.priority, list = t.listName
+        let tags = t.tags, steps = t.microSteps, rule = t.recurrence, alert = t.alertOffsetMinutes, goal = t.goalId
         TaskAlerts.cancel(t)
         CalendarService.shared.removeReminder(for: t)
         ctx.delete(t)
+        UndoCenter.shared.offer("Deleted “\(title)”") {
+            let r = TaskItem(title: title, dueDate: due, priority: priority)
+            r.notes = notes; r.listName = list; r.tags = tags; r.microSteps = steps
+            r.recurrence = rule; r.alertOffsetMinutes = alert; r.goalId = goal
+            ctx.insert(r)
+            try? CalendarService.shared.push(r)
+            TaskAlerts.schedule(r)
+        }
     }
 
     static func reschedule(_ t: TaskItem, to day: Date) {

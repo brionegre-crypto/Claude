@@ -1,5 +1,7 @@
 import SwiftUI
 import SwiftData
+import VisionKit
+import PhotosUI
 
 /// Notion-style block notes. Meeting notes auto-link to the calendar event; any line can become a task.
 struct NotesView: View {
@@ -63,6 +65,10 @@ struct NoteEditor: View {
     @Environment(\.modelContext) private var ctx
     @Bindable var note: Note
     @FocusState private var focused: UUID?
+    @State private var photoItem: PhotosPickerItem?
+    @State private var showSketch = false
+    @State private var showScanner = false
+    @State private var scanning = false
 
     var body: some View {
         ScrollView {
@@ -78,12 +84,43 @@ struct NoteEditor: View {
             ToolbarItemGroup(placement: .topBarTrailing) {
                 Button { note.isPinned.toggle() } label: { Image(systemName: note.isPinned ? "pin.fill" : "pin") }
                 Menu {
+                    PhotosPicker(selection: $photoItem, matching: .images) { Label("Photo", systemImage: "photo") }
+                    Button("Sketch", systemImage: "pencil.tip") { showSketch = true }
+                    if VNDocumentCameraViewController.isSupported {
+                        Button("Scan document", systemImage: "doc.viewfinder") { showScanner = true }
+                    }
+                } label: { Image(systemName: "paperclip") }
+                .accessibilityLabel("Insert")
+                Menu {
                     Button("Summarize", systemImage: "sparkles") { Task { note.aiSummary = await AIRouter.shared.summarize(note.plainText) } }
                     Button("Turn to-dos into tasks", systemImage: "checklist") { extractTasks() }
                 } label: { Image(systemName: "sparkles") }
             }
         }
         .onChange(of: note.blocks) { note.updatedAt = Date() }
+        .onChange(of: photoItem) { _, item in
+            Task {
+                if let data = try? await item?.loadTransferable(type: Data.self), let img = UIImage(data: data), let jpg = NoteMedia.jpeg(img) {
+                    NoteMedia.add(jpg, kind: "photo", to: note, ctx: ctx)
+                }
+                photoItem = nil
+            }
+        }
+        .sheet(isPresented: $showSketch) { SketchSheet { NoteMedia.add($0, kind: "sketch", to: note, ctx: ctx) } }
+        .fullScreenCover(isPresented: $showScanner) {
+            DocumentScanner { pages in
+                Task {
+                    scanning = true
+                    for page in pages {
+                        let text = await NoteMedia.recognizeText(page)
+                        if let jpg = NoteMedia.jpeg(page) { NoteMedia.add(jpg, kind: "scan", to: note, ctx: ctx, text: text) }
+                    }
+                    scanning = false
+                }
+            }
+            .ignoresSafeArea()
+        }
+        .overlay { if scanning { ProgressView("Reading the scan…").padding().background(.regularMaterial, in: .rect(cornerRadius: 12)) } }
     }
 
     @ViewBuilder private func blockView(_ block: Binding<NoteBlock>) -> some View {
@@ -99,6 +136,8 @@ struct NoteEditor: View {
                 .overlay(alignment: .leading) { Rectangle().fill(DS.Palette.accent).frame(width: 3) }
         case .divider:
             Divider()
+        case .image:
+            ImageBlockView(attachmentId: block.wrappedValue.refId)
         default:
             // Slash-commands: type "/todo", "/h", "/quote" at the start of a line to convert the block
             TextField("Type / for commands", text: block.text, axis: .vertical)

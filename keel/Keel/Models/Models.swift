@@ -202,6 +202,7 @@ struct MicroStep: Codable, Identifiable, Hashable {
     var latitude: Double?
     var longitude: Double?
     var remindOnArrive: Bool = true             // false = when leaving
+    var stage: String = "todo"                  // board view: todo | doing | done
     // TickTick-style
     var recurrence: Recurrence?                 // repeating task; completing it moves it to the next date
     var alertOffsetMinutes: Int?                // nil = no Keel alert; 0 = at due time; 15 = 15 min before…
@@ -224,7 +225,7 @@ struct MicroStep: Codable, Identifiable, Hashable {
 
 // MARK: - Notes (Notion-style blocks)
 
-enum BlockKind: String, Codable { case text, heading, todo, bullet, quote, divider, emailEmbed, taskEmbed }
+enum BlockKind: String, Codable { case text, heading, todo, bullet, quote, divider, emailEmbed, taskEmbed, image }
 
 struct NoteBlock: Codable, Identifiable, Hashable {
     var id = UUID()
@@ -538,6 +539,42 @@ enum OdysseyKind: String, Codable, CaseIterable, Identifiable {
     }
 
     static let faces = ["😞", "😕", "😐", "🙂", "😄"]
+}
+
+// MARK: - Note attachments (photos, sketches, scans)
+
+@Model final class NoteAttachment {
+    var id: UUID = UUID()
+    var noteId: UUID
+    @Attribute(.externalStorage) var data: Data
+    var kind: String                            // photo | sketch | scan
+    var recognizedText: String = ""             // OCR from scans, so they're searchable
+    var createdAt: Date = Date()
+
+    init(noteId: UUID, data: Data, kind: String) {
+        self.noteId = noteId
+        self.data = data
+        self.kind = kind
+    }
+}
+
+// MARK: - Countdowns
+
+@Model final class Countdown {
+    var id: UUID = UUID()
+    var title: String
+    var date: Date
+    var emoji: String = "🎉"
+    var createdAt: Date = Date()
+
+    init(title: String, date: Date) {
+        self.title = title
+        self.date = date
+    }
+
+    var daysLeft: Int {
+        Calendar.current.dateComponents([.day], from: Calendar.current.startOfDay(for: Date()), to: Calendar.current.startOfDay(for: date)).day ?? 0
+    }
 }
 
 // MARK: - Templates

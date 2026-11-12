@@ -54,6 +54,8 @@ targets:
         UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
         UIRequiresFullScreen: true
         NSSupportsLiveActivities: true
+        NSCameraUsageDescription: Keel uses the camera to scan documents into your notes.
+        NSPhotoLibraryAddUsageDescription: Keel can save images from your notes to Photos.
         NSMicrophoneUsageDescription: Keel records meetings you choose to record and turns them into notes.
         NSSpeechRecognitionUsageDescription: Keel transcribes your meeting recordings on this iPhone.
         NSFaceIDUsageDescription: Keel locks your notes and mail behind Face ID.

@@ -230,7 +230,11 @@ struct InboxView: View {
     private func archive(_ e: EmailMessage) {
         withAnimation(DS.spring) { e.isArchived = true; e.snoozedUntil = nil }
         Haptics.success()
-        Task { try? await provider(for: e)?.archive(e.providerMessageId) }
+        let p = provider(for: e)
+        let id = e.providerMessageId
+        // The server archive waits for the undo window to close.
+        UndoCenter.shared.offer("Archived", undo: { withAnimation { e.isArchived = false } },
+                                commit: { Task { try? await p?.archive(id) } })
         checkInboxZero()
     }
 
