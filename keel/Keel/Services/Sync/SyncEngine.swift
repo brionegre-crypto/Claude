@@ -87,6 +87,8 @@ final class SyncEngine {
         await MailRules.apply(to: fresh, accounts: accounts, ctx: ctx)
         MailScanners.backfillIfNeeded(ctx: ctx)
         MailScanners.scan(fresh, ctx: ctx)
+        Task { await TripScanner.backfillIfNeeded(ctx: ctx) }   // one-time, in the background
+        await TripScanner.scan(fresh, ctx: ctx)
 
         // 2. AI triage on anything new (on-device first — free)
         let untriaged = (try? ctx.fetch(FetchDescriptor<EmailMessage>(predicate: #Predicate { $0.triagedAt == nil }))) ?? []
@@ -123,6 +125,8 @@ final class SyncEngine {
         // 4. Claude connector: apply what Claude queued, then publish a fresh snapshot
         await ClaudeBridge.applyQueuedActions(ctx: ctx)
         try? ctx.save()
+        await HealthHabits.check(ctx: ctx)
+        BreakReminders.schedule()
         await Briefing.refresh(ctx: ctx)
         await MeetingPrep.scheduleReminders(ctx: ctx)
         await ClaudeBridge.uploadSnapshot(ctx: ctx)

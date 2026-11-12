@@ -35,6 +35,14 @@ struct HabitsView: View {
             .onAppear { HabitEngine.scheduleEventAnchoredStacks(stacks, habits: habits) }
     }
 
+    private func setGoal(_ h: Habit, _ goal: String?) {
+        h.healthGoal = goal
+        Task {
+            if goal != nil { await HealthService.shared.requestAccess() }
+            await HealthHabits.check(ctx: ctx)
+        }
+    }
+
     private func stackCard(_ stack: HabitStack) -> some View {
         let chain = habits.filter { $0.stackId == stack.id }.sorted { $0.orderInStack < $1.orderInStack }
         let today = Calendar.current.startOfDay(for: Date())
@@ -59,8 +67,20 @@ struct HabitsView: View {
                         Image(systemName: h.icon).frame(width: 22)
                         Text(h.name)
                         Spacer()
+                        if let g = HealthHabits.label(h.healthGoal) {
+                            Image(systemName: "heart.fill").font(.caption).foregroundStyle(.pink).accessibilityLabel("Completes from Health: \(g)")
+                        }
                         if h.currentStreak > 0 { Chip(text: "\(h.currentStreak)🔥", color: DS.Palette.warmth) }
                         if h.graceTokens > 0 { Text(String(repeating: "◇", count: h.graceTokens)).font(.caption).foregroundStyle(DS.Palette.calm).accessibilityLabel("\(h.graceTokens) grace days") }
+                    }
+                    .contextMenu {
+                        Menu("Complete from Apple Health", systemImage: "heart") {
+                            ForEach(HealthHabits.options, id: \.label) { o in
+                                Button { setGoal(h, o.id) } label: {
+                                    if h.healthGoal == o.id { Label(o.label, systemImage: "checkmark") } else { Text(o.label) }
+                                }
+                            }
+                        }
                     }
                     if i < chain.count - 1 { Image(systemName: "arrow.down").font(.caption).foregroundStyle(DS.Palette.inkSoft).padding(.leading, 6) }
                 }

@@ -97,12 +97,19 @@ struct InboxView: View {
                     .accessibilityLabel("Mailboxes and accounts")
                 }
                 ToolbarItem(placement: .topBarTrailing) {
-                    NavigationLink { ScheduledMailView() } label: { Image(systemName: "clock.arrow.circlepath") }
-                        .accessibilityLabel("Scheduled emails")
+                    NavigationLink { CatchUpView() } label: { Image(systemName: "sparkles") }
+                        .accessibilityLabel("Catch me up")
                 }
                 ToolbarItem(placement: .topBarTrailing) {
-                    NavigationLink { DigestView() } label: { Image(systemName: "newspaper") }
-                        .accessibilityLabel("Newsletter digest")
+                    Menu {
+                        NavigationLink { ScheduledMailView() } label: { Label("Scheduled", systemImage: "clock.arrow.circlepath") }
+                        NavigationLink { DigestView() } label: { Label("Newsletter digest", systemImage: "newspaper") }
+                        NavigationLink { AttachmentsView() } label: { Label("Attachments", systemImage: "paperclip") }
+                        NavigationLink { SubscriptionsView() } label: { Label("Subscriptions & bills", systemImage: "creditcard") }
+                        NavigationLink { DeliveriesView() } label: { Label("Deliveries", systemImage: "shippingbox") }
+                        NavigationLink { TripsView() } label: { Label("Trips", systemImage: "airplane") }
+                    } label: { Image(systemName: "ellipsis.circle") }
+                    .accessibilityLabel("More mail tools")
                 }
                 ToolbarItem(placement: .topBarTrailing) {
                     Button { compose = ComposeDraft(accountId: accountFilter) } label: { Image(systemName: "square.and.pencil") }

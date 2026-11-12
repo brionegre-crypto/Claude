@@ -21,6 +21,7 @@ enum MailProviderKind: String, Codable, CaseIterable, Identifiable {
     var lastSyncedAt: Date?
     var lastSentScanAt: Date?                    // promise tracker: last time Sent mail was scanned
     var isEnabled: Bool = true
+    var signature: String?                       // per-account; nil uses the shared signature
 
     init(provider: MailProviderKind, address: String, displayName: String, colorHex: String = "#5B8DEF") {
         self.id = "\(provider.rawValue):\(address.lowercased())"
@@ -274,6 +275,8 @@ struct NoteBlock: Codable, Identifiable, Hashable {
     var graceTokens: Int = 2
     /// Count of all-time completions — never goes down, so a bad week doesn't erase progress.
     var totalCompletions: Int = 0
+    /// Auto-complete from Apple Health, e.g. "steps:8000", "workout:20", "mindful:5" (minutes).
+    var healthGoal: String?
 
     init(name: String, icon: String = "circle", minutes: Int = 2) {
         self.name = name
@@ -816,6 +819,36 @@ struct StoredAttachment: Codable {
         case "FedEx": return URL(string: "https://www.fedex.com/fedextrack/?trknbr=\(n)")
         case "DHL": return URL(string: "https://www.dhl.com/global-en/home/tracking.html?tracking-id=\(n)")
         default: return nil
+        }
+    }
+}
+
+// MARK: - Trips (reservations found in email)
+
+@Model final class Reservation {
+    var id: UUID = UUID()
+    var kind: String                            // flight | hotel | car | train | event | restaurant
+    var title: String                           // "UA 1234 SFO → JFK", "Hilton Midtown"
+    var confirmation: String = ""
+    var start: Date
+    var end: Date?
+    var location: String = ""
+    var detail: String = ""                     // seat, terminal, address…
+    var sourceEmailId: String?
+    var calendarEventId: String?                // set once added to Calendar
+    var isHidden: Bool = false
+    var createdAt: Date = Date()
+
+    init(kind: String, title: String, start: Date) {
+        self.kind = kind
+        self.title = title
+        self.start = start
+    }
+
+    var icon: String {
+        switch kind {
+        case "flight": "airplane"; case "hotel": "bed.double.fill"; case "car": "car.fill"
+        case "train": "tram.fill"; case "restaurant": "fork.knife"; default: "ticket.fill"
         }
     }
 }

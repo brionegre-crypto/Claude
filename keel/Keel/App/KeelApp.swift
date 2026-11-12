@@ -36,6 +36,7 @@ struct KeelApp: App {
                     _ = try? await UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge])
                     SyncEngine.shared.configure(container: container)
                     MedEngine.scheduleAll(ctx: container.mainContext)
+                    BreakReminders.schedule()
                     await SyncEngine.shared.syncAll()
                     SyncEngine.scheduleNextRefresh()
                 }
@@ -44,6 +45,7 @@ struct KeelApp: App {
         .onChange(of: scenePhase) { _, phase in
             if phase == .active {
                 WidgetActions.applyPending(ctx: container.mainContext)   // taps on interactive widgets
+                Task { await HealthHabits.check(ctx: container.mainContext) }
                 Task { await KeelFocusFilter.syncCurrent() }
                 LinkSaver.importShared(into: container.mainContext)     // links saved from Safari's share sheet
                 LinkSaver.importSharedNotes(into: container.mainContext) // text/images shared from Notes, Messages, Photos…
@@ -61,7 +63,7 @@ struct KeelApp: App {
     static let container: ModelContainer = {
         let schema = Schema([
             MailAccount.self, EmailMessage.self, TaskItem.self, Note.self,
-            Habit.self, HabitStack.self, HabitLog.self, FocusSession.self, Commitment.self, Goal.self, FollowUp.self, SavedLink.self, TimeEntry.self, IdealBlock.self, OdysseyPath.self, SenderRule.self, Person.self, CheckIn.self, TaskTemplate.self, NoteAttachment.self, Countdown.self, Project.self, Snippet.self, MailRule.self, ScheduledMail.self, Medication.self, MedDose.self, Subscription.self, Delivery.self,
+            Habit.self, HabitStack.self, HabitLog.self, FocusSession.self, Commitment.self, Goal.self, FollowUp.self, SavedLink.self, TimeEntry.self, IdealBlock.self, OdysseyPath.self, SenderRule.self, Person.self, CheckIn.self, TaskTemplate.self, NoteAttachment.self, Countdown.self, Project.self, Snippet.self, MailRule.self, ScheduledMail.self, Medication.self, MedDose.self, Subscription.self, Delivery.self, Reservation.self,
         ])
         // Lives in the App Group so widgets / intents extensions can read it too.
         let config = ModelConfiguration(schema: schema, groupContainer: .identifier("group.com.briangreenejr.keel"))

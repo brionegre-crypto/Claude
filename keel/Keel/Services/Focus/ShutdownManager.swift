@@ -53,6 +53,7 @@ final class ShutdownManager {
     func start(minutes: Int, level: Level, task: TaskItem?) -> FocusSession {
         let s = FocusSession(plannedMinutes: minutes, mode: "deep", taskId: task?.id)
         active = s
+        BreakReminders.schedule(skipUntil: Date().addingTimeInterval(Double(minutes * 60)))   // no breaks mid-focus
         self.level = level
         if level != .soft, isAuthorized {
             store.shield.applications = selection.applicationTokens.isEmpty ? nil : selection.applicationTokens
@@ -83,6 +84,7 @@ final class ShutdownManager {
     }
 
     func end(early: Bool) {
+        defer { BreakReminders.schedule(skipUntil: Date()) }
         endLiveActivities()
         FocusSound.shared.stop()
         store.clearAllSettings()

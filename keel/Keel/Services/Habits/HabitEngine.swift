@@ -68,3 +68,42 @@ enum HabitEngine {
         Haptics.success()
     }
 }
+
+/// Habits that tick themselves off from Apple Health: "Walk 8,000 steps", "Work out 20 min", "Meditate 5 min".
+@MainActor
+enum HealthHabits {
+    static let options: [(id: String?, label: String)] = [
+        (nil, "Off"),
+        ("steps:5000", "5,000 steps"), ("steps:8000", "8,000 steps"), ("steps:10000", "10,000 steps"),
+        ("workout:20", "20 min exercise"), ("workout:30", "30 min exercise"), ("workout:45", "45 min exercise"),
+        ("mindful:5", "5 mindful minutes"), ("mindful:10", "10 mindful minutes"),
+    ]
+
+    static func label(_ goal: String?) -> String? { goal.flatMap { g in options.first { $0.id == g }?.label } }
+
+    /// Checks Health and completes any habit whose goal is met today.
+    static func check(ctx: ModelContext) async {
+        let habits = ((try? ctx.fetch(FetchDescriptor<Habit>())) ?? []).filter { $0.healthGoal != nil }
+        guard !habits.isEmpty, HealthService.shared.isAuthorizedHint else { return }
+        let today = Calendar.current.startOfDay(for: Date())
+        let logs = (try? ctx.fetch(FetchDescriptor<HabitLog>())) ?? []
+        var steps: Int?, exercise: Int?, mindful: Int?
+        for h in habits {
+            guard let goal = h.healthGoal, !logs.contains(where: { $0.habitId == h.id && $0.day == today }) else { continue }
+            let parts = goal.split(separator: ":")
+            guard parts.count == 2, let target = Int(parts[1]) else { continue }
+            let value: Int
+            switch parts[0] {
+            case "steps": if steps == nil { steps = await HealthService.shared.todaySteps() }; value = steps!
+            case "workout": if exercise == nil { exercise = await HealthService.shared.todayExerciseMinutes() }; value = exercise!
+            case "mindful": if mindful == nil { mindful = await HealthService.shared.todayMindfulMinutes() }; value = mindful!
+            default: continue
+            }
+            if value >= target {
+                let last = logs.filter { $0.habitId == h.id }.map(\.day).max()
+                HabitEngine.complete(h, lastCompletedDay: last, ctx: ctx)
+            }
+        }
+        try? ctx.save()
+    }
+}

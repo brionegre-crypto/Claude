@@ -37,6 +37,7 @@ struct TodayView: View {
                     MedsTodayCard()
                     PinnedTasksCard()
                     FoundInMailTodayCard()
+                    TripTodayCard()
                     // Today reshapes itself through the day: plan in the morning, do in the day, wind down at night.
                     switch DayPhase.now {
                     case .morning:
@@ -104,6 +105,7 @@ struct TodayView: View {
                         NavigationLink { MedsView() } label: { Label("Medications", systemImage: "pills") }
                         NavigationLink { SubscriptionsView() } label: { Label("Subscriptions & bills", systemImage: "creditcard") }
                         NavigationLink { DeliveriesView() } label: { Label("Deliveries", systemImage: "shippingbox") }
+                        NavigationLink { TripsView() } label: { Label("Trips", systemImage: "airplane") }
                         NavigationLink { AchievementsView() } label: { Label("Achievements", systemImage: "trophy") }
                         NavigationLink { FocusHistoryView() } label: { Label("Focus history", systemImage: "chart.bar.xaxis") }
                         NavigationLink { JournalTimelineView() } label: { Label("Mood journal", systemImage: "face.smiling") }

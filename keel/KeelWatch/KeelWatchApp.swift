@@ -231,6 +231,9 @@ struct NowCard: View {
                     }
                     .font(.caption2).foregroundStyle(.secondary)
                 }
+                if let trip = store.payload.nextTrip {
+                    Label(trip, systemImage: "airplane").font(.caption2).foregroundStyle(accent).lineLimit(2)
+                }
                 if let b = store.payload.briefing, Calendar.current.component(.hour, from: Date()) < 11 {
                     Text(b).font(.caption2).foregroundStyle(.secondary).lineLimit(4)
                 }
@@ -317,6 +320,9 @@ struct InboxPage: View {
     var body: some View {
         List {
             let mail = store.payload.mail ?? []
+            if let n = store.payload.unreadCount, n > 0 {
+                Text("\(n) unread · \(mail.count) need you").font(.caption2).foregroundStyle(.secondary).listRowBackground(Color.clear)
+            }
             if mail.isEmpty { Text("Nothing important waiting").foregroundStyle(.secondary) }
             ForEach(mail) { m in
                 VStack(alignment: .leading, spacing: 2) {

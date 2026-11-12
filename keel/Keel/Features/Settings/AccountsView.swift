@@ -218,6 +218,11 @@ struct MailAccountDetail: View {
                 Toggle("Sync this account", isOn: $account.isEnabled)
             }
             Section {
+                TextField("Uses your shared signature", text: Binding(get: { account.signature ?? "" },
+                                                                     set: { account.signature = $0.isEmpty ? nil : $0 }), axis: .vertical)
+                    .lineLimit(2...6)
+            } header: { Text("Signature") } footer: { Text("Added to emails you send from \(account.address). Leave empty to use the signature in Settings → Mail.") }
+            Section {
                 Button(syncing ? "Syncing…" : "Sync Now") {
                     Task { syncing = true; await SyncEngine.shared.syncAll(); syncing = false }
                 }
@@ -459,7 +464,17 @@ struct TaskSettings: View {
 struct FocusSettings: View {
     @AppStorage(Prefs.focusMinutes) private var minutes = 25
     @AppStorage(Prefs.hyperfocusCheck) private var hyperfocusOff = false
+    @AppStorage(BreakReminders.onKey) private var breaksOn = false
+    @AppStorage(BreakReminders.everyKey) private var breakEvery = 60
+    @AppStorage(BreakReminders.startKey) private var breakStart = 540
+    @AppStorage(BreakReminders.endKey) private var breakEnd = 1050
+    @AppStorage(BreakReminders.weekendsKey) private var breakWeekends = false
     @State private var shutdown = ShutdownManager.shared
+
+    private func minuteBinding(_ b: Binding<Int>) -> Binding<Date> {
+        Binding(get: { Calendar.current.date(bySettingHour: b.wrappedValue / 60, minute: b.wrappedValue % 60, second: 0, of: Date())! },
+                set: { b.wrappedValue = Calendar.current.component(.hour, from: $0) * 60 + Calendar.current.component(.minute, from: $0) })
+    }
 
     var body: some View {
         List {
@@ -469,6 +484,22 @@ struct FocusSettings: View {
                 }
                 Toggle("Hyperfocus Check-in", isOn: Binding(get: { !hyperfocusOff }, set: { hyperfocusOff = !$0 }))
             } footer: { Text("The check-in nudges you 30 minutes after a session ends, in case you lost track of time.") }
+            Section {
+                Toggle("Break Reminders", isOn: $breaksOn)
+                if breaksOn {
+                    Picker("Every", selection: $breakEvery) {
+                        ForEach([30, 45, 60, 90], id: \.self) { Text("\($0) minutes").tag($0) }
+                    }
+                    DatePicker("From", selection: minuteBinding($breakStart), displayedComponents: .hourAndMinute)
+                    DatePicker("Until", selection: minuteBinding($breakEnd), displayedComponents: .hourAndMinute)
+                    Toggle("Weekends Too", isOn: $breakWeekends)
+                }
+            } footer: { Text("Quiet nudges to stand, drink water, rest your eyes or breathe. Never during a focus session.") }
+            .onChange(of: breaksOn) { BreakReminders.schedule() }
+            .onChange(of: breakEvery) { BreakReminders.schedule() }
+            .onChange(of: breakStart) { BreakReminders.schedule() }
+            .onChange(of: breakEnd) { BreakReminders.schedule() }
+            .onChange(of: breakWeekends) { BreakReminders.schedule() }
             Section {
                 LabeledContent("Screen Time Access", value: shutdown.isAuthorized ? "Allowed" : "Not allowed")
                 if !shutdown.isAuthorized {

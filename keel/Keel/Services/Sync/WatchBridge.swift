@@ -94,6 +94,12 @@ final class WatchBridge: NSObject, WCSessionDelegate {
                     d.expected.map { Calendar.current.isDateInToday($0) ? "Arriving today" : "Arriving \($0.formatted(.dateTime.weekday(.abbreviated)))" } ?? "Shipped"
                 return .init(title: d.title, carrier: d.carrier, status: label)
             }
+        if let r = ((try? ctx.fetch(FetchDescriptor<Reservation>(sortBy: [SortDescriptor(\.start)]))) ?? [])
+            .first(where: { !$0.isHidden && $0.start > Date().addingTimeInterval(-3600) && $0.start < Date().addingTimeInterval(7 * 86_400) }) {
+            payload.nextTrip = [r.title, r.start.formatted(.dateTime.weekday(.abbreviated).hour().minute()), r.confirmation.isEmpty ? nil : r.confirmation]
+                .compactMap { $0 }.joined(separator: " · ")
+        }
+        payload.unreadCount = ((try? ctx.fetch(FetchDescriptor<EmailMessage>(predicate: #Predicate { !$0.isRead && !$0.isArchived }))) ?? []).count
         let subs = ((try? ctx.fetch(FetchDescriptor<Subscription>())) ?? []).filter { !$0.isHidden && $0.kind == "subscription" }
         if !subs.isEmpty {
             payload.subscriptionsMonthly = String(format: "%@%.0f/mo", subs[0].currency, subs.reduce(0) { $0 + $1.monthlyCost })

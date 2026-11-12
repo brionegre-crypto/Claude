@@ -206,9 +206,16 @@ struct ComposeView: View {
                 Button("Cancel", role: .cancel) {}
             } message: { Text("Say what you want to say. Keel drafts it; you review before sending.") }
             .interactiveDismissDisabled(sendCountdown != nil || !draft.body.isEmpty)
+            .onChange(of: accountId) { old, new in
+                // Switching the From account swaps in that account's signature.
+                let a = signature(for: old), b = signature(for: new)
+                guard a != b, !old.isEmpty else { return }
+                if !a.isEmpty, let r = draft.body.range(of: a) { draft.body.replaceSubrange(r, with: b) }
+                else if !b.isEmpty { draft.body = "\n\n" + b + draft.body }
+            }
             .task {
                 accountId = draft.accountId ?? accounts.first?.id ?? ""
-                let signature = UserDefaults.standard.string(forKey: Prefs.signature) ?? ""
+                let signature = signature(for: accountId)
                 if !signature.isEmpty && !draft.body.contains(signature) { draft.body = "\n\n" + signature + draft.body }
                 let defaultFollowUp = UserDefaults.standard.integer(forKey: Prefs.followUpDefault)
                 if defaultFollowUp > 0 && followUpDays == nil { followUpDays = defaultFollowUp }
@@ -216,6 +223,11 @@ struct ComposeView: View {
                 await loadForwardedAttachments()
             }
         }
+    }
+
+    /// The sending account's own signature, or the shared one.
+    private func signature(for id: String) -> String {
+        accounts.first { $0.id == id }?.signature ?? UserDefaults.standard.string(forKey: Prefs.signature) ?? ""
     }
 
     private func field(_ label: String, text: Binding<String>) -> some View {
