@@ -40,6 +40,10 @@ struct NoteEditor: View {
     @State private var recording = false
 
     var body: some View {
+        editorBody.savePoint { SavePoints.note(note, focusedBlock: focused ?? editing) }
+    }
+
+    @ViewBuilder private var editorBody: some View {
         if note.isLocked && !unlocked {
             ContentUnavailableView {
                 Label("This note is locked", systemImage: "lock.fill")

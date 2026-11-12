@@ -82,6 +82,7 @@ struct RootView: View {
     @AppStorage(Prefs.appearance) private var appearance = "system"
     @AppStorage("accent") private var accentName = "indigo"
     @State private var appLock = AppLock.shared
+    @State private var savePoints = SavePointCenter.shared
     @Environment(\.scenePhase) private var phase
 
     enum Tab { case today, inbox, calendar, tasks, notes }
@@ -104,6 +105,25 @@ struct RootView: View {
         // Focus lives above the tab bar (like Music's mini-player): always one tap away, shows the live timer.
         .tabViewBottomAccessory { FocusAccessory { router.showFocus = true } }
         .overlay(alignment: .bottom) { UndoToast() }
+        .overlay(alignment: .top) {
+            if let p = savePoints.showing {
+                SavePointBanner(point: p, resume: {
+                    withAnimation(DS.spring) { savePoints.showing = nil }
+                    SavePoints.resume(p, ctx: KeelStore.container.mainContext)
+                }, dismiss: {
+                    withAnimation(DS.spring) { savePoints.showing = nil }
+                })
+                .transition(.move(edge: .top).combined(with: .opacity))
+                .padding(.top, 4)
+            }
+        }
+        .onChange(of: phase) { _, p in
+            if p == .background { savePoints.showing = nil; SavePoints.didEnterBackground() }
+            if p == .active, let sp = SavePoints.pendingResume() {
+                UserDefaults.standard.removeObject(forKey: SavePoints.awayKey)
+                withAnimation(DS.spring) { savePoints.showing = sp }
+            }
+        }
         .sheet(isPresented: $router.showFocus) { NavigationStack { FocusView() } }
         .sheet(item: $mailRouter.pending) { ComposeView(draft: $0) }
         .sheet(isPresented: $router.showSearch) { NavigationStack { SearchView() } }

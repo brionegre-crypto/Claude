@@ -89,6 +89,17 @@ final class WatchBridge: NSObject, WCSessionDelegate {
         payload.scheduledMail = ((try? ctx.fetch(FetchDescriptor<ScheduledMail>())) ?? []).count
         payload.briefing = Briefing.latest
         payload.routines = RoutineStore.all
+        if let sp = SavePoints.latest, Date().timeIntervalSince(sp.createdAt) < 12 * 3600 {
+            payload.savePoint = sp.title + (sp.next.map { " · Next: \($0)" } ?? "")
+        }
+        let meds = (try? ctx.fetch(FetchDescriptor<Medication>())) ?? []
+        if meds.contains(where: { FocusForecast.timing(for: $0).profile != .none }) {
+            let todayCheckIn = ((try? ctx.fetch(FetchDescriptor<CheckIn>())) ?? []).first(where: { cal.isDateInToday($0.day) })
+            let doses = (try? ctx.fetch(FetchDescriptor<MedDose>())) ?? []
+            let sessions = (try? ctx.fetch(FetchDescriptor<FocusSession>(sortBy: [SortDescriptor(\.startedAt)]))) ?? []
+            let f = FocusForecast.build(meds: meds, doses: doses, sleepHours: todayCheckIn?.sleepHours, sessions: sessions)
+            payload.focusWindow = f.peaks.first { $0.end > Date() }?.label
+        }
         payload.suggestions = Autopilot.pending(ctx: ctx).prefix(8).map {
             .init(id: $0.id, title: $0.title, detail: $0.kind == "reply" ? String($0.payload.prefix(240)) : $0.detail, accept: $0.acceptLabel, icon: $0.icon)
         }

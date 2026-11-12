@@ -551,6 +551,7 @@ struct FocusSettings: View {
     @AppStorage(BreakReminders.startKey) private var breakStart = 540
     @AppStorage(BreakReminders.endKey) private var breakEnd = 1050
     @AppStorage(BreakReminders.weekendsKey) private var breakWeekends = false
+    @AppStorage("forecast.on") private var forecastOn = true
     @State private var shutdown = ShutdownManager.shared
 
     private func minuteBinding(_ b: Binding<Int>) -> Binding<Date> {
@@ -560,6 +561,10 @@ struct FocusSettings: View {
 
     var body: some View {
         List {
+            Section {
+                Toggle("Focus Forecast", isOn: $forecastOn)
+                NavigationLink("Set Up Medication Timing") { FocusForecastView() }
+            } footer: { Text("Your best focus window each day, from your meds, sleep and focus history. A forecast, not medical advice.") }
             Section {
                 Picker("Default Length", selection: $minutes) {
                     ForEach([15, 25, 45, 50, 60, 90], id: \.self) { Text("\($0) minutes").tag($0) }

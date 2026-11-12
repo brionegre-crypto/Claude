@@ -122,7 +122,8 @@ struct TodayView: View {
                 }
                 .buttonStyle(.plain)
             }
-        case .avoided: avoidedCard
+        case .avoided: DreadTodayCard()
+        case .forecast: FocusForecastCard()
         }
     }
 

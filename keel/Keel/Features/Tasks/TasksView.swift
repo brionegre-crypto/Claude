@@ -514,6 +514,10 @@ struct TaskDetailView: View {
     }
 
     var body: some View {
+        detailBody.savePoint { SavePoints.task(task) }
+    }
+
+    @ViewBuilder private var detailBody: some View {
         Form {
             Section {
                 TextField("Title", text: $task.title, axis: .vertical).font(DS.Font.headline)

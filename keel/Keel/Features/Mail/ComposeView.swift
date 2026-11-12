@@ -113,6 +113,12 @@ struct ComposeView: View {
     @Environment(\.modelContext) private var ctx
 
     var body: some View {
+        composeBody
+            // If you're pulled away mid-email, Keel remembers it and offers it back when you return.
+            .savePoint { sendCountdown == nil ? SavePoints.draft(draft, accountId: accountId) : nil }
+    }
+
+    @ViewBuilder private var composeBody: some View {
         NavigationStack {
             Form {
                 Section {
@@ -162,7 +168,9 @@ struct ComposeView: View {
             .navigationTitle(draft.replyTo != nil ? "Reply" : (draft.forwardSource != nil || draft.subject.hasPrefix("Fwd:") ? "Forward" : "New Message"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() }.disabled(sendCountdown != nil) }
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") { SavePoints.remove(refId: draft.id.uuidString); dismiss() }.disabled(sendCountdown != nil)
+                }
                 ToolbarItem(placement: .confirmationAction) {
                     Menu {
                         Section("Send later") {
@@ -305,6 +313,7 @@ struct ComposeView: View {
         }
         let mail = outgoing(for: account)
         let scheduled = SendLater.schedule(mail, accountId: account.id, at: date, ctx: ctx)
+        SavePoints.remove(refId: draft.id.uuidString)
         if let days = followUpDays, let to = mail.to.first {
             FollowUps.create(account: account.id, to: to, name: draft.original?.fromName ?? "", subject: draft.subject, days: days, ctx: ctx)
         }
@@ -320,6 +329,7 @@ struct ComposeView: View {
         let mail = outgoing(for: account)
         do {
             try await MailProviderFactory.make(for: account).send(mail)
+            SavePoints.remove(refId: draft.id.uuidString)
             if mail.replyTo != nil, let o = draft.original { InboxBrain.record(.reply, sender: o.from, name: o.fromName, ctx: ctx) }
             if let days = followUpDays, let to = mail.to.first {
                 FollowUps.create(account: account.id, to: to, name: draft.original?.fromName ?? "", subject: draft.subject, days: days, ctx: ctx)

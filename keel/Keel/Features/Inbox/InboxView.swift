@@ -757,6 +757,7 @@ struct EmailDetailView: View {
         .sheet(item: $eventDraft) { d in EventEditor(event: d.event, start: d.start) { eventDraft = nil }.ignoresSafeArea() }
         .translationPresentation(isPresented: $showTranslate, text: email.subject + "\n\n" + email.bodyPlain)
         .task {
+            Dread.recordOpen(email.id)          // Dread Radar notices emails opened again and again
             if !email.isRead {
                 InboxBrain.record(.open, sender: email.from, name: email.fromName, ctx: ctx)
                 email.isRead = true

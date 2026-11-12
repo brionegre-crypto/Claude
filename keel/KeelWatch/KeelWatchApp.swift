@@ -166,6 +166,12 @@ struct WatchRoot: View {
                 NowCard()
                     .listRowBackground(Color.clear)
 
+                if let sp = store.payload.savePoint {
+                    Label { Text("You were: \(sp)").font(.caption2).lineLimit(3) } icon: { Image(systemName: "bookmark.fill").foregroundStyle(accent) }
+                }
+                if let w = store.payload.focusWindow {
+                    Label { Text("Best focus: \(w)").font(.caption2) } icon: { Image(systemName: "sparkles").foregroundStyle(.indigo) }
+                }
                 if let s = store.payload.suggestions, !s.isEmpty {
                     link("Keel prepared \(s.count)", "sparkles", accent, nil) { SuggestionsPage() }
                 }

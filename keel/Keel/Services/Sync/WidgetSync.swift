@@ -126,6 +126,9 @@ final class AppRouter {
         case "money": showMoney = true
         case "leaving": showLeaving = true
         case "journal": showJournal = true
+        case "resume":
+            // After a meeting: offer the latest save point.
+            if let p = SavePoints.latest { SavePointCenter.shared.showing = p }
         case "join":
             // From the meeting Live Activity or widget: open the call itself.
             let link = URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems?.first { $0.name == "url" }?.value
