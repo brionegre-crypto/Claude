@@ -8,23 +8,63 @@ import FoundationModels
 /// Record a meeting, transcribe it on-device as people talk, then write up a summary,
 /// decisions and action items with Apple Intelligence. Saved as a note linked to the calendar event.
 
-/// The audio thread feeds buffers here (kept off the main actor on purpose).
+/// The audio thread feeds buffers here (kept off the main actor on purpose): to live transcription, and to a file
+/// on disk so nothing is lost even if live transcription hiccups.
 private final class AudioFeed: @unchecked Sendable {
-    var request: SFSpeechAudioBufferRecognitionRequest?
+    private let lock = NSLock()
+    private var _request: SFSpeechAudioBufferRecognitionRequest?
+    private var _file: AVAudioFile?
+    var request: SFSpeechAudioBufferRecognitionRequest? {
+        get { lock.withLock { _request } }
+        set { lock.withLock { _request = newValue } }
+    }
+    var file: AVAudioFile? {
+        get { lock.withLock { _file } }
+        set { lock.withLock { _file = newValue } }
+    }
+    func append(_ buffer: AVAudioPCMBuffer) {
+        let (req, f) = lock.withLock { (_request, _file) }
+        req?.append(buffer)
+        try? f?.write(from: buffer)
+    }
 }
 
+/// One recorder for the whole app, so a meeting keeps recording if you switch screens or lock your iPhone.
 @MainActor @Observable
 final class MeetingRecorder {
+    static let shared = MeetingRecorder()
+
     var transcript = ""
     var isRecording = false
     var startedAt: Date?
     var error: String?
+    var repairing = false                  // re-reading the saved audio after you stop
+    var recordedSeconds: TimeInterval = 0
 
-    private var finalized = ""
+    private var finalized = ""             // everything from earlier segments
+    private var segment = ""               // the current segment's latest text
+    private var generation = 0             // ignores late results from a recognition task we already replaced
+    private var segmentStarted = Date()
     private let engine = AVAudioEngine()
     private let feed = AudioFeed()
     private var task: SFSpeechRecognitionTask?
+    private var interruptionObserver: NSObjectProtocol?
     private let recognizer = SFSpeechRecognizer(locale: Locale.current) ?? SFSpeechRecognizer(locale: Locale(identifier: "en-US"))
+    private(set) var audioParts: [URL] = []      // one file per stretch of recording (pause → resume starts a new one)
+
+    static var recordingsFolder: URL {
+        let dir = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0].appendingPathComponent("MeetingAudio", isDirectory: true)
+        try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+        return dir
+    }
+
+    /// Clears the last meeting so the next one starts fresh.
+    func reset() {
+        guard !isRecording else { return }
+        transcript = ""; finalized = ""; segment = ""
+        startedAt = nil; recordedSeconds = 0; error = nil
+        audioParts = []
+    }
 
     func start(resume: Bool = false) async {
         error = nil
@@ -37,15 +77,25 @@ final class MeetingRecorder {
             return
         }
         guard let recognizer, recognizer.isAvailable else { error = "Speech recognition isn't available right now."; return }
+        if !resume { reset() }
         do {
             let session = AVAudioSession.sharedInstance()
             try session.setCategory(.record, mode: .measurement, options: [.duckOthers])
             try session.setActive(true, options: .notifyOthersOnDeactivation)
             let input = engine.inputNode
+            let format = input.outputFormat(forBus: 0)
+            // Keep a compressed copy of the audio, appended across pauses.
+            let url = Self.recordingsFolder.appendingPathComponent("meeting-\(Int(Date().timeIntervalSince1970))-\(audioParts.count).m4a")
+            do {
+                let settings: [String: Any] = [AVFormatIDKey: kAudioFormatMPEG4AAC, AVSampleRateKey: format.sampleRate,
+                                               AVNumberOfChannelsKey: format.channelCount, AVEncoderBitRateKey: 48_000]
+                feed.file = try? AVAudioFile(forWriting: url, settings: settings, commonFormat: format.commonFormat, interleaved: format.isInterleaved)
+                if feed.file != nil { audioParts.append(url) }
+            }
             input.removeTap(onBus: 0)
             let feed = self.feed
-            input.installTap(onBus: 0, bufferSize: 1024, format: input.outputFormat(forBus: 0)) { buffer, _ in
-                feed.request?.append(buffer)
+            input.installTap(onBus: 0, bufferSize: 4096, format: format) { buffer, _ in
+                feed.append(buffer)
             }
             engine.prepare()
             try engine.start()
@@ -55,20 +105,25 @@ final class MeetingRecorder {
         }
         if resume {
             finalized = transcript.isEmpty ? "" : transcript + " "
-        } else {
-            transcript = ""; finalized = ""
-            startedAt = Date()
+            segment = ""
         }
         isRecording = true
         if startedAt == nil { startedAt = Date() }
+        segmentStarted = Date()
+        UIApplication.shared.isIdleTimerDisabled = true       // the screen stays on while you record
+        observeInterruptions()
         beginRecognition()
     }
 
     private func beginRecognition() {
-        guard let recognizer else { return }
+        guard let recognizer, isRecording else { return }
+        generation += 1
+        let gen = generation
+        segment = ""
         let req = SFSpeechAudioBufferRecognitionRequest()
         req.shouldReportPartialResults = true
         req.addsPunctuation = true
+        req.taskHint = .dictation
         if recognizer.supportsOnDeviceRecognition { req.requiresOnDeviceRecognition = true }   // private, no time limit
         feed.request = req
         task = recognizer.recognitionTask(with: req) { [weak self] result, err in
@@ -76,27 +131,133 @@ final class MeetingRecorder {
             let isFinal = result?.isFinal ?? false
             let failed = err != nil
             Task { @MainActor in
-                guard let self else { return }
-                if let text { self.transcript = self.finalized + text }
+                guard let self, gen == self.generation else { return }
+                if let text { self.take(text) }
                 if isFinal || failed {
-                    // Recognition segments end on long pauses; keep going until the user stops.
-                    self.finalized = self.transcript.isEmpty ? "" : self.transcript + " "
+                    // The recognizer ends a segment on a long pause or an error; bank it and keep listening.
+                    self.commitSegment()
                     if self.isRecording {
-                        try? await Task.sleep(for: .milliseconds(300))
-                        if self.isRecording { self.beginRecognition() }
+                        try? await Task.sleep(for: .milliseconds(150))
+                        if self.isRecording && gen == self.generation { self.beginRecognition() }
                     }
                 }
             }
         }
     }
 
+    /// New text for the current segment. On-device recognition sometimes starts over after a pause
+    /// without saying so; when the new text no longer continues the old one, bank the old one first.
+    private func take(_ text: String) {
+        let t = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !t.isEmpty else { return }
+        if !segment.isEmpty && !Self.continues(segment, with: t) {
+            finalized += segment + " "
+        }
+        segment = t
+        transcript = finalized + segment
+    }
+
+    private func commitSegment() {
+        if !segment.isEmpty { finalized += segment + " " }
+        segment = ""
+        transcript = finalized.trimmingCharacters(in: .whitespaces)
+        if !transcript.isEmpty { finalized = transcript + " " }
+    }
+
+    /// True when `new` is a revision of `old` (same beginning), false when the recognizer started over.
+    nonisolated static func continues(_ old: String, with new: String) -> Bool {
+        let a = old.lowercased().split(separator: " ").prefix(3)
+        let b = new.lowercased().split(separator: " ").prefix(3)
+        if a.isEmpty || b.isEmpty { return true }
+        if new.count + 12 < old.count / 2 { return false }               // far shorter: it reset
+        return a.first == b.first || Array(a) == Array(b)
+    }
+
     func stop() {
+        guard isRecording else { return }
         isRecording = false
+        generation += 1
         engine.stop()
         engine.inputNode.removeTap(onBus: 0)
         feed.request?.endAudio()
+        feed.request = nil
+        feed.file = nil                                    // closes the audio file
         task?.finish()
+        commitSegment()
+        if let s = startedAt { recordedSeconds = Date().timeIntervalSince(s) }
+        UIApplication.shared.isIdleTimerDisabled = false
+        if let o = interruptionObserver { NotificationCenter.default.removeObserver(o); interruptionObserver = nil }
         try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
+        Task { await repairIfShort() }
+    }
+
+    /// The meeting is saved as a note: delete the temporary audio and start clean next time.
+    func finishMeeting() {
+        guard !isRecording else { return }
+        for url in audioParts { try? FileManager.default.removeItem(at: url) }
+        reset()
+    }
+
+    /// A phone call or Siri pauses recording; pick it back up when the interruption ends.
+    private func observeInterruptions() {
+        guard interruptionObserver == nil else { return }
+        interruptionObserver = NotificationCenter.default.addObserver(forName: AVAudioSession.interruptionNotification, object: nil, queue: .main) { note in
+            let raw = note.userInfo?[AVAudioSessionInterruptionTypeKey] as? UInt
+            Task { @MainActor in
+                let rec = MeetingRecorder.shared
+                guard rec.isRecording, raw == AVAudioSession.InterruptionType.ended.rawValue else { return }
+                try? AVAudioSession.sharedInstance().setActive(true)
+                if !rec.engine.isRunning { try? rec.engine.start() }
+                rec.commitSegment()
+                rec.beginRecognition()
+            }
+        }
+    }
+
+    /// If the live transcript is much shorter than the meeting (people talk ~2 words a second),
+    /// transcribe the saved audio file again from the start and keep whichever is longer.
+    func repairIfShort() async {
+        let parts = audioParts.filter { FileManager.default.fileExists(atPath: $0.path) }
+        guard !parts.isEmpty, let recognizer else { return }
+        let words = transcript.split(separator: " ").count
+        let seconds = recordedSeconds
+        guard seconds > 30, Double(words) < seconds * 0.6 else { return }
+        repairing = true
+        defer { repairing = false }
+        var pieces: [String] = []
+        for url in parts { pieces.append(await Self.transcribeFile(url, recognizer: recognizer)) }
+        let full = pieces.filter { !$0.isEmpty }.joined(separator: " ")
+        if !isRecording, full.split(separator: " ").count > words {
+            transcript = full
+            finalized = full + " "
+        }
+    }
+
+    /// Reads a whole recording on device, banking each segment as it finishes.
+    static func transcribeFile(_ url: URL, recognizer: SFSpeechRecognizer) async -> String {
+        await withCheckedContinuation { (c: CheckedContinuation<String, Never>) in
+            let req = SFSpeechURLRecognitionRequest(url: url)
+            req.shouldReportPartialResults = false
+            req.addsPunctuation = true
+            req.taskHint = .dictation
+            if recognizer.supportsOnDeviceRecognition { req.requiresOnDeviceRecognition = true }
+            final class Box: @unchecked Sendable { var parts: [String] = []; var done = false }
+            let box = Box()
+            _ = recognizer.recognitionTask(with: req) { result, err in
+                if let r = result {
+                    let t = r.bestTranscription.formattedString
+                    if !t.isEmpty {
+                        // A revision of the same stretch replaces it; a new stretch is added after it.
+                        if let last = box.parts.last, MeetingRecorder.continues(last, with: t) { box.parts[box.parts.count - 1] = t }
+                        else { box.parts.append(t) }
+                    }
+                    if r.isFinal && !box.done { box.done = true; c.resume(returning: box.parts.joined(separator: " ")) }
+                } else if err != nil, !box.done {
+                    box.done = true
+                    c.resume(returning: box.parts.joined(separator: " "))
+                }
+            }
+        }
     }
 }
 
@@ -250,7 +411,7 @@ struct MeetingRecorderView: View {
     @Environment(\.modelContext) private var ctx
     @Environment(\.dismiss) private var dismiss
     @Query private var accounts: [MailAccount]
-    @State private var recorder = MeetingRecorder()
+    @State private var recorder = MeetingRecorder.shared
     @State private var event: EKEvent?
     @State private var writing = false
     @State private var makeTasks = true
@@ -309,11 +470,12 @@ struct MeetingRecorderView: View {
                 if !recorder.isRecording && !recorder.transcript.isEmpty {
                     Toggle("Turn my action items into tasks", isOn: $makeTasks).font(DS.Font.body)
                     Button { Task { await writeUp() } } label: {
-                        Label(writing ? "Writing up with context…" : "Write up meeting notes", systemImage: "sparkles")
+                        Label(recorder.repairing ? "Recovering the full transcript…" : writing ? "Writing up with context…" : "Write up meeting notes",
+                              systemImage: recorder.repairing ? "waveform" : "sparkles")
                             .font(DS.Font.headline).frame(maxWidth: .infinity).padding(.vertical, DS.Space.m)
                             .background(DS.Palette.accent, in: Capsule()).foregroundStyle(.white)
                     }
-                    .disabled(writing)
+                    .disabled(writing || recorder.repairing)
                 }
             }
         }
@@ -331,6 +493,8 @@ struct MeetingRecorderView: View {
                 event = CalendarService.shared.events(from: now.addingTimeInterval(-3_600), to: now.addingTimeInterval(3_600))
                     .first { !$0.isAllDay && $0.startDate <= now.addingTimeInterval(900) && $0.endDate >= now }
             }
+            // A finished meeting from hours ago shouldn't leak into this one.
+            if !recorder.isRecording, let s = recorder.startedAt, Date().timeIntervalSince(s) > 4 * 3600 { recorder.reset() }
             if autoStart && !recorder.isRecording && recorder.transcript.isEmpty {
                 if let event { MeetingAutopilot.startActivity(for: event) }
                 await recorder.start()
@@ -340,7 +504,7 @@ struct MeetingRecorderView: View {
             let web = await WebContext.gather(event: event, title: title, transcript: "", deep: false)
             sources += web.sources
         }
-        .onDisappear { if recorder.isRecording { recorder.stop() }; MeetingAutopilot.setRecording(false) }
+        .onDisappear { if !recorder.isRecording { MeetingAutopilot.setRecording(false) } }   // keeps recording if you switch screens
         .onChange(of: recorder.isRecording) { _, on in MeetingAutopilot.setRecording(on) }
     }
 
@@ -479,6 +643,7 @@ struct MeetingRecorderView: View {
         }
         savedNote = note
         result = w
+        recorder.finishMeeting()             // saved in the note; clear the recorder and its audio for next time
         Haptics.milestone()
     }
 
