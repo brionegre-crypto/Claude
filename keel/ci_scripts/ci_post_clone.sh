@@ -45,3 +45,13 @@ if [ -n "$CI_BUILD_NUMBER" ]; then
 fi
 
 xcodegen generate
+
+# Diagnostics: show what this build will ask Apple to sign, so export failures are easy to pin down.
+echo "---- Keel signing diagnostics ----"
+echo "KEEL_FAMILY_CONTROLS=${KEEL_FAMILY_CONTROLS:-unset} KEEL_WEATHERKIT=${KEEL_WEATHERKIT:-unset} KEEL_HEALTHKIT=${KEEL_HEALTHKIT:-unset} KEEL_MAIL_CLIENT=${KEEL_MAIL_CLIENT:-unset}"
+for f in Keel/Keel.entitlements KeelWidgets/KeelWidgets.entitlements KeelShare/KeelShare.entitlements KeelWatch/KeelWatch.entitlements KeelWatchWidgets/KeelWatchWidgets.entitlements; do
+  echo "== $f"; grep -o '<key>[^<]*</key>' "$f" || true
+done
+grep -n "PRODUCT_BUNDLE_IDENTIFIER" project.yml || true
+echo "----------------------------------"
+
