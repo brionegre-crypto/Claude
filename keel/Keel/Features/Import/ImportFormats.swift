@@ -5,7 +5,7 @@ import CryptoKit
 
 /// One page on its way into Keel, before it's saved. Links point at other pages by `key` until the end,
 /// when they're turned into real Keel page links.
-struct ImportedPage {
+struct ImportedPage: Codable {
     var key: String                         // unique within the import (usually the source path)
     var title: String
     var icon: String? = nil

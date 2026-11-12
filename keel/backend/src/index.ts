@@ -1,5 +1,6 @@
 import { handleAI, json } from "./ai";
 import { handleMCP } from "./mcp";
+import { handleNotion, infoPage, privacyPage, termsPage } from "./notion";
 
 export interface Env {
   KEEL: KVNamespace;
@@ -7,6 +8,8 @@ export interface Env {
   KEEL_DEVICE_TOKEN: string;
   KEEL_MCP_TOKEN: string;
   DAILY_AI_LIMIT: string;
+  NOTION_CLIENT_ID: string;      // public integration (Sign in with Notion)
+  NOTION_CLIENT_SECRET: string;
 }
 
 /**
@@ -18,6 +21,9 @@ export interface Env {
  *   POST /mcp           Remote MCP server for Claude / Claude Duet custom connectors.             [MCP token]
  *   POST /push/gmail    Gmail Pub/Sub push → silent APNs to wake the app.        (TODO: APNs key)
  *   POST /push/graph    Microsoft Graph change notifications → silent APNs.      (TODO: APNs key)
+ *   GET  /              Status page: what's set up, and the Notion redirect URI to copy.          [public]
+ *   GET  /privacy /terms Pages Notion asks public integrations to link to.                       [public]
+ *   /notion/start, /notion/callback, /notion/redeem, /notion/refresh   Sign in with Notion.     [public, see notion.ts]
  */
 export default {
   async fetch(req: Request, env: Env): Promise<Response> {
@@ -26,6 +32,11 @@ export default {
     // Never match when a secret is unset (undefined === undefined would otherwise let anyone in).
     const device = !!env.KEEL_DEVICE_TOKEN && bearer === env.KEEL_DEVICE_TOKEN;
     const mcp = !!env.KEEL_MCP_TOKEN && bearer === env.KEEL_MCP_TOKEN;
+
+    if (req.method === "GET" && (url.pathname === "/" || url.pathname === "/setup")) return infoPage(req, env);
+    if (req.method === "GET" && url.pathname === "/privacy") return privacyPage();
+    if (req.method === "GET" && url.pathname === "/terms") return termsPage();
+    if (url.pathname.startsWith("/notion/")) return handleNotion(req, env);
 
     // Lets the app check its access code without spending AI credits.
     if (url.pathname === "/health") {

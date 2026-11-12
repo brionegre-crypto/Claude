@@ -1,6 +1,7 @@
 import SwiftUI
 import SwiftData
 import UniformTypeIdentifiers
+import AuthenticationServices
 
 /// "Move to Keel": bring notes in from other apps. Drop in anything (a zip, a folder, files) and Keel
 /// works out where it came from, shows you exactly what it found, then imports pages, sub-pages,
@@ -307,6 +308,7 @@ struct ImportView: View {
         record = r
         history = ImportEngine.history
         archive = nil
+        if b.source == .notionAPI { NotionCache.clearAll() }     // downloaded copies are no longer needed
         Haptics.milestone()
         withAnimation(.spring) { stage = .done }
     }
@@ -384,7 +386,7 @@ struct SourceGuideSheet: View {
     private var steps: [String] {
         switch source {
         case .notion, .notionAPI: [
-            "Fastest: tap Connect your workspace below and Keel imports straight from it, no files needed.",
+            "Fastest: tap Connect your workspace below, sign in with Notion and tap Select all. Keel brings the whole workspace, no files needed.",
             "Or export: in the workspace go to Settings → Export all workspace content (or ••• on a page → Export).",
             "Choose “Markdown & CSV”, include subpages, and turn on “Create folders for subpages”.",
             "Download the .zip to Files, then choose it here. Keel unzips it (even zips inside zips).",
@@ -447,82 +449,173 @@ struct SourceGuideSheet: View {
     }
 }
 
-// MARK: - Connect a workspace with a token
+// MARK: - Connect a whole workspace
 
 struct NotionConnectSheet: View {
     let imported: (ImportBundle) -> Void
     @Environment(\.dismiss) private var dismiss
-    @Environment(\.modelContext) private var ctx
+    @Environment(\.webAuthenticationSession) private var webAuth
+    @State private var serverAddress = UserDefaults.standard.string(forKey: KeelServer.addressKey) ?? ""
+    @State private var serverReady: Bool?
+    @State private var workspace = NotionAuth.savedWorkspace
     @State private var token = KeychainStore.read(NotionConnector.keychainKey) ?? ""
-    @State private var workspace: String?
+    @State private var showSecret = false
     @State private var busy = false
     @State private var progress = 0.0
     @State private var status = ""
     @State private var error: String?
     @State private var fetched: ImportBundle?
-    @State private var result: ImportEngine.Record?
+    @State private var bgTask: UIBackgroundTaskIdentifier = .invalid
+
+    private var connected: Bool { !(KeychainStore.read(NotionConnector.keychainKey) ?? "").isEmpty && workspace != nil }
 
     var body: some View {
         NavigationStack {
             Form {
-                Section {
-                    Text("1. Open the integrations page and create a new **internal** integration.")
-                    Link(destination: URL(string: "https://www.notion.so/profile/integrations")!) {
-                        Label("Open integrations page", systemImage: "arrow.up.right.square")
-                    }
-                    Text("2. Copy its **Internal Integration Secret** and paste it below.")
-                    Text("3. In your workspace, open each top page you want → ••• → **Connections** → add the integration. Everything inside it comes too.")
-                } header: { Text("Connect in three steps") }
-                Section {
-                    SecureField("Paste the secret (starts with ntn_ or secret_)", text: $token)
-                        .textInputAutocapitalization(.never).autocorrectionDisabled()
-                    if let workspace { Label("Connected to \(workspace)", systemImage: "checkmark.circle.fill").foregroundStyle(DS.Palette.calm) }
-                    if let error { Text(error).font(DS.Font.caption).foregroundStyle(.red) }
-                } footer: { Text("The secret is kept in the Keychain on this iPhone and only sent to the workspace's own servers. Remove the integration any time to revoke it.") }
-
-                if busy {
+                if let fetched {
                     Section {
-                        ProgressView(value: progress) { Text(status).font(DS.Font.caption).lineLimit(1) }
+                        Label("\(fetched.pages.count) pages, \(fetched.databases) databases and \(fetched.images) images ready.", systemImage: "tray.full.fill")
+                            .font(DS.Font.headline)
+                        Button { imported(fetched) } label: { Text("Review and import").font(DS.Font.headline).frame(maxWidth: .infinity) }
+                            .buttonStyle(.borderedProminent).tint(DS.Palette.accent)
                     }
-                } else if let fetched {
+                } else if busy {
                     Section {
-                        Label("\(fetched.pages.count) pages, \(fetched.databases) databases and \(fetched.images) images ready.", systemImage: "tray.full")
-                        Button { imported(fetched) } label: { Text("Review and import").font(DS.Font.headline) }
-                    }
+                        ProgressView(value: progress) { Text(status).font(DS.Font.caption).lineLimit(2) }
+                        Text("Keep Keel open for the fastest import. If you leave, it picks up where it stopped next time.")
+                            .font(.caption2).foregroundStyle(DS.Palette.inkSoft)
+                    } header: { Text("Reading \(workspace ?? "your workspace")") }
                 } else {
-                    Section {
-                        Button {
-                            Task { await connectAndFetch() }
-                        } label: { Text(workspace == nil ? "Connect and read everything" : "Read everything").font(DS.Font.headline) }
-                        .disabled(token.trimmingCharacters(in: .whitespaces).count < 20)
-                        if KeychainStore.read(NotionConnector.keychainKey) != nil {
-                            Button("Forget This Secret", role: .destructive) {
-                                KeychainStore.delete(NotionConnector.keychainKey); token = ""; workspace = nil
-                            }
+                    signInSection
+                    if NotionCache.cachedCount > 0 {
+                        Section {
+                            Label("\(NotionCache.cachedCount) pages already downloaded. Keel continues where it left off.", systemImage: "arrow.clockwise.circle")
+                                .font(DS.Font.caption)
+                            Button("Start Over", role: .destructive) { NotionCache.clearAll(); Haptics.tap() }.font(DS.Font.caption)
                         }
                     }
+                    secretSection
                 }
+                if let error { Section { Text(error).font(DS.Font.caption).foregroundStyle(.red) } }
             }
-            .navigationTitle("Connect Workspace")
+            .navigationTitle("Notion Workspace")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar { ToolbarItem(placement: .cancellationAction) { Button("Close") { dismiss() } } }
+            .task { serverReady = await NotionAuth.serverReady() }
+            .onDisappear { endBackground() }
         }
     }
 
-    private func connectAndFetch() async {
+    // MARK: Sign in (whole workspace)
+
+    @ViewBuilder private var signInSection: some View {
+        Section {
+            if connected {
+                Label("Connected to \(workspace ?? "your workspace")", systemImage: "checkmark.seal.fill").foregroundStyle(DS.Palette.calm)
+                Button { Task { await fetch(token: KeychainStore.read(NotionConnector.keychainKey) ?? "") } } label: {
+                    Label("Import the whole workspace", systemImage: "square.and.arrow.down.on.square.fill").font(DS.Font.headline)
+                }
+                Button { Task { await signIn() } } label: { Label("Choose different pages", systemImage: "checklist") }
+                Button("Disconnect", role: .destructive) { NotionAuth.signOut(); workspace = nil; token = "" }
+            } else {
+                Button { Task { await signIn() } } label: {
+                    HStack(spacing: 12) {
+                        Image(systemName: "square.stack.3d.up.fill").font(.title2).foregroundStyle(Color(uiColor: .systemBackground))
+                            .frame(width: 44, height: 44).background(DS.Palette.ink, in: .rect(cornerRadius: 12, style: .continuous))
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("Sign in with Notion").font(DS.Font.headline).foregroundStyle(DS.Palette.ink)
+                            Text("Brings every page, sub-page and database").font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
+                        }
+                    }
+                }
+                .disabled(KeelServer.baseURL == nil || serverReady == false)
+                if KeelServer.baseURL == nil || serverReady == false {
+                    TextField("Keel server address", text: $serverAddress)
+                        .keyboardType(.URL).textInputAutocapitalization(.never).autocorrectionDisabled()
+                        .onSubmit(saveServer)
+                    Button("Save Server Address", action: saveServer).disabled(serverAddress.isEmpty)
+                }
+            }
+        } header: { Text("Your whole workspace") } footer: {
+            if KeelServer.baseURL == nil {
+                Text("Sign-in goes through your Keel server, which keeps Notion's secret key off your phone. Deploy it from GitHub: Actions → Deploy Keel server → Run. Its address appears in the run's summary.")
+            } else if serverReady == false {
+                Text("Your server is running but Notion sign-in isn't set up yet. Open the server address in Safari for the last step.")
+            } else {
+                Text("On Notion's screen, tap **Select all** (or pick top-level pages). Everything inside them comes too: sub-pages, databases, images and links. Notion's limit is about three requests a second, so a big workspace can take a while; you'll see the time left.")
+            }
+        }
+    }
+
+    // MARK: Integration secret (no server needed)
+
+    @ViewBuilder private var secretSection: some View {
+        Section {
+            DisclosureGroup("Use an integration secret instead", isExpanded: $showSecret) {
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("1. Create an **internal** integration and copy its secret.")
+                    Link("Open integrations page", destination: URL(string: "https://www.notion.so/profile/integrations")!)
+                    Text("2. In Notion, open each top page → ••• → **Connections** → add the integration.")
+                }
+                .font(DS.Font.caption)
+                SecureField("Paste the secret (ntn_…)", text: $token)
+                    .textInputAutocapitalization(.never).autocorrectionDisabled()
+                Button("Connect and import") { Task { await fetch(token: token.trimmingCharacters(in: .whitespacesAndNewlines), viaSecret: true) } }
+                    .disabled(token.trimmingCharacters(in: .whitespaces).count < 20)
+            }
+        } footer: { Text("Secrets and sign-ins are kept in the Keychain on this iPhone and only sent to Notion.") }
+    }
+
+    // MARK: Actions
+
+    private func saveServer() {
+        UserDefaults.standard.set(serverAddress.trimmingCharacters(in: .whitespacesAndNewlines), forKey: KeelServer.addressKey)
+        serverReady = nil
+        Task { serverReady = await NotionAuth.serverReady() }
+    }
+
+    private func signIn() async {
         error = nil
-        let t = token.trimmingCharacters(in: .whitespacesAndNewlines)
-        let c = NotionConnector(token: t)
-        busy = true; defer { busy = false }
         do {
-            workspace = try await c.verify()
-            KeychainStore.save(t, for: NotionConnector.keychainKey)
+            let r = try await NotionAuth.signIn(with: webAuth)
+            workspace = r.workspace
+            token = r.token
+            Haptics.success()
+            await fetch(token: r.token)
+        } catch NotionAuth.Failure.cancelled {
+            // Closed the sheet: nothing to report.
+        } catch {
+            self.error = error.localizedDescription
+        }
+    }
+
+    private func fetch(token: String, viaSecret: Bool = false) async {
+        guard !token.isEmpty else { return }
+        error = nil
+        let c = NotionConnector(token: token)
+        busy = true
+        UIApplication.shared.isIdleTimerDisabled = true
+        bgTask = UIApplication.shared.beginBackgroundTask(withName: "Notion import") { endBackground() }
+        defer { busy = false; UIApplication.shared.isIdleTimerDisabled = false; endBackground() }
+        do {
+            if viaSecret {
+                workspace = try await c.verify()
+                KeychainStore.save(token, for: NotionConnector.keychainKey)
+                UserDefaults.standard.set(workspace, forKey: NotionAuth.workspaceKey)
+            }
             status = "Looking for pages…"
             fetched = try await c.fetchAll { s, p in
                 await MainActor.run { status = s; progress = p }
             }
+            Haptics.success()
+        } catch is CancellationError {
+            error = "Stopped. Open this again to continue where it left off."
         } catch {
-            self.error = error.localizedDescription
+            self.error = error.localizedDescription + " What's downloaded so far is saved; try again to continue."
         }
+    }
+
+    private func endBackground() {
+        if bgTask != .invalid { UIApplication.shared.endBackgroundTask(bgTask); bgTask = .invalid }
     }
 }

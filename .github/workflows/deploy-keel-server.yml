@@ -1,0 +1,106 @@
+# Deploys Keel's small server (Cloudflare Workers, free tier) without a computer.
+# One-time: add these in GitHub → Settings → Secrets and variables → Actions → New repository secret:
+#   CLOUDFLARE_API_TOKEN    Cloudflare → My Profile → API Tokens → Create Token → "Edit Cloudflare Workers"
+#   CLOUDFLARE_ACCOUNT_ID   Cloudflare dashboard → Workers & Pages → Account ID (right side)
+#   NOTION_CLIENT_ID        Notion public integration → Configuration → OAuth Client ID      (after the first deploy)
+#   NOTION_CLIENT_SECRET    Notion public integration → Configuration → OAuth Client Secret  (after the first deploy)
+# Then: Actions → Deploy Keel server → Run workflow. The summary shows your server address and the
+# Notion redirect URI to copy. Re-run after adding the Notion keys.
+name: Deploy Keel server
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, claude/vigilant-allen-4869op]
+    paths: ["keel/backend/**", ".github/workflows/deploy-keel-server.yml"]
+concurrency:
+  group: deploy-keel-server
+  cancel-in-progress: false
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: keel/backend
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      NOTION_CLIENT_ID: ${{ secrets.NOTION_CLIENT_ID }}
+      NOTION_CLIENT_SECRET: ${{ secrets.NOTION_CLIENT_SECRET }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check Cloudflare keys
+        id: keys
+        run: |
+          if [ -z "$CLOUDFLARE_API_TOKEN" ] || [ -z "$CLOUDFLARE_ACCOUNT_ID" ]; then
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            {
+              echo "### Keel server not deployed yet"
+              echo "Add the **CLOUDFLARE_API_TOKEN** and **CLOUDFLARE_ACCOUNT_ID** repository secrets, then run this workflow again."
+            } >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/setup-node@v4
+        if: steps.keys.outputs.ready == 'true'
+        with: { node-version: "22" }
+
+      - name: Install
+        if: steps.keys.outputs.ready == 'true'
+        run: npm ci || npm install
+
+      - name: Type-check
+        if: steps.keys.outputs.ready == 'true'
+        run: npx tsc --noEmit
+
+      - name: Storage (find or create)
+        if: steps.keys.outputs.ready == 'true'
+        run: |
+          if grep -q REPLACE_WITH_KV_ID wrangler.toml; then
+            ID=$(npx wrangler kv namespace list 2>/dev/null | node -e '
+              let s="";process.stdin.on("data",d=>s+=d).on("end",()=>{
+                try{const l=JSON.parse(s.slice(s.indexOf("[")));const k=l.find(n=>/KEEL$/.test(n.title));console.log(k?k.id:"")}catch{console.log("")}})')
+            if [ -z "$ID" ]; then
+              ID=$(npx wrangler kv namespace create KEEL 2>&1 | grep -oE '[0-9a-f]{32}' | head -1)
+            fi
+            [ -n "$ID" ] || { echo "Couldn't find or create storage"; exit 1; }
+            sed -i "s/REPLACE_WITH_KV_ID/$ID/" wrangler.toml
+          fi
+
+      - name: Deploy
+        if: steps.keys.outputs.ready == 'true'
+        run: npx wrangler deploy 2>&1 | tee deploy.log
+
+      - name: Notion keys
+        if: steps.keys.outputs.ready == 'true'
+        run: |
+          if [ -n "$NOTION_CLIENT_ID" ] && [ -n "$NOTION_CLIENT_SECRET" ]; then
+            printf '%s' "$NOTION_CLIENT_ID" | npx wrangler secret put NOTION_CLIENT_ID
+            printf '%s' "$NOTION_CLIENT_SECRET" | npx wrangler secret put NOTION_CLIENT_SECRET
+            echo "notion=ready" >> "$GITHUB_ENV"
+          fi
+
+      - name: Summary
+        if: steps.keys.outputs.ready == 'true'
+        run: |
+          URL=$(grep -oE 'https://[A-Za-z0-9.-]+\.workers\.dev' deploy.log | head -1)
+          {
+            echo "### ✅ Keel server is live"
+            echo ""
+            echo "**Server address (paste into Keel):** \`$URL\`"
+            echo ""
+            if [ "$notion" = "ready" ]; then
+              echo "**Notion sign-in:** ready. In Keel: Move to Keel → Notion → Sign in with Notion."
+            else
+              echo "**Notion sign-in: one more step.** Create a *public* integration at https://www.notion.so/profile/integrations with:"
+              echo "- Redirect URI: \`$URL/notion/callback\`"
+              echo "- Privacy policy: \`$URL/privacy\` · Terms of use: \`$URL/terms\`"
+              echo "- Capabilities: Read content (and Read user information including email addresses, optional)"
+              echo ""
+              echo "Then add **NOTION_CLIENT_ID** and **NOTION_CLIENT_SECRET** as repository secrets and run this workflow again."
+            fi
+            echo ""
+            echo "Status page: $URL"
+          } >> "$GITHUB_STEP_SUMMARY"

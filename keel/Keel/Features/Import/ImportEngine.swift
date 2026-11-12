@@ -72,7 +72,7 @@ enum ImportEngine {
             n.icon = p.icon
             n.isPinned = p.pinned
             if let c = p.coverData { n.cover = c }
-            else if let path = p.coverPath, let d = archive?.data(path) { n.cover = d }
+            else if let path = p.coverPath, let d = loadData(path, archive: archive) { n.cover = d }
             n.createdAt = p.created ?? Date()
             n.updatedAt = p.updated ?? p.created ?? Date()
             n.sortIndex = Double(i)
@@ -123,12 +123,12 @@ enum ImportEngine {
             // Images: from the import's files or bytes we already have.
             for (bi, b) in blocks.enumerated() where b.kind == .image {
                 var data = p.imageData[b.id]
-                if data == nil, let path = p.imagePaths[b.id], let archive {
-                    if path.hasPrefix("find:") {
+                if data == nil, let path = p.imagePaths[b.id] {
+                    if path.hasPrefix("find:"), let archive {
                         let name = String(path.dropFirst(5)).lowercased()
                         if let found = allPaths.first(where: { $0.lowercased().hasSuffix("/" + name) || $0.lowercased() == name }) { data = archive.data(found) }
                     } else {
-                        data = archive.data(path)
+                        data = loadData(path, archive: archive)
                     }
                 }
                 if let data, !data.isEmpty {
@@ -161,6 +161,14 @@ enum ImportEngine {
         h.insert(record, at: 0)
         history = h
         return record
+    }
+
+    /// Bytes for an image or cover: from the picked files, or downloaded earlier to the import cache.
+    private static func loadData(_ path: String, archive: ImportArchive?) -> Data? {
+        if path.hasPrefix("notioncache:") {
+            return try? Data(contentsOf: NotionCache.images.appendingPathComponent(String(path.dropFirst(12))))
+        }
+        return archive?.data(path)
     }
 
     // MARK: Links

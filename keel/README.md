@@ -205,3 +205,15 @@ keel/
 - [ ] Gmail label creation (`Keel/<category>` labels must be created before `applyLabel`).
 - [ ] Live Activity / widgets / Watch.
 - [ ] Per-user auth (Sign in with Apple) before anyone else uses the backend.
+
+## Deploying the server from your phone (no computer needed)
+
+The `backend/` server is deployed by GitHub Actions (`.github/workflows/deploy-keel-server.yml`).
+
+1. **Cloudflare (free):** create an account, then My Profile → API Tokens → Create Token → "Edit Cloudflare Workers". Copy the token and your Account ID.
+2. **GitHub:** repository Settings → Secrets and variables → Actions → add `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`.
+3. **Run it:** Actions → Deploy Keel server → Run workflow. The run summary shows the server address and the Notion redirect URI.
+4. **Notion sign-in:** at notion.so/profile/integrations create a **public** integration with redirect URI `https://<server>/notion/callback`, privacy policy `https://<server>/privacy` and terms `https://<server>/terms`. Add its OAuth Client ID and Secret as `NOTION_CLIENT_ID` and `NOTION_CLIENT_SECRET` secrets and run the workflow again.
+5. **In Keel:** Move to Keel → Notion → enter the server address once → Sign in with Notion → Select all.
+
+The server never stores Notion content: it swaps the sign-in code for a token and hands it to the phone through a single-use, five-minute handoff.

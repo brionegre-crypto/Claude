@@ -3,8 +3,21 @@ import Foundation
 /// Imports straight from a workspace with an integration token: every page and database shared with
 /// the integration, with their blocks, properties, icons and images. Nothing to export or unzip.
 /// The token is kept in the Keychain on this iPhone and only ever sent to api.notion.com.
+/// Spaces requests to about three a second across everything in flight (the workspace API's limit).
+actor NotionPacer {
+    private var next = Date.distantPast
+    func wait() async {
+        let now = Date()
+        let at = max(now, next)
+        next = at.addingTimeInterval(0.34)
+        let delay = at.timeIntervalSince(now)
+        if delay > 0 { try? await Task.sleep(for: .seconds(delay)) }
+    }
+}
+
 struct NotionConnector: Sendable {
     let token: String
+    let pacer = NotionPacer()
     static let keychainKey = "import.notion.token"
     private let base = URL(string: "https://api.notion.com/v1")!
 
@@ -29,7 +42,7 @@ struct NotionConnector: Sendable {
         r.setValue("application/json", forHTTPHeaderField: "Content-Type")
         r.timeoutInterval = 30
         if let body { r.httpBody = try JSONSerialization.data(withJSONObject: body) }
-        try await Task.sleep(for: .milliseconds(340))
+        await pacer.wait()
         let (data, resp) = try await URLSession.shared.data(for: r)
         let code = (resp as? HTTPURLResponse)?.statusCode ?? 0
         if code == 429 || code >= 500, attempt < 4 {
@@ -53,8 +66,10 @@ struct NotionConnector: Sendable {
 
     // MARK: Import
 
+    /// Reads the whole workspace (everything the sign-in shared): several pages at a time within the rate
+    /// limit, saving each to disk as it goes so a large workspace can resume where it stopped.
     func fetchAll(progress: @escaping @Sendable (String, Double) async -> Void) async throws -> ImportBundle {
-        // 1. Everything shared with the integration.
+        // 1. Everything shared: pages, database rows and databases.
         var objects: [[String: Any]] = []
         var cursor: String?
         repeat {
@@ -63,46 +78,79 @@ struct NotionConnector: Sendable {
             let r = try await request("/search", method: "POST", body: body)
             objects += (r["results"] as? [[String: Any]]) ?? []
             cursor = (r["has_more"] as? Bool == true) ? r["next_cursor"] as? String : nil
-            await progress("Found \(objects.count) pages…", 0.05)
-        } while cursor != nil && objects.count < 5000
+            await progress("Found \(objects.count) pages and databases…", 0.03)
+        } while cursor != nil && objects.count < 50_000
         objects.removeAll { $0["archived"] as? Bool == true || $0["in_trash"] as? Bool == true }
         guard !objects.isEmpty else { throw Failure.nothingShared }
 
-        var pages: [ImportedPage] = []
-        var warnings: Set<String> = []
         let dbSchemas = Dictionary(objects.filter { $0["object"] as? String == "database" }.compactMap { o -> (String, [DBProperty])? in
             guard let id = o["id"] as? String else { return nil }
             return (id, schema(o))
         }, uniquingKeysWith: { a, _ in a })
 
-        for (i, o) in objects.enumerated() {
-            try Task.checkCancellation()
-            guard let id = o["id"] as? String else { continue }
-            let isDB = o["object"] as? String == "database"
-            var page = ImportedPage(key: id, title: isDB ? plain(o["title"]) : pageTitle(o))
-            if page.title.isEmpty { page.title = "Untitled" }
-            page.icon = icon(o["icon"]) ?? (isDB ? "🗃️" : nil)
-            page.created = date(o["created_time"])
-            page.updated = date(o["last_edited_time"])
-            page.parentKey = parentId(o["parent"])
-            if isDB {
-                page.isDatabase = true
-                page.schema = dbSchemas[id] ?? []
-            } else {
-                if let dbId = (o["parent"] as? [String: Any])?["database_id"] as? String {
-                    page.props = props(o["properties"], schema: dbSchemas[dbId] ?? [])
+        // 2. Each page's content, four at a time (the pacer keeps the overall rate polite).
+        var pages: [ImportedPage] = []
+        var warnings = Set<String>()
+        let total = objects.count
+        let started = Date()
+        var finished = 0, reused = 0
+        var nextIndex = 0
+        try await withThrowingTaskGroup(of: (ImportedPage?, Set<String>, Bool).self) { group in
+            while nextIndex < min(4, total) {
+                let o = objects[nextIndex]; nextIndex += 1
+                group.addTask { try await self.readPage(o, schemas: dbSchemas) }
+            }
+            while let r = try await group.next() {
+                if let p = r.0 { pages.append(p) }
+                warnings.formUnion(r.1)
+                if r.2 { reused += 1 }
+                finished += 1
+                if nextIndex < total {
+                    let o = objects[nextIndex]; nextIndex += 1
+                    group.addTask { try await self.readPage(o, schemas: dbSchemas) }
                 }
-                var images: [UUID: Data] = [:]
-                page.blocks = try await blocks(of: id, depth: 0, images: &images, warnings: &warnings)
-                page.imageData = images
+                let fetchedNew = max(1, finished - reused)
+                let perPage = Date().timeIntervalSince(started) / Double(fetchedNew)
+                let left = Double(total - finished) * perPage
+                let eta = left < 60 ? "less than a minute left" : "about \(Int(left / 60) + 1) min left"
+                await progress("\(finished) of \(total) pages · \(eta)\(reused > 0 ? " · \(reused) already saved" : "")",
+                               0.03 + 0.95 * Double(finished) / Double(total))
             }
-            if let cover = o["cover"] as? [String: Any], let url = fileURL(cover), let d = await download(url) {
-                page.coverData = d                     // the page's cover, just like the original
-            }
-            pages.append(page)
-            await progress("Reading “\(page.title)”", 0.05 + 0.9 * Double(i + 1) / Double(objects.count))
         }
         return ImportBundle(source: .notionAPI, name: "Workspace", pages: pages, warnings: Array(warnings).sorted())
+    }
+
+    /// One page or database. Reuses the saved copy if it hasn't changed since. Returns (page, warnings, reused).
+    private func readPage(_ o: [String: Any], schemas: [String: [DBProperty]]) async throws -> (ImportedPage?, Set<String>, Bool) {
+        try Task.checkCancellation()
+        guard let id = o["id"] as? String else { return (nil, [], false) }
+        let edited = o["last_edited_time"] as? String ?? ""
+        if let cached = NotionCache.load(id, edited: edited) { return (cached, [], true) }
+
+        let isDB = o["object"] as? String == "database"
+        var warnings = Set<String>()
+        var page = ImportedPage(key: id, title: isDB ? plain(o["title"]) : pageTitle(o))
+        if page.title.isEmpty { page.title = "Untitled" }
+        page.icon = icon(o["icon"]) ?? (isDB ? "🗃️" : nil)
+        page.created = date(o["created_time"])
+        page.updated = date(o["last_edited_time"])
+        page.parentKey = parentId(o["parent"])
+        if isDB {
+            page.isDatabase = true
+            page.schema = schemas[id] ?? []
+        } else {
+            if let dbId = (o["parent"] as? [String: Any])?["database_id"] as? String {
+                page.props = props(o["properties"], schema: schemas[dbId] ?? [])
+            }
+            var images: [UUID: String] = [:]
+            page.blocks = try await blocks(of: id, depth: 0, images: &images, warnings: &warnings)
+            page.imagePaths = images
+        }
+        if let cover = o["cover"] as? [String: Any], let url = fileURL(cover), let saved = await saveImage(url) {
+            page.coverPath = saved                     // the page's cover, just like the original
+        }
+        NotionCache.save(page, id: id, edited: edited)
+        return (page, warnings, false)
     }
 
     // MARK: Blocks
@@ -120,7 +168,7 @@ struct NotionConnector: Sendable {
 
     /// Blocks keep their nesting (`indent`), colours, line breaks and empty spacing lines, so the page
     /// looks the way it did. Toggles keep their contents as real blocks inside them.
-    private func blocks(of id: String, depth: Int, images: inout [UUID: Data], warnings: inout Set<String>) async throws -> [NoteBlock] {
+    private func blocks(of id: String, depth: Int, images: inout [UUID: String], warnings: inout Set<String>) async throws -> [NoteBlock] {
         var out: [NoteBlock] = []
         for b in try await children(id) {
             guard let type = b["type"] as? String, let v = b[type] as? [String: Any] else { continue }
@@ -153,7 +201,7 @@ struct NotionConnector: Sendable {
                 made = t
             case "image":
                 let b2 = NoteBlock(kind: .image, text: rich(v["caption"]))
-                if let url = fileURL(v), let d = await download(url) { images[b2.id] = d; made = b2 }
+                if let url = fileURL(v), let saved = await saveImage(url) { images[b2.id] = saved; made = b2 }
                 else { warnings.insert("Some images couldn't be downloaded.") }
             case "bookmark", "embed", "link_preview", "video", "file", "pdf", "audio":
                 if let url = (v["url"] as? String) ?? fileURL(v)?.absoluteString {
@@ -263,6 +311,16 @@ struct NotionConnector: Sendable {
     private func fileURL(_ v: [String: Any]) -> URL? {
         let s = ((v["file"] as? [String: Any])?["url"] as? String) ?? ((v["external"] as? [String: Any])?["url"] as? String)
         return s.flatMap(URL.init(string:))
+    }
+
+    /// Downloads an image straight to disk (image links expire after an hour, so it's done right away).
+    /// Returns a name the importer resolves, so huge workspaces don't fill memory.
+    private func saveImage(_ url: URL) async -> String? {
+        guard let d = await download(url) else { return nil }
+        let ext = url.pathExtension.isEmpty || url.pathExtension.count > 5 ? "img" : url.pathExtension.lowercased()
+        let name = UUID().uuidString + "." + ext
+        do { try d.write(to: NotionCache.images.appendingPathComponent(name)) } catch { return nil }
+        return "notioncache:" + name
     }
 
     private func download(_ url: URL) async -> Data? {
