@@ -17,6 +17,15 @@ final class SyncEngine {
     private var container: ModelContainer?
 
     private var storeObserver: NSObjectProtocol?
+    private var worker: MailStore?
+
+    /// One background mail worker per container, made the first time sync runs.
+    private func mailStore(_ container: ModelContainer) -> MailStore {
+        if let worker { return worker }
+        let w = MailStore(modelContainer: container)
+        worker = w
+        return w
+    }
     private var pendingReminderSync: Task<Void, Never>?
 
     func configure(container: ModelContainer) {
@@ -60,32 +69,25 @@ final class SyncEngine {
         await FocusForecast.refresh(ctx: ctx)
         await TransitionAlerts.refresh()
 
-        // 1. Mail, all accounts in parallel-ish (sequential per account keeps rate limits sane)
+        // 1. Mail: download on each account (network, off the main thread while waiting), then save
+        //    everything in one background batch so open screens update once instead of per message.
         let accounts = (try? ctx.fetch(FetchDescriptor<MailAccount>())) ?? []
-        var fresh: [EmailMessage] = []
+        var batches: [MailStore.Batch] = []
         for account in accounts where account.isEnabled {
             do {
                 let provider = MailProviderFactory.make(for: account)
                 let (msgs, cursor) = try await provider.fetchChanges(cursor: account.syncCursor)
-                for m in msgs {
-                    let id = "\(account.id)|\(m.providerId)"
-                    if let existing = try? ctx.fetch(FetchDescriptor<EmailMessage>(predicate: #Predicate { $0.id == id })).first {
-                        // Already synced: update state only, keep Keel's AI sorting and summary.
-                        existing.isRead = m.isRead
-                        existing.isStarred = m.isStarred
-                    } else {
-                        let e = EmailMessage(accountId: account.id, fetched: m)
-                        ctx.insert(e)
-                        fresh.append(e)
-                    }
-                }
+                batches.append(MailStore.Batch(accountId: account.id, messages: msgs))
                 account.syncCursor = cursor
                 account.lastSyncedAt = Date()
             } catch {
                 lastError = "\(account.address): \(error.localizedDescription)"
             }
         }
-        try? ctx.save()
+        let worker = mailStore(container)
+        let newIds = await worker.upsert(batches)
+        let fresh: [EmailMessage] = newIds.isEmpty ? [] :
+            ((try? ctx.fetch(FetchDescriptor<EmailMessage>(predicate: #Predicate { newIds.contains($0.id) }))) ?? [])
 
         // 1a. Your smart rules run first; a rule's category skips AI sorting.
         await MailRules.apply(to: fresh, accounts: accounts, ctx: ctx)
@@ -93,32 +95,34 @@ final class SyncEngine {
         MailScanners.scan(fresh, ctx: ctx)
         Task { await TripScanner.backfillIfNeeded(ctx: ctx) }   // one-time, in the background
         await TripScanner.scan(fresh, ctx: ctx)
+        try? ctx.save()                                          // also stores each account's sync position, now that its mail is saved
 
-        // 1b. Machines aren't people: automated mail the AI called important/actionable becomes an update.
-        let misfiled = ((try? ctx.fetch(FetchDescriptor<EmailMessage>(predicate: #Predicate { !$0.isArchived }))) ?? [])
-            .filter { ($0.category == .important || $0.category == .actionable) && MailNoise.isAutomated($0) }
-        for e in misfiled { e.category = .updates; e.priorityScore = min(e.priorityScore, 0.3) }
+        // 1b. Machines aren't people: automated mail the AI called important/actionable becomes an update (in the background).
+        await worker.reclassifyAutomated()
 
-        // 2. AI triage on anything new (on-device first — free)
+        // 2. AI triage on anything new (on-device first — free). Results are written together at the end,
+        //    so the inbox re-sorts once instead of flickering through every email.
         let untriaged = (try? ctx.fetch(FetchDescriptor<EmailMessage>(predicate: #Predicate { $0.triagedAt == nil }))) ?? []
+        var updates: [MailStore.TriageUpdate] = []
         for email in untriaged.prefix(150) {
             guard let r = await AIRouter.shared.triage(email) else { continue }
-            email.category = r.category
-            email.priorityScore = r.priority
-            if (r.category == .important || r.category == .actionable) && MailNoise.isAutomated(email) {
-                email.category = .updates; email.priorityScore = min(r.priority, 0.3)
+            var category = r.category
+            var priority = r.priority
+            if (category == .important || category == .actionable) && MailNoise.isAutomated(email) {
+                category = .updates; priority = min(r.priority, 0.3)
             }
-            email.aiSummary = r.summary
-            email.triagedAt = Date()
-            if let title = r.taskTitle, r.category == .actionable || r.category == .important {
-                email.extractedTaskTitle = title
-                email.extractedDueDate = r.dueDateISO.flatMap { ISO8601DateFormatter.dateOnly.date(from: $0) }
-            }
+            let wantsTask = r.taskTitle != nil && (r.category == .actionable || r.category == .important)
+            updates.append(MailStore.TriageUpdate(id: email.id, category: category, priority: priority, summary: r.summary,
+                                                  taskTitle: wantsTask ? r.taskTitle : nil,
+                                                  dueDate: wantsTask ? r.dueDateISO.flatMap { ISO8601DateFormatter.dateOnly.date(from: $0) } : nil))
             // Write category back as a label so Gmail/Outlook (and Claude Duet's connectors) see Keel's sorting.
             if let account = accounts.first(where: { $0.id == email.accountId }) {
                 try? await MailProviderFactory.make(for: account).applyLabel(email.providerMessageId, label: r.category.rawValue)
             }
+            // Big first sync: save in chunks so sorting shows up as it goes.
+            if updates.count >= 40 { await worker.applyTriage(updates); updates.removeAll() }
         }
+        await worker.applyTriage(updates)
 
         // 2b. A heads-up only for VIPs and urgent mail.
         await InboxBrain.notify(fresh, ctx: ctx)
