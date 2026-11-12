@@ -17,7 +17,12 @@ struct NoteLinksSection: View {
 
     var body: some View {
         let outgoing = Self.linkTitles(in: note.plainText)
-        let backlinks = notes.filter { $0.id != note.id && $0.plainText.localizedCaseInsensitiveContains("[[\(note.title)]]") }
+        let url = RichText.pageURL(note.id)
+        let backlinks = notes.filter { other in
+            other.id != note.id && !other.isLocked &&
+            (other.plainText.contains(url) || (!note.title.isEmpty && other.plainText.localizedCaseInsensitiveContains("[[\(note.title)]]"))
+             || other.blocks.contains { $0.kind == .page && $0.refId == note.id.uuidString })
+        }
         if !outgoing.isEmpty || !backlinks.isEmpty {
             VStack(alignment: .leading, spacing: DS.Space.s) {
                 Divider().padding(.vertical, DS.Space.s)

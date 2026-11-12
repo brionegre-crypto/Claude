@@ -235,14 +235,34 @@ struct MicroStep: Codable, Identifiable, Hashable {
 
 // MARK: - Notes (Notion-style blocks)
 
-enum BlockKind: String, Codable { case text, heading, todo, bullet, quote, divider, emailEmbed, taskEmbed, image }
+enum BlockKind: String, Codable {
+    case text, heading, todo, bullet, quote, divider, emailEmbed, taskEmbed, image
+    // Workspace blocks
+    case heading2, heading3, numbered, toggle, callout, code, table, bookmark, page
+}
 
 struct NoteBlock: Codable, Identifiable, Hashable {
     var id = UUID()
     var kind: BlockKind
-    var text: String
+    var text: String                            // inline markdown: **bold**, *italic*, ==highlight==, `code`, [link](url)
     var checked: Bool = false
-    var refId: String?                          // email id / task id for embeds
+    var refId: String?                          // email / task / attachment / sub-page id, or a bookmark URL
+    // Optional, so notes saved before these existed still load.
+    var body: String?                           // toggle contents
+    var collapsed: Bool?                        // toggle open/closed
+    var icon: String?                           // callout emoji
+    var lang: String?                           // code language
+    var rows: [[String]]?                       // table cells, first row is the header
+    var color: String?                          // gray | red | orange | yellow | green | blue | purple | pink (+ "bg:" prefix for background)
+}
+
+/// A column in a notes database: Status, Due, Tags…
+struct DBProperty: Codable, Identifiable, Hashable {
+    enum Kind: String, Codable, CaseIterable { case text, number, select, multiSelect, status, date, checkbox, url, person }
+    var id: String = UUID().uuidString
+    var name: String
+    var kind: Kind
+    var options: [String] = []
 }
 
 @Model final class Note {
@@ -257,13 +277,33 @@ struct NoteBlock: Codable, Identifiable, Hashable {
     var isTemplate: Bool = false                // a reusable note template, hidden from Notes
     var folder: String?                         // nil = no folder
     var isLocked: Bool = false                  // needs Face ID to open; hidden from search, Spotlight and AI
+    // Workspace
+    var icon: String?                           // page emoji
+    @Attribute(.externalStorage) var cover: Data?
+    var createdAt: Date = Date()
+    var sortIndex: Double = 0                   // order among sibling pages
+    // Databases: a database is a page whose child pages are its rows.
+    var isDatabase: Bool = false
+    var schema: [DBProperty] = []
+    var dbView: String = "table"                // table | board | calendar | gallery | list
+    var dbGroupBy: String?                      // property id for board columns
+    var dbSortBy: String?                       // property id, or "title" / "created"
+    var dbSortAscending: Bool = true
+    var dbFilterProp: String?
+    var dbFilterValue: String?
+    var props: [String: String] = [:]           // this page's values when it's a database row
 
     init(title: String, blocks: [NoteBlock] = [NoteBlock(kind: .text, text: "")]) {
         self.title = title
         self.blocks = blocks
     }
 
-    var plainText: String { blocks.map(\.text).joined(separator: "\n") }
+    var plainText: String {
+        blocks.map { b in
+            [b.text, b.body ?? "", (b.rows ?? []).map { $0.joined(separator: " ") }.joined(separator: "\n")]
+                .filter { !$0.isEmpty }.joined(separator: "\n")
+        }.joined(separator: "\n")
+    }
 }
 
 // MARK: - Habits & habit stacking
