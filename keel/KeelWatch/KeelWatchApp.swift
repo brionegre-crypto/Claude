@@ -173,6 +173,7 @@ struct WatchRoot: View {
                     if let f = store.payload.followUps, !f.isEmpty { link("Awaiting reply", "bubble.left.and.exclamationmark.bubble.right", .teal, "\(f.count)") { ListPage(title: "Awaiting reply", items: f) } }
                     if let c = store.payload.countdowns, !c.isEmpty { link("Countdowns", "hourglass", .yellow, nil) { CountdownsPage() } }
                     if let p = store.payload.projects, !p.isEmpty { link("Projects", "folder.fill", .blue, "\(p.count)") { ProjectsPage() } }
+                    if let m = store.payload.moodWeek, !m.isEmpty { link("Mood", "face.smiling", .yellow, nil) { MoodPage() } }
                     link("Day in review", "moon.stars.fill", .indigo, nil) { DayReviewPage() }
                 }
             }
@@ -203,6 +204,14 @@ struct NowCard: View {
                 Text(timerInterval: Date()...end, countsDown: true)
                     .font(.system(size: 34, weight: .semibold, design: .rounded).monospacedDigit())
             } else {
+                if let w = store.payload.weather {
+                    HStack(spacing: 4) {
+                        Image(systemName: w.symbol).symbolRenderingMode(.multicolor)
+                        Text("\(w.temperature) · H \(w.high) L \(w.low)")
+                        if let r = w.rainFrom { Text("☔︎ \(r.formatted(date: .omitted, time: .shortened))") }
+                    }
+                    .font(.caption2).foregroundStyle(.secondary)
+                }
                 Text("JUST ONE THING").font(.caption2.weight(.bold)).foregroundStyle(accent)
                 Text(store.payload.nextThing ?? "Nothing urgent").font(.headline).lineLimit(3)
                 if let step = store.payload.nextThingStep { Text("Start: \(step)").font(.caption2).foregroundStyle(.secondary) }
@@ -339,6 +348,17 @@ struct FocusPage: View {
                 }
                 if let mins = store.payload.focusMinutesWeek {
                     Text("This week: \(mins / 60)h \(mins % 60)m focused").font(.caption2).foregroundStyle(.secondary)
+                }
+                if let days = store.payload.focusDays, days.contains(where: { $0 > 0 }) {
+                    let top = max(1, days.max() ?? 1)
+                    HStack(alignment: .bottom, spacing: 3) {
+                        ForEach(Array(days.enumerated()), id: \.offset) { i, m in
+                            RoundedRectangle(cornerRadius: 2)
+                                .fill(i == days.count - 1 ? accent : accent.opacity(0.5))
+                                .frame(height: max(2, CGFloat(m) / CGFloat(top) * 36))
+                        }
+                    }
+                    .frame(height: 38)
                 }
             }
         }
@@ -499,5 +519,24 @@ struct ParkPage: View {
             }
             if parked > 0 { Text("\(parked) parked for later").font(.caption2).foregroundStyle(.secondary) }
         }
+    }
+}
+
+/// The last 7 check-ins from the iPhone mood journal.
+struct MoodPage: View {
+    @Environment(WatchStore.self) private var store
+    private let faces = ["😞", "😕", "😐", "🙂", "😄"]
+    var body: some View {
+        List {
+            ForEach(store.payload.moodWeek ?? [], id: \.day) { d in
+                HStack {
+                    Text(faces[max(0, min(4, d.mood - 1))]).font(.title3)
+                    Text(d.day.formatted(.dateTime.weekday(.abbreviated).day()))
+                    Spacer()
+                    if let e = d.energy { Image(systemName: ["battery.25", "battery.50", "battery.100"][max(0, min(2, e - 1))]).foregroundStyle(.secondary) }
+                }
+            }
+        }
+        .navigationTitle("Mood")
     }
 }

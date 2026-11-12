@@ -36,6 +36,7 @@ targets:
         com.apple.security.application-groups: [group.com.briangreenejr.keel]
         aps-environment: development
         com.apple.developer.healthkit: true
+        com.apple.developer.weatherkit: true
         com.apple.developer.healthkit.access: []
     info:
       path: Keel/Info.plist
@@ -60,6 +61,7 @@ targets:
         NSSupportsLiveActivities: true
         NSHealthShareUsageDescription: Keel reads last night's sleep to suggest how much energy you have today. Nothing is written to Health.
         NSPhotoLibraryUsageDescription: Keel reads your recent screenshots on this iPhone to suggest tasks, and lets you add photos to notes.
+        NSLocationWhenInUseUsageDescription: Keel uses your approximate location for today's weather and to search places for location reminders.
         NSCameraUsageDescription: Keel uses the camera to scan documents into your notes.
         NSPhotoLibraryAddUsageDescription: Keel can save images from your notes to Photos.
         NSMicrophoneUsageDescription: Keel records meetings you choose to record and turns them into notes.

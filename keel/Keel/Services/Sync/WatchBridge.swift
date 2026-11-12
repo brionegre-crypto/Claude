@@ -68,6 +68,19 @@ final class WatchBridge: NSObject, WCSessionDelegate {
         payload.focusMinutesWeek = ((try? ctx.fetch(FetchDescriptor<FocusSession>())) ?? [])
             .filter { ($0.endedAt ?? .distantPast) >= weekStart }
             .reduce(0) { $0 + Int((($1.endedAt ?? $1.startedAt).timeIntervalSince($1.startedAt)) / 60) }
+        let sessions = ((try? ctx.fetch(FetchDescriptor<FocusSession>())) ?? []).filter { $0.endedAt != nil }
+        payload.focusDays = (0..<7).reversed().map { i in
+            let d = cal.date(byAdding: .day, value: -i, to: today)!
+            return sessions.filter { cal.isDate($0.startedAt, inSameDayAs: d) }
+                .reduce(0) { $0 + Int((($1.endedAt ?? $1.startedAt).timeIntervalSince($1.startedAt)) / 60) }
+        }
+        payload.moodWeek = ((try? ctx.fetch(FetchDescriptor<CheckIn>())) ?? [])
+            .filter { $0.day >= weekStart }.sorted { $0.day < $1.day }
+            .map { .init(day: $0.day, mood: $0.mood, energy: $0.energy) }
+        if let w = KeelWeather.shared.today {
+            payload.weather = .init(temperature: w.temperature, symbol: w.symbol, condition: w.condition,
+                                    high: w.high, low: w.low, rainFrom: w.rainStartsAt)
+        }
         if let data = WatchCoding.encode(payload) {
             try? WCSession.default.updateApplicationContext(["payload": data])
         }

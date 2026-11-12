@@ -7,6 +7,7 @@ struct CheckInCard: View {
     @Query(sort: \CheckIn.day, order: .reverse) private var checkIns: [CheckIn]
     @State private var highlight = ""
     @State private var picked: Int?
+    @State private var energy: Int?
 
     private var today: CheckIn? { checkIns.first { Calendar.current.isDateInToday($0.day) } }
 
@@ -39,6 +40,16 @@ struct CheckInCard: View {
                         }
                     }
                     if picked != nil {
+                        HStack {
+                            Text("Energy").font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
+                            ForEach([(1, "battery.25", "Low"), (2, "battery.50", "OK"), (3, "battery.100", "High")], id: \.0) { lvl in
+                                Button { energy = lvl.0; Haptics.tap() } label: {
+                                    Label(lvl.2, systemImage: lvl.1).font(DS.Font.caption)
+                                        .padding(.horizontal, 10).padding(.vertical, 6)
+                                        .background(energy == lvl.0 ? DS.Palette.accent.opacity(0.2) : Color.secondary.opacity(0.1), in: Capsule())
+                                }.buttonStyle(.plain)
+                            }
+                        }
                         TextField("One good thing today (optional)", text: $highlight)
                             .textFieldStyle(.roundedBorder)
                             .onSubmit(save)
@@ -62,8 +73,10 @@ struct CheckInCard: View {
         guard let m = picked else { return }
         let c = CheckIn(day: Calendar.current.startOfDay(for: Date()), mood: m)
         c.highlight = highlight
+        c.energy = energy
         ctx.insert(c)
         Haptics.success()
-        highlight = ""; picked = nil
+        highlight = ""; picked = nil; energy = nil
+        if HealthService.shared.isAuthorizedHint { Task { c.sleepHours = await HealthService.shared.lastNightSleepHours() } }
     }
 }

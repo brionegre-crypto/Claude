@@ -55,6 +55,7 @@ final class SyncEngine {
 
         // 1. Mail, all accounts in parallel-ish (sequential per account keeps rate limits sane)
         let accounts = (try? ctx.fetch(FetchDescriptor<MailAccount>())) ?? []
+        var fresh: [EmailMessage] = []
         for account in accounts where account.isEnabled {
             do {
                 let provider = MailProviderFactory.make(for: account)
@@ -66,7 +67,9 @@ final class SyncEngine {
                         existing.isRead = m.isRead
                         existing.isStarred = m.isStarred
                     } else {
-                        ctx.insert(EmailMessage(accountId: account.id, fetched: m))
+                        let e = EmailMessage(accountId: account.id, fetched: m)
+                        ctx.insert(e)
+                        fresh.append(e)
                     }
                 }
                 account.syncCursor = cursor
@@ -76,6 +79,9 @@ final class SyncEngine {
             }
         }
         try? ctx.save()
+
+        // 1a. Your smart rules run first; a rule's category skips AI sorting.
+        await MailRules.apply(to: fresh, accounts: accounts, ctx: ctx)
 
         // 2. AI triage on anything new (on-device first — free)
         let untriaged = (try? ctx.fetch(FetchDescriptor<EmailMessage>(predicate: #Predicate { $0.triagedAt == nil }))) ?? []

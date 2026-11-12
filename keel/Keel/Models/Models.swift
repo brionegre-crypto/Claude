@@ -534,6 +534,8 @@ enum OdysseyKind: String, Codable, CaseIterable, Identifiable {
     var mood: Int                               // 1…5
     var highlight: String = ""
     var gratitude: String = ""
+    var energy: Int?                            // 1…3, captured with the check-in
+    var sleepHours: Double?
     var createdAt: Date = Date()
 
     init(day: Date, mood: Int) {
@@ -608,6 +610,24 @@ enum OdysseyKind: String, Codable, CaseIterable, Identifiable {
     init(name: String, body: String) {
         self.name = name
         self.body = body
+    }
+}
+
+// MARK: - Smart email rules
+
+@Model final class MailRule {
+    var id: UUID = UUID()
+    var field: String                           // from | subject | any
+    var contains: String                        // case-insensitive match
+    var action: String                          // archive | star | read | category:<name> | task
+    var isOn: Bool = true
+    var timesApplied: Int = 0
+    var createdAt: Date = Date()
+
+    init(field: String, contains: String, action: String) {
+        self.field = field
+        self.contains = contains
+        self.action = action
     }
 }
 

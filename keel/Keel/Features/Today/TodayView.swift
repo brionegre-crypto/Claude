@@ -97,6 +97,10 @@ struct TodayView: View {
                         NavigationLink { ProjectsView() } label: { Label("Projects", systemImage: "folder") }
                         NavigationLink { ProcessInboxView() } label: { Label("Sort loose tasks", systemImage: "tray.and.arrow.down") }
                         NavigationLink { HabitsView() } label: { Label("Habit stacks", systemImage: "link") }
+                        NavigationLink { HabitLibraryView() } label: { Label("Habit library", systemImage: "books.vertical") }
+                        NavigationLink { FocusHistoryView() } label: { Label("Focus history", systemImage: "chart.bar.xaxis") }
+                        NavigationLink { JournalTimelineView() } label: { Label("Mood journal", systemImage: "face.smiling") }
+                        NavigationLink { SharedCalendarsView() } label: { Label("Shared calendars", systemImage: "person.3") }
                         NavigationLink { WeeklyReviewView() } label: { Label("Weekly review", systemImage: "chart.bar.doc.horizontal") }
                         NavigationLink { MonthlyReviewView() } label: { Label("Monthly review", systemImage: "calendar.badge.checkmark") }
                         NavigationLink { PeopleView() } label: { Label("Keep in touch", systemImage: "person.2") }
@@ -126,6 +130,7 @@ struct TodayView: View {
             Text(Date.now, format: .dateTime.weekday(.wide).month().day())
                 .font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft).textCase(.uppercase)
             Text(greetingText).font(DS.Font.hero)
+            WeatherRow()
             if !yearTheme.isEmpty {
                 Label(yearTheme, systemImage: "sparkle").font(DS.Font.caption).foregroundStyle(DS.Palette.accent)
             }
@@ -404,6 +409,7 @@ struct TodayView: View {
             tasks: tasks.prefix(20).map { "\($0.title) [~\(ADHDCoach.calibratedMinutes($0))m, energy \($0.energy.label)]" },
             importantEmails: emails.filter { $0.category == .important }.prefix(5).map { $0.subject },
             habitStacks: stacks.map { "\($0.name): \($0.anchor.label)" },
+            weather: KeelWeather.shared.today?.plannerLine ?? "",
             idealWeek: idealBlocks.filter { $0.weekdays.contains(Calendar.current.component(.weekday, from: Date())) }
                 .sorted { $0.startMinute < $1.startMinute }.map { "\($0.timeLabel) \($0.title) (\($0.area.title))" })
         plan = await AIRouter.shared.planDay(context: ctxData)
@@ -435,5 +441,36 @@ struct BrainDumpView: View {
                 }
             }
         }
+    }
+}
+
+/// "18° · Partly Cloudy · H 21° L 12° · rain from 3 PM" with Apple Weather attribution.
+struct WeatherRow: View {
+    @State private var weather = KeelWeather.shared
+    @Environment(\.colorScheme) private var scheme
+    @Environment(\.openURL) private var openURL
+
+    var body: some View {
+        Group {
+            if let w = weather.today {
+                HStack(spacing: 6) {
+                    Image(systemName: w.symbol).symbolRenderingMode(.multicolor)
+                    Text("\(w.temperature) · \(w.condition) · H \(w.high) L \(w.low)")
+                    if let r = w.rainStartsAt {
+                        Text("· rain from \(r.formatted(date: .omitted, time: .shortened))").foregroundStyle(DS.Palette.meeting)
+                    }
+                    Spacer()
+                    if let logo = scheme == .dark ? weather.logoDark : weather.logoLight {
+                        Button { if let l = weather.legalURL { openURL(l) } } label: {
+                            AsyncImage(url: logo) { $0.resizable().scaledToFit() } placeholder: { Color.clear }.frame(height: 10)
+                        }
+                        .buttonStyle(.plain)
+                        .accessibilityLabel("Weather data from Apple Weather")
+                    }
+                }
+                .font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
+            }
+        }
+        .task { await weather.refresh() }
     }
 }

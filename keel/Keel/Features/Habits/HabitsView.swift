@@ -19,6 +19,7 @@ struct HabitsView: View {
                             Text("Attach tiny habits to things you already do. “After my morning coffee → take meds → 2-min plan.”")
                         } actions: {
                             Button("Use a starter stack") { seedStarter() }.buttonStyle(.borderedProminent).tint(DS.Palette.accent)
+                            NavigationLink("Browse the habit library") { HabitLibraryView() }
                         }
                     }
                     ForEach(stacks) { stack in stackCard(stack) }
@@ -26,7 +27,10 @@ struct HabitsView: View {
                 .padding()
             }
             .navigationTitle("Habits")
-            .toolbar { Button { showNew = true } label: { Image(systemName: "plus") } }
+            .toolbar {
+                NavigationLink { HabitLibraryView() } label: { Image(systemName: "books.vertical") }
+                Button { showNew = true } label: { Image(systemName: "plus") }
+            }
             .sheet(isPresented: $showNew) { NewStackView() }
             .onAppear { HabitEngine.scheduleEventAnchoredStacks(stacks, habits: habits) }
     }

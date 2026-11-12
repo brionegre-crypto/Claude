@@ -15,27 +15,56 @@ struct SearchView: View {
     @State private var query = ""
     @State private var events: [EKEvent] = []
     @State private var viewing: EventRef?
+    @State private var refined: SmartQuery?
 
-    private func hit(_ fields: String...) -> Bool {
-        let q = query.lowercased()
-        return fields.contains { $0.lowercased().contains(q) }
+    /// Typed text parsed locally; Apple Intelligence's reading replaces it after you press Search.
+    private var smart: SmartQuery { refined ?? SmartQueryParser.parse(query) }
+    private func taskOK(_ t: TaskItem) -> Bool {
+        let s = smart
+        guard s.allows("task"), s.matches(t.title, t.notes, t.tags.joined(separator: " ")) else { return false }
+        if s.flags.contains("done") && !t.isDone { return false }
+        if s.flags.contains("open") && t.isDone { return false }
+        if s.flags.contains("overdue") && (t.isDone || (t.dueDate ?? .distantFuture) >= Calendar.current.startOfDay(for: Date())) { return false }
+        if s.flags.contains("starred") || s.flags.contains("unread") || s.flags.contains("attachments") { return false }
+        return s.inRange(s.flags.contains("done") ? t.completedAt : t.dueDate)
     }
+    private func mailOK(_ e: EmailMessage) -> Bool {
+        let s = smart
+        guard s.allows("email"), s.matches(e.subject, e.fromName, e.from, e.bodyPlain) else { return false }
+        if let f = s.from, !(e.fromName + " " + e.from).lowercased().contains(f) { return false }
+        if s.flags.contains("unread") && e.isRead { return false }
+        if s.flags.contains("starred") && !e.isStarred { return false }
+        if s.flags.contains("attachments") && !e.hasAttachments { return false }
+        if s.flags.contains("overdue") || s.flags.contains("done") { return false }
+        return s.inRange(e.receivedAt)
+    }
+    private var plainOnly: Bool { smart.kinds.isEmpty && smart.flags.isEmpty && smart.from == nil }
 
     var body: some View {
         List {
-            if query.count < 2 {
+            if query.count < 2 || (!smart.isStructured && smart.words.isEmpty) {
                 ContentUnavailableView("Search everything", systemImage: "magnifyingglass",
-                                       description: Text("Tasks, notes, email, events, saved links, goals and people."))
+                                       description: Text("Tasks, notes, email, events, links, goals and people.\nTry “emails from sam last week”, “overdue tasks” or “notes about budget this month”."))
                     .listRowBackground(Color.clear)
             } else {
-                let t = tasks.filter { hit($0.title, $0.notes, $0.tags.joined(separator: " ")) }.prefix(8)
+                if smart.isStructured {
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack {
+                            Image(systemName: refined == nil ? "text.magnifyingglass" : "sparkles").foregroundStyle(DS.Palette.accent)
+                            ForEach(smart.chips, id: \.self) { Chip(text: $0, color: DS.Palette.accent) }
+                        }
+                    }
+                    .listRowBackground(Color.clear)
+                }
+                let t = tasks.filter(taskOK).prefix(smart.isStructured ? 30 : 8)
                 if !t.isEmpty {
                     Section("Tasks") { ForEach(Array(t)) { task in NavigationLink { TaskDetailView(task: task) } label: { TaskRow(task: task) } } }
                 }
-                let n = notes.filter { hit($0.title, $0.plainText) }.prefix(6)
+                let n = smart.allows("note") && smart.flags.isEmpty && smart.from == nil
+                    ? Array(notes.filter { smart.matches($0.title, $0.plainText) && smart.inRange($0.updatedAt) }.prefix(smart.isStructured ? 20 : 6)) : []
                 if !n.isEmpty {
                     Section("Notes") {
-                        ForEach(Array(n)) { note in
+                        ForEach(n) { note in
                             NavigationLink { NoteEditor(note: note) } label: {
                                 VStack(alignment: .leading) {
                                     Text(note.title).font(DS.Font.headline)
@@ -45,7 +74,7 @@ struct SearchView: View {
                         }
                     }
                 }
-                let m = mail.filter { hit($0.subject, $0.fromName, $0.from, $0.bodyPlain) }.prefix(8)
+                let m = mail.filter(mailOK).prefix(smart.isStructured ? 30 : 8)
                 if !m.isEmpty {
                     Section("Email") { ForEach(Array(m)) { e in NavigationLink { EmailDetailView(email: e) } label: { EmailRow(email: e) } } }
                 }
@@ -64,15 +93,15 @@ struct SearchView: View {
                         }
                     }
                 }
-                let l = links.filter { hit($0.title, $0.summary ?? "", $0.url) }.prefix(5)
+                let l = plainOnly && smart.range == nil ? Array(links.filter { smart.matches($0.title, $0.summary ?? "", $0.url) }.prefix(5)) : []
                 if !l.isEmpty {
-                    Section("Read later") { ForEach(Array(l)) { LinkRow(link: $0) } }
+                    Section("Read later") { ForEach(l) { LinkRow(link: $0) } }
                 }
-                let g = goals.filter { hit($0.title, $0.why) }
+                let g = plainOnly && smart.range == nil ? goals.filter { smart.matches($0.title, $0.why) } : []
                 if !g.isEmpty {
                     Section("Goals") { ForEach(g) { goal in NavigationLink { GoalDetailView(goal: goal) } label: { Text("\(goal.emoji) \(goal.title)") } } }
                 }
-                let p = people.filter { hit($0.name, $0.email, $0.notes) }
+                let p = plainOnly && smart.range == nil ? people.filter { smart.matches($0.name, $0.email, $0.notes) } : []
                 if !p.isEmpty {
                     Section("People") { ForEach(p) { person in Text(person.name) } }
                 }
@@ -80,17 +109,24 @@ struct SearchView: View {
         }
         .navigationTitle("Search")
         .searchable(text: $query, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search Keel")
-        .onChange(of: query) { loadEvents() }
+        .onChange(of: query) { refined = nil; loadEvents() }
+        .onSubmit(of: .search) {
+            let q = query
+            Task {
+                if let r = await SmartQueryParser.refine(q), q == query { refined = r; loadEvents() }
+            }
+        }
         .sheet(item: $viewing) { ref in EventDetail(event: ref.event) { viewing = nil }.ignoresSafeArea() }
     }
 
     private func loadEvents() {
-        guard query.count >= 2 else { events = []; return }
-        let q = query.lowercased()
+        let s = smart
+        guard query.count >= 2, s.allows("event"), s.flags.isEmpty, s.from == nil else { events = []; return }
         let now = Date()
-        events = CalendarService.shared.events(from: now.addingTimeInterval(-90 * 86_400), to: now.addingTimeInterval(180 * 86_400))
-            .filter { ($0.title ?? "").lowercased().contains(q) || ($0.location ?? "").lowercased().contains(q) }
-            .prefix(8).map { $0 }
+        let r = s.range ?? DateInterval(start: now.addingTimeInterval(-90 * 86_400), end: now.addingTimeInterval(180 * 86_400))
+        events = CalendarService.shared.events(from: r.start, to: r.end)
+            .filter { s.matches($0.title ?? "", $0.location ?? "") }
+            .prefix(s.isStructured ? 20 : 8).map { $0 }
     }
 }
 

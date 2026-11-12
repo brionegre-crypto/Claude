@@ -40,6 +40,19 @@ struct WatchPayload: Codable {
         var done: Int
         var total: Int
     }
+    struct WeatherRow: Codable, Hashable {
+        var temperature: String
+        var symbol: String
+        var condition: String
+        var high: String
+        var low: String
+        var rainFrom: Date?
+    }
+    struct MoodDay: Codable, Hashable {
+        var day: Date
+        var mood: Int
+        var energy: Int?
+    }
     struct CountdownRow: Codable, Hashable {
         var title: String
         var emoji: String
@@ -65,6 +78,9 @@ struct WatchPayload: Codable {
     var doneToday: Int? = nil
     var focusMinutesWeek: Int? = nil
     var projects: [ProjectRow]? = nil
+    var weather: WeatherRow? = nil
+    var focusDays: [Int]? = nil           // minutes focused, oldest → today (7 days)
+    var moodWeek: [MoodDay]? = nil
 }
 
 /// What Apple Watch asks the iPhone to do.

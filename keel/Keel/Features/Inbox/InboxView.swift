@@ -32,6 +32,7 @@ struct InboxView: View {
     @State private var loadingSent = false
     @State private var compose: ComposeDraft?
     @State private var snoozing: EmailMessage?
+    @State private var ruleFrom: EmailMessage?
     @State private var pickSnoozeDate = false
     @State private var customSnooze = Date().addingTimeInterval(86_400)
 
@@ -100,6 +101,7 @@ struct InboxView: View {
                 }
             }
             .sheet(item: $compose) { ComposeView(draft: $0) }
+            .sheet(item: $ruleFrom) { MailRuleEditor(rule: nil, prefillField: "from", prefillText: $0.from) }
             .confirmationDialog("Snooze until…", isPresented: Binding(get: { snoozing != nil && !pickSnoozeDate }, set: { if !$0 && !pickSnoozeDate { snoozing = nil } }), titleVisibility: .visible) {
                 ForEach(Self.snoozeOptions(), id: \.0) { option in
                     Button("\(option.0) · \(option.1.formatted(date: .abbreviated, time: .shortened))") {
@@ -217,6 +219,7 @@ struct InboxView: View {
                 Divider()
                 Button(e.isRead ? "Mark Unread" : "Mark Read", systemImage: e.isRead ? "envelope.badge" : "envelope.open") { toggleRead(e) }
                 Button(e.isStarred ? "Unstar" : "Star", systemImage: "star") { star(e) }
+                Button("Create Rule…", systemImage: "line.3.horizontal.decrease.circle") { ruleFrom = e }
                 if e.category == .newsletters || e.category == .promotions || Unsubscribe.canUnsubscribe(e) {
                     Button("Unsubscribe & archive all", systemImage: "hand.raised.slash") {
                         Task { _ = await Unsubscribe.run(e, provider: provider(for: e), ctx: ctx) }

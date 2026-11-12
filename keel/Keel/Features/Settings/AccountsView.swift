@@ -391,6 +391,7 @@ struct MailSettings: View {
                 Toggle("Screener", isOn: Binding(get: { !UserDefaults.standard.bool(forKey: "screener.off") },
                                                  set: { UserDefaults.standard.set(!$0, forKey: "screener.off") }))
             } footer: { Text("The first time someone emails you, decide whether they get into your inbox. Blocked senders are archived automatically.") }
+            Section { NavigationLink("Rules") { MailRulesView() } } footer: { Text("Auto-archive, star, file or turn mail into tasks as it arrives.") }
             Section { NavigationLink("Snippets") { SnippetsView() } } footer: { Text("Saved replies you can insert while writing an email.") }
             Section("Signature") {
                 TextField("Sent from Keel", text: $signature, axis: .vertical).lineLimit(2...5)

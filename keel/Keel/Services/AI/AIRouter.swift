@@ -89,6 +89,7 @@ struct DayContext: Codable {
     var tasks: [String]
     var importantEmails: [String]
     var habitStacks: [String]
+    var weather: String = ""            // e.g. "18°, cloudy, rain likely from 3 PM"
     var idealWeek: [String] = []        // today's blocks from the ideal week
 }
 
