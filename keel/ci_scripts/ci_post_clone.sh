@@ -19,24 +19,24 @@ fi
 # Apple Weather (WeatherKit) and Apple Health (HealthKit): the export fails if the App ID doesn't have these
 # capabilities turned on yet, because the provisioning profile won't carry them. Cloud builds leave them out
 # unless enabled; the app hides weather and Health features gracefully without them.
-# After enabling each capability on the App ID com.briangreenejr.keel, add to the workflow's environment variables:
-#   KEEL_WEATHERKIT=1   (Capabilities AND App Services tabs → WeatherKit)
-#   KEEL_HEALTHKIT=1    (Capabilities tab → HealthKit)
-if [ "${KEEL_WEATHERKIT:-0}" != "1" ]; then
+# Both are now enabled on the App ID com.briangreenejr.keel, so they're included by default.
+# To leave one out (e.g. if Apple's capability setup breaks an export), set in the workflow's environment variables:
+#   KEEL_WEATHERKIT=0   or   KEEL_HEALTHKIT=0
+if [ "${KEEL_WEATHERKIT:-1}" != "1" ]; then
   sed -i '' '/com.apple.developer.weatherkit/d' project.yml
-  echo "WeatherKit entitlement left out of this build (set KEEL_WEATHERKIT=1 to include it)."
+  echo "WeatherKit entitlement left out of this build (KEEL_WEATHERKIT=0)."
 fi
-if [ "${KEEL_HEALTHKIT:-0}" != "1" ]; then
+if [ "${KEEL_HEALTHKIT:-1}" != "1" ]; then
   sed -i '' '/com.apple.developer.healthkit/d' project.yml
-  echo "HealthKit entitlements left out of this build (set KEEL_HEALTHKIT=1 to include them)."
+  echo "HealthKit entitlements left out of this build (KEEL_HEALTHKIT=0)."
 fi
 
 # Apple Watch app: it needs its own two App IDs (…watchkitapp and …watchkitapp.widgets), each with App Groups.
-# Until a build with it passes, cloud builds ship the iPhone app without the watch app embedded.
-# Set KEEL_WATCH=1 in the workflow's environment variables to include it.
-if [ "${KEEL_WATCH:-0}" != "1" ]; then
+# Both are registered with App Groups, so the watch app is included by default.
+# Set KEEL_WATCH=0 in the workflow's environment variables to ship the iPhone app without it.
+if [ "${KEEL_WATCH:-1}" != "1" ]; then
   sed -i '' '/      - target: KeelWatch                 # Apple Watch companion/d' project.yml
-  echo "Apple Watch app left out of this build (set KEEL_WATCH=1 to include it)."
+  echo "Apple Watch app left out of this build (KEEL_WATCH=0)."
 fi
 
 # Default mail app: Apple must grant the com.apple.developer.mail-client entitlement first.
