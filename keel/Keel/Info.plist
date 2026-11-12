@@ -50,7 +50,7 @@
 	<key>NSContactsUsageDescription</key>
 	<string>Keel shows who's invited to your calendar events.</string>
 	<key>NSFaceIDUsageDescription</key>
-	<string>Keel locks your notes and mail behind Face ID.</string>
+	<string>Keel uses Face ID to unlock the app and your locked notes.</string>
 	<key>NSHealthShareUsageDescription</key>
 	<string>Keel reads last night's sleep to suggest how much energy you have today. Nothing is written to Health.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
