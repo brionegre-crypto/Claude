@@ -1,0 +1,3765 @@
+{
+"version": 10,
+"entries": [
+{
+"s": 0,
+"section": "Leviticus 11",
+"group": "LEVITICUS 11 DIETARY LAW SUMMARY",
+"name": "Beef, Lamb, Goat, Bison, Venison, Elk",
+"status": "approved",
+"details": "Split hoof + chews cud [Lev 11:3]. All cuts approved if plain"
+},
+{
+"s": 0,
+"section": "Leviticus 11",
+"group": "LEVITICUS 11 DIETARY LAW SUMMARY",
+"name": "Chicken, Turkey, Duck, Quail, Pheasant, Goose",
+"status": "approved",
+"details": "Not on forbidden bird list [Lev 11:13-19]. Domestic poultry permitted"
+},
+{
+"s": 0,
+"section": "Leviticus 11",
+"group": "LEVITICUS 11 DIETARY LAW SUMMARY",
+"name": "Salmon, Tuna, Cod, Trout, Mackerel, Sardines, Herring, Bass, Snapper, Halibut, Tilapia",
+"status": "approved",
+"details": "Fins and scales present [Lev 11:9]. All permitted"
+},
+{
+"s": 0,
+"section": "Leviticus 11",
+"group": "LEVITICUS 11 DIETARY LAW SUMMARY",
+"name": "ALL PORK: ham, bacon, pork chops, lard, pepperoni, pork sausage, pork gelatin",
+"status": "avoid",
+"details": "[Lev 11:7-8]. Removed from this diet in all forms"
+},
+{
+"s": 0,
+"section": "Leviticus 11",
+"group": "LEVITICUS 11 DIETARY LAW SUMMARY",
+"name": "Shrimp, Lobster, Crab, Oysters, Clams, Mussels, Scallops, Squid",
+"status": "avoid",
+"details": "No fins and scales [Lev 11:10-12]. All shellfish forbidden"
+},
+{
+"s": 0,
+"section": "Leviticus 11",
+"group": "LEVITICUS 11 DIETARY LAW SUMMARY",
+"name": "Catfish, Shark, Eel, Swordfish, Sturgeon",
+"status": "avoid",
+"details": "No true scales [Lev 11:10]. Forbidden regardless of local availability"
+},
+{
+"s": 1,
+"section": "Meats & Poultry",
+"group": "Fresh & Frozen (Levitically Clean)",
+"name": "Beef (grass-fed)",
+"status": "approved",
+"details": "Ground beef, sirloin, ribeye, liver, stew beef [Lev 11:3]",
+"alt": "Injected beef with soy solution; any listing 'soy protein' or 'soybean oil'"
+},
+{
+"s": 1,
+"section": "Meats & Poultry",
+"group": "Fresh & Frozen (Levitically Clean)",
+"name": "Lamb / Goat",
+"status": "approved",
+"details": "All cuts [Lev 11:3]. High zinc and iron",
+"alt": "Pre-marinated or pre-seasoned (check for soy and added sugar)"
+},
+{
+"s": 1,
+"section": "Meats & Poultry",
+"group": "Fresh & Frozen (Levitically Clean)",
+"name": "Bison / Venison / Elk",
+"status": "approved",
+"details": "All plain cuts [Lev 11:3]. Lean, high iron",
+"alt": "Pre-marinated or sauced versions"
+},
+{
+"s": 1,
+"section": "Meats & Poultry",
+"group": "Fresh & Frozen (Levitically Clean)",
+"name": "Chicken",
+"status": "approved",
+"details": "Organic, air-chilled, plain [Lev 11:13-19]",
+"alt": "Injected chicken labeled 'up to 15% solution' — soy in the brine"
+},
+{
+"s": 1,
+"section": "Meats & Poultry",
+"group": "Fresh & Frozen (Levitically Clean)",
+"name": "Turkey",
+"status": "approved",
+"details": "Ground turkey plain, turkey breast [Lev 11:13-19]",
+"alt": "Pre-seasoned roasts, flavored ground turkey with added seasonings"
+},
+{
+"s": 1,
+"section": "Meats & Poultry",
+"group": "Fresh & Frozen (Levitically Clean)",
+"name": "Duck / Quail / Pheasant",
+"status": "approved",
+"details": "All plain, not on forbidden bird list [Lev 11:13-19]",
+"alt": "Sweet-glazed or pre-marinated preparations"
+},
+{
+"s": 1,
+"section": "Meats & Poultry",
+"group": "Fresh & Frozen (Levitically Clean)",
+"name": "Organ Meats",
+"status": "approved",
+"details": "Beef liver, chicken liver — highest iron and B12 of any food [Lev 11:3]",
+"alt": "Organ meats from unclean animals"
+},
+{
+"s": 1,
+"section": "Meats & Poultry",
+"group": "Fresh & Frozen (Levitically Clean)",
+"name": "ALL PORK",
+"status": "approved",
+"details": "NONE — completely removed from this diet",
+"alt": "Ham, bacon, pork chops, lard, pepperoni, pork rinds, prosciutto [Lev 11:7-8]"
+},
+{
+"s": 1,
+"section": "Meats & Poultry",
+"group": "Canned & Packaged Meats — Approved Brands",
+"name": "Kirkland Canned Chicken (Costco)",
+"status": "approved",
+"details": "Ingredients: chicken, water, salt. Clean, affordable, bulk. Best value canned chicken. Buy by the case."
+},
+{
+"s": 1,
+"section": "Meats & Poultry",
+"group": "Canned & Packaged Meats — Approved Brands",
+"name": "Member's Mark Canned Chicken (Sam's Club)",
+"status": "approved",
+"details": "Chicken breast, water, salt. Bulk multi-pack. Verify current label. Great pantry protein staple at Sam's."
+},
+{
+"s": 1,
+"section": "Meats & Poultry",
+"group": "Canned & Packaged Meats — Approved Brands",
+"name": "Member's Mark Grassfed Beef Snack Sticks (Sam's Club)",
+"status": "approved",
+"details": "100% grass-fed beef, 0g sugar, no nitrates, no nitrites, no MSG, gluten-free. 9g protein per stick, 12-pack. Naturally seasoned with celery powder, sea salt, spices. Excellent clean grab-and-go protein. Sam's Club."
+},
+{
+"s": 1,
+"section": "Meats & Poultry",
+"group": "Canned & Packaged Meats — Approved Brands",
+"name": "Valley Fresh Canned Chicken",
+"status": "approved",
+"details": "Ingredients: chicken, water, salt. Widely available at Walmart, Target, Publix. No soy, no broth."
+},
+{
+"s": 1,
+"section": "Meats & Poultry",
+"group": "Canned & Packaged Meats — Approved Brands",
+"name": "Trader Joe's Canned Chicken",
+"status": "approved",
+"details": "Clean label. Affordable. Verify current label shows chicken, water, salt only."
+},
+{
+"s": 1,
+"section": "Meats & Poultry",
+"group": "Canned & Packaged Meats — Approved Brands",
+"name": "Wild Planet Tuna (in water)",
+"status": "approved",
+"details": "Wild-caught albacore or skipjack. No vegetable broth, no soy. Fins and scales [Lev 11:9]. Whole Foods, Target, Amazon."
+},
+{
+"s": 1,
+"section": "Meats & Poultry",
+"group": "Canned & Packaged Meats — Approved Brands",
+"name": "Safe Catch Tuna",
+"status": "approved",
+"details": "Tests every fish for mercury. Clean label. No soy, no broth. Good for frequent consumption. Whole Foods, Sprouts."
+},
+{
+"s": 1,
+"section": "Meats & Poultry",
+"group": "Canned & Packaged Meats — Approved Brands",
+"name": "Member's Mark Chunk Light / Albacore Tuna (Sam's Club)",
+"status": "approved",
+"details": "Tuna, water, salt in the plain water-packed version. Fins and scales [Lev 11:9]. Bulk multi-pack. Check label for 'vegetable broth' and choose water-pack only. Sam's Club."
+},
+{
+"s": 1,
+"section": "Meats & Poultry",
+"group": "Canned & Packaged Meats — Approved Brands",
+"name": "Wild Planet Sardines (water or olive oil)",
+"status": "approved",
+"details": "Wild-caught, no soy, fins and scales [Lev 11:9]. High omega-3, iron, vitamin D. Whole Foods, Sprouts, Amazon."
+},
+{
+"s": 1,
+"section": "Meats & Poultry",
+"group": "Canned & Packaged Meats — Approved Brands",
+"name": "Crown Prince Sardines (water)",
+"status": "approved",
+"details": "BPA-free can, clean label, no soy. Budget-friendly option. Walmart, Publix, Amazon."
+},
+{
+"s": 1,
+"section": "Meats & Poultry",
+"group": "Canned & Packaged Meats — Approved Brands",
+"name": "Wild Planet Wild Salmon (canned)",
+"status": "approved",
+"details": "Pink salmon, wild-caught, no soy, no broth, fins and scales [Lev 11:9]. Whole Foods, Costco."
+},
+{
+"s": 1,
+"section": "Meats & Poultry",
+"group": "Canned & Packaged Meats — Approved Brands",
+"name": "Applegate Naturals Turkey Deli",
+"status": "approved",
+"details": "No soy, no nitrates, no dyes, no HFCS. Turkey breast slices. Find at Whole Foods, Publix, Target."
+},
+{
+"s": 1,
+"section": "Meats & Poultry",
+"group": "Canned & Packaged Meats — Approved Brands",
+"name": "Applegate Naturals Beef Hot Dogs",
+"status": "approved",
+"details": "No pork, no soy, no artificial nitrates. 100% beef. Check label for current formula. Whole Foods, Target."
+},
+{
+"s": 1,
+"section": "Meats & Poultry",
+"group": "Canned & Packaged Meats — Approved Brands",
+"name": "EPIC Beef Jerky (original sea salt)",
+"status": "caution",
+"details": "No soy, no artificial dyes. Check for no added sugar on current label. Whole Foods, REI, Target."
+},
+{
+"s": 1,
+"section": "Meats & Poultry",
+"group": "Canned & Packaged Meats — Approved Brands",
+"name": "Chomps Beef Sticks",
+"status": "approved",
+"details": "Grass-fed beef, no soy, no artificial dyes, no HFCS. 10g protein per stick. Whole Foods, Costco, Target."
+},
+{
+"s": 1,
+"section": "Meats & Poultry",
+"group": "Canned & Packaged Meats — Approved Brands",
+"name": "SPAM / Canned Ham",
+"status": "avoid",
+"details": "Pork [Lev 11:7-8] + soy derivatives. Double violation. No exceptions."
+},
+{
+"s": 1,
+"section": "Meats & Poultry",
+"group": "Canned & Packaged Meats — Approved Brands",
+"name": "Generic deli turkey with 'soy protein'",
+"status": "avoid",
+"details": "Soy protein isolate listed on most grocery store sliced turkey. Check every label."
+},
+{
+"s": 1,
+"section": "Meats & Poultry",
+"group": "Canned & Packaged Meats — Approved Brands",
+"name": "Great Value Canned Chicken Breast (Walmart)",
+"status": "approved",
+"details": "Chicken breast, water, salt. Cheapest clean canned chicken anywhere. Walmart is removing synthetic dyes and 30+ additives from ALL Great Value products by Jan 2027, so this line keeps getting cleaner. Walmart."
+},
+{
+"s": 1,
+"section": "Meats & Poultry",
+"group": "Canned & Packaged Meats — Approved Brands",
+"name": "Good & Gather Canned Chicken (Target)",
+"status": "approved",
+"details": "Target's clean private line. Chicken, water, salt. No soy, no broth. Good & Gather is Target's 'no artificial flavors/dyes/sweeteners' brand — a reliable default across the store."
+},
+{
+"s": 1,
+"section": "Meats & Poultry",
+"group": "Canned & Packaged Meats — Approved Brands",
+"name": "Publix Canned Chicken Breast",
+"status": "approved",
+"details": "Chicken, water, salt. Clean store label, and Publix is the most convenient stop in Huntsville. Verify no 'vegetable broth' on the current can."
+},
+{
+"s": 1,
+"section": "Meats & Poultry",
+"group": "Canned & Packaged Meats — Approved Brands",
+"name": "Simple Truth Canned Chicken (Kroger)",
+"status": "approved",
+"details": "Kroger's Simple Truth line is 'Free From 101+' artificial ingredients — no artificial flavors, colors, sweeteners, or preservatives by brand standard. Reliable clean default in any Kroger."
+},
+{
+"s": 1,
+"section": "Meats & Poultry",
+"group": "Canned & Packaged Meats — Approved Brands",
+"name": "GreenWise Chicken / Beef (Publix)",
+"status": "approved",
+"details": "Publix's clean line: raised without antibiotics or added hormones, made without the preservatives, flavors, and colors on Publix's published exclusion list. Any GreenWise item is a safe starting point — still read for soy and sugar."
+},
+{
+"s": 1,
+"section": "Meats & Poultry",
+"group": "Canned & Packaged Meats — Approved Brands",
+"name": "Simply Nature Grass-Fed Beef (Aldi)",
+"status": "approved",
+"details": "Aldi's clean line — no added hormones, no artificial ingredients. Aldi grass-fed ground beef is one of the best price-per-pound clean beef options in Huntsville. Aldi."
+},
+{
+"s": 1,
+"section": "Meats & Poultry",
+"group": "Canned & Packaged Meats — Approved Brands",
+"name": "Great Value Tuna in Water (Walmart)",
+"status": "approved",
+"details": "Tuna, water, salt. Fins and scales [Lev 11:9]. Cheapest clean tuna. Avoid the pouches listing 'vegetable broth' — buy the plain water-packed cans."
+},
+{
+"s": 1,
+"section": "Meats & Poultry",
+"group": "Canned & Packaged Meats — Approved Brands",
+"name": "Good & Gather / 365 Sardines",
+"status": "approved",
+"details": "Both Target's and Whole Foods' store sardines are packed in water or olive oil with clean labels. Fins and scales [Lev 11:9]. Cheaper than Wild Planet, nearly as clean."
+},
+{
+"s": 1,
+"section": "Meats & Poultry",
+"group": "Canned & Packaged Meats — Approved Brands",
+"name": "Store-brand deli turkey with 'soy protein'",
+"status": "avoid",
+"details": "Most grocery store sliced turkey — including many store brands — lists soy protein isolate and dextrose. Applegate or GreenWise are the safe deli picks."
+},
+{
+"s": 2,
+"section": "Seafood",
+"group": "",
+"name": "Wild Planet Wild Sockeye Salmon",
+"status": "approved",
+"details": "Wild-caught, no soy, no broth, fins and scales [Lev 11:9]. Highest omega-3. At Whole Foods, Costco, Amazon."
+},
+{
+"s": 2,
+"section": "Seafood",
+"group": "",
+"name": "Safe Catch Wild Salmon",
+"status": "approved",
+"details": "Mercury-tested, clean label. At Whole Foods, Sprouts. Good for frequent use."
+},
+{
+"s": 2,
+"section": "Seafood",
+"group": "",
+"name": "Costco Wild-Caught Salmon (fresh/frozen)",
+"status": "approved",
+"details": "Best price per pound for fresh salmon. Buy in bulk and freeze portions. Kirkland brand is clean."
+},
+{
+"s": 2,
+"section": "Seafood",
+"group": "",
+"name": "Member's Mark Wild-Caught Sockeye Salmon (Sam's Club)",
+"status": "approved",
+"details": "Wild-caught sockeye, fins and scales [Lev 11:9]. IMPORTANT: Sam's carries both wild-caught AND farm-raised — check each package for the 'wild-caught' label. Wild sockeye is leaner with brighter color. Fresh or frozen. Sam's Club."
+},
+{
+"s": 2,
+"section": "Seafood",
+"group": "",
+"name": "Trader Joe's Wild Salmon (frozen)",
+"status": "approved",
+"details": "Affordable, clean label, no additives. Wild-caught Pacific. Good everyday option."
+},
+{
+"s": 2,
+"section": "Seafood",
+"group": "",
+"name": "Wild Planet Sardines",
+"status": "approved",
+"details": "Water or olive oil. Wild-caught, no soy. One of the most affordable omega-3 sources. Publix, Walmart, Target."
+},
+{
+"s": 2,
+"section": "Seafood",
+"group": "",
+"name": "Crown Prince Sardines",
+"status": "approved",
+"details": "BPA-free can, water-packed, clean label. Walmart, Publix, Winn-Dixie."
+},
+{
+"s": 2,
+"section": "Seafood",
+"group": "",
+"name": "Starkist Tuna (in water)",
+"status": "caution",
+"details": "Widely available and affordable. Standard Starkist albacore in water is clean, BUT check label — some pouches list 'vegetable broth' or 'pyrophosphate.' Choose plain water-pack only."
+},
+{
+"s": 2,
+"section": "Seafood",
+"group": "",
+"name": "Catfish",
+"status": "avoid",
+"details": "No true scales [Lev 11:10]. Forbidden. Common in Southern cooking but off this diet. Substitute with tilapia or cod."
+},
+{
+"s": 2,
+"section": "Seafood",
+"group": "",
+"name": "Shrimp (all forms)",
+"status": "avoid",
+"details": "No fins and scales [Lev 11:10-12]. Forbidden. Includes fried shrimp, shrimp cocktail, shrimp pasta."
+},
+{
+"s": 2,
+"section": "Seafood",
+"group": "",
+"name": "Crab, Lobster, Oysters, Clams, Mussels",
+"status": "avoid",
+"details": "No fins and scales [Lev 11:10-12]. Forbidden in all forms including crab cakes and clam chowder."
+},
+{
+"s": 2,
+"section": "Seafood",
+"group": "",
+"name": "Member's Mark Shrimp / Crab / Lobster / Catfish (Sam's Club)",
+"status": "avoid",
+"details": "Sam's stocks all of these prominently in the seafood case [Lev 11:10-12]. Walk past them — no fins and scales means forbidden regardless of the warehouse deal."
+},
+{
+"s": 2,
+"section": "Seafood",
+"group": "",
+"name": "Great Value Wild-Caught Salmon (Walmart)",
+"status": "approved",
+"details": "Frozen wild-caught fillets. Fins and scales [Lev 11:9]. Check the bag says WILD-CAUGHT, not farm-raised or 'Atlantic.' Best budget salmon in Huntsville."
+},
+{
+"s": 2,
+"section": "Seafood",
+"group": "",
+"name": "Good & Gather Wild Caught Salmon (Target)",
+"status": "approved",
+"details": "Frozen wild salmon portions, clean label, no additives. Convenient single-portion packs — easy to cook one at a time."
+},
+{
+"s": 2,
+"section": "Seafood",
+"group": "",
+"name": "GreenWise Sustainably Sourced Seafood (Publix)",
+"status": "approved",
+"details": "Publix's GreenWise wild-caught seafood carries a Sustainably Sourced logo. Choose only fins-and-scales species [Lev 11:9] — salmon, cod, snapper, trout. Skip the shrimp and crab in the same case."
+},
+{
+"s": 2,
+"section": "Seafood",
+"group": "",
+"name": "Simply Nature / Fremont Fish Market (Aldi)",
+"status": "approved",
+"details": "Aldi's frozen wild salmon and cod are clean-label and among the cheapest anywhere. Verify wild-caught on the package."
+},
+{
+"s": 2,
+"section": "Seafood",
+"group": "",
+"name": "365 Wild Alaskan Salmon (Whole Foods)",
+"status": "approved",
+"details": "Whole Foods store brand, canned or frozen. Clean label, no broth, no soy."
+},
+{
+"s": 2,
+"section": "Seafood",
+"group": "",
+"name": "Store-brand catfish / shrimp / crab (any store)",
+"status": "avoid",
+"details": "Every store in Huntsville sells these cheap and prominently — catfish especially in the South. No fins and scales [Lev 11:10-12]. Off the diet regardless of price."
+},
+{
+"s": 3,
+"section": "Eggs & Dairy",
+"group": "",
+"name": "Vital Farms Pasture-Raised Eggs",
+"status": "approved",
+"details": "Best egg brand for choline, omega-3, and B12. Bright orange yolk = higher nutrient density. Whole Foods, Target, Publix, Walmart."
+},
+{
+"s": 3,
+"section": "Eggs & Dairy",
+"group": "",
+"name": "Costco Kirkland Organic Eggs",
+"status": "approved",
+"details": "Best price for organic. Not pasture-raised but still clean — no additives. Buy the 2-pack."
+},
+{
+"s": 3,
+"section": "Eggs & Dairy",
+"group": "",
+"name": "Member's Mark Organic Brown Eggs (Sam's Club)",
+"status": "approved",
+"details": "USDA organic, no additives. Bulk carton at warehouse price. Not pasture-raised (cage-free) but clean for this diet. Sam's Club."
+},
+{
+"s": 3,
+"section": "Eggs & Dairy",
+"group": "",
+"name": "Trader Joe's Organic Eggs",
+"status": "approved",
+"details": "Affordable clean option. No additives. Good everyday egg."
+},
+{
+"s": 3,
+"section": "Eggs & Dairy",
+"group": "",
+"name": "Fage 0% or 2% Plain Greek Yogurt",
+"status": "approved",
+"details": "Clean label: milk and live cultures only. High protein. No sugar. Probiotic strains present. Widely available everywhere."
+},
+{
+"s": 3,
+"section": "Eggs & Dairy",
+"group": "",
+"name": "Chobani Plain Greek Yogurt",
+"status": "approved",
+"details": "Clean label. No added sugar, no artificial dyes. Good probiotic cultures. Walmart, Publix, Target, Costco."
+},
+{
+"s": 3,
+"section": "Eggs & Dairy",
+"group": "",
+"name": "Siggi's Plain Icelandic Yogurt",
+"status": "approved",
+"details": "Skyr-style, higher protein than standard Greek yogurt. Very low sugar. Clean label. Whole Foods, Target, Publix."
+},
+{
+"s": 3,
+"section": "Eggs & Dairy",
+"group": "",
+"name": "Good Cultures Cottage Cheese",
+"status": "approved",
+"details": "Live probiotic cultures in cottage cheese. Clean label, no added sugar. Whole Foods, Publix, Target."
+},
+{
+"s": 3,
+"section": "Eggs & Dairy",
+"group": "",
+"name": "Lifeway Kefir (plain)",
+"status": "approved",
+"details": "12 live and active cultures. No added sugar in plain variety. High probiotic count. Publix, Whole Foods, Walmart."
+},
+{
+"s": 3,
+"section": "Eggs & Dairy",
+"group": "",
+"name": "Kerrygold Butter (salted or unsalted)",
+"status": "approved",
+"details": "Grass-fed butter. Clean label: cream and salt. No soy. No artificial additives. Costco carries large packs at best price."
+},
+{
+"s": 3,
+"section": "Eggs & Dairy",
+"group": "",
+"name": "4th & Heart Ghee",
+"status": "approved",
+"details": "Grass-fed ghee, lactose-free, no soy, no artificial flavors. Good for high-heat cooking. Whole Foods, Sprouts, Amazon."
+},
+{
+"s": 3,
+"section": "Eggs & Dairy",
+"group": "",
+"name": "Tillamook Cheddar / Sharp Cheddar",
+"status": "approved",
+"details": "Clean label: milk, cheese cultures, salt, enzymes. No artificial dyes (orange color from annatto, a natural seed). Costco, Publix, Walmart."
+},
+{
+"s": 3,
+"section": "Eggs & Dairy",
+"group": "",
+"name": "Organic Valley Whole Milk",
+"status": "approved",
+"details": "USDA organic, no artificial hormones, clean label. If you tolerate dairy. Whole Foods, Publix, Kroger."
+},
+{
+"s": 3,
+"section": "Eggs & Dairy",
+"group": "",
+"name": "Member's Mark Organic Whole Milk (Sam's Club)",
+"status": "approved",
+"details": "USDA organic, no artificial hormones. Bulk 64oz cartons at warehouse price. If you tolerate dairy. Sam's Club."
+},
+{
+"s": 3,
+"section": "Eggs & Dairy",
+"group": "",
+"name": "Flavored yogurt (Yoplait, Dannon, etc.)",
+"status": "avoid",
+"details": "20-30g added sugar, often artificial flavors. Off the list regardless of brand."
+},
+{
+"s": 3,
+"section": "Eggs & Dairy",
+"group": "",
+"name": "Soy milk / soy yogurt",
+"status": "avoid",
+"details": "Soy — entirely off this diet."
+},
+{
+"s": 3,
+"section": "Eggs & Dairy",
+"group": "",
+"name": "Great Value Organic Eggs (Walmart)",
+"status": "approved",
+"details": "USDA organic, no additives. Cheapest organic egg in town. Walmart."
+},
+{
+"s": 3,
+"section": "Eggs & Dairy",
+"group": "",
+"name": "Good & Gather Organic / Cage-Free Eggs (Target)",
+"status": "approved",
+"details": "Clean label organic eggs. Target."
+},
+{
+"s": 3,
+"section": "Eggs & Dairy",
+"group": "",
+"name": "Publix GreenWise Organic Eggs",
+"status": "approved",
+"details": "Organic, no antibiotics or added hormones. Convenient if Publix is your regular stop."
+},
+{
+"s": 3,
+"section": "Eggs & Dairy",
+"group": "",
+"name": "Simply Nature Organic Eggs (Aldi)",
+"status": "approved",
+"details": "Aldi's organic eggs — excellent price, clean label."
+},
+{
+"s": 3,
+"section": "Eggs & Dairy",
+"group": "",
+"name": "Great Value Plain Greek Yogurt (Walmart)",
+"status": "approved",
+"details": "Milk and live cultures. No added sugar in the PLAIN tub. Cheapest clean Greek yogurt — buy the big plain container and add your own berries."
+},
+{
+"s": 3,
+"section": "Eggs & Dairy",
+"group": "",
+"name": "Good & Gather Plain Greek Yogurt (Target)",
+"status": "approved",
+"details": "Clean label, live cultures, no added sugar in plain. Solid everyday probiotic base."
+},
+{
+"s": 3,
+"section": "Eggs & Dairy",
+"group": "",
+"name": "Publix Plain Greek Yogurt / GreenWise",
+"status": "approved",
+"details": "Clean plain yogurt. Check that you grab PLAIN — the flavored tubs beside it carry 15-20g added sugar."
+},
+{
+"s": 3,
+"section": "Eggs & Dairy",
+"group": "",
+"name": "Simply Nature Organic Plain Greek Yogurt (Aldi)",
+"status": "approved",
+"details": "Organic, clean, cheapest plain Greek yogurt in Huntsville. Aldi."
+},
+{
+"s": 3,
+"section": "Eggs & Dairy",
+"group": "",
+"name": "365 Organic Plain Whole Milk Yogurt (Whole Foods)",
+"status": "approved",
+"details": "Full-fat, organic, live cultures, no sugar. Excellent probiotic base."
+},
+{
+"s": 3,
+"section": "Eggs & Dairy",
+"group": "",
+"name": "Great Value / Good & Gather Grass-Fed Butter",
+"status": "approved",
+"details": "Both stores now carry grass-fed butter store-brand at well under Kerrygold pricing. Ingredients: cream, salt. Clean."
+},
+{
+"s": 3,
+"section": "Eggs & Dairy",
+"group": "",
+"name": "Store-brand shredded cheese (any store)",
+"status": "caution",
+"details": "Most pre-shredded cheese is dusted with potato starch or cellulose to prevent caking — not a dealbreaker, but block cheese you shred yourself is cleaner and cheaper. Check for added dyes in orange varieties (annatto is natural and fine)."
+},
+{
+"s": 4,
+"section": "Milk Alternatives",
+"group": "All Plant Milk Brands — Specific Approved Options",
+"name": "Elmhurst Unsweetened Walnut Milk",
+"status": "approved",
+"details": "2 ingredients (walnuts, water). No gums, no soy, no sugar. 1,400mg omega-3 per serving. Your top daily choice. Whole Foods, Sprouts, Target, Amazon."
+},
+{
+"s": 4,
+"section": "Milk Alternatives",
+"group": "All Plant Milk Brands — Specific Approved Options",
+"name": "Elmhurst Unsweetened Almond Milk",
+"status": "approved",
+"details": "2 ingredients (almonds, water). Same clean formula as walnut milk. No gums, no soy, no sugar. Same stores."
+},
+{
+"s": 4,
+"section": "Milk Alternatives",
+"group": "All Plant Milk Brands — Specific Approved Options",
+"name": "Elmhurst Unsweetened Oat Milk (Barista)",
+"status": "approved",
+"details": "Simple oat-based, no gums in the barista version. Best for frothing in coffee. Whole Foods, Sprouts."
+},
+{
+"s": 4,
+"section": "Milk Alternatives",
+"group": "All Plant Milk Brands — Specific Approved Options",
+"name": "Califia Farms Unsweetened Almond Milk",
+"status": "approved",
+"details": "3 ingredients: almonds, water, sea salt. No gums, no soy, no added sugar. Widely available: Walmart, Target, Publix, Costco."
+},
+{
+"s": 4,
+"section": "Milk Alternatives",
+"group": "All Plant Milk Brands — Specific Approved Options",
+"name": "Malk Organics Almond Milk",
+"status": "approved",
+"details": "Organic almonds + water + pink himalayan salt only. No gums, no soy. Whole Foods, Sprouts, Amazon."
+},
+{
+"s": 4,
+"section": "Milk Alternatives",
+"group": "All Plant Milk Brands — Specific Approved Options",
+"name": "So Delicious Unsweetened Coconut Milk (carton)",
+"status": "approved",
+"details": "No added sugar, no artificial dyes. Clean carton coconut milk. Whole Foods, Target, Publix."
+},
+{
+"s": 4,
+"section": "Milk Alternatives",
+"group": "All Plant Milk Brands — Specific Approved Options",
+"name": "Native Forest Simple Coconut Milk (can)",
+"status": "approved",
+"details": "BPA-free can. Ingredients: organic coconut and water only. No guar gum. For cooking and smoothies. Whole Foods, Sprouts, Amazon."
+},
+{
+"s": 4,
+"section": "Milk Alternatives",
+"group": "All Plant Milk Brands — Specific Approved Options",
+"name": "Pacific Foods Hemp Milk (unsweetened)",
+"status": "approved",
+"details": "Hemp seeds + water + pea protein. No soy, no added sugar. Good omega-3 and omega-6 balance. Whole Foods, Sprouts."
+},
+{
+"s": 4,
+"section": "Milk Alternatives",
+"group": "All Plant Milk Brands — Specific Approved Options",
+"name": "Ripple Unsweetened (pea protein milk)",
+"status": "approved",
+"details": "High plant protein (8g per serving), omega-3 added, no soy, no added sugar. Good post-workout. Walmart, Target, Publix."
+},
+{
+"s": 4,
+"section": "Milk Alternatives",
+"group": "All Plant Milk Brands — Specific Approved Options",
+"name": "Oatly Oat Milk (any variety)",
+"status": "avoid",
+"details": "Contains rapeseed (canola) oil. Soybean oil in some versions. Not clean for this plan."
+},
+{
+"s": 4,
+"section": "Milk Alternatives",
+"group": "All Plant Milk Brands — Specific Approved Options",
+"name": "Silk Almond / Oat / Cashew",
+"status": "caution",
+"details": "Some contain gellan gum, sunflower oil, or 'natural flavors.' Silk Unsweetened Almond is lowest-risk but not ideal — Elmhurst is better."
+},
+{
+"s": 4,
+"section": "Milk Alternatives",
+"group": "All Plant Milk Brands — Specific Approved Options",
+"name": "Almond Breeze",
+"status": "avoid",
+"details": "Contains carrageenan in some versions. Higher levels of additives than Califia or Elmhurst. Not recommended."
+},
+{
+"s": 4,
+"section": "Milk Alternatives",
+"group": "All Plant Milk Brands — Specific Approved Options",
+"name": "Soy Milk (any brand)",
+"status": "avoid",
+"details": "Soy — entirely off this diet. Silk Soy, Westsoy, Edensoy: all off the list."
+},
+{
+"s": 4,
+"section": "Milk Alternatives",
+"group": "All Plant Milk Brands — Specific Approved Options",
+"name": "Great Value Unsweetened Almond Milk (Walmart)",
+"status": "caution",
+"details": "Cheapest almond milk available. Contains gums (gellan) but NO soy and NO added sugar in the unsweetened carton. Acceptable budget fallback — Elmhurst is still cleaner."
+},
+{
+"s": 4,
+"section": "Milk Alternatives",
+"group": "All Plant Milk Brands — Specific Approved Options",
+"name": "Good & Gather Unsweetened Almond Milk (Target)",
+"status": "caution",
+"details": "Clean-ish: no soy, no added sugar, but contains gums. Fine as a backup; not your daily if Elmhurst is available."
+},
+{
+"s": 4,
+"section": "Milk Alternatives",
+"group": "All Plant Milk Brands — Specific Approved Options",
+"name": "Simply Nature Organic Unsweetened Almond Milk (Aldi)",
+"status": "caution",
+"details": "Organic, no added sugar, no soy. Contains gums. Best budget organic plant milk in Huntsville."
+},
+{
+"s": 4,
+"section": "Milk Alternatives",
+"group": "All Plant Milk Brands — Specific Approved Options",
+"name": "365 Unsweetened Almond Milk (Whole Foods)",
+"status": "approved",
+"details": "Whole Foods store brand — shorter ingredient list than most national brands, no soy, no added sugar. Good value clean option."
+},
+{
+"s": 4,
+"section": "Milk Alternatives",
+"group": "All Plant Milk Brands — Specific Approved Options",
+"name": "365 Organic Coconut Milk, can (Whole Foods)",
+"status": "approved",
+"details": "Organic coconut and water. No guar gum in the simple version. Great for cooking and smoothies."
+},
+{
+"s": 4,
+"section": "Milk Alternatives",
+"group": "All Plant Milk Brands — Specific Approved Options",
+"name": "Great Value Coconut Milk, can (Walmart)",
+"status": "caution",
+"details": "Cheap and usually just coconut, water, guar gum. No soy, no sugar. Fine for cooking."
+},
+{
+"s": 5,
+"section": "Breads",
+"group": "Sandwich Bread — Approved Brands",
+"name": "Ezekiel 4:9 Sprouted Grain Bread",
+"status": "approved",
+"details": "Food For Life brand. Organic sprouted wheat, barley, millet, lentils, spelt. No sugar, no soy lecithin, no preservatives. Nutty flavor, dense. Best toasted. Found in FREEZER section at Whole Foods, Publix, Walmart, Target. Store yours in freezer — no preservatives means it goes stale fast."
+},
+{
+"s": 5,
+"section": "Breads",
+"group": "Sandwich Bread — Approved Brands",
+"name": "Ezekiel 4:9 English Muffins",
+"status": "approved",
+"details": "Same brand, same clean formula. Great as a burger bun substitute or breakfast base. Freezer section at same stores."
+},
+{
+"s": 5,
+"section": "Breads",
+"group": "Sandwich Bread — Approved Brands",
+"name": "Dave's Killer Bread — 21 Whole Grains",
+"status": "approved",
+"details": "Organic, non-GMO, no HFCS, no artificial preservatives. IMPORTANT: not all Dave's varieties are soy-free. The 21 Whole Grains & Seeds variety does not list soy lecithin. Check the specific loaf label every time. Publix, Walmart, Target, Costco."
+},
+{
+"s": 5,
+"section": "Breads",
+"group": "Sandwich Bread — Approved Brands",
+"name": "Dave's Killer Bread — Powerseed",
+"status": "approved",
+"details": "Organic, clean label, no HFCS. Check for soy lecithin on current label. Publix, Walmart, Costco."
+},
+{
+"s": 5,
+"section": "Breads",
+"group": "Sandwich Bread — Approved Brands",
+"name": "Alvarado Street Bakery Sprouted Wheat",
+"status": "approved",
+"details": "Organic sprouted wheat, naturally leavened, no artificial sweeteners or preservatives. No soy lecithin. Whole Foods, Sprouts."
+},
+{
+"s": 5,
+"section": "Breads",
+"group": "Sandwich Bread — Approved Brands",
+"name": "One Mighty Mill Whole Wheat",
+"status": "approved",
+"details": "Organic, no cheap seed oils (uses extra virgin olive oil if any oil), no artificial flavors, no soy lecithin. Whole Foods, Sprouts."
+},
+{
+"s": 5,
+"section": "Breads",
+"group": "Sandwich Bread — Approved Brands",
+"name": "Canyon Bakehouse Gluten-Free (if needed)",
+"status": "approved",
+"details": "Soy-free, dairy-free, nut-free. Made from sorghum, millet, amaranth, teff. Good gluten-free option. Whole Foods, Publix, Target, Walmart."
+},
+{
+"s": 5,
+"section": "Breads",
+"group": "Sandwich Bread — Approved Brands",
+"name": "Base Culture Grain-Free Bread (frozen)",
+"status": "approved",
+"details": "Paleo-friendly: almond flour, flaxseed, eggs. No grains, no soy, no refined sugar. Dense, best toasted. Whole Foods freezer section."
+},
+{
+"s": 5,
+"section": "Breads",
+"group": "Sandwich Bread — Approved Brands",
+"name": "Nature's Own Honey Wheat",
+"status": "avoid",
+"details": "Contains soy lecithin. Despite 'no artificial preservatives' marketing, soy is present."
+},
+{
+"s": 5,
+"section": "Breads",
+"group": "Sandwich Bread — Approved Brands",
+"name": "Wonder Bread / Sara Lee / Pepperidge Farm",
+"status": "avoid",
+"details": "Soy lecithin and/or HFCS in all standard varieties. Off the list."
+},
+{
+"s": 5,
+"section": "Breads",
+"group": "Sandwich Bread — Approved Brands",
+"name": "365 Organic Sprouted Whole Wheat Bread (Whole Foods)",
+"status": "approved",
+"details": "Whole Foods store brand sprouted bread — clean label, no soy lecithin, no HFCS. Cheaper than Ezekiel with a similar profile. Freezer or bread aisle."
+},
+{
+"s": 5,
+"section": "Breads",
+"group": "Sandwich Bread — Approved Brands",
+"name": "Simple Truth Organic Bread (Kroger)",
+"status": "approved",
+"details": "Kroger's Simple Truth line excludes artificial flavors, colors, sweeteners, and preservatives by brand standard. Read the specific loaf for soy lecithin, but the line is a reliable starting point."
+},
+{
+"s": 5,
+"section": "Breads",
+"group": "Sandwich Bread — Approved Brands",
+"name": "bettergoods bread (Walmart)",
+"status": "caution",
+"details": "Walmart's newer 'made without' premium line, mostly under $5. Cleaner than Great Value by design. Verify no soy lecithin on the specific loaf — the dye/additive cleanup completes Jan 2027."
+},
+{
+"s": 5,
+"section": "Breads",
+"group": "Sandwich Bread — Approved Brands",
+"name": "Simply Nature Organic Bread (Aldi)",
+"status": "caution",
+"details": "Aldi's clean line — organic, no artificial preservatives. Check the specific loaf for soy lecithin. Excellent price."
+},
+{
+"s": 5,
+"section": "Breads",
+"group": "Sandwich Bread — Approved Brands",
+"name": "GreenWise Bread (Publix)",
+"status": "caution",
+"details": "Made without the preservatives, flavors, and colors on Publix's exclusion list, with unbleached unbromated flour and expeller-pressed oils. Still read for soy lecithin — the GreenWise standard doesn't automatically exclude it."
+},
+{
+"s": 5,
+"section": "Breads",
+"group": "Sandwich Bread — Approved Brands",
+"name": "Store-brand white sandwich bread (any store)",
+"status": "avoid",
+"details": "Great Value, Publix, Kroger standard white and wheat loaves nearly all contain soy lecithin and/or HFCS. Off the list."
+},
+{
+"s": 5,
+"section": "Breads",
+"group": "Sourdough — Specific Options",
+"name": "Rudi's Organic Rocky Mountain Sourdough",
+"status": "approved",
+"details": "Organic wheat flour fermented 24 hours. No soy, no HFCS. Clean label. Whole Foods, Sprouts."
+},
+{
+"s": 5,
+"section": "Breads",
+"group": "Sourdough — Specific Options",
+"name": "Local bakery sourdough (verify label)",
+"status": "approved",
+"details": "True sourdough from a local bakery should be: flour, water, salt only. Ask the baker if they use any soy or additives. Huntsville has several local options at the farmers market."
+},
+{
+"s": 5,
+"section": "Breads",
+"group": "Sourdough — Specific Options",
+"name": "Berlin Natural Bakery Spelt Sourdough",
+"status": "approved",
+"details": "Organic spelt flour, minimal ingredients, small batch. Non-GMO verified. No soy. Order online or find at Whole Foods."
+},
+{
+"s": 5,
+"section": "Breads",
+"group": "Sourdough — Specific Options",
+"name": "Grocery store 'sourdough-style' bread",
+"status": "avoid",
+"details": "Most grocery store sourdough is fake — just white bread with vinegar added. No real fermentation, and often contains soy lecithin. Check for 'sourdough starter' or 'cultured wheat' in ingredients."
+},
+{
+"s": 5,
+"section": "Breads",
+"group": "Crackers — Specific Approved Brands",
+"name": "Simple Mills Almond Flour Crackers",
+"status": "approved",
+"details": "Almond flour, tapioca flour, cassava flour, herbs. No soy, no refined sugar, no artificial dyes. Multiple flavors — all are clean. Target, Whole Foods, Publix, Walmart, Sprouts."
+},
+{
+"s": 5,
+"section": "Breads",
+"group": "Crackers — Specific Approved Brands",
+"name": "Simple Mills Sea Salt Crackers",
+"status": "approved",
+"details": "Cleanest flavor. Same brand. Great with almond butter, hummus, or avocado."
+},
+{
+"s": 5,
+"section": "Breads",
+"group": "Crackers — Specific Approved Brands",
+"name": "Mary's Gone Crackers (Original)",
+"status": "approved",
+"details": "Whole grain rice, quinoa, flax, sesame seeds. No soy, no artificial dyes, no refined sugar. Dense and filling. Whole Foods, Sprouts."
+},
+{
+"s": 5,
+"section": "Breads",
+"group": "Crackers — Specific Approved Brands",
+"name": "RW Garcia Organic Corn Thin (plain)",
+"status": "approved",
+"details": "Organic blue corn, sunflower oil, sea salt. Check label for soy-free. Minimal ingredients. Whole Foods."
+},
+{
+"s": 5,
+"section": "Breads",
+"group": "Crackers — Specific Approved Brands",
+"name": "Ritz Crackers",
+"status": "avoid",
+"details": "Refined enriched flour + soybean oil. Always off this diet."
+},
+{
+"s": 5,
+"section": "Breads",
+"group": "Crackers — Specific Approved Brands",
+"name": "Wheat Thins",
+"status": "avoid",
+"details": "Soybean oil + refined flour + added sugar. Off the list."
+},
+{
+"s": 5,
+"section": "Breads",
+"group": "Crackers — Specific Approved Brands",
+"name": "Goldfish Crackers",
+"status": "avoid",
+"details": "Soybean oil + enriched refined flour. Off the list."
+},
+{
+"s": 5,
+"section": "Breads",
+"group": "Crackers — Specific Approved Brands",
+"name": "365 Organic Woven Wheat Crackers (Whole Foods)",
+"status": "caution",
+"details": "Store-brand Triscuit equivalent — whole wheat, oil, salt. Check the oil: choose the version without soybean oil. Simple Mills is still cleaner."
+},
+{
+"s": 5,
+"section": "Breads",
+"group": "Crackers — Specific Approved Brands",
+"name": "Simple Truth Organic Crackers (Kroger)",
+"status": "caution",
+"details": "Free-from-101 brand standard means no artificial colors or preservatives. Still verify the oil used — many crackers use sunflower or canola."
+},
+{
+"s": 5,
+"section": "Breads",
+"group": "Crackers — Specific Approved Brands",
+"name": "Good & Gather Almond Flour Crackers (Target)",
+"status": "approved",
+"details": "Target's answer to Simple Mills at a lower price. Almond flour base, no soy, no artificial dyes. Verify current label."
+},
+{
+"s": 5,
+"section": "Breads",
+"group": "Crackers — Specific Approved Brands",
+"name": "Store-brand 'butter' crackers (any store)",
+"status": "avoid",
+"details": "Ritz-style store knockoffs use the same formula: enriched refined flour + soybean oil. Off the list."
+},
+{
+"s": 6,
+"section": "Tortillas & Wraps",
+"group": "",
+"name": "Siete Cassava Flour Tortillas",
+"status": "approved",
+"details": "Cassava flour, coconut oil, cream of tartar, sea salt. No soy, no refined sugar, no dyes. Flexible, burrito-size. Find: Whole Foods, Target, Sprouts, Walmart, Publix. Store in freezer."
+},
+{
+"s": 6,
+"section": "Tortillas & Wraps",
+"group": "",
+"name": "Siete Almond Flour Tortillas",
+"status": "approved",
+"details": "Higher fat, more protein, lower carb. Smaller (taco-size). No soy, no sugar, no dyes. Same stores as cassava version."
+},
+{
+"s": 6,
+"section": "Tortillas & Wraps",
+"group": "",
+"name": "Siete Chickpea Flour Tortillas",
+"status": "approved",
+"details": "4.5g fat, 4g fiber per tortilla. No soy, no dyes. Good middle ground between cassava and almond flour versions."
+},
+{
+"s": 6,
+"section": "Tortillas & Wraps",
+"group": "",
+"name": "Mission Corn Tortillas (yellow or white)",
+"status": "approved",
+"details": "Ingredients: ground corn, water, trace of lime. 3 ingredients. No soy, no added sugar, no dyes. Best budget-friendly, widely available tortilla option. Walmart, Publix, Target, Winn-Dixie."
+},
+{
+"s": 6,
+"section": "Tortillas & Wraps",
+"group": "",
+"name": "Trader Joe's Corn Tortillas",
+"status": "approved",
+"details": "Clean label corn tortilla. Affordable. Verify current label shows corn, water, lime only."
+},
+{
+"s": 6,
+"section": "Tortillas & Wraps",
+"group": "",
+"name": "Egglife Egg White Wraps",
+"status": "approved",
+"details": "Cage-free egg whites as base. 5g protein, under 1g carb per wrap. Grain-free, no soy, no sugar. Full burrito size. Find: Whole Foods, Publix, Target. Best low-carb, high-protein wrap option."
+},
+{
+"s": 6,
+"section": "Tortillas & Wraps",
+"group": "",
+"name": "Rise & Puff Cassava-Tapioca Tortillas",
+"status": "approved",
+"details": "Cassava + tapioca blend. Puffs up when heated, closest to flour tortilla texture. No soy, no sugar, no dyes. Whole Foods."
+},
+{
+"s": 6,
+"section": "Tortillas & Wraps",
+"group": "",
+"name": "Homemade Corn Tortillas (masa harina)",
+"status": "approved",
+"details": "Bob's Red Mill Masa Harina + water + salt. 3 ingredients. Best texture. Make a batch, refrigerate for the week."
+},
+{
+"s": 6,
+"section": "Tortillas & Wraps",
+"group": "",
+"name": "Mission Flour Tortillas (any variety)",
+"status": "avoid",
+"details": "Soybean oil is ingredient #3 in all Mission flour tortilla varieties. Always off this list."
+},
+{
+"s": 6,
+"section": "Tortillas & Wraps",
+"group": "",
+"name": "Old El Paso Flour Tortillas",
+"status": "avoid",
+"details": "Soybean oil + refined bleached flour. Off the list."
+},
+{
+"s": 6,
+"section": "Tortillas & Wraps",
+"group": "",
+"name": "La Banderita Flour Tortillas",
+"status": "avoid",
+"details": "Soybean oil present. Off the list."
+},
+{
+"s": 6,
+"section": "Tortillas & Wraps",
+"group": "",
+"name": "Great Value Corn Tortillas (Walmart)",
+"status": "approved",
+"details": "Corn, water, lime, trace preservative. No soy, no added sugar. Cheapest clean tortilla in Huntsville — this is your everyday taco base."
+},
+{
+"s": 6,
+"section": "Tortillas & Wraps",
+"group": "",
+"name": "Good & Gather Corn Tortillas (Target)",
+"status": "approved",
+"details": "Clean corn tortilla, no soy. Target."
+},
+{
+"s": 6,
+"section": "Tortillas & Wraps",
+"group": "",
+"name": "Publix Corn Tortillas",
+"status": "approved",
+"details": "Clean 3-4 ingredient corn tortilla. Verify no soybean oil on the current bag."
+},
+{
+"s": 6,
+"section": "Tortillas & Wraps",
+"group": "",
+"name": "365 Organic Corn Tortillas (Whole Foods)",
+"status": "approved",
+"details": "Organic corn, water, lime. Cleanest store-brand corn tortilla available."
+},
+{
+"s": 6,
+"section": "Tortillas & Wraps",
+"group": "",
+"name": "La Banderita / store-brand CORN tortillas",
+"status": "approved",
+"details": "Most corn tortillas from any brand are clean (corn, water, lime). It's the FLOUR tortillas that carry soybean oil — corn is almost always safe. Read anyway."
+},
+{
+"s": 6,
+"section": "Tortillas & Wraps",
+"group": "",
+"name": "Store-brand FLOUR tortillas (any store)",
+"status": "avoid",
+"details": "Great Value, Publix, Kroger, Mission — all list soybean oil or partially hydrogenated oil. Corn or Siete only."
+},
+{
+"s": 6,
+"section": "Tortillas & Wraps",
+"group": "Tortilla Alternatives (No-Brand Needed)",
+"name": "Romaine / Butter Lettuce Cups",
+"status": "approved",
+"details": "Zero carbs, zero violations. Best for taco night — use as shells. No label reading required."
+},
+{
+"s": 6,
+"section": "Tortillas & Wraps",
+"group": "Tortilla Alternatives (No-Brand Needed)",
+"name": "Collard Green Wraps",
+"status": "approved",
+"details": "Blanch 30 seconds in hot water. Holds fillings better than lettuce. High iron and calcium. Large leaf = full burrito wrap."
+},
+{
+"s": 6,
+"section": "Tortillas & Wraps",
+"group": "Tortilla Alternatives (No-Brand Needed)",
+"name": "Nori Sheets (plain seaweed)",
+"status": "approved",
+"details": "GimMe Organics Roasted Seaweed or Trader Joe's Roasted Seaweed. No soy, no dyes, high iodine. Great for tuna or salmon wraps."
+},
+{
+"s": 7,
+"section": "Grains, Rice & Pasta",
+"group": "",
+"name": "Bob's Red Mill Rolled Oats (plain)",
+"status": "approved",
+"details": "Old-fashioned rolled oats. Clean label: oats only. Best everyday oatmeal. Walmart, Target, Publix, Costco."
+},
+{
+"s": 7,
+"section": "Grains, Rice & Pasta",
+"group": "",
+"name": "Bob's Red Mill Steel Cut Oats",
+"status": "approved",
+"details": "Lower glycemic than rolled. Higher fiber. Same clean label. Same stores."
+},
+{
+"s": 7,
+"section": "Grains, Rice & Pasta",
+"group": "",
+"name": "Quaker Old-Fashioned Rolled Oats (plain)",
+"status": "approved",
+"details": "Plain old-fashioned only — clean label. Do NOT buy Quaker flavored instant packets — those have sugar and artificial flavors."
+},
+{
+"s": 7,
+"section": "Grains, Rice & Pasta",
+"group": "",
+"name": "Ancient Harvest Quinoa",
+"status": "approved",
+"details": "Organic, pre-rinsed, minimal processing. Multiple colors available. Whole Foods, Sprouts, Walmart."
+},
+{
+"s": 7,
+"section": "Grains, Rice & Pasta",
+"group": "",
+"name": "Bob's Red Mill Quinoa (organic)",
+"status": "approved",
+"details": "Clean, affordable, widely available. Same stores as oats."
+},
+{
+"s": 7,
+"section": "Grains, Rice & Pasta",
+"group": "",
+"name": "Lotus Foods Brown Rice",
+"status": "approved",
+"details": "Organic, single ingredient, no additives. Also makes great brown rice ramen noodles (check label). Whole Foods, Sprouts."
+},
+{
+"s": 7,
+"section": "Grains, Rice & Pasta",
+"group": "",
+"name": "Trader Joe's Brown Rice (frozen plain)",
+"status": "approved",
+"details": "Ready in 3 minutes, single ingredient, no additives. Great convenience option. Trader Joe's only."
+},
+{
+"s": 7,
+"section": "Grains, Rice & Pasta",
+"group": "",
+"name": "Member's Mark Organic Quinoa / Rice (Sam's Club)",
+"status": "approved",
+"details": "Bulk organic quinoa and rice at warehouse prices. Single ingredient, no additives. Rinse quinoa before cooking. Sam's Club."
+},
+{
+"s": 7,
+"section": "Grains, Rice & Pasta",
+"group": "",
+"name": "Banza Chickpea Pasta",
+"status": "approved",
+"details": "Higher protein (14g), higher fiber than wheat pasta. No soy, no dyes. Clean label. Walmart, Target, Publix, Whole Foods. Shapes: penne, rotini, shells, spaghetti."
+},
+{
+"s": 7,
+"section": "Grains, Rice & Pasta",
+"group": "",
+"name": "Tinkyada Brown Rice Pasta",
+"status": "approved",
+"details": "Brown rice flour + water only. No soy, no dyes, good texture when cooked al dente. Whole Foods, Sprouts, Amazon."
+},
+{
+"s": 7,
+"section": "Grains, Rice & Pasta",
+"group": "",
+"name": "Tolerant Lentil or Chickpea Pasta",
+"status": "approved",
+"details": "Single ingredient (lentil or chickpea flour). 13g protein per serving. No soy. Whole Foods, Sprouts."
+},
+{
+"s": 7,
+"section": "Grains, Rice & Pasta",
+"group": "",
+"name": "Bob's Red Mill Whole Grain Cornmeal",
+"status": "approved",
+"details": "Stone-ground, no additives, no soy. Good for polenta and grain bowls. Walmart, Target, Publix."
+},
+{
+"s": 7,
+"section": "Grains, Rice & Pasta",
+"group": "",
+"name": "Quaker Flavored Oatmeal Packets",
+"status": "avoid",
+"details": "Added sugar, artificial flavors, and often artificial dyes. Off the list."
+},
+{
+"s": 7,
+"section": "Grains, Rice & Pasta",
+"group": "",
+"name": "Great Value Old-Fashioned Oats (Walmart)",
+"status": "approved",
+"details": "Single ingredient: whole grain rolled oats. Cheapest oats anywhere. Buy the big canister."
+},
+{
+"s": 7,
+"section": "Grains, Rice & Pasta",
+"group": "",
+"name": "Good & Gather Organic Rolled Oats (Target)",
+"status": "approved",
+"details": "Organic, single ingredient. Clean and affordable."
+},
+{
+"s": 7,
+"section": "Grains, Rice & Pasta",
+"group": "",
+"name": "Simply Nature Organic Rolled Oats (Aldi)",
+"status": "approved",
+"details": "Organic oats at Aldi pricing — the best value clean oat in Huntsville."
+},
+{
+"s": 7,
+"section": "Grains, Rice & Pasta",
+"group": "",
+"name": "365 Organic Rolled Oats / Quinoa (Whole Foods)",
+"status": "approved",
+"details": "Organic, single ingredient, bulk-bin option available. Clean."
+},
+{
+"s": 7,
+"section": "Grains, Rice & Pasta",
+"group": "",
+"name": "Great Value Organic Quinoa (Walmart)",
+"status": "approved",
+"details": "Organic, single ingredient. Rinse before cooking. Much cheaper than Ancient Harvest."
+},
+{
+"s": 7,
+"section": "Grains, Rice & Pasta",
+"group": "",
+"name": "Simple Truth Organic Brown Rice / Quinoa (Kroger)",
+"status": "approved",
+"details": "Clean, organic, single ingredient. Reliable Kroger default."
+},
+{
+"s": 7,
+"section": "Grains, Rice & Pasta",
+"group": "",
+"name": "Great Value Brown Rice (Walmart)",
+"status": "approved",
+"details": "Single ingredient. Buy the large bag and batch-cook for the week."
+},
+{
+"s": 7,
+"section": "Grains, Rice & Pasta",
+"group": "",
+"name": "Store-brand seasoned rice / pasta mixes",
+"status": "avoid",
+"details": "Any 'rice pilaf,' 'Spanish rice,' or flavored pasta side kit — the seasoning packet almost always contains soy, MSG, sugar, and sometimes dyes. Buy plain rice and season it yourself."
+},
+{
+"s": 8,
+"section": "Fruits & Vegetables",
+"group": "",
+"name": "Leafy Greens",
+"status": "approved",
+"details": "Spinach, kale, collards, arugula — iron and magnesium. Fresh or frozen plain",
+"alt": "Bagged salad kits with dressings containing soy"
+},
+{
+"s": 8,
+"section": "Fruits & Vegetables",
+"group": "",
+"name": "Berries",
+"status": "approved",
+"details": "Blueberries, strawberries, raspberries, blackberries. Fresh or frozen plain",
+"alt": "Dried berries with added sugar (Craisins, sweetened dried blueberries)"
+},
+{
+"s": 8,
+"section": "Fruits & Vegetables",
+"group": "",
+"name": "Cruciferous",
+"status": "approved",
+"details": "Broccoli, cauliflower, Brussels sprouts — fiber, sulforaphane. Fresh or plain frozen",
+"alt": "Frozen veggie blends with sauce packets"
+},
+{
+"s": 8,
+"section": "Fruits & Vegetables",
+"group": "",
+"name": "Root Vegetables",
+"status": "approved",
+"details": "Sweet potato, beets, carrots — complex carbs, fiber",
+"alt": "Instant mashed potato packets with dyes and additives"
+},
+{
+"s": 8,
+"section": "Fruits & Vegetables",
+"group": "",
+"name": "Avocado",
+"status": "approved",
+"details": "Daily if possible — fat, fiber, magnesium. Wholly Guacamole (plain) is clean if buying premade",
+"alt": "Store guacamole dips with soybean oil or artificial flavors"
+},
+{
+"s": 8,
+"section": "Fruits & Vegetables",
+"group": "",
+"name": "Citrus",
+"status": "approved",
+"details": "Oranges, grapefruit, lemon, lime. Vitamin C boosts iron absorption",
+"alt": "Do NOT take vitamin C within 1 hour of ADHD stimulant medication"
+},
+{
+"s": 8,
+"section": "Fruits & Vegetables",
+"group": "",
+"name": "Apples / Pears",
+"status": "approved",
+"details": "High fiber, steady energy. Eat with nut butter for balance",
+"alt": "Applesauce with added sugar or artificial flavors"
+},
+{
+"s": 8,
+"section": "Fruits & Vegetables",
+"group": "",
+"name": "Frozen Vegetables (plain)",
+"status": "approved",
+"details": "Birds Eye plain (single vegetable), Trader Joe's plain frozen, Whole Foods 365 plain frozen",
+"alt": "Frozen blends with sauce packets or 'seasoned' varieties"
+},
+{
+"s": 9,
+"section": "Nuts, Seeds & Healthy Fats",
+"group": "",
+"name": "Kirkland (Costco) Raw Pumpkin Seeds",
+"status": "approved",
+"details": "Best price for plain pumpkin seeds in bulk. Raw, unsalted. Buy the large bag and portion into weekly containers. Your most important daily snack."
+},
+{
+"s": 9,
+"section": "Nuts, Seeds & Healthy Fats",
+"group": "",
+"name": "Go Raw Organic Pumpkin Seeds",
+"status": "approved",
+"details": "Sprouted, organic. Easier to digest than raw. No soy, no dyes. Whole Foods, Sprouts, Amazon."
+},
+{
+"s": 9,
+"section": "Nuts, Seeds & Healthy Fats",
+"group": "",
+"name": "Member's Mark Nuts (Sam's Club) — read the oil",
+"status": "caution",
+"details": "Sam's has bulk almonds, walnuts, cashews, and pistachios at great prices, BUT many warehouse nuts are ROASTED IN PEANUT OIL or contain added sugar. Choose RAW or 'dry roasted, no oil' only. Member's Mark raw walnuts and raw almonds are clean; skip the honey-roasted and oil-roasted tubs."
+},
+{
+"s": 9,
+"section": "Nuts, Seeds & Healthy Fats",
+"group": "",
+"name": "Kirkland (Costco) Raw Walnuts",
+"status": "approved",
+"details": "Best price per pound. Plain, no additives. Buy bulk and store in airtight container in freezer to prevent rancidity."
+},
+{
+"s": 9,
+"section": "Nuts, Seeds & Healthy Fats",
+"group": "",
+"name": "Diamond of California Raw Walnuts",
+"status": "approved",
+"details": "Clean label. Widely available at Walmart, Target, Publix."
+},
+{
+"s": 9,
+"section": "Nuts, Seeds & Healthy Fats",
+"group": "",
+"name": "Kirkland (Costco) Raw Almonds",
+"status": "approved",
+"details": "Plain, bulk. Best price. No additives, no soy."
+},
+{
+"s": 9,
+"section": "Nuts, Seeds & Healthy Fats",
+"group": "",
+"name": "Justin's Classic Almond Butter",
+"status": "approved",
+"details": "Ingredients: dry roasted almonds only (unsalted version). No added sugar, no palm oil, no soy. Target, Walmart, Publix, Whole Foods, Sprouts."
+},
+{
+"s": 9,
+"section": "Nuts, Seeds & Healthy Fats",
+"group": "",
+"name": "Trader Joe's Almond Butter (no salt)",
+"status": "approved",
+"details": "Ingredients: almonds only. Affordable clean option. Trader Joe's only."
+},
+{
+"s": 9,
+"section": "Nuts, Seeds & Healthy Fats",
+"group": "",
+"name": "SunButter No Added Sugar",
+"status": "approved",
+"details": "Sunflower seeds only. No soy, no artificial dyes. Good peanut butter alternative AND extra zinc. Target, Walmart, Publix."
+},
+{
+"s": 9,
+"section": "Nuts, Seeds & Healthy Fats",
+"group": "",
+"name": "Trader Joe's Almond Butter (salted)",
+"status": "approved",
+"details": "Almonds + salt. Same clean formula. Trader Joe's."
+},
+{
+"s": 9,
+"section": "Nuts, Seeds & Healthy Fats",
+"group": "",
+"name": "Kirkland Organic Peanut Butter (Costco)",
+"status": "approved",
+"details": "Ingredients: organic peanuts + salt. No added sugar, no palm oil, no soy. Best price. Costco."
+},
+{
+"s": 9,
+"section": "Nuts, Seeds & Healthy Fats",
+"group": "",
+"name": "Smucker's Natural Peanut Butter",
+"status": "approved",
+"details": "Peanuts + salt only. Clean label. Widely available everywhere. Must stir before use."
+},
+{
+"s": 9,
+"section": "Nuts, Seeds & Healthy Fats",
+"group": "",
+"name": "Chosen Foods Avocado Oil Spray",
+"status": "approved",
+"details": "100% avocado oil. No propellants, no soy. Best spray oil for cooking. Target, Walmart, Costco, Sprouts."
+},
+{
+"s": 9,
+"section": "Nuts, Seeds & Healthy Fats",
+"group": "",
+"name": "California Olive Ranch EVOO",
+"status": "approved",
+"details": "Domestic extra virgin olive oil. Clean, third-party tested. Target, Costco, Walmart, Publix."
+},
+{
+"s": 9,
+"section": "Nuts, Seeds & Healthy Fats",
+"group": "",
+"name": "Member's Mark Organic Extra Virgin Olive Oil (Sam's Club)",
+"status": "approved",
+"details": "USDA organic EVOO in a large 2L / 68oz bottle at warehouse price. Clean single-ingredient oil. Store in a cool dark place. Best bulk olive oil value. Sam's Club."
+},
+{
+"s": 9,
+"section": "Nuts, Seeds & Healthy Fats",
+"group": "",
+"name": "Olivari Avocado Oil (Sam's Club)",
+"status": "approved",
+"details": "100% avocado oil, affordable, sold at Sam's. Great for high-heat cooking. No soy. Also at Walmart, Publix."
+},
+{
+"s": 9,
+"section": "Nuts, Seeds & Healthy Fats",
+"group": "",
+"name": "Jif / Skippy Peanut Butter",
+"status": "avoid",
+"details": "Added sugar + soybean oil in both brands. Off the list."
+},
+{
+"s": 9,
+"section": "Nuts, Seeds & Healthy Fats",
+"group": "",
+"name": "Trail Mix (most brands)",
+"status": "avoid",
+"details": "Almost always contains M&Ms or dyed candy pieces + soy-roasted nuts. Build your own instead."
+},
+{
+"s": 9,
+"section": "Nuts, Seeds & Healthy Fats",
+"group": "",
+"name": "Great Value Raw Pumpkin Seeds / Walnuts (Walmart)",
+"status": "approved",
+"details": "Plain raw nuts and seeds at the lowest price in Huntsville. CHECK: choose RAW or dry-roasted only — skip anything roasted in oil or honey-glazed."
+},
+{
+"s": 9,
+"section": "Nuts, Seeds & Healthy Fats",
+"group": "",
+"name": "Good & Gather Raw Walnuts / Almonds (Target)",
+"status": "approved",
+"details": "Clean plain nuts, no oil roasting, no added sugar. Target."
+},
+{
+"s": 9,
+"section": "Nuts, Seeds & Healthy Fats",
+"group": "",
+"name": "Southern Grove Nuts (Aldi)",
+"status": "approved",
+"details": "Aldi's nut line — raw and dry-roasted options at excellent prices. Read for oil-roasted vs. raw."
+},
+{
+"s": 9,
+"section": "Nuts, Seeds & Healthy Fats",
+"group": "",
+"name": "365 Raw Nuts & Seeds (Whole Foods)",
+"status": "approved",
+"details": "Bulk bins and bagged. Organic options. Clean, single ingredient."
+},
+{
+"s": 9,
+"section": "Nuts, Seeds & Healthy Fats",
+"group": "",
+"name": "Great Value Natural Peanut Butter (Walmart)",
+"status": "approved",
+"details": "Peanuts and salt only — the 'natural' stir-type jar, NOT the regular creamy. Cheapest clean peanut butter available."
+},
+{
+"s": 9,
+"section": "Nuts, Seeds & Healthy Fats",
+"group": "",
+"name": "Good & Gather Almond Butter (Target)",
+"status": "approved",
+"details": "Almonds, salt. Clean label, well under Justin's pricing."
+},
+{
+"s": 9,
+"section": "Nuts, Seeds & Healthy Fats",
+"group": "",
+"name": "Simply Nature Organic Peanut / Almond Butter (Aldi)",
+"status": "approved",
+"details": "Organic, single-ingredient nut butters at Aldi prices. Excellent value."
+},
+{
+"s": 9,
+"section": "Nuts, Seeds & Healthy Fats",
+"group": "",
+"name": "365 Organic Extra Virgin Olive Oil (Whole Foods)",
+"status": "approved",
+"details": "Clean single-ingredient EVOO, store brand pricing. Good everyday cooking oil."
+},
+{
+"s": 9,
+"section": "Nuts, Seeds & Healthy Fats",
+"group": "",
+"name": "Great Value Extra Virgin Olive Oil (Walmart)",
+"status": "approved",
+"details": "Budget EVOO. Fine for everyday cooking and dressings. For finishing, spend up on California Olive Ranch."
+},
+{
+"s": 9,
+"section": "Nuts, Seeds & Healthy Fats",
+"group": "",
+"name": "Store-brand 'vegetable oil' / canola spray",
+"status": "avoid",
+"details": "Any store-brand vegetable oil is a soybean/canola blend. Buy avocado, olive, or coconut oil instead."
+},
+{
+"s": 10,
+"section": "Beans, Legumes & Plant Protein",
+"group": "",
+"name": "Goya Black Beans (canned)",
+"status": "approved",
+"details": "Ingredients: black beans, water, salt. Clean. Affordable. Widely available at Walmart, Publix, Target, Winn-Dixie."
+},
+{
+"s": 10,
+"section": "Beans, Legumes & Plant Protein",
+"group": "",
+"name": "Bush's Best Black Beans (canned)",
+"status": "approved",
+"details": "Beans, water, sugar, salt (minimal sugar). Clean enough. Walmart, Publix, Target."
+},
+{
+"s": 10,
+"section": "Beans, Legumes & Plant Protein",
+"group": "",
+"name": "365 (Whole Foods) No Salt Added Black Beans",
+"status": "approved",
+"details": "Cleanest: black beans and water only. Best if watching sodium. Whole Foods."
+},
+{
+"s": 10,
+"section": "Beans, Legumes & Plant Protein",
+"group": "",
+"name": "Member's Mark Black Beans / Pinto Beans (Sam's Club)",
+"status": "approved",
+"details": "Beans, water, salt. Bulk canned multi-packs or large dry bags. Clean, affordable staple. Rinse canned to reduce sodium. Sam's Club."
+},
+{
+"s": 10,
+"section": "Beans, Legumes & Plant Protein",
+"group": "",
+"name": "Bob's Red Mill Green Lentils",
+"status": "approved",
+"details": "Dried lentils, single ingredient, bulk bag. Best price. Walmart, Target, Publix."
+},
+{
+"s": 10,
+"section": "Beans, Legumes & Plant Protein",
+"group": "",
+"name": "Goya Chickpeas (canned)",
+"status": "approved",
+"details": "Chickpeas, water, salt. Clean. Great zinc source replacing shellfish. Same stores as black beans."
+},
+{
+"s": 10,
+"section": "Beans, Legumes & Plant Protein",
+"group": "",
+"name": "Trader Joe's Hummus (classic)",
+"status": "caution",
+"details": "Check current label. Most Trader Joe's hummus is clean (tahini + chickpeas). Confirm no soybean oil in current formula."
+},
+{
+"s": 10,
+"section": "Beans, Legumes & Plant Protein",
+"group": "",
+"name": "Hope Foods Hummus",
+"status": "approved",
+"details": "Organic ingredients, no soybean oil, clean tahini base. Multiple flavors. Whole Foods, Sprouts."
+},
+{
+"s": 10,
+"section": "Beans, Legumes & Plant Protein",
+"group": "",
+"name": "Trader Joe's Fat Free Refried Beans",
+"status": "approved",
+"details": "No lard [Lev 11:7], no soybean oil. Ingredients: pinto beans, water, salt. Best clean canned refried bean. Trader Joe's only."
+},
+{
+"s": 10,
+"section": "Beans, Legumes & Plant Protein",
+"group": "",
+"name": "Rosarita Traditional Refried Beans",
+"status": "avoid",
+"details": "Contains lard (pork fat) [Lev 11:7-8]. Off this diet."
+},
+{
+"s": 10,
+"section": "Beans, Legumes & Plant Protein",
+"group": "",
+"name": "Old El Paso Refried Beans (standard)",
+"status": "avoid",
+"details": "Contains lard [Lev 11:7-8]. Off this diet. Check 'fat-free' version label separately."
+},
+{
+"s": 10,
+"section": "Beans, Legumes & Plant Protein",
+"group": "",
+"name": "Edamame / Soybeans (any brand)",
+"status": "avoid",
+"details": "Soy — off this diet entirely."
+},
+{
+"s": 10,
+"section": "Beans, Legumes & Plant Protein",
+"group": "",
+"name": "Great Value Black / Pinto Beans (Walmart)",
+"status": "approved",
+"details": "Beans, water, salt. Cheapest canned beans anywhere. Rinse to cut sodium."
+},
+{
+"s": 10,
+"section": "Beans, Legumes & Plant Protein",
+"group": "",
+"name": "Good & Gather Organic Beans (Target)",
+"status": "approved",
+"details": "Organic, clean 3-ingredient label. Also carries no-salt-added versions."
+},
+{
+"s": 10,
+"section": "Beans, Legumes & Plant Protein",
+"group": "",
+"name": "Simply Nature Organic Beans (Aldi)",
+"status": "approved",
+"details": "Organic canned and dried beans at the best prices in Huntsville."
+},
+{
+"s": 10,
+"section": "Beans, Legumes & Plant Protein",
+"group": "",
+"name": "365 No Salt Added Beans (Whole Foods)",
+"status": "approved",
+"details": "Beans and water only — cleanest canned bean available. Whole Foods."
+},
+{
+"s": 10,
+"section": "Beans, Legumes & Plant Protein",
+"group": "",
+"name": "Publix / Simple Truth Canned Beans",
+"status": "approved",
+"details": "Both store labels are clean: beans, water, salt. Verify no added sugar in 'seasoned' versions."
+},
+{
+"s": 10,
+"section": "Beans, Legumes & Plant Protein",
+"group": "",
+"name": "Store-brand refried beans (any store)",
+"status": "caution",
+"details": "Check for LARD [Lev 11:7-8] and soybean oil — both are common in canned refried beans. The 'fat free' or 'vegetarian' versions are usually safe. Trader Joe's fat-free is confirmed clean."
+},
+{
+"s": 11,
+"section": "Jelly, Jams & Spreads",
+"group": "",
+"name": "Polaner All Fruit (any flavor)",
+"status": "approved",
+"details": "Fruit-juice sweetened. No added refined sugar, no artificial dyes, no soy. BEST mainstream jelly option. Find at: Publix, Walmart, Target, Winn-Dixie. Grape and strawberry are cleanest flavors."
+},
+{
+"s": 11,
+"section": "Jelly, Jams & Spreads",
+"group": "",
+"name": "Smucker's Simply Fruit",
+"status": "approved",
+"details": "100% fruit, no added sugar. Clean label. Publix, Walmart, Target. Seedless strawberry is easy to find."
+},
+{
+"s": 11,
+"section": "Jelly, Jams & Spreads",
+"group": "",
+"name": "Bonne Maman Intense",
+"status": "approved",
+"details": "Higher fruit content, 39% less sugar than standard preserves. European recipe, short ingredient list. Whole Foods, Publix, Target. Strawberry and apricot recommended."
+},
+{
+"s": 11,
+"section": "Jelly, Jams & Spreads",
+"group": "",
+"name": "Nature's Hollow Sugar-Free Jam",
+"status": "approved",
+"details": "Xylitol-sweetened. No refined sugar, no artificial dyes. 2g net carbs. Strawberry, blueberry, apricot, raspberry available. STORE AWAY FROM PETS — xylitol is toxic to dogs. Find at Sprouts, Whole Foods, Amazon."
+},
+{
+"s": 11,
+"section": "Jelly, Jams & Spreads",
+"group": "",
+"name": "Good Good Jam (no added sugar)",
+"status": "approved",
+"details": "Erythritol + stevia sweetened. No artificial dyes, no soy. 1g net carb per serving. Multiple flavors. Find at Sprouts, Whole Foods, Amazon."
+},
+{
+"s": 11,
+"section": "Jelly, Jams & Spreads",
+"group": "",
+"name": "Smucker's Low Sugar (not sugar-free)",
+"status": "caution",
+"details": "5g sugar per serving (from fruit, not HFCS). No artificial sweeteners. No dyes. Better than standard Smucker's. Publix, Walmart, Target."
+},
+{
+"s": 11,
+"section": "Jelly, Jams & Spreads",
+"group": "",
+"name": "Welch's Grape Jelly (standard)",
+"status": "avoid",
+"details": "High refined sugar (HFCS or cane sugar). Off the list."
+},
+{
+"s": 11,
+"section": "Jelly, Jams & Spreads",
+"group": "",
+"name": "Smucker's Sugar Free (Splenda/sucralose)",
+"status": "avoid",
+"details": "Sucralose disrupts gut microbiome. Off this plan even though it has no sugar."
+},
+{
+"s": 11,
+"section": "Jelly, Jams & Spreads",
+"group": "",
+"name": "Standard Jell-O (original line)",
+"status": "avoid",
+"details": "Red 40, Blue 1, Yellow 5 in every flavor. High refined sugar. Off the list."
+},
+{
+"s": 11,
+"section": "Jelly, Jams & Spreads",
+"group": "",
+"name": "Jell-O Simply (new 2026 line)",
+"status": "caution",
+"details": "New formula: real fruit juice, no FD&C dyes, 25% less sugar. Cleaner than original. Check label for current formula before buying."
+},
+{
+"s": 11,
+"section": "Jelly, Jams & Spreads",
+"group": "",
+"name": "365 Organic Fruit Spread (Whole Foods)",
+"status": "approved",
+"details": "Organic fruit-sweetened spreads with clean labels. Comparable to Polaner at store-brand pricing."
+},
+{
+"s": 11,
+"section": "Jelly, Jams & Spreads",
+"group": "",
+"name": "Simple Truth Organic Fruit Spread (Kroger)",
+"status": "approved",
+"details": "Free-from-101 standard: no artificial colors, flavors, sweeteners, or preservatives. Check for added cane sugar on the specific jar."
+},
+{
+"s": 11,
+"section": "Jelly, Jams & Spreads",
+"group": "",
+"name": "Simply Nature Organic Fruit Spread (Aldi)",
+"status": "caution",
+"details": "Organic, no artificial dyes. Some varieties still list cane sugar — read the jar. Good price if it checks out."
+},
+{
+"s": 11,
+"section": "Jelly, Jams & Spreads",
+"group": "",
+"name": "Store-brand grape jelly (any store)",
+"status": "avoid",
+"details": "Great Value, Publix, Kroger standard jellies are HFCS or cane sugar first. Off the list — buy Polaner All Fruit instead."
+},
+{
+"s": 12,
+"section": "Condiments, Sauces & Cooking",
+"group": "",
+"name": "Soy Sauce Alternative",
+"status": "best",
+"details": "Coconut Secret Coconut Aminos (best flavor). Bragg Liquid Aminos (also clean).",
+"alt": "Coconut Secret: Whole Foods, Target, Walmart, Sprouts • Bragg: same stores. Both no soy, lower sodium, same umami. No exceptions for soy sauce or tamari."
+},
+{
+"s": 12,
+"section": "Condiments, Sauces & Cooking",
+"group": "",
+"name": "Ketchup",
+"status": "best",
+"details": "Primal Kitchen Ketchup (avocado oil, no HFCS, no refined sugar)",
+"alt": "Find at: Target, Whole Foods, Publix, Walmart • Primal Kitchen is the only mainstream brand that qualifies. Avoid: Heinz, Hunt's, Del Monte — all HFCS or refined sugar."
+},
+{
+"s": 12,
+"section": "Condiments, Sauces & Cooking",
+"group": "",
+"name": "Mayonnaise",
+"status": "best",
+"details": "Primal Kitchen Avocado Oil Mayo",
+"alt": "1st: Primal Kitchen (Target, Whole Foods, Publix, Walmart) • 2nd: Sir Kensington's Avocado Oil Mayo (Whole Foods, Sprouts) • Avoid: Hellmann's, Duke's, Blue Plate, Kraft — all use soybean oil"
+},
+{
+"s": 12,
+"section": "Condiments, Sauces & Cooking",
+"group": "",
+"name": "BBQ Sauce",
+"status": "best",
+"details": "Primal Kitchen BBQ (no sugar, no soy)",
+"alt": "1st: Primal Kitchen Classic BBQ or Golden BBQ (Target, Whole Foods) • 2nd: Tessemae's Organic BBQ (Whole Foods, Sprouts) • Avoid: Sweet Baby Ray's, KC Masterpiece, Heinz BBQ — all have HFCS"
+},
+{
+"s": 12,
+"section": "Condiments, Sauces & Cooking",
+"group": "",
+"name": "Salad Dressing (bottled)",
+"status": "best",
+"details": "Primal Kitchen Ranch or Caesar (avocado oil, no soy)",
+"alt": "1st: Primal Kitchen (Target, Whole Foods) • 2nd: Tessemae's All Natural Ranch (Whole Foods) • 3rd: Homemade (olive oil + lemon + dijon + ACV + garlic) • Avoid: Hidden Valley, Ken's, Newman's Own — soybean oil"
+},
+{
+"s": 12,
+"section": "Condiments, Sauces & Cooking",
+"group": "",
+"name": "Mustard",
+"status": "best",
+"details": "Annie's Organic Yellow Mustard (no Yellow 5) or Primal Kitchen Dijon",
+"alt": "Annie's Yellow Mustard: Target, Publix, Walmart • Grey Poupon Dijon is generally clean (vinegar, mustard seed, water, salt) • French's Yellow: check current label — some versions have Yellow 5"
+},
+{
+"s": 12,
+"section": "Condiments, Sauces & Cooking",
+"group": "",
+"name": "Hot Sauce",
+"status": "best",
+"details": "Frank's RedHot Original (pepper mash, vinegar, salt, garlic)",
+"alt": "1st: Frank's RedHot Original (everywhere) • 2nd: Tabasco Original (everywhere) • 3rd: Cholula Original (vinegar, peppers, water, spices, clean) • 4th: Valentina (check label) • Avoid: all Frank's flavored varieties — many have dyes"
+},
+{
+"s": 12,
+"section": "Condiments, Sauces & Cooking",
+"group": "",
+"name": "Apple Cider Vinegar",
+"status": "best",
+"details": "Bragg Organic ACV with 'the mother'",
+"alt": "Find at: Walmart, Target, Publix, Whole Foods, Costco. Best gut-supporting ACV. Use in dressings, a splash in water, or as a marinade."
+},
+{
+"s": 12,
+"section": "Condiments, Sauces & Cooking",
+"group": "",
+"name": "Worcestershire Sauce",
+"status": "best",
+"details": "Lea & Perrins Original (anchovies, vinegar, molasses, spices)",
+"alt": "Use sparingly — trace molasses (unrefined sugar). Acceptable in small cooking amounts. Widely available everywhere. Annie's Worcestershire is cleaner if available."
+},
+{
+"s": 13,
+"section": "Drinks & Beverages",
+"group": "Sparkling Water — Approved Brands",
+"name": "LaCroix Sparkling Water (any flavor)",
+"status": "approved",
+"details": "Zero sugar, no artificial sweeteners, no artificial dyes, no soy. Naturally flavored with citrus oils. 25+ flavors. Walmart, Target, Publix, Costco, Winn-Dixie. Most affordable clean sparkling water."
+},
+{
+"s": 13,
+"section": "Drinks & Beverages",
+"group": "Sparkling Water — Approved Brands",
+"name": "Waterloo Sparkling Water",
+"status": "approved",
+"details": "Zero sugar, no artificial anything, certified non-GMO. Bolder fruit flavor than LaCroix. Target, Whole Foods, Sprouts, Publix."
+},
+{
+"s": 13,
+"section": "Drinks & Beverages",
+"group": "Sparkling Water — Approved Brands",
+"name": "Spindrift Sparkling Water",
+"status": "approved",
+"details": "Real fruit juice added (5-20 calories, 0-4g natural sugar). No artificial anything. Closest to a juice without the blood sugar spike. Whole Foods, Target, Publix, Sprouts."
+},
+{
+"s": 13,
+"section": "Drinks & Beverages",
+"group": "Sparkling Water — Approved Brands",
+"name": "Topo Chico (plain)",
+"status": "approved",
+"details": "Mineral water, naturally carbonated. No artificial dyes or sweeteners. Strong carbonation. Great with lime. Walmart, Target, Publix, Whole Foods."
+},
+{
+"s": 13,
+"section": "Drinks & Beverages",
+"group": "Sparkling Water — Approved Brands",
+"name": "Bubly Sparkling Water",
+"status": "approved",
+"details": "Zero sugar, no artificial sweeteners, no artificial dyes. Similar to LaCroix. Walmart, Target, Publix. Affordable."
+},
+{
+"s": 13,
+"section": "Drinks & Beverages",
+"group": "Sparkling Water — Approved Brands",
+"name": "Sparkling Ice (any flavor)",
+"status": "avoid",
+"details": "Contains sucralose (artificial sweetener) + artificial dyes in most flavors. Off the list."
+},
+{
+"s": 13,
+"section": "Drinks & Beverages",
+"group": "Sparkling Water — Approved Brands",
+"name": "Bubly Burst",
+"status": "avoid",
+"details": "Contains acesulfame potassium and sucralose. Off the list."
+},
+{
+"s": 13,
+"section": "Drinks & Beverages",
+"group": "Sparkling Water — Approved Brands",
+"name": "Great Value Sparkling Water (Walmart)",
+"status": "approved",
+"details": "Zero sugar, zero sweeteners, natural flavor. Direct LaCroix equivalent at roughly half the price. Walmart."
+},
+{
+"s": 13,
+"section": "Drinks & Beverages",
+"group": "Sparkling Water — Approved Brands",
+"name": "Good & Gather Sparkling Water (Target)",
+"status": "approved",
+"details": "Clean, zero sugar, no artificial sweeteners or dyes. Target."
+},
+{
+"s": 13,
+"section": "Drinks & Beverages",
+"group": "Sparkling Water — Approved Brands",
+"name": "Publix Sparkling Water",
+"status": "approved",
+"details": "Store brand, zero sugar, naturally flavored. Convenient and cheap."
+},
+{
+"s": 13,
+"section": "Drinks & Beverages",
+"group": "Sparkling Water — Approved Brands",
+"name": "365 Sparkling Water (Whole Foods)",
+"status": "approved",
+"details": "Clean store brand, zero sugar, no additives."
+},
+{
+"s": 13,
+"section": "Drinks & Beverages",
+"group": "Sparkling Water — Approved Brands",
+"name": "Simply Nature / Vive Sparkling Water (Aldi)",
+"status": "approved",
+"details": "Aldi's sparkling water — zero sugar, no artificial sweeteners. Cheapest per can in Huntsville."
+},
+{
+"s": 13,
+"section": "Drinks & Beverages",
+"group": "Kombucha — Approved Brands (Probiotic Drinks)",
+"name": "GT's Synergy Trilogy (raspberry, lemon, ginger)",
+"status": "approved",
+"details": "3-4g sugar per 8oz (naturally from fermentation). Live cultures, no artificial flavors or dyes. Raw, unpasteurized. Best starter kombucha. Whole Foods, Publix, Target, Sprouts, Walmart."
+},
+{
+"s": 13,
+"section": "Drinks & Beverages",
+"group": "Kombucha — Approved Brands (Probiotic Drinks)",
+"name": "GT's Synergy Gingerade",
+"status": "approved",
+"details": "Clean ginger-lemon flavor. Same low sugar, same live cultures. Same stores."
+},
+{
+"s": 13,
+"section": "Drinks & Beverages",
+"group": "Kombucha — Approved Brands (Probiotic Drinks)",
+"name": "GT's Synergy Original (unflavored)",
+"status": "approved",
+"details": "Lowest sugar of all GT's varieties. Tart, acquired taste. Best pure probiotic option. Same stores."
+},
+{
+"s": 13,
+"section": "Drinks & Beverages",
+"group": "Kombucha — Approved Brands (Probiotic Drinks)",
+"name": "Health-Ade Bubbly Rose",
+"status": "approved",
+"details": "Small-batch brewed in glass. Cold-pressed juice for flavor. No artificial dyes, no artificial sweeteners. About 70 calories and 13g sugar per bottle — limit to 8oz serving. Whole Foods, Target, Sprouts."
+},
+{
+"s": 13,
+"section": "Drinks & Beverages",
+"group": "Kombucha — Approved Brands (Probiotic Drinks)",
+"name": "Brew Dr. Kombucha (Love flavor)",
+"status": "approved",
+"details": "100% organic ingredients, whole tea leaves, real fruit. No artificial dyes. Oregon-based, high quality. Whole Foods, Sprouts."
+},
+{
+"s": 13,
+"section": "Drinks & Beverages",
+"group": "Kombucha — Approved Brands (Probiotic Drinks)",
+"name": "Humm Kombucha (zero sugar varieties)",
+"status": "approved",
+"details": "Raw, unpasteurized. Zero sugar options available. Organic. Good for those watching sugar closely. Whole Foods, Target, Sprouts."
+},
+{
+"s": 13,
+"section": "Drinks & Beverages",
+"group": "Kombucha — Approved Brands (Probiotic Drinks)",
+"name": "KeVita Master Brew Kombucha",
+"status": "caution",
+"details": "Artificially carbonated (not naturally fermented to full strength). Still has probiotic cultures but quality is lower than GT's or Health-Ade. Widely available — acceptable if others aren't available."
+},
+{
+"s": 13,
+"section": "Drinks & Beverages",
+"group": "Kombucha — Approved Brands (Probiotic Drinks)",
+"name": "Synergy Cosmic Cranberry / Mystic Mango",
+"status": "caution",
+"details": "Higher sugar than Trilogy or Original (7-9g per 8oz). Still no artificial dyes, still live cultures. Limit to one serving if you choose these flavors."
+},
+{
+"s": 13,
+"section": "Drinks & Beverages",
+"group": "Clean Soda Alternatives — For When You Want Something Fun",
+"name": "Zevia Zero Sugar Soda (any flavor)",
+"status": "approved",
+"details": "Stevia-sweetened. Zero sugar, zero artificial dyes, zero artificial sweeteners. 17 flavors including cola, ginger root beer, lemon lime. No aspartame or sucralose. Target, Whole Foods, Publix, Walmart, Sprouts. Best clean soda substitute."
+},
+{
+"s": 13,
+"section": "Drinks & Beverages",
+"group": "Clean Soda Alternatives — For When You Want Something Fun",
+"name": "Olipop Prebiotic Soda (Vintage Cola, Root Beer)",
+"status": "approved",
+"details": "2-5g sugar, 9g fiber per can. Prebiotic fiber supports gut health. No artificial dyes, no artificial sweeteners. Check flavor — most are clean. Target, Whole Foods, Sprouts, Walmart."
+},
+{
+"s": 13,
+"section": "Drinks & Beverages",
+"group": "Clean Soda Alternatives — For When You Want Something Fun",
+"name": "Poppi Prebiotic Soda",
+"status": "caution",
+"details": "Apple cider vinegar-based. Low sugar (5g). No artificial dyes in most flavors. Check current label — some flavors have added colorings. Target, Whole Foods, Walmart."
+},
+{
+"s": 13,
+"section": "Drinks & Beverages",
+"group": "Clean Soda Alternatives — For When You Want Something Fun",
+"name": "Culture Pop Probiotic Soda",
+"status": "approved",
+"details": "Organic juices, no refined sugar, no artificial dyes, live probiotics. Good gut-health soda. Whole Foods, Sprouts, Amazon."
+},
+{
+"s": 13,
+"section": "Drinks & Beverages",
+"group": "Clean Soda Alternatives — For When You Want Something Fun",
+"name": "Gatorade (all varieties)",
+"status": "avoid",
+"details": "Red 40, Yellow 5, Yellow 6, Blue 1 throughout. High sugar or artificial sweeteners. Off the list."
+},
+{
+"s": 13,
+"section": "Drinks & Beverages",
+"group": "Clean Soda Alternatives — For When You Want Something Fun",
+"name": "Powerade (all varieties)",
+"status": "avoid",
+"details": "Same violations as Gatorade. Off the list."
+},
+{
+"s": 13,
+"section": "Drinks & Beverages",
+"group": "Clean Soda Alternatives — For When You Want Something Fun",
+"name": "BodyArmor Lyte (all flavors)",
+"status": "approved",
+"details": "YES — this one works. 2g sugar, 20 calories per 16oz. NO artificial sweeteners, NO artificial dyes — color comes from vegetable and fruit juice concentrates, not Red 40. Sweetened with stevia plus a bulk sweetener (older formula used erythritol; the 2026 reformulation moved to ALLULOSE, which is the upgrade you want — check your bottle). High potassium. THE ONE CATCH: if your bottle still lists erythritol, it carries about 16g per bottle, which is a meaningful dose given the 2023-2025 cardiovascular signal on erythritol (see Sweeteners, Tier 3). Limit to 1 bottle a day and prefer the allulose-sweetened bottles when you see them. Walmart, Target, Publix, Sam's Club, Costco."
+},
+{
+"s": 13,
+"section": "Drinks & Beverages",
+"group": "Clean Soda Alternatives — For When You Want Something Fun",
+"name": "BodyArmor Zero Sugar",
+"status": "approved",
+"details": "THE BEST BODYARMOR FOR YOU. Sweetened with stevia only — no erythritol, no cane sugar, no artificial sweeteners, no artificial dyes. 0g sugar, 0g added sugar. Delivers potassium and vitamins. If you are choosing between BodyArmor lines, grab this one over Lyte and you sidestep the erythritol question entirely. Four flavors. Walmart, Target, Publix, Sam's Club."
+},
+{
+"s": 13,
+"section": "Drinks & Beverages",
+"group": "Clean Soda Alternatives — For When You Want Something Fun",
+"name": "BodyArmor ORIGINAL (the standard bottle)",
+"status": "avoid",
+"details": "21g of cane sugar per bottle — that is refined sugar, and it is the exact spike-and-crash your ADHD focus cannot afford. It IS free of artificial dyes and artificial sweeteners, which puts it ahead of Gatorade, but the sugar load disqualifies it here. Grab Lyte or Zero Sugar instead — same shelf, same brand, same flavors."
+},
+{
+"s": 13,
+"section": "Drinks & Beverages",
+"group": "Clean Soda Alternatives — For When You Want Something Fun",
+"name": "BodyArmor Flash IV",
+"status": "caution",
+"details": "Higher sodium (better for genuine heavy-sweat hydration) but sweetened with a sugar + stevia blend — about 15g sugar per 20oz bottle. The powder stick-pack version of Flash IV contains NO sugar, so if you want Flash IV, buy the STICKS, not the bottles."
+},
+{
+"s": 13,
+"section": "Drinks & Beverages",
+"group": "Clean Soda Alternatives — For When You Want Something Fun",
+"name": "wildwonder Sparkling Prebiotic + Probiotic",
+"status": "approved",
+"details": "YES — and it fits your gut-brain strategy better than almost anything else in this section. THE ONLY drink that combines BOTH 5g prebiotic fiber (Jerusalem artichoke + chicory root inulin) AND 1 billion CFU live probiotics (Bacillus subtilis DE111, a spore-forming strain clinically shown to survive stomach acid and reach the gut). USDA Organic, non-GMO, and the allergen panel explicitly confirms FREE FROM SOYBEAN AND ITS DERIVATIVES. No artificial dyes, no artificial sweeteners, no sucralose, no erythritol. Only 6g sugar and 40 calories per can. Primarily sweetened with monk fruit extract (your Tier 1 sweetener). Caffeine-free. Flavors: Guava Rose, Mango Turmeric, Strawberry Passion, Peach Ginger, Pineapple Paradise, Raspberry Lychee. Whole Foods, Sprouts, Kroger, Target, Amazon."
+},
+{
+"s": 13,
+"section": "Drinks & Beverages",
+"group": "Clean Soda Alternatives — For When You Want Something Fun",
+"name": "wildwonder — THE ONE CAVEAT (agave)",
+"status": "caution",
+"details": "READ THIS BEFORE YOU BUY A CASE. Every wildwonder flavor lists ORGANIC AGAVE NECTAR as a sweetener alongside monk fruit. Agave sits in Tier 4 (AVOID) in your Sweeteners section because it is 70-90% fructose — higher than HFCS — and fructose is metabolized almost entirely by the liver. THE CONTEXT THAT MATTERS: the total sugar is only 6g per can, so the actual agave dose is small (roughly 4-5g). That is a very different thing from a 20g agave-sweetened product. VERDICT: 1 can per day is a clear net win — the 5g prebiotic fiber and live probiotics do more good for your gut-brain axis than 4-5g of agave does harm. Do not drink 3 a day, and do not treat it as a water replacement. If you want zero agave, GT's Synergy Original kombucha is your alternative."
+},
+{
+"s": 13,
+"section": "Drinks & Beverages",
+"group": "Clean Soda Alternatives — For When You Want Something Fun",
+"name": "wildwonder vs. Olipop vs. GT's Kombucha — which when",
+"status": "approved",
+"details": "ALL THREE ARE ON YOUR PLAN; use them for different jobs. wildwonder = the only one with BOTH prebiotic fiber AND live probiotics in the same can, so it is your best single gut-health drink; also the best-tasting soda replacement and a strong mocktail base. OLIPOP = highest prebiotic fiber (9g) but NO live probiotics — best when you want fiber and a classic cola or root beer flavor. GT'S SYNERGY = highest live-culture count and the only one with zero agave, but it is fermented and tart. ROTATION IDEA: GT's in the morning with food, wildwonder in the afternoon as your soda replacement."
+},
+{
+"s": 13,
+"section": "Drinks & Beverages",
+"group": "Electrolytes — Clean Options When You Need Them",
+"name": "LMNT Electrolyte Packets",
+"status": "approved",
+"details": "Zero sugar, zero dyes, zero artificial sweeteners. 1,000mg sodium, 200mg potassium, 60mg magnesium per packet. Best electrolyte product on the market for this diet. Citrus salt and grapefruit salt are cleanest flavors. Amazon, Whole Foods, Sprouts, Target."
+},
+{
+"s": 13,
+"section": "Drinks & Beverages",
+"group": "Electrolytes — Clean Options When You Need Them",
+"name": "Nuun Sport Tablets",
+"status": "caution",
+"details": "Low sugar (1g) and no artificial sweeteners in most flavors. Check current label for artificial dyes — some flavors use beet juice (clean) while others use FD&C dyes. Whole Foods, Target, Sprouts."
+},
+{
+"s": 13,
+"section": "Drinks & Beverages",
+"group": "Electrolytes — Clean Options When You Need Them",
+"name": "Liquid I.V. Hydration Multiplier (ORIGINAL)",
+"status": "avoid",
+"details": "The original orange-box formula is sweetened with PURE CANE SUGAR + DEXTROSE — 11g of added sugar per stick, 45 calories. Both are refined sugars. That sugar is intentional (it powers the sodium-glucose cotransport that the brand is built on), but for your purposes it is a blood-sugar spike in a packet. Do not buy the original box."
+},
+{
+"s": 13,
+"section": "Drinks & Beverages",
+"group": "Electrolytes — Clean Options When You Need Them",
+"name": "Liquid I.V. SUGAR-FREE Hydration Multiplier",
+"status": "approved",
+"details": "YES — THIS is the Liquid I.V. you can have, and it is a genuinely strong pick. Sweetened with ALLULOSE + stevia (your Tier 1 sweeteners — no erythritol, no sucralose, no artificial sweeteners). 0g sugar, 10 calories. Free of gluten, dairy, and SOY. The electrolyte profile is actually BETTER than the original: about 490mg sodium, 380mg potassium, 56mg magnesium, and 120mg calcium — it adds the magnesium and calcium the original lacks, and magnesium is on your priority list. Comes in a smaller 6.5g stick (vs 15g) — which tells you how much of the original was just sugar. TRADEOFF: without glucose it loses the sodium-glucose cotransport mechanism, so it is a very good everyday electrolyte drink rather than a rapid-rehydration tool. Look for the box that says SUGAR-FREE. Walmart, Target, Costco, Sam's Club, Amazon."
+},
+{
+"s": 13,
+"section": "Drinks & Beverages",
+"group": "Electrolytes — Clean Options When You Need Them",
+"name": "Liquid I.V. Sugar-Free vs. LMNT — which to use when",
+"status": "caution",
+"details": "Both are clean and both are on your plan. LMNT delivers more total electrolytes (about 1,260mg vs 910mg) with 1,000mg of sodium — better when you are sweating hard, working outside in Alabama heat, or doing a long training session. Liquid I.V. Sugar-Free tastes closer to real sugar (allulose mimics sugar better than stevia alone, which some people find bitter) and adds magnesium + calcium. USE BOTH: LMNT for heavy sweat and heat, Liquid I.V. Sugar-Free for everyday hydration and better taste."
+},
+{
+"s": 13,
+"section": "Drinks & Beverages",
+"group": "Cleanest Options — Natural Caffeine, No Dyes, No Sucralose",
+"name": "Zevia Energy (all flavors)",
+"status": "approved",
+"details": "YOUR BEST EVERYDAY PICK. 120mg natural caffeine from green tea/coffee, zero sugar, zero calories. Sweetened with PURE stevia — no erythritol, no sucralose. No artificial dyes, non-GMO, vegan. Same clean brand as your Zevia soda. This is the one to default to. Target, Whole Foods, Publix, Walmart, Sprouts, Amazon."
+},
+{
+"s": 13,
+"section": "Drinks & Beverages",
+"group": "Cleanest Options — Natural Caffeine, No Dyes, No Sucralose",
+"name": "Josie Clean Energy Sparkling Water",
+"status": "approved",
+"details": "THE CLEANEST ON THE MARKET. 65mg natural caffeine from green coffee beans (about one espresso — ideal for daily), zero sugar, zero calories, nothing artificial. Adds Lion's Mane and Cordyceps (focus + endurance adaptogens) and B12. Short, recognizable ingredient list. Order at drinkjosie.com or Amazon."
+},
+{
+"s": 13,
+"section": "Drinks & Beverages",
+"group": "Cleanest Options — Natural Caffeine, No Dyes, No Sucralose",
+"name": "FOCUSAID (LIFEAID) Clean Energy",
+"status": "approved",
+"details": "100mg natural caffeine from yerba mate + green tea, plus GABA, Rhodiola, ginseng — formulated specifically for calm focus, which fits ADHD well. NOTE: sweetened with organic AGAVE (7g sugar) — agave is high-fructose, so this is a Tier-2 allowance, not daily. But no dyes, no sucralose. Whole Foods, Sprouts, Amazon."
+},
+{
+"s": 13,
+"section": "Drinks & Beverages",
+"group": "Cleanest Options — Natural Caffeine, No Dyes, No Sucralose",
+"name": "FITAID ZERO",
+"status": "approved",
+"details": "Naturally sweetened with MONK FRUIT + stevia (Tier 1). Zero sugar, no sucralose, no Ace-K, plant-based green tea caffeine, plus electrolytes and micronutrients. Good post-workout. Whole Foods, Sprouts, Amazon, some Publix."
+},
+{
+"s": 13,
+"section": "Drinks & Beverages",
+"group": "Cleanest Options — Natural Caffeine, No Dyes, No Sucralose",
+"name": "Guayaki Yerba Mate (Zero Sugar varieties)",
+"status": "approved",
+"details": "Organic yerba mate, ~150mg natural caffeine with naturally occurring theobromine for smoother energy. CHOOSE THE ZERO-SUGAR cans — some Guayaki flavors carry 14g+ cane sugar. Fair-trade, no dyes. Whole Foods, Sprouts, Target, Publix."
+},
+{
+"s": 13,
+"section": "Drinks & Beverages",
+"group": "Cleanest Options — Natural Caffeine, No Dyes, No Sucralose",
+"name": "Runa Clean Energy",
+"status": "approved",
+"details": "Guayusa-leaf caffeine (Amazonian), antioxidants, low sugar. No artificial sweeteners or dyes. Clean and smooth. Whole Foods, Amazon, Sprouts."
+},
+{
+"s": 13,
+"section": "Drinks & Beverages",
+"group": "Cleanest Options — Natural Caffeine, No Dyes, No Sucralose",
+"name": "MatchaBar Hustle (unsweetened / lightly sweetened)",
+"status": "approved",
+"details": "Matcha-based, ~120mg caffeine with naturally occurring L-THEANINE built in — the theanine is exactly why matcha gives calm focus. No dyes. Check flavor for added sugar. Whole Foods, Sprouts, Amazon."
+},
+{
+"s": 13,
+"section": "Drinks & Beverages",
+"group": "Cleanest Options — Natural Caffeine, No Dyes, No Sucralose",
+"name": "Pureboost Clean Energy Mix (powder stick)",
+"status": "approved",
+"details": "Green-tea caffeine, no sugar, no sucralose. Powder stick you add to water — portable, no dyes, adds B-vitamins and antioxidants. Amazon, pureboost.com."
+},
+{
+"s": 13,
+"section": "Drinks & Beverages",
+"group": "Use With Caution",
+"name": "Guru Organic Energy",
+"status": "caution",
+"details": "Natural caffeine, coconut water, no sucralose — but some versions use organic cane sugar AND organic erythritol. No dyes. Choose zero-sugar version and be aware of the erythritol given the cardiovascular signal (see Sweeteners, Tier 3). Whole Foods, Sprouts."
+},
+{
+"s": 13,
+"section": "Drinks & Beverages",
+"group": "Use With Caution",
+"name": "Celsius ESSENTIALS",
+"status": "caution",
+"details": "Green-tea caffeine, B-vitamins, no dyes — BUT sweetened with SUCRALOSE and packs 200-270mg caffeine per can. Sucralose disrupts the gut microbiome you're rebuilding, and that caffeine is too high for daily use. Occasional pre-workout only, if at all. Everywhere."
+},
+{
+"s": 13,
+"section": "Drinks & Beverages",
+"group": "Use With Caution",
+"name": "ZOA Zero Sugar",
+"status": "caution",
+"details": "Natural green-tea/green-coffee caffeine, no dyes, added vitamins — but sweetened with sucralose + Ace-K. Cleaner than Monster but the artificial sweeteners keep it off the daily list. Walmart, Target, Sam's Club."
+},
+{
+"s": 13,
+"section": "Drinks & Beverages",
+"group": "Use With Caution",
+"name": "Bang / Reign / C4",
+"status": "caution",
+"details": "Zero sugar and no dyes in some SKUs, but all rely on sucralose and 200-300mg synthetic caffeine. Not for daily use. Treat as an occasional pre-workout at most."
+},
+{
+"s": 13,
+"section": "Drinks & Beverages",
+"group": "Avoid Entirely — The Dye + Sugar + Sucralose Offenders",
+"name": "Monster (original green + most flavors)",
+"status": "avoid",
+"details": "27-54g sugar, artificial flavors, and dyes in colored varieties. The zero-sugar versions swap in sucralose + Ace-K. Synthetic caffeine. Off the list top to bottom."
+},
+{
+"s": 13,
+"section": "Drinks & Beverages",
+"group": "Avoid Entirely — The Dye + Sugar + Sucralose Offenders",
+"name": "Red Bull (regular)",
+"status": "avoid",
+"details": "27g sugar per can plus artificial coloring. Sugar-Free version uses aspartame + Ace-K. Neither qualifies."
+},
+{
+"s": 13,
+"section": "Drinks & Beverages",
+"group": "Avoid Entirely — The Dye + Sugar + Sucralose Offenders",
+"name": "Rockstar",
+"status": "avoid",
+"details": "High sugar or artificial sweeteners, artificial dyes, synthetic caffeine. Off the list."
+},
+{
+"s": 13,
+"section": "Drinks & Beverages",
+"group": "Avoid Entirely — The Dye + Sugar + Sucralose Offenders",
+"name": "NOS / Full Throttle / Amp",
+"status": "avoid",
+"details": "High-fructose corn syrup and artificial dyes throughout. Off the list."
+},
+{
+"s": 13,
+"section": "Drinks & Beverages",
+"group": "Avoid Entirely — The Dye + Sugar + Sucralose Offenders",
+"name": "Alani Nu",
+"status": "avoid",
+"details": "Markets clean but is sweetened with SUCRALOSE and runs 200mg caffeine. The candy-style flavors also carry the sucralose gut concern. Off the daily list."
+},
+{
+"s": 13,
+"section": "Drinks & Beverages",
+"group": "Avoid Entirely — The Dye + Sugar + Sucralose Offenders",
+"name": "Ghost Energy",
+"status": "avoid",
+"details": "No dyes in some flavors but sweetened with SUCRALOSE, 200mg caffeine. Pre-workout territory, not clean daily. Off the list."
+},
+{
+"s": 13,
+"section": "Drinks & Beverages",
+"group": "Avoid Entirely — The Dye + Sugar + Sucralose Offenders",
+"name": "Bloom / Celsius Original",
+"status": "avoid",
+"details": "Both use sucralose despite clean marketing. Off the list for your purposes."
+},
+{
+"s": 13,
+"section": "Drinks & Beverages",
+"group": "Avoid Entirely — The Dye + Sugar + Sucralose Offenders",
+"name": "Prime Energy",
+"status": "avoid",
+"details": "Sucralose + Ace-K, 200mg caffeine. Off the list."
+},
+{
+"s": 13,
+"section": "Drinks & Beverages",
+"group": "Tea — Bottled & Bagged Brands",
+"name": "Yogi Tea (unsweetened / plain)",
+"status": "approved",
+"details": "Organic herbal and green teas. Clean ingredients. No artificial flavors or dyes. Target, Walmart, Whole Foods, Publix."
+},
+{
+"s": 13,
+"section": "Drinks & Beverages",
+"group": "Tea — Bottled & Bagged Brands",
+"name": "Celestial Seasonings (plain varieties)",
+"status": "approved",
+"details": "Clean herbal teas. No artificial dyes. Avoid 'sleepytime extra' varieties with chamomile extract and alcohol. Walmart, Target, Publix."
+},
+{
+"s": 13,
+"section": "Drinks & Beverages",
+"group": "Tea — Bottled & Bagged Brands",
+"name": "Bigelow Green Tea (plain)",
+"status": "approved",
+"details": "Simple, clean, widely available. No artificial anything. Walmart, Target, Publix, Winn-Dixie."
+},
+{
+"s": 13,
+"section": "Drinks & Beverages",
+"group": "Tea — Bottled & Bagged Brands",
+"name": "Honest Tea (unsweetened)",
+"status": "approved",
+"details": "Organic, no added sugar in unsweetened varieties. Clean label. Whole Foods, Publix, Target."
+},
+{
+"s": 13,
+"section": "Drinks & Beverages",
+"group": "Tea — Bottled & Bagged Brands",
+"name": "GT's Kombucha Ginger Lemon (as tea)",
+"status": "approved",
+"details": "If you want fermented tea with gut benefit. See kombucha section."
+},
+{
+"s": 13,
+"section": "Drinks & Beverages",
+"group": "Tea — Bottled & Bagged Brands",
+"name": "Lipton Sweet Tea (bottled)",
+"status": "avoid",
+"details": "High HFCS, caramel color. Off the list."
+},
+{
+"s": 13,
+"section": "Drinks & Beverages",
+"group": "Tea — Bottled & Bagged Brands",
+"name": "Arizona Iced Tea",
+"status": "avoid",
+"details": "High sugar (HFCS), often artificial dyes. All flavors off the list."
+},
+{
+"s": 13,
+"section": "Drinks & Beverages",
+"group": "Tea — Bottled & Bagged Brands",
+"name": "Snapple (most flavors)",
+"status": "avoid",
+"details": "High sugar or artificial sweeteners, artificial flavors. Off the list."
+},
+{
+"s": 13,
+"section": "Drinks & Beverages",
+"group": "Coffee — Clean Creamer & Additive Options",
+"name": "Califia Farms Barista Almond Milk",
+"status": "approved",
+"details": "Soy-free, no carrageenan, no sugar. Best clean coffee creamer. Publix, Target, Whole Foods."
+},
+{
+"s": 13,
+"section": "Drinks & Beverages",
+"group": "Coffee — Clean Creamer & Additive Options",
+"name": "Elmhurst Barista Oat Milk",
+"status": "approved",
+"details": "No gums, no soy. Good froth for lattes. Whole Foods, Sprouts."
+},
+{
+"s": 13,
+"section": "Drinks & Beverages",
+"group": "Coffee — Clean Creamer & Additive Options",
+"name": "Laird Superfood Creamer (unsweetened)",
+"status": "approved",
+"details": "Coconut milk powder + aquamin mineral blend. No soy, no sugar in unsweetened. Clean and functional. Amazon, Whole Foods, Target."
+},
+{
+"s": 13,
+"section": "Drinks & Beverages",
+"group": "Coffee — Clean Creamer & Additive Options",
+"name": "International Delight / Coffee Mate",
+"status": "avoid",
+"details": "Sodium caseinate (dairy derivative), soybean oil, added sugar, artificial flavors. Off the list."
+},
+{
+"s": 13,
+"section": "Drinks & Beverages",
+"group": "Coffee — Clean Creamer & Additive Options",
+"name": "Starbucks Frappuccino (bottled)",
+"status": "avoid",
+"details": "40-55g sugar, soy milk, caramel color, artificial flavors. Multiple violations."
+},
+{
+"s": 14,
+"section": "Snacks",
+"group": "Chips — The Only Approved Chip Brands",
+"name": "Siete Foods Grain-Free Chips (all flavors)",
+"status": "approved",
+"details": "Avocado oil base across all flavors. No soy, no artificial dyes, no refined sugar. Flavors: Sea Salt, Lime, Ranch, Fuego, Nacho, BBQ. The cleanest chip available in mainstream stores. Target, Walmart, Whole Foods, Publix, Sprouts, Costco (multipacks)."
+},
+{
+"s": 14,
+"section": "Snacks",
+"group": "Chips — The Only Approved Chip Brands",
+"name": "Siete Sea Salt (cleanest flavor)",
+"status": "approved",
+"details": "Cassava and coconut flour + avocado oil + sea salt. Shortest ingredient list of all Siete flavors. Best everyday chip."
+},
+{
+"s": 14,
+"section": "Snacks",
+"group": "Chips — The Only Approved Chip Brands",
+"name": "MASA Chips (sea salt)",
+"status": "approved",
+"details": "Whole grain corn + grass-fed beef tallow + sea salt. No seed oils whatsoever. Seed-oil-free, Levitically clean fat. No soy, no dyes. Order online at masachips.com or find at select Whole Foods."
+},
+{
+"s": 14,
+"section": "Snacks",
+"group": "Chips — The Only Approved Chip Brands",
+"name": "Rosie's Chips",
+"status": "approved",
+"details": "Potatoes + grass-fed beef tallow + sea salt. 3 ingredients. No seed oils, no soy, no dyes. Order at rosieschips.com. Clean kettle chip in clean fat."
+},
+{
+"s": 14,
+"section": "Snacks",
+"group": "Chips — The Only Approved Chip Brands",
+"name": "PopCorners SEA SALT (the only fully clean flavor)",
+"status": "approved",
+"details": "YES — but ONLY the Sea Salt flavor. Just 3 ingredients: yellow corn, sunflower oil, sea salt. No soy, no artificial dyes, no artificial flavors, no added sugar. Popped, never fried. Non-GMO. This is the cleanest PopCorners and the flavor to buy. TWO HONEST CAVEATS: (1) sunflower oil is high in omega-6, and a high omega-6 load competes against the omega-3 you are working hard to raise — so this is a Siete-second, not a Siete-replacement; (2) it is ground yellow corn, not whole grain, so the fiber is low. Treat as an occasional snack, not a daily one. Walmart, Target, Publix, Sam's Club, Costco."
+},
+{
+"s": 14,
+"section": "Snacks",
+"group": "Chips — The Only Approved Chip Brands",
+"name": "PopCorners KETTLE CORN",
+"status": "caution",
+"details": "4 ingredients: yellow corn, sunflower oil, CANE SUGAR, sea salt. No dyes, no soy, no artificial flavors — which is genuinely better than almost every chip on the shelf. BUT cane sugar is refined sugar, and refined sugar is your #1 elimination. It is a small amount, so this is not a disaster — but it is a compromise. If you want the sweet-and-salty thing, Sea Salt PopCorners with 2 squares of dark chocolate gets you there without the refined sugar."
+},
+{
+"s": 14,
+"section": "Snacks",
+"group": "Chips — The Only Approved Chip Brands",
+"name": "PopCorners WHITE CHEDDAR / Spicy Queso / flavored",
+"status": "caution",
+"details": "White Cheddar adds whey, reduced-lactose whey, and MALTODEXTRIN. Maltodextrin is a refined carbohydrate with a HIGHER glycemic index than table sugar — it spikes blood glucose fast, which is exactly the crash you are engineering your whole diet to prevent. No artificial dyes and no soy, so it is still far cleaner than Doritos or Cheetos. But it is not clean by YOUR standard. Check every flavored variety for maltodextrin, soy, and added sugar. Default to Sea Salt."
+},
+{
+"s": 14,
+"section": "Snacks",
+"group": "Chips — The Only Approved Chip Brands",
+"name": "Cape Cod Original Sea Salt Chips",
+"status": "caution",
+"details": "Classic variety: potatoes + canola oil + salt. Canola oil is not ideal but no soy and no dyes. Better than most mainstream chips but not the cleanest fat. Check current label."
+},
+{
+"s": 14,
+"section": "Snacks",
+"group": "Chips — The Only Approved Chip Brands",
+"name": "Kettle Brand Sea Salt Chips",
+"status": "caution",
+"details": "Non-GMO, no artificial flavors. Uses sunflower/safflower oil (not soybean oil). No dyes in plain flavor. Acceptable occasional option when Siete isn't available."
+},
+{
+"s": 14,
+"section": "Snacks",
+"group": "Chips — The Only Approved Chip Brands",
+"name": "Lay's (all flavors)",
+"status": "avoid",
+"details": "Sunflower and corn oil + artificial flavors in most varieties. Flavored Lay's use artificial dyes. Standard Lay's is off this plan."
+},
+{
+"s": 14,
+"section": "Snacks",
+"group": "Chips — The Only Approved Chip Brands",
+"name": "Doritos (all standard flavors)",
+"status": "avoid",
+"details": "Multiple artificial dyes (Red 40, Yellow 5, Yellow 6, Blue 1) + soy-based coatings. The new 'Simply NKD' Doritos remove FD&C dyes but still use soybean oil. Off this plan."
+},
+{
+"s": 14,
+"section": "Snacks",
+"group": "Chips — The Only Approved Chip Brands",
+"name": "Cheetos (all standard flavors)",
+"status": "avoid",
+"details": "Yellow 6 throughout + soy flour or soy-based cheese powder. Off the list."
+},
+{
+"s": 14,
+"section": "Snacks",
+"group": "Chips — The Only Approved Chip Brands",
+"name": "Pringles",
+"status": "avoid",
+"details": "Soy lecithin + artificial flavors. Off the list."
+},
+{
+"s": 14,
+"section": "Snacks",
+"group": "Chips — The Only Approved Chip Brands",
+"name": "Good & Gather Avocado Oil Kettle Chips (Target)",
+"status": "approved",
+"details": "Potatoes, avocado oil, sea salt. Target's clean chip — no soybean oil, no dyes. Direct competitor to the premium brands at store pricing."
+},
+{
+"s": 14,
+"section": "Snacks",
+"group": "Chips — The Only Approved Chip Brands",
+"name": "365 Organic Tortilla Chips (Whole Foods)",
+"status": "approved",
+"details": "Organic corn, oil, salt. Check the oil — choose sunflower or avocado versions over canola. No dyes, no soy."
+},
+{
+"s": 14,
+"section": "Snacks",
+"group": "Chips — The Only Approved Chip Brands",
+"name": "bettergoods chips (Walmart)",
+"status": "caution",
+"details": "Walmart's premium 'made without' line, mostly under $5. Cleaner formulations than Great Value by design. Read the oil — many still use sunflower or canola."
+},
+{
+"s": 14,
+"section": "Snacks",
+"group": "Chips — The Only Approved Chip Brands",
+"name": "Simply Nature Organic Tortilla Chips (Aldi)",
+"status": "approved",
+"details": "Organic corn, sunflower or safflower oil, sea salt. No soy, no dyes. Excellent price. Aldi."
+},
+{
+"s": 14,
+"section": "Snacks",
+"group": "Chips — The Only Approved Chip Brands",
+"name": "Simple Truth Organic Tortilla Chips (Kroger)",
+"status": "approved",
+"details": "Free-from-101 line. Clean corn chip, no artificial anything. Verify the oil."
+},
+{
+"s": 14,
+"section": "Snacks",
+"group": "Chips — The Only Approved Chip Brands",
+"name": "Great Value / store-brand flavored chips",
+"status": "avoid",
+"details": "Store-brand nacho, ranch, and BBQ chips use the same formula as the national brands: soybean or canola oil plus artificial flavors, and many still carry dyes until the Jan 2027 Walmart cleanup completes."
+},
+{
+"s": 14,
+"section": "Snacks",
+"group": "Protein Bars & Meat Sticks",
+"name": "RXBAR (any flavor)",
+"status": "approved",
+"details": "Egg white protein base + dates + nuts. No soy protein isolate, no artificial dyes, no HFCS. Dates provide natural sweetness. Flavors: Chocolate Sea Salt, Blueberry, Maple Sea Salt, Peanut Butter. Target, Walmart, Publix, Costco, Whole Foods."
+},
+{
+"s": 14,
+"section": "Snacks",
+"group": "Protein Bars & Meat Sticks",
+"name": "Chomps Beef Meat Sticks (original)",
+"status": "approved",
+"details": "Grass-fed beef, no soy, no artificial dyes, no HFCS. 10g protein per stick. Flavors: Original, Jalapeño, Pepperoni Style (beef only — no pork). Target, Whole Foods, Costco, Walmart."
+},
+{
+"s": 14,
+"section": "Snacks",
+"group": "Protein Bars & Meat Sticks",
+"name": "EPIC Beef Jerky (sea salt)",
+"status": "approved",
+"details": "100% grass-fed beef, no soy, minimal ingredients. Target, Whole Foods, REI. Check: EPIC pork products are off the list [Lev 11:7-8]. Beef variety only."
+},
+{
+"s": 14,
+"section": "Snacks",
+"group": "Protein Bars & Meat Sticks",
+"name": "EPIC Beef Bar (apple bacon variant)",
+"status": "avoid",
+"details": "Contains pork bacon [Lev 11:7-8]. Off this diet."
+},
+{
+"s": 14,
+"section": "Snacks",
+"group": "Protein Bars & Meat Sticks",
+"name": "Kind Bars (most varieties)",
+"status": "avoid",
+"details": "Most contain soy lecithin. Some use glucose syrup (refined sugar). Check label carefully — few qualify. Not recommended as a regular choice."
+},
+{
+"s": 14,
+"section": "Snacks",
+"group": "Protein Bars & Meat Sticks",
+"name": "Quest Bars",
+"status": "avoid",
+"details": "Sucralose + soy protein isolate in most varieties. Off the list."
+},
+{
+"s": 14,
+"section": "Snacks",
+"group": "Protein Bars & Meat Sticks",
+"name": "Clif Bars",
+"status": "avoid",
+"details": "Soy protein isolate + refined organic cane sugar as primary sweetener + soy lecithin. Off the list."
+},
+{
+"s": 14,
+"section": "Snacks",
+"group": "Protein Bars & Meat Sticks",
+"name": "Good & Gather Beef Sticks (Target)",
+"status": "approved",
+"details": "Beef, salt, spices. No soy, no added sugar in the plain original. Cheaper than Chomps. CHECK: avoid any pork or 'smoked sausage' style sticks [Lev 11:7-8]."
+},
+{
+"s": 14,
+"section": "Snacks",
+"group": "Protein Bars & Meat Sticks",
+"name": "Simply Nature Grass-Fed Beef Sticks (Aldi)",
+"status": "approved",
+"details": "Aldi's clean line — grass-fed beef, no nitrates, no added sugar. Best price per stick in Huntsville."
+},
+{
+"s": 14,
+"section": "Snacks",
+"group": "Protein Bars & Meat Sticks",
+"name": "365 Beef Jerky (Whole Foods)",
+"status": "caution",
+"details": "Clean label but check for added cane sugar and soy sauce — both are common even in clean-brand jerky."
+},
+{
+"s": 14,
+"section": "Snacks",
+"group": "Protein Bars & Meat Sticks",
+"name": "Store-brand protein bars (any store)",
+"status": "avoid",
+"details": "Nearly all store-brand protein bars use soy protein isolate plus sucralose or maltitol. RXBAR remains the reliable pick."
+},
+{
+"s": 14,
+"section": "Snacks",
+"group": "Other Clean Snacks",
+"name": "GimMe Organics Roasted Seaweed (original)",
+"status": "approved",
+"details": "Seaweed + sesame oil + sea salt. No soy, no dyes, no sugar. Iodine, magnesium, minerals. Target, Walmart, Publix, Whole Foods, Costco."
+},
+{
+"s": 14,
+"section": "Snacks",
+"group": "Other Clean Snacks",
+"name": "SeaSnax Roasted Seaweed (olive oil)",
+"status": "approved",
+"details": "Seaweed + olive oil + sea salt. Cleaner oil than sesame. Organic. Whole Foods, Sprouts."
+},
+{
+"s": 14,
+"section": "Snacks",
+"group": "Other Clean Snacks",
+"name": "Simple Mills Almond Flour Crackers",
+"status": "approved",
+"details": "See Breads section. Also great as a snack with almond butter or guacamole."
+},
+{
+"s": 14,
+"section": "Snacks",
+"group": "Other Clean Snacks",
+"name": "Wholly Guacamole (classic mini cups)",
+"status": "approved",
+"details": "Hass avocados + onion + tomato + cilantro + salt. No soy, no dyes, no added sugar. Walmart, Target, Publix, Costco."
+},
+{
+"s": 14,
+"section": "Snacks",
+"group": "Other Clean Snacks",
+"name": "Bare Baked Apple Chips",
+"status": "approved",
+"details": "Ingredients: apples only. No added sugar, no oil, no soy. Baked and freeze-dried. Target, Walmart, Whole Foods."
+},
+{
+"s": 14,
+"section": "Snacks",
+"group": "Other Clean Snacks",
+"name": "Larabar (Original, Dates + Nuts)",
+"status": "approved",
+"details": "Short ingredient lists: dates + nuts + fruit. No soy, no refined sugar. Peanut Butter, Apple Pie, Coconut Cream flavors are cleanest. Target, Walmart, Publix, Whole Foods. Check: some new Larabar varieties have added chocolate with soy lecithin."
+},
+{
+"s": 14,
+"section": "Snacks",
+"group": "Other Clean Snacks",
+"name": "Good & Gather Freeze-Dried Fruit (Target)",
+"status": "approved",
+"details": "Single ingredient: fruit. No added sugar, no oil, no dyes. Great crunchy sweet snack that stays fully on plan."
+},
+{
+"s": 14,
+"section": "Snacks",
+"group": "Other Clean Snacks",
+"name": "365 Organic Roasted Seaweed (Whole Foods)",
+"status": "approved",
+"details": "Seaweed, oil, salt. Clean, cheap, high in iodine and minerals."
+},
+{
+"s": 14,
+"section": "Snacks",
+"group": "Other Clean Snacks",
+"name": "Great Value Freeze-Dried / Dried Fruit (Walmart)",
+"status": "caution",
+"details": "Check for added sugar and sulfites. The unsweetened freeze-dried versions are clean; sweetened dried fruit is not."
+},
+{
+"s": 14,
+"section": "Snacks",
+"group": "Other Clean Snacks",
+"name": "Simply Nature Organic Applesauce Cups (Aldi)",
+"status": "approved",
+"details": "Apples only, no added sugar. Portable, clean, good fiber. Aldi."
+},
+{
+"s": 14,
+"section": "Snacks",
+"group": "Other Clean Snacks",
+"name": "Store-brand granola bars (any store)",
+"status": "avoid",
+"details": "Same formula as the national brands — soy lecithin, added sugar, sometimes dyes. Off the list."
+},
+{
+"s": 15,
+"section": "Candy",
+"group": "Worst Offenders — Never",
+"name": "M&Ms (all varieties)",
+"status": "avoid",
+"details": "Red 40, Yellow 5, Yellow 6, Blue 1, Blue 2 + soy lecithin throughout"
+},
+{
+"s": 15,
+"section": "Candy",
+"group": "Worst Offenders — Never",
+"name": "Skittles",
+"status": "avoid",
+"details": "Red 40, Yellow 5, Yellow 6, Blue 1 — every color is a different dye"
+},
+{
+"s": 15,
+"section": "Candy",
+"group": "Worst Offenders — Never",
+"name": "Starburst",
+"status": "avoid",
+"details": "Red 40, Yellow 5, Yellow 6, artificial flavors"
+},
+{
+"s": 15,
+"section": "Candy",
+"group": "Worst Offenders — Never",
+"name": "Jolly Ranchers",
+"status": "avoid",
+"details": "Red 40, Blue 1, Yellow 5, Yellow 6"
+},
+{
+"s": 15,
+"section": "Candy",
+"group": "Worst Offenders — Never",
+"name": "Sour Patch Kids",
+"status": "avoid",
+"details": "Red 40, Yellow 5, Blue 1 — plus citric acid and sugar"
+},
+{
+"s": 15,
+"section": "Candy",
+"group": "Worst Offenders — Never",
+"name": "Haribo Gummy Bears",
+"status": "avoid",
+"details": "Artificial dyes + pork gelatin [Lev 11:7-8] — two violations"
+},
+{
+"s": 15,
+"section": "Candy",
+"group": "Worst Offenders — Never",
+"name": "Reese's Peanut Butter Cups",
+"status": "avoid",
+"details": "PGPR (soy derivative) + soy lecithin + refined sugar"
+},
+{
+"s": 15,
+"section": "Candy",
+"group": "Worst Offenders — Never",
+"name": "Kit Kat, Snickers, Milky Way, Butterfinger",
+"status": "avoid",
+"details": "Soy lecithin + refined sugar + artificial flavors throughout"
+},
+{
+"s": 15,
+"section": "Candy",
+"group": "Clean Approved Candy Brands",
+"name": "Hu Kitchen Dark Chocolate Bar",
+"status": "approved",
+"details": "No soy lecithin, no refined sugar (coconut sugar), no artificial dyes, no emulsifiers. Multiple flavors: Simple, Almond Butter, Hazelnut, Cashew. BEST clean chocolate on the market. Whole Foods, Target, Amazon. Price: ~$4 per bar — worth it."
+},
+{
+"s": 15,
+"section": "Candy",
+"group": "Clean Approved Candy Brands",
+"name": "Hu Kitchen Gems (chocolate chips)",
+"status": "approved",
+"details": "Same clean formula as bars. Use in baking or eat as candy. No soy lecithin, coconut sugar only. Whole Foods, Target."
+},
+{
+"s": 15,
+"section": "Candy",
+"group": "Clean Approved Candy Brands",
+"name": "Lindt 85% Dark Chocolate",
+"status": "approved",
+"details": "Lower sugar, higher cacao. Check label: some Lindt bars list soy lecithin, others use sunflower lecithin. Sunflower lecithin is fine. 85% and 90% are cleanest. Walmart, Target, Publix, Whole Foods. Best affordable dark chocolate."
+},
+{
+"s": 15,
+"section": "Candy",
+"group": "Clean Approved Candy Brands",
+"name": "Lindt 90% Dark Chocolate",
+"status": "approved",
+"details": "Even lower sugar than 85%. Intense flavor. Good for brain magnesium. Same stores."
+},
+{
+"s": 15,
+"section": "Candy",
+"group": "Clean Approved Candy Brands",
+"name": "Alter Eco Deep Dark Sea Salt",
+"status": "approved",
+"details": "Organic, fair trade. No soy lecithin, no artificial dyes, ethically sourced cacao. 70-85% cacao. Whole Foods, Sprouts, Target."
+},
+{
+"s": 15,
+"section": "Candy",
+"group": "Clean Approved Candy Brands",
+"name": "Endangered Species 72% Dark Chocolate",
+"status": "approved",
+"details": "No soy lecithin (uses sunflower lecithin). Fair trade. Affordable clean dark chocolate. Target, Walmart, Whole Foods, Publix."
+},
+{
+"s": 15,
+"section": "Candy",
+"group": "Clean Approved Candy Brands",
+"name": "Unreal Dark Chocolate Gems",
+"status": "approved",
+"details": "M&M-style without artificial dyes (colored with beet juice, turmeric, spirulina). No soy. Closest clean M&M substitute. Target, Whole Foods."
+},
+{
+"s": 15,
+"section": "Candy",
+"group": "Clean Approved Candy Brands",
+"name": "Unreal Dark Chocolate Peanut Butter Cups",
+"status": "approved",
+"details": "Cleaner than Reese's. No artificial dyes, no soy. Check label for soy lecithin on current formula. Whole Foods, Target."
+},
+{
+"s": 15,
+"section": "Candy",
+"group": "Clean Approved Candy Brands",
+"name": "Yum Earth Organic Lollipops",
+"status": "approved",
+"details": "Colored with vegetable and fruit juice only. No artificial dyes, no soy, organic sugar. Flavors: strawberry, watermelon, mango. Walmart, Target, Whole Foods, Publix, Amazon."
+},
+{
+"s": 15,
+"section": "Candy",
+"group": "Clean Approved Candy Brands",
+"name": "Yum Earth Organic Gummy Bears",
+"status": "approved",
+"details": "Pectin-based (no pork gelatin [Lev 11:7-8]). Plant-based colors, no artificial dyes, no soy. Best clean gummy option. Walmart, Target, Whole Foods."
+},
+{
+"s": 15,
+"section": "Candy",
+"group": "Clean Approved Candy Brands",
+"name": "SmartSweets Gummy Bears",
+"status": "caution",
+"details": "Low sugar, plant-based colors. Check current label for gelatin source (pectin vs. pork gelatin). Formula has changed between batches. Whole Foods, Target, Sprouts."
+},
+{
+"s": 15,
+"section": "Candy",
+"group": "Clean Approved Candy Brands",
+"name": "Cocomels Coconut Milk Caramels",
+"status": "caution",
+"details": "No soy, no artificial dyes. Contains coconut sugar — limit to 2-3 pieces. Whole Foods, Sprouts, Amazon."
+},
+{
+"s": 15,
+"section": "Candy",
+"group": "Clean Approved Candy Brands",
+"name": "Justin's Dark Chocolate PB Cups",
+"status": "caution",
+"details": "Cleaner than Reese's — no PGPR. Check current label for soy lecithin. Organic Dark variety is best. Target, Whole Foods, Publix."
+},
+{
+"s": 15,
+"section": "Candy",
+"group": "Clean Approved Candy Brands",
+"name": "Lily's Dark Chocolate (stevia-sweetened)",
+"status": "caution",
+"details": "No refined sugar. Check label: some flavors use soy lecithin, others use sunflower lecithin. Choose sunflower lecithin varieties only. Walmart, Target, Whole Foods."
+},
+{
+"s": 15,
+"section": "Candy",
+"group": "Clean Approved Candy Brands",
+"name": "365 Organic Dark Chocolate 72%+ (Whole Foods)",
+"status": "approved",
+"details": "Store-brand dark chocolate at roughly half the price of Hu Kitchen. Check for soy lecithin — many 365 bars use sunflower lecithin instead, which is fine."
+},
+{
+"s": 15,
+"section": "Candy",
+"group": "Clean Approved Candy Brands",
+"name": "Simple Truth Organic Dark Chocolate (Kroger)",
+"status": "approved",
+"details": "Free-from-101 standard. Clean dark chocolate. Verify lecithin source on the specific bar."
+},
+{
+"s": 15,
+"section": "Candy",
+"group": "Clean Approved Candy Brands",
+"name": "Moser Roth Dark Chocolate 70-85% (Aldi)",
+"status": "approved",
+"details": "Aldi's German dark chocolate — genuinely excellent quality, low sugar in the 85%, and priced far under Lindt. Check the wrapper for soy lecithin; several varieties use it, so read before buying."
+},
+{
+"s": 15,
+"section": "Candy",
+"group": "Clean Approved Candy Brands",
+"name": "Good & Gather Dark Chocolate (Target)",
+"status": "caution",
+"details": "Clean by brand standard (no artificial dyes or flavors) but verify soy lecithin and sugar content on the specific bar."
+},
+{
+"s": 15,
+"section": "Candy",
+"group": "Clean Approved Candy Brands",
+"name": "Store-brand candy / gummies (any store)",
+"status": "avoid",
+"details": "Store-brand versions of gummy bears, fruit snacks, and hard candy carry the same dyes as the national brands, plus pork gelatin in most gummies [Lev 11:7-8]."
+},
+{
+"s": 16,
+"section": "Supplement Stack",
+"group": "",
+"name": "Nordic Naturals Ultimate Omega",
+"status": "approved",
+"details": "1,000-2,000mg EPA+DHA daily. Third-party tested, no soy, no artificial dyes. From wild-caught fins-and-scales fish [Lev 11:9]. Take with food. Amazon, Whole Foods, Sprouts, iHerb."
+},
+{
+"s": 16,
+"section": "Supplement Stack",
+"group": "",
+"name": "Doctor's Best Magnesium Glycinate 100%",
+"status": "approved",
+"details": "200-400mg at night. Highest bioavailability, no soy, no artificial dyes, no fillers. Amazon, Whole Foods, Sprouts."
+},
+{
+"s": 16,
+"section": "Supplement Stack",
+"group": "",
+"name": "MegaFood Magtein (Magnesium L-Threonate)",
+"status": "approved",
+"details": "Alternative to glycinate. Crosses blood-brain barrier more effectively. Better for cognitive focus during day. Amazon, Whole Foods."
+},
+{
+"s": 16,
+"section": "Supplement Stack",
+"group": "",
+"name": "Thorne D3/K2 Drops",
+"status": "approved",
+"details": "Get blood test first. Then 3,000-5,000 IU D3 + K2 MK-7. Drop format. No dyes, no soy, no fillers. Amazon, Whole Foods, iHerb. Critical for Black men."
+},
+{
+"s": 16,
+"section": "Supplement Stack",
+"group": "",
+"name": "Pure Encapsulations Zinc (Picolinate)",
+"status": "approved",
+"details": "15mg daily — bumped since shellfish removed. Hypoallergenic, no fillers, no soy, no dyes. Amazon, Whole Foods, iHerb."
+},
+{
+"s": 16,
+"section": "Supplement Stack",
+"group": "",
+"name": "Garden of Life RAW Probiotics (Ultimate Care)",
+"status": "approved",
+"details": "100 billion CFU, 34 strains. No soy, no artificial dyes. Raw/unprocessed. Refrigerated. Whole Foods, Sprouts, Amazon."
+},
+{
+"s": 16,
+"section": "Supplement Stack",
+"group": "",
+"name": "Seed DS-01 Daily Synbiotic",
+"status": "approved",
+"details": "24 strains, 53.6 billion AFU. No soy, no dyes. Pre + probiotic in one. Subscription delivery. seed.com"
+},
+{
+"s": 16,
+"section": "Supplement Stack",
+"group": "",
+"name": "Thorne Basic B (methylated B-complex)",
+"status": "approved",
+"details": "Methylcobalamin B12 + methylfolate. No artificial dyes, no soy, pharmaceutical grade. Amazon, iHerb, Whole Foods."
+},
+{
+"s": 16,
+"section": "Supplement Stack",
+"group": "",
+"name": "Sports Research L-Theanine",
+"status": "approved",
+"details": "100-200mg as needed for calm focus. Sunflower lecithin (not soy). No artificial dyes. Amazon, Walmart, Sprouts."
+},
+{
+"s": 16,
+"section": "Supplement Stack",
+"group": "",
+"name": "Charlotte's Web CBD Oil (17mg)",
+"status": "caution",
+"details": "Broad-spectrum, 0% THC. No soy, no artificial dyes. Certificate of Analysis available. Start at 5-10mg. charlottes-web.com, Sprouts, Whole Foods."
+},
+{
+"s": 16,
+"section": "Supplement Stack",
+"group": "",
+"name": "Lazarus Naturals CBD Oil",
+"status": "caution",
+"details": "Broad-spectrum, third-party tested. No soy, no dyes. More affordable than Charlotte's Web. lazarusnaturals.com, some Whole Foods."
+},
+{
+"s": 17,
+"section": "Sweeteners",
+"group": "TIER 1 — Best: Zero Glycemic Impact, Gut-Safe",
+"name": "Allulose",
+"status": "approved",
+"details": "THE BEST OVERALL CHOICE. A rare sugar with about 70% the sweetness of sugar and roughly 10% of the calories. Glycemic index of 1 — essentially no blood sugar impact. Behaves like real sugar in recipes (browns, caramelizes, dissolves). May actually blunt post-meal glucose spikes and enhance GLP-1 release. Typically causes no digestive issues. BRANDS: RxSugar Allulose (pure, single ingredient), Wholesome Organic Allulose, Besti Allulose. Find at: Whole Foods, Sprouts, Amazon, Thrive Market."
+},
+{
+"s": 17,
+"section": "Sweeteners",
+"group": "TIER 1 — Best: Zero Glycemic Impact, Gut-Safe",
+"name": "Monk Fruit (PURE extract only)",
+"status": "approved",
+"details": "100-250x sweeter than sugar. Zero calories, zero glycemic impact. Used in Traditional Chinese Medicine for centuries. Clean, pleasant sweetness. WARNING: most 'Monk Fruit Sweetener' bags on the shelf are actually 99% erythritol with a sprinkle of monk fruit — the bag is named after the rare ingredient because it sells better. FLIP THE BAG OVER. You want the ingredient list to say monk fruit extract (or monk fruit + allulose), NOT erythritol. BRANDS: NOW Foods Pure Monk Fruit, Lakanto Monkfruit with Allulose (not the erythritol version). Whole Foods, Sprouts, Amazon."
+},
+{
+"s": 17,
+"section": "Sweeteners",
+"group": "TIER 1 — Best: Zero Glycemic Impact, Gut-Safe",
+"name": "Stevia (PURE leaf / Reb A or Reb M)",
+"status": "approved",
+"details": "200-300x sweeter than sugar. Zero calories, non-glycemic — steviol glycosides do not raise blood sugar. Some people taste a slight licorice aftertaste; Reb M has less aftertaste than Reb A. Same warning as monk fruit: many stevia packets are bulked with erythritol or dextrose (which IS sugar). BRANDS: SweetLeaf Stevia (liquid drops — purest form, no bulking agent), Pyure Organic Stevia, NuNaturals Pure Stevia. Liquid drops are cleanest — no filler needed. Walmart, Target, Whole Foods, Sprouts, Amazon."
+},
+{
+"s": 17,
+"section": "Sweeteners",
+"group": "TIER 1 — Best: Zero Glycemic Impact, Gut-Safe",
+"name": "Allulose + Monk Fruit blend",
+"status": "approved",
+"details": "The gold-standard combination — allulose provides the bulk and mouthfeel, monk fruit provides the intensity. Replaces sugar 1:1 in baking with no erythritol needed. Best of both worlds. BRANDS: RxSugar, Lakanto Monkfruit Sweetener with Allulose, Zeroh. Whole Foods, Amazon, Thrive Market."
+},
+{
+"s": 17,
+"section": "Sweeteners",
+"group": "TIER 2 — Whole-Food Sweeteners: Real Sugar, But Unrefined + Nutrients",
+"name": "Raw / Unfiltered Honey",
+"status": "caution",
+"details": "The most biblically celebrated sweetener — named throughout Scripture. Raw honey retains enzymes, antioxidants, trace minerals, and antimicrobial compounds that processed honey loses. STILL SUGAR: about 17g per tablespoon, and it will raise blood glucose. Use 1 tsp at a time, ideally with protein or fat. Local raw honey is best (potential allergy benefit). BRANDS: Nature Nate's Raw & Unfiltered (Walmart, Target, Publix, Sam's Club), Member's Mark Organic Honey (Sam's Club, large bulk jar), Kirkland Raw Honey (Costco), local Huntsville-area farmers market honey. AVOID: 'honey' that lists corn syrup on the label."
+},
+{
+"s": 17,
+"section": "Sweeteners",
+"group": "TIER 2 — Whole-Food Sweeteners: Real Sugar, But Unrefined + Nutrients",
+"name": "Medjool Dates (whole)",
+"status": "approved",
+"details": "BEST WHOLE-FOOD SWEETENER. Whole dates bring fiber (7g per 100g) that slows glucose absorption, plus potassium, magnesium, and iron. The fiber is exactly why dates behave better than any syrup. This is why RXBAR works on this plan — dates are the sweetener. Blend 2-3 dates into smoothies, oatmeal, or homemade energy balls. BRANDS: Natural Delights Medjool Dates (Walmart, Publix, Sam's Club), Member's Mark Medjool Dates (Sam's Club bulk container — best value), Costco Kirkland Medjool Dates."
+},
+{
+"s": 17,
+"section": "Sweeteners",
+"group": "TIER 2 — Whole-Food Sweeteners: Real Sugar, But Unrefined + Nutrients",
+"name": "Date Syrup / Date Paste",
+"status": "caution",
+"details": "Made from whole dates but the fiber is reduced or removed, so it spikes faster than eating the whole date. Still far better than refined sugar — retains minerals and antioxidants. Use as a 1:1 replacement for honey or maple in recipes. BRANDS: Just Date Syrup (single ingredient: dates), D'vash Organic Date Nectar. Whole Foods, Sprouts, Amazon."
+},
+{
+"s": 17,
+"section": "Sweeteners",
+"group": "TIER 2 — Whole-Food Sweeteners: Real Sugar, But Unrefined + Nutrients",
+"name": "Pure Maple Syrup (Grade A Dark)",
+"status": "caution",
+"details": "Real maple syrup only — not 'pancake syrup' (which is HFCS with caramel coloring). Contains manganese, zinc, and over 60 antioxidants. Darker grades have more minerals and stronger flavor, so you use less. STILL SUGAR: about 12g per tablespoon. Limit to 1 tsp. BRANDS: Kirkland Organic Maple Syrup (Costco), Member's Mark Organic Maple Syrup (Sam's Club), Butternut Mountain Farm, 365 Organic (Whole Foods). AVOID: Aunt Jemima, Mrs. Butterworth, Log Cabin — these are HFCS + caramel color, not maple."
+},
+{
+"s": 17,
+"section": "Sweeteners",
+"group": "TIER 2 — Whole-Food Sweeteners: Real Sugar, But Unrefined + Nutrients",
+"name": "Blackstrap Molasses",
+"status": "approved",
+"details": "Best mineral content of any sweetener — significant IRON (about 20% DV per tablespoon), calcium, magnesium, and potassium. Given your iron and magnesium priorities, this is a functional sweetener. Strong, bitter-sweet flavor. Use 1 tsp in oatmeal, coffee, or marinades. BRANDS: Golden Barrel Blackstrap Molasses, Wholesome Organic Molasses, Plantation Blackstrap. Walmart, Publix, Whole Foods, Amazon."
+},
+{
+"s": 17,
+"section": "Sweeteners",
+"group": "TIER 2 — Whole-Food Sweeteners: Real Sugar, But Unrefined + Nutrients",
+"name": "Yacon Syrup",
+"status": "approved",
+"details": "Unique: it is a PREBIOTIC. High in fructooligosaccharides (FOS) that feed the beneficial gut bacteria you are cultivating with probiotics. Very low glycemic. Molasses-like taste. Works with your gut-brain axis strategy rather than against it. Do not cook with it (heat destroys the FOS) — use raw as a drizzle or in cold applications. BRANDS: Alovitox Yacon Syrup, Sunfood Yacon Syrup. Whole Foods, Sprouts, Amazon. More expensive than other options."
+},
+{
+"s": 17,
+"section": "Sweeteners",
+"group": "TIER 2 — Whole-Food Sweeteners: Real Sugar, But Unrefined + Nutrients",
+"name": "Coconut Sugar",
+"status": "caution",
+"details": "Lower glycemic than white sugar and contains trace inulin, iron, and zinc — but it IS sugar. This is what Hu Kitchen chocolate uses, which is why Hu qualifies while conventional chocolate does not. Fine as an ingredient in a clean product; not something to spoon into your coffee daily. BRANDS: Nutiva Organic Coconut Sugar, Wholesome Organic Coconut Sugar. Walmart, Whole Foods, Sprouts."
+},
+{
+"s": 17,
+"section": "Sweeteners",
+"group": "TIER 2 — Whole-Food Sweeteners: Real Sugar, But Unrefined + Nutrients",
+"name": "Mashed Banana / Applesauce (unsweetened)",
+"status": "approved",
+"details": "The most underrated sweeteners. Use in baking and oatmeal to replace sugar entirely while ADDING fiber, potassium, and prebiotic starch. A ripe mashed banana replaces roughly 1/2 cup of sugar in most baked goods. Zero label reading required."
+},
+{
+"s": 17,
+"section": "Sweeteners",
+"group": "TIER 2 — Whole-Food Sweeteners: Real Sugar, But Unrefined + Nutrients",
+"name": "Cinnamon (not a sweetener, but works like one)",
+"status": "approved",
+"details": "Ceylon cinnamon enhances the perception of sweetness with no sugar at all, AND it improves insulin sensitivity. Add to coffee, oatmeal, and walnut milk smoothies. This is the cheapest trick in this entire section — use it liberally."
+},
+{
+"s": 17,
+"section": "Sweeteners",
+"group": "TIER 3 — Sugar Alcohols: Use With Caution",
+"name": "Erythritol",
+"status": "caution",
+"details": "Zero glycemic, mostly absorbed in the small intestine and excreted unchanged, so it causes fewer digestive issues than other sugar alcohols. BUT: a 2023 Nature Medicine study linked erythritol to increased cardiovascular event risk and platelet activation, and that signal got partial replication in 2025. This is a real concern, not internet noise. Erythritol is also the hidden bulk ingredient in most 'monk fruit' and 'stevia' packets. My recommendation: choose allulose over erythritol whenever you have the option. If you use it, keep it under 10g per day."
+},
+{
+"s": 17,
+"section": "Sweeteners",
+"group": "TIER 3 — Sugar Alcohols: Use With Caution",
+"name": "Xylitol",
+"status": "caution",
+"details": "Zero glycemic, good for dental health. BUT: a 2024 European Heart Journal study found xylitol is prothrombotic and associated with cardiovascular risk — similar concern to erythritol. Also causes GI distress in larger amounts. CRITICAL: xylitol is highly TOXIC TO DOGS even in small amounts. If there is a dog in your home, keep xylitol products (including Nature's Hollow jam) locked away or skip them entirely. Allulose has none of these problems."
+},
+{
+"s": 17,
+"section": "Sweeteners",
+"group": "TIER 3 — Sugar Alcohols: Use With Caution",
+"name": "Sorbitol",
+"status": "avoid",
+"details": "Rapidly fermented by gut bacteria — causes bloating, gas, and diarrhea. Actively works against the gut healing you are doing with probiotics. Common in sugar-free gum and candy. Off this plan."
+},
+{
+"s": 17,
+"section": "Sweeteners",
+"group": "TIER 3 — Sugar Alcohols: Use With Caution",
+"name": "Maltitol",
+"status": "avoid",
+"details": "Has a significant glycemic impact despite being marketed as sugar-free (GI of ~35). Also causes major GI distress. Common in 'sugar-free' chocolate and protein bars. Off this plan."
+},
+{
+"s": 17,
+"section": "Sweeteners",
+"group": "TIER 3 — Sugar Alcohols: Use With Caution",
+"name": "Glycerin / Glycerol",
+"status": "caution",
+"details": "Common in low-carb protein bars as a binder and sweetener. Minimal glycemic impact but can cause GI upset. Neutral — not a reason to avoid an otherwise clean product, but not something to seek out."
+},
+{
+"s": 17,
+"section": "Sweeteners",
+"group": "TIER 4 — Refined Sugars: Never",
+"name": "White Refined Sugar (sucrose)",
+"status": "avoid",
+"details": "The primary target of this entire diet. Spikes blood glucose hard, crashes hard. The crash is what wrecks your focus, patience, and mood 60-90 minutes later. Zero nutritional value."
+},
+{
+"s": 17,
+"section": "Sweeteners",
+"group": "TIER 4 — Refined Sugars: Never",
+"name": "High-Fructose Corn Syrup (HFCS)",
+"status": "avoid",
+"details": "In nearly every conventional condiment, bread, jelly, and drink. The single most important ingredient to scan for on labels. Off this plan without exception."
+},
+{
+"s": 17,
+"section": "Sweeteners",
+"group": "TIER 4 — Refined Sugars: Never",
+"name": "Brown Sugar",
+"status": "avoid",
+"details": "White sugar with molasses added back in. The trace minerals are negligible. Metabolically identical to white sugar. If you want the molasses benefit, use blackstrap molasses directly."
+},
+{
+"s": 17,
+"section": "Sweeteners",
+"group": "TIER 4 — Refined Sugars: Never",
+"name": "Raw Cane Sugar / Turbinado / Sucanat / Demerara",
+"status": "avoid",
+"details": "Marketed as 'natural' and 'less processed.' Metabolically, your body processes them identically to white sugar. The 'less refined' framing is marketing, not nutrition. Off this plan."
+},
+{
+"s": 17,
+"section": "Sweeteners",
+"group": "TIER 4 — Refined Sugars: Never",
+"name": "Agave Nectar",
+"status": "avoid",
+"details": "Frequently sold in health food stores as a healthy option — it is not. Agave is 70-90% FRUCTOSE, higher than HFCS. Fructose is metabolized almost entirely by the liver and is linked to fatty liver and insulin resistance. Low glycemic index on paper, but metabolically one of the worst options. Skip it."
+},
+{
+"s": 17,
+"section": "Sweeteners",
+"group": "TIER 4 — Refined Sugars: Never",
+"name": "Corn Syrup / Dextrose / Glucose Syrup / Maltodextrin",
+"status": "avoid",
+"details": "All refined sugars under different names. Maltodextrin actually has a HIGHER glycemic index than table sugar. Hidden in protein powders, seasonings, and 'sugar-free' products. Scan for all of these."
+},
+{
+"s": 17,
+"section": "Sweeteners",
+"group": "TIER 4 — Refined Sugars: Never",
+"name": "Fruit Juice Concentrate",
+"status": "avoid",
+"details": "The sneakiest one. Marketed as 'no added sugar — sweetened with fruit juice!' but the fiber has been stripped out, leaving concentrated fructose. Metabolically it is sugar. NOTE: this is different from Polaner All Fruit, which uses whole fruit juice as the sole sweetener rather than as an additive on top of sugar — that one still qualifies as a Tier 2 allowance."
+},
+{
+"s": 17,
+"section": "Sweeteners",
+"group": "TIER 5 — Artificial Sweeteners: Absolutely Not",
+"name": "Sucralose (Splenda)",
+"status": "avoid",
+"details": "Disrupts gut microbiome composition. This is why Smucker's Sugar Free jam is off the list despite having zero sugar. Also found in Sparkling Ice, many protein bars, and 'diet' products."
+},
+{
+"s": 17,
+"section": "Sweeteners",
+"group": "TIER 5 — Artificial Sweeteners: Absolutely Not",
+"name": "Aspartame (Equal, NutraSweet)",
+"status": "avoid",
+"details": "Classified by the WHO/IARC as possibly carcinogenic to humans (Group 2B) in 2023. Found in Diet Coke, sugar-free gum, and diet products. Off this plan."
+},
+{
+"s": 17,
+"section": "Sweeteners",
+"group": "TIER 5 — Artificial Sweeteners: Absolutely Not",
+"name": "Saccharin (Sweet'N Low)",
+"status": "avoid",
+"details": "Pink packet. Disrupts gut bacteria. Off this plan."
+},
+{
+"s": 17,
+"section": "Sweeteners",
+"group": "TIER 5 — Artificial Sweeteners: Absolutely Not",
+"name": "Acesulfame Potassium (Ace-K)",
+"status": "avoid",
+"details": "Almost always paired with sucralose or aspartame in diet drinks. Found in Sparkling Ice, Bubly Burst, many 'zero sugar' sports drinks. Scan for it."
+},
+{
+"s": 17,
+"section": "Sweeteners",
+"group": "TIER 5 — Artificial Sweeteners: Absolutely Not",
+"name": "Neotame / Advantame",
+"status": "avoid",
+"details": "Newer high-intensity artificial sweeteners. Same category, same answer."
+},
+{
+"s": 17,
+"section": "Sweeteners",
+"group": "PRACTICAL SWAP CHART",
+"name": "Coffee / Tea",
+"status": "best",
+"details": "SweetLeaf liquid stevia drops (2-3 drops) or a dash of Ceylon cinnamon",
+"alt": "1st: Stevia drops (no calories, no bulk, no aftertaste in liquid form) • 2nd: Cinnamon (adds sweetness perception + improves insulin sensitivity) • 3rd: Pure monk fruit • Avoid: flavored syrups, Splenda packets, sugar"
+},
+{
+"s": 17,
+"section": "Sweeteners",
+"group": "PRACTICAL SWAP CHART",
+"name": "Baking (1:1 sugar swap)",
+"status": "best",
+"details": "Allulose (RxSugar or Wholesome) — browns and caramelizes like real sugar",
+"alt": "1st: Allulose 1:1 • 2nd: Allulose + monk fruit blend (Lakanto with Allulose) • 3rd: Mashed ripe banana or unsweetened applesauce (adds fiber) • 4th: Date paste • Avoid: erythritol-based blends given the 2023-2025 cardiovascular signal"
+},
+{
+"s": 17,
+"section": "Sweeteners",
+"group": "PRACTICAL SWAP CHART",
+"name": "Oatmeal / Yogurt",
+"status": "best",
+"details": "Blended Medjool dates or fresh berries — fiber slows the glucose curve",
+"alt": "1st: 2-3 chopped Medjool dates (Sam's Club bulk container) • 2nd: Fresh or frozen berries • 3rd: 1 tsp blackstrap molasses (adds iron) • 4th: Cinnamon + a splash of walnut milk • Avoid: brown sugar, flavored oatmeal packets"
+},
+{
+"s": 17,
+"section": "Sweeteners",
+"group": "PRACTICAL SWAP CHART",
+"name": "Smoothies",
+"status": "best",
+"details": "Whole fruit — banana, dates, berries. The fiber comes with it.",
+"alt": "1st: Half a banana + a handful of berries • 2nd: 2 Medjool dates • 3rd: A few drops of stevia if you need more • Never: fruit juice or agave as the sweetener"
+},
+{
+"s": 17,
+"section": "Sweeteners",
+"group": "PRACTICAL SWAP CHART",
+"name": "Marinades / BBQ / Sauces",
+"status": "best",
+"details": "Date syrup or 1 tsp raw honey + coconut aminos",
+"alt": "1st: Date syrup (Just Date brand) • 2nd: 1 tsp raw honey • 3rd: Blackstrap molasses for a BBQ depth • 4th: Buy Primal Kitchen BBQ (already sugar-free) • Avoid: conventional BBQ sauce, teriyaki, honey mustard — all HFCS"
+},
+{
+"s": 17,
+"section": "Sweeteners",
+"group": "PRACTICAL SWAP CHART",
+"name": "Sweet craving (in the moment)",
+"status": "best",
+"details": "2 squares of Hu Kitchen or Lindt 85% dark chocolate",
+"alt": "1st: Dark chocolate 70%+ • 2nd: 2 Medjool dates with almond butter stuffed inside (tastes like caramel, delivers fiber + protein + magnesium) • 3rd: Berries with plain Greek yogurt • 4th: Yum Earth lollipop • Never: conventional candy"
+},
+{
+"s": 17,
+"section": "Sweeteners",
+"group": "PRACTICAL SWAP CHART",
+"name": "Sweet drink",
+"status": "best",
+"details": "Zevia (stevia-sweetened, no dyes) or Spindrift (real fruit juice, 0-4g)",
+"alt": "1st: Zevia • 2nd: Olipop (2-5g sugar + 9g prebiotic fiber) • 3rd: Sparkling water + a squeeze of lemon or crushed berries • 4th: GT's Synergy kombucha • Never: soda, sports drinks, sweet tea, juice"
+},
+{
+"s": 19,
+"section": "Eating Out",
+"group": "BEST FAST FOOD — Ranked for Your Plan",
+"name": "Chipotle",
+"status": "approved",
+"details": "YOUR #1 FAST FOOD OPTION. Proteins are cooked on a plancha (flat-top) rather than deep-fried, and the chain is unusually transparent about ingredients. ORDER: burrito BOWL (no tortilla) with double chicken or steak, brown rice, black beans, fajita veggies, mild salsa, guacamole, and lettuce. SKIP: chips (rice bran oil, plus salt and lime), flour tortilla (soybean oil), queso, sour cream, and the vinaigrette. NOTE: Chipotle cooks with sunflower and rice bran oil — not ideal, but the proteins themselves are grilled, not fried. Huntsville: 5900 University Dr NW."
+},
+{
+"s": 19,
+"section": "Eating Out",
+"group": "BEST FAST FOOD — Ranked for Your Plan",
+"name": "Chick-fil-A",
+"status": "approved",
+"details": "STRONG PICK IF YOU ORDER RIGHT. ORDER: Grilled Chicken Sandwich (ask for no bun, or eat it open-faced), Grilled Nuggets, Grilled Chicken Cool Wrap, Market Salad or Cobb Salad with GRILLED chicken, Kale Crunch side, fruit cup. Drink: water or unsweet tea. SKIP: anything fried — the breaded chicken cooks in peanut oil and the waffle fries in canola oil, in separate fryers. Also skip Chick-fil-A Sauce, Polynesian, and the lemonade (all high sugar). CAUTION: the grilled filet marinade may contain soy — ask for the allergen sheet if strict. Huntsville: University Dr, Governors Dr, US-72 E."
+},
+{
+"s": 19,
+"section": "Eating Out",
+"group": "BEST FAST FOOD — Ranked for Your Plan",
+"name": "Taziki's Mediterranean Cafe",
+"status": "approved",
+"details": "EXCELLENT FIT — built around grilled protein and vegetables. ORDER: Grilled Salmon feast with basmati rice and a Greek salad, or the Chicken Feast, or the grilled lamb. Salmon is fins-and-scales clean [Lev 11:9]. SKIP: pita bread, and go light on the tzatziki. Ask for dressing on the side. THREE HUNTSVILLE LOCATIONS: Whitesburg Dr, The Foundry on Governors Dr, and Hays Farm on Memorial Pkwy SW."
+},
+{
+"s": 19,
+"section": "Eating Out",
+"group": "BEST FAST FOOD — Ranked for Your Plan",
+"name": "Fresko Grille Modern Mediterranean",
+"status": "approved",
+"details": "Local Huntsville spot — essentially Chipotle for Mediterranean food, build-your-own bowls. ORDER: chicken shawarma bowl with greens, rice or extra vegetables, hummus, and olive oil. Fresh, grilled protein, high vegetable content, no fryer required. SKIP: pita. 3414 Governors Dr SW."
+},
+{
+"s": 19,
+"section": "Eating Out",
+"group": "BEST FAST FOOD — Ranked for Your Plan",
+"name": "CHOP N FRESH",
+"status": "approved",
+"details": "Local salad and bowl shop, two Huntsville locations. Big custom salads with grilled chicken. ORDER: build-your-own with greens, grilled chicken, quinoa, chickpeas, avocado, pumpkin seeds, olive oil and vinegar. SKIP: shrimp (on several of their bowls) [Lev 11:10-12], bacon [Lev 11:7-8], and creamy dressings. Locations: 6125 University Dr NW and 931 Bob Wallace Ave SW."
+},
+{
+"s": 19,
+"section": "Eating Out",
+"group": "BEST FAST FOOD — Ranked for Your Plan",
+"name": "Panera Bread",
+"status": "caution",
+"details": "Decent salad options and they publish full ingredients online. ORDER: any salad with grilled chicken, dressing on the side. Broth bowls are workable. SKIP: bread, baguette side (swap for apple), all sandwiches, soups with cream, and every pastry. Most dressings contain soybean oil — request oil and vinegar."
+},
+{
+"s": 19,
+"section": "Eating Out",
+"group": "BEST FAST FOOD — Ranked for Your Plan",
+"name": "Jason's Deli / Newk's",
+"status": "caution",
+"details": "Both have salad bars, which give you full control. ORDER: build your own salad, grilled chicken, olive oil and vinegar. SKIP: the bread, the muffins, the soft-serve, and any pork-containing deli meat [Lev 11:7-8]."
+},
+{
+"s": 19,
+"section": "Eating Out",
+"group": "BEST FAST FOOD — Ranked for Your Plan",
+"name": "Firehouse Subs / Jersey Mike's / Subway",
+"status": "caution",
+"details": "WORKABLE ONLY AS A BOWL OR SALAD. ORDER: any sub 'as a salad' or 'in a tub' with turkey or roast beef, oil and vinegar. SKIP: the bread (soy lecithin and sugar in nearly all sub rolls), all pork products — ham, salami, pepperoni, bacon [Lev 11:7-8] — and mayo-based dressings."
+},
+{
+"s": 19,
+"section": "Eating Out",
+"group": "BEST FAST FOOD — Ranked for Your Plan",
+"name": "Steak 'n Shake",
+"status": "caution",
+"details": "Notable exception in fast food: as of 2025 the chain fries its shoestring fries in 100% beef tallow rather than seed oil. That makes the fries cleaner-fat than any other chain. STILL: refined-flour bun, shakes are pure sugar. ORDER: burger patties with no bun, no shake."
+},
+{
+"s": 19,
+"section": "Eating Out",
+"group": "BEST FAST FOOD — Ranked for Your Plan",
+"name": "Five Guys",
+"status": "caution",
+"details": "Cooks in peanut oil rather than soybean oil — better than most. ORDER: bunless burger (they serve it in a lettuce wrap or bowl), all vegetable toppings, no ketchup or BBQ sauce. SKIP: fries, bun, milkshakes, and the bacon [Lev 11:7-8]."
+},
+{
+"s": 19,
+"section": "Eating Out",
+"group": "SIT-DOWN RESTAURANTS — Huntsville",
+"name": "Connors Steak & Seafood (Bridge St)",
+"status": "approved",
+"details": "Steakhouses are naturally the best fit on your plan — grilled clean protein, vegetable sides, butter instead of seed oil. ORDER: any steak, or the grilled salmon, with a wedge or house salad (dressing on side) and a vegetable side. SKIP: shrimp and crab appetizers [Lev 11:10-12], the pork chop [Lev 11:7-8], bread service, and dessert. 345 The Bridge St."
+},
+{
+"s": 19,
+"section": "Eating Out",
+"group": "SIT-DOWN RESTAURANTS — Huntsville",
+"name": "Char Restaurant (Bob Wallace Ave)",
+"status": "approved",
+"details": "Upscale steak and seafood. ORDER: steak or the grouper (fins and scales, clean). SKIP: the catfish [Lev 11:10] — it is on their menu — plus the shrimp and grits and all shellfish appetizers."
+},
+{
+"s": 19,
+"section": "Eating Out",
+"group": "SIT-DOWN RESTAURANTS — Huntsville",
+"name": "Stoney River Steakhouse (Madison)",
+"status": "approved",
+"details": "ORDER: filet or steak with a wedge salad and vegetable side. SKIP: crab cakes, lobster bisque, whiskey shrimp [Lev 11:10-12], the poppyseed bread and honey butter, and dessert."
+},
+{
+"s": 19,
+"section": "Eating Out",
+"group": "SIT-DOWN RESTAURANTS — Huntsville",
+"name": "The Chop House (Madison)",
+"status": "approved",
+"details": "ORDER: ribeye, prime rib, or the Mahi-Mahi (fins and scales, clean). SKIP: crab cakes, voodoo shrimp [Lev 11:10-12], and dessert."
+},
+{
+"s": 19,
+"section": "Eating Out",
+"group": "SIT-DOWN RESTAURANTS — Huntsville",
+"name": "Bad Daddy's Burger Bar",
+"status": "caution",
+"details": "Fully customizable burgers. ORDER: Angus burger with no bun (lettuce wrap), Swiss, mushrooms, grilled onions, side Caesar without croutons, unsweet tea. SKIP: bun, truffle fries, bacon [Lev 11:7-8], and the aioli and mayo-based sauces (soybean oil)."
+},
+{
+"s": 19,
+"section": "Eating Out",
+"group": "SIT-DOWN RESTAURANTS — Huntsville",
+"name": "Glaze & Green Bistro (Five Points)",
+"status": "caution",
+"details": "Fresh Asian bowls with generous vegetables. ORDER: teriyaki BEEF or CHICKEN rice bowl, ask for sauce on the side. SKIP: shrimp bowls [Lev 11:10-12], spring rolls and egg rolls (fried), and be aware that teriyaki and most Asian sauces are SOY-BASED — ask for the bowl plain with vegetables and add your own seasoning."
+},
+{
+"s": 19,
+"section": "Eating Out",
+"group": "SIT-DOWN RESTAURANTS — Huntsville",
+"name": "Salt Smokehouse",
+"status": "caution",
+"details": "Michelin-guide barbecue — excellent food, but barbecue is a minefield for you. ORDER: smoked chicken or brisket, plain, sauce on the side. SKIP: ALL pulled pork, Texas Twinkies, pork chop, and bacon-wrapped anything [Lev 11:7-8], plus every sweet BBQ sauce (sugar) and the mac and cheese."
+},
+{
+"s": 19,
+"section": "Eating Out",
+"group": "SIT-DOWN RESTAURANTS — Huntsville",
+"name": "Melt Huntsville",
+"status": "caution",
+"details": "Grilled cheese concept — mostly bread-based. ORDER: they substitute readily; ask for a burger patty in place of ham, and a side salad instead of fries. SKIP: the Cuban and Hawaiian melts (pork) [Lev 11:7-8], beer-batter fries, and Texas toast."
+},
+{
+"s": 19,
+"section": "Eating Out",
+"group": "SIT-DOWN RESTAURANTS — Huntsville",
+"name": "Good Company Cafe (Five Points)",
+"status": "caution",
+"details": "Breakfast all day. ORDER: eggs any style, avocado, side of fruit, black coffee. SKIP: biscuits and gravy (pork sausage) [Lev 11:7-8], pancakes, and the cookies."
+},
+{
+"s": 19,
+"section": "Eating Out",
+"group": "SIT-DOWN RESTAURANTS — Huntsville",
+"name": "Any local catfish house / fish fry",
+"status": "avoid",
+"details": "Catfish has no true scales [Lev 11:10] and is deep-fried in seed oil. This is the most common 'healthy-sounding' trap in North Alabama. Order grilled clean fish elsewhere."
+},
+{
+"s": 19,
+"section": "Eating Out",
+"group": "CHAINS TO AVOID ENTIRELY",
+"name": "McDonald's",
+"status": "avoid",
+"details": "Fries and hash browns cook in a blend of canola, corn, soybean, and hydrogenated soybean oil with added natural beef flavor. Buns carry HFCS and soy lecithin, and the sauces are sugar-based. Nothing here is worth the compromise."
+},
+{
+"s": 19,
+"section": "Eating Out",
+"group": "CHAINS TO AVOID ENTIRELY",
+"name": "Burger King / Wendy's / KFC",
+"status": "avoid",
+"details": "Soybean oil fryers, refined-flour buns, HFCS sauces, and heavy pork presence (bacon on nearly everything) [Lev 11:7-8]."
+},
+{
+"s": 19,
+"section": "Eating Out",
+"group": "CHAINS TO AVOID ENTIRELY",
+"name": "Popeyes / Zaxby's / Bojangles",
+"status": "avoid",
+"details": "Fried chicken chains — breading plus fryer oil plus sugary sauces plus biscuits. Popeyes fries in a beef tallow and palm blend, which is a cleaner fat, but the breading, the biscuits, and the sugar-heavy sauces still disqualify it."
+},
+{
+"s": 19,
+"section": "Eating Out",
+"group": "CHAINS TO AVOID ENTIRELY",
+"name": "Waffle House / Cracker Barrel",
+"status": "avoid",
+"details": "Both are built on pork — bacon, sausage, country ham [Lev 11:7-8] — plus refined flour and syrup. If you must go, order eggs and grilled chicken plain and nothing else."
+},
+{
+"s": 19,
+"section": "Eating Out",
+"group": "CHAINS TO AVOID ENTIRELY",
+"name": "Pizza chains (all)",
+"status": "avoid",
+"details": "Refined flour crust with soy lecithin and sugar, pepperoni and sausage are pork [Lev 11:7-8], and the sauce carries added sugar."
+},
+{
+"s": 19,
+"section": "Eating Out",
+"group": "CHAINS TO AVOID ENTIRELY",
+"name": "Sonic / Dairy Queen / Milkshake spots",
+"status": "avoid",
+"details": "Sugar-delivery vehicles with artificial dyes throughout. The exact spike-and-crash pattern you are eliminating everywhere else."
+}
+]
+}
