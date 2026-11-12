@@ -37,6 +37,7 @@ struct NoteEditor: View {
     @State private var answer: String?
     @State private var aiWorking = false
     @State private var movingPage = false
+    @State private var recording = false
 
     var body: some View {
         if note.isLocked && !unlocked {
@@ -109,6 +110,12 @@ struct NoteEditor: View {
         .sheet(isPresented: $showSketch) { SketchSheet { NoteMedia.add($0, kind: "sketch", to: note, ctx: ctx) } }
         .sheet(isPresented: $showIcons) { IconPicker(icon: $note.icon) }
         .sheet(isPresented: $movingPage) { MovePageSheet(note: note) }
+        .sheet(isPresented: $recording) {
+            NavigationStack {
+                MeetingRecorderView(target: note)
+                    .toolbar { ToolbarItem(placement: .cancellationAction) { Button("Close") { recording = false } } }
+            }
+        }
         .sheet(item: Binding(get: { exportURL.map(ExportFile.init) }, set: { if $0 == nil { exportURL = nil } })) { f in
             ShareSheet(url: f.url).presentationDetents([.medium, .large])
         }
@@ -437,6 +444,11 @@ struct NoteEditor: View {
     private func apply(_ cmd: SlashCommand, to b: Binding<NoteBlock>) {
         slashFor = nil
         b.wrappedValue.text = ""
+        if cmd.id == "meeting" {                   // AI meeting notes go straight into this page
+            editing = nil
+            recording = true
+            return
+        }
         switch cmd.kind {
         case .page:
             let sub = Note(title: "")
@@ -524,7 +536,7 @@ struct NoteEditor: View {
     @ViewBuilder
     private func blockMenu(_ b: Binding<NoteBlock>) -> some View {
         Menu("Turn into", systemImage: "arrow.triangle.2.circlepath") {
-            ForEach(SlashCommand.all.filter { ![.page, .image, .table, .bookmark, .divider].contains($0.kind) }) { cmd in
+            ForEach(SlashCommand.all.filter { ![.page, .image, .table, .bookmark, .divider].contains($0.kind) && $0.id != "meeting" }) { cmd in
                 Button(cmd.title, systemImage: cmd.icon) { b.wrappedValue.kind = cmd.kind; if cmd.kind == .callout && b.wrappedValue.icon == nil { b.wrappedValue.icon = "💡" } }
             }
         }
@@ -589,6 +601,7 @@ struct NoteEditor: View {
                 if VNDocumentCameraViewController.isSupported {
                     Button("Scan document", systemImage: "doc.viewfinder") { showScanner = true }
                 }
+                Button("AI meeting notes", systemImage: "waveform.badge.mic") { recording = true }
                 Divider()
                 Button("Sub-page", systemImage: "doc.badge.plus") {
                     let nb = NoteBlock(kind: .text, text: "")
