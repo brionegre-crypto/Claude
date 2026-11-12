@@ -8,6 +8,7 @@ struct KeelWidgetBundle: WidgetBundle {
     var body: some Widget {
         TodayWidget()
         NextEventWidget()
+        CountdownWidget()
         FocusLiveActivity()
         CaptureControl()
         FocusControl()
@@ -236,5 +237,50 @@ struct FocusControl: ControlWidget {
         }
         .displayName("Keel Focus")
         .description("Start a focus session.")
+    }
+}
+
+// MARK: - Countdown widget
+
+struct CountdownWidget: Widget {
+    var body: some WidgetConfiguration {
+        StaticConfiguration(kind: "KeelCountdown", provider: KeelProvider()) { entry in
+            CountdownView(entry: entry)
+                .containerBackground(for: .widget) { LinearGradient(colors: [accent.opacity(0.2), .clear], startPoint: .top, endPoint: .bottom) }
+                .widgetURL(URL(string: "com.keel.app://today"))
+        }
+        .configurationDisplayName("Countdown")
+        .description("Days until the next big date.")
+        .supportedFamilies([.systemSmall, .accessoryRectangular, .accessoryInline])
+    }
+}
+
+struct CountdownView: View {
+    let entry: KeelEntry
+    @Environment(\.widgetFamily) private var family
+    var body: some View {
+        if let c = entry.snapshot.countdowns?.first(where: { $0.date >= Calendar.current.startOfDay(for: entry.date) }) {
+            let days = Calendar.current.dateComponents([.day], from: Calendar.current.startOfDay(for: entry.date), to: Calendar.current.startOfDay(for: c.date)).day ?? 0
+            switch family {
+            case .accessoryInline:
+                Text("\(c.emoji) \(days)d · \(c.title)")
+            case .accessoryRectangular:
+                VStack(alignment: .leading, spacing: 1) {
+                    Text("\(c.emoji) \(c.title)").font(.headline).lineLimit(1)
+                    Text(days == 0 ? "Today!" : "\(days) days").font(.caption)
+                }
+            default:
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(c.emoji).font(.title)
+                    Spacer(minLength: 0)
+                    Text(days == 0 ? "Today!" : "\(days)").font(.system(size: 40, weight: .bold, design: .rounded)).foregroundStyle(accent)
+                    if days > 0 { Text(days == 1 ? "day to go" : "days to go").font(.caption).foregroundStyle(.secondary) }
+                    Text(c.title).font(.caption.weight(.semibold)).lineLimit(2)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+            }
+        } else {
+            Text("Add a countdown in Keel").font(.caption).foregroundStyle(.secondary)
+        }
     }
 }

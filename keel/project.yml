@@ -33,6 +33,8 @@ targets:
         com.apple.developer.family-controls: true
         com.apple.security.application-groups: [group.com.briangreenejr.keel]
         aps-environment: development
+        com.apple.developer.healthkit: true
+        com.apple.developer.healthkit.access: []
     info:
       path: Keel/Info.plist
       properties:
@@ -54,6 +56,8 @@ targets:
         UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
         UIRequiresFullScreen: true
         NSSupportsLiveActivities: true
+        NSHealthShareUsageDescription: Keel reads last night's sleep to suggest how much energy you have today. Nothing is written to Health.
+        NSPhotoLibraryUsageDescription: Keel reads your recent screenshots on this iPhone to suggest tasks, and lets you add photos to notes.
         NSCameraUsageDescription: Keel uses the camera to scan documents into your notes.
         NSPhotoLibraryAddUsageDescription: Keel can save images from your notes to Photos.
         NSMicrophoneUsageDescription: Keel records meetings you choose to record and turns them into notes.
@@ -115,6 +119,7 @@ targets:
             NSExtensionActivationRule:
               NSExtensionActivationSupportsWebURLWithMaxCount: 1
               NSExtensionActivationSupportsText: true
+              NSExtensionActivationSupportsImageWithMaxCount: 10
 
   KeelWatch:
     type: application

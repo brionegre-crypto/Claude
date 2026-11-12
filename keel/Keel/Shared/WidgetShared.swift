@@ -22,6 +22,13 @@ struct WidgetSnapshot: Codable {
     var tasks: [TaskLine] = []
     var tasksLeftToday: Int = 0
     var tasksDoneToday: Int = 0
+    var countdowns: [CountdownLine]? = nil
+
+    struct CountdownLine: Codable, Hashable {
+        var title: String
+        var emoji: String
+        var date: Date
+    }
     var updatedAt = Date()
 
     static let groupId = "group.com.briangreenejr.keel"

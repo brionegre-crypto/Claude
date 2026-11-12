@@ -143,3 +143,46 @@ struct AddEventIntent: AppIntent {
         return .result(dialog: "Added “\(title)” on \(start.formatted(date: .abbreviated, time: .shortened)).")
     }
 }
+
+// MARK: - Bring in Apple Notes and Messages through Shortcuts (you approve access there)
+
+/// "Save to Keel Notes": Shortcuts can pass Apple Notes, messages or any text here.
+/// Used by the "Import Apple Notes" shortcut and message automations.
+struct SaveNoteIntent: AppIntent {
+    static let title: LocalizedStringResource = "Save to Keel Notes"
+    static let description: IntentDescription = "Saves text as a Keel note. Use it in Shortcuts to bring in Apple Notes or messages."
+    @Parameter(title: "Title") var noteTitle: String?
+    @Parameter(title: "Text") var text: String
+
+    @MainActor func perform() async throws -> some IntentResult & ProvidesDialog {
+        let ctx = KeelStore.container.mainContext
+        let firstLine = text.split(whereSeparator: \.isNewline).first.map(String.init) ?? "Imported note"
+        let title = (noteTitle?.isEmpty == false ? noteTitle! : String(firstLine.prefix(60)))
+        // Skip notes that were already imported (same title and text).
+        let existing = (try? ctx.fetch(FetchDescriptor<Note>())) ?? []
+        if existing.contains(where: { $0.title == title && $0.plainText == text }) {
+            return .result(dialog: "Already in Keel.")
+        }
+        let note = Note(title: title, blocks: [NoteBlock(kind: .text, text: text)])
+        ctx.insert(note)
+        try ctx.save()
+        return .result(dialog: "Saved “\(title)” to Keel.")
+    }
+}
+
+/// "Add message to Keel": for a Shortcuts message automation. Turns a message into a task, with who sent it.
+struct MessageToTaskIntent: AppIntent {
+    static let title: LocalizedStringResource = "Add Message to Keel"
+    static let description: IntentDescription = "Turns a message into a Keel task. Use it in a Shortcuts “Message” automation."
+    @Parameter(title: "Message") var message: String
+    @Parameter(title: "From") var sender: String?
+
+    @MainActor func perform() async throws -> some IntentResult {
+        let ctx = KeelStore.container.mainContext
+        let t = QuickAdd.create(String(message.prefix(140)), in: ctx)
+        t.notes = "From \(sender ?? "a message"):\n\(message)"
+        t.tags = Array(Set(t.tags + ["message"]))
+        try ctx.save()
+        return .result()
+    }
+}

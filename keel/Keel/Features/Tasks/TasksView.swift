@@ -131,6 +131,7 @@ struct TasksView: View {
                             Button("Share “\(name)”…", systemImage: "person.2") { sharingList = name }
                         }
                         NavigationLink { TemplatesView() } label: { Label("Templates", systemImage: "doc.on.doc") }
+                        NavigationLink { ScreenshotTasksView() } label: { Label("From screenshots", systemImage: "camera.viewfinder") }
                         if case .list(let name) = filter {
                             Button("Save “\(name)” as a template", systemImage: "square.and.arrow.down") {
                                 TemplateSaver.save(listName: name, tasks: tasks.filter { !$0.isDone }, ctx: ctx)

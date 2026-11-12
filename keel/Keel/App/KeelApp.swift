@@ -44,6 +44,7 @@ struct KeelApp: App {
             if phase == .active {
                 Task { await KeelFocusFilter.syncCurrent() }
                 LinkSaver.importShared(into: container.mainContext)     // links saved from Safari's share sheet
+                LinkSaver.importSharedNotes(into: container.mainContext) // text/images shared from Notes, Messages, Photos…
             }
             if phase == .background { WidgetSync.update(container.mainContext) }
         }

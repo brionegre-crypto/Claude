@@ -32,7 +32,10 @@ enum WidgetSync {
             tasks: dueToday.sorted { ($0.dueDate ?? .distantFuture) < ($1.dueDate ?? .distantFuture) }.prefix(6)
                 .map { WidgetSnapshot.TaskLine(title: $0.title, due: $0.dueDate, priority: $0.priority.rawValue) },
             tasksLeftToday: dueToday.count,
-            tasksDoneToday: doneToday.count
+            tasksDoneToday: doneToday.count,
+            countdowns: ((try? ctx.fetch(FetchDescriptor<Countdown>(sortBy: [SortDescriptor(\.date)]))) ?? [])
+                .filter { $0.daysLeft >= 0 }.prefix(5)
+                .map { WidgetSnapshot.CountdownLine(title: $0.title, emoji: $0.emoji, date: $0.date) }
         ).save()
         WidgetCenter.shared.reloadAllTimelines()
         WatchBridge.shared.push(ctx)          // keep Apple Watch in step

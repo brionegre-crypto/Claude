@@ -94,6 +94,7 @@ struct AccountsView: View {
                     SettingsRow(title: "Mail Accounts", symbol: "envelope.fill", color: .blue, value: accounts.isEmpty ? "None" : "\(accounts.count)") { MailAccountsSettings() }
                     SettingsRow(title: "Calendars", symbol: "calendar", color: .red) { CalendarSettings() }
                     SettingsRow(title: "Reminders", symbol: "checklist", color: .orange) { RemindersSettings() }
+                    SettingsRow(title: "Connected Apps", symbol: "app.connected.to.app.below.fill", color: .indigo) { ConnectedAppsView() }
                 }
 
                 Section {

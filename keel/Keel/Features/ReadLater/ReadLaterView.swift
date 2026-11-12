@@ -21,6 +21,30 @@ enum LinkSaver {
         for item in items { add(item.url, title: item.title, ctx: ctx) }
     }
 
+    private struct SharedNote: Codable { var text: String; var images: [String]; var date: Date }
+
+    /// Text and images shared to Keel (from Notes, Messages, Photos, anywhere) become Keel notes.
+    static func importSharedNotes(into ctx: ModelContext) {
+        guard let dir = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: WidgetSnapshot.groupId) else { return }
+        let file = dir.appendingPathComponent("shared-notes.json")
+        guard let data = try? Data(contentsOf: file),
+              let items = try? JSONDecoder().decode([SharedNote].self, from: data), !items.isEmpty else { return }
+        try? FileManager.default.removeItem(at: file)
+        for item in items {
+            let firstLine = item.text.split(whereSeparator: \.isNewline).first.map(String.init) ?? ""
+            let title = firstLine.isEmpty ? "Shared \(item.date.formatted(date: .abbreviated, time: .shortened))" : String(firstLine.prefix(60))
+            let note = Note(title: title, blocks: item.text.isEmpty ? [] : [NoteBlock(kind: .text, text: item.text)])
+            ctx.insert(note)
+            for name in item.images {
+                let url = dir.appendingPathComponent("shared-images").appendingPathComponent(name)
+                if let img = try? Data(contentsOf: url) {
+                    NoteMedia.add(img, kind: "photo", to: note, ctx: ctx)
+                    try? FileManager.default.removeItem(at: url)
+                }
+            }
+        }
+    }
+
     @discardableResult
     static func add(_ raw: String, title: String? = nil, ctx: ModelContext) -> SavedLink? {
         var s = raw.trimmingCharacters(in: .whitespacesAndNewlines)

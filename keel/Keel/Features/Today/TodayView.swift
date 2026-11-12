@@ -15,6 +15,9 @@ struct TodayView: View {
     @Query private var idealBlocks: [IdealBlock]
     @Query(sort: \Person.name) private var people: [Person]
     @State private var scheduleMessage: String?
+    @State private var sleepHours: Double?
+    @AppStorage("energy.day") private var energyDay = ""
+    @Query(sort: \Countdown.date) private var countdowns: [Countdown]
     @State private var plan: DayPlan?
     @State private var planning = false
     @State private var showSettings = false
@@ -49,6 +52,7 @@ struct TodayView: View {
                         if !events.isEmpty { upNext }
                         justOneThing
                     }
+                    countdownCard
                     promisesCard
                     followUpsCard
                     keepInTouchCard
@@ -68,6 +72,14 @@ struct TodayView: View {
             }
             .background(DS.Palette.canvas)
             .refreshable { await SyncEngine.shared.syncAll() }
+            .task {
+                // Short night → suggest a gentler day, unless you've already picked your energy today.
+                sleepHours = await HealthService.shared.lastNightSleepHours()
+                let today = Date().formatted(.iso8601.year().month().day())
+                if let h = sleepHours, energyDay != today {
+                    energyRaw = HealthService.energy(forSleep: h).rawValue
+                }
+            }
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     Button { showBrainDump = true } label: { Image(systemName: "brain.head.profile") }
@@ -83,6 +95,8 @@ struct TodayView: View {
                         NavigationLink { HabitsView() } label: { Label("Habit stacks", systemImage: "link") }
                         NavigationLink { WeeklyReviewView() } label: { Label("Weekly review", systemImage: "chart.bar.doc.horizontal") }
                         NavigationLink { PeopleView() } label: { Label("Keep in touch", systemImage: "person.2") }
+                        NavigationLink { CountdownsView() } label: { Label("Countdowns", systemImage: "hourglass") }
+                        NavigationLink { ScreenshotTasksView() } label: { Label("Tasks from screenshots", systemImage: "camera.viewfinder") }
                         NavigationLink { TimeAuditView() } label: { Label("Time audit", systemImage: "chart.pie") }
                         NavigationLink { IdealWeekView() } label: { Label("Ideal week", systemImage: "calendar.badge.clock") }
                         NavigationLink { ReadLaterView() } label: { Label("Read later", systemImage: "books.vertical") }
@@ -122,11 +136,21 @@ struct TodayView: View {
     }
 
     private var energyPicker: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            energyButtons
+            if let h = sleepHours {
+                Text("Suggested from \(Int(h))h \(Int((h - Double(Int(h))) * 60))m of sleep").font(.caption2).foregroundStyle(DS.Palette.inkSoft)
+            }
+        }
+    }
+
+    private var energyButtons: some View {
         HStack(spacing: DS.Space.s) {
             Text("Energy").font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
             ForEach(EnergyLevel.allCases) { level in
                 Button {
                     withAnimation(DS.spring) { energyRaw = level.rawValue }; Haptics.tap()
+                    energyDay = Date().formatted(.iso8601.year().month().day())
                 } label: {
                     Label(level.label, systemImage: level.icon).font(DS.Font.caption)
                         .padding(.horizontal, 10).padding(.vertical, 6)
@@ -255,6 +279,26 @@ struct TodayView: View {
                             }
                             Spacer()
                             Image(systemName: "chevron.right").foregroundStyle(DS.Palette.inkSoft)
+                        }
+                    }
+                }
+                .buttonStyle(.plain)
+            }
+        }
+    }
+
+    private var countdownCard: some View {
+        let soon = countdowns.filter { $0.daysLeft >= 0 && $0.daysLeft <= 30 }.first
+        return Group {
+            if let c = soon {
+                NavigationLink { CountdownsView() } label: {
+                    GlassCard {
+                        HStack {
+                            Text(c.emoji).font(.title)
+                            Text(c.title).font(DS.Font.headline).foregroundStyle(DS.Palette.ink)
+                            Spacer()
+                            Text(c.daysLeft == 0 ? "Today!" : "in \(c.daysLeft) day\(c.daysLeft == 1 ? "" : "s")")
+                                .font(DS.Font.headline).foregroundStyle(DS.Palette.accent)
                         }
                     }
                 }
