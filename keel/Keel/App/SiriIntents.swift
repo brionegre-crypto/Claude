@@ -150,7 +150,7 @@ struct AddEventIntent: AppIntent {
 /// Used by the "Import Apple Notes" shortcut and message automations.
 struct SaveNoteIntent: AppIntent {
     static let title: LocalizedStringResource = "Save to Keel Notes"
-    static let description: IntentDescription = "Saves text as a Keel note. Use it in Shortcuts to bring in Apple Notes or messages."
+    static let description: IntentDescription = "Saves text as a Keel note. Use it in Shortcuts to bring in notes or messages from other apps."
     @Parameter(title: "Title") var noteTitle: String?
     @Parameter(title: "Text") var text: String
 
