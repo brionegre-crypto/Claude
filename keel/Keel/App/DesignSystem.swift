@@ -171,3 +171,80 @@ enum AppIconChoice: String, CaseIterable, Identifiable {
     var iconName: String? { self == .standard ? nil : "AppIcon-\(rawValue)" }
     var preview: String { "IconPreview-\(rawValue)" }
 }
+
+// MARK: - Larger text & Display Zoom
+
+/// A fixed point size that still follows the person's text size setting (Settings → Display & Brightness → Text Size,
+/// or Accessibility → Larger Text), up to a ceiling so small labels stay readable without breaking their layout.
+struct ScaledFont: ViewModifier {
+    @ScaledMetric private var scaled: CGFloat
+    private let base: CGFloat
+    private let weight: Font.Weight
+    private let design: Font.Design
+    private let maxScale: CGFloat
+
+    init(size: CGFloat, weight: Font.Weight, design: Font.Design, maxScale: CGFloat?) {
+        base = size
+        self.weight = weight
+        self.design = design
+        self.maxScale = maxScale ?? (size >= 28 ? 1.3 : 1.8)
+        let style: Font.TextStyle = size <= 11 ? .caption2 : size <= 13 ? .footnote : size <= 17 ? .body : size <= 22 ? .title3 : size <= 28 ? .title : .largeTitle
+        _scaled = ScaledMetric(wrappedValue: size, relativeTo: style)
+    }
+
+    func body(content: Content) -> some View {
+        content.font(.system(size: min(scaled, base * maxScale), weight: weight, design: design))
+    }
+}
+
+extension View {
+    /// Use instead of `.font(.system(size:))` for anything people read.
+    func scaledFont(size: CGFloat, weight: Font.Weight = .regular, design: Font.Design = .default, maxScale: CGFloat? = nil) -> some View {
+        modifier(ScaledFont(size: size, weight: weight, design: design, maxScale: maxScale))
+    }
+}
+
+/// A card grid that drops columns as text gets bigger: 3 → 2 at large sizes, and 1 column at accessibility sizes,
+/// so titles never get squeezed into a sliver (also helps with Display Zoom on smaller iPhones).
+struct FlexGrid<Content: View>: View {
+    let columns: Int
+    var spacing: CGFloat = 10
+    var alignment: HorizontalAlignment = .center
+    @ViewBuilder let content: () -> Content
+    @Environment(\.dynamicTypeSize) private var typeSize
+    @Environment(\.horizontalSizeClass) private var hSize
+
+    private var count: Int {
+        if typeSize.isAccessibilitySize { return hSize == .regular ? min(2, columns) : 1 }
+        if typeSize >= .xxLarge && columns > 2 { return 2 }
+        return columns
+    }
+
+    var body: some View {
+        LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: spacing), count: max(1, count)), alignment: alignment, spacing: spacing) {
+            content()
+        }
+    }
+}
+
+/// Settings → Appearance → Text Size: follow the iPhone, or pick a size just for Keel.
+enum KeelTextSize {
+    static let key = "appearance.textSize"
+    static let choices: [(String, DynamicTypeSize?)] = [
+        ("Use iPhone Setting", nil), ("Smaller", .medium), ("Default", .large), ("Large", .xLarge), ("Larger", .xxLarge),
+        ("Extra Large", .xxxLarge), ("Huge", .accessibility1), ("Biggest", .accessibility3),
+    ]
+}
+
+struct KeelTextSizeModifier: ViewModifier {
+    @AppStorage(KeelTextSize.key) private var index = 0
+    func body(content: Content) -> some View {
+        let picked = KeelTextSize.choices.indices.contains(index) ? KeelTextSize.choices[index].1 : nil
+        if let picked {
+            content.dynamicTypeSize(picked)
+        } else {
+            // Follows the iPhone all the way into the larger accessibility sizes; the top two are capped so layouts hold.
+            content.dynamicTypeSize(...DynamicTypeSize.accessibility3)
+        }
+    }
+}

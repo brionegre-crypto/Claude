@@ -264,7 +264,7 @@ struct ComposeView: View {
 
     private func field(_ label: String, text: Binding<String>) -> some View {
         HStack {
-            Text(label).foregroundStyle(DS.Palette.inkSoft).frame(width: 36, alignment: .leading)
+            Text(label).foregroundStyle(DS.Palette.inkSoft).frame(minWidth: 36, alignment: .leading)
             TextField("", text: text)
                 .keyboardType(.emailAddress).textContentType(.emailAddress)
                 .textInputAutocapitalization(.never).autocorrectionDisabled()

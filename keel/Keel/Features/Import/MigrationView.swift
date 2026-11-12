@@ -99,7 +99,7 @@ struct ImportView: View {
                 .buttonStyle(PressStyle())
 
                 Text("Or pick where you're coming from").font(DS.Font.caption.weight(.semibold)).foregroundStyle(DS.Palette.inkSoft).textCase(.uppercase)
-                LazyVGrid(columns: [GridItem(.flexible(), spacing: 10), GridItem(.flexible(), spacing: 10)], spacing: 10) {
+                FlexGrid(columns: 2, spacing: 10) {
                     sourceTile("Notion", "Connect or upload an export", "square.stack.3d.up.fill", .primary) { guide = .notion }
                     sourceTile("Obsidian", "Pick your vault folder", "diamond.fill", .purple) { guide = .obsidian }
                     sourceTile("Evernote", ".enex notebooks", "leaf.fill", .green) { guide = .evernote }
@@ -231,7 +231,7 @@ struct ImportView: View {
                         } label: { Text("Not right?").font(DS.Font.caption) }
                     }
                 }
-                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
+                FlexGrid(columns: 3, spacing: 12) {
                     stat("\(b.pages.count - b.rows - b.databases)", "pages")
                     stat("\(b.databases)", "databases")
                     stat("\(b.rows)", "rows")

@@ -44,7 +44,7 @@ struct SubscriptionsView: View {
                     ForEach(comingUp) { s in
                         HStack {
                             Text(s.nextDate?.formatted(.dateTime.month(.abbreviated).day()) ?? "").font(DS.Font.caption.monospacedDigit())
-                                .foregroundStyle(DS.Palette.inkSoft).frame(width: 52, alignment: .leading)
+                                .foregroundStyle(DS.Palette.inkSoft).frame(minWidth: 52, alignment: .leading)
                             Image(systemName: icon(s)).foregroundStyle(color(s))
                             Text(s.name).lineLimit(1)
                             Spacer()

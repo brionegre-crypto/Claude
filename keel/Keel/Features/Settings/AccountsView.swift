@@ -609,9 +609,15 @@ struct AppearanceSettings: View {
     @AppStorage("accent") private var accent = "indigo"
     @AppStorage(Prefs.calm) private var calm = false
     @State private var icon = AppIconChoice.allCases.first { $0.iconName == UIApplication.shared.alternateIconName } ?? .standard
+    @AppStorage(KeelTextSize.key) private var textSize = 0
 
     var body: some View {
         List {
+            Section {
+                Picker("Text Size", selection: $textSize) {
+                    ForEach(KeelTextSize.choices.indices, id: \.self) { i in Text(KeelTextSize.choices[i].0).tag(i) }
+                }
+            } footer: { Text("Keel follows your iPhone's text size (Settings → Display & Brightness → Text Size, or Accessibility → Larger Text), and works with Display Zoom. Pick a size here to change Keel only. Card grids switch to fewer columns as text gets bigger.") }
             Section {
                 Toggle("Calm Mode", isOn: $calm)
             } footer: { Text("For overwhelming days: Today shows only your next thing and what's coming up. Unread counts and red overdue dates are hidden everywhere.") }

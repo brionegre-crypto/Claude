@@ -151,7 +151,7 @@ struct HubView: View {
                     .simultaneousGesture(TapGesture().onEnded { remember(hero.id) })
                     .padding(.horizontal)
             }
-            LazyVGrid(columns: [GridItem(.flexible(), spacing: 10), GridItem(.flexible(), spacing: 10)], spacing: 10) {
+            FlexGrid(columns: 2, spacing: 10) {
                 ForEach(g.tools.dropFirst()) { t in
                     NavigationLink { t.dest() } label: { ToolTile(tool: t, stat: stats[t.id], color: g.color) }
                         .buttonStyle(PressStyle())
@@ -467,7 +467,8 @@ private struct PrescriptionCard: View {
                 .background(.white.opacity(0.2), in: Capsule()).lineLimit(1) }
         }
         .padding(16)
-        .frame(width: 210, height: 180, alignment: .leading)
+        .frame(width: 210, alignment: .leading)
+        .frame(minHeight: 180)
         .background {
             RoundedRectangle(cornerRadius: 26, style: .continuous).fill(color.gradient)
                 .overlay(alignment: .topTrailing) {

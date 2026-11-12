@@ -201,7 +201,7 @@ struct DayLogView: View {
                 ForEach(entries) { e in
                     HStack(alignment: .top, spacing: DS.Space.m) {
                         Text(e.time.formatted(date: .omitted, time: .shortened)).font(DS.Font.caption.monospacedDigit())
-                            .foregroundStyle(DS.Palette.inkSoft).frame(width: 64, alignment: .leading)
+                            .foregroundStyle(DS.Palette.inkSoft).frame(minWidth: 64, alignment: .leading)
                         Image(systemName: e.icon).foregroundStyle(e.color).frame(width: 22)
                         VStack(alignment: .leading, spacing: 2) {
                             Text(e.title).font(DS.Font.body)

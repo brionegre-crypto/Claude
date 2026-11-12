@@ -66,7 +66,7 @@ struct MedsView: View {
                     RoundedRectangle(cornerRadius: 3)
                         .fill(n >= perDay ? DS.Palette.calm : n > 0 ? DS.Palette.warmth : Color.secondary.opacity(0.2))
                         .frame(height: 22)
-                    Text(d.formatted(.dateTime.weekday(.narrow))).font(.system(size: 9)).foregroundStyle(DS.Palette.inkSoft)
+                    Text(d.formatted(.dateTime.weekday(.narrow))).scaledFont(size: 9, maxScale: 1.3).foregroundStyle(DS.Palette.inkSoft)
                 }
                 .accessibilityLabel("\(d.formatted(date: .abbreviated, time: .omitted)): \(n) of \(perDay)")
             }

@@ -118,7 +118,7 @@ struct OdysseyCompare: View {
 
     private func bar(_ label: String, _ v: Int) -> some View {
         HStack {
-            Text(label).frame(width: 100, alignment: .leading)
+            Text(label).frame(minWidth: 100, alignment: .leading)
             GeometryReader { g in
                 Capsule().fill(DS.Palette.accent.opacity(0.15))
                     .overlay(alignment: .leading) { Capsule().fill(DS.Palette.accent).frame(width: g.size.width * CGFloat(v) / 5) }

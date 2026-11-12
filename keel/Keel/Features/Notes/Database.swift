@@ -228,7 +228,7 @@ struct DatabaseView: View {
     }
 
     private var gallery: some View {
-        LazyVGrid(columns: [GridItem(.flexible(), spacing: 10), GridItem(.flexible(), spacing: 10)], spacing: 10) {
+        FlexGrid(columns: 2, spacing: 10) {
             ForEach(rows) { r in
                 Button { open(r) } label: {
                     VStack(alignment: .leading, spacing: 0) {
@@ -295,12 +295,12 @@ struct DatabaseView: View {
                             VStack(alignment: .leading, spacing: 2) {
                                 Text("\(i - lead + 1)").font(.caption2).foregroundStyle(cal.isDateInToday(day) ? DS.Palette.accent : DS.Palette.inkSoft)
                                 ForEach(items.prefix(2)) { r in
-                                    Text(r.title.isEmpty ? "Untitled" : r.title).font(.system(size: 9)).lineLimit(1)
+                                    Text(r.title.isEmpty ? "Untitled" : r.title).scaledFont(size: 9, maxScale: 1.3).lineLimit(1)
                                         .padding(2).frame(maxWidth: .infinity, alignment: .leading)
                                         .background(DS.Palette.accent.opacity(0.15), in: .rect(cornerRadius: 3))
                                         .onTapGesture { open(r) }
                                 }
-                                if items.count > 2 { Text("+\(items.count - 2)").font(.system(size: 9)).foregroundStyle(DS.Palette.inkSoft) }
+                                if items.count > 2 { Text("+\(items.count - 2)").scaledFont(size: 9, maxScale: 1.3).foregroundStyle(DS.Palette.inkSoft) }
                                 Spacer(minLength: 0)
                             }
                             .padding(3).frame(height: 64, alignment: .topLeading)

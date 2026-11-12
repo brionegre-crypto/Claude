@@ -28,7 +28,7 @@ struct MonthlyReviewView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: DS.Space.l) {
                 Text("Last 30 days").font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft).textCase(.uppercase)
-                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: DS.Space.s) {
+                FlexGrid(columns: 2, spacing: DS.Space.s) {
                     tile("\(done.count)", "tasks done")
                     tile(String(format: "%.1fh", focusHours), "focused")
                     tile("\(logs.filter { $0.day >= start }.count)", "habit check-ins")

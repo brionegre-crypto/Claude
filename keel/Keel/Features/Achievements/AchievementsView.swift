@@ -105,10 +105,10 @@ struct AchievementsView: View {
                                 .foregroundStyle(a.unlocked ? AnyShapeStyle(DS.Palette.accent.gradient) : AnyShapeStyle(Color.secondary.opacity(0.3)))
                             Text(a.title).font(.caption2.weight(.semibold)).multilineTextAlignment(.center)
                             if a.unlocked {
-                                Text(a.detail).font(.system(size: 9)).foregroundStyle(DS.Palette.inkSoft)
+                                Text(a.detail).scaledFont(size: 9).foregroundStyle(DS.Palette.inkSoft)
                             } else {
                                 ProgressView(value: Double(min(a.current, a.target)), total: Double(a.target)).tint(DS.Palette.accent)
-                                Text("\(a.current)/\(a.target)").font(.system(size: 9)).foregroundStyle(DS.Palette.inkSoft).monospacedDigit()
+                                Text("\(a.current)/\(a.target)").scaledFont(size: 9).foregroundStyle(DS.Palette.inkSoft).monospacedDigit()
                             }
                         }
                         .frame(maxWidth: .infinity)
@@ -128,7 +128,7 @@ struct AchievementsView: View {
 
     private func part(_ label: String, _ value: Int, _ max: Int) -> some View {
         HStack {
-            Text(label).font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft).frame(width: 64, alignment: .leading)
+            Text(label).font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft).frame(minWidth: 64, alignment: .leading)
             ProgressView(value: Double(value), total: Double(max)).tint(DS.Palette.accent)
         }
     }

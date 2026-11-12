@@ -286,7 +286,7 @@ struct TodayView: View {
                     Text(plan.headline).font(DS.Font.body).foregroundStyle(DS.Palette.inkSoft)
                     ForEach(plan.blocks) { b in
                         HStack {
-                            Text(b.start).font(DS.Font.caption.monospacedDigit()).frame(width: 48, alignment: .leading)
+                            Text(b.start).font(DS.Font.caption.monospacedDigit()).frame(minWidth: 48, alignment: .leading)
                             Text(b.title).font(DS.Font.body)
                             Spacer()
                             Image(systemName: icon(for: b.kind)).foregroundStyle(DS.Palette.inkSoft)

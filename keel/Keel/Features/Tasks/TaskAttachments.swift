@@ -65,7 +65,7 @@ struct TaskAttachmentsSection: View {
         } else {
             VStack(spacing: 4) {
                 Image(systemName: "doc.fill").font(.title2).foregroundStyle(DS.Palette.accent)
-                Text(a.filename).font(.system(size: 9)).lineLimit(2).multilineTextAlignment(.center)
+                Text(a.filename).scaledFont(size: 9).lineLimit(2).multilineTextAlignment(.center)
             }
             .frame(width: 64, height: 64)
             .background(DS.Palette.elevated, in: .rect(cornerRadius: 8))

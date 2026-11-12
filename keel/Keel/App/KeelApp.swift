@@ -21,6 +21,7 @@ struct KeelApp: App {
     var body: some Scene {
         WindowGroup {
             RootView()
+                .modifier(KeelTextSizeModifier())
                 .environment(SyncEngine.shared)
                 .environment(ShutdownManager.shared)
                 .onOpenURL { url in

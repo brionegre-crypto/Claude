@@ -461,7 +461,7 @@ struct MatrixView: View {
             ("Later / drop", "Neither", DS.Palette.inkSoft, tasks.filter { !urgent($0) && !important($0) }),
         ]
         ScrollView {
-            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: DS.Space.s) {
+            FlexGrid(columns: 2, spacing: DS.Space.s) {
                 ForEach(quadrants, id: \.0) { q in
                     GlassCard(tint: q.2) {
                         VStack(alignment: .leading, spacing: DS.Space.s) {

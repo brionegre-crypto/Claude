@@ -28,7 +28,7 @@ struct ProcessInboxView: View {
                 }
                 .padding(.horizontal)
                 Spacer()
-                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: DS.Space.s) {
+                FlexGrid(columns: 2, spacing: DS.Space.s) {
                     choice("Do it now", "bolt.fill", DS.Palette.calm) { TaskActions.setDone(t, true); next(t) }
                     choice("Today", "sun.max.fill", DS.Palette.warmth) { TaskActions.reschedule(t, to: Date()); next(t) }
                     choice("Pick a date", "calendar", DS.Palette.meeting) { showDate = true }

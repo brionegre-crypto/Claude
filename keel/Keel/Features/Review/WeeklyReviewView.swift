@@ -79,7 +79,7 @@ struct WeeklyReviewView: View {
 
                 weekLetter
 
-                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: DS.Space.s) {
+                FlexGrid(columns: 2, spacing: DS.Space.s) {
                     stat("\(completed.count)", "tasks done", "checkmark.circle.fill", DS.Palette.calm)
                     stat(hours(focusMinutes), "focused", "moon.zzz.fill", DS.Palette.focus)
                     stat("\(habitCount)", "habit check-ins", "link", .purple)

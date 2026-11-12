@@ -65,7 +65,7 @@ struct NotesView: View {
                             .listRowInsets(EdgeInsets(top: 10, leading: 16, bottom: 10, trailing: 16))
                     }
                     Section {
-                        LazyVGrid(columns: [GridItem(.flexible(), spacing: 12), GridItem(.flexible(), spacing: 12)], spacing: 12) {
+                        FlexGrid(columns: 2, spacing: 12) {
                             ForEach(summaries) { f in
                                 FolderCard(summary: f) { openFolder = FolderRef(name: f.name); Haptics.tap() }
                                     .contextMenu {
@@ -479,7 +479,7 @@ private struct QuickTile: View {
                     .frame(width: 38, height: 38).background(color.gradient, in: .rect(cornerRadius: 11))
                 Text(title).font(DS.Font.caption.weight(.semibold)).foregroundStyle(DS.Palette.ink)
             }
-            .frame(width: 92, alignment: .leading)
+            .frame(minWidth: 92, alignment: .leading)
             .padding(12)
             .background(DS.Palette.elevated, in: .rect(cornerRadius: 16))
         }
@@ -580,7 +580,7 @@ private struct FolderCard: View {
                     }
                     if summary.recent.isEmpty { Text("Empty").font(.caption2).foregroundStyle(DS.Palette.inkSoft) }
                 }
-                .frame(height: 30, alignment: .topLeading)
+                .frame(minHeight: 30, alignment: .topLeading)
             }
             .frame(maxWidth: .infinity, minHeight: 104, alignment: .topLeading)
             .padding(14)

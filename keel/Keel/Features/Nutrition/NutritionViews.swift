@@ -58,7 +58,7 @@ struct FactsGrid: View {
         if rows.isEmpty {
             Text("No nutrition numbers yet. Scan the label to add them.").font(DS.Font.caption).foregroundStyle(.secondary)
         } else {
-            LazyVGrid(columns: [GridItem(.flexible(), spacing: 12), GridItem(.flexible(), spacing: 12), GridItem(.flexible())], alignment: .leading, spacing: 14) {
+            FlexGrid(columns: 3, spacing: 14, alignment: .leading) {
                 ForEach(rows) { r in
                     VStack(alignment: .leading, spacing: 1) {
                         Text(r.value).font(DS.Font.headline).monospacedDigit()
@@ -289,7 +289,7 @@ private struct BigAction: View {
             Text(title).font(DS.Font.headline)
         }
         .foregroundStyle(.white)
-        .frame(maxWidth: .infinity).frame(height: 96)
+        .frame(maxWidth: .infinity, minHeight: 96).padding(.vertical, 4)
         .background(color.gradient, in: RoundedRectangle(cornerRadius: DS.Radius.card, style: .continuous))
     }
 }

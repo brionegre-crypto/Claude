@@ -203,7 +203,7 @@ struct VisionBoardView: View {
                 ContentUnavailableView("Your vision board is empty", systemImage: "photo.on.rectangle.angled",
                                        description: Text("Open a goal and add a picture of what achieving it looks like."))
             }
-            LazyVGrid(columns: [GridItem(.flexible(), spacing: 8), GridItem(.flexible(), spacing: 8)], spacing: 8) {
+            FlexGrid(columns: 2, spacing: 8) {
                 ForEach(withPictures) { g in
                     NavigationLink { GoalDetailView(goal: g) } label: {
                         ZStack(alignment: .bottomLeading) {

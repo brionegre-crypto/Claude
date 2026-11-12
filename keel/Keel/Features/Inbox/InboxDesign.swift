@@ -66,7 +66,7 @@ struct MailChip: View {
     var color: Color = DS.Palette.inkSoft
     var body: some View {
         Label(text, systemImage: icon)
-            .font(.system(size: 11, weight: .medium))
+            .scaledFont(size: 11, weight: .medium)
             .lineLimit(1)
             .padding(.horizontal, 7).padding(.vertical, 3)
             .foregroundStyle(color)
@@ -82,14 +82,22 @@ struct InboxTabBar: View {
     var hideCounts = false
 
     var body: some View {
+        // Bigger text or Display Zoom: the tabs scroll sideways instead of running off the screen.
+        ViewThatFits(in: .horizontal) {
+            bar
+            ScrollView(.horizontal, showsIndicators: false) { bar }
+        }
+    }
+
+    private var bar: some View {
         HStack(spacing: 6) {
             ForEach(InboxTab.allCases) { t in
                 Button { withAnimation(DS.spring) { tab = t }; Haptics.tap() } label: {
                     HStack(spacing: 4) {
-                        Image(systemName: t.icon).font(.system(size: 11, weight: .semibold))
-                        Text(t == .quick ? "Quick" : t.title).font(.system(size: 13, weight: .semibold))
+                        Image(systemName: t.icon).scaledFont(size: 11, weight: .semibold)
+                        Text(t == .quick ? "Quick" : t.title).scaledFont(size: 13, weight: .semibold)
                         if !hideCounts, let n = counts[t], n > 0 {
-                            Text("\(n)").font(.system(size: 11, weight: .bold)).monospacedDigit()
+                            Text("\(n)").scaledFont(size: 11, weight: .bold).monospacedDigit()
                                 .padding(.horizontal, 5).padding(.vertical, 1)
                                 .background((tab == t ? Color.white : DS.Palette.accent).opacity(tab == t ? 0.25 : 0.15), in: Capsule())
                         }
