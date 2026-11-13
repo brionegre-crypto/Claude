@@ -507,9 +507,12 @@ enum MeetingAI {
         CONTEXT:
         \(context)
         """
-        // Apple Intelligence first; Claude only when it isn't available on this device or can't read the meeting.
+        // Meeting notes are the one place Claude goes first (when connected): it reads the whole meeting at once.
+        // Apple Intelligence takes over if Claude isn't connected or doesn't answer.
+        if text.count > 40, AIRouter.shared.cloudEnabled, let w = await cloudWriteUp(text, instructions: instructions, mine: mine) {
+            return w
+        }
         guard AIRouter.shared.onDeviceAvailable, text.count > 40 else {
-            if text.count > 40, AIRouter.shared.cloudEnabled, let w = await cloudWriteUp(text, instructions: instructions, mine: mine) { return w }
             return MeetingWriteUp(summary: String(text.prefix(400)), enhancedNotes: mine)
         }
         // 1. Read the transcript in parts.
@@ -524,7 +527,6 @@ enum MeetingAI {
             i = j
         }
         guard !parts.isEmpty else {
-            if AIRouter.shared.cloudEnabled, let w = await cloudWriteUp(text, instructions: instructions, mine: mine) { return w }
             return MeetingWriteUp(summary: await AIRouter.shared.summarize(String(text.prefix(6_000))) ?? String(text.prefix(400)), enhancedNotes: mine)
         }
         // 2. Merge.
@@ -572,11 +574,10 @@ enum MeetingAI {
         If the transcript doesn't say, answer "That wasn't discussed." Keep it to a few sentences.
         QUESTION: \(question)
         TRANSCRIPT:
-        \(transcript.suffix(AIRouter.shared.onDeviceAvailable ? 8_000 : 120_000))
+        \(transcript.suffix(AIRouter.shared.cloudEnabled ? 120_000 : 8_000))
         """
-        if AIRouter.shared.onDeviceAvailable, let a = await AIRouter.shared.write(prompt) { return a }
         if AIRouter.shared.cloudEnabled, let a = try? await AIRouter.shared.cloud.answer(prompt) { return a }
-        return "Keel couldn't answer that right now."
+        return await AIRouter.shared.write(prompt) ?? "Keel couldn't answer that right now."
     }
 }
 
