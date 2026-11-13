@@ -41,6 +41,7 @@ targets:
         com.apple.developer.healthkit: true
         com.apple.developer.weatherkit: true
         com.apple.developer.healthkit.access: []
+        com.apple.developer.usernotifications.time-sensitive: true                           # Time Sensitive reminders (break through Focus)
         com.apple.developer.icloud-container-identifiers: [iCloud.com.briangreenejr.keel]   # iCloud sync (KEEL_ICLOUD)
         com.apple.developer.icloud-services: [CloudKit]                                      # iCloud sync (KEEL_ICLOUD)
         aps-environment: development                                                         # iCloud sync (KEEL_ICLOUD): silent pushes; App Store builds use production
