@@ -341,13 +341,21 @@ struct InboxView: View {
         switch tab {
         case .priority:
             let items = collapse(visible)
+            otherTabsCard
+            let fresh = justArrived
+            if !fresh.isEmpty {
+                Section {
+                    ForEach(fresh) { e in row(e) }
+                } header: {
+                    Label("Just arrived in Updates", systemImage: "sparkle").textCase(nil)
+                }
+            }
             ForEach(["Today", "Yesterday", "This week", "Older"], id: \.self) { name in
                 let group = items.filter { InboxBrain.section(for: $0.receivedAt) == name }
                 if !group.isEmpty {
                     Section(name) { ForEach(group) { e in row(e) } }
                 }
             }
-            otherTabsCard
         case .updates, .newsletters:
             if tab == .newsletters {
                 HStack {
@@ -382,7 +390,18 @@ struct InboxView: View {
         }
     }
 
-    /// At the bottom of Priority: what's waiting in the other tabs, without letting it crowd your people.
+    /// Unread mail from the last 12 hours that was sorted into Updates, so nothing new slips by unseen.
+    private var justArrived: [EmailMessage] {
+        let scores = scoreMap
+        let since = Date().addingTimeInterval(-12 * 3600)
+        return Array(collapse(mailboxEmails.filter {
+            !$0.isRead && !$0.isPinned && $0.receivedAt > since
+                && InboxBrain.tab($0, score: scores[$0.from.lowercased()]) == .updates
+                && !InboxBrain.isHeld($0, score: scores[$0.from.lowercased()])
+        }).prefix(5))
+    }
+
+    /// At the top of Priority: what's waiting in the other tabs, without letting it crowd your people.
     @ViewBuilder
     private var otherTabsCard: some View {
         let counts = tabCounts

@@ -56,7 +56,10 @@ enum InboxBrain {
     /// Which tab an email belongs in, using AI sorting corrected by what Keel has learned.
     static func tab(_ e: EmailMessage, score: SenderScore?) -> InboxTab {
         if score?.isVIP == true { return .priority }
-        if let s = score, s.replies >= 2 { return .priority }                       // you write back: they matter
+        if let s = score, s.replies >= 1 { return .priority }                       // you've written back: they matter
+        if MailNoise.needsAttention(e) { return .priority }                           // payment failed, security alert, action required
+        let subj = e.subject.lowercased()
+        if (subj.hasPrefix("re:") || subj.hasPrefix("re :")) && !MailNoise.isAutomated(e) { return .priority }   // a real reply in a conversation
         switch e.category ?? .important {
         case .newsletters, .promotions: return .newsletters
         case .updates, .lowPriority: return .updates

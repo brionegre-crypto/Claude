@@ -100,6 +100,15 @@ final class SyncEngine {
         // 1b. Machines aren't people: automated mail the AI called important/actionable becomes an update (in the background).
         await worker.reclassifyAutomated()
 
+        // One time: mail the old, stricter "automated" rules pushed into Updates gets sorted again.
+        if !UserDefaults.standard.bool(forKey: "mail.retriage.v2") {
+            let since = Date().addingTimeInterval(-14 * 86_400)
+            let recent = (try? ctx.fetch(FetchDescriptor<EmailMessage>(predicate: #Predicate { !$0.isArchived && $0.receivedAt > since }))) ?? []
+            for e in recent where e.category == .updates && !MailNoise.isAutomated(e) { e.triagedAt = nil }
+            try? ctx.save()
+            UserDefaults.standard.set(true, forKey: "mail.retriage.v2")
+        }
+
         // 2. AI triage on anything new (on-device first — free). Results are written together at the end,
         //    so the inbox re-sorts once instead of flickering through every email.
         let untriaged = (try? ctx.fetch(FetchDescriptor<EmailMessage>(predicate: #Predicate { $0.triagedAt == nil }))) ?? []
