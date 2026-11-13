@@ -68,16 +68,30 @@ struct NotesView: View {
                         Section { organizeBanner(unfiled) }
                             .listRowInsets(EdgeInsets(top: 10, leading: 16, bottom: 10, trailing: 16))
                     }
-                    ForEach(groups) { g in
+                    ForEach(Array(groups.enumerated()), id: \.element.id) { i, g in
                         Section {
                             FlexGrid(columns: 2, spacing: 12) {
                                 ForEach(g.folders) { f in folderCard(f) }
-                                NewFolderCard { newFolderName = ""; newFolderWorkspace = g.name; creatingFolder = true }
+                                if !selectingFolders {
+                                    NewFolderCard { newFolderName = ""; newFolderWorkspace = g.name; creatingFolder = true }
+                                }
                             }
                             .padding(.vertical, 4)
+                            .padding(6)
+                            .background(RoundedRectangle(cornerRadius: 22, style: .continuous).fill(DS.Palette.accent.opacity(dropTarget == g.id ? 0.12 : 0)))
+                            .overlay(RoundedRectangle(cornerRadius: 22, style: .continuous)
+                                .strokeBorder(DS.Palette.accent.opacity(dropTarget == g.id ? 0.6 : 0), style: StrokeStyle(lineWidth: 2, dash: [7, 5]))
+                                .allowsHitTesting(false))
+                            // Drop folders anywhere in a section to move them into it (the whole selection, if you were selecting).
+                            .dropDestination(for: String.self) { items, _ in
+                                moveFolders(items, to: g.name)
+                                return true
+                            } isTargeted: { on in
+                                withAnimation(DS.spring) { dropTarget = on ? g.id : (dropTarget == g.id ? nil : dropTarget) }
+                            }
                             .listRowInsets(EdgeInsets(top: 4, leading: 0, bottom: 8, trailing: 0))
                             .listRowBackground(Color.clear)
-                        } header: { workspaceHeader(g) }
+                        } header: { workspaceHeader(g, first: i == 0) }
                     }
                     if !templates.isEmpty {
                         Section {
@@ -158,6 +172,34 @@ struct NotesView: View {
                 Button("Cancel", role: .cancel) { renamingWorkspace = nil }
             }
             .sheet(isPresented: $showReorganize) { ReorganizeNotesView() }
+            .safeAreaInset(edge: .bottom) {
+                if selectingFolders {
+                    HStack {
+                        Text(selectedFolders.isEmpty ? "Tap folders, or drag one into a section" : "\(selectedFolders.count) selected")
+                            .font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
+                        Spacer()
+                        Menu {
+                            ForEach(workspaceNames, id: \.self) { w in
+                                Button("\(NotePath.icon(for: w)) \(w)") { moveFolders(Array(selectedFolders), to: w) }
+                            }
+                            Button("No workspace", systemImage: "folder") { moveFolders(Array(selectedFolders), to: nil) }
+                            Divider()
+                            Button("New workspace…", systemImage: "plus.rectangle.on.rectangle") { newFolderName = ""; namingWorkspaceForMove = true }
+                        } label: {
+                            Label("Move to…", systemImage: "arrow.right.doc.on.clipboard").font(DS.Font.headline)
+                        }
+                        .disabled(selectedFolders.isEmpty)
+                    }
+                    .padding(.horizontal, 20).padding(.vertical, 12)
+                    .background(.bar)
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
+                }
+            }
+            .alert("New workspace", isPresented: $namingWorkspaceForMove) {
+                TextField("Name, like Work or Faith", text: $newFolderName)
+                Button("Move \(selectedFolders.count) here") { moveFolders(Array(selectedFolders), to: newFolderName) }
+                Button("Cancel", role: .cancel) {}
+            }
             .navigationDestination(isPresented: $showHelp) { HelpCenterView(area: .notes) }
             .task { await NotesOrganizer.autoFile(ctx: ctx) }
         }
@@ -172,6 +214,10 @@ struct NotesView: View {
     @State private var renamingFolder: String?
     @State private var creatingFolder = false
     @State private var newFolderWorkspace: String?
+    @State private var selectingFolders = false
+    @State private var selectedFolders: Set<String> = []
+    @State private var dropTarget: String?
+    @State private var namingWorkspaceForMove = false
     @State private var renamingWorkspace: String?
     @State private var showReorganize = false
     @State private var showHelp = false
@@ -407,7 +453,7 @@ struct NotesView: View {
         return out
     }
 
-    private func workspaceHeader(_ g: WorkspaceGroup) -> some View {
+    private func workspaceHeader(_ g: WorkspaceGroup, first: Bool = false) -> some View {
         HStack(spacing: 8) {
             if let name = g.name {
                 Text(NotePath.icon(for: name)).font(.title3)
@@ -417,6 +463,14 @@ struct NotesView: View {
             }
             Spacer()
             Text("\(g.pages) page\(g.pages == 1 ? "" : "s")").font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
+            if first {
+                Button(selectingFolders ? "Done" : "Select") {
+                    withAnimation(DS.spring) { selectingFolders.toggle(); selectedFolders = [] }
+                }
+                .font(DS.Font.caption.weight(.semibold))
+                .buttonStyle(.borderless)
+                .accessibilityHint("Pick several folders to move together")
+            }
             if let name = g.name {
                 Menu {
                     Button("Rename Workspace", systemImage: "pencil") { newFolderName = name; renamingWorkspace = name }
@@ -429,7 +483,28 @@ struct NotesView: View {
     }
 
     private func folderCard(_ f: FolderSummary) -> some View {
-        FolderCard(summary: f) { openFolder = FolderRef(name: f.name); Haptics.tap() }
+        let picked = f.name.map { selectedFolders.contains($0) } ?? false
+        return FolderCard(summary: f) {
+            if selectingFolders {
+                guard let name = f.name else { return }
+                withAnimation(DS.spring) { if picked { selectedFolders.remove(name) } else { selectedFolders.insert(name) } }
+                Haptics.tap()
+            } else {
+                openFolder = FolderRef(name: f.name); Haptics.tap()
+            }
+        }
+            .overlay(alignment: .topLeading) {
+                if selectingFolders && f.name != nil {
+                    Image(systemName: picked ? "checkmark.circle.fill" : "circle")
+                        .font(.title3).foregroundStyle(picked ? DS.Palette.accent : DS.Palette.inkSoft)
+                        .background(Circle().fill(DS.Palette.canvas).padding(2))
+                        .offset(x: -6, y: -6)
+                        .accessibilityHidden(true)
+                }
+            }
+            .opacity(selectingFolders && f.name == nil ? 0.4 : 1)
+            .accessibilityAddTraits(picked ? .isSelected : [])
+            .modifier(FolderDrag(path: f.name, count: picked ? selectedFolders.count : 1))
             .matchedTransitionSource(id: "f" + f.id, in: zoom)
             .contextMenu {
                 if let name = f.name {
@@ -456,6 +531,31 @@ struct NotesView: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
+    }
+
+    private var workspaceNames: [String] {
+        Array(Set(folders.compactMap(NotePath.workspace))).sorted { $0.localizedCaseInsensitiveCompare($1) == .orderedAscending }
+    }
+
+    /// Moves folders (and every page in them) into a workspace, or out of any workspace when `workspace` is nil.
+    /// Dropping one folder from a selection moves the whole selection.
+    private func moveFolders(_ dropped: [String], to workspace: String?) {
+        var paths = Set(dropped.filter { !$0.isEmpty })
+        if !paths.isDisjoint(with: selectedFolders) { paths.formUnion(selectedFolders) }
+        let target = workspace?.trimmingCharacters(in: .whitespacesAndNewlines).replacingOccurrences(of: "/", with: "-")
+        let ws = (target?.isEmpty ?? true) ? nil : target
+        var moved = 0
+        for old in paths {
+            let new = NotePath.make(ws, NotePath.leaf(old))
+            guard new != old else { continue }
+            for n in allNotes where n.folder == old { n.folder = new }
+            emptyFoldersRaw = emptyFolders.map { $0 == old ? new : $0 }.joined(separator: "\n")
+            moved += 1
+        }
+        guard moved > 0 else { return }
+        try? ctx.save()
+        Haptics.success()
+        withAnimation(DS.spring) { selectedFolders = []; selectingFolders = false; dropTarget = nil }
     }
 
     private func renameWorkspace(_ old: String, to raw: String) {
@@ -713,5 +813,23 @@ private struct NewFolderCard: View {
             .contentShape(.rect(cornerRadius: 18))
         }
         .buttonStyle(PressStyle())
+    }
+}
+
+/// Press and hold a folder card to drag it into another section. The drag preview shows how many are moving.
+private struct FolderDrag: ViewModifier {
+    let path: String?
+    let count: Int
+    func body(content: Content) -> some View {
+        if let path {
+            content.draggable(path) {
+                Label(count > 1 ? "\(count) folders" : NotePath.leaf(path), systemImage: count > 1 ? "folder.fill.badge.plus" : "folder.fill")
+                    .font(DS.Font.headline)
+                    .padding(.horizontal, 14).padding(.vertical, 10)
+                    .background(.regularMaterial, in: Capsule())
+            }
+        } else {
+            content
+        }
     }
 }
