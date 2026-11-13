@@ -5,7 +5,8 @@ import VisionKit
 #endif
 import PhotosUI
 
-/// Your workspace: favorites, a tree of pages and databases, folders and templates.
+/// Your workspace, Notion-style: a greeting, quick actions, Jump back in, Favorites, then a page tree of
+/// workspaces → folders → pages (and pages inside pages), and templates.
 struct NotesView: View {
     @Environment(\.modelContext) private var ctx
     @Environment(\.openWindow) private var openWindow
@@ -40,6 +41,9 @@ struct NotesView: View {
                     emptyState
                 } else {
                     Section {
+                        greeting
+                            .listRowInsets(EdgeInsets(top: 4, leading: 20, bottom: 0, trailing: 20))
+                            .listRowBackground(Color.clear)
                         quickActions
                             .listRowInsets(EdgeInsets(top: 8, leading: 0, bottom: 8, trailing: 0))
                             .listRowBackground(Color.clear)
@@ -72,30 +76,41 @@ struct NotesView: View {
                         Section { organizeBanner(unfiled) }
                             .listRowInsets(EdgeInsets(top: 10, leading: 16, bottom: 10, trailing: 16))
                     }
+                    // Notion-style page tree: workspaces → folders → pages (and pages inside pages). Tap a folder's name to open it.
                     ForEach(Array(groups.enumerated()), id: \.element.id) { i, g in
                         Section {
-                            FlexGrid(columns: 2, spacing: 12) {
-                                ForEach(g.folders) { f in folderCard(f) }
-                                if !selectingFolders {
-                                    NewFolderCard { newFolderName = ""; newFolderWorkspace = g.name; creatingFolder = true }
+                            ForEach(g.folders) { f in
+                                if let name = f.name {
+                                    folderTreeRow(f)
+                                    if expanded.contains("f:" + name) && !selectingFolders {
+                                        ForEach(pages(in: name)) { n in pageTree(n, depth: 1) }
+                                        if f.count == 0 {
+                                            Text("Empty. Drag pages here or tap + New page inside the folder.").font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
+                                                .padding(.leading, 34)
+                                        }
+                                    }
+                                } else {
+                                    ForEach(pages(in: nil)) { n in pageTree(n, depth: 0) }
                                 }
                             }
-                            .padding(.vertical, 4)
-                            .padding(6)
-                            .background(RoundedRectangle(cornerRadius: 22, style: .continuous).fill(DS.Palette.accent.opacity(dropTarget == g.id ? 0.12 : 0)))
-                            .overlay(RoundedRectangle(cornerRadius: 22, style: .continuous)
-                                .strokeBorder(DS.Palette.accent.opacity(dropTarget == g.id ? 0.6 : 0), style: StrokeStyle(lineWidth: 2, dash: [7, 5]))
-                                .allowsHitTesting(false))
-                            // Drop folders anywhere in a section to move them into it (the whole selection, if you were selecting).
-                            .dropDestination(for: String.self) { items, _ in
-                                moveFolders(items, to: g.name)
-                                return true
-                            } isTargeted: { on in
-                                withAnimation(DS.spring) { dropTarget = on ? g.id : (dropTarget == g.id ? nil : dropTarget) }
+                            if !selectingFolders {
+                                Button { newFolderName = ""; newFolderWorkspace = g.name; creatingFolder = true } label: {
+                                    Label("New folder", systemImage: "folder.badge.plus").font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
+                                }
+                                .buttonStyle(.borderless)
                             }
-                            .listRowInsets(EdgeInsets(top: 4, leading: 0, bottom: 8, trailing: 0))
-                            .listRowBackground(Color.clear)
-                        } header: { workspaceHeader(g, first: i == 0) }
+                        } header: {
+                            workspaceHeader(g, first: i == 0)
+                                .padding(.vertical, 4)
+                                .background(RoundedRectangle(cornerRadius: 10).fill(DS.Palette.accent.opacity(dropTarget == g.id ? 0.14 : 0)))
+                                // Drop folders on a workspace's heading to move them into it (the whole selection, if selecting).
+                                .dropDestination(for: String.self) { items, _ in
+                                    moveFolders(items, to: g.name)
+                                    return true
+                                } isTargeted: { on in
+                                    withAnimation(DS.spring) { dropTarget = on ? g.id : (dropTarget == g.id ? nil : dropTarget) }
+                                }
+                        }
                     }
                     if !templates.isEmpty {
                         Section {
@@ -259,6 +274,7 @@ struct NotesView: View {
                 QuickTile(title: "New page", icon: "square.and.pencil", color: DS.Palette.accent) { newPage() }
                 QuickTile(title: "Today", icon: "calendar", color: .orange) { opened = DailyNote.today(ctx) }
                 QuickTile(title: "Record", icon: "waveform.badge.mic", color: .red) { recording = true }
+                QuickTile(title: "Capture", icon: "tray.and.arrow.down.fill", color: .blue) { AppRouter.shared.openTool = ToolRoute(id: "capture") }
                 QuickTile(title: "Journal", icon: "book.fill", color: .pink) { createJournalPage() }
                 QuickTile(title: "Second brain", icon: "brain.head.profile.fill", color: .pink) { showBrain = true }
                 QuickTile(title: "Vault", icon: "archivebox.fill", color: .brown) { showVault = true }
@@ -523,6 +539,95 @@ struct NotesView: View {
             }
         }
         .textCase(nil)
+    }
+
+    // MARK: Notion-style home
+
+    @AppStorage("notes.tree.expanded") private var expandedRaw = ""
+    private var expanded: Set<String> { Set(expandedRaw.split(separator: "\n").map(String.init)) }
+    private func toggleExpanded(_ key: String) {
+        var e = expanded
+        if e.contains(key) { e.remove(key) } else { e.insert(key) }
+        withAnimation(DS.spring) { expandedRaw = e.sorted().joined(separator: "\n") }
+        Haptics.tap()
+    }
+
+    private var greeting: some View {
+        let h = Calendar.current.component(.hour, from: Date())
+        let part = h < 12 ? "Good morning" : h < 17 ? "Good afternoon" : "Good evening"
+        let name = KeelAccount.shared.name.split(separator: " ").first.map(String.init) ?? ""
+        return VStack(alignment: .leading, spacing: 2) {
+            Text(name.isEmpty ? part : "\(part), \(name)").font(.system(.title2, design: .default).weight(.bold))
+            Text("\(notes.count) page\(notes.count == 1 ? "" : "s")\(editedToday > 0 ? " · \(editedToday) edited today" : "")")
+                .font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .accessibilityElement(children: .combine)
+    }
+
+    /// One folder in the tree: chevron to open it in place, name to go into it.
+    private func folderTreeRow(_ f: FolderSummary) -> some View {
+        let name = f.name ?? ""
+        let open = expanded.contains("f:" + name)
+        let picked = selectedFolders.contains(name)
+        return HStack(spacing: 10) {
+            if selectingFolders {
+                Image(systemName: picked ? "checkmark.circle.fill" : "circle").foregroundStyle(picked ? DS.Palette.accent : DS.Palette.inkSoft)
+            } else {
+                Button { toggleExpanded("f:" + name) } label: {
+                    Image(systemName: "chevron.right").font(.caption.weight(.bold)).foregroundStyle(DS.Palette.inkSoft)
+                        .rotationEffect(.degrees(open ? 90 : 0)).frame(width: 18, height: 28)
+                }
+                .buttonStyle(.borderless)
+                .accessibilityLabel(open ? "Collapse \(NotePath.leaf(name))" : "Expand \(NotePath.leaf(name))")
+            }
+            Image(systemName: f.style.icon).foregroundStyle(f.style.color).frame(width: 22)
+            Text(NotePath.leaf(name)).font(DS.Font.body).foregroundStyle(DS.Palette.ink).lineLimit(1)
+            Spacer()
+            Text("\(f.count)").font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft).monospacedDigit()
+        }
+        .contentShape(Rectangle())
+        .onTapGesture {
+            if selectingFolders {
+                withAnimation(DS.spring) { if picked { selectedFolders.remove(name) } else { selectedFolders.insert(name) } }
+                Haptics.tap()
+            } else {
+                openFolder = FolderRef(name: f.name); Haptics.tap()
+            }
+        }
+        .accessibilityAddTraits(picked ? [.isButton, .isSelected] : .isButton)
+        .modifier(FolderDrag(path: f.name, count: picked ? selectedFolders.count : 1))
+        .matchedTransitionSource(id: "f" + f.id, in: zoom)
+        .contextMenu {
+            Button(open ? "Collapse" : "Expand", systemImage: open ? "chevron.up" : "chevron.down") { toggleExpanded("f:" + name) }
+            Button("Rename", systemImage: "pencil") { newFolderName = NotePath.leaf(name); renamingFolder = name }
+            Button("Remove Folder (Keeps Pages)", systemImage: "folder.badge.minus", role: .destructive) { removeFolder(name) }
+        }
+    }
+
+    /// A page in the tree, with the pages inside it one tap away (databases open as tables instead).
+    private func pageTree(_ n: Note, depth: Int) -> AnyView {
+        let kids = n.isDatabase ? [] : notes.filter { $0.parentId == n.id }.sorted { ($0.sortIndex, $1.updatedAt) < ($1.sortIndex, $0.updatedAt) }
+        let open = expanded.contains("p:" + n.id.uuidString)
+        return AnyView(Group {
+            HStack(spacing: 6) {
+                if !kids.isEmpty {
+                    Button { toggleExpanded("p:" + n.id.uuidString) } label: {
+                        Image(systemName: "chevron.right").font(.caption2.weight(.bold)).foregroundStyle(DS.Palette.inkSoft)
+                            .rotationEffect(.degrees(open ? 90 : 0)).frame(width: 16, height: 26)
+                    }
+                    .buttonStyle(.borderless)
+                    .accessibilityLabel(open ? "Hide pages inside" : "Show pages inside")
+                } else {
+                    Color.clear.frame(width: 16, height: 1)
+                }
+                row(n, showSnippet: false)
+            }
+            .padding(.leading, CGFloat(depth) * 18)
+            if open && depth < 6 {
+                ForEach(kids) { k in pageTree(k, depth: depth + 1) }
+            }
+        })
     }
 
     private func folderCard(_ f: FolderSummary) -> some View {
