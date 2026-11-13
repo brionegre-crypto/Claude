@@ -204,7 +204,7 @@ final class WatchBridge: NSObject, WCSessionDelegate {
             Task { @MainActor in
                 let items = await BrainDumpSorter.sort(text)
                 BrainDumpSorter.save(items, ctx: ctx)
-                WidgetSync.update(ctx)
+                WidgetSync.updateNow(ctx)
             }
         case .loggedBreath(let seconds, let at):
             DailyLog.logBreath(seconds: seconds, at: at, source: "Apple Watch")
@@ -223,7 +223,7 @@ final class WatchBridge: NSObject, WCSessionDelegate {
         }
         try? ctx.save()
         push(ctx)
-        WidgetSync.update(ctx)
+        WidgetSync.updateNow(ctx)
     }
 
     // MARK: WCSessionDelegate

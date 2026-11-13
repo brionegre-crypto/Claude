@@ -111,7 +111,7 @@ enum AppointmentFinder {
         ev.notes = "Added by Keel from an email."
         if !ev.isAllDay { ev.addAlarm(EKAlarm(relativeOffset: -3_600)) }
         do {
-            try store.save(ev, span: .thisEvent)
+            try store.save(ev, span: .thisEvent); CalendarService.shared.invalidateEvents()
             return "“\(p[0])” is on your calendar."
         } catch {
             s.status = "pending"

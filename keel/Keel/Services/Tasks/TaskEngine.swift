@@ -10,6 +10,7 @@ enum TaskActions {
     /// Returns the next due date when a repeating task rolled forward (for a "Next: …" toast).
     @discardableResult
     static func setDone(_ t: TaskItem, _ done: Bool) -> Date? {
+        done ? Haptics.success() : Haptics.tap()          // feedback first, with the finger still on the glass
         if done { Automations.taskCompleted(t, ctx: t.modelContext) }
         var rolledTo: Date?
         if done, let rule = t.recurrence {
@@ -37,9 +38,9 @@ enum TaskActions {
             t.completedAt = done ? Date() : nil
         }
         t.updatedAt = Date()
-        try? CalendarService.shared.push(t)
+        // Reminders sync writes to EventKit, which is slow: do it just after this frame instead of during the tap.
+        Task { @MainActor in try? CalendarService.shared.push(t) }
         TaskAlerts.schedule(t)
-        done ? Haptics.success() : Haptics.tap()
         if done, t.isDone, let ctx = t.modelContext { notifyUnblocked(by: t, ctx: ctx) }
         if let ctx = t.modelContext { WidgetSync.update(ctx) }
         return rolledTo

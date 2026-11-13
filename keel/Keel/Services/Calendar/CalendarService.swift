@@ -31,8 +31,29 @@ final class CalendarService {
 
     func events(from start: Date, to end: Date, calendars: [EKCalendar]? = nil) -> [EKEvent] {
         guard hasCalendarAccess else { return [] }
+        // Screens ask for the same day many times while they redraw; reading EventKit each time made scrolling
+        // and taps stutter. Cache briefly, and drop the cache whenever any calendar changes.
+        let key = calendars == nil ? "\(start.timeIntervalSince1970)|\(end.timeIntervalSince1970)" : nil
+        if let key, let hit = cache[key], Date().timeIntervalSince(hit.at) < 20 { return hit.events }
         let pred = store.predicateForEvents(withStart: start, end: end, calendars: calendars)
-        return Self.mergeDuplicates(store.events(matching: pred)).sorted { $0.startDate < $1.startDate }
+        let result = Self.mergeDuplicates(store.events(matching: pred)).sorted { $0.startDate < $1.startDate }
+        if let key {
+            if cache.count > 60 { cache.removeAll() }
+            cache[key] = (Date(), result)
+        }
+        return result
+    }
+
+    private var cache: [String: (at: Date, events: [EKEvent])] = [:]
+    private var changeObserver: NSObjectProtocol?
+
+    /// Forget cached events (any calendar changed, here or in another app).
+    func invalidateEvents() { cache.removeAll() }
+
+    init() {
+        changeObserver = NotificationCenter.default.addObserver(forName: .EKEventStoreChanged, object: store, queue: .main) { _ in
+            MainActor.assumeIsolated { CalendarService.shared.invalidateEvents() }
+        }
     }
 
     /// The same event often lives in two calendars (an invite accepted in both Google and iCloud, a shared
@@ -94,7 +115,7 @@ final class CalendarService {
         e.startDate = start
         e.endDate = start.addingTimeInterval(Double(minutes * 60))
         e.notes = "keel-task:\(task.id.uuidString)"
-        try store.save(e, span: .thisEvent)
+        try store.save(e, span: .thisEvent); invalidateEvents()
         task.scheduledBlockStart = start
     }
 
@@ -106,12 +127,12 @@ final class CalendarService {
         let length = event.endDate.timeIntervalSince(event.startDate)
         event.startDate = start
         event.endDate = start.addingTimeInterval(length)
-        try store.save(event, span: .thisEvent)
+        try store.save(event, span: .thisEvent); invalidateEvents()
     }
 
     func delete(_ event: EKEvent) throws {
         guard event.calendar.allowsContentModifications else { throw CalendarError.readOnly }
-        try store.remove(event, span: .thisEvent)
+        try store.remove(event, span: .thisEvent); invalidateEvents()
     }
 
     enum CalendarError: Error { case readOnly }

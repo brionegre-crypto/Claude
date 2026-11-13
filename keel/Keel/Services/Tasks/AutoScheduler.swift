@@ -60,7 +60,7 @@ enum AutoScheduler {
         let cal = Calendar.current
         let start = cal.startOfDay(for: Date())
         let events = svc.store.events(matching: svc.store.predicateForEvents(withStart: start, end: start.addingTimeInterval(86_400), calendars: [keel]))
-        for e in events { try? svc.store.remove(e, span: .thisEvent, commit: false) }
+        for e in events { try? svc.store.remove(e, span: .thisEvent, commit: false) }; CalendarService.shared.invalidateEvents()
         try? svc.store.commit()
         for t in tasks where t.scheduledBlockStart.map({ cal.isDateInToday($0) }) == true {
             t.scheduledBlockStart = nil

@@ -278,7 +278,7 @@ struct IdealWeekView: View {
                 e.title = b.title
                 e.startDate = start
                 e.endDate = start.addingTimeInterval(Double(b.minutes * 60))
-                try? svc.store.save(e, span: .thisEvent, commit: false)
+                try? svc.store.save(e, span: .thisEvent, commit: false); CalendarService.shared.invalidateEvents()
             }
         }
         try? svc.store.commit()

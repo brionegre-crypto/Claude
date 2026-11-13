@@ -139,7 +139,7 @@ struct AddEventIntent: AppIntent {
         e.startDate = start
         e.endDate = start.addingTimeInterval(Double(minutes * 60))
         e.calendar = store.defaultCalendarForNewEvents
-        try store.save(e, span: .thisEvent)
+        try store.save(e, span: .thisEvent); CalendarService.shared.invalidateEvents()
         return .result(dialog: "Added “\(title)” on \(start.formatted(date: .abbreviated, time: .shortened)).")
     }
 }
@@ -239,7 +239,7 @@ struct BrainDumpIntent: AppIntent {
         let ctx = KeelStore.container.mainContext
         let items = await BrainDumpSorter.sort(text)
         let summary = BrainDumpSorter.save(items, ctx: ctx)
-        WidgetSync.update(ctx)
+        WidgetSync.updateNow(ctx)
         return .result(dialog: "Got it. Added \(summary.isEmpty ? "nothing" : summary).")
     }
 }

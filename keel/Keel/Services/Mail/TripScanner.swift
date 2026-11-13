@@ -114,7 +114,7 @@ enum TripScanner {
         e.location = r.location.isEmpty ? nil : r.location
         e.notes = [r.confirmation.isEmpty ? nil : "Confirmation: \(r.confirmation)", r.detail.isEmpty ? nil : r.detail, "Added by Keel"].compactMap { $0 }.joined(separator: "\n")
         if r.kind == "flight" { e.addAlarm(EKAlarm(relativeOffset: -3 * 3600)) }
-        try store.save(e, span: .thisEvent)
+        try store.save(e, span: .thisEvent); CalendarService.shared.invalidateEvents()
         r.calendarEventId = e.eventIdentifier
     }
 }

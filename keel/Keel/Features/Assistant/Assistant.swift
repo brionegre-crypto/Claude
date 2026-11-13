@@ -120,7 +120,7 @@ struct CreateEventTool: Tool {
             e.endDate = start.addingTimeInterval(Double(arguments.minutes * 60))
             e.calendar = store.defaultCalendarForNewEvents
             do {
-                try store.save(e, span: .thisEvent)
+                try store.save(e, span: .thisEvent); CalendarService.shared.invalidateEvents()
                 return "Created “\(arguments.title)” on \(start.formatted(date: .abbreviated, time: .shortened))."
             } catch {
                 return "Couldn't create the event: \(error.localizedDescription)"

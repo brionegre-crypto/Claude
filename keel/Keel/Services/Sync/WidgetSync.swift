@@ -10,7 +10,23 @@ import CoreGraphics
 /// when Keel goes to the background, and after task changes.
 @MainActor
 enum WidgetSync {
+    private static var pending: Task<Void, Never>?
+
+    /// Coalesced: many changes in a row (checking off several tasks) write the widgets once, a moment later,
+    /// so taps never wait on it.
     static func update(_ ctx: ModelContext) {
+        pending?.cancel()
+        pending = Task { @MainActor in
+            try? await Task.sleep(for: .milliseconds(800))
+            guard !Task.isCancelled else { return }
+            updateNow(ctx)
+        }
+    }
+
+    /// Right away: when Keel goes to the background, and from Siri/Shortcuts (which can end straight after).
+    static func updateNow(_ ctx: ModelContext) {
+        pending?.cancel()
+        pending = nil
         let cal = Calendar.current
         let now = Date()
         let endOfDay = cal.date(byAdding: .day, value: 1, to: cal.startOfDay(for: now))!

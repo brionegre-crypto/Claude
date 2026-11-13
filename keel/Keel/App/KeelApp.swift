@@ -59,7 +59,7 @@ struct KeelApp: App {
                 MeetingAutopilot.syncActivity()                         // Lock Screen timer for a meeting in progress
             }
             if phase == .background {
-                WidgetSync.update(container.mainContext)
+                WidgetSync.updateNow(container.mainContext)
                 AppLock.shared.lockIfEnabled()
             }
         }

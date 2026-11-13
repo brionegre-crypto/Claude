@@ -68,7 +68,7 @@ struct StartNowIntent: AppIntent {
         guard ShutdownManager.shared.active == nil else { return .result(dialog: "You're already in a session. Finish that one first.") }
         NowTimer.start(t, ctx: ctx)
         try? ctx.save()
-        WidgetSync.update(ctx)
+        WidgetSync.updateNow(ctx)
         return .result(dialog: "Starting “\(t.title)”. \(max(5, ADHDCoach.calibratedMinutes(t))) minutes on the clock.")
     }
 }
@@ -93,7 +93,7 @@ struct AddGroceryIntent: AppIntent {
             added.append(n)
         }
         try? ctx.save()
-        WidgetSync.update(ctx)
+        WidgetSync.updateNow(ctx)
         if added.isEmpty { return .result(dialog: "Already on your list.") }
         return .result(dialog: "Added \(Self.list(added)) to groceries.")
     }
@@ -131,7 +131,7 @@ struct ThisEveningIntent: AppIntent {
         }
         TaskMeta.setEvening(t, true)
         try ctx.save()
-        WidgetSync.update(ctx)
+        WidgetSync.updateNow(ctx)
         return .result(dialog: "“\(t.title)” is set for this evening.")
     }
 }

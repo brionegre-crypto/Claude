@@ -34,7 +34,7 @@ enum QuickEvent {
         e.isAllDay = p.allDay
         e.startDate = p.start
         e.endDate = p.allDay ? p.start.addingTimeInterval(86_400) : p.start.addingTimeInterval(Double(p.minutes * 60))
-        try store.save(e, span: .thisEvent)
+        try store.save(e, span: .thisEvent); CalendarService.shared.invalidateEvents()
         return p
     }
 }
