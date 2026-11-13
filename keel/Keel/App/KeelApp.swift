@@ -199,6 +199,10 @@ struct RootView: View {
         try? KeelStore.container.mainContext.fetch(FetchDescriptor<Note>(predicate: #Predicate { $0.id == id })).first
     }
 
+    @Environment(\.horizontalSizeClass) private var sizeClass
+    /// Only where there's a sidebar (Mac, and iPad at full width). Never on iPhone.
+    private var showsSidebarSettings: Bool { UIDevice.current.userInterfaceIdiom != .phone && sizeClass == .regular }
+
     var body: some View {
         TabView(selection: $router.tab) {
             SwiftUI.Tab("Today", systemImage: "sun.max", value: Tab.today) { TodayView() }
@@ -207,9 +211,13 @@ struct RootView: View {
             SwiftUI.Tab("Tasks", systemImage: "checklist", value: Tab.tasks) { TasksView() }
             SwiftUI.Tab("Notes", systemImage: "note.text", value: Tab.notes) { NotesView() }
             // Mac and iPad: Settings sits at the bottom of the sidebar. iPhone uses the gear on each tab.
-            SwiftUI.Tab("Settings", systemImage: "gearshape", value: Tab.settings) { AccountsView() }
-                .tabPlacement(.sidebarOnly)
+            // Left out of the iPhone tab bar entirely: a sixth tab pushes Notes behind "More".
+            if showsSidebarSettings {
+                SwiftUI.Tab("Settings", systemImage: "gearshape", value: Tab.settings) { AccountsView() }
+                    .tabPlacement(.sidebarOnly)
+            }
         }
+        .onChange(of: showsSidebarSettings) { _, shown in if !shown && router.tab == .settings { router.tab = .today } }
         .tabViewStyle(.sidebarAdaptable)      // tabs on iPhone; a sidebar on Mac and iPad
         // Focus lives above the tab bar (like Music's mini-player): always one tap away, shows the live timer.
         .tabViewBottomAccessory { FocusAccessory { router.showFocus = true } }
