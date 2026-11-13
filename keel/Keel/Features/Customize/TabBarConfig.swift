@@ -12,7 +12,8 @@ enum TabBarConfig {
     static var items: [String] {
         get {
             let saved = UserDefaults.standard.stringArray(forKey: key) ?? core
-            var v = saved.filter { valid($0) }
+            var seen = Set<String>()
+            var v = saved.filter { valid($0) && seen.insert($0).inserted }      // each section once
             if v.first != "today" { v.removeAll { $0 == "today" }; v.insert("today", at: 0) }
             return Array(v.prefix(maxTabs))
         }
