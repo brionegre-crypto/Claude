@@ -135,6 +135,9 @@ enum Autopilot {
             add(s)
         }
 
+        // 9. Mass unsubscribe, calendar clashes, tasks hiding in email, repeating tasks that should be habits.
+        await moreSuggestions(ctx: ctx, mail: mail, open: open, add: add)
+
         try? ctx.save()
         let after = pending(ctx: ctx).count
         if after >= 3 && after > before { await notify(after) }
@@ -223,7 +226,7 @@ enum Autopilot {
             ctx.insert(n)
             return "Notes page ready for “\(title)”."
         default:
-            return "Done."
+            return await acceptMore(s, ctx: ctx) ?? "Done."
         }
     }
 

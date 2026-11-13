@@ -77,6 +77,9 @@ enum HelpLibrary {
               keywords: "panic anxious stressed overwhelmed sos"),
 
         // Email
+        HowTo(id: "autopilot", area: .today, question: "Let Keel prepare things for me (Autopilot)",
+              steps: ["Autopilot sits at the top of Today (and Today → ⊞ → Autopilot).", "After each sync it prepares: replies already drafted, a mass unsubscribe from senders you never read, events that clash moved to a free gap, tasks from your email, overbooked days rebalanced, focus time for deadlines, repeating tasks turned into habits, bills and promises as tasks, and notes for tomorrow's meetings.", "Nothing happens until you tap. Dismiss anything you don't want; it won't come back."],
+              keywords: "autopilot suggestions propose unsubscribe reschedule habit tasks automatic"),
         HowTo(id: "triage", area: .inbox, question: "Get through my inbox quickly",
               steps: ["Open Inbox. Priority shows real people and deadlines first.", "Swipe right for task, snooze or star; swipe left for done or trash.", "Try the ⚡ Quick wins tab for replies that take about 2 minutes.", "Today → ⊞ → Quick replies goes through them one by one."],
               keywords: "inbox zero triage swipe archive"),

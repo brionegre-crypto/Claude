@@ -31,6 +31,7 @@ enum Guide {
         GuideSection(icon: "sparkles", color: DS.Palette.accent, title: "Autopilot",
                      summary: "Keel does the prep. You just say yes.",
                      tips: ["After every sync Keel looks across your email, calendar, tasks, promises and bills and prepares actions: replies already drafted, newsletters to clear, an overbooked day rebalanced, focus time found for a deadline, a slipping task split into steps, promises and bills made into tasks, and notes started for tomorrow's meetings.",
+                            "It also proposes: unsubscribing in one go from senders you never read (and archiving their old mail), moving your own events that clash with a meeting to the next free gap, tasks people asked you for in email that aren't on your list yet, and turning repeating tasks into habits (from the habit library when one fits) so they get streaks instead of going overdue.",
                             "Nothing happens until you tap. Edit any reply first, or dismiss what you don't want; dismissed ideas never come back.",
                             "Find it at the top of Today, in Today → ⊞ → Autopilot, and on Apple Watch. Turn it off in Settings → AI & Privacy."]),
         GuideSection(icon: "brain.fill", color: .pink, title: "Keel Memory & Talk to Keel",

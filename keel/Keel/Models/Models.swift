@@ -983,7 +983,9 @@ struct StoredAttachment: Codable {
         case "reply": "arrowshape.turn.up.left.fill"; case "declutter": "tray.and.arrow.down.fill"
         case "overload": "scalemass.fill"; case "focus": "moon.zzz.fill"; case "stale": "arrow.triangle.2.circlepath"
         case "promise": "hand.raised.fill"; case "bill": "creditcard.fill"; case "prep": "doc.text.magnifyingglass"
-        case "followup": "bubble.left.and.exclamationmark.bubble.right.fill"; case "appointment": "calendar.badge.plus"; default: "sparkles"
+        case "followup": "bubble.left.and.exclamationmark.bubble.right.fill"; case "appointment": "calendar.badge.plus"
+        case "unsubscribe": "hand.raised.slash.fill"; case "reschedule": "calendar.badge.clock"; case "addtask": "plus.circle.fill"
+        case "habit": "repeat.circle.fill"; default: "sparkles"
         }
     }
 }
