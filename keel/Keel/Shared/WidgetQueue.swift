@@ -52,6 +52,24 @@ struct WidgetCompleteTaskIntent: AppIntent {
     }
 }
 
+struct WidgetArchiveMailIntent: AppIntent {
+    static let title: LocalizedStringResource = "Archive Email"
+    static let isDiscoverable = false
+    @Parameter(title: "Email ID") var emailId: String
+
+    init() {}
+    init(id: String) { emailId = id }
+
+    func perform() async throws -> some IntentResult {
+        WidgetQueue.append(.archiveMail(emailId))
+        if var s = WidgetSnapshot.load() {
+            s.mail?.removeAll { $0.id == emailId }
+            s.save()
+        }
+        return .result()
+    }
+}
+
 struct WidgetCompleteHabitIntent: AppIntent {
     static let title: LocalizedStringResource = "Complete Habit"
     static let isDiscoverable = false

@@ -345,6 +345,7 @@ private struct MoreRouterSheets: ViewModifier {
             .sheet(isPresented: $router.showJournal) { JournalEntryView() }
             .sheet(item: $router.openTool) { r in ToolSheet(id: r.id) }
             .sheet(isPresented: $router.showQuickOpen) { QuickOpenView() }
+            .sheet(isPresented: $router.showShortcuts) { KeyboardShortcutsView() }
     }
 }
 
@@ -391,6 +392,9 @@ struct KeelCommands: Commands {
                 .keyboardShortcut("r", modifiers: [.command, .shift])
             Button("Open Page…") { AppRouter.shared.showQuickOpen = true }
                 .keyboardShortcut("o")
+        }
+        CommandGroup(replacing: .help) {
+            Button("Keyboard Shortcuts") { AppRouter.shared.showShortcuts = true }.keyboardShortcut("/")
         }
         CommandGroup(replacing: .appSettings) {
             Button("Settings…") { AppRouter.shared.showSettings = true }.keyboardShortcut(",")

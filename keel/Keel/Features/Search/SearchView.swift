@@ -8,17 +8,24 @@ struct SearchView: View {
     @Environment(\.modelContext) private var ctx
     @Query private var tasks: [TaskItem]
     @Query private var notes: [Note]
-    @Query(sort: \EmailMessage.receivedAt, order: .reverse) private var mail: [EmailMessage]
+    /// The newest 5,000 emails, searched instantly on this device (older mail: Inbox search asks the server).
+    @Query(SearchView.recentMail) private var mail: [EmailMessage]
+    static var recentMail: FetchDescriptor<EmailMessage> {
+        var d = FetchDescriptor<EmailMessage>(sortBy: [SortDescriptor(\.receivedAt, order: .reverse)])
+        d.fetchLimit = 5_000
+        return d
+    }
     @Query private var links: [SavedLink]
     @Query private var goals: [Goal]
     @Query private var people: [Person]
     @State private var query = ""
+    @State private var live = ""          // what's searched: follows typing a beat behind, so every keystroke stays instant
     @State private var events: [EKEvent] = []
     @State private var viewing: EventRef?
     @State private var refined: SmartQuery?
 
     /// Typed text parsed locally; Apple Intelligence's reading replaces it after you press Search.
-    private var smart: SmartQuery { refined ?? SmartQueryParser.parse(query) }
+    private var smart: SmartQuery { refined ?? SmartQueryParser.parse(live) }
     private func taskOK(_ t: TaskItem) -> Bool {
         let s = smart
         guard s.allows("task"), s.matches(t.title, t.notes, t.tags.joined(separator: " ")) else { return false }
@@ -42,7 +49,7 @@ struct SearchView: View {
 
     var body: some View {
         List {
-            if query.count < 2 || (!smart.isStructured && smart.words.isEmpty) {
+            if live.count < 2 || (!smart.isStructured && smart.words.isEmpty) {
                 ContentUnavailableView("Search everything", systemImage: "magnifyingglass",
                                        description: Text("Tasks, notes, email, events, links, goals and people.\nTry “emails from sam last week”, “overdue tasks” or “notes about budget this month”."))
                     .listRowBackground(Color.clear)
@@ -109,7 +116,14 @@ struct SearchView: View {
         }
         .navigationTitle("Search")
         .searchable(text: $query, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search Keel")
-        .onChange(of: query) { refined = nil; loadEvents() }
+        .onChange(of: query) { refined = nil }
+        .task(id: query) {
+            // Short pause while you're still typing; clearing is immediate.
+            if !query.isEmpty { try? await Task.sleep(for: .milliseconds(120)) }
+            guard !Task.isCancelled else { return }
+            live = query
+            loadEvents()
+        }
         .onSubmit(of: .search) {
             let q = query
             Task {
@@ -121,7 +135,7 @@ struct SearchView: View {
 
     private func loadEvents() {
         let s = smart
-        guard query.count >= 2, s.allows("event"), s.flags.isEmpty, s.from == nil else { events = []; return }
+        guard live.count >= 2, s.allows("event"), s.flags.isEmpty, s.from == nil else { events = []; return }
         let now = Date()
         let r = s.range ?? DateInterval(start: now.addingTimeInterval(-90 * 86_400), end: now.addingTimeInterval(180 * 86_400))
         events = CalendarService.shared.events(from: r.start, to: r.end)

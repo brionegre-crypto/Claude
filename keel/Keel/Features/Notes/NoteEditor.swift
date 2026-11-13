@@ -87,6 +87,14 @@ struct NoteEditor: View {
         } }
         .sheet(item: $commentTarget) { CommentsSheet(note: note, blockId: $0.blockId) }
         .sheet(isPresented: $showFindReplace) { FindReplaceSheet(note: note) { scrollTarget = $0 } }
+        .background {
+            Group {
+                Button("Find in Page") { showFindReplace = true }.keyboardShortcut("f", modifiers: [.command, .option])
+                Button("Outline") { showOutline = true }.keyboardShortcut("o", modifiers: [.command, .shift])
+                Button("Comments") { commentTarget = CommentTarget(blockId: nil) }.keyboardShortcut("m", modifiers: [.command, .shift])
+            }
+            .hidden()
+        }
         .sheet(isPresented: $showOutline) { OutlineSheet(note: note) { id in scrollTarget = id } }
         .sheet(item: $pickBlock) { t in
             PagePickerSheet(title: t.databasesOnly ? "Choose a database" : "Embed a page", databasesOnly: t.databasesOnly, exclude: note.id) { picked in

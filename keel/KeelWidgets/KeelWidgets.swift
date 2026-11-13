@@ -18,6 +18,8 @@ struct KeelWidgetBundle: WidgetBundle {
         GroceriesWidget()
         TonightWidget()
         LevelWidget()
+        InboxWidget()
+        NotesWidget()
         #if !targetEnvironment(macCatalyst)       // Live Activities and Control Center are iPhone-only
         FocusLiveActivity()
         MeetingLiveActivity()
@@ -758,6 +760,110 @@ struct LevelView: View {
                 }
                 .frame(width: 84, height: 84)
                 Label("\(entry.snapshot.coins ?? 0) coins", systemImage: "circle.hexagongrid.fill").font(.caption.weight(.semibold)).foregroundStyle(.orange)
+            }
+        }
+    }
+}
+
+
+// MARK: - Inbox (newest unread, archive in place)
+
+struct InboxWidget: Widget {
+    var body: some WidgetConfiguration {
+        StaticConfiguration(kind: "KeelInbox", provider: KeelProvider()) { entry in
+            InboxWidgetView(entry: entry)
+                .containerBackground(for: .widget) { Color(.systemBackground) }
+                .widgetURL(URL(string: "com.keel.app://inbox"))
+        }
+        .configurationDisplayName("Inbox")
+        .description("Your newest unread email from every account. Archive without opening Keel.")
+        .supportedFamilies([.systemSmall, .systemMedium, .systemLarge])
+    }
+}
+
+struct InboxWidgetView: View {
+    let entry: KeelEntry
+    @Environment(\.widgetFamily) private var family
+    var body: some View {
+        let mail = entry.snapshot.mail ?? []
+        VStack(alignment: .leading, spacing: 6) {
+            HStack {
+                Label("INBOX", systemImage: "tray.fill").font(.caption2.weight(.bold)).foregroundStyle(accent)
+                Spacer()
+                if !mail.isEmpty { Text("\(mail.count)\(mail.count >= 6 ? "+" : "") new").font(.caption2).foregroundStyle(.secondary) }
+            }
+            if mail.isEmpty {
+                Spacer()
+                Text("Inbox zero ✨").font(.headline).frame(maxWidth: .infinity)
+                Spacer()
+            } else {
+                ForEach(mail.prefix(family == .systemLarge ? 6 : family == .systemMedium ? 3 : 2), id: \.self) { m in
+                    HStack(alignment: .top, spacing: 8) {
+                        VStack(alignment: .leading, spacing: 1) {
+                            Text(m.from).font(.caption.weight(.semibold)).lineLimit(1)
+                            Text(m.subject).font(.caption).foregroundStyle(.secondary).lineLimit(1)
+                        }
+                        Spacer(minLength: 0)
+                        if family != .systemSmall {
+                            Button(intent: WidgetArchiveMailIntent(id: m.id)) {
+                                Image(systemName: "archivebox").font(.caption).padding(5).background(.quaternary, in: Circle())
+                            }
+                            .buttonStyle(.plain)
+                            .accessibilityLabel("Archive")
+                        }
+                    }
+                }
+                Spacer(minLength: 0)
+            }
+        }
+    }
+}
+
+// MARK: - Favorite notes
+
+struct NotesWidget: Widget {
+    var body: some WidgetConfiguration {
+        StaticConfiguration(kind: "KeelNotes", provider: KeelProvider()) { entry in
+            NotesWidgetView(entry: entry)
+                .containerBackground(for: .widget) { Color(.systemBackground) }
+                .widgetURL(URL(string: "com.keel.app://notes"))
+        }
+        .configurationDisplayName("Favorite Notes")
+        .description("The pages you starred, one tap away.")
+        .supportedFamilies([.systemSmall, .systemMedium])
+    }
+}
+
+struct NotesWidgetView: View {
+    let entry: KeelEntry
+    @Environment(\.widgetFamily) private var family
+    var body: some View {
+        let notes = entry.snapshot.notes ?? []
+        VStack(alignment: .leading, spacing: 6) {
+            Label("NOTES", systemImage: "star.fill").font(.caption2.weight(.bold)).foregroundStyle(.orange)
+            if notes.isEmpty {
+                Spacer()
+                Text("Star a page to keep it here").font(.caption).foregroundStyle(.secondary)
+                Spacer()
+            } else if family == .systemSmall, let n = notes.first {
+                Link(destination: URL(string: "com.keel.app://note/\(n.id.uuidString)")!) {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("\(n.icon) \(n.title)").font(.headline).lineLimit(2)
+                        Text(n.preview).font(.caption).foregroundStyle(.secondary).lineLimit(4)
+                    }
+                }
+                Spacer(minLength: 0)
+            } else {
+                ForEach(notes.prefix(4), id: \.self) { n in
+                    Link(destination: URL(string: "com.keel.app://note/\(n.id.uuidString)")!) {
+                        HStack(spacing: 6) {
+                            Text(n.icon)
+                            Text(n.title).font(.subheadline).lineLimit(1)
+                            Spacer(minLength: 0)
+                        }
+                    }
+                }
+                Spacer(minLength: 0)
             }
         }
     }

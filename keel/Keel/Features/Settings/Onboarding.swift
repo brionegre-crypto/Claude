@@ -18,7 +18,8 @@ struct OnboardingFlow: View {
     @State private var focusTime = ""
     @State private var aboutMe = ""
 
-    private let steps = 8
+    private let steps = 9
+    @State private var showImport = false
     @State private var claudeKey = ""
     @State private var keyTesting = false
     @State private var keyResult: String?
@@ -37,7 +38,8 @@ struct OnboardingFlow: View {
                     case 3: today
                     case 4: you
                     case 5: ownClaude
-                    case 6: discover
+                    case 6: bringStuff
+                    case 7: discover
                     default: finished
                     }
                 }
@@ -60,6 +62,7 @@ struct OnboardingFlow: View {
         .sheet(isPresented: $showMail) { NavigationStack { MailAccountsSettings().toolbar { Button("Done") { showMail = false } } } }
         .sheet(isPresented: $showMeds) { NavigationStack { MedsView().toolbar { Button("Done") { showMeds = false } } } }
         .sheet(item: $tryTool) { ToolSheet(id: $0.id) }
+        .sheet(isPresented: $showImport) { NavigationStack { ImportView() } }
         .sheet(isPresented: $showHabits) { NavigationStack { HabitLibraryView().toolbar { Button("Done") { showHabits = false } } } }
     }
 
@@ -219,6 +222,21 @@ struct OnboardingFlow: View {
             keyResult = nil
             withAnimation(DS.spring) { keyOK = true }
             Haptics.success()
+        }
+    }
+
+    private var bringStuff: some View {
+        VStack(spacing: DS.Space.l) {
+            hero("square.and.arrow.down.on.square.fill", .teal, "Bring your stuff", "Move in everything at once. You can also do this any time from Settings → Data & Storage.")
+            Button { showImport = true } label: {
+                Label("Import notes and tasks", systemImage: "square.and.arrow.down").frame(maxWidth: .infinity)
+            }
+            .buttonStyle(.bordered).controlSize(.large).tint(DS.Palette.accent)
+            VStack(alignment: .leading, spacing: DS.Space.m) {
+                bullet("doc.richtext", "Notes", "Notion (sign in, or an export), Obsidian, Evernote, Google Keep, Apple Notes and Bear, with folders, links and databases.")
+                bullet("checklist", "Tasks", "Apple Reminders syncs both ways by itself. Todoist and other apps come in from a CSV export.")
+                bullet("envelope.fill", "Mail and calendar", "Your accounts from the email step, and every calendar on this device, already show up.")
+            }
         }
     }
 

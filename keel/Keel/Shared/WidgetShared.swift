@@ -46,6 +46,10 @@ struct WidgetSnapshot: Codable {
     var level: Int? = nil
     var levelProgress: Double? = nil       // 0…1 toward the next level
     var coins: Int? = nil
+    var mail: [MailLine]? = nil            // newest unread, for the inbox widget
+    var notes: [NoteLine]? = nil           // favorite pages, for the notes widget
+    struct MailLine: Codable, Hashable { var id: String; var from: String; var subject: String; var at: Date }
+    struct NoteLine: Codable, Hashable { var id: UUID; var title: String; var icon: String; var preview: String }
 
     struct CountdownLine: Codable, Hashable {
         var title: String

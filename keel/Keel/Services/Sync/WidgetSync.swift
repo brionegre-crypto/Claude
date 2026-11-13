@@ -71,10 +71,24 @@ enum WidgetSync {
                 .map { WidgetSnapshot.TaskLine(title: $0.0.title, due: $0.1, priority: $0.0.priority.rawValue, id: $0.0.id) },
             level: rewards.level,
             levelProgress: rewards.progress,
-            coins: rewards.coins
+            coins: rewards.coins,
+            mail: unreadMail(ctx),
+            notes: favoriteNotes(ctx)
         ).save()
         WidgetCenter.shared.reloadAllTimelines()
         WatchBridge.shared.push(ctx)          // keep Apple Watch in step
+    }
+
+    private static func unreadMail(_ ctx: ModelContext) -> [WidgetSnapshot.MailLine] {
+        var d = FetchDescriptor<EmailMessage>(predicate: #Predicate { !$0.isRead && !$0.isArchived }, sortBy: [SortDescriptor(\.receivedAt, order: .reverse)])
+        d.fetchLimit = 6
+        return ((try? ctx.fetch(d)) ?? []).map { .init(id: $0.id, from: $0.fromName.isEmpty ? $0.from : $0.fromName, subject: $0.subject, at: $0.receivedAt) }
+    }
+
+    private static func favoriteNotes(_ ctx: ModelContext) -> [WidgetSnapshot.NoteLine] {
+        var d = FetchDescriptor<Note>(predicate: #Predicate { $0.isPinned && !$0.isLocked }, sortBy: [SortDescriptor(\.updatedAt, order: .reverse)])
+        d.fetchLimit = 4
+        return ((try? ctx.fetch(d)) ?? []).map { .init(id: $0.id, title: $0.title.isEmpty ? "Untitled" : $0.title, icon: $0.icon ?? "📄", preview: String($0.plainText.prefix(120))) }
     }
 
     /// Today's habits (active stacks, scheduled for today) for the interactive habits widget.
@@ -138,6 +152,7 @@ final class AppRouter {
     var showJournal = false
     var openTool: ToolRoute?
     var showQuickOpen = false
+    var showShortcuts = false
 
     func handle(_ url: URL) -> Bool {
         guard url.scheme == "com.keel.app" else { return false }

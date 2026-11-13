@@ -933,6 +933,20 @@ struct EmailDetailView: View {
             }
         }
         .sheet(item: $compose) { ComposeView(draft: $0) }
+        // Keyboard (iPad and Mac), the same keys as Apple Mail.
+        .background {
+            Group {
+                Button("Reply") { compose = .reply(to: email, all: false, accounts: accounts) }.keyboardShortcut("r")
+                Button("Reply All") { compose = .reply(to: email, all: true, accounts: accounts) }.keyboardShortcut("r", modifiers: [.command, .shift])
+                Button("Forward") { compose = .forward(email) }.keyboardShortcut("f", modifiers: [.command, .shift])
+                Button("Archive") { archive() }.keyboardShortcut("a", modifiers: [.command, .control])
+                Button("Flag") { toggleStar() }.keyboardShortcut("l", modifiers: [.command, .shift])
+                Button("Mark Unread") { email.isRead = false; Task { try? await provider?.markRead(email.providerMessageId, read: false) } }
+                    .keyboardShortcut("u", modifiers: [.command, .shift])
+                Button("Delete") { trash() }.keyboardShortcut(.delete, modifiers: .command)
+            }
+            .hidden()
+        }
         .quickLookPreview($previewURL)
         .sheet(item: $eventDraft) { d in EventEditor(event: d.event, start: d.start) { eventDraft = nil }.ignoresSafeArea() }
         #if !targetEnvironment(macCatalyst)
