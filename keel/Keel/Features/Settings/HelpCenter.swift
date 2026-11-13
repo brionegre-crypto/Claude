@@ -208,6 +208,9 @@ enum HelpLibrary {
               keywords: "memory remember facts"),
 
         // Settings & Watch
+        HowTo(id: "opensettings", area: .start, question: "Open Settings",
+              steps: ["Tap the gear at the top right of any tab: Today, Inbox, Calendar, Tasks or Notes.", "On Mac or iPad, Settings is also at the bottom of the sidebar, and ⌘, opens it.", "Use the search field at the top of Settings to jump straight to something, like “alarms” or “text size”.", "A red dot on the gear means you haven't signed in to sync your devices yet."],
+              keywords: "settings preferences options gear where find"),
         HowTo(id: "textsize", area: .settings, question: "Make the text bigger",
               steps: ["Keel follows your iPhone text size.", "To change Keel only: Settings → Appearance → Text Size."],
               keywords: "text size font large accessibility zoom"),

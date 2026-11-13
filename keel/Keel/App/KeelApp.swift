@@ -189,7 +189,7 @@ struct RootView: View {
     @State private var savePoints = SavePointCenter.shared
     @Environment(\.scenePhase) private var phase
 
-    enum Tab { case today, inbox, calendar, tasks, notes }
+    enum Tab { case today, inbox, calendar, tasks, notes, settings }
 
     private func openTask(_ id: UUID) -> TaskItem? {
         try? KeelStore.container.mainContext.fetch(FetchDescriptor<TaskItem>(predicate: #Predicate { $0.id == id })).first
@@ -205,6 +205,9 @@ struct RootView: View {
             SwiftUI.Tab("Calendar", systemImage: "calendar", value: Tab.calendar) { CalendarView() }
             SwiftUI.Tab("Tasks", systemImage: "checklist", value: Tab.tasks) { TasksView() }
             SwiftUI.Tab("Notes", systemImage: "note.text", value: Tab.notes) { NotesView() }
+            // Mac and iPad: Settings sits at the bottom of the sidebar. iPhone uses the gear on each tab.
+            SwiftUI.Tab("Settings", systemImage: "gearshape", value: Tab.settings) { AccountsView() }
+                .tabPlacement(.sidebarOnly)
         }
         .tabViewStyle(.sidebarAdaptable)      // tabs on iPhone; a sidebar on Mac and iPad
         // Focus lives above the tab bar (like Music's mini-player): always one tap away, shows the live timer.
@@ -238,6 +241,7 @@ struct RootView: View {
         .sheet(isPresented: $router.showFocus) { NavigationStack { FocusView() } }
         .sheet(item: $mailRouter.pending) { ComposeView(draft: $0) }
         .sheet(isPresented: $router.showSearch) { NavigationStack { SearchView() } }
+        .sheet(isPresented: $router.showSettings) { AccountsView() }
         .sheet(isPresented: $router.showPlan) { PlanRitualView() }
         .sheet(isPresented: $router.showAutopilot) { NavigationStack { AutopilotView() } }
         .sheet(isPresented: $router.showRecorder) { NavigationStack { MeetingRecorderView(autoStart: true) } }
@@ -322,6 +326,9 @@ struct KeelCommands: Commands {
             Button("Record a Meeting") { AppRouter.shared.showRecorder = true }
                 .keyboardShortcut("r", modifiers: [.command, .shift])
         }
+        CommandGroup(replacing: .appSettings) {
+            Button("Settings…") { AppRouter.shared.showSettings = true }.keyboardShortcut(",")
+        }
         CommandMenu("Go") {
             Button("Today") { AppRouter.shared.tab = .today }.keyboardShortcut("1")
             Button("Inbox") { AppRouter.shared.tab = .inbox }.keyboardShortcut("2")
@@ -382,4 +389,26 @@ enum KeelQuickActions {
             }
         }
     }
+}
+
+/// The gear at the top of every tab: Settings is always one tap away, in the same place.
+struct SettingsButton: ViewModifier {
+    @State private var account = KeelAccount.shared
+    func body(content: Content) -> some View {
+        content.toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button { AppRouter.shared.showSettings = true } label: {
+                    Image(systemName: "gearshape")
+                        .overlay(alignment: .topTrailing) {
+                            if !account.isSignedIn { Circle().fill(.red).frame(width: 7, height: 7).offset(x: 3, y: -2) }   // sign-in reminder
+                        }
+                }
+                .accessibilityLabel(account.isSignedIn ? "Settings" : "Settings. Sign in to sync your devices")
+            }
+        }
+    }
+}
+
+extension View {
+    func keelSettingsButton() -> some View { modifier(SettingsButton()) }
 }

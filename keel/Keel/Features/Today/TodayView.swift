@@ -90,10 +90,9 @@ struct TodayView: View {
                         .accessibilityLabel("Compass: every Keel tool")
                 }
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button { showSettings = true } label: { Image(systemName: "person.crop.circle") }.accessibilityLabel("Settings")
+                    Button { AppRouter.shared.showSettings = true } label: { Image(systemName: "gearshape") }.accessibilityLabel("Settings")
                 }
             }
-            .sheet(isPresented: $showSettings) { AccountsView() }
             .sheet(isPresented: $showBrainDump) { BrainDumpView() }
             .fullScreenCover(isPresented: $showSOS) { OverwhelmedView() }
         }

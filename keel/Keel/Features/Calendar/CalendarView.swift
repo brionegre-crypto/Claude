@@ -85,6 +85,7 @@ struct CalendarView: View {
             }
             .background(DS.Palette.canvas)
             .navigationTitle(title)
+            .keelSettingsButton()
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {

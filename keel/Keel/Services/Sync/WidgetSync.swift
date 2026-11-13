@@ -100,6 +100,7 @@ final class AppRouter {
     var openTaskId: UUID?
     var openNoteId: UUID?
     var showSearch = false
+    var showSettings = false
     var showPlan = false
     var showAutopilot = false
     var showRecorder = false
@@ -121,6 +122,7 @@ final class AppRouter {
         case "plan": showPlan = true
         case "autopilot": showAutopilot = true
         case "search": showSearch = true
+        case "settings": showSettings = true
         case "record": showRecorder = true
         case "review": showReview = true
         case "money": showMoney = true

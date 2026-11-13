@@ -165,6 +165,7 @@ struct TasksView: View {
                 }
             }
             .navigationTitle(screenTitle)
+            .keelSettingsButton()
             .searchable(text: $search, prompt: "Search tasks")
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {

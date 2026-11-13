@@ -121,6 +121,7 @@ struct NotesView: View {
                 Button("Cancel", role: .cancel) { newFolderFor = nil }
             }
             .navigationTitle("Notes")
+            .keelSettingsButton()
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     Button { showBrain = true } label: { Image(systemName: "brain.head.profile") }

@@ -66,6 +66,8 @@ struct AccountsView: View {
     @AppStorage("ai.privateMode") private var privateMode = false
     @State private var showPaywall = false
     @State private var showTour = false
+    @State private var query = ""
+    @Environment(\.isPresented) private var isPresented
 
     private var version: String {
         let v = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "1.0"
@@ -76,30 +78,18 @@ struct AccountsView: View {
     var body: some View {
         NavigationStack {
             List {
+                if !query.isEmpty {
+                    SettingsSearchResults(query: query)
+                } else {
                 Section {
                     NavigationLink { AccountView() } label: { AccountRow() }
                 }
-                Section {
-                    HStack(spacing: 14) {
-                        Image(systemName: "sailboat.fill")
-                            .font(.system(size: 28, weight: .semibold)).foregroundStyle(.white)
-                            .frame(width: 60, height: 60)
-                            .background(DS.Palette.accent.gradient, in: .rect(cornerRadius: 14))
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text("Keel").font(.title2.weight(.semibold))
-                            Text(accounts.isEmpty ? "Add an email account to get started" : "\(accounts.count) account\(accounts.count == 1 ? "" : "s") · syncing")
-                                .font(.subheadline).foregroundStyle(.secondary)
-                        }
-                    }
-                    .padding(.vertical, 6)
-                }
-
                 Section {
                     SettingsRow(title: "Mail Accounts", symbol: "envelope.fill", color: .blue, value: accounts.isEmpty ? "None" : "\(accounts.count)") { MailAccountsSettings() }
                     SettingsRow(title: "Calendars", symbol: "calendar", color: .red) { CalendarSettings() }
                     SettingsRow(title: "Reminders", symbol: "checklist", color: .orange) { RemindersSettings() }
                     SettingsRow(title: "Connected Apps", symbol: "app.connected.to.app.below.fill", color: .indigo) { ConnectedAppsView() }
-                }
+                } header: { Text("Accounts & Connections") }
 
                 Section {
                     SettingsRow(title: "Notifications", symbol: "bell.badge.fill", color: .red) { NotificationSettings() }
@@ -108,13 +98,13 @@ struct AccountsView: View {
                     SettingsRow(title: "Focus", symbol: "moon.fill", color: .indigo) { FocusSettings() }
                     SettingsRow(title: "Medications", symbol: "pills.fill", color: .mint) { MedsView() }
                     SettingsRow(title: "Health & Nutrition", symbol: "fork.knife", color: .green) { NutritionSettingsView() }
-                }
+                } header: { Text("Features") }
 
                 Section {
                     SettingsRow(title: "Appearance", symbol: "textformat.size", color: .gray, value: appearance.capitalized) { AppearanceSettings() }
                     SettingsRow(title: "Siri & Shortcuts", symbol: "waveform", color: .purple) { SiriSettings() }
                     SettingsRow(title: "AI & Privacy", symbol: "hand.raised.fill", color: .blue, value: privateMode ? "Private" : nil) { PrivacySettings() }
-                }
+                } header: { Text("Look & Feel, AI") }
 
                 Section {
                     SettingsRow(title: "Help: How do I…", symbol: "questionmark.bubble.fill", color: .indigo) { HelpCenterView() }
@@ -127,18 +117,20 @@ struct AccountsView: View {
                             HStack(spacing: 12) { SettingsIcon(symbol: "star.fill", color: .yellow); Text("Keel Pro").foregroundStyle(.primary) }
                         }
                     }
-                }
+                } header: { Text("Help") }
 
                 Section {
                     SettingsRow(title: "Data & Storage", symbol: "externaldrive.fill", color: .gray) { DataSettings() }
                     LabeledContent("Version", value: version)
-                } footer: {
-                    Text("Your data stays on this iPhone and your own email, calendar and Reminders accounts. Keel has no servers of its own.")
+                } header: { Text("Data") } footer: {
+                    Text("When you sign in, your content syncs through your own private iCloud. Email stays between this device and your mail provider, and calendars and Reminders stay in your own accounts.")
+                }
                 }
             }
+            .searchable(text: $query, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search Settings")
             .navigationTitle("Settings")
             .navigationBarTitleDisplayMode(.inline)
-            .toolbar { ToolbarItem(placement: .confirmationAction) { Button("Done") { dismiss() } } }
+            .toolbar { if isPresented { ToolbarItem(placement: .confirmationAction) { Button("Done") { dismiss() } } } }
             .sheet(isPresented: $showPaywall) { PaywallView() }
             .fullScreenCover(isPresented: $showTour) { WelcomeTour() }
         }
@@ -1283,5 +1275,65 @@ private struct AccountRow: View {
             }
         }
         .padding(.vertical, 4)
+    }
+}
+
+/// Settings search: type “alarms”, “text size”, “Claude” or “sync” and jump straight there.
+private struct SettingsSearchResults: View {
+    let query: String
+
+    private struct Entry: Identifiable {
+        let id: String
+        let title: String
+        let icon: String
+        let color: Color
+        let words: String
+        let destination: () -> AnyView
+    }
+
+    private var entries: [Entry] {
+        func e<V: View>(_ title: String, _ icon: String, _ color: Color, _ words: String, @ViewBuilder _ d: @escaping () -> V) -> Entry {
+            Entry(id: title, title: title, icon: icon, color: color, words: words, destination: { AnyView(d()) })
+        }
+        return [
+            e("Account & iCloud Sync", "person.crop.circle.fill", DS.Palette.accent, "account sign in apple icloud sync devices mac ipad login profile") { AccountView() },
+            e("Mail Accounts", "envelope.fill", .blue, "email gmail outlook icloud yahoo add account") { MailAccountsSettings() },
+            e("Calendars", "calendar", .red, "calendar google outlook show hide") { CalendarSettings() },
+            e("Reminders", "checklist", .orange, "apple reminders sync lists") { RemindersSettings() },
+            e("Connected Apps", "app.connected.to.app.below.fill", .indigo, "connect notion health apps integrations") { ConnectedAppsView() },
+            e("Notifications", "bell.badge.fill", .red, "notifications alerts time sensitive pop up briefing reminders sound") { NotificationSettings() },
+            e("Mail", "paperplane.fill", .blue, "mail swipe signature batched delivery vip notify") { MailSettings() },
+            e("Tasks & Full-Screen Alarms", "checkmark.circle.fill", .green, "tasks alarms full screen default list alert") { TaskSettings() },
+            e("Focus", "moon.fill", .indigo, "focus block apps screen time sounds hyperfocus") { FocusSettings() },
+            e("Medications", "pills.fill", .mint, "meds medication pills dose refill") { MedsView() },
+            e("Health & Nutrition", "fork.knife", .green, "health nutrition food diet protein apple health") { NutritionSettingsView() },
+            e("Appearance & Text Size", "textformat.size", .gray, "appearance dark light theme color accent icon text size bigger font calm haptics") { AppearanceSettings() },
+            e("Siri & Shortcuts", "waveform", .purple, "siri shortcuts voice") { SiriSettings() },
+            e("AI & Privacy", "hand.raised.fill", .blue, "ai claude chatgpt gemini key server private apple intelligence memory") { PrivacySettings() },
+            e("Help: How do I…", "questionmark.bubble.fill", .indigo, "help how guide tutorial") { HelpCenterView() },
+            e("How Keel Works", "questionmark", .teal, "features guide explained") { FeatureGuideView() },
+            e("Data & Storage", "externaldrive.fill", .gray, "backup restore export erase import storage") { DataSettings() },
+        ]
+    }
+
+    var body: some View {
+        let q = query.lowercased().split(separator: " ").map(String.init)
+        let hits = entries.filter { en in q.allSatisfy { (en.title + " " + en.words).lowercased().contains($0) } }
+        if hits.isEmpty {
+            ContentUnavailableView {
+                Label("No setting called “\(query)”", systemImage: "magnifyingglass")
+            } description: {
+                Text("Try other words, or look it up in Help.")
+            } actions: {
+                NavigationLink("Search Help") { HelpCenterView() }
+            }
+            .listRowBackground(Color.clear)
+        } else {
+            ForEach(hits) { h in
+                NavigationLink { h.destination() } label: {
+                    HStack(spacing: 12) { SettingsIcon(symbol: h.icon, color: h.color); Text(h.title) }
+                }
+            }
+        }
     }
 }
