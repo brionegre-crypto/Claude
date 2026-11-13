@@ -55,6 +55,8 @@ struct NoteEditor: View {
     @State private var supertagDefs: [SupertagDef] = []
     @State private var openAt: UUID?
     @State private var importingPDF = false
+    @State private var confirmDelete = false
+    @Environment(\.dismiss) private var dismissPage
     @State private var importingFile = false
     @State private var fileTarget: UUID?
     @State private var zen = false
@@ -115,6 +117,20 @@ struct NoteEditor: View {
             note.blocks[i].refId = a.id.uuidString
         }
         .sheet(isPresented: $showLocalGraph) { LocalGraphView(note: note) }
+        .confirmationDialog("Delete “\(note.title.isEmpty ? "Untitled" : note.title)”?", isPresented: $confirmDelete, titleVisibility: .visible) {
+            Button("Delete page", role: .destructive) {
+                // Pages inside move up a level; the page waits in Recently deleted for 30 days.
+                let n = note
+                for child in allNotes where child.parentId == n.id { if n.isDatabase { NoteTrash.delete(child, ctx: ctx) } else { child.parentId = n.parentId } }
+                dismissPage()
+                Task { @MainActor in
+                    try? await Task.sleep(for: .milliseconds(350))
+                    NoteTrash.delete(n, ctx: ctx)
+                    UndoCenter.shared.notify("Moved to Recently deleted")
+                    Haptics.tap()
+                }
+            }
+        } message: { Text("It stays in Recently deleted for 30 days, so you can bring it back.") }
         .sheet(item: $personSheet) { p in NavigationStack { PersonPageView(person: p) } }
         .toolbar(zen ? .hidden : .automatic, for: .navigationBar)
         .statusBarHidden(zen)
@@ -979,6 +995,8 @@ struct NoteEditor: View {
                 Divider()
                 Button("Export as Markdown", systemImage: "doc.plaintext") { exportURL = NoteExport.markdownFile(note) }
                 Button("Export as PDF", systemImage: "doc.richtext") { exportURL = NoteExport.pdfFile(note) }
+                Divider()
+                Button("Delete page", systemImage: "trash", role: .destructive) { confirmDelete = true }
             } label: { Image(systemName: "ellipsis.circle") }.accessibilityLabel("More")
         }
         ToolbarItemGroup(placement: .keyboard) {
