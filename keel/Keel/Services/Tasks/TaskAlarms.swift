@@ -17,7 +17,8 @@ struct KeelAlarmMetadata: AlarmMetadata {
 @MainActor
 enum TaskAlarms {
     static let globalKey = "tasks.fullScreenAlarms"
-    static var globalOn: Bool { UserDefaults.standard.bool(forKey: globalKey) }
+    /// On by default, like an alarm-clock reminder: timed tasks take over the screen until you tap Done or Snooze.
+    static var globalOn: Bool { UserDefaults.standard.object(forKey: globalKey) as? Bool ?? true }
 
     /// The task's own choice wins; otherwise the setting.
     static func wanted(_ t: TaskItem) -> Bool { t.useAlarm ?? globalOn }

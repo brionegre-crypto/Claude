@@ -66,6 +66,19 @@ targets:
         UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
         UISupportedInterfaceOrientations~ipad: [UIInterfaceOrientationPortrait, UIInterfaceOrientationPortraitUpsideDown, UIInterfaceOrientationLandscapeLeft, UIInterfaceOrientationLandscapeRight]
         LSApplicationCategoryType: public.app-category.productivity
+        UIApplicationShortcutItems:                      # press and hold the app icon
+          - UIApplicationShortcutItemType: com.keel.app.capture
+            UIApplicationShortcutItemTitle: New Task
+            UIApplicationShortcutItemIconSymbolName: plus.circle.fill
+          - UIApplicationShortcutItemType: com.keel.app.note
+            UIApplicationShortcutItemTitle: New Note
+            UIApplicationShortcutItemIconSymbolName: square.and.pencil
+          - UIApplicationShortcutItemType: com.keel.app.focus
+            UIApplicationShortcutItemTitle: Start Focus
+            UIApplicationShortcutItemIconSymbolName: moon.zzz.fill
+          - UIApplicationShortcutItemType: com.keel.app.record
+            UIApplicationShortcutItemTitle: Record a Meeting
+            UIApplicationShortcutItemIconSymbolName: waveform.badge.mic
         UIApplicationSceneManifest:
           UIApplicationSupportsMultipleScenes: true     # several Keel windows on Mac and iPad
         UIRequiresFullScreen: true

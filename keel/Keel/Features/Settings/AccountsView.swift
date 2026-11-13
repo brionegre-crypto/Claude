@@ -526,7 +526,7 @@ struct MailSettings: View {
 struct TaskSettings: View {
     @AppStorage(Prefs.defaultList) private var defaultList = "Inbox"
     @AppStorage(Prefs.defaultAlert) private var defaultAlert = 0
-    @AppStorage(TaskAlarms.globalKey) private var alarms = false
+    @AppStorage(TaskAlarms.globalKey) private var alarms = true
 
     var body: some View {
         List {

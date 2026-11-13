@@ -342,6 +342,21 @@ struct TasksView: View {
             Button { move(t, days: 7) } label: { Label("Next week", systemImage: "calendar") }.tint(DS.Palette.meeting)
         }
         .contextMenu {
+            Button(t.isDone ? "Mark Not Done" : "Done", systemImage: t.isDone ? "circle" : "checkmark.circle") {
+                withAnimation(DS.spring) { _ = TaskActions.setDone(t, !t.isDone) }
+                try? ctx.save()
+                Haptics.success()
+            }
+            #if !targetEnvironment(macCatalyst)
+            if t.hasDueTime {
+                Button(TaskAlarms.wanted(t) ? "Turn Off Full-Screen Alarm" : "Full-Screen Alarm", systemImage: TaskAlarms.wanted(t) ? "alarm.waves.left.and.right" : "alarm") {
+                    t.useAlarm = !TaskAlarms.wanted(t)
+                    TaskAlerts.schedule(t)
+                    Haptics.tap()
+                }
+            }
+            #endif
+            Divider()
             Button("Today", systemImage: "sun.max") { move(t, days: 0) }
             Button("Tomorrow", systemImage: "sunrise") { move(t, days: 1) }
             Button("Next week", systemImage: "calendar") { move(t, days: 7) }

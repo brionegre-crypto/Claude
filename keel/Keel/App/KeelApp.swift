@@ -5,6 +5,7 @@ import UserNotifications
 
 @main
 struct KeelApp: App {
+    @UIApplicationDelegateAdaptor(KeelAppDelegate.self) private var appDelegate
     let container = KeelStore.container
     @Environment(\.scenePhase) private var scenePhase
 
@@ -38,6 +39,7 @@ struct KeelApp: App {
                     _ = try? await UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge])
                     SyncEngine.shared.configure(container: container)
                     MedEngine.scheduleAll(ctx: container.mainContext)
+                    if TaskAlarms.globalOn { _ = await TaskAlarms.authorize() }   // asks once for full-screen task alarms
                     BreakReminders.schedule()
                     await SyncEngine.shared.syncAll()
                     SyncEngine.scheduleNextRefresh()
@@ -131,6 +133,7 @@ struct KeelApp: App {
             return c
         } catch {
             syncState = "Couldn't start iCloud sync: \(error.localizedDescription)"
+            print("KeelStore:", error)
             if wantCloud {
                 // Try again without iCloud so Keel still opens with all your data.
                 let content = ModelConfiguration("Content", schema: Schema(syncedTypes), url: single.url, cloudKitDatabase: .none)
@@ -140,9 +143,15 @@ struct KeelApp: App {
                     return c
                 }
             }
-            return try! ModelContainer(for: all, configurations: single)
+            if let c = try? ModelContainer(for: all, configurations: single) { return c }
+            // Never crash on launch: open an empty, temporary store and show what went wrong.
+            loadError = "Keel couldn't open your data (\(error.localizedDescription)). Nothing has been deleted. Send this message to support."
+            return try! ModelContainer(for: all, configurations: ModelConfiguration(schema: all, isStoredInMemoryOnly: true, cloudKitDatabase: .none))
         }
     }()
+
+    /// Shown at the top of the app if the data couldn't be opened, instead of crashing.
+    static private(set) var loadError: String?
 
     /// Copies a SQLite store and its side files (-wal, -shm) before either is opened.
     private static func copyStore(from: URL, to: URL) {
@@ -187,6 +196,12 @@ struct RootView: View {
         // Focus lives above the tab bar (like Music's mini-player): always one tap away, shows the live timer.
         .tabViewBottomAccessory { FocusAccessory { router.showFocus = true } }
         .overlay(alignment: .bottom) { UndoToast() }
+        .safeAreaInset(edge: .top) {
+            if let err = KeelStore.loadError {
+                Text(err).font(DS.Font.caption).foregroundStyle(.white).padding(10).frame(maxWidth: .infinity)
+                    .background(.red.gradient).textSelection(.enabled)
+            }
+        }
         .overlay(alignment: .top) {
             if let p = savePoints.showing {
                 SavePointBanner(point: p, resume: {
@@ -313,5 +328,44 @@ struct KeelCommands: Commands {
         try? KeelStore.container.mainContext.save()
         AppRouter.shared.tab = .notes
         AppRouter.shared.openNoteId = n.id
+    }
+}
+
+// MARK: - Haptic Touch on the app icon
+
+/// Press and hold the Keel icon: New Task, New Note, Start Focus, Record a Meeting, Search.
+final class KeelAppDelegate: NSObject, UIApplicationDelegate {
+    func application(_ application: UIApplication, configurationForConnecting session: UISceneSession,
+                     options: UIScene.ConnectionOptions) -> UISceneConfiguration {
+        if let item = options.shortcutItem { KeelQuickActions.perform(item.type, delay: 0.6) }   // Keel wasn't running yet
+        let config = UISceneConfiguration(name: nil, sessionRole: session.role)
+        config.delegateClass = KeelSceneDelegate.self
+        return config
+    }
+}
+
+final class KeelSceneDelegate: NSObject, UIWindowSceneDelegate {
+    func windowScene(_ windowScene: UIWindowScene, performActionFor shortcutItem: UIApplicationShortcutItem,
+                     completionHandler: @escaping (Bool) -> Void) {
+        KeelQuickActions.perform(shortcutItem.type, delay: 0.1)
+        completionHandler(true)
+    }
+}
+
+enum KeelQuickActions {
+    static func perform(_ type: String, delay: Double) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
+            MainActor.assumeIsolated {
+                let r = AppRouter.shared
+                switch type.components(separatedBy: ".").last {
+                case "capture": r.showCapture = true
+                case "note": KeelCommands.newNote()
+                case "focus": r.showFocus = true
+                case "record": r.showRecorder = true
+                case "search": r.showSearch = true
+                default: break
+                }
+            }
+        }
     }
 }
