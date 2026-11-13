@@ -100,6 +100,8 @@ final class ShutdownManager {
 
     func end(early: Bool) {
         defer { BreakReminders.schedule(skipUntil: Date()) }
+        if active != nil { Automations.focusEnded(ctx: KeelStore.container.mainContext) }
+        UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: ["now.half"])
         // Focus Room check-ins stop whenever the session ends, wherever it was ended from.
         UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: (0..<12).map { "room.checkin.\($0)" })
         endLiveActivities()

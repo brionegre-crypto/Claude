@@ -110,7 +110,7 @@ struct NotesView: View {
             }
             .listStyle(.insetGrouped)
             .searchable(text: $search, prompt: "Search titles and text")
-            .navigationDestination(item: $opened) { NoteEditor(note: $0) }
+            .navigationDestination(item: $opened) { NoteOrCanvas(note: $0) }
             .alert("New folder", isPresented: Binding(get: { newFolderFor != nil }, set: { if !$0 { newFolderFor = nil } })) {
                 TextField("Name", text: $newFolderName)
                 Button("Create") {
@@ -139,6 +139,7 @@ struct NotesView: View {
                     Menu {
                         Button("New page", systemImage: "doc") { newPage() }
                         Button("New database", systemImage: "tablecells") { opened = NotesDatabase.create(title: "Untitled database", parent: nil, ctx: ctx) }
+                        Button("New canvas", systemImage: "rectangle.on.rectangle.angled") { opened = KeelCanvas.create(ctx: ctx, folder: nil) }
                         if !templates.isEmpty {
                             Menu("From template", systemImage: "doc.on.doc") {
                                 ForEach(templates) { t in Button(t.title) { create(fromTemplate: t) } }
@@ -149,6 +150,8 @@ struct NotesView: View {
                         Button("Today's note", systemImage: "calendar") { opened = DailyNote.today(ctx) }
                         Button("Daily journal", systemImage: "book") { createJournalPage() }
                         Divider()
+                        Button("Paperwork vault", systemImage: "archivebox") { showVault = true }
+                        Button("Tags & saved searches", systemImage: "number") { showTags = true }
                         Button("Reorganize everything…", systemImage: "sparkles.rectangle.stack") { showReorganize = true }
                         Button("Sort loose pages…", systemImage: "wand.and.stars") { showOrganize = true }
                         Button("Import from another app…", systemImage: "square.and.arrow.down") { showImport = true }
@@ -206,6 +209,8 @@ struct NotesView: View {
                 Button("Cancel", role: .cancel) {}
             }
             .navigationDestination(isPresented: $showHelp) { HelpCenterView(area: .notes) }
+            .navigationDestination(isPresented: $showVault) { VaultView() }
+            .navigationDestination(isPresented: $showTags) { TagBrowserView() }
             .task { await NotesOrganizer.autoFile(ctx: ctx) }
         }
     }
@@ -226,6 +231,8 @@ struct NotesView: View {
     @State private var renamingWorkspace: String?
     @State private var showReorganize = false
     @State private var showHelp = false
+    @State private var showVault = false
+    @State private var showTags = false
     @AppStorage("notes.emptyFolders") private var emptyFoldersRaw = ""      // folders you made that have no pages yet
 
     // MARK: Pieces
@@ -238,6 +245,8 @@ struct NotesView: View {
                 QuickTile(title: "Record", icon: "waveform.badge.mic", color: .red) { recording = true }
                 QuickTile(title: "Journal", icon: "book.fill", color: .pink) { createJournalPage() }
                 QuickTile(title: "Brain map", icon: "brain.head.profile.fill", color: .pink) { showBrain = true }
+                QuickTile(title: "Vault", icon: "archivebox.fill", color: .brown) { showVault = true }
+                QuickTile(title: "Canvas", icon: "rectangle.on.rectangle.angled.fill", color: .teal) { opened = KeelCanvas.create(ctx: ctx, folder: nil) }
                 QuickTile(title: "Reorganize", icon: "sparkles.rectangle.stack.fill", color: .indigo) { showReorganize = true }
                 QuickTile(title: "Database", icon: "tablecells.fill", color: .purple) {
                     opened = NotesDatabase.create(title: "Untitled database", parent: nil, ctx: ctx)
@@ -270,7 +279,16 @@ struct NotesView: View {
         } else {
             Section {
                 ForEach(results) { row($0, showSnippet: true) }
-            } header: { sectionHeader("\(results.count) result\(results.count == 1 ? "" : "s")", nil) }
+            } header: {
+                HStack {
+                    sectionHeader("\(results.count) result\(results.count == 1 ? "" : "s")", nil)
+                    Spacer()
+                    Button(KeelTags.saved.contains(search) ? "Saved" : "Save search") {
+                        if !KeelTags.saved.contains(search) { KeelTags.saved = [search] + KeelTags.saved; Haptics.tap() }
+                    }
+                    .font(DS.Font.caption).textCase(nil).buttonStyle(.borderless)
+                }
+            }
         }
     }
 

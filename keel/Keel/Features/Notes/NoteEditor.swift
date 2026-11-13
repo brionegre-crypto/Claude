@@ -15,6 +15,9 @@ struct NoteEditor: View {
 
     @FocusState private var focused: UUID?
     @State private var editing: UUID?
+    @State private var showHistory = false
+    @State private var publishedURL: URL?
+    @State private var publishError: String?
     @State private var selection: TextSelection?
     @State private var slashFor: UUID?
     @State private var slashQuery = ""
@@ -56,6 +59,14 @@ struct NoteEditor: View {
                     .buttonStyle(.borderedProminent).tint(DS.Palette.accent)
             }
             .task { await unlockNote() }
+            .onAppear { NoteHistory.snapshot(note) }       // the page as it was before this visit, for Version history
+            .sheet(isPresented: $showHistory) { NoteHistoryView(note: note) }
+            .sheet(item: Binding(get: { publishedURL.map { PublishedLink(url: $0) } }, set: { if $0 == nil { publishedURL = nil } })) { link in
+                PublishedSheet(url: link.url)
+            }
+            .alert("Couldn't publish", isPresented: Binding(get: { publishError != nil }, set: { if !$0 { publishError = nil } })) {
+                Button("OK", role: .cancel) {}
+            } message: { Text(publishError ?? "") }
         } else {
             page
         }
@@ -701,6 +712,15 @@ struct NoteEditor: View {
                 Button(reordering ? "Done reordering" : "Reorder blocks", systemImage: "arrow.up.arrow.down") { withAnimation { reordering.toggle() } }
                 Button("Move to…", systemImage: "folder") { movingPage = true }
                 Button(note.isLocked ? "Remove lock" : "Lock page", systemImage: note.isLocked ? "lock.open" : "lock") { toggleLock() }
+                Button("Version history", systemImage: "clock.arrow.circlepath") { showHistory = true }
+                Button(NotePublisher.url(note) == nil ? "Publish to web" : "Update web page", systemImage: "globe") {
+                    Task {
+                        do { publishedURL = try await NotePublisher.publish(note) } catch { publishError = error.localizedDescription }
+                    }
+                }
+                if NotePublisher.url(note) != nil {
+                    Button("Unpublish", systemImage: "eye.slash") { Task { try? await NotePublisher.unpublish(note) } }
+                }
                 Button("Save as template", systemImage: "doc.on.doc") {
                     let t = Note(title: note.title, blocks: note.blocks.map { var b = $0; b.id = UUID(); b.checked = false; return b })
                     t.isTemplate = true; t.icon = note.icon
@@ -882,5 +902,30 @@ struct MovePageSheet: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar { ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() } } }
         }
+    }
+}
+
+private struct PublishedLink: Identifiable { let url: URL; var id: String { url.absoluteString } }
+
+/// After publishing: the link, ready to copy or share.
+private struct PublishedSheet: View {
+    let url: URL
+    @Environment(\.dismiss) private var dismiss
+    var body: some View {
+        NavigationStack {
+            VStack(spacing: DS.Space.m) {
+                Image(systemName: "globe").font(.system(size: 44)).foregroundStyle(DS.Palette.accent)
+                Text("Published").font(DS.Font.title)
+                Text("Anyone with this link can read the page. Edit the page and choose Update web page to refresh it, or Unpublish to take it down.")
+                    .font(DS.Font.body).foregroundStyle(DS.Palette.inkSoft).multilineTextAlignment(.center)
+                Text(url.absoluteString).font(.callout.monospaced()).textSelection(.enabled).multilineTextAlignment(.center)
+                ShareLink(item: url) { Label("Share link", systemImage: "square.and.arrow.up").frame(maxWidth: .infinity) }
+                    .buttonStyle(.borderedProminent)
+                Button("Copy link") { UIPasteboard.general.url = url; Haptics.tap() }
+            }
+            .padding()
+            .toolbar { ToolbarItem(placement: .confirmationAction) { Button("Done") { dismiss() } } }
+        }
+        .presentationDetents([.medium])
     }
 }

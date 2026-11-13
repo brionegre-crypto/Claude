@@ -15,6 +15,7 @@ struct KeelApp: App {
         UNUserNotificationCenter.current().delegate = NotificationHandler.shared
         TaskAlerts.registerCategories()
         WatchBridge.shared.activate()
+        KeelDiagnostics.shared.start()           // crash & hang reports (kept on device; shared only if you turn it on)
         if !UserDefaults.standard.bool(forKey: Prefs.reviewReminderOff) { WeeklyReview.scheduleReminder() }
         if !UserDefaults.standard.bool(forKey: "dayReview.off") { DayReviewView.scheduleReminder() }
         Journal.scheduleReminder()

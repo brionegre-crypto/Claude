@@ -98,6 +98,8 @@ struct AccountsView: View {
                     SettingsRow(title: "Focus", symbol: "moon.fill", color: .indigo) { FocusSettings() }
                     SettingsRow(title: "Medications", symbol: "pills.fill", color: .mint) { MedsView() }
                     SettingsRow(title: "Health & Nutrition", symbol: "fork.knife", color: .green) { NutritionSettingsView() }
+                    SettingsRow(title: "Email to Keel", symbol: "envelope.arrow.triangle.branch.fill", color: .blue) { EmailToKeelView() }
+                    SettingsRow(title: "Automations", symbol: "bolt.horizontal.fill", color: .orange) { AutomationsView() }
                 } header: { Text("Features") }
 
                 Section {
@@ -784,6 +786,7 @@ struct PrivacySettings: View {
 struct DataSettings: View {
     @Environment(\.modelContext) private var ctx
     @State private var exportURL: URL?
+    @State private var zipURL: URL?
     @State private var confirmErase = false
     @State private var syncing = false
     @AppStorage("onboarding.done") private var onboarded = true
@@ -801,9 +804,15 @@ struct DataSettings: View {
                 if let exportURL {
                     ShareLink(item: exportURL) { Label("Share Export", systemImage: "square.and.arrow.up") }
                 } else {
-                    Button { exportURL = makeExport() } label: { Label("Export My Data", systemImage: "arrow.down.doc") }
+                    Button { exportURL = makeExport() } label: { Label("Export My Data (JSON)", systemImage: "arrow.down.doc") }
                 }
-            } footer: { Text("A JSON file with your tasks, notes, goals and habits.") }
+                if let zipURL {
+                    ShareLink(item: zipURL) { Label("Share Everything (ZIP)", systemImage: "square.and.arrow.up.on.square") }
+                } else {
+                    Button { zipURL = try? ExportAll.make(ctx: ctx) } label: { Label("Export Everything (ZIP)", systemImage: "archivebox") }
+                }
+            } footer: { Text("Export Everything makes a ZIP anyone can open: every note as a Markdown file in its folders, plus tasks, habits, journal and food as spreadsheets. Your data is always yours.") }
+            DiagnosticsSection()
             Section { NavigationLink { ImportView() } label: { Label("Move to Keel (Import)", systemImage: "square.and.arrow.down") } }
             BackupSection()
             Section {
@@ -1312,7 +1321,9 @@ private struct SettingsSearchResults: View {
             e("AI & Privacy", "hand.raised.fill", .blue, "ai claude chatgpt gemini key server private apple intelligence memory") { PrivacySettings() },
             e("Help: How do I…", "questionmark.bubble.fill", .indigo, "help how guide tutorial") { HelpCenterView() },
             e("How Keel Works", "questionmark", .teal, "features guide explained") { FeatureGuideView() },
-            e("Data & Storage", "externaldrive.fill", .gray, "backup restore export erase import storage") { DataSettings() },
+            e("Data & Storage", "externaldrive.fill", .gray, "backup restore export everything zip markdown erase import storage crash reports diagnostics") { DataSettings() },
+            e("Email to Keel", "envelope.arrow.triangle.branch.fill", .blue, "email forward address task note plus keel") { EmailToKeelView() },
+            e("Automations", "bolt.horizontal.fill", .orange, "automation rules when then trigger") { AutomationsView() },
         ]
     }
 

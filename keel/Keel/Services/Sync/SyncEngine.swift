@@ -91,6 +91,8 @@ final class SyncEngine {
 
         // 1a. Your smart rules run first; a rule's category skips AI sorting.
         await MailRules.apply(to: fresh, accounts: accounts, ctx: ctx)
+        EmailToKeel.process(fresh, accounts: accounts, ctx: ctx)        // forwarded to name+keel@… or “Task:” to yourself
+        Automations.emailsArrived(fresh, ctx: ctx)
         MailScanners.backfillIfNeeded(ctx: ctx)
         MailScanners.scan(fresh, ctx: ctx)
         Task { await TripScanner.backfillIfNeeded(ctx: ctx) }   // one-time, in the background

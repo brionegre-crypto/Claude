@@ -10,6 +10,7 @@ enum TaskActions {
     /// Returns the next due date when a repeating task rolled forward (for a "Next: …" toast).
     @discardableResult
     static func setDone(_ t: TaskItem, _ done: Bool) -> Date? {
+        if done { Automations.taskCompleted(t, ctx: t.modelContext) }
         var rolledTo: Date?
         if done, let rule = t.recurrence {
             let current = t.dueDate ?? Calendar.current.startOfDay(for: Date())

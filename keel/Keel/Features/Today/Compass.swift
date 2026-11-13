@@ -382,6 +382,9 @@ enum HubCatalog {
             t("dopamine", "Dopamine menu", "dice.fill", "boost bored reward motivation") { DopamineMenuView() },
         ]),
         HubGroup(id: "top", title: "Stay on top", subtitle: "Money, promises and things in motion", icon: "checkmark.shield.fill", color: .orange, tools: [
+            t("vault", "Paperwork vault", "archivebox.fill", "receipt warranty id passport insurance documents paperwork expire return") { VaultView() },
+            t("errands", "Errands", "car.fill", "errands store pharmacy post office bank run") { ErrandsView() },
+            t("sharedLists", "Shared lists", "person.2.fill", "share list family partner groceries together") { SharedListsView() },
             t("appointments", "Appointments from email", "calendar.badge.plus", "appointment doctor dentist booking confirmation calendar email find schedule") { AppointmentsView() },
             t("bills", "Bills & money", "creditcard.fill", "subscriptions trial renewal payment cost") { SubscriptionsView() },
             t("meds", "Medications", "pills.fill", "meds pills dose refill") { MedsView() },
@@ -433,6 +436,10 @@ enum HubCatalog {
             t("screenshots", "Tasks from screenshots", "camera.viewfinder", "photo scan") { ScreenshotTasksView() },
             t("brainMap", "Brain map", "brain.head.profile.fill", "notes graph links connections map neurons") { BrainMapView() },
             t("memory", "What Keel knows", "brain", "memory facts about me") { MemoryView() },
+            t("mealplan", "Meal plan & groceries", "cart.fill", "meal plan grocery list shopping diet week dinner") { MealPlanView() },
+            t("rewards", "Rewards & buddy", "gift.fill", "rewards xp level coins treat accountability buddy friend") { RewardsView() },
+            t("automations", "Automations", "bolt.horizontal.fill", "automation rules when then") { AutomationsView() },
+            t("tags", "Tags & searches", "number", "tags hashtags saved searches") { TagBrowserView() },
             t("help", "How do I…", "questionmark.bubble.fill", "help how do i guide tutorial instructions learn support stuck confused") { HelpCenterView() },
         ]),
     ]

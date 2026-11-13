@@ -91,6 +91,10 @@ struct ShareListSheet: View {
     let listName: String
     @Environment(\.dismiss) private var dismiss
     @Environment(\.openURL) private var openURL
+    @Query(filter: #Predicate<TaskItem> { !$0.isDone }) private var open: [TaskItem]
+    @State private var link: SharedListRef?
+    @State private var linkError: String?
+    @State private var making = false
 
     var body: some View {
         NavigationStack {
@@ -105,6 +109,22 @@ struct ShareListSheet: View {
                     Label("Invite your partner, family or team", systemImage: "3.circle.fill")
                 }
                 .font(DS.Font.body)
+                Divider()
+                Text("Sharing with someone without an iPhone?").font(DS.Font.headline)
+                if let link, let url = URL(string: link.url) {
+                    ShareLink(item: url) { Label("Send the link", systemImage: "link") }
+                    Text("They can check off and add items in any web browser; Keel users see it in Tasks → Shared lists.").font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
+                } else {
+                    Button(making ? "Making a link…" : "Share as a link (anyone)", systemImage: "link") {
+                        Task {
+                            making = true; defer { making = false }
+                            do { link = try await SharedLists.create(title: listName, items: open.filter { $0.listName == listName }.map(\.title)) }
+                            catch { linkError = error.localizedDescription }
+                        }
+                    }
+                    .disabled(making)
+                    if let linkError { Text(linkError).font(DS.Font.caption).foregroundStyle(.red) }
+                }
                 Spacer()
                 Button {
                     if let url = URL(string: "x-apple-reminderkit://") { openURL(url) }

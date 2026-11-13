@@ -140,6 +140,7 @@ struct FoodScanView: View {
             busy = false
             switch outcome {
             case .found(let p, _):
+                if let hit = MealPlanner.checkOff(productName: p.displayName, ctx: ctx) { message = "Checked “\(hit)” off your grocery list." }
                 product = p
             case .notFound(let c):
                 pendingBarcode = c

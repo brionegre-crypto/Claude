@@ -2,6 +2,7 @@ import { handleAI, json } from "./ai";
 import { handleMCP } from "./mcp";
 import { handleNotion, infoPage, privacyPage, termsPage } from "./notion";
 import { handleAppleAuth, isSession } from "./auth";
+import { handleShare } from "./share";
 
 export interface Env {
   KEEL: KVNamespace;
@@ -40,6 +41,10 @@ export default {
     if (req.method === "GET" && url.pathname === "/terms") return termsPage();
     if (url.pathname.startsWith("/notion/")) return handleNotion(req, env);
     if (url.pathname === "/auth/apple" && req.method === "POST") return handleAppleAuth(req, env);
+    if (/^\/(share|l|publish|p|diagnostics)(\/|$)/.test(url.pathname)) {
+      const r = await handleShare(req, env, url, device);
+      if (r) return r;
+    }
 
     // Lets the app check its access code without spending AI credits.
     if (url.pathname === "/health") {

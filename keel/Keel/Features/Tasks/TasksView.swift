@@ -44,6 +44,7 @@ struct TasksView: View {
     @Environment(\.modelContext) private var ctx
     @Query(sort: \TaskItem.createdAt, order: .reverse) private var tasks: [TaskItem]
     @Query(sort: \SmartList.createdAt) private var smartLists: [SmartList]
+    @State private var deadlineFor: TaskItem?
     @State private var editingSmart: SmartList?
     @State private var selecting = false
     @State private var selectedTasks = Set<UUID>()
@@ -85,7 +86,7 @@ struct TasksView: View {
     private var lists: [String] {
         Array(Set(tasks.map(\.listName) + CalendarService.shared.reminderLists.map(\.title))).sorted()
     }
-    private var tags: [String] { Array(Set(tasks.flatMap(\.tags))).sorted() }
+    private var tags: [String] { Array(Set(tasks.flatMap(\.tags))).filter { !TaskMeta.isHidden($0) }.sorted() }
 
     private var chosen: [TaskItem] { tasks.filter { selectedTasks.contains($0.id) } }
 
@@ -200,6 +201,9 @@ struct TasksView: View {
                         NavigationLink { WeekPlannerView() } label: { Label("Plan the week", systemImage: "calendar.day.timeline.left") }
                         NavigationLink { StatsView() } label: { Label("Statistics", systemImage: "chart.xyaxis.line") }
                         NavigationLink { TagsManagerView() } label: { Label("Manage tags", systemImage: "number") }
+                        NavigationLink { ErrandsView() } label: { Label("Errands by place", systemImage: "car") }
+                        NavigationLink { SharedListsView() } label: { Label("Shared lists", systemImage: "person.2") }
+                        NavigationLink { AutomationsView() } label: { Label("Automations", systemImage: "bolt.horizontal") }
                         NavigationLink { ScreenshotTasksView() } label: { Label("From screenshots", systemImage: "camera.viewfinder") }
                         if case .list(let name) = filter {
                             Button("Save “\(name)” as a template", systemImage: "square.and.arrow.down") {
@@ -215,6 +219,7 @@ struct TasksView: View {
             .refreshable { await SyncEngine.shared.syncAll() }
             .sheet(item: Binding(get: { sharingList.map { ListName(name: $0) } }, set: { sharingList = $0?.name })) { ShareListSheet(listName: $0.name) }
             .sheet(isPresented: $newSmart) { SmartListEditor(list: nil, allLists: lists, allTags: tags) }
+            .sheet(item: $deadlineFor) { DeadlineSheet(task: $0) }
             .sheet(item: $editingSmart) { SmartListEditor(list: $0, allLists: lists, allTags: tags) }
             .overlay(alignment: .bottom) {
                 if let toast {
@@ -326,8 +331,16 @@ struct TasksView: View {
             ("No Date", { $0.dueDate == nil }),
         ]
         let pinned: [(title: String, items: [TaskItem])] = [("Pinned", sorted(active.filter(\.isPinned)))]
-        return (pinned + buckets.map { (title, test) in (title, sorted(active.filter { !$0.isPinned && test($0) })) })
-            .filter { !$0.items.isEmpty }
+        // Things-style: tonight's tasks get their own section after Today.
+        let evening = active.filter { !$0.isPinned && TaskMeta.isEvening($0) && ($0.dueDate ?? .distantFuture) < tomorrow }
+        let rest = active.filter { !evening.contains($0) }
+        var out = pinned + buckets.map { (title, test) in (title, sorted(rest.filter { !$0.isPinned && test($0) })) }
+        if let i = out.firstIndex(where: { $0.title == "Today" }) ?? out.firstIndex(where: { $0.title == "Overdue" }) {
+            out.insert(("This Evening", sorted(evening)), at: i + 1)
+        } else {
+            out.insert(("This Evening", sorted(evening)), at: min(2, out.count))
+        }
+        return out.filter { !$0.items.isEmpty }
     }
 
     @ViewBuilder
@@ -357,8 +370,13 @@ struct TasksView: View {
                 }
             }
             #endif
+            Button("Start now (\(max(5, ADHDCoach.calibratedMinutes(t))) min)", systemImage: "timer") { NowTimer.start(t, ctx: ctx) }
             Divider()
-            Button("Today", systemImage: "sun.max") { move(t, days: 0) }
+            Button("Today", systemImage: "sun.max") { TaskMeta.setEvening(t, false); move(t, days: 0) }
+            Button(TaskMeta.isEvening(t) ? "Not This Evening" : "This Evening", systemImage: "moon.stars") {
+                withAnimation(DS.spring) { TaskMeta.setEvening(t, !TaskMeta.isEvening(t)) }; Haptics.tap()
+            }
+            Button(TaskMeta.deadline(t) == nil ? "Set Deadline…" : "Change Deadline…", systemImage: "flag") { deadlineFor = t }
             Button("Tomorrow", systemImage: "sunrise") { move(t, days: 1) }
             Button("Next week", systemImage: "calendar") { move(t, days: 7) }
             Button("No date", systemImage: "calendar.badge.minus") { t.dueDate = nil; t.updatedAt = Date(); try? CalendarService.shared.push(t); TaskAlerts.cancel(t) }
@@ -442,7 +460,11 @@ struct TaskRow: View {
                     if !task.microSteps.isEmpty { Text("\(task.microSteps.filter(\.done).count)/\(task.microSteps.count)") }
                     if task.sourceEmailId != nil { Image(systemName: "envelope") }
                     if showList && task.listName != "Inbox" { Text(task.listName) }
-                    ForEach(task.tags.prefix(2), id: \.self) { Text("#\($0)").foregroundStyle(DS.Palette.accent) }
+                    if let dl = TaskMeta.deadline(task) {
+                        Text("⚑ \(dl.formatted(.dateTime.month(.abbreviated).day()))").foregroundStyle(dl < Date().addingTimeInterval(2 * 86_400) ? DS.Palette.warmth : DS.Palette.inkSoft)
+                    }
+                    if TaskMeta.isEvening(task) { Image(systemName: "moon.stars").foregroundStyle(.indigo) }
+                    ForEach(TaskMeta.visibleTags(task).prefix(2), id: \.self) { Text("#\($0)").foregroundStyle(DS.Palette.accent) }
                 }
                 .font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
             }
@@ -615,8 +637,8 @@ struct TaskDetailView: View {
                 }
                 Button("New list…") { showNewList = true }
                 TextField("Tags (comma separated)", text: Binding(
-                    get: { task.tags.joined(separator: ", ") },
-                    set: { task.tags = $0.split(separator: ",").map { $0.trimmingCharacters(in: .whitespaces).replacingOccurrences(of: "#", with: "") }.filter { !$0.isEmpty } }))
+                    get: { TaskMeta.visibleTags(task).joined(separator: ", ") },
+                    set: { task.tags = task.tags.filter(TaskMeta.isHidden) + $0.split(separator: ",").map { $0.trimmingCharacters(in: .whitespaces).replacingOccurrences(of: "#", with: "") }.filter { !$0.isEmpty } }))
                     .textInputAutocapitalization(.never)
             }
 
