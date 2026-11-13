@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import CoreData
 import CoreSpotlight
 import UserNotifications
 
@@ -122,6 +123,9 @@ struct KeelApp: App {
         if !UserDefaults.standard.bool(forKey: splitKey) {
             copyStore(from: single.url, to: mailURL)
         }
+        // A copied store keeps the original's identity; two stores with the same ID get mixed up
+        // ("Failed to find entity for this object in the schema"). Give the mail store its own.
+        giveOwnIdentity(mailURL, unlike: single.url)
         let wantCloud = syncWanted
         do {
             let content = ModelConfiguration("Content", schema: Schema(syncedTypes), url: single.url,
@@ -152,6 +156,16 @@ struct KeelApp: App {
 
     /// Shown at the top of the app if the data couldn't be opened, instead of crashing.
     static private(set) var loadError: String?
+
+    private static func giveOwnIdentity(_ url: URL, unlike other: URL) {
+        let fm = FileManager.default
+        guard fm.fileExists(atPath: url.path), fm.fileExists(atPath: other.path),
+              var meta = try? NSPersistentStoreCoordinator.metadataForPersistentStore(ofType: NSSQLiteStoreType, at: url, options: nil),
+              let otherMeta = try? NSPersistentStoreCoordinator.metadataForPersistentStore(ofType: NSSQLiteStoreType, at: other, options: nil),
+              let id = meta[NSStoreUUIDKey] as? String, id == otherMeta[NSStoreUUIDKey] as? String else { return }
+        meta[NSStoreUUIDKey] = UUID().uuidString
+        try? NSPersistentStoreCoordinator.setMetadata(meta, forPersistentStoreOfType: NSSQLiteStoreType, at: url, options: nil)
+    }
 
     /// Copies a SQLite store and its side files (-wal, -shm) before either is opened.
     private static func copyStore(from: URL, to: URL) {
