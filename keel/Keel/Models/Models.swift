@@ -361,7 +361,7 @@ enum StackAnchor: Codable, Hashable {
 @Model final class HabitStack {
     var id: UUID = UUID()
     var name: String = ""
-    var anchor: StackAnchor = .afterFocusSession
+    var anchor: StackAnchor = StackAnchor.afterFocusSession
     var weekdays: [Int] = [1, 2, 3, 4, 5, 6, 7]   // Calendar weekday numbers
     var isActive: Bool = true
 
@@ -434,7 +434,7 @@ enum LifeArea: String, Codable, CaseIterable, Identifiable {
 @Model final class Goal {
     var id: UUID = UUID()
     var title: String = ""
-    var area: LifeArea = .growth
+    var area: LifeArea = LifeArea.growth
     var why: String = ""                        // the reason it matters (shown when motivation dips)
     var targetDate: Date?
     var emoji: String = "🎯"
@@ -482,7 +482,7 @@ enum TaskFeeling: String, Codable, CaseIterable, Identifiable {
 @Model final class TimeEntry {
     var id: UUID = UUID()
     var title: String = ""
-    var area: LifeArea = .growth
+    var area: LifeArea = LifeArea.growth
     var start: Date = Date()
     var end: Date?                              // nil while the timer is running
     var source: String = "manual"               // manual | focus | calendar
@@ -501,7 +501,7 @@ enum TaskFeeling: String, Codable, CaseIterable, Identifiable {
 @Model final class IdealBlock {
     var id: UUID = UUID()
     var title: String = ""
-    var area: LifeArea = .growth
+    var area: LifeArea = LifeArea.growth
     var weekdays: [Int] = []                         // 1 = Sunday … 7 = Saturday
     var startMinute: Int = 0 // minutes after midnight
     var endMinute: Int = 0
@@ -540,7 +540,7 @@ enum OdysseyKind: String, Codable, CaseIterable, Identifiable {
 
 @Model final class OdysseyPath {
     var id: UUID = UUID()
-    var kind: OdysseyKind = .current
+    var kind: OdysseyKind = OdysseyKind.current
     var title: String = ""
     var years: [String] = ["", "", "", "", ""]  // one line per year
     var questions: String = ""                  // questions this path raises
