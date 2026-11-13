@@ -35,7 +35,7 @@ final class AIRouter {
     }
 
     func summarize(_ text: String) async -> String? {
-        if preferCloud, let s = try? await cloud.summarize(text) { return s }
+        // Apple Intelligence first (free, private, on this device); Claude only if it can't.
         if onDeviceAvailable, let s = try? await onDevice.summarize(String(text.prefix(12_000))) { return s }
         return cloudEnabled ? try? await cloud.summarize(text) : nil
     }
@@ -58,13 +58,12 @@ final class AIRouter {
     }
 
     func planDay(context: DayContext) async -> DayPlan? {
-        // With a Claude server connected, its stronger planning is used first.
-        if cloudEnabled, let plan = try? await cloud.planDay(context) { return plan }
-        return onDeviceAvailable ? try? await onDevice.planDay(context) : nil
+        // Apple Intelligence first; Claude only when it isn't available or can't do it.
+        if onDeviceAvailable, let plan = try? await onDevice.planDay(context) { return plan }
+        return cloudEnabled ? try? await cloud.planDay(context) : nil
     }
 
     func draftReply(to email: EmailMessage, intent: String) async -> String? {
-        if preferCloud, let d = try? await cloud.draftReply(email, intent: intent) { return d }
         if onDeviceAvailable, let d = try? await onDevice.draftReply(email, intent: intent) { return d }
         return cloudEnabled ? try? await cloud.draftReply(email, intent: intent) : nil
     }
@@ -79,7 +78,6 @@ final class AIRouter {
 
     /// "Break into tiny steps". Without any AI, a simple starter plan still beats a blank page.
     func breakDown(_ task: String, minutesAvailable: Int?) async -> [MicroStep] {
-        if preferCloud, let steps = try? await cloud.breakDown(task, minutesAvailable: minutesAvailable), !steps.isEmpty { return steps }
         if onDeviceAvailable, let steps = try? await onDevice.breakDown(task, minutesAvailable: minutesAvailable), !steps.isEmpty { return steps }
         if cloudEnabled, let steps = try? await cloud.breakDown(task, minutesAvailable: minutesAvailable) { return steps }
         return [

@@ -73,8 +73,8 @@ enum NotesReorganizer {
     }
 
     static func plan(for pages: [Note], existingFolders: [String], progress: @escaping (String, Double) -> Void) async -> Plan {
-        if AIRouter.shared.cloudEnabled, let p = await cloudPlan(pages, existing: existingFolders, progress: progress) { return p }
         if AIRouter.shared.onDeviceAvailable, let p = await onDevicePlan(pages, existing: existingFolders, progress: progress) { return p }
+        if AIRouter.shared.cloudEnabled, let p = await cloudPlan(pages, existing: existingFolders, progress: progress) { return p }
         return basicPlan(pages)
     }
 

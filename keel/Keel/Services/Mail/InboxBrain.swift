@@ -84,7 +84,7 @@ enum InboxBrain {
     }
 
     static func isQuickWin(_ e: EmailMessage, score: SenderScore?) -> Bool {
-        !e.isArchived && tab(e, score: score) == .priority && replyMinutes(e) <= 2 && !MailNoise.isAutomated(e)
+        !e.isArchived && tab(e, score: score) == .priority && replyMinutes(e) <= 2 && AutoDrafts.isRealPerson(e)
     }
 
     /// Urgent: VIP, or a person with a deadline today/tomorrow, or very high priority.

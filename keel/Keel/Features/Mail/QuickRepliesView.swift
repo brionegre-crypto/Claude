@@ -27,7 +27,7 @@ struct QuickRepliesView: View {
         let mine = Set(accounts.map { $0.address.lowercased() })
         let map = Dictionary(scores.map { ($0.sender, $0) }, uniquingKeysWith: { a, _ in a })
         return mail.filter { e in
-            (MailNoise.needsYou(e, myAddresses: mine) && InboxBrain.replyMinutes(e) <= 5)
+            AutoDrafts.isRealPerson(e) && (MailNoise.needsYou(e, myAddresses: mine) && InboxBrain.replyMinutes(e) <= 5)
                 || (InboxBrain.isQuickWin(e, score: map[e.from.lowercased()]) && !mine.contains(e.from.lowercased()))
         }
         .sorted { $0.receivedAt < $1.receivedAt }

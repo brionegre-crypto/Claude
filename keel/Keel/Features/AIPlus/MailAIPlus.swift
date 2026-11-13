@@ -32,8 +32,26 @@ enum AutoDrafts {
     static func has(_ id: String) -> Bool { store[id] != nil }
     static func clear(_ id: String) { store[id] = nil }
 
+    /// Only real people: never companies, shops, newsletters, notifications or no-reply addresses.
+    static func isRealPerson(_ e: EmailMessage) -> Bool {
+        if MailNoise.isAutomated(e) || e.unsubscribeHeader != nil { return false }
+        if [.newsletters, .promotions, .updates, .lowPriority].contains(e.category) { return false }
+        let addr = e.from.lowercased()
+        let local = String(addr.split(separator: "@").first ?? "")
+        let businessBoxes = ["info", "hello", "hi", "support", "help", "team", "contact", "sales", "billing", "accounts", "admin", "office",
+                             "service", "services", "customerservice", "care", "orders", "order", "shop", "store", "marketing", "news",
+                             "newsletter", "notifications", "notification", "alerts", "updates", "mail", "mailer", "bounce", "reply",
+                             "noreply", "no-reply", "donotreply", "do-not-reply", "feedback", "jobs", "careers", "hr", "events", "membership", "booking", "reservations"]
+        if businessBoxes.contains(local) || local.contains("noreply") || local.contains("no-reply") || local.contains("notify") { return false }
+        // A business name shown instead of a person's ("Acme Inc", "The Shop Team").
+        let name = e.fromName.lowercased()
+        if ["inc", "llc", "ltd", "corp", "company", "team", "support", "store", "shop", "bank", "services", "group", "official", "hq", "app"]
+            .contains(where: { name.split(separator: " ").map(String.init).contains($0) }) { return false }
+        return true
+    }
+
     static func needsReply(_ e: EmailMessage, mine: Set<String>) -> Bool {
-        guard !e.isRead, !e.isArchived, !mine.contains(e.from.lowercased()), !MailNoise.isAutomated(e) else { return false }
+        guard !e.isRead, !e.isArchived, !mine.contains(e.from.lowercased()), isRealPerson(e) else { return false }
         guard e.category == .important || e.category == .actionable || e.category == nil else { return false }
         let text = (e.subject + " " + e.bodyPlain.prefix(1_500)).lowercased()
         return text.contains("?") || ["can you", "could you", "would you", "let me know", "please", "thoughts", "are you", "do you"].contains { text.contains($0) }
@@ -48,6 +66,7 @@ enum AutoDrafts {
         Task {
             defer { working = false }
             for e in picks {
+                // Drafts are always written by Apple Intelligence on this device when it's available (free, private).
                 let intent = "Write the reply I'd most likely send, in my usual voice. If it needs a decision or a fact only I know, leave a short [bracketed] placeholder instead of guessing."
                 if let d = await AIRouter.shared.draftReply(to: e, intent: intent), !d.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                     store[e.id] = d
