@@ -1,4 +1,5 @@
 import AVFoundation
+import CoreAudioTypes   // UnsafeMutableAudioBufferListPointer (the Mac build doesn't get it through AVFoundation)
 
 /// Focus sounds generated on-device (no downloads): brown, pink and white noise, and ocean waves.
 @MainActor
