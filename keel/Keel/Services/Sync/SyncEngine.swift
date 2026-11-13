@@ -93,6 +93,7 @@ final class SyncEngine {
         await MailRules.apply(to: fresh, accounts: accounts, ctx: ctx)
         EmailToKeel.process(fresh, accounts: accounts, ctx: ctx)        // forwarded to name+keel@… or “Task:” to yourself
         Automations.emailsArrived(fresh, ctx: ctx)
+        MailTabs.classifyInBackground(fresh)                           // your plain-words inbox tabs
         MailScanners.backfillIfNeeded(ctx: ctx)
         MailScanners.scan(fresh, ctx: ctx)
         Task { await TripScanner.backfillIfNeeded(ctx: ctx) }   // one-time, in the background

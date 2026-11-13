@@ -87,6 +87,7 @@ struct InboxView: View {
             return pool.filter { q.matches($0, isVIP: scores[$0.from.lowercased()]?.isVIP == true) }
         }
         guard mailbox == .inbox else { return base }
+        if let c = customTab { return base.filter { !$0.isPinned && MailTabs.matches($0, c) }.sorted { $0.receivedAt > $1.receivedAt } }
         // All: a regular inbox. Every account, newest first, nothing sorted away or held back.
         if tab == .all { return base.filter { !$0.isPinned }.sorted { $0.receivedAt > $1.receivedAt } }
         let scores = scoreMap
@@ -119,7 +120,15 @@ struct InboxView: View {
         return out
     }
 
+    /// A tab you made (Settings → Look & Feel → Inbox tabs) shows like All, filtered to its rule.
+    private var customTab: CustomMailTab? { MailTabs.tab(for: tabRaw) }
     private var tab: InboxTab { InboxTab(rawValue: tabRaw) ?? .all }
+    private var tabBarCounts: [String: Int] {
+        var out = Dictionary(uniqueKeysWithValues: tabCounts.map { ($0.key.rawValue, $0.value) })
+        let unread = mailboxEmails.filter { !$0.isRead }
+        for c in MailTabs.custom { out[c.key] = unread.filter { MailTabs.matches($0, c) }.count }
+        return out
+    }
     private var scoreMap: [String: SenderScore] {
         if let m = memo.scores { return m }
         let m = Dictionary(senderScores.map { ($0.sender, $0) }, uniquingKeysWith: { a, _ in a })
@@ -309,7 +318,7 @@ struct InboxView: View {
                 }
             }
             if mailbox == .inbox && search.isEmpty && !selecting {
-                InboxTabBar(tab: Binding(get: { tab }, set: { tabRaw = $0.rawValue }), counts: tabCounts, hideCounts: calm)
+                InboxTabBar(items: MailTabs.visibleItems, selected: $tabRaw, counts: tabBarCounts, hideCounts: calm)
                     .listRowSeparator(.hidden)
                     .listRowInsets(EdgeInsets(top: 4, leading: 12, bottom: 4, trailing: 12))
                     .selectionDisabled()
@@ -370,6 +379,7 @@ struct InboxView: View {
         }
         .listStyle(.plain)
         .environment(\.accountTags, accountTags)
+        .modifier(MailLayoutReader())
         .environment(\.editMode, .constant(selecting ? .active : .inactive))
         .safeAreaInset(edge: .bottom) { if selecting { bulkBar } }
         .refreshable {
@@ -639,7 +649,7 @@ struct InboxView: View {
 
     private var readAllTitle: String {
         let n = visible.filter { !$0.isRead }.count
-        let place = mailbox == .inbox && search.isEmpty ? (tab == .all ? "your inbox" : tab.title) : (search.isEmpty ? mailbox.rawValue : "these results")
+        let place = mailbox == .inbox && search.isEmpty ? (customTab?.name ?? (tab == .all ? "your inbox" : tab.title)) : (search.isEmpty ? mailbox.rawValue : "these results")
         return "Mark \(n) unread email\(n == 1 ? "" : "s") in \(place) as read?"
     }
 
@@ -761,6 +771,7 @@ extension EnvironmentValues {
 
 struct EmailRow: View {
     @Environment(\.accountTags) private var accountTags
+    @Environment(\.mailLayout) private var layout
     let email: EmailMessage
     var count: Int = 1
     var unreadInThread = false
@@ -789,10 +800,14 @@ struct EmailRow: View {
 
     var body: some View {
         HStack(alignment: .top, spacing: DS.Space.m) {
-            SenderAvatar(name: email.fromName, email: email.from)
-                .overlay(alignment: .topLeading) {
-                    if unread { Circle().fill(DS.Palette.accent).frame(width: 10, height: 10).overlay(Circle().stroke(DS.Palette.canvas, lineWidth: 2)).offset(x: -3, y: -3) }
-                }
+            if layout.avatars {
+                SenderAvatar(name: email.fromName, email: email.from, size: layout.avatarSize)
+                    .overlay(alignment: .topLeading) {
+                        if unread { Circle().fill(DS.Palette.accent).frame(width: 10, height: 10).overlay(Circle().stroke(DS.Palette.canvas, lineWidth: 2)).offset(x: -3, y: -3) }
+                    }
+            } else {
+                Circle().fill(unread ? DS.Palette.accent : .clear).frame(width: 8, height: 8).padding(.top, 6)
+            }
             VStack(alignment: .leading, spacing: 3) {
                 HStack(spacing: 4) {
                     Text(email.fromName.isEmpty ? email.from : email.fromName)
@@ -810,15 +825,17 @@ struct EmailRow: View {
                     Text(Self.time(email.receivedAt)).font(DS.Font.caption).foregroundStyle(unread ? DS.Palette.accent : DS.Palette.inkSoft)
                 }
                 Text(email.subject).font(DS.Font.body).foregroundStyle(unread ? DS.Palette.ink : DS.Palette.inkSoft).lineLimit(1)
-                Text((count > 1 ? "Thread · " : "") + (email.aiSummary ?? email.snippet))
-                    .font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft).lineLimit(count > 1 ? 1 : 2)
-                if !chips.isEmpty {
+                if layout.previewLines > 0 {
+                    Text((count > 1 ? "Thread · " : "") + ((layout.aiSummary ? email.aiSummary : nil) ?? email.snippet))
+                        .font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft).lineLimit(count > 1 ? min(1, layout.previewLines) : layout.previewLines)
+                }
+                if !chips.isEmpty && layout.density != .compact {
                     HStack(spacing: 4) { ForEach(chips, id: \.0) { MailChip(text: $0.0, icon: $0.1, color: $0.2) } }
                         .padding(.top, 2)
                 }
             }
         }
-        .padding(.vertical, 4)
+        .padding(.vertical, layout.rowPadding)
     }
 
     /// "9:41 AM" today, "Tue" this week, "Nov 3" otherwise.

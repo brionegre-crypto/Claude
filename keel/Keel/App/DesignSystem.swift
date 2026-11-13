@@ -8,10 +8,11 @@ enum DS {
     enum Palette {
         /// Accent follows Settings → Appearance (Keel indigo by default).
         static var accent: Color { Theme.current.color }
-        static let canvas = Color(uiColor: .systemBackground)
-        static let elevated = Color(uiColor: .secondarySystemBackground)
-        static let ink = Color.primary
-        static let inkSoft = Color.secondary
+        // Follow Settings → Look & Feel → Theme (Standard, Paper, Midnight, High contrast).
+        static var canvas: Color { KeelLook.current.canvas }
+        static var elevated: Color { KeelLook.current.elevated }
+        static var ink: Color { KeelLook.current.ink }
+        static var inkSoft: Color { KeelLook.current.inkSoft }
         static let focus = Color(red: 0.42, green: 0.36, blue: 0.95)
         static let calm = Color(red: 0.27, green: 0.70, blue: 0.62)         // done / healthy
         static let warmth = Color(red: 0.98, green: 0.62, blue: 0.29)       // gentle attention, never red alarms

@@ -187,11 +187,15 @@ struct RootView: View {
     @AppStorage("onboarding.done") private var onboarded = false
     @AppStorage(Prefs.appearance) private var appearance = "system"
     @AppStorage("accent") private var accentName = "indigo"
+    @AppStorage(KeelLook.key) private var lookRaw = KeelLook.standard.rawValue
+    @AppStorage(KeelLook.fontKey) private var fontRaw = KeelFontStyle.system.rawValue
     @State private var appLock = AppLock.shared
     @State private var savePoints = SavePointCenter.shared
     @Environment(\.scenePhase) private var phase
 
-    enum Tab { case today, inbox, calendar, tasks, notes, settings }
+    enum Tab: Hashable { case today, inbox, calendar, tasks, notes, settings, tool(String) }
+    @AppStorage(TabBarConfig.revKey) private var tabBarRev = 0
+    @State private var hiddenSection: HiddenSection?
 
     private func openTask(_ id: UUID) -> TaskItem? {
         try? KeelStore.container.mainContext.fetch(FetchDescriptor<TaskItem>(predicate: #Predicate { $0.id == id })).first
@@ -200,17 +204,17 @@ struct RootView: View {
         try? KeelStore.container.mainContext.fetch(FetchDescriptor<Note>(predicate: #Predicate { $0.id == id })).first
     }
 
+    private var tabBarItems: [String] { _ = tabBarRev; return TabBarConfig.items }
     @Environment(\.horizontalSizeClass) private var sizeClass
     /// Only where there's a sidebar (Mac, and iPad at full width). Never on iPhone.
     private var showsSidebarSettings: Bool { UIDevice.current.userInterfaceIdiom != .phone && sizeClass == .regular }
 
     var body: some View {
         TabView(selection: $router.tab) {
-            SwiftUI.Tab("Today", systemImage: "sun.max", value: Tab.today) { TodayView() }
-            SwiftUI.Tab("Inbox", systemImage: "tray", value: Tab.inbox) { InboxView() }
-            SwiftUI.Tab("Calendar", systemImage: "calendar", value: Tab.calendar) { CalendarView() }
-            SwiftUI.Tab("Tasks", systemImage: "checklist", value: Tab.tasks) { TasksView() }
-            SwiftUI.Tab("Notes", systemImage: "note.text", value: Tab.notes) { NotesView() }
+            // Your tab bar (Settings → Look & Feel → Tab bar).
+            ForEach(tabBarItems, id: \.self) { id in
+                SwiftUI.Tab(TabBarConfig.title(id), systemImage: TabBarConfig.icon(id), value: TabBarConfig.value(id)) { TabBarConfig.content(id) }
+            }
             // Mac and iPad: Settings sits at the bottom of the sidebar. iPhone uses the gear on each tab.
             // Left out of the iPhone tab bar entirely: a sixth tab pushes Notes behind "More".
             if showsSidebarSettings {
@@ -219,6 +223,13 @@ struct RootView: View {
             }
         }
         .onChange(of: showsSidebarSettings) { _, shown in if !shown && router.tab == .settings { router.tab = .today } }
+        // A section you took out of the tab bar still opens (from a link, widget or ⌘-shortcut), as a sheet.
+        .onChange(of: router.tab) { old, new in
+            guard let id = TabBarConfig.id(for: new), !tabBarItems.contains(id) else { return }
+            router.tab = tabBarItems.contains(TabBarConfig.id(for: old) ?? "") ? old : .today
+            hiddenSection = HiddenSection(id: id)
+        }
+        .sheet(item: $hiddenSection) { HiddenSectionSheet(sectionId: $0.id) }
         .tabViewStyle(.sidebarAdaptable)      // tabs on iPhone; a sidebar on Mac and iPad
         // Focus lives above the tab bar (like Music's mini-player): always one tap away, shows the live timer.
         .tabViewBottomAccessory { FocusAccessory { router.showFocus = true } }
@@ -252,9 +263,10 @@ struct RootView: View {
         .modifier(OpenItemSheets(router: router))
         .fullScreenCover(isPresented: Binding(get: { !onboarded }, set: { if !$0 { onboarded = true } })) { OnboardingFlow() }
         .modifier(WhatsNewModifier())
-        .preferredColorScheme(appearance == "light" ? .light : appearance == "dark" ? .dark : nil)
+        .preferredColorScheme(KeelLook(rawValue: lookRaw)?.scheme ?? (appearance == "light" ? .light : appearance == "dark" ? .dark : nil))
+        .fontDesign(KeelFontStyle(rawValue: fontRaw)?.design ?? .default)
         .tint(Theme(rawValue: accentName)?.color ?? DS.Palette.accent)
-        .id(accentName)          // redraw everything with the new accent
+        .id(accentName + lookRaw)          // redraw everything with the new accent
         // Superhuman-style universal command bar: ⌘K on a keyboard
         .overlay(alignment: .top) {
             if showCommandBar || router.showCapture {

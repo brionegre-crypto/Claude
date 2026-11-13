@@ -677,6 +677,7 @@ struct AppearanceSettings: View {
                 .pickerStyle(.inline)
                 .labelsHidden()
             }
+            LookSettingsSection()
             Section {
                 Toggle("Haptics", isOn: Binding(get: { !hapticsOff }, set: { hapticsOff = !$0 }))
             } footer: { Text("Small taps you feel when you complete things.") }

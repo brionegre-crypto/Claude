@@ -77,12 +77,13 @@ struct MailChip: View {
 // MARK: - Tab bar
 
 struct InboxTabBar: View {
-    @Binding var tab: InboxTab
-    let counts: [InboxTab: Int]
+    let items: [MailTabItem]
+    @Binding var selected: String
+    let counts: [String: Int]
     var hideCounts = false
 
     var body: some View {
-        // Bigger text or Display Zoom: the tabs scroll sideways instead of running off the screen.
+        // Bigger text, Display Zoom or many tabs: the tabs scroll sideways instead of running off the screen.
         ViewThatFits(in: .horizontal) {
             bar
             ScrollView(.horizontal, showsIndicators: false) { bar }
@@ -91,24 +92,25 @@ struct InboxTabBar: View {
 
     private var bar: some View {
         HStack(spacing: 6) {
-            ForEach(InboxTab.allCases) { t in
-                Button { withAnimation(DS.spring) { tab = t }; Haptics.tap() } label: {
+            ForEach(items) { t in
+                let on = selected == t.id
+                Button { withAnimation(DS.spring) { selected = t.id }; Haptics.tap() } label: {
                     HStack(spacing: 4) {
                         Image(systemName: t.icon).scaledFont(size: 11, weight: .semibold)
-                        Text(t == .quick ? "Quick" : t.title).scaledFont(size: 13, weight: .semibold)
-                        if !hideCounts, let n = counts[t], n > 0 {
+                        Text(t.title).scaledFont(size: 13, weight: .semibold).lineLimit(1)
+                        if !hideCounts, let n = counts[t.id], n > 0 {
                             Text("\(n)").scaledFont(size: 11, weight: .bold).monospacedDigit()
                                 .padding(.horizontal, 5).padding(.vertical, 1)
-                                .background((tab == t ? Color.white : DS.Palette.accent).opacity(tab == t ? 0.25 : 0.15), in: Capsule())
+                                .background((on ? Color.white : DS.Palette.accent).opacity(on ? 0.25 : 0.15), in: Capsule())
                         }
                     }
                     .padding(.horizontal, 10).padding(.vertical, 7)
                     .frame(maxWidth: .infinity)
-                    .foregroundStyle(tab == t ? .white : DS.Palette.ink)
-                    .background(tab == t ? AnyShapeStyle(DS.Palette.accent.gradient) : AnyShapeStyle(DS.Palette.elevated), in: Capsule())
+                    .foregroundStyle(on ? .white : DS.Palette.ink)
+                    .background(on ? AnyShapeStyle(DS.Palette.accent.gradient) : AnyShapeStyle(DS.Palette.elevated), in: Capsule())
                 }
                 .buttonStyle(.plain)
-                .accessibilityLabel("\(t.title)\(counts[t].map { ", \($0) unread" } ?? "")")
+                .accessibilityLabel("\(t.title)\(counts[t.id].map { ", \($0) unread" } ?? "")")
             }
         }
     }
