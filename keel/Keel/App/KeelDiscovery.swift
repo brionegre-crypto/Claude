@@ -13,7 +13,11 @@ struct ToolSheet: View {
     var body: some View {
         NavigationStack {
             Group {
-                if let t = HubCatalog.tool(id) { t.dest() } else { ContentUnavailableView("Not found", systemImage: "questionmark") }
+                if let t = HubCatalog.tool(id) { t.dest() }
+                else if id.hasPrefix("person:"), let pid = UUID(uuidString: String(id.dropFirst(7))),
+                        let p = try? KeelStore.container.mainContext.fetch(FetchDescriptor<Person>(predicate: #Predicate { $0.id == pid })).first {
+                    PersonPageView(person: p)
+                } else { ContentUnavailableView("Not found", systemImage: "questionmark") }
             }
             .toolbar { ToolbarItem(placement: .cancellationAction) { Button("Done") { dismiss() } } }
         }

@@ -20,6 +20,8 @@ targets:
       - target: KeelShare                 # "Save to Keel" in the share sheet (Mac too)
       - target: KeelWatch                 # Apple Watch companion
         platformFilter: iOS
+      - target: KeelSafari                # Safari extension: save pages and highlights (KEEL_SAFARI)
+        platformFilter: iOS
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.briangreenejr.keel   # must be unique across all Apple developers
@@ -124,6 +126,36 @@ targets:
         CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         NSExtension:
           NSExtensionPointIdentifier: com.apple.widgetkit-extension
+
+  KeelSafari:
+    type: app-extension
+    platform: iOS
+    sources:
+      - path: KeelSafari/SafariWebExtensionHandler.swift
+      - path: KeelSafari/Resources
+        type: folder
+        buildPhase: resources
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.briangreenejr.keel.safari
+        MARKETING_VERSION: "0.1.0"
+        CURRENT_PROJECT_VERSION: "1"
+        CODE_SIGN_STYLE: Automatic
+        TARGETED_DEVICE_FAMILY: "1,2"
+        SUPPORTS_MACCATALYST: NO
+    entitlements:
+      path: KeelSafari/KeelSafari.entitlements
+      properties:
+        com.apple.security.application-groups: [group.com.briangreenejr.keel]
+    info:
+      path: KeelSafari/Info.plist
+      properties:
+        CFBundleDisplayName: Keel
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.Safari.web-extension
+          NSExtensionPrincipalClass: $(PRODUCT_MODULE_NAME).SafariWebExtensionHandler
 
   KeelShare:
     type: app-extension

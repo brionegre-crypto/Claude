@@ -307,6 +307,7 @@ struct CanvasCard: Codable, Identifiable, Hashable {
     var text: String
     var pageId: UUID?
     var color: String = "yellow"
+    var ref: String?                    // "task:<id>", "mail:<id>", "person:<id>", "pdf:<attachmentId>": anything on the canvas
 }
 struct CanvasLink: Codable, Hashable { var from: UUID; var to: UUID }
 struct CanvasData: Codable { var cards: [CanvasCard] = []; var links: [CanvasLink] = [] }
@@ -361,6 +362,8 @@ struct CanvasBoardView: View {
     @State private var linking = false
     @State private var editing: CanvasCard?
     @State private var pickingPage = false
+    @State private var pickingAny = false
+    @State private var openRef: CanvasRefTarget?
     @State private var openPage: Note?
 
     private static let colors: [String: Color] = ["yellow": .yellow, "blue": .blue, "green": .green, "pink": .pink, "purple": .purple, "gray": .gray]
@@ -399,6 +402,7 @@ struct CanvasBoardView: View {
             ToolbarItemGroup(placement: .bottomBar) {
                 Button { addCard() } label: { Label("Card", systemImage: "note.text.badge.plus") }
                 Button { pickingPage = true } label: { Label("Page", systemImage: "doc.badge.plus") }
+                Button { pickingAny = true } label: { Label("Task, email, person or PDF", systemImage: "square.stack.3d.up.badge.plus") }
                 Button { linking.toggle() } label: { Label(linking ? "Pick a card" : "Connect", systemImage: "arrow.triangle.branch") }
                     .disabled(selected == nil)
                 Button(role: .destructive) { deleteSelected() } label: { Label("Delete", systemImage: "trash") }.disabled(selected == nil)
@@ -427,6 +431,13 @@ struct CanvasBoardView: View {
             .presentationDetents([.medium, .large])
         }
         .navigationDestination(item: $openPage) { NoteEditor(note: $0) }
+        .sheet(isPresented: $pickingAny) {
+            CanvasAnythingPicker { ref, title in
+                data.cards.append(CanvasCard(x: Double(-offset.width / scale), y: Double(-offset.height / scale), text: title, color: CanvasAnythingPicker.color(ref), ref: ref))
+                persist(); pickingAny = false
+            }
+        }
+        .sheet(item: $openRef) { CanvasRefSheet(target: $0) }
     }
 
     private func point(_ c: CanvasCard, _ center: CGPoint) -> CGPoint {
@@ -437,6 +448,7 @@ struct CanvasBoardView: View {
         let color = Self.colors[c.color] ?? .yellow
         return HStack(spacing: 6) {
             if c.pageId != nil { Image(systemName: "doc.text").font(.caption) }
+            if let r = c.ref { Image(systemName: CanvasAnythingPicker.icon(r)).font(.caption) }
             Text(c.text.isEmpty ? "Tap to write" : c.text).font(.callout).lineLimit(6)
         }
         .padding(10)
@@ -461,7 +473,9 @@ struct CanvasBoardView: View {
             data.links.append(CanvasLink(from: from, to: c.id)); linking = false; selected = c.id; persist(); Haptics.tap(); return
         }
         if selected == c.id {
-            if let pid = c.pageId, let n = allNotes.first(where: { $0.id == pid }) { openPage = n } else { editing = c }
+            if let pid = c.pageId, let n = allNotes.first(where: { $0.id == pid }) { openPage = n }
+            else if let r = c.ref { openRef = CanvasRefTarget(ref: r) }
+            else { editing = c }
         } else {
             selected = c.id
         }

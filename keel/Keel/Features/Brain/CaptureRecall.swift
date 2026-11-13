@@ -934,3 +934,22 @@ struct AskBrainIntent: AppIntent {
         return .result(dialog: "\(a.replacingOccurrences(of: #"\[\d+\]"#, with: "", options: .regularExpression))")
     }
 }
+
+/// Highlights saved with the Safari extension join their article in the reading list.
+@MainActor
+enum SafariHighlights {
+    private struct Item: Codable { var url: String; var title: String; var text: String; var date: Date }
+    static func importQueued(ctx: ModelContext) {
+        guard let dir = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: WidgetSnapshot.groupId) else { return }
+        let file = dir.appendingPathComponent("safari-highlights.json")
+        guard let data = try? Data(contentsOf: file), let items = try? JSONDecoder().decode([Item].self, from: data), !items.isEmpty else { return }
+        try? FileManager.default.removeItem(at: file)
+        let links = (try? ctx.fetch(FetchDescriptor<SavedLink>())) ?? []
+        for it in items {
+            let link = links.first { $0.url == it.url } ?? { let l = SavedLink(url: it.url, title: it.title); ctx.insert(l); return l }()
+            var h = ReaderStore.highlights(link.id)
+            if !h.contains(where: { $0.text == it.text }) { h.append(ReaderHighlight(text: it.text, at: it.date)); ReaderStore.setHighlights(link.id, h) }
+        }
+        try? ctx.save()
+    }
+}

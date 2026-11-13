@@ -1,0 +1,10 @@
+{
+  "manifest_version": 3,
+  "default_locale": "en",
+  "name": "Keel",
+  "description": "Save pages and highlights to your Keel reading list.",
+  "version": "1.0",
+  "action": { "default_popup": "popup.html", "default_title": "Save to Keel" },
+  "permissions": ["activeTab", "scripting", "nativeMessaging"],
+  "background": { "service_worker": "background.js" }
+}

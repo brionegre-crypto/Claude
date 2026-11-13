@@ -66,6 +66,16 @@ enum DailyNote {
             .map { NoteBlock(kind: .bullet, text: "\($0.startDate.formatted(date: .omitted, time: .shortened)) \($0.title ?? "")") }
         var blocks: [NoteBlock] = []
         if !events.isEmpty { blocks += [NoteBlock(kind: .heading, text: "Today")] + events }
+        // Tasks due today, and what's still open from yesterday's page.
+        let endToday = Calendar.current.startOfDay(for: Date()).addingTimeInterval(86_400)
+        let due = ((try? ctx.fetch(FetchDescriptor<TaskItem>(predicate: #Predicate { !$0.isDone }))) ?? [])
+            .filter { ($0.dueDate ?? .distantFuture) < endToday }.prefix(10)
+        if !due.isEmpty { blocks += [NoteBlock(kind: .heading, text: "Due today")] + due.map { NoteBlock(kind: .bullet, text: $0.title) } }
+        let y = title(for: Date().addingTimeInterval(-86_400))
+        if let yesterday = ((try? ctx.fetch(FetchDescriptor<Note>(predicate: #Predicate { $0.title == y }))) ?? []).first {
+            let open = yesterday.blocks.filter { $0.kind == .todo && !$0.checked && !$0.text.isEmpty }
+            if !open.isEmpty { blocks += [NoteBlock(kind: .heading, text: "From yesterday")] + open.map { NoteBlock(kind: .todo, text: $0.text) } }
+        }
         blocks += [
             NoteBlock(kind: .heading, text: "Notes"), NoteBlock(kind: .bullet, text: ""),
             NoteBlock(kind: .heading, text: "Wins"), NoteBlock(kind: .bullet, text: ""),

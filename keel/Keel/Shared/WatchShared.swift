@@ -165,6 +165,7 @@ enum WatchAction: Codable {
     case parkThought(String)
     case takeMed(UUID, Int)
     case brainDump(String)
+    case capture(String)                 // Watch voice capture → capture inbox
     case addEvent(String)
     case acceptSuggestion(UUID)
     case dismissSuggestion(UUID)

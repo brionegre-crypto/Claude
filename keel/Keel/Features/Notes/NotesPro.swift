@@ -32,10 +32,10 @@ enum SpecialBlock {
         lineEmbed,
         .init(id: "mermaid", title: "Diagram", subtitle: "Flowcharts and sequence diagrams (Mermaid)", icon: "point.3.connected.trianglepath.dotted", keywords: ["mermaid", "flowchart", "diagram", "chart", "graph"], kind: .code),
     ]
-    static let commandIds: Set<String> = Set(commands.map(\.id))
+    static let commandIds: Set<String> = Set((commands + moreCommands).map(\.id))
     static let lineEmbed = SlashCommand(id: "blockref", title: "Line embed", subtitle: "Show a line copied with “Copy line embed”", icon: "text.quote", keywords: ["block", "reference", "line", "embed", "(("], kind: .code)
     static func lang(for commandId: String) -> String? {
-        ["embed": embed, "dbview": dbview, "toc": toc, "math": math, "mermaid": mermaid, "blockref": blockref][commandId]
+        ["embed": embed, "dbview": dbview, "toc": toc, "math": math, "mermaid": mermaid, "blockref": blockref][commandId] ?? moreLangs[commandId]
     }
 }
 

@@ -12,7 +12,7 @@ struct NotesView: View {
     @Environment(\.supportsMultipleWindows) private var multiWindow
     @Query(sort: \Note.updatedAt, order: .reverse) private var allNotes: [Note]
     private var notes: [Note] { allNotes.filter { !$0.isTemplate } }
-    private var templates: [Note] { allNotes.filter(\.isTemplate) }
+    private var templates: [Note] { allNotes.filter { $0.isTemplate && $0.title != Supertags.pageTitle } }
     @State private var search = ""
     @State private var newFolderFor: Note?
     @State private var newFolderName = ""
@@ -143,6 +143,9 @@ struct NotesView: View {
                     Menu {
                         Button("New page", systemImage: "doc") { newPage() }
                         Button("Ask my notes", systemImage: "text.bubble") { showAskNotes = true }
+                        Button("Second-brain setup", systemImage: "square.grid.2x2") { showSetup = true }
+                        Button("Brain health", systemImage: "stethoscope") { showHealth = true }
+                        Button("Recently deleted", systemImage: "trash") { showTrash = true }
                         Button("New database", systemImage: "tablecells") { opened = NotesDatabase.create(title: "Untitled database", parent: nil, ctx: ctx) }
                         Button("New canvas", systemImage: "rectangle.on.rectangle.angled") { opened = KeelCanvas.create(ctx: ctx, folder: nil) }
                         if !templates.isEmpty {
@@ -218,6 +221,9 @@ struct NotesView: View {
             .navigationDestination(isPresented: $showTags) { TagBrowserView() }
             .task { await NotesOrganizer.autoFile(ctx: ctx) }
             .navigationDestination(isPresented: $showAskNotes) { AskNotesView() }
+            .navigationDestination(isPresented: $showSetup) { StarterSetupView() }
+            .navigationDestination(isPresented: $showHealth) { BrainHealthView() }
+            .navigationDestination(isPresented: $showTrash) { TrashView() }
         }
     }
 
@@ -240,6 +246,9 @@ struct NotesView: View {
     @State private var showVault = false
     @State private var showTags = false
     @State private var showAskNotes = false
+    @State private var showSetup = false
+    @State private var showHealth = false
+    @State private var showTrash = false
     @AppStorage("notes.emptyFolders") private var emptyFoldersRaw = ""      // folders you made that have no pages yet
 
     // MARK: Pieces
@@ -659,13 +668,10 @@ struct NotesView: View {
 
     /// A fresh copy of a template, with {{date}} filled in.
     private func create(fromTemplate t: Note) {
-        let today = Date().formatted(date: .long, time: .omitted)
-        let blocks = t.blocks.map { b -> NoteBlock in
-            var c = NoteBlock(kind: b.kind, text: b.text.replacingOccurrences(of: "{{date}}", with: today))
-            c.checked = false; c.refId = b.refId
-            return c
-        }
-        create(Note(title: t.title.replacingOccurrences(of: "{{date}}", with: today), blocks: blocks))
+        // {{date}}, {{weekday}}, {{time}}, {{week}} and {{title}} are filled in; the page lands in the template's folder.
+        let n = SmartTemplates.instantiate(t, ctx: ctx)
+        Haptics.tap()
+        AppRouter.shared.openNoteId = n.id
     }
 
     private func createMeetingNote() {

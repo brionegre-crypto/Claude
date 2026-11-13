@@ -55,6 +55,14 @@ struct NoteEditor: View {
     @State private var supertagDefs: [SupertagDef] = []
     @State private var openAt: UUID?
     @State private var importingPDF = false
+    @State private var importingFile = false
+    @State private var fileTarget: UUID?
+    @State private var zen = false
+    @State private var showLocalGraph = false
+    @State private var personSheet: Person?
+    @AppStorage(PageLook.widthKey) private var pageWidth = "comfortable"
+    @Environment(\.openWindow) private var openWindow
+    @Environment(\.supportsMultipleWindows) private var multiWindow
 
     var body: some View {
         editorBody.savePoint { SavePoints.note(note, focusedBlock: focused ?? editing) }
@@ -96,6 +104,27 @@ struct NoteEditor: View {
         .fileImporter(isPresented: $importingPDF, allowedContentTypes: [.pdf]) { r in
             if case .success(let url) = r { PDFImport.add(url, to: note, ctx: ctx) }
         }
+        .fileImporter(isPresented: $importingFile, allowedContentTypes: [.item]) { r in
+            guard case .success(let url) = r, let target = fileTarget else { return }
+            let scoped = url.startAccessingSecurityScopedResource()
+            defer { if scoped { url.stopAccessingSecurityScopedResource() } }
+            guard let data = try? Data(contentsOf: url), let i = note.blocks.firstIndex(where: { $0.id == target }) else { return }
+            let a = NoteAttachment(noteId: note.id, data: data, kind: "file")
+            a.recognizedText = url.lastPathComponent
+            ctx.insert(a)
+            note.blocks[i].refId = a.id.uuidString
+        }
+        .sheet(isPresented: $showLocalGraph) { LocalGraphView(note: note) }
+        .sheet(item: $personSheet) { p in NavigationStack { PersonPageView(person: p) } }
+        .toolbar(zen ? .hidden : .automatic, for: .navigationBar)
+        .statusBarHidden(zen)
+        .overlay(alignment: .topTrailing) {
+            if zen {
+                Button { withAnimation(DS.spring) { zen = false } } label: { Image(systemName: "arrow.down.right.and.arrow.up.left").padding(10).background(.ultraThinMaterial, in: Circle()) }
+                    .padding().accessibilityLabel("Leave focus mode")
+            }
+        }
+        .onDisappear { if note.isLocked { PageCrypto.encrypt(note) } }       // locked pages are stored encrypted whenever they're closed
         .sheet(isPresented: $showFindReplace) { FindReplaceSheet(note: note) { scrollTarget = $0 } }
         .background {
             Group {
@@ -147,11 +176,18 @@ struct NoteEditor: View {
             }
         }
         .listStyle(.plain)
+        .frame(maxWidth: PageLook.maxWidth(pageWidth))
+        .frame(maxWidth: .infinity)
         .environment(\.editMode, .constant(reordering ? .active : .inactive))
         .scrollDismissesKeyboard(.interactively)
         .environment(\.openURL, OpenURLAction { url in
             if let id = RichText.pageId(from: url), let target = allNotes.first(where: { $0.id == id }) {
                 openPage = target
+                return .handled
+            }
+            if url.scheme == "com.keel.app", url.host == "person", let id = url.pathComponents.dropFirst().first.flatMap(UUID.init(uuidString:)),
+               let p = people.first(where: { $0.id == id }) {
+                personSheet = p
                 return .handled
             }
             if let link = BlockLinks.parse(url) {
@@ -180,7 +216,16 @@ struct NoteEditor: View {
             }
         }
         .photosPicker(isPresented: $showPhotoPicker, selection: $photoItem, matching: .images)
-        .sheet(isPresented: $showSketch) { SketchSheet { NoteMedia.add($0, kind: "sketch", to: note, ctx: ctx) } }
+        .sheet(isPresented: $showSketch) {
+            SketchSheet { data in
+                // Handwriting is read on the device so search finds it.
+                Task {
+                    var text = ""
+                    if let img = UIImage(data: data) { text = await NoteMedia.recognizeText(img) }
+                    NoteMedia.add(data, kind: "sketch", to: note, ctx: ctx, text: text)
+                }
+            }
+        }
         .sheet(isPresented: $showIcons) { IconPicker(icon: $note.icon) }
         .sheet(isPresented: $movingPage) { MovePageSheet(note: note) }
         .sheet(isPresented: $recording) {
@@ -267,6 +312,7 @@ struct NoteEditor: View {
                         .buttonStyle(.plain)
                 }
             }
+            PageStats(note: note).padding(.top, DS.Space.s)
             NoteLinksSection(note: note)
             RelatedSection(note: note, allNotes: allNotes, open: { openPage = $0 })
         }
@@ -431,6 +477,11 @@ struct NoteEditor: View {
             } else {
                 Button { pickBlock = BlockPickTarget(id: blk.id, databasesOnly: true) } label: { Label("Choose a database to show here", systemImage: "tablecells.badge.ellipsis") }
             }
+        case SpecialBlock.columns: ColumnsBlockView(block: b)
+        case SpecialBlock.button: ButtonBlockView(block: b)
+        case SpecialBlock.progress: ProgressBlockView(note: note)
+        case SpecialBlock.chart: ChartBlockView(dbId: blk.refId) { pickBlock = BlockPickTarget(id: blk.id, databasesOnly: true) }
+        case SpecialBlock.file: FileBlockView(attachmentId: blk.refId)
         case "keel-audio":
             AudioBlockView(attachmentId: blk.refId)
         case "keel-pdf":
@@ -658,6 +709,10 @@ struct NoteEditor: View {
             if cmd.id == "embed" || cmd.id == "dbview" { pickBlock = BlockPickTarget(id: b.wrappedValue.id, databasesOnly: cmd.id == "dbview") }
             if cmd.id == "toc" { insertBlock(after: b.wrappedValue.id, kind: .text, text: "") }
             if cmd.id == "blockref" { b.wrappedValue.refId = BlockLinks.clipboard }
+            if cmd.id == "chart" { pickBlock = BlockPickTarget(id: b.wrappedValue.id, databasesOnly: true) }
+            if cmd.id == "columns" { b.wrappedValue.text = "\n|||\n" }
+            if cmd.id == "button" { b.wrappedValue.text = "Add a task | task: " }
+            if cmd.id == "file" { fileTarget = b.wrappedValue.id; importingFile = true }
             Haptics.tap()
             return
         }
@@ -712,7 +767,7 @@ struct NoteEditor: View {
                 mentionRow(p.icon ?? "📄", p.title) { finishMention(b, with: "[\(p.title)](\(RichText.pageURL(p.id)))") }
             }
             ForEach(Array(persons)) { p in
-                mentionRow("👤", p.name) { finishMention(b, with: "**@\(p.name)**") }
+                mentionRow("👤", p.name) { finishMention(b, with: "[@\(p.name)](com.keel.app://person/\(p.id.uuidString))") }
             }
             ForEach(dates, id: \.0) { d in
                 mentionRow("📅", "\(d.0) · \(d.1.formatted(date: .abbreviated, time: .omitted))") {
@@ -882,6 +937,9 @@ struct NoteEditor: View {
                 Button("Summarize", systemImage: "text.line.first.and.arrowtriangle.forward") { Task { await summarize() } }
                 Button("Ask this page", systemImage: "questionmark.bubble") { answer = nil; question = ""; asking = true }
                 Button("Turn to-dos into tasks", systemImage: "checklist") { extractTasks() }
+                ForEach(Extensions.commands) { c in
+                    Button(c.name, systemImage: c.icon) { Task { aiWorking = true; await Extensions.run(c, on: note); aiWorking = false } }
+                }
                 Button("Make flashcards", systemImage: "rectangle.on.rectangle.angled") {
                     Task { aiWorking = true; let n = await Flashcards.generate(for: note); aiWorking = false; UndoCenter.shared.notify(n == 0 ? "Couldn't make cards from this page" : "Added \(n) flashcards") }
                 }
@@ -889,6 +947,15 @@ struct NoteEditor: View {
             .disabled(note.isLocked)
             Menu {
                 Button("Outline", systemImage: "list.bullet.indent") { showOutline = true }
+                Button("Local graph", systemImage: "point.3.filled.connected.trianglepath.dotted") { showLocalGraph = true }
+                Button("Focus mode", systemImage: "arrow.up.left.and.arrow.down.right") { withAnimation(DS.spring) { zen = true } }
+                Picker("Page width", selection: $pageWidth) {
+                    Text("Comfortable").tag("comfortable"); Text("Wide").tag("wide"); Text("Full width").tag("full")
+                }
+                if multiWindow {
+                    Button("Open side by side", systemImage: "rectangle.split.2x1") { openWindow(id: "note", value: note.id) }
+                }
+                if note.isTemplate { TemplateScheduleMenu(template: note) }
                 Button("Find & replace", systemImage: "magnifyingglass") { showFindReplace = true }
                 Button("Comments", systemImage: "text.bubble") { commentTarget = CommentTarget(blockId: nil) }
                 Button(reordering ? "Done reordering" : "Reorder blocks", systemImage: "arrow.up.arrow.down") { withAnimation { reordering.toggle() } }
@@ -1002,7 +1069,7 @@ struct NoteEditor: View {
     }
 
     private func unlockNote() async {
-        if await AppLock.authenticate("Open “\(note.title)”") { withAnimation { unlocked = true } }
+        if await AppLock.authenticate("Open “\(note.title)”") { PageCrypto.decrypt(note); withAnimation { unlocked = true } }
     }
 
     private func toggleLock() {

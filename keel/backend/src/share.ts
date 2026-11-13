@@ -12,12 +12,82 @@ import { json } from "./ai";
 type Item = { id: string; text: string; done: boolean; by?: string };
 type SharedList = { title: string; items: Item[]; comments: { text: string; by: string; at: number }[]; updated: number };
 
+type Space = { name: string; pages: { id: string; title: string }[]; lists: { id: string; title: string; url: string }[]; members: string[] };
+type SPage = { title: string; blocks: unknown[]; version: number; updated: number };
+
 const rid = (n = 16) => Array.from(crypto.getRandomValues(new Uint8Array(n)), (b) => b.toString(16).padStart(2, "0")).join("");
 const esc = (s: string) => s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
 const html = (body: string, status = 200) => new Response(body, { status, headers: { "content-type": "text/html; charset=utf-8" } });
 
 export async function handleShare(req: Request, env: Env, url: URL, device: boolean): Promise<Response | null> {
   const p = url.pathname;
+
+  // ---- Shared spaces (family or team brains): pages edited together + shared lists. Anyone with the link can join.
+  if (p === "/space" && req.method === "POST") {
+    if (!device) return json({ error: "unauthorized" }, 401);
+    const body = (await req.json()) as { name?: string; by?: string };
+    const id = rid();
+    const space: Space = { name: (body.name ?? "Space").slice(0, 80), pages: [], lists: [], members: body.by ? [body.by.slice(0, 40)] : [] };
+    await env.KEEL.put(`space:${id}`, JSON.stringify(space));
+    return json({ id, url: `${url.origin}/space/${id}` });
+  }
+  const sm = p.match(/^\/space\/([a-f0-9]{32})(\/(page|list))?$/);
+  if (sm) {
+    const key = `space:${sm[1]}`;
+    const raw = await env.KEEL.get(key);
+    if (!raw) return json({ error: "not found" }, 404);
+    const space = JSON.parse(raw) as Space;
+    if (!sm[3] && req.method === "GET") return json(space);
+    if (sm[3] === "page" && req.method === "POST") {
+      const b = (await req.json()) as { title?: string; blocks?: unknown[]; by?: string };
+      const pid = rid();
+      const page: SPage = { title: (b.title ?? "Untitled").slice(0, 200), blocks: (b.blocks ?? []).slice(0, 2000), version: 1, updated: Date.now() };
+      await env.KEEL.put(`spage:${pid}`, JSON.stringify(page));
+      space.pages.push({ id: pid, title: page.title });
+      if (b.by && !space.members.includes(b.by)) space.members.push(b.by.slice(0, 40));
+      await env.KEEL.put(key, JSON.stringify(space));
+      return json({ id: pid });
+    }
+    if (sm[3] === "list" && req.method === "POST") {
+      const b = (await req.json()) as { id: string; title: string; url: string };
+      if (!space.lists.some((l) => l.id === b.id)) space.lists.push({ id: b.id, title: b.title.slice(0, 120), url: b.url });
+      await env.KEEL.put(key, JSON.stringify(space));
+      return json({ ok: true });
+    }
+  }
+  const spm = p.match(/^\/spage\/([a-f0-9]{32})(\/here)?$/);
+  if (spm) {
+    const key = `spage:${spm[1]}`;
+    const raw = await env.KEEL.get(key);
+    if (!raw) return json({ error: "not found" }, 404);
+    const page = JSON.parse(raw) as SPage;
+    const hereKey = `here:${spm[1]}`;
+    const here = ((await env.KEEL.get(hereKey, "json")) ?? {}) as Record<string, number>;
+    const viewers = () => Object.entries(here).filter(([, t]) => Date.now() - t < 20_000).map(([n]) => n);
+    if (spm[2] && req.method === "POST") {
+      const b = (await req.json()) as { by?: string };
+      if (b.by) { here[b.by.slice(0, 40)] = Date.now(); await env.KEEL.put(hereKey, JSON.stringify(here), { expirationTtl: 3600 }); }
+      return json({ ok: true });
+    }
+    if (req.method === "GET") return json({ ...page, viewers: viewers() });
+    if (req.method === "PUT") {
+      const b = (await req.json()) as { title?: string; blocks?: { id: string }[]; base?: number; by?: string };
+      let blocks = (b.blocks ?? []) as { id: string }[];
+      // Someone saved since you loaded: keep their new lines; yours win where you both edited.
+      if ((b.base ?? 0) < page.version) {
+        const mine = new Set(blocks.map((x) => x.id));
+        const theirsNew = (page.blocks as { id: string }[]).filter((x) => !mine.has(x.id));
+        blocks = blocks.concat(theirsNew);
+      }
+      page.blocks = blocks.slice(0, 2000);
+      if (b.title) page.title = b.title.slice(0, 200);
+      page.version += 1;
+      page.updated = Date.now();
+      await env.KEEL.put(key, JSON.stringify(page));
+      if (b.by) { here[b.by.slice(0, 40)] = Date.now(); await env.KEEL.put(hereKey, JSON.stringify(here), { expirationTtl: 3600 }); }
+      return json({ ...page, viewers: viewers() });
+    }
+  }
 
   // ---- Shared lists
   if (p === "/share/list" && req.method === "POST") {

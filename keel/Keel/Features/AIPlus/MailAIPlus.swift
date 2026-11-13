@@ -31,6 +31,7 @@ enum AutoDrafts {
     static func draft(for id: String) -> String? { store[id] }
     static func has(_ id: String) -> Bool { store[id] != nil }
     static func clear(_ id: String) { store[id] = nil }
+    static func setDraft(_ id: String, _ text: String) { store[id] = text }
 
     /// Only real people: never companies, shops, newsletters, notifications or no-reply addresses.
     static func isRealPerson(_ e: EmailMessage) -> Bool {

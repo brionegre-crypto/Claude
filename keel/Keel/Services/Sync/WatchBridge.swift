@@ -200,6 +200,8 @@ final class WatchBridge: NSObject, WCSessionDelegate {
             if let s = try? ctx.fetch(FetchDescriptor<Suggestion>(predicate: #Predicate { $0.id == id })).first { Autopilot.dismiss(s) }
         case .addEvent(let text):
             if (try? QuickEvent.create(text)) == nil { QuickAdd.create(text, in: ctx) }   // no time understood: keep it as a task
+        case .capture(let text):
+            Task { @MainActor in _ = CaptureInbox.add(title: String(text.prefix(60)), blocks: [NoteBlock(kind: .text, text: text)], ctx: ctx) }
         case .brainDump(let text):
             Task { @MainActor in
                 let items = await BrainDumpSorter.sort(text)

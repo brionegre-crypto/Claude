@@ -42,7 +42,7 @@ export default {
     if (url.pathname.startsWith("/notion/")) return handleNotion(req, env);
     if (url.pathname === "/auth/apple" && req.method === "POST") return handleAppleAuth(req, env);
     if (url.pathname === "/auth/account" && req.method === "DELETE") return handleDeleteAccount(bearer, env);
-    if (/^\/(share|l|publish|p|diagnostics)(\/|$)/.test(url.pathname)) {
+    if (/^\/(share|l|publish|p|diagnostics|space|spage)(\/|$)/.test(url.pathname)) {
       const r = await handleShare(req, env, url, device);
       if (r) return r;
     }

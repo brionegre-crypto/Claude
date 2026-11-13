@@ -37,7 +37,8 @@ enum ClaudeBridge {
                 "promise": $0.promise, "to": $0.displayName, "quote": $0.quote,
                 "due": $0.dueDate?.ISO8601Format() ?? "", "overdue": $0.isOverdue,
             ] as [String: Any] },
-            "notes": notes.prefix(200).map { ["title": $0.title, "text": String($0.plainText.prefix(4_000))] },
+            "notes": notes.filter { !$0.isTemplate }.sorted { $0.updatedAt > $1.updatedAt }.prefix(800)
+                .map { ["title": $0.title, "folder": $0.folder ?? "", "text": String($0.plainText.prefix(2_500))] },
         ]
         guard let data = try? JSONSerialization.data(withJSONObject: snapshot),
               let req = request("snapshot", method: "POST", body: data) else { return }

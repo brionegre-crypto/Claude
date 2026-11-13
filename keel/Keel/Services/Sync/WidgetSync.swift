@@ -181,6 +181,9 @@ final class AppRouter {
         case "groceries": openTool = ToolRoute(id: "mealplan")
         case "open": showQuickOpen = true
         case "voice": showVoice = true
+        case "extension": _ = Extensions.importLink(url)
+        case "person":
+            if let id = url.pathComponents.dropFirst().first, UUID(uuidString: id) != nil { openTool = ToolRoute(id: "person:" + id) }
         case "inbox-capture": openTool = ToolRoute(id: "capture")
         case "note":
             if let id = url.pathComponents.dropFirst().first.flatMap(UUID.init(uuidString:)) { openNoteId = id }

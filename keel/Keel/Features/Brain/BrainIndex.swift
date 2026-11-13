@@ -46,9 +46,9 @@ final class BrainIndex {
         for i in f.indices { f[i] /= n }
         return f
     }
-    private static func pack(_ f: [Float]) -> Data { f.withUnsafeBufferPointer { Data(buffer: $0) } }
-    private static func unpack(_ d: Data) -> [Float] { d.withUnsafeBytes { Array($0.bindMemory(to: Float.self)) } }
-    private static func dot(_ a: [Float], _ b: [Float]) -> Float {
+    nonisolated private static func pack(_ f: [Float]) -> Data { f.withUnsafeBufferPointer { Data(buffer: $0) } }
+    nonisolated private static func unpack(_ d: Data) -> [Float] { d.withUnsafeBytes { Array($0.bindMemory(to: Float.self)) } }
+    nonisolated private static func dot(_ a: [Float], _ b: [Float]) -> Float {
         var s: Float = 0
         for i in 0..<min(a.count, b.count) { s += a[i] * b[i] }
         return s
@@ -65,12 +65,12 @@ final class BrainIndex {
         for n in (try? ctx.fetch(FetchDescriptor<Note>())) ?? [] where !n.isLocked && !n.isTemplate {
             let key = "note:\(n.id.uuidString)"; live.insert(key)
             let stamp = n.updatedAt.timeIntervalSince1970
-            if items[key]?.stamp != stamp { jobs.append((key, "note", n.id.uuidString, n.title, n.title + ". " + n.plainText.prefix(1_200), stamp)) }
+            if items[key]?.stamp != stamp { jobs.append((key, "note", n.id.uuidString, n.title, n.title + ". " + String(n.plainText.prefix(1_200)), stamp)) }
         }
         for t in (try? ctx.fetch(FetchDescriptor<TaskItem>(predicate: #Predicate { !$0.isDone }))) ?? [] {
             let key = "task:\(t.id.uuidString)"; live.insert(key)
             let stamp = t.updatedAt.timeIntervalSince1970
-            if items[key]?.stamp != stamp { jobs.append((key, "task", t.id.uuidString, t.title, t.title + ". " + t.notes.prefix(400), stamp)) }
+            if items[key]?.stamp != stamp { jobs.append((key, "task", t.id.uuidString, t.title, t.title + ". " + String(t.notes.prefix(400)), stamp)) }
         }
         var md = FetchDescriptor<EmailMessage>(sortBy: [SortDescriptor(\.receivedAt, order: .reverse)])
         md.fetchLimit = 1_500

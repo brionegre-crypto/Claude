@@ -540,9 +540,14 @@ struct AddPage: View {
     @State private var dumped = false
     @State private var event = ""
     @State private var eventSent = false
+    @State private var capture = ""
+    @State private var captured = false
 
     var body: some View {
         ScrollView { VStack(spacing: 10) {
+            TextField("Capture a thought…", text: $capture).onSubmit(sendCapture)   // dictation: it lands in the capture inbox
+            if captured { Label("In your capture inbox", systemImage: "tray.and.arrow.down.fill").foregroundStyle(calm).font(.caption) }
+            Divider()
             TextField("Add a task…", text: $text).onSubmit(add)    // dictation or Scribble
             Button("Add", action: add).tint(accent).disabled(text.isEmpty)
             if added { Label("Added", systemImage: "checkmark.circle.fill").foregroundStyle(calm).font(.caption) }
@@ -565,6 +570,14 @@ struct AddPage: View {
         WKInterfaceDevice.current().play(.success)
         event = ""
         eventSent = true
+    }
+
+    private func sendCapture() {
+        guard !capture.isEmpty else { return }
+        store.send(.capture(capture))
+        WKInterfaceDevice.current().play(.success)
+        capture = ""
+        captured = true
     }
 
     private func sendDump() {

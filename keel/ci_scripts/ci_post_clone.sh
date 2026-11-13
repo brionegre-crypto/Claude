@@ -50,6 +50,13 @@ if [ "${KEEL_WATCH:-1}" != "1" ]; then
   echo "Apple Watch app left out of this build (KEEL_WATCH=0)."
 fi
 
+# Safari extension ("Save to Keel" in Safari, with highlights): needs the App ID com.briangreenejr.keel.safari with
+# App Groups (group.com.briangreenejr.keel) registered first. Off until then; set KEEL_SAFARI=1 in the workflow to include it.
+if [ "${KEEL_SAFARI:-0}" != "1" ]; then
+  sed -i '' -e '/- target: KeelSafari /{N;d;}' project.yml
+  echo "Safari extension left out of this build (set KEEL_SAFARI=1 once its App ID is registered)."
+fi
+
 # Default mail app: Apple must grant the com.apple.developer.mail-client entitlement first.
 # Once it's granted, add KEEL_MAIL_CLIENT=1 to the Xcode Cloud workflow's environment variables.
 if [ "${KEEL_MAIL_CLIENT:-0}" = "1" ]; then

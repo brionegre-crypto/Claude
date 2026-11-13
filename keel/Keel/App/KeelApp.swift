@@ -55,12 +55,17 @@ struct KeelApp: App {
                 Task { await HealthHabits.check(ctx: container.mainContext) }
                 Task { await KeelFocusFilter.syncCurrent() }
                 LinkSaver.importShared(into: container.mainContext)     // links saved from Safari's share sheet
+                SafariHighlights.importQueued(ctx: container.mainContext) // highlights saved with the Safari extension
                 LinkSaver.importSharedNotes(into: container.mainContext) // text/images shared from Notes, Messages, Photos…
                 MeetingAutopilot.syncActivity()                         // Lock Screen timer for a meeting in progress
                 WeeklyDigest.makeIfDue(ctx: container.mainContext)      // Sunday evening: last week on one page
                 BrainIndex.shared.refresh(ctx: container.mainContext)   // meaning index for related pages (only what changed)
                 BrainBackup.backupIfDue(ctx: container.mainContext)     // a daily safety copy
                 NoteTrash.purgeOld()
+                SmartTemplates.runScheduled(ctx: container.mainContext)  // templates set to repeat make their page
+                if MarkdownMirror.isOn { _ = MarkdownMirror.pull(ctx: container.mainContext) }   // edits made in Obsidian or any Markdown app
+                OvernightAgent.runIfDue(ctx: container.mainContext)     // "done for you" prep, once a night
+                Coach.weeklyIfDue(ctx: container.mainContext)            // Sunday check-in
             }
             if phase == .background {
                 WidgetSync.updateNow(container.mainContext)

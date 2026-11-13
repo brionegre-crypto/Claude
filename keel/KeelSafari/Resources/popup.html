@@ -1,0 +1,17 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width">
+<style>
+  body{font:15px -apple-system,system-ui;margin:0;padding:14px;min-width:240px;color:#1c1c1e;background:#fff}
+  @media (prefers-color-scheme:dark){body{color:#f2f2f7;background:#1c1c1e}}
+  h1{font-size:17px;margin:0 0 10px}
+  button{display:block;width:100%;margin:8px 0;padding:11px;border:0;border-radius:12px;font:600 15px -apple-system;background:#5b6bfa;color:#fff}
+  button.alt{background:rgba(91,107,250,.14);color:#5b6bfa}
+  #msg{font-size:13px;opacity:.7;min-height:18px;text-align:center}
+</style></head>
+<body>
+  <h1>Save to Keel</h1>
+  <button id="save">Save page to reading list</button>
+  <button id="hl" class="alt">Save selected text as a highlight</button>
+  <div id="msg"></div>
+  <script src="popup.js"></script>
+</body></html>
