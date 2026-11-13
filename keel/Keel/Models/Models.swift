@@ -264,7 +264,14 @@ struct NoteBlock: Codable, Identifiable, Hashable {
 
 /// A column in a notes database: Status, Due, Tags…
 struct DBProperty: Codable, Identifiable, Hashable {
-    enum Kind: String, Codable, CaseIterable { case text, number, select, multiSelect, status, date, checkbox, url, person }
+    enum Kind: String, Codable, CaseIterable {
+        case text, number, select, multiSelect, status, date, checkbox, url, person
+        case relation, formula              // relation: options[0] = target database id; formula: options[0] = expression
+        /// Unknown kinds (from a newer Keel on another device) read as text instead of failing the whole page.
+        init(from decoder: Decoder) throws {
+            self = Kind(rawValue: try decoder.singleValueContainer().decode(String.self)) ?? .text
+        }
+    }
     var id: String = UUID().uuidString
     var name: String
     var kind: Kind

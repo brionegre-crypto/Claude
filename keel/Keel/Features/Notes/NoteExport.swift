@@ -1,5 +1,6 @@
 import UIKit
 import SwiftUI
+import SwiftData
 
 /// Share a note as Markdown or as a PDF.
 @MainActor
@@ -19,6 +20,13 @@ enum NoteExport {
             case .numbered: out += "\(pad)1. \(b.text)\n"
             case .toggle: out += "<details><summary>\(b.text)</summary>\n\n\(b.body ?? "")\n\n</details>\n\n"
             case .callout: out += "> \(b.icon ?? "💡") \(b.text)\n\n"
+            case .code where SpecialBlock.kind(raw) == SpecialBlock.math: out += "$$\n\(raw.text)\n$$\n\n"
+            case .code where SpecialBlock.kind(raw) == SpecialBlock.mermaid: out += "```mermaid\n\(raw.text)\n```\n\n"
+            case .code where SpecialBlock.kind(raw) == SpecialBlock.toc: out += "[TOC]\n\n"
+            case .code where SpecialBlock.kind(raw) == SpecialBlock.embed || SpecialBlock.kind(raw) == SpecialBlock.dbview:
+                let title = raw.refId.flatMap(UUID.init(uuidString:)).flatMap { id in
+                    n.modelContext.flatMap { mc in try? mc.fetch(FetchDescriptor<Note>(predicate: #Predicate { $0.id == id })).first }?.title }
+                if let title { out += "![[\(title)]]\n\n" }
             case .code: out += "```\(b.lang ?? "")\n\(b.text)\n```\n\n"
             case .bookmark: if let u = b.refId { out += "[\(b.text.isEmpty ? u : b.text)](\(u))\n\n" }
             case .table:

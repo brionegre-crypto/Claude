@@ -216,8 +216,8 @@ struct DatabaseView: View {
                     Image(uiImage: img).resizable().scaledToFill().frame(height: 70).clipped().clipShape(.rect(cornerRadius: 6))
                 }
                 Text("\(r.icon.map { $0 + " " } ?? "")\(r.title.isEmpty ? "Untitled" : r.title)").font(DS.Font.body).foregroundStyle(DS.Palette.ink).lineLimit(2)
-                ForEach(db.schema.filter { $0.id != groupProp?.id && !(r.props[$0.id] ?? "").isEmpty }.prefix(2)) { p in
-                    Text(PropertyValueEditor.display(p, r.props[p.id] ?? "")).font(.caption2).foregroundStyle(DS.Palette.inkSoft).lineLimit(1)
+                ForEach(db.schema.filter { $0.id != groupProp?.id && (!(r.props[$0.id] ?? "").isEmpty || $0.kind == .formula) }.prefix(2)) { p in
+                    Text(PropertyValueEditor.display(p, row: r, schema: db.schema)).font(.caption2).foregroundStyle(DS.Palette.inkSoft).lineLimit(1)
                 }
             }
             .padding(8).frame(maxWidth: .infinity, alignment: .leading)
@@ -259,8 +259,8 @@ struct DatabaseView: View {
                         Text(r.icon ?? "📄")
                         Text(r.title.isEmpty ? "Untitled" : r.title).foregroundStyle(DS.Palette.ink)
                         Spacer()
-                        ForEach(db.schema.filter { !(r.props[$0.id] ?? "").isEmpty }.prefix(2)) { p in
-                            Text(PropertyValueEditor.display(p, r.props[p.id] ?? "")).font(.caption2).foregroundStyle(DS.Palette.inkSoft).lineLimit(1)
+                        ForEach(db.schema.filter { !(r.props[$0.id] ?? "").isEmpty || $0.kind == .formula }.prefix(2)) { p in
+                            Text(PropertyValueEditor.display(p, row: r, schema: db.schema)).font(.caption2).foregroundStyle(DS.Palette.inkSoft).lineLimit(1)
                         }
                     }
                     .padding(.vertical, 8)
@@ -328,6 +328,15 @@ struct PropertyValueEditor: View {
         Binding(get: { row.props[property.id] ?? "" }, set: { row.props[property.id] = $0.isEmpty ? nil : $0 })
     }
 
+    /// What a card shows for this property on a row (formulas are worked out, relations show their titles).
+    static func display(_ p: DBProperty, row: Note, schema: [DBProperty]) -> String {
+        switch p.kind {
+        case .formula: return p.options.first.map { DBFormula.evaluate($0, row: row, schema: schema) } ?? ""
+        case .relation: return DBRelation.titles(row.props[p.id] ?? "", ctx: row.modelContext).joined(separator: ", ")
+        default: return display(p, row.props[p.id] ?? "")
+        }
+    }
+
     static func display(_ p: DBProperty, _ v: String) -> String {
         switch p.kind {
         case .checkbox: return v == "1" ? "☑︎ \(p.name)" : ""
@@ -369,6 +378,11 @@ struct PropertyValueEditor: View {
                 Text(value.wrappedValue.isEmpty ? "Empty" : value.wrappedValue).font(DS.Font.caption).lineLimit(1)
                     .foregroundStyle(value.wrappedValue.isEmpty ? DS.Palette.inkSoft : DS.Palette.ink)
             }
+        case .relation:
+            RelationCell(property: property, row: row)
+        case .formula:
+            Text(property.options.first.map { DBFormula.evaluate($0, row: row, schema: schemaOf(row)) } ?? "")
+                .font(DS.Font.caption.monospacedDigit()).foregroundStyle(DS.Palette.inkSoft)
         case .number:
             TextField("Empty", text: value).keyboardType(.decimalPad).font(DS.Font.caption)
         case .url:
@@ -376,6 +390,13 @@ struct PropertyValueEditor: View {
         default:
             TextField("Empty", text: value).font(DS.Font.caption)
         }
+    }
+
+    /// The database this row belongs to, for formulas that read other properties.
+    private func schemaOf(_ row: Note) -> [DBProperty] {
+        guard let pid = row.parentId, let ctx = row.modelContext,
+              let db = try? ctx.fetch(FetchDescriptor<Note>(predicate: #Predicate { $0.id == pid })).first else { return [property] }
+        return db.schema
     }
 
     private var selectedTags: [String] {
@@ -418,6 +439,7 @@ struct DatabaseRowProperties: View {
         switch k {
         case .text: "text.alignleft"; case .number: "number"; case .select: "chevron.down.circle"; case .multiSelect: "list.bullet"
         case .status: "circle.dotted"; case .date: "calendar"; case .checkbox: "checkmark.square"; case .url: "link"; case .person: "person"
+        case .relation: "arrow.up.right"; case .formula: "function"
         }
     }
 }
@@ -428,6 +450,7 @@ struct SchemaEditor: View {
     @Environment(\.dismiss) private var dismiss
     @State private var newName = ""
     @State private var newKind: DBProperty.Kind = .text
+    @Query(filter: #Predicate<Note> { $0.isDatabase }) private var databases: [Note]
 
     var body: some View {
         NavigationStack {
@@ -437,6 +460,18 @@ struct SchemaEditor: View {
                         TextField("Name", text: $p.name).font(DS.Font.headline)
                         Picker("Type", selection: $p.kind) {
                             ForEach(DBProperty.Kind.allCases, id: \.self) { Text(label($0)).tag($0) }
+                        }
+                        if p.kind == .relation {
+                            Picker("Links to", selection: Binding(get: { p.options.first ?? "" }, set: { p.options = $0.isEmpty ? [] : [$0] })) {
+                                Text("Choose a database").tag("")
+                                ForEach(databases) { d in Text(d.title.isEmpty ? "Untitled" : d.title).tag(d.id.uuidString) }
+                            }
+                        }
+                        if p.kind == .formula {
+                            TextField("e.g. {Price} * {Quantity}", text: Binding(get: { p.options.first ?? "" }, set: { p.options = [$0] }))
+                                .font(.system(.body, design: .monospaced)).textInputAutocapitalization(.never).autocorrectionDisabled()
+                            Text("Use {Property name}, numbers, + − × ÷ and brackets. days({Date}) gives days from today. Checkboxes count as 1 or 0; multi-select and relations count their items.")
+                                .font(.caption2).foregroundStyle(DS.Palette.inkSoft)
                         }
                         if [.select, .status, .multiSelect].contains(p.kind) {
                             ForEach(p.options.indices, id: \.self) { i in
@@ -469,6 +504,7 @@ struct SchemaEditor: View {
         switch k {
         case .text: "Text"; case .number: "Number"; case .select: "Select"; case .multiSelect: "Multi-select"
         case .status: "Status"; case .date: "Date"; case .checkbox: "Checkbox"; case .url: "URL"; case .person: "Person"
+        case .relation: "Relation"; case .formula: "Formula"
         }
     }
 }

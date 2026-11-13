@@ -23,6 +23,7 @@ struct NoteLinksSection: View {
             (other.plainText.contains(url) || (!note.title.isEmpty && other.plainText.localizedCaseInsensitiveContains("[[\(note.title)]]"))
              || other.blocks.contains { $0.kind == .page && $0.refId == note.id.uuidString })
         }
+        UnlinkedMentions(note: note, notes: notes)
         if !outgoing.isEmpty || !backlinks.isEmpty {
             VStack(alignment: .leading, spacing: DS.Space.s) {
                 Divider().padding(.vertical, DS.Space.s)

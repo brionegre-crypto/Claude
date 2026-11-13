@@ -60,6 +60,7 @@ struct KeelApp: App {
             }
             if phase == .background {
                 WidgetSync.updateNow(container.mainContext)
+                if MarkdownMirror.isOn { MarkdownMirror.sync(ctx: container.mainContext) }   // Markdown copy of changed pages
                 AppLock.shared.lockIfEnabled()
             }
         }
@@ -330,6 +331,7 @@ private struct MoreRouterSheets: ViewModifier {
             .sheet(isPresented: $router.showLeaving) { LeavingChecklistView() }
             .sheet(isPresented: $router.showJournal) { JournalEntryView() }
             .sheet(item: $router.openTool) { r in ToolSheet(id: r.id) }
+            .sheet(isPresented: $router.showQuickOpen) { QuickOpenView() }
     }
 }
 
@@ -374,6 +376,8 @@ struct KeelCommands: Commands {
                 .keyboardShortcut("n", modifiers: [.command, .shift])
             Button("Record a Meeting") { AppRouter.shared.showRecorder = true }
                 .keyboardShortcut("r", modifiers: [.command, .shift])
+            Button("Open Page…") { AppRouter.shared.showQuickOpen = true }
+                .keyboardShortcut("o")
         }
         CommandGroup(replacing: .appSettings) {
             Button("Settings…") { AppRouter.shared.showSettings = true }.keyboardShortcut(",")

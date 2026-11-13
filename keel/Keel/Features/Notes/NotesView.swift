@@ -132,6 +132,10 @@ struct NotesView: View {
                         .accessibilityLabel("Help with notes")
                 }
                 ToolbarItem(placement: .topBarTrailing) {
+                    Button { AppRouter.shared.showQuickOpen = true } label: { Image(systemName: "magnifyingglass") }
+                        .accessibilityLabel("Jump to a page")
+                }
+                ToolbarItem(placement: .topBarTrailing) {
                     Button { showReorganize = true } label: { Image(systemName: "sparkles.rectangle.stack") }
                         .accessibilityLabel("Reorganize everything into workspaces")
                 }

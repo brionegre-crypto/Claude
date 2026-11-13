@@ -28,7 +28,7 @@ struct SlashCommand: Identifiable {
         .init(id: "bookmark", title: "Web bookmark", subtitle: "Save a link", icon: "link", keywords: ["url", "link", "web"], kind: .bookmark),
         .init(id: "image", title: "Image", subtitle: "Photo from your library", icon: "photo", keywords: ["picture", "photo"], kind: .image),
         .init(id: "meeting", title: "AI meeting notes", subtitle: "Record, transcribe and write up with context", icon: "waveform.badge.mic", keywords: ["meeting", "record", "transcribe", "notes", "ai"], kind: .text),
-    ]
+    ] + SpecialBlock.commands
 
     static func matching(_ query: String) -> [SlashCommand] {
         let q = query.lowercased().trimmingCharacters(in: .whitespaces)

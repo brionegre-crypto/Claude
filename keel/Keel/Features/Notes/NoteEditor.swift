@@ -43,6 +43,11 @@ struct NoteEditor: View {
     @State private var aiWorking = false
     @State private var movingPage = false
     @State private var recording = false
+    @State private var commentTarget: CommentTarget?
+    @State private var showFindReplace = false
+    @State private var showOutline = false
+    @State private var pickBlock: BlockPickTarget?
+    @State private var scrollTarget: UUID?
 
     var body: some View {
         editorBody.savePoint { SavePoints.note(note, focusedBlock: focused ?? editing) }
@@ -75,6 +80,22 @@ struct NoteEditor: View {
     // MARK: Page
 
     private var page: some View {
+        ScrollViewReader { proxy in pageList.onChange(of: scrollTarget) { _, id in
+            guard let id else { return }
+            withAnimation(DS.spring) { proxy.scrollTo(id, anchor: .top) }
+            scrollTarget = nil
+        } }
+        .sheet(item: $commentTarget) { CommentsSheet(note: note, blockId: $0.blockId) }
+        .sheet(isPresented: $showFindReplace) { FindReplaceSheet(note: note) { scrollTarget = $0 } }
+        .sheet(isPresented: $showOutline) { OutlineSheet(note: note) { id in scrollTarget = id } }
+        .sheet(item: $pickBlock) { t in
+            PagePickerSheet(title: t.databasesOnly ? "Choose a database" : "Embed a page", databasesOnly: t.databasesOnly, exclude: note.id) { picked in
+                if let i = note.blocks.firstIndex(where: { $0.id == t.id }) { note.blocks[i].refId = picked.id.uuidString }
+            }
+        }
+    }
+
+    private var pageList: some View {
         List {
             header
                 .buttonStyle(.borderless)
@@ -234,6 +255,14 @@ struct NoteEditor: View {
             .padding(.vertical, blk.kind == .callout || colors.background != nil ? 8 : 2)
             .padding(.horizontal, blk.kind == .callout || colors.background != nil ? 10 : 0)
             .background(blk.kind == .callout ? (colors.background ?? DS.Palette.elevated) : (colors.background ?? .clear), in: .rect(cornerRadius: 8))
+            let n = NoteComments.open(note, block: blk.id)
+            if n > 0 {
+                Button { commentTarget = CommentTarget(blockId: blk.id) } label: {
+                    Label("\(n) comment\(n == 1 ? "" : "s")", systemImage: "text.bubble.fill").font(.caption2)
+                }
+                .buttonStyle(.plain).foregroundStyle(.orange)
+                .padding(.leading, CGFloat(min(blk.indent ?? 0, 8)) * 24)
+            }
             if slashFor == blk.id { slashMenu(b) }
             if mentionFor == blk.id { mentionMenu(b) }
         }
@@ -305,6 +334,8 @@ struct NoteEditor: View {
                         b.wrappedValue.text = ""
                     }
             }
+        case .code where SpecialBlock.kind(blk) != nil:
+            specialBlock(b)
         case .code:
             VStack(alignment: .leading, spacing: 4) {
                 TextField("Code", text: b.text, axis: .vertical)
@@ -334,6 +365,35 @@ struct NoteEditor: View {
                 .opacity(blk.checked ? 0.5 : 1)
         default:
             editableText(b, font: DS.Font.body)
+        }
+    }
+
+    /// Embeds, linked databases, table of contents, equations and diagrams.
+    @ViewBuilder
+    private func specialBlock(_ b: Binding<NoteBlock>) -> some View {
+        let blk = b.wrappedValue
+        switch SpecialBlock.kind(blk) ?? "" {
+        case SpecialBlock.embed:
+            EmbeddedPageView(pageId: blk.refId, allNotes: allNotes, open: { openPage = $0 },
+                             choose: { pickBlock = BlockPickTarget(id: blk.id, databasesOnly: false) })
+        case SpecialBlock.dbview:
+            if let id = blk.refId.flatMap(UUID.init(uuidString:)), let db = allNotes.first(where: { $0.id == id && $0.isDatabase }) {
+                VStack(alignment: .leading, spacing: 4) {
+                    Button { openPage = db } label: { Label(db.title.isEmpty ? "Untitled database" : db.title, systemImage: "tablecells") .font(DS.Font.headline) }
+                        .buttonStyle(.plain)
+                    DatabaseView(db: db, open: { openPage = $0 })
+                }
+            } else {
+                Button { pickBlock = BlockPickTarget(id: blk.id, databasesOnly: true) } label: { Label("Choose a database to show here", systemImage: "tablecells.badge.ellipsis") }
+            }
+        case SpecialBlock.toc:
+            TableOfContentsView(note: note) { scrollTarget = $0 }
+        case SpecialBlock.math:
+            RenderedSourceBlock(block: b, mode: .math)
+        case SpecialBlock.mermaid:
+            RenderedSourceBlock(block: b, mode: .mermaid)
+        default:
+            Text(blk.text).font(.system(.callout, design: .monospaced))
         }
     }
 
@@ -533,6 +593,15 @@ struct NoteEditor: View {
             recording = true
             return
         }
+        if let lang = SpecialBlock.lang(for: cmd.id) {
+            b.wrappedValue.kind = .code
+            b.wrappedValue.lang = lang
+            editing = nil
+            if cmd.id == "embed" || cmd.id == "dbview" { pickBlock = BlockPickTarget(id: b.wrappedValue.id, databasesOnly: cmd.id == "dbview") }
+            if cmd.id == "toc" { insertBlock(after: b.wrappedValue.id, kind: .text, text: "") }
+            Haptics.tap()
+            return
+        }
         switch cmd.kind {
         case .page:
             let sub = Note(title: "")
@@ -620,8 +689,8 @@ struct NoteEditor: View {
     @ViewBuilder
     private func blockMenu(_ b: Binding<NoteBlock>) -> some View {
         Menu("Turn into", systemImage: "arrow.triangle.2.circlepath") {
-            ForEach(SlashCommand.all.filter { ![.page, .image, .table, .bookmark, .divider].contains($0.kind) && $0.id != "meeting" }) { cmd in
-                Button(cmd.title, systemImage: cmd.icon) { b.wrappedValue.kind = cmd.kind; if cmd.kind == .callout && b.wrappedValue.icon == nil { b.wrappedValue.icon = "💡" } }
+            ForEach(SlashCommand.all.filter { ![.page, .image, .table, .bookmark, .divider].contains($0.kind) && $0.id != "meeting" && !SpecialBlock.commandIds.contains($0.id) }) { cmd in
+                Button(cmd.title, systemImage: cmd.icon) { b.wrappedValue.kind = cmd.kind; if cmd.kind == .code && SpecialBlock.kind(b.wrappedValue) != nil { b.wrappedValue.lang = nil }; if cmd.kind == .callout && b.wrappedValue.icon == nil { b.wrappedValue.icon = "💡" } }
             }
         }
         Menu("Color", systemImage: "paintpalette") {
@@ -635,6 +704,7 @@ struct NoteEditor: View {
                 ForEach(["💡", "⚠️", "✅", "❗", "📌", "🔥", "🧠", "❤️"], id: \.self) { e in Button(e) { b.wrappedValue.icon = e } }
             }
         }
+        Button("Comment", systemImage: "text.bubble") { commentTarget = CommentTarget(blockId: b.wrappedValue.id) }
         Button("Make it a task", systemImage: "checklist") {
             let title = b.wrappedValue.text.replacingOccurrences(of: #"[*_=`]"#, with: "", options: .regularExpression)
             guard !title.isEmpty else { return }
@@ -709,6 +779,9 @@ struct NoteEditor: View {
             } label: { Image(systemName: "sparkles") }.accessibilityLabel("AI tools")
             .disabled(note.isLocked)
             Menu {
+                Button("Outline", systemImage: "list.bullet.indent") { showOutline = true }
+                Button("Find & replace", systemImage: "magnifyingglass") { showFindReplace = true }
+                Button("Comments", systemImage: "text.bubble") { commentTarget = CommentTarget(blockId: nil) }
                 Button(reordering ? "Done reordering" : "Reorder blocks", systemImage: "arrow.up.arrow.down") { withAnimation { reordering.toggle() } }
                 Button("Move to…", systemImage: "folder") { movingPage = true }
                 Button(note.isLocked ? "Remove lock" : "Lock page", systemImage: note.isLocked ? "lock.open" : "lock") { toggleLock() }

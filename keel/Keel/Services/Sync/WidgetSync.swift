@@ -137,6 +137,7 @@ final class AppRouter {
     var showLeaving = false
     var showJournal = false
     var openTool: ToolRoute?
+    var showQuickOpen = false
 
     func handle(_ url: URL) -> Bool {
         guard url.scheme == "com.keel.app" else { return false }
@@ -162,6 +163,7 @@ final class AppRouter {
             guard HubCatalog.tool(id) != nil else { return false }
             openTool = ToolRoute(id: id)
         case "groceries": openTool = ToolRoute(id: "mealplan")
+        case "open": showQuickOpen = true
         case "nownext":    // Start the next task with a Now timer
             let ctx = KeelStore.container.mainContext
             let open = ((try? ctx.fetch(FetchDescriptor<TaskItem>(predicate: #Predicate { !$0.isDone }))) ?? [])
