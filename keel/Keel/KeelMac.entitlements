@@ -2,7 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<!-- The Mac app (Mac Catalyst). Sandboxed like every Mac App Store app; Screen Time and HealthKit stay iPhone-only. -->
+	<!-- The Mac app (Mac Catalyst). Sandboxed like every Mac App Store app; Screen Time and HealthKit stay iPhone-only.
+	     Time Sensitive is left out until it's enabled on the App ID (developer.apple.com → Identifiers → Keel). -->
 	<key>com.apple.security.app-sandbox</key>
 	<true/>
 	<key>com.apple.security.network.client</key>
@@ -26,8 +27,6 @@
 		<string>group.com.briangreenejr.keel</string>
 	</array>
 	<key>com.apple.developer.weatherkit</key>
-	<true/>
-	<key>com.apple.developer.usernotifications.time-sensitive</key>
 	<true/>
 </dict>
 </plist>
