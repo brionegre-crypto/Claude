@@ -238,30 +238,8 @@ struct RootView: View {
                 withAnimation(DS.spring) { savePoints.showing = sp }
             }
         }
-        .sheet(isPresented: $router.showFocus) { NavigationStack { FocusView() } }
-        .sheet(item: $mailRouter.pending) { ComposeView(draft: $0) }
-        .sheet(isPresented: $router.showSearch) { NavigationStack { SearchView() } }
-        .sheet(isPresented: $router.showSettings) { AccountsView() }
-        .sheet(isPresented: $router.showPlan) { PlanRitualView() }
-        .sheet(isPresented: $router.showAutopilot) { NavigationStack { AutopilotView() } }
-        .sheet(isPresented: $router.showRecorder) { NavigationStack { MeetingRecorderView(autoStart: true) } }
-        .sheet(isPresented: $router.showReview) { NavigationStack { WeeklyReviewView() } }
-        .sheet(isPresented: $router.showMoney) { NavigationStack { SubscriptionsView() } }
-        .sheet(isPresented: $router.showLeaving) { LeavingChecklistView() }
-        .sheet(isPresented: $router.showJournal) { JournalEntryView() }
-        .sheet(item: Binding(get: { router.openTaskId.flatMap { id in openTask(id) } }, set: { if $0 == nil { router.openTaskId = nil } })) { t in
-            NavigationStack { TaskDetailView(task: t) }
-        }
-        .sheet(item: Binding(get: { router.openNoteId.flatMap { id in openNote(id) } }, set: { if $0 == nil { router.openNoteId = nil } })) { n in
-            NavigationStack { NoteEditor(note: n) }
-        }
-        // Tapping a Keel result in iPhone search
-        .onContinueUserActivity(CSSearchableItemActionType) { activity in
-            guard let id = activity.userInfo?[CSSearchableItemActivityIdentifier] as? String else { return }
-            let parts = id.split(separator: ":", maxSplits: 1).map(String.init)
-            guard parts.count == 2, let uuid = UUID(uuidString: parts[1]) else { return }
-            if parts[0] == "task" { router.openTaskId = uuid } else { router.openNoteId = uuid }
-        }
+        .modifier(RouterSheets(router: router, mailRouter: mailRouter))
+        .modifier(OpenItemSheets(router: router))
         .fullScreenCover(isPresented: Binding(get: { !onboarded }, set: { if !$0 { onboarded = true } })) { OnboardingFlow() }
         .preferredColorScheme(appearance == "light" ? .light : appearance == "dark" ? .dark : nil)
         .tint(Theme(rawValue: accentName)?.color ?? DS.Palette.accent)
@@ -281,6 +259,66 @@ struct RootView: View {
             if appLock.isLocked { LockScreen().transition(.opacity) }
             else if AppLock.isEnabled && phase != .active { PrivacyCover() }
         }
+    }
+}
+
+/// Every screen the app can open from anywhere (widgets, Siri, shortcuts, the menu bar), kept out of RootView's
+/// body so the compiler can check it quickly.
+private struct RouterSheets: ViewModifier {
+    @Bindable var router: AppRouter
+    @Bindable var mailRouter: MailRouter
+
+    func body(content: Content) -> some View {
+        content
+            .sheet(isPresented: $router.showFocus) { NavigationStack { FocusView() } }
+            .sheet(item: $mailRouter.pending) { ComposeView(draft: $0) }
+            .sheet(isPresented: $router.showSearch) { NavigationStack { SearchView() } }
+            .sheet(isPresented: $router.showSettings) { AccountsView() }
+            .sheet(isPresented: $router.showPlan) { PlanRitualView() }
+            .modifier(MoreRouterSheets(router: router))
+    }
+}
+
+/// A task or page opened from a widget, Spotlight or the menu bar.
+private struct OpenItemSheets: ViewModifier {
+    @Bindable var router: AppRouter
+
+    private func openTask(_ id: UUID) -> TaskItem? {
+        try? KeelStore.container.mainContext.fetch(FetchDescriptor<TaskItem>(predicate: #Predicate { $0.id == id })).first
+    }
+    private func openNote(_ id: UUID) -> Note? {
+        try? KeelStore.container.mainContext.fetch(FetchDescriptor<Note>(predicate: #Predicate { $0.id == id })).first
+    }
+
+    func body(content: Content) -> some View {
+        content
+            .sheet(item: Binding(get: { router.openTaskId.flatMap { id in openTask(id) } }, set: { if $0 == nil { router.openTaskId = nil } })) { t in
+                NavigationStack { TaskDetailView(task: t) }
+            }
+            .sheet(item: Binding(get: { router.openNoteId.flatMap { id in openNote(id) } }, set: { if $0 == nil { router.openNoteId = nil } })) { n in
+                NavigationStack { NoteEditor(note: n) }
+            }
+            // Tapping a Keel result in iPhone search
+            .onContinueUserActivity(CSSearchableItemActionType) { activity in
+                guard let id = activity.userInfo?[CSSearchableItemActivityIdentifier] as? String else { return }
+                let parts = id.split(separator: ":", maxSplits: 1).map(String.init)
+                guard parts.count == 2, let uuid = UUID(uuidString: parts[1]) else { return }
+                if parts[0] == "task" { router.openTaskId = uuid } else { router.openNoteId = uuid }
+            }
+    }
+}
+
+private struct MoreRouterSheets: ViewModifier {
+    @Bindable var router: AppRouter
+
+    func body(content: Content) -> some View {
+        content
+            .sheet(isPresented: $router.showAutopilot) { NavigationStack { AutopilotView() } }
+            .sheet(isPresented: $router.showRecorder) { NavigationStack { MeetingRecorderView(autoStart: true) } }
+            .sheet(isPresented: $router.showReview) { NavigationStack { WeeklyReviewView() } }
+            .sheet(isPresented: $router.showMoney) { NavigationStack { SubscriptionsView() } }
+            .sheet(isPresented: $router.showLeaving) { LeavingChecklistView() }
+            .sheet(isPresented: $router.showJournal) { JournalEntryView() }
     }
 }
 
