@@ -755,7 +755,9 @@ struct EmailDetailView: View {
                     }
                     Button(showPlain ? "Show formatted" : "Show plain text", systemImage: "doc.plaintext") { showPlain.toggle() }
                     Button(readingMode ? "Exit reading mode" : "Reading mode", systemImage: "text.book.closed") { withAnimation { readingMode.toggle() } }
+                    #if !targetEnvironment(macCatalyst)
                     Button("Translate", systemImage: "translate") { showTranslate = true }
+                    #endif
                     Button("Move to trash", systemImage: "trash", role: .destructive) { trash() }
                 } label: { Image(systemName: "ellipsis.circle") }.accessibilityLabel("More")
             }
@@ -770,7 +772,9 @@ struct EmailDetailView: View {
         .sheet(item: $compose) { ComposeView(draft: $0) }
         .quickLookPreview($previewURL)
         .sheet(item: $eventDraft) { d in EventEditor(event: d.event, start: d.start) { eventDraft = nil }.ignoresSafeArea() }
+        #if !targetEnvironment(macCatalyst)
         .translationPresentation(isPresented: $showTranslate, text: email.subject + "\n\n" + email.bodyPlain)
+        #endif
         .task {
             Dread.recordOpen(email.id)          // Dread Radar notices emails opened again and again
             if !email.isRead {
