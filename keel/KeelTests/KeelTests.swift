@@ -10,7 +10,8 @@ final class KeelTests: XCTestCase {
     // An in-memory database, so tests never touch your real data.
     private func makeContext() throws -> ModelContext {
         let schema = Schema(KeelStore.syncedTypes + KeelStore.localTypes)
-        let container = try ModelContainer(for: schema, configurations: ModelConfiguration(isStoredInMemoryOnly: true))
+        // In memory and never iCloud: the test database must not try to sync (mail models are local-only by design).
+        let container = try ModelContainer(for: schema, configurations: ModelConfiguration(isStoredInMemoryOnly: true, cloudKitDatabase: .none))
         return ModelContext(container)
     }
 
