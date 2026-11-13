@@ -254,19 +254,28 @@ struct MeetingLiveActivity: Widget {
                         .symbolEffect(.pulse, isActive: s.recording)
                     VStack(alignment: .leading, spacing: 2) {
                         Text(context.attributes.title).font(.headline).lineLimit(1)
-                        Text(s.recording ? "Recording notes" : (Date() < s.start ? "Starts \(s.start.formatted(date: .omitted, time: .shortened))" : "In progress"))
+                        Text(s.recording ? "Recording · Keel is taking notes" : context.attributes.isAdHoc ? "Paused · tap to resume" : (Date() < s.start ? "Starts \(s.start.formatted(date: .omitted, time: .shortened))" : "In progress"))
                             .font(.caption).foregroundStyle(.secondary)
                     }
                     Spacer()
                     VStack(alignment: .trailing, spacing: 0) {
-                        Text(timerInterval: Date()...max(Date(), s.end), countsDown: true)
-                            .font(.system(.title2, design: .rounded).weight(.semibold).monospacedDigit())
-                            .multilineTextAlignment(.trailing).frame(maxWidth: 96)
-                        Text("left").font(.caption2).foregroundStyle(.secondary)
+                        if s.recording, let since = s.since {
+                            Text(timerInterval: since...since.addingTimeInterval(24 * 3600), countsDown: false)
+                                .font(.system(.title2, design: .rounded).weight(.semibold).monospacedDigit())
+                                .multilineTextAlignment(.trailing).frame(maxWidth: 96).foregroundStyle(.red)
+                            Text("recorded").font(.caption2).foregroundStyle(.secondary)
+                        } else if !context.attributes.isAdHoc {
+                            Text(timerInterval: Date()...max(Date(), s.end), countsDown: true)
+                                .font(.system(.title2, design: .rounded).weight(.semibold).monospacedDigit())
+                                .multilineTextAlignment(.trailing).frame(maxWidth: 96)
+                            Text("left").font(.caption2).foregroundStyle(.secondary)
+                        }
                     }
                 }
-                ProgressView(timerInterval: s.start...max(s.start.addingTimeInterval(60), s.end), countsDown: false) { EmptyView() } currentValueLabel: { EmptyView() }
-                    .tint(meetingColor)
+                if !context.attributes.isAdHoc {
+                    ProgressView(timerInterval: s.start...max(s.start.addingTimeInterval(60), s.end), countsDown: false) { EmptyView() } currentValueLabel: { EmptyView() }
+                        .tint(meetingColor)
+                }
                 HStack(spacing: 8) {
                     if let join = context.attributes.joinDeepLink {
                         Link(destination: join) {
@@ -277,7 +286,7 @@ struct MeetingLiveActivity: Widget {
                     }
                     if !s.recording, let rec = URL(string: "com.keel.app://record") {
                         Link(destination: rec) {
-                            Label("Record notes", systemImage: "mic.fill")
+                            Label(context.attributes.isAdHoc ? "Resume recording" : "Record notes", systemImage: "mic.fill")
                                 .font(.caption.weight(.semibold)).frame(maxWidth: .infinity).padding(.vertical, 7)
                                 .background(.white.opacity(0.15), in: Capsule())
                         }
@@ -286,7 +295,7 @@ struct MeetingLiveActivity: Widget {
             }
             .padding()
             .activityBackgroundTint(Color.black.opacity(0.6))
-            .widgetURL(URL(string: "com.keel.app://calendar"))
+            .widgetURL(URL(string: s.recording || context.attributes.isAdHoc ? "com.keel.app://record" : "com.keel.app://calendar"))
         } dynamicIsland: { context in
             let s = context.state
             return DynamicIsland {
@@ -295,8 +304,13 @@ struct MeetingLiveActivity: Widget {
                         .font(.caption).lineLimit(1).foregroundStyle(s.recording ? .red : meetingColor)
                 }
                 DynamicIslandExpandedRegion(.trailing) {
-                    Text(timerInterval: Date()...max(Date(), s.end), countsDown: true)
-                        .monospacedDigit().frame(maxWidth: 70)
+                    if s.recording, let since = s.since {
+                        Text(timerInterval: since...since.addingTimeInterval(24 * 3600), countsDown: false)
+                            .monospacedDigit().frame(maxWidth: 70).foregroundStyle(.red)
+                    } else {
+                        Text(timerInterval: Date()...max(Date(), s.end), countsDown: true)
+                            .monospacedDigit().frame(maxWidth: 70)
+                    }
                 }
                 DynamicIslandExpandedRegion(.bottom) {
                     HStack {
@@ -312,12 +326,17 @@ struct MeetingLiveActivity: Widget {
             } compactLeading: {
                 Image(systemName: s.recording ? "record.circle" : "person.2.fill").foregroundStyle(s.recording ? .red : meetingColor)
             } compactTrailing: {
-                Text(timerInterval: Date()...max(Date(), s.end), countsDown: true)
-                    .monospacedDigit().frame(maxWidth: 44)
+                if s.recording, let since = s.since {
+                    Text(timerInterval: since...since.addingTimeInterval(24 * 3600), countsDown: false)
+                        .monospacedDigit().frame(maxWidth: 44).foregroundStyle(.red)
+                } else {
+                    Text(timerInterval: Date()...max(Date(), s.end), countsDown: true)
+                        .monospacedDigit().frame(maxWidth: 44)
+                }
             } minimal: {
-                Image(systemName: "person.2.fill").foregroundStyle(meetingColor)
+                Image(systemName: s.recording ? "record.circle" : "person.2.fill").foregroundStyle(s.recording ? .red : meetingColor)
             }
-            .widgetURL(URL(string: "com.keel.app://calendar"))
+            .widgetURL(URL(string: s.recording || context.attributes.isAdHoc ? "com.keel.app://record" : "com.keel.app://calendar"))
         }
     }
 }

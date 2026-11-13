@@ -131,14 +131,58 @@ enum MeetingAutopilot {
         let link = MeetingLink.find(e)
         let attrs = MeetingActivityAttributes(eventId: id, title: e.title ?? "Meeting",
                                               joinURL: link?.absoluteString, service: link.flatMap(MeetingLink.service))
-        let state = MeetingActivityAttributes.ContentState(start: e.startDate, end: e.endDate, recording: false)
-        let content = ActivityContent(state: state, staleDate: e.endDate.addingTimeInterval(60))
-        Task {
+        Task { @MainActor in
+            // Already recording (e.g. started before the event was found): the timer shows it straight away.
+            let rec = MeetingRecorder.shared
+            let state = MeetingActivityAttributes.ContentState(start: e.startDate, end: e.endDate, recording: rec.isRecording,
+                                                               since: rec.isRecording ? (rec.startedAt ?? Date()) : nil)
+            let content = ActivityContent(state: state, staleDate: e.endDate.addingTimeInterval(60))
             // One meeting timer at a time: the previous one ends first.
             for a in Activity<MeetingActivityAttributes>.activities { await a.end(nil, dismissalPolicy: .immediate) }
             _ = try? Activity.request(attributes: attrs, content: content)
         }
             #endif
+    }
+
+    /// Called by the recorder itself whenever recording starts or pauses, so the Lock Screen and Dynamic Island
+    /// always show it, with or without a calendar event (and whatever the meeting timer setting).
+    static func recordingChanged(_ on: Bool, since: Date?, title: String? = nil) {
+        #if !targetEnvironment(macCatalyst)
+        Task { @MainActor in
+            let active = Activity<MeetingActivityAttributes>.activities.filter { $0.activityState == .active }
+            if on {
+                if let a = active.first {
+                    var s = a.content.state
+                    s.recording = true
+                    s.since = since ?? Date()
+                    if a.attributes.isAdHoc { s.end = Date().addingTimeInterval(6 * 3600) }
+                    await a.update(ActivityContent(state: s, staleDate: s.end.addingTimeInterval(60)))
+                } else if ActivityAuthorizationInfo().areActivitiesEnabled {
+                    let now = Date()
+                    let attrs = MeetingActivityAttributes(eventId: "rec-\(UUID().uuidString)", title: title ?? "Recording a meeting", joinURL: nil, service: nil)
+                    let s = MeetingActivityAttributes.ContentState(start: since ?? now, end: now.addingTimeInterval(6 * 3600), recording: true, since: since ?? now)
+                    _ = try? Activity.request(attributes: attrs, content: ActivityContent(state: s, staleDate: s.end))
+                }
+            } else {
+                for a in active {
+                    var s = a.content.state
+                    guard s.recording else { continue }
+                    s.recording = false
+                    if a.attributes.isAdHoc { s.end = Date().addingTimeInterval(20 * 60) }   // paused: goes away if not resumed
+                    await a.update(ActivityContent(state: s, staleDate: s.end.addingTimeInterval(60)))
+                }
+            }
+        }
+        #endif
+    }
+
+    /// The meeting is written up: a recording-only timer has nothing left to show.
+    static func recordingFinished() {
+        #if !targetEnvironment(macCatalyst)
+        Task {
+            for a in Activity<MeetingActivityAttributes>.activities where a.attributes.isAdHoc { await a.end(nil, dismissalPolicy: .immediate) }
+        }
+        #endif
     }
 
     /// Shows a red dot on the Lock Screen timer while Keel is recording the meeting.

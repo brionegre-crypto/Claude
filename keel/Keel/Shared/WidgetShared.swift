@@ -95,8 +95,11 @@ struct MeetingActivityAttributes: ActivityAttributes {
         var start: Date
         var end: Date
         var recording: Bool
+        var since: Date? = nil              // when recording began, for the elapsed timer on the Lock Screen
     }
     var eventId: String
+    /// A recording with no calendar event behind it ("rec-…"): shows elapsed time instead of time left.
+    var isAdHoc: Bool { eventId.hasPrefix("rec-") }
     var title: String
     var joinURL: String?
     var service: String?

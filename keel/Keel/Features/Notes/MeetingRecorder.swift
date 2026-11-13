@@ -40,6 +40,7 @@ final class MeetingRecorder {
     var error: String?
     var repairing = false                  // re-reading the saved audio after you stop
     var recordedSeconds: TimeInterval = 0
+    var liveTitle: String?                 // what the Lock Screen calls this recording (the event's name, if known)
 
     private var finalized = ""             // everything from earlier segments
     private var segment = ""               // the current segment's latest text
@@ -111,6 +112,7 @@ final class MeetingRecorder {
         isRecording = true
         if startedAt == nil { startedAt = Date() }
         segmentStarted = Date()
+        MeetingAutopilot.recordingChanged(true, since: startedAt, title: liveTitle)
         UIApplication.shared.isIdleTimerDisabled = true       // the screen stays on while you record
         observeInterruptions()
         beginRecognition()
@@ -186,6 +188,7 @@ final class MeetingRecorder {
     func stop(repair: Bool = true) {
         guard isRecording else { return }
         isRecording = false
+        MeetingAutopilot.recordingChanged(false, since: nil)
         generation += 1
         engine.stop()
         engine.inputNode.removeTap(onBus: 0)
@@ -204,6 +207,8 @@ final class MeetingRecorder {
     /// The meeting is saved as a note: delete the temporary audio and start clean next time.
     func finishMeeting() {
         guard !isRecording else { return }
+        MeetingAutopilot.recordingFinished()
+        liveTitle = nil
         for url in audioParts { try? FileManager.default.removeItem(at: url) }
         reset()
     }
@@ -320,6 +325,103 @@ struct MeetingPartOut {
 struct EnhancedNotesOut {
     @Guide(description: "Each of the user's own notes, in the same order, rewritten as one fuller sentence with specific details from the transcript. Keep their meaning; never invent.", .maximumCount(20))
     var notes: [String]
+}
+
+/// Which calendar event a recording belongs to. Like picking the event you "Join and transcribe" from:
+/// a real meeting (people or a call link) happening when you pressed record beats an all-day block,
+/// a long "Work" hold, an event you declined, or Keel's own focus blocks.
+@MainActor
+enum MeetingEventMatcher {
+    /// Events near this moment, best first (for the picker as well).
+    static func candidates(around t: Date, window: TimeInterval = 2 * 3600) -> [EKEvent] {
+        CalendarService.shared.events(from: t.addingTimeInterval(-window), to: t.addingTimeInterval(window))
+            .filter { usable($0) }
+            .sorted { score($0, at: t) > score($1, at: t) }
+    }
+
+    /// The event this recording is most likely for, or nil when nothing fits well.
+    static func best(at t: Date) -> EKEvent? {
+        let near = CalendarService.shared.events(from: t.addingTimeInterval(-6 * 3600), to: t.addingTimeInterval(1_800))
+            .filter { usable($0) && $0.startDate <= t.addingTimeInterval(15 * 60) && $0.endDate >= t.addingTimeInterval(-5 * 60) }
+        guard let top = near.max(by: { score($0, at: t) < score($1, at: t) }) else { return nil }
+        // A solo, hours-long block ("Work", "Office") isn't a meeting someone records.
+        let hours = top.endDate.timeIntervalSince(top.startDate) / 3600
+        if !MeetingAutopilot.isMeeting(top) && hours > 2.5 { return nil }
+        return top
+    }
+
+    private static func usable(_ e: EKEvent) -> Bool {
+        guard !e.isAllDay, e.status != .canceled, e.calendar?.title != "Keel" else { return false }
+        if let me = e.attendees?.first(where: \.isCurrentUser), me.participantStatus == .declined { return false }
+        return true
+    }
+
+    static func score(_ e: EKEvent, at t: Date) -> Double {
+        var s = 0.0
+        let others = (e.attendees ?? []).filter { !$0.isCurrentUser }.count
+        if others > 0 { s += 3 + min(Double(others), 5) * 0.2 }
+        if MeetingLink.find(e) != nil { s += 2 }
+        if e.availability == .free { s -= 1 }
+        if e.startDate <= t && e.endDate >= t { s += 2 }                       // happening right now
+        s -= abs(e.startDate.timeIntervalSince(t)) / 1_800                       // closer start, better
+        s -= min(e.endDate.timeIntervalSince(e.startDate) / 3600, 8) * 0.4       // long holds lose
+        return s
+    }
+
+    /// When the event was guessed (not chosen), check the conversation is actually that meeting.
+    static func confirm(_ e: EKEvent, transcript: String) async -> Bool {
+        let text = transcript.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard text.count > 400 else { return true }
+        let people = (e.attendees ?? []).compactMap(\.name).prefix(6).joined(separator: ", ")
+        let prompt = """
+        A calendar event is titled "\(e.title ?? "")"\(people.isEmpty ? "" : " with \(people)")\(e.notes.map { ". Invite notes: \($0.prefix(200))" } ?? "").
+        Below is the start of a recorded conversation. Reply with only YES if it could plausibly be this meeting, or NO if it is clearly about something unrelated.
+
+        \(text.prefix(2_500))
+        """
+        guard let r = await AIRouter.shared.write(prompt) else { return true }
+        return !r.trimmingCharacters(in: .whitespacesAndNewlines).uppercased().hasPrefix("NO")
+    }
+}
+
+/// Names the meeting note: the calendar event's name when it's specific; otherwise a short title written from what
+/// was actually discussed (a generic "Sync" or "Call" gets the subject added).
+@MainActor
+enum MeetingTitler {
+    static let generic: Set<String> = ["meeting", "call", "sync", "catch up", "catch-up", "catchup", "chat", "1:1", "1-1", "1 on 1", "one on one",
+                                       "busy", "hold", "blocked", "zoom", "zoom meeting", "teams meeting", "microsoft teams meeting", "google meet",
+                                       "check-in", "check in", "standup", "stand-up", "huddle", "discussion", "event", "appointment", "new event",
+                                       "phone call", "video call", "facetime", "quick call", "quick chat", "touch base", "connect", "tbd"]
+
+    static func isGeneric(_ title: String?) -> Bool {
+        let t = (title ?? "").trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        return t.count < 3 || generic.contains(t)
+    }
+
+    static func title(event: EKEvent?, summary: String, topics: [String], transcript: String) async -> String {
+        if let e = event, !isGeneric(e.title) { return e.title ?? "Meeting" }
+        let basis = summary.isEmpty ? String(transcript.prefix(3_000)) : summary + (topics.isEmpty ? "" : "\nTopics: " + topics.joined(separator: "; "))
+        var subject: String?
+        if basis.count > 40 {
+            let prompt = """
+            Write a short, specific title for these meeting notes: 3 to 7 words naming the main subject and, if clear, who it was with             (like "Q3 budget review with Dana" or "Kitchen remodel quote"). No quotes, no date, no ending period. Reply with only the title.
+
+            \(basis.prefix(3_000))
+            """
+            if let r = await AIRouter.shared.write(prompt) {
+                let clean = r.split(separator: "\n").first.map(String.init)?
+                    .trimmingCharacters(in: CharacterSet(charactersIn: "\"'“”‘’*#. ").union(.whitespaces)) ?? ""
+                if clean.count >= 3 && clean.count <= 80 && !clean.lowercased().hasPrefix("title") { subject = clean }
+            }
+        }
+        let date = (event?.startDate ?? Date()).formatted(date: .abbreviated, time: .omitted)
+        switch (event?.title, subject) {
+        case let (eventTitle?, subject?) where !eventTitle.isEmpty: return "\(eventTitle): \(subject)"
+        case let (_, subject?): return subject
+        case let (eventTitle?, nil) where !eventTitle.isEmpty: return "\(eventTitle) · \(date)"
+        default: return "Meeting · \(date)"
+        }
+    }
 }
 
 /// Everything Keel knows that helps it understand this meeting.
@@ -488,6 +590,8 @@ struct MeetingRecorderView: View {
     @Query private var accounts: [MailAccount]
     @State private var recorder = MeetingRecorder.shared
     @State private var event: EKEvent?
+    @State private var eventChosen = false          // linked to the page, or picked by you: never second-guessed
+    @State private var candidates: [EKEvent] = []
     @State private var writing = false
     @State private var makeTasks = true
     @State private var savedNote: Note?
@@ -509,7 +613,34 @@ struct MeetingRecorderView: View {
         VStack(spacing: DS.Space.m) {
             VStack(spacing: 4) {
                 Text(title).font(DS.Font.title).multilineTextAlignment(.center)
-                if let e = event {
+                if result == nil {
+                    Menu {
+                        Section("Which meeting is this?") {
+                            ForEach(candidates, id: \.calendarItemIdentifier) { e in
+                                Button {
+                                    event = e; eventChosen = true; recorder.liveTitle = e.title
+                                    if recorder.isRecording { MeetingAutopilot.startActivity(for: e) }
+                                } label: {
+                                    Label("\(e.title ?? "Event") · \(e.startDate.formatted(date: .omitted, time: .shortened))",
+                                          systemImage: event?.calendarItemIdentifier == e.calendarItemIdentifier ? "checkmark" : "calendar")
+                                }
+                            }
+                        }
+                        Button("Not a calendar event", systemImage: "calendar.badge.minus") { event = nil; eventChosen = true; recorder.liveTitle = nil }
+                    } label: {
+                        HStack(spacing: 4) {
+                            if let e = event {
+                                Text("\(e.startDate.formatted(date: .omitted, time: .shortened))\((e.attendees ?? []).isEmpty ? "" : " · " + (e.attendees ?? []).compactMap(\.name).prefix(3).joined(separator: ", "))")
+                                    .lineLimit(1)
+                            } else {
+                                Text("No calendar event · Keel names it from the conversation")
+                            }
+                            Image(systemName: "chevron.up.chevron.down").font(.caption2)
+                        }
+                        .font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
+                    }
+                    .accessibilityLabel(event == nil ? "No calendar event. Choose the meeting" : "Linked to \(event?.title ?? ""). Change the meeting")
+                } else if let e = event {
                     Text("\(e.startDate.formatted(date: .omitted, time: .shortened)) · \((e.attendees ?? []).compactMap(\.name).prefix(4).joined(separator: ", "))")
                         .font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft).lineLimit(1)
                 }
@@ -579,17 +710,20 @@ struct MeetingRecorderView: View {
         .task {
             await CalendarService.shared.requestAccess()
             let now = Date()
+            let at = recorder.startedAt ?? now
             if let id = target?.linkedEventId, let e = CalendarService.shared.store.event(withIdentifier: id) {
                 event = e
-            } else {
-                event = CalendarService.shared.events(from: now.addingTimeInterval(-3_600), to: now.addingTimeInterval(3_600))
-                    .first { !$0.isAllDay && $0.startDate <= now.addingTimeInterval(900) && $0.endDate >= now }
+                eventChosen = true
+            } else if !eventChosen {
+                event = MeetingEventMatcher.best(at: at)
             }
+            candidates = MeetingEventMatcher.candidates(around: at)
+            recorder.liveTitle = event?.title
             // A finished meeting from hours ago shouldn't leak into this one.
             if !recorder.isRecording, let s = recorder.startedAt, Date().timeIntervalSince(s) > 4 * 3600 { recorder.reset() }
             if autoStart && !recorder.isRecording && recorder.transcript.isEmpty {
-                if let event { MeetingAutopilot.startActivity(for: event) }
                 await recorder.start()
+                if let event { MeetingAutopilot.startActivity(for: event) }
             }
             sources = MeetingContext.build(event: event, title: title, ctx: ctx).sources
             // A quick look at the web (company sites, invite links) so you can see what Keel will use.
@@ -597,7 +731,6 @@ struct MeetingRecorderView: View {
             sources += web.sources
         }
         .onDisappear { if !recorder.isRecording { MeetingAutopilot.setRecording(false) } }   // keeps recording if you switch screens
-        .onChange(of: recorder.isRecording) { _, on in MeetingAutopilot.setRecording(on) }
     }
 
     private var controls: some View {
@@ -605,7 +738,11 @@ struct MeetingRecorderView: View {
             HStack(spacing: DS.Space.l) {
                 Button {
                     Task {
-                        if recorder.isRecording { recorder.stop() } else { await recorder.start(resume: !recorder.transcript.isEmpty) }
+                        if recorder.isRecording { recorder.stop() } else {
+                            let first = recorder.transcript.isEmpty
+                            await recorder.start(resume: !first)
+                            if first, let event { MeetingAutopilot.startActivity(for: event) }
+                        }
                     }
                 } label: {
                     ZStack {
@@ -740,6 +877,12 @@ struct MeetingRecorderView: View {
 
     private func writeUp() async {
         writing = true; defer { writing = false }
+        // Settle which meeting this was, using when recording actually started, then make sure the
+        // conversation matches it (a call taken during a scheduled block shouldn't be named after the block).
+        if !eventChosen {
+            event = MeetingEventMatcher.best(at: recorder.startedAt ?? Date())
+            if let e = event, !(await MeetingEventMatcher.confirm(e, transcript: recorder.transcript)) { event = nil }
+        }
         let context = MeetingContext.build(event: event, title: title, ctx: ctx)
         // Web context: company sites, invite links, Wikipedia for recurring topics, and (with your own AI key) a live web search.
         let web = await WebContext.gather(event: event, title: title, transcript: recorder.transcript, deep: true)
@@ -791,8 +934,12 @@ struct MeetingRecorderView: View {
         if let target {
             note = target
             note.blocks += blocks
+            if note.title.trimmingCharacters(in: .whitespaces).isEmpty {
+                note.title = await MeetingTitler.title(event: event, summary: w.summary, topics: w.topics.map(\.title), transcript: recorder.transcript)
+            }
         } else {
-            note = Note(title: event?.title ?? "Meeting · \(Date().formatted(date: .abbreviated, time: .shortened))", blocks: blocks)
+            let name = await MeetingTitler.title(event: event, summary: w.summary, topics: w.topics.map(\.title), transcript: recorder.transcript)
+            note = Note(title: name, blocks: blocks)
             note.icon = "🎙️"
             ctx.insert(note)
         }
