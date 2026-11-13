@@ -7,7 +7,7 @@ enum MailSwipe {
     static let defaultLeading = "task,snooze,star", defaultTrailing = "archive,trash"
     static let all: [(id: String, label: String, icon: String)] = [
         ("archive", "Archive", "checkmark"), ("trash", "Trash", "trash"), ("task", "Make a Task", "checklist"),
-        ("snooze", "Snooze", "clock"), ("star", "Star", "star"), ("read", "Read / Unread", "envelope.open"), ("pin", "Pin", "pin"),
+        ("snooze", "Snooze", "clock"), ("star", "Flag", "flag"), ("read", "Read / Unread", "envelope.open"), ("pin", "Pin", "pin"),
     ]
     static func actions(_ raw: String) -> [String] { raw.split(separator: ",").map(String.init).filter { id in all.contains { $0.id == id } } }
 }

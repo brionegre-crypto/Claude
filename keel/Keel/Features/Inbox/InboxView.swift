@@ -7,11 +7,11 @@ import QuickLook
 /// AI split inbox, Starred / Snoozed / Sent / Archive mailboxes, search (on-phone and all-mail),
 /// compose, swipe actions, formatted emails and attachments.
 enum Mailbox: String, CaseIterable, Identifiable {
-    case inbox = "Inbox", screener = "Screener", starred = "Starred", snoozed = "Snoozed", awaiting = "Awaiting reply", sent = "Sent", archive = "Archive"
+    case inbox = "Inbox", screener = "Screener", starred = "Flagged", snoozed = "Snoozed", awaiting = "Awaiting reply", sent = "Sent", archive = "Archive"
     var id: String { rawValue }
     var icon: String {
         switch self {
-        case .inbox: "tray"; case .screener: "person.crop.circle.badge.questionmark"; case .starred: "star"; case .snoozed: "clock"; case .awaiting: "bubble.left.and.exclamationmark.bubble.right"
+        case .inbox: "tray"; case .screener: "person.crop.circle.badge.questionmark"; case .starred: "flag"; case .snoozed: "clock"; case .awaiting: "bubble.left.and.exclamationmark.bubble.right"
         case .sent: "paperplane"; case .archive: "archivebox"
         }
     }
@@ -54,6 +54,7 @@ struct InboxView: View {
     @AppStorage(MailSwipe.leadingKey) private var leadingRaw = MailSwipe.defaultLeading
     @AppStorage(MailSwipe.trailingKey) private var trailingRaw = MailSwipe.defaultTrailing
     @State private var pickSnoozeDate = false
+    @State private var confirmReadAll = false
     @State private var customSnooze = Date().addingTimeInterval(86_400)
 
     private func inAccount(_ e: EmailMessage) -> Bool { accountFilter == nil || e.accountId == accountFilter }
@@ -217,6 +218,9 @@ struct InboxView: View {
                         Button(selecting ? "Done Selecting" : "Select Messages", systemImage: "checkmark.circle") {
                             withAnimation { selecting.toggle(); selected = [] }
                         }
+                        Button("Mark All as Read", systemImage: "envelope.open") { confirmReadAll = true }
+                            .disabled(!visible.contains { !$0.isRead })
+                        Divider()
                         NavigationLink { QuickRepliesView() } label: { Label("Clear 5 quick replies", systemImage: "bolt.horizontal.circle") }
                         NavigationLink { ScheduledMailView() } label: { Label("Scheduled", systemImage: "clock.arrow.circlepath") }
                         NavigationLink { DigestView() } label: { Label("Newsletter digest", systemImage: "newspaper") }
@@ -233,6 +237,9 @@ struct InboxView: View {
                 }
             }
             .sheet(item: $compose) { ComposeView(draft: $0) }
+            .confirmationDialog(readAllTitle, isPresented: $confirmReadAll, titleVisibility: .visible) {
+                Button("Mark All as Read") { markAllRead(visible) }
+            }
             .sheet(item: $ruleFrom) { MailRuleEditor(rule: nil, prefillField: "from", prefillText: $0.from) }
             .confirmationDialog("Snooze until…", isPresented: Binding(get: { snoozing != nil && !pickSnoozeDate }, set: { if !$0 && !pickSnoozeDate { snoozing = nil } }), titleVisibility: .visible) {
                 ForEach(Self.snoozeOptions(), id: \.0) { option in
@@ -387,7 +394,12 @@ struct InboxView: View {
                 Section {
                     ForEach(fresh) { e in row(e) }
                 } header: {
-                    Label("New · \(fresh.count)", systemImage: "circle.fill").textCase(nil).foregroundStyle(DS.Palette.accent)
+                    HStack {
+                        Label("New · \(fresh.count)", systemImage: "circle.fill").foregroundStyle(DS.Palette.accent)
+                        Spacer()
+                        Button("Mark all read") { markAllRead(fresh) }.font(DS.Font.caption).buttonStyle(.borderless)
+                    }
+                    .textCase(nil)
                 }
             }
             let rest = items.filter { !freshIds.contains($0.id) }
@@ -507,7 +519,7 @@ struct InboxView: View {
         case "trash": Button(role: .destructive) { trash(e) } label: { Label("Trash", systemImage: "trash") }
         case "task": Button { toTask(e) } label: { Label("Task", systemImage: "checklist") }.tint(DS.Palette.warmth)
         case "snooze": Button { snoozing = e } label: { Label("Snooze", systemImage: "clock") }.tint(DS.Palette.meeting)
-        case "star": Button { star(e) } label: { Label(e.isStarred ? "Unstar" : "Star", systemImage: e.isStarred ? "star.slash" : "star") }.tint(.yellow)
+        case "star": Button { star(e) } label: { Label(e.isStarred ? "Unflag" : "Flag", systemImage: e.isStarred ? "flag.slash" : "flag") }.tint(.orange)
         case "read": Button { toggleRead(e) } label: { Label(e.isRead ? "Unread" : "Read", systemImage: e.isRead ? "envelope.badge" : "envelope.open") }.tint(.blue)
         case "pin": Button { e.isPinned.toggle(); Haptics.tap() } label: { Label(e.isPinned ? "Unpin" : "Pin", systemImage: "pin") }.tint(.orange)
         default: EmptyView()
@@ -536,7 +548,7 @@ struct InboxView: View {
                 Button("Forward", systemImage: "arrowshape.turn.up.right") { compose = .forward(e) }
                 Divider()
                 Button(e.isRead ? "Mark Unread" : "Mark Read", systemImage: e.isRead ? "envelope.badge" : "envelope.open") { toggleRead(e) }
-                Button(e.isStarred ? "Unstar" : "Star", systemImage: "star") { star(e) }
+                Button(e.isStarred ? "Unflag" : "Flag", systemImage: e.isStarred ? "flag.slash" : "flag") { star(e) }
                 Button(e.isPinned ? "Unpin" : "Pin to Top", systemImage: e.isPinned ? "pin.slash" : "pin") {
                     withAnimation(DS.spring) { e.isPinned.toggle() }; Haptics.tap()
                 }
@@ -589,7 +601,8 @@ struct InboxView: View {
         HStack(spacing: DS.Space.l) {
             Button { bulk { m, p in m.isArchived = true; try? await p?.archive(m.providerMessageId) } } label: { Label("Archive", systemImage: "archivebox") }
             Button { bulk { m, p in m.isRead = true; try? await p?.markRead(m.providerMessageId, read: true) } } label: { Label("Read", systemImage: "envelope.open") }
-            Button { bulk { m, p in m.isStarred = true; try? await p?.setStarred(m.providerMessageId, starred: true) } } label: { Label("Star", systemImage: "star") }
+            Button { bulk { m, p in m.isRead = false; try? await p?.markRead(m.providerMessageId, read: false) } } label: { Label("Unread", systemImage: "envelope.badge") }
+            Button { bulk { m, p in m.isStarred = true; try? await p?.setStarred(m.providerMessageId, starred: true) } } label: { Label("Flag", systemImage: "flag") }
             Button(role: .destructive) { bulk { m, p in try? await p?.trash(m.providerMessageId); ctx.delete(m) } } label: { Label("Trash", systemImage: "trash") }
         }
         .labelStyle(.iconOnly).font(.title3)
@@ -622,6 +635,30 @@ struct InboxView: View {
         Haptics.tap()
         let starred = e.isStarred
         Task { try? await provider(for: e)?.setStarred(e.providerMessageId, starred: starred) }
+    }
+
+    private var readAllTitle: String {
+        let n = visible.filter { !$0.isRead }.count
+        let place = mailbox == .inbox && search.isEmpty ? (tab == .all ? "your inbox" : tab.title) : (search.isEmpty ? mailbox.rawValue : "these results")
+        return "Mark \(n) unread email\(n == 1 ? "" : "s") in \(place) as read?"
+    }
+
+    /// Marks everything in this list read, here at once and on the mail servers in the background (a few at a time).
+    private func markAllRead(_ list: [EmailMessage]) {
+        let unread = list.flatMap { threaded ? conversation($0) : [$0] }.filter { !$0.isRead }
+        guard !unread.isEmpty else { return }
+        let jobs = unread.map { ($0.providerMessageId, provider(for: $0)) }
+        withAnimation(DS.spring) { for m in unread { m.isRead = true } }
+        try? ctx.save()
+        Haptics.success()
+        UndoCenter.shared.notify("Marked \(unread.count) as read")
+        Task {
+            for chunk in stride(from: 0, to: jobs.count, by: 6).map({ Array(jobs[$0..<min($0 + 6, jobs.count)]) }) {
+                await withTaskGroup(of: Void.self) { g in
+                    for (id, p) in chunk { g.addTask { try? await p?.markRead(id, read: true) } }
+                }
+            }
+        }
     }
 
     private func toggleRead(_ e: EmailMessage) {
@@ -841,8 +878,8 @@ struct EmailDetailView: View {
         }
         .toolbar {
             ToolbarItemGroup(placement: .topBarTrailing) {
-                Button { toggleStar() } label: { Image(systemName: email.isStarred ? "star.fill" : "star") }
-                    .tint(email.isStarred ? .yellow : nil).accessibilityLabel(email.isStarred ? "Unstar" : "Star")
+                Button { toggleStar() } label: { Image(systemName: email.isStarred ? "flag.fill" : "flag") }
+                    .tint(email.isStarred ? .orange : nil).accessibilityLabel(email.isStarred ? "Unflag" : "Flag")
                 Button { archive() } label: { Image(systemName: "archivebox") }.accessibilityLabel("Archive")
                 Menu {
                     Button("Mark unread", systemImage: "envelope.badge") { email.isRead = false; Task { try? await provider?.markRead(email.providerMessageId, read: false) } }
