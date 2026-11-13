@@ -39,6 +39,13 @@ enum HelpArea: String, CaseIterable, Identifiable {
 enum HelpLibrary {
     static let all: [HowTo] = [
         // Getting started
+        HowTo(id: "signin", area: .start, question: "Use the same Keel on iPhone, iPad and Mac",
+              steps: ["Open Settings → Sign in to Keel (top of Settings) and tap Sign in with Apple.", "Do the same on your other devices with the same Apple Account.", "Close and reopen Keel once. Your tasks, notes, habits and everything you make now sync through your private iCloud.", "Add your mail accounts on each device in Settings → Mail Accounts; email is fetched by each device, not copied to iCloud."],
+              tip: "Signing in also connects this device to your Keel server, so Claude works without typing an access code.",
+              keywords: "account sign in login sync icloud same devices mac ipad"),
+        HowTo(id: "windows", area: .settings, question: "Open a page or email in its own window",
+              steps: ["On Mac or iPad, right-click (or touch and hold) a page in Notes or an email in Inbox.", "Choose Open in New Window.", "For a small always-handy window with your next task, a focus button and quick capture, tap the Quick window button at the top of Today."],
+              keywords: "window multiple mac ipad side by side quick"),
         HowTo(id: "accounts", area: .start, question: "Add my email accounts",
               steps: ["Open Settings (the gear on Today).", "Tap Mail Accounts, then choose under Add Account.", "Pick Gmail, Outlook, iCloud or another provider and sign in.", "Mail starts syncing right away; pull down on Inbox to refresh."],
               keywords: "gmail outlook icloud yahoo connect sign in mail"),

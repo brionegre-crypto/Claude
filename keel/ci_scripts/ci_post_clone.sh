@@ -26,6 +26,17 @@ if [ "${KEEL_WEATHERKIT:-1}" != "1" ]; then
   sed -i '' '/com.apple.developer.weatherkit/d' project.yml
   echo "WeatherKit entitlement left out of this build (KEEL_WEATHERKIT=0)."
 fi
+# iCloud sync + Sign in with Apple need the App ID's iCloud (with container iCloud.com.briangreenejr.keel),
+# Push Notifications and Sign in with Apple capabilities turned on at developer.apple.com first.
+# Off until then; set KEEL_ICLOUD=1 in the Xcode Cloud workflow's environment variables to include them.
+if [ "${KEEL_ICLOUD:-0}" != "1" ]; then
+  sed -i '' '/KEEL_ICLOUD/d' project.yml
+  sed -i '' '/com.apple.developer.applesignin/d' project.yml
+  for key in com.apple.developer.icloud-container-identifiers com.apple.developer.icloud-services com.apple.developer.aps-environment com.apple.developer.applesignin; do
+    /usr/libexec/PlistBuddy -c "Delete :$key" Keel/KeelMac.entitlements 2>/dev/null || true
+  done
+  echo "iCloud sync and Sign in with Apple left out of this build (set KEEL_ICLOUD=1 once the App ID has them)."
+fi
 if [ "${KEEL_HEALTHKIT:-1}" != "1" ]; then
   sed -i '' '/com.apple.developer.healthkit/d' project.yml
   echo "HealthKit entitlements left out of this build (KEEL_HEALTHKIT=0)."

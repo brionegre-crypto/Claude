@@ -59,21 +59,100 @@ struct KeelApp: App {
                 AppLock.shared.lockIfEnabled()
             }
         }
+
+        // Mac and iPad: pages, emails and the Quick window in their own windows.
+        WindowGroup("Page", id: "note", for: UUID.self) { $id in
+            NoteWindow(id: id)
+                .modifier(KeelTextSizeModifier())
+                .environment(SyncEngine.shared)
+                .environment(ShutdownManager.shared)
+        }
+        .modelContainer(container)
+        WindowGroup("Email", id: "mail", for: String.self) { $id in
+            EmailWindow(id: id)
+                .modifier(KeelTextSizeModifier())
+                .environment(SyncEngine.shared)
+                .environment(ShutdownManager.shared)
+        }
+        .modelContainer(container)
+        WindowGroup("Quick", id: "quick") {
+            QuickWindowView()
+                .modifier(KeelTextSizeModifier())
+                .environment(SyncEngine.shared)
+                .environment(ShutdownManager.shared)
+        }
+        .modelContainer(container)
     }
 }
 
-/// One shared store for the app, Siri/App Intents and (later) widgets.
+/// Keel's data. Two stores in the App Group:
+///  • default.store: your own content (tasks, notes, habits, goals, meds, food…). With iCloud sync on, it syncs
+///    through your private iCloud database, so every iPhone, iPad and Mac signed in to your Apple Account matches.
+///  • mail.store: the mail cache and things scanned from mail (bills, trips, promises). Each device builds its own
+///    from your mail accounts, so nothing is scanned twice and iCloud isn't filled with email.
 @MainActor enum KeelStore {
+    static let cloudID = "iCloud.com.briangreenejr.keel"
+    static let syncKey = "icloud.sync"                 // turned on when you sign in; takes effect next launch
+    static let splitKey = "store.split.v1"
+    static var syncWanted: Bool { UserDefaults.standard.bool(forKey: syncKey) }
+    /// What actually happened at launch: "on", "off", or why sync couldn't start.
+    static private(set) var syncState = "off"
+
+    static let syncedTypes: [any PersistentModel.Type] = [
+        TaskItem.self, Note.self, NoteAttachment.self, Habit.self, HabitStack.self, HabitLog.self, FocusSession.self, Goal.self,
+        SavedLink.self, TimeEntry.self, IdealBlock.self, OdysseyPath.self, Person.self, CheckIn.self, TaskTemplate.self, Countdown.self,
+        Project.self, Snippet.self, MailRule.self, Medication.self, MedDose.self, TaskAttachment.self, SmartList.self, FoodProduct.self, FoodEntry.self,
+    ]
+    static let localTypes: [any PersistentModel.Type] = [
+        MailAccount.self, EmailMessage.self, Commitment.self, FollowUp.self, SenderRule.self, ScheduledMail.self, Subscription.self,
+        Delivery.self, Reservation.self, Suggestion.self, SenderScore.self,
+    ]
+
     static let container: ModelContainer = {
-        let schema = Schema([
-            MailAccount.self, EmailMessage.self, TaskItem.self, Note.self,
-            Habit.self, HabitStack.self, HabitLog.self, FocusSession.self, Commitment.self, Goal.self, FollowUp.self, SavedLink.self, TimeEntry.self, IdealBlock.self, OdysseyPath.self, SenderRule.self, Person.self, CheckIn.self, TaskTemplate.self, NoteAttachment.self, Countdown.self, Project.self, Snippet.self, MailRule.self, ScheduledMail.self, Medication.self, MedDose.self, Subscription.self, Delivery.self, Reservation.self, TaskAttachment.self, SmartList.self, Suggestion.self, SenderScore.self, FoodProduct.self, FoodEntry.self,
-        ])
+        let all = Schema(syncedTypes + localTypes)
         // Lives in the App Group so widgets / intents extensions can read it too.
-        let config = ModelConfiguration(schema: schema, groupContainer: .identifier("group.com.briangreenejr.keel"))
-        KeelBackup.applyPendingRestore(storeURL: config.url)       // finish a restore picked last session
-        return try! ModelContainer(for: schema, configurations: config)
+        let group = ModelConfiguration.GroupContainer.identifier("group.com.briangreenejr.keel")
+        let single = ModelConfiguration(schema: all, groupContainer: group, cloudKitDatabase: .none)
+        KeelBackup.applyPendingRestore(storeURL: single.url)       // finish a restore picked last session
+
+        let mailURL = single.url.deletingLastPathComponent().appendingPathComponent("mail.store")
+        // First launch with two stores: copy today's store so the mail side keeps your accounts and cache.
+        if !UserDefaults.standard.bool(forKey: splitKey) {
+            copyStore(from: single.url, to: mailURL)
+        }
+        let wantCloud = syncWanted
+        do {
+            let content = ModelConfiguration("Content", schema: Schema(syncedTypes), url: single.url,
+                                             cloudKitDatabase: wantCloud ? .private(cloudID) : .none)
+            let mail = ModelConfiguration("Mail", schema: Schema(localTypes), url: mailURL, cloudKitDatabase: .none)
+            let c = try ModelContainer(for: all, configurations: content, mail)
+            UserDefaults.standard.set(true, forKey: splitKey)
+            syncState = wantCloud ? "on" : "off"
+            return c
+        } catch {
+            syncState = "Couldn't start iCloud sync: \(error.localizedDescription)"
+            if wantCloud {
+                // Try again without iCloud so Keel still opens with all your data.
+                let content = ModelConfiguration("Content", schema: Schema(syncedTypes), url: single.url, cloudKitDatabase: .none)
+                let mail = ModelConfiguration("Mail", schema: Schema(localTypes), url: mailURL, cloudKitDatabase: .none)
+                if let c = try? ModelContainer(for: all, configurations: content, mail) {
+                    UserDefaults.standard.set(true, forKey: splitKey)
+                    return c
+                }
+            }
+            return try! ModelContainer(for: all, configurations: single)
+        }
     }()
+
+    /// Copies a SQLite store and its side files (-wal, -shm) before either is opened.
+    private static func copyStore(from: URL, to: URL) {
+        let fm = FileManager.default
+        guard fm.fileExists(atPath: from.path), !fm.fileExists(atPath: to.path) else { return }
+        for suffix in ["", "-wal", "-shm"] {
+            let src = URL(fileURLWithPath: from.path + suffix), dst = URL(fileURLWithPath: to.path + suffix)
+            if fm.fileExists(atPath: src.path) { try? fm.copyItem(at: src, to: dst) }
+        }
+    }
 }
 
 struct RootView: View {

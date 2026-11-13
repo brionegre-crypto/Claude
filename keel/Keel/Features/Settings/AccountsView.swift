@@ -77,6 +77,9 @@ struct AccountsView: View {
         NavigationStack {
             List {
                 Section {
+                    NavigationLink { AccountView() } label: { AccountRow() }
+                }
+                Section {
                     HStack(spacing: 14) {
                         Image(systemName: "sailboat.fill")
                             .font(.system(size: 28, weight: .semibold)).foregroundStyle(.white)
@@ -1263,5 +1266,22 @@ struct WritingStyleView: View {
             } footer: { Text("Learn Now reads the last 30 days of mail you sent. Only short statistics are kept.") }
         }
         .navigationTitle("Writing Style")
+    }
+}
+
+/// Top of Settings: who's signed in and whether this device is syncing.
+private struct AccountRow: View {
+    @State private var account = KeelAccount.shared
+    var body: some View {
+        HStack(spacing: 12) {
+            Image(systemName: account.isSignedIn ? "person.crop.circle.fill.badge.checkmark" : "person.crop.circle.badge.plus")
+                .font(.system(size: 34)).foregroundStyle(DS.Palette.accent)
+            VStack(alignment: .leading, spacing: 2) {
+                Text(account.isSignedIn ? (account.name.isEmpty ? "Keel Account" : account.name) : "Sign in to Keel").font(DS.Font.headline)
+                Text(account.isSignedIn ? (KeelStore.syncState == "on" ? "Syncing with iCloud" : "Signed in") : "Same Keel on iPhone, iPad and Mac")
+                    .font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
+            }
+        }
+        .padding(.vertical, 4)
     }
 }

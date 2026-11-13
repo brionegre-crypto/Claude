@@ -16,10 +16,8 @@ targets:
     platform: iOS
     sources: [Keel]
     dependencies:
-      - target: KeelWidgets               # widgets + focus Live Activity, embedded in the app
-        platformFilter: iOS               # (iPhone/iPad only for now; the Mac app ships without them)
-      - target: KeelShare                 # "Save to Keel" in the share sheet
-        platformFilter: iOS
+      - target: KeelWidgets               # widgets + focus Live Activity, embedded in the app (Mac: widgets only)
+      - target: KeelShare                 # "Save to Keel" in the share sheet (Mac too)
       - target: KeelWatch                 # Apple Watch companion
         platformFilter: iOS
     settings:
@@ -43,6 +41,10 @@ targets:
         com.apple.developer.healthkit: true
         com.apple.developer.weatherkit: true
         com.apple.developer.healthkit.access: []
+        com.apple.developer.icloud-container-identifiers: [iCloud.com.briangreenejr.keel]   # iCloud sync (KEEL_ICLOUD)
+        com.apple.developer.icloud-services: [CloudKit]                                      # iCloud sync (KEEL_ICLOUD)
+        aps-environment: development                                                         # iCloud sync (KEEL_ICLOUD): silent pushes; App Store builds use production
+        com.apple.developer.applesignin: [Default]                                           # Sign in with Apple
     info:
       path: Keel/Info.plist
       properties:
@@ -51,7 +53,7 @@ targets:
         CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         ITSAppUsesNonExemptEncryption: false   # only standard HTTPS, so TestFlight skips the export-compliance question
         UILaunchScreen: {}
-        UIBackgroundModes: [fetch, processing, audio]
+        UIBackgroundModes: [fetch, processing, audio, remote-notification]
         BGTaskSchedulerPermittedIdentifiers:
           - com.keel.sync.refresh
           - com.keel.sync.process
@@ -64,6 +66,8 @@ targets:
         UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
         UISupportedInterfaceOrientations~ipad: [UIInterfaceOrientationPortrait, UIInterfaceOrientationPortraitUpsideDown, UIInterfaceOrientationLandscapeLeft, UIInterfaceOrientationLandscapeRight]
         LSApplicationCategoryType: public.app-category.productivity
+        UIApplicationSceneManifest:
+          UIApplicationSupportsMultipleScenes: true     # several Keel windows on Mac and iPad
         UIRequiresFullScreen: true
         NSSupportsLiveActivities: true
         NSHealthUpdateUsageDescription: When you turn it on, Keel saves the meals you log (calories, protein, carbs, fat, fiber, sugar, sodium and caffeine) to Health, and removes them if you delete them in Keel.
@@ -90,7 +94,10 @@ targets:
         MARKETING_VERSION: "0.1.0"
         CURRENT_PROJECT_VERSION: "1"
         CODE_SIGN_STYLE: Automatic
-        TARGETED_DEVICE_FAMILY: "1"
+        TARGETED_DEVICE_FAMILY: "1,2"
+        SUPPORTS_MACCATALYST: YES
+        DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER: NO
+        "CODE_SIGN_ENTITLEMENTS[sdk=macosx*]": KeelWidgets/KeelWidgetsMac.entitlements
     entitlements:
       path: KeelWidgets/KeelWidgets.entitlements
       properties:
@@ -114,7 +121,10 @@ targets:
         MARKETING_VERSION: "0.1.0"
         CURRENT_PROJECT_VERSION: "1"
         CODE_SIGN_STYLE: Automatic
-        TARGETED_DEVICE_FAMILY: "1"
+        TARGETED_DEVICE_FAMILY: "1,2"
+        SUPPORTS_MACCATALYST: YES
+        DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER: NO
+        "CODE_SIGN_ENTITLEMENTS[sdk=macosx*]": KeelShare/KeelShareMac.entitlements
     entitlements:
       path: KeelShare/KeelShare.entitlements
       properties:

@@ -5,6 +5,8 @@ import EventKit
 /// Home screen. ADHD rule: ONE focal point. The "Just One Thing" card dominates; everything else is quieter.
 struct TodayView: View {
     @Environment(\.modelContext) private var ctx
+    @Environment(\.openWindow) private var openWindow
+    @Environment(\.supportsMultipleWindows) private var multiWindow
     @Query(filter: #Predicate<TaskItem> { !$0.isDone }) private var tasks: [TaskItem]
     @Query(TodayView.topEmails) private var emails: [EmailMessage]     // top 60 by priority, not the whole mailbox
     static var topEmails: FetchDescriptor<EmailMessage> {
@@ -72,6 +74,12 @@ struct TodayView: View {
                 ToolbarItem(placement: .topBarLeading) {
                     Button { showBrainDump = true } label: { Image(systemName: "brain.head.profile") }
                         .accessibilityLabel("Brain dump")
+                }
+                if multiWindow {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button { openWindow(id: "quick") } label: { Image(systemName: "rectangle.inset.topright.filled") }
+                            .accessibilityLabel("Open the Quick window")
+                    }
                 }
                 ToolbarItem(placement: .topBarTrailing) {
                     NavigationLink { SearchView() } label: { Image(systemName: "magnifyingglass") }

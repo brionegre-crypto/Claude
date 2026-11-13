@@ -131,7 +131,7 @@ final class CalendarService {
     /// Two-way sync with Apple Reminders. Whichever side changed last wins; a reminder deleted in the
     /// Reminders app is removed from Keel; tasks made in Keel are created in Reminders.
     func syncReminders(tasks: [TaskItem], insert: (TaskItem) -> Void, delete: (TaskItem) -> Void) async {
-        guard hasReminderAccess else { return }
+        guard hasReminderAccess, RemindersBridge.isThisDevice else { return }
         let reminders = await fetchReminders()
         let byId = Dictionary(tasks.compactMap { t in t.ekReminderId.map { ($0, t) } }, uniquingKeysWith: { a, _ in a })
         var seen = Set<String>()
@@ -246,5 +246,20 @@ extension Recurrence {
         self.init(frequency: f, interval: rule.interval,
                   weekdays: (rule.daysOfTheWeek ?? []).map { $0.dayOfTheWeek.rawValue },
                   endDate: rule.recurrenceEnd?.endDate)
+    }
+}
+
+
+/// With iCloud sync, tasks already reach every device. Apple Reminders syncs through iCloud on its own too,
+/// so only one device links the two (your iPhone by default); otherwise each device would copy them again.
+@MainActor
+enum RemindersBridge {
+    static let key = "reminders.bridge"
+    static var isThisDevice: Bool {
+        get {
+            if let v = UserDefaults.standard.object(forKey: key) as? Bool { return v }
+            return UIDevice.current.userInterfaceIdiom == .phone
+        }
+        set { UserDefaults.standard.set(newValue, forKey: key) }
     }
 }

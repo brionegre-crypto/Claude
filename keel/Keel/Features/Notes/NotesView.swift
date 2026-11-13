@@ -8,6 +8,8 @@ import PhotosUI
 /// Your workspace: favorites, a tree of pages and databases, folders and templates.
 struct NotesView: View {
     @Environment(\.modelContext) private var ctx
+    @Environment(\.openWindow) private var openWindow
+    @Environment(\.supportsMultipleWindows) private var multiWindow
     @Query(sort: \Note.updatedAt, order: .reverse) private var allNotes: [Note]
     private var notes: [Note] { allNotes.filter { !$0.isTemplate } }
     private var templates: [Note] { allNotes.filter(\.isTemplate) }
@@ -314,6 +316,9 @@ struct NotesView: View {
         }
         .buttonStyle(.plain)
         .contextMenu {
+            if multiWindow {
+                Button("Open in New Window", systemImage: "macwindow.badge.plus") { openWindow(id: "note", value: n.id) }
+            }
             Button(n.isPinned ? "Remove from Favorites" : "Add to Favorites", systemImage: n.isPinned ? "star.slash" : "star") { n.isPinned.toggle() }
             Button("Add page inside", systemImage: "doc.badge.plus") {
                 let c = Note(title: ""); c.parentId = n.id; ctx.insert(c); opened = c
@@ -691,6 +696,7 @@ private struct QuickTile: View {
             .background(DS.Palette.elevated, in: .rect(cornerRadius: 16))
         }
         .buttonStyle(.plain)
+        .hoverEffect(.lift)
         .accessibilityLabel(title)
     }
 }
@@ -795,7 +801,7 @@ private struct FolderCard: View {
             .overlay(RoundedRectangle(cornerRadius: 18).strokeBorder(style.color.opacity(0.18)))
             .contentShape(.rect(cornerRadius: 18))
         }
-        .buttonStyle(PressStyle())
+        .buttonStyle(PressStyle()).hoverEffect(.lift)
         .accessibilityElement(children: .combine)
         .accessibilityLabel("\(summary.name.map(NotePath.leaf) ?? "Unfiled"), \(summary.count) pages")
         .accessibilityAddTraits(.isButton)
@@ -814,7 +820,7 @@ private struct NewFolderCard: View {
             .background(RoundedRectangle(cornerRadius: 18).strokeBorder(DS.Palette.inkSoft.opacity(0.3), style: StrokeStyle(lineWidth: 1.5, dash: [6, 5])))
             .contentShape(.rect(cornerRadius: 18))
         }
-        .buttonStyle(PressStyle())
+        .buttonStyle(PressStyle()).hoverEffect(.lift)
     }
 }
 

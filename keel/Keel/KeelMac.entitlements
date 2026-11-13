@@ -25,6 +25,20 @@
 	<array>
 		<string>group.com.briangreenejr.keel</string>
 	</array>
+	<key>com.apple.developer.icloud-container-identifiers</key>
+	<array>
+		<string>iCloud.com.briangreenejr.keel</string>
+	</array>
+	<key>com.apple.developer.icloud-services</key>
+	<array>
+		<string>CloudKit</string>
+	</array>
+	<key>com.apple.developer.aps-environment</key>
+	<string>development</string>
+	<key>com.apple.developer.applesignin</key>
+	<array>
+		<string>Default</string>
+	</array>
 	<key>com.apple.developer.weatherkit</key>
 	<true/>
 	<key>com.apple.developer.usernotifications.time-sensitive</key>

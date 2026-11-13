@@ -1,6 +1,7 @@
 import { handleAI, json } from "./ai";
 import { handleMCP } from "./mcp";
 import { handleNotion, infoPage, privacyPage, termsPage } from "./notion";
+import { handleAppleAuth, isSession } from "./auth";
 
 export interface Env {
   KEEL: KVNamespace;
@@ -10,6 +11,7 @@ export interface Env {
   DAILY_AI_LIMIT: string;
   NOTION_CLIENT_ID: string;      // public integration (Sign in with Notion)
   NOTION_CLIENT_SECRET: string;
+  OWNER_APPLE_SUB?: string;      // optional: pin the owner's Apple account (otherwise the first sign-in claims it)
 }
 
 /**
@@ -30,13 +32,14 @@ export default {
     const url = new URL(req.url);
     const bearer = req.headers.get("authorization")?.replace(/^Bearer /, "");
     // Never match when a secret is unset (undefined === undefined would otherwise let anyone in).
-    const device = !!env.KEEL_DEVICE_TOKEN && bearer === env.KEEL_DEVICE_TOKEN;
+    const device = (!!env.KEEL_DEVICE_TOKEN && bearer === env.KEEL_DEVICE_TOKEN) || (await isSession(bearer, env));
     const mcp = !!env.KEEL_MCP_TOKEN && bearer === env.KEEL_MCP_TOKEN;
 
     if (req.method === "GET" && (url.pathname === "/" || url.pathname === "/setup")) return infoPage(req, env);
     if (req.method === "GET" && url.pathname === "/privacy") return privacyPage();
     if (req.method === "GET" && url.pathname === "/terms") return termsPage();
     if (url.pathname.startsWith("/notion/")) return handleNotion(req, env);
+    if (url.pathname === "/auth/apple" && req.method === "POST") return handleAppleAuth(req, env);
 
     // Lets the app check its access code without spending AI credits.
     if (url.pathname === "/health") {

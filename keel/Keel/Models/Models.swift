@@ -183,7 +183,7 @@ struct MicroStep: Codable, Identifiable, Hashable {
 
 @Model final class TaskItem {
     var id: UUID = UUID()
-    var title: String
+    var title: String = ""
     var notes: String = ""
     var dueDate: Date?
     var priority: TaskPriority = TaskPriority.none
@@ -273,7 +273,7 @@ struct DBProperty: Codable, Identifiable, Hashable {
 
 @Model final class Note {
     var id: UUID = UUID()
-    var title: String
+    var title: String = ""
     var blocks: [NoteBlock] = []
     var parentId: UUID?                         // nested pages
     var linkedEventId: String?                  // meeting notes tied to a calendar event
@@ -316,9 +316,9 @@ struct DBProperty: Codable, Identifiable, Hashable {
 
 @Model final class Habit {
     var id: UUID = UUID()
-    var name: String
-    var icon: String                            // SF Symbol
-    var minutes: Int                            // tiny-habit duration
+    var name: String = ""
+    var icon: String = "" // SF Symbol
+    var minutes: Int = 0 // tiny-habit duration
     var orderInStack: Int = 0
     var stackId: UUID?
     var currentStreak: Int = 0
@@ -360,8 +360,8 @@ enum StackAnchor: Codable, Hashable {
 
 @Model final class HabitStack {
     var id: UUID = UUID()
-    var name: String
-    var anchor: StackAnchor
+    var name: String = ""
+    var anchor: StackAnchor = .afterFocusSession
     var weekdays: [Int] = [1, 2, 3, 4, 5, 6, 7]   // Calendar weekday numbers
     var isActive: Bool = true
 
@@ -372,9 +372,9 @@ enum StackAnchor: Codable, Hashable {
 }
 
 @Model final class HabitLog {
-    var habitId: UUID
-    var day: Date                                // start of day
-    var completedAt: Date
+    var habitId: UUID = UUID()
+    var day: Date = Date() // start of day
+    var completedAt: Date = Date()
 
     init(habitId: UUID, day: Date, completedAt: Date = Date()) {
         self.habitId = habitId
@@ -433,8 +433,8 @@ enum LifeArea: String, Codable, CaseIterable, Identifiable {
 
 @Model final class Goal {
     var id: UUID = UUID()
-    var title: String
-    var area: LifeArea
+    var title: String = ""
+    var area: LifeArea = .growth
     var why: String = ""                        // the reason it matters (shown when motivation dips)
     var targetDate: Date?
     var emoji: String = "🎯"
@@ -462,8 +462,8 @@ enum TaskFeeling: String, Codable, CaseIterable, Identifiable {
 
 @Model final class SavedLink {
     var id: UUID = UUID()
-    var url: String
-    var title: String
+    var url: String = ""
+    var title: String = ""
     var summary: String?
     var siteName: String = ""
     var addedAt: Date = Date()
@@ -481,9 +481,9 @@ enum TaskFeeling: String, Codable, CaseIterable, Identifiable {
 
 @Model final class TimeEntry {
     var id: UUID = UUID()
-    var title: String
-    var area: LifeArea
-    var start: Date
+    var title: String = ""
+    var area: LifeArea = .growth
+    var start: Date = Date()
     var end: Date?                              // nil while the timer is running
     var source: String = "manual"               // manual | focus | calendar
 
@@ -500,11 +500,11 @@ enum TaskFeeling: String, Codable, CaseIterable, Identifiable {
 /// One block of your ideal week (e.g. Mon–Fri 9:00–11:30 Deep work, Work).
 @Model final class IdealBlock {
     var id: UUID = UUID()
-    var title: String
-    var area: LifeArea
-    var weekdays: [Int]                         // 1 = Sunday … 7 = Saturday
-    var startMinute: Int                        // minutes after midnight
-    var endMinute: Int
+    var title: String = ""
+    var area: LifeArea = .growth
+    var weekdays: [Int] = []                         // 1 = Sunday … 7 = Saturday
+    var startMinute: Int = 0 // minutes after midnight
+    var endMinute: Int = 0
 
     init(title: String, area: LifeArea, weekdays: [Int], startMinute: Int, endMinute: Int) {
         self.title = title
@@ -540,7 +540,7 @@ enum OdysseyKind: String, Codable, CaseIterable, Identifiable {
 
 @Model final class OdysseyPath {
     var id: UUID = UUID()
-    var kind: OdysseyKind
+    var kind: OdysseyKind = .current
     var title: String = ""
     var years: [String] = ["", "", "", "", ""]  // one line per year
     var questions: String = ""                  // questions this path raises
@@ -571,7 +571,7 @@ enum OdysseyKind: String, Codable, CaseIterable, Identifiable {
 
 @Model final class Person {
     var id: UUID = UUID()
-    var name: String
+    var name: String = ""
     var email: String = ""
     var phone: String = ""
     var cadenceDays: Int = 14                   // how often you want to be in touch
@@ -589,8 +589,8 @@ enum OdysseyKind: String, Codable, CaseIterable, Identifiable {
 
 @Model final class CheckIn {
     var id: UUID = UUID()
-    var day: Date                               // start of day
-    var mood: Int                               // 1…5
+    var day: Date = Date() // start of day
+    var mood: Int = 0 // 1…5
     var highlight: String = ""
     var gratitude: String = ""
     var energy: Int?                            // 1…3, captured with the check-in
@@ -611,9 +611,9 @@ enum OdysseyKind: String, Codable, CaseIterable, Identifiable {
 
 @Model final class NoteAttachment {
     var id: UUID = UUID()
-    var noteId: UUID
-    @Attribute(.externalStorage) var data: Data
-    var kind: String                            // photo | sketch | scan
+    var noteId: UUID = UUID()
+    @Attribute(.externalStorage) var data: Data = Data()
+    var kind: String = "" // photo | sketch | scan
     var recognizedText: String = ""             // OCR from scans, so they're searchable
     var createdAt: Date = Date()
 
@@ -628,8 +628,8 @@ enum OdysseyKind: String, Codable, CaseIterable, Identifiable {
 
 @Model final class Countdown {
     var id: UUID = UUID()
-    var title: String
-    var date: Date
+    var title: String = ""
+    var date: Date = Date()
     var emoji: String = "🎉"
     var createdAt: Date = Date()
 
@@ -647,7 +647,7 @@ enum OdysseyKind: String, Codable, CaseIterable, Identifiable {
 
 @Model final class Project {
     var id: UUID = UUID()
-    var name: String
+    var name: String = ""
     var emoji: String = "📁"
     var area: LifeArea = LifeArea.work
     var goalId: UUID?
@@ -664,8 +664,8 @@ enum OdysseyKind: String, Codable, CaseIterable, Identifiable {
 
 @Model final class Snippet {
     var id: UUID = UUID()
-    var name: String
-    var body: String
+    var name: String = ""
+    var body: String = ""
     var uses: Int = 0
 
     init(name: String, body: String) {
@@ -678,9 +678,9 @@ enum OdysseyKind: String, Codable, CaseIterable, Identifiable {
 
 @Model final class MailRule {
     var id: UUID = UUID()
-    var field: String                           // from | subject | any
-    var contains: String                        // case-insensitive match
-    var action: String                          // archive | star | read | category:<name> | task
+    var field: String = "" // from | subject | any
+    var contains: String = "" // case-insensitive match
+    var action: String = "" // archive | star | read | category:<name> | task
     var isOn: Bool = true
     var timesApplied: Int = 0
     var createdAt: Date = Date()
@@ -696,7 +696,7 @@ enum OdysseyKind: String, Codable, CaseIterable, Identifiable {
 
 @Model final class TaskTemplate {
     var id: UUID = UUID()
-    var name: String
+    var name: String = ""
     var icon: String = "doc.on.doc"
     var items: [String] = []                    // one task per line; quick-add syntax works (e.g. "Pack charger !high")
     var listName: String = ""                   // empty = default list
@@ -736,11 +736,11 @@ enum OdysseyKind: String, Codable, CaseIterable, Identifiable {
 
 @Model final class FocusSession {
     var id: UUID = UUID()
-    var startedAt: Date
-    var plannedMinutes: Int
+    var startedAt: Date = Date()
+    var plannedMinutes: Int = 0
     var endedAt: Date?
     var taskId: UUID?
-    var mode: String                             // "deep", "shutdown"
+    var mode: String = "" // "deep", "shutdown"
     var interruptionsBlocked: Int = 0
     var brokeEarly: Bool = false
 
@@ -791,7 +791,7 @@ struct StoredAttachment: Codable {
 
 @Model final class Medication {
     var id: UUID = UUID()
-    var name: String
+    var name: String = ""
     var dose: String = ""                       // "20 mg"
     var times: [Int] = [480]                    // minutes after midnight, e.g. 8:00 = 480
     var remind: Bool = true
@@ -809,9 +809,9 @@ struct StoredAttachment: Codable {
 
 @Model final class MedDose {
     var id: UUID = UUID()
-    var medicationId: UUID
-    var slot: Int                               // which scheduled time (minutes after midnight)
-    var day: Date                               // start of day
+    var medicationId: UUID = UUID()
+    var slot: Int = 0 // which scheduled time (minutes after midnight)
+    var day: Date = Date() // start of day
     var takenAt: Date = Date()
 
     init(medicationId: UUID, slot: Int, day: Date) {
@@ -910,10 +910,10 @@ struct StoredAttachment: Codable {
 
 @Model final class TaskAttachment {
     var id: UUID = UUID()
-    var taskId: UUID
-    @Attribute(.externalStorage) var data: Data
-    var filename: String
-    var kind: String                            // photo | file
+    var taskId: UUID = UUID()
+    @Attribute(.externalStorage) var data: Data = Data()
+    var filename: String = ""
+    var kind: String = "" // photo | file
     var createdAt: Date = Date()
 
     init(taskId: UUID, data: Data, filename: String, kind: String) {
@@ -928,7 +928,7 @@ struct StoredAttachment: Codable {
 
 @Model final class SmartList {
     var id: UUID = UUID()
-    var name: String
+    var name: String = ""
     var icon: String = "line.3.horizontal.decrease.circle"
     var priorities: [Int] = []                  // TaskPriority raw values; empty = any
     var tags: [String] = []                     // any of these; empty = any

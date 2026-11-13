@@ -71,7 +71,7 @@ struct HubView: View {
                             .foregroundStyle(on ? .white : DS.Palette.ink)
                             .overlay(Capsule().strokeBorder(.white.opacity(on ? 0.3 : 0.15)))
                         }
-                        .buttonStyle(PressStyle())
+                        .buttonStyle(PressStyle()).hoverEffect(.lift)
                         .accessibilityAddTraits(on ? .isSelected : [])
                         .accessibilityHint("Shows tools for feeling \(s.label.lowercased())")
                     }
@@ -96,7 +96,7 @@ struct HubView: View {
                         NavigationLink { t.dest().navigationTransition(.zoom(sourceID: "p" + t.id, in: zoom)) } label: {
                             PrescriptionCard(tool: t, why: pick.1, stat: stats[t.id], color: state?.color ?? color(of: t.id))
                         }
-                        .buttonStyle(PressStyle())
+                        .buttonStyle(PressStyle()).hoverEffect(.lift)
                         .matchedTransitionSource(id: "p" + t.id, in: zoom)
                         .simultaneousGesture(TapGesture().onEnded { remember(t.id) })
                     }
@@ -123,7 +123,7 @@ struct HubView: View {
                                 .background(color(of: t.id).opacity(0.12), in: Capsule())
                                 .foregroundStyle(color(of: t.id))
                         }
-                        .buttonStyle(PressStyle())
+                        .buttonStyle(PressStyle()).hoverEffect(.lift)
                         .simultaneousGesture(TapGesture().onEnded { remember(t.id) })
                     }
                 }
@@ -149,7 +149,7 @@ struct HubView: View {
 
             if let hero = g.tools.first {
                 NavigationLink { hero.dest().navigationTransition(.zoom(sourceID: "g" + hero.id, in: zoom)) } label: { HeroTile(tool: hero, stat: stats[hero.id], color: g.color) }
-                    .buttonStyle(PressStyle())
+                    .buttonStyle(PressStyle()).hoverEffect(.lift)
                     .matchedTransitionSource(id: "g" + hero.id, in: zoom)
                     .simultaneousGesture(TapGesture().onEnded { remember(hero.id) })
                     .padding(.horizontal)
@@ -157,7 +157,7 @@ struct HubView: View {
             FlexGrid(columns: 2, spacing: 10) {
                 ForEach(g.tools.dropFirst()) { t in
                     NavigationLink { t.dest().navigationTransition(.zoom(sourceID: "g" + t.id, in: zoom)) } label: { ToolTile(tool: t, stat: stats[t.id], color: g.color) }
-                        .buttonStyle(PressStyle())
+                        .buttonStyle(PressStyle()).hoverEffect(.lift)
                         .matchedTransitionSource(id: "g" + t.id, in: zoom)
                         .simultaneousGesture(TapGesture().onEnded { remember(t.id) })
                 }
@@ -199,7 +199,7 @@ struct HubView: View {
             }
             ForEach(hits) { t in
                 NavigationLink { t.dest().navigationTransition(.zoom(sourceID: "s" + t.id, in: zoom)) } label: { ToolTile(tool: t, stat: stats[t.id], color: color(of: t.id), wide: true) }
-                    .buttonStyle(PressStyle())
+                    .buttonStyle(PressStyle()).hoverEffect(.lift)
                     .matchedTransitionSource(id: "s" + t.id, in: zoom)
                     .simultaneousGesture(TapGesture().onEnded { remember(t.id) })
             }

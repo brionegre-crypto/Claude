@@ -1,6 +1,8 @@
 import WidgetKit
 import SwiftUI
+#if !targetEnvironment(macCatalyst)
 import ActivityKit
+#endif
 import AppIntents
 
 @main
@@ -13,10 +15,12 @@ struct KeelWidgetBundle: WidgetBundle {
         HabitsCheckWidget()
         MedsWidget()
         MomentumWidget()
+        #if !targetEnvironment(macCatalyst)       // Live Activities and Control Center are iPhone-only
         FocusLiveActivity()
         MeetingLiveActivity()
         CaptureControl()
         FocusControl()
+        #endif
     }
 }
 
@@ -185,6 +189,7 @@ struct NextEventView: View {
     }
 }
 
+#if !targetEnvironment(macCatalyst)
 // MARK: - Focus Live Activity (Lock Screen + Dynamic Island)
 
 struct FocusLiveActivity: Widget {
@@ -338,6 +343,8 @@ struct FocusControl: ControlWidget {
         .description("Start a focus session.")
     }
 }
+
+#endif
 
 // MARK: - Countdown widget
 

@@ -19,6 +19,8 @@ enum Mailbox: String, CaseIterable, Identifiable {
 
 struct InboxView: View {
     @Environment(\.modelContext) private var ctx
+    @Environment(\.openWindow) private var openWindow
+    @Environment(\.supportsMultipleWindows) private var multiWindow
     /// The newest 2,500 messages. Older mail is still found by Search (it asks the server), and keeping
     /// the whole history in memory made every sync re-sort everything and stutter the app.
     @Query(InboxView.recentMail) private var allEmails: [EmailMessage]
@@ -143,7 +145,7 @@ struct InboxView: View {
 
     var body: some View {
         let _ = memo.reset()
-        NavigationStack {
+        SplitOrStack(placeholder: "Select an email", icon: "envelope.open") {
             Group {
                 if mailbox == .awaiting {
                     FollowUpsView()
@@ -447,6 +449,10 @@ struct InboxView: View {
                 ForEach(MailSwipe.actions(leadingRaw).filter { mailbox != .sent || $0 == "task" }, id: \.self) { swipeButton($0, e) }
             }
             .contextMenu {
+                if multiWindow {
+                    Button("Open in New Window", systemImage: "macwindow.badge.plus") { openWindow(id: "mail", value: e.id) }
+                    Divider()
+                }
                 Button("Reply", systemImage: "arrowshape.turn.up.left") { compose = .reply(to: e, all: false, accounts: accounts) }
                 Button("Reply All", systemImage: "arrowshape.turn.up.left.2") { compose = .reply(to: e, all: true, accounts: accounts) }
                 Button("Forward", systemImage: "arrowshape.turn.up.right") { compose = .forward(e) }
