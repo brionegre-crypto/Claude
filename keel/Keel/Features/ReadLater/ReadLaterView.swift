@@ -87,6 +87,7 @@ enum LinkSaver {
 struct ReadLaterView: View {
     @Environment(\.modelContext) private var ctx
     @Query(sort: \SavedLink.addedAt, order: .reverse) private var links: [SavedLink]
+    @State private var readerLink: SavedLink?
     @State private var showRead = false
     @State private var newURL = ""
     @State private var reading: SavedLink?
@@ -120,8 +121,10 @@ struct ReadLaterView: View {
             ForEach(visible) { link in
                 Button { open(link) } label: { LinkRow(link: link) }
                     .buttonStyle(.plain)
+                    .contextMenu { Button("Read in Keel and highlight", systemImage: "book") { readerLink = link } }
                     .swipeActions(edge: .trailing) {
                         Button(role: .destructive) { ctx.delete(link) } label: { Label("Delete", systemImage: "trash") }
+                        Button { readerLink = link } label: { Label("Reader", systemImage: "book") }.tint(.indigo)
                         Button { link.isRead.toggle(); link.readAt = link.isRead ? Date() : nil } label: {
                             Label(link.isRead ? "Unread" : "Read", systemImage: link.isRead ? "circle" : "checkmark")
                         }
@@ -137,6 +140,7 @@ struct ReadLaterView: View {
             }
         }
         .navigationTitle("Read Later")
+        .navigationDestination(item: $readerLink) { ReaderView(link: $0) }
         .toolbar {
             Picker("Show", selection: $showRead) { Text("Unread").tag(false); Text("Read").tag(true) }
                 .pickerStyle(.segmented).frame(width: 170)

@@ -153,6 +153,7 @@ final class AppRouter {
     var openTool: ToolRoute?
     var showQuickOpen = false
     var showShortcuts = false
+    var showVoice = false
 
     func handle(_ url: URL) -> Bool {
         guard url.scheme == "com.keel.app" else { return false }
@@ -179,6 +180,8 @@ final class AppRouter {
             openTool = ToolRoute(id: id)
         case "groceries": openTool = ToolRoute(id: "mealplan")
         case "open": showQuickOpen = true
+        case "voice": showVoice = true
+        case "inbox-capture": openTool = ToolRoute(id: "capture")
         case "note":
             if let id = url.pathComponents.dropFirst().first.flatMap(UUID.init(uuidString:)) { openNoteId = id }
         case "nownext":    // Start the next task with a Now timer

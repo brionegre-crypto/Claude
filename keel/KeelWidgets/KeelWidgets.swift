@@ -26,6 +26,7 @@ struct KeelWidgetBundle: WidgetBundle {
         CaptureControl()
         FocusControl()
         StartNowControl()
+        VoiceNoteControl()
         #endif
     }
 }
@@ -372,6 +373,16 @@ struct FocusControl: ControlWidget {
 #endif
 
 #if !targetEnvironment(macCatalyst)
+struct VoiceNoteControl: ControlWidget {
+    var body: some ControlWidgetConfiguration {
+        StaticControlConfiguration(kind: "KeelVoiceNote") {
+            ControlWidgetButton(action: OpenURLIntent(URL(string: "com.keel.app://voice")!)) { Label("Voice Note", systemImage: "mic.fill") }
+        }
+        .displayName("Keel Voice Note")
+        .description("Talk and it becomes a tidy note.")
+    }
+}
+
 struct StartNowControl: ControlWidget {
     var body: some ControlWidgetConfiguration {
         StaticControlConfiguration(kind: "KeelStartNow") {

@@ -349,6 +349,7 @@ private struct MoreRouterSheets: ViewModifier {
             .sheet(item: $router.openTool) { r in ToolSheet(id: r.id) }
             .sheet(isPresented: $router.showQuickOpen) { QuickOpenView() }
             .sheet(isPresented: $router.showShortcuts) { KeyboardShortcutsView() }
+            .sheet(isPresented: $router.showVoice) { VoiceNoteView() }
     }
 }
 

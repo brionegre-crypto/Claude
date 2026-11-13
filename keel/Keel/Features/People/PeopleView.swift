@@ -44,6 +44,7 @@ extension KeepInTouch {
 }
 
 struct PeopleView: View {
+    @State private var personPage: Person?
     @Environment(\.modelContext) private var ctx
     @Query(sort: \Person.name) private var people: [Person]
     @State private var showPicker = false
@@ -99,6 +100,7 @@ struct PeopleView: View {
             }
         }
         .navigationTitle("Keep in Touch")
+        .navigationDestination(item: $personPage) { PersonPageView(person: $0) }
         .toolbar { Button { showPicker = true } label: { Image(systemName: "person.badge.plus") }.accessibilityLabel("Add person") }
         .sheet(isPresented: $showPicker) {
             ContactPicker { contact in
@@ -130,6 +132,7 @@ struct PeopleView: View {
             Button(role: .destructive) { ctx.delete(p) } label: { Label("Remove", systemImage: "trash") }
             Button { p.lastContact = Date(); Haptics.success() } label: { Label("Talked", systemImage: "checkmark") }.tint(DS.Palette.calm)
         }
+        .swipeActions(edge: .leading) { Button { personPage = p } label: { Label("Page", systemImage: "person.text.rectangle") }.tint(.indigo) }
     }
 }
 

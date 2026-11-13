@@ -1,3 +1,4 @@
+import UniformTypeIdentifiers
 import SwiftUI
 import SwiftData
 import PhotosUI
@@ -53,6 +54,7 @@ struct NoteEditor: View {
     @State private var zoomRoot: UUID?              // outliner: show one line and what's under it
     @State private var supertagDefs: [SupertagDef] = []
     @State private var openAt: UUID?
+    @State private var importingPDF = false
 
     var body: some View {
         editorBody.savePoint { SavePoints.note(note, focusedBlock: focused ?? editing) }
@@ -91,6 +93,9 @@ struct NoteEditor: View {
             scrollTarget = nil
         } }
         .sheet(item: $commentTarget) { CommentsSheet(note: note, blockId: $0.blockId) }
+        .fileImporter(isPresented: $importingPDF, allowedContentTypes: [.pdf]) { r in
+            if case .success(let url) = r { PDFImport.add(url, to: note, ctx: ctx) }
+        }
         .sheet(isPresented: $showFindReplace) { FindReplaceSheet(note: note) { scrollTarget = $0 } }
         .background {
             Group {
@@ -426,6 +431,10 @@ struct NoteEditor: View {
             } else {
                 Button { pickBlock = BlockPickTarget(id: blk.id, databasesOnly: true) } label: { Label("Choose a database to show here", systemImage: "tablecells.badge.ellipsis") }
             }
+        case "keel-audio":
+            AudioBlockView(attachmentId: blk.refId)
+        case "keel-pdf":
+            PDFBlockView(attachmentId: blk.refId, note: note)
         case SpecialBlock.blockref:
             BlockRefView(ref: blk.refId, allNotes: allNotes) { n, bid in
                 if n.id == note.id { scrollTarget = bid } else { openAt = bid; openPage = n }
@@ -854,6 +863,7 @@ struct NoteEditor: View {
                 }
                 #endif
                 Button("AI meeting notes", systemImage: "waveform.badge.mic") { recording = true }
+                Button("PDF to read and highlight", systemImage: "doc.richtext") { importingPDF = true }
                 Divider()
                 Button("Sub-page", systemImage: "doc.badge.plus") {
                     let nb = NoteBlock(kind: .text, text: "")
@@ -872,6 +882,9 @@ struct NoteEditor: View {
                 Button("Summarize", systemImage: "text.line.first.and.arrowtriangle.forward") { Task { await summarize() } }
                 Button("Ask this page", systemImage: "questionmark.bubble") { answer = nil; question = ""; asking = true }
                 Button("Turn to-dos into tasks", systemImage: "checklist") { extractTasks() }
+                Button("Make flashcards", systemImage: "rectangle.on.rectangle.angled") {
+                    Task { aiWorking = true; let n = await Flashcards.generate(for: note); aiWorking = false; UndoCenter.shared.notify(n == 0 ? "Couldn't make cards from this page" : "Added \(n) flashcards") }
+                }
             } label: { Image(systemName: "sparkles") }.accessibilityLabel("AI tools")
             .disabled(note.isLocked)
             Menu {

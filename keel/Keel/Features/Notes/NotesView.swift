@@ -165,7 +165,7 @@ struct NotesView: View {
                 }
             }
             .navigationDestination(isPresented: $recording) { MeetingRecorderView() }
-            .navigationDestination(isPresented: $showBrain) { BrainMapView() }
+            .navigationDestination(isPresented: $showBrain) { BrainHomeView() }      // the brain map, unchanged, on top of your second-brain home
             .navigationDestination(isPresented: $showImport) { ImportView() }
             .sheet(isPresented: $showOrganize) { OrganizeNotesView() }
             .navigationDestination(item: $openFolder) { ref in folderPage(ref).navigationTransition(.zoom(sourceID: "f" + ref.id, in: zoom)) }
@@ -251,7 +251,7 @@ struct NotesView: View {
                 QuickTile(title: "Today", icon: "calendar", color: .orange) { opened = DailyNote.today(ctx) }
                 QuickTile(title: "Record", icon: "waveform.badge.mic", color: .red) { recording = true }
                 QuickTile(title: "Journal", icon: "book.fill", color: .pink) { createJournalPage() }
-                QuickTile(title: "Brain map", icon: "brain.head.profile.fill", color: .pink) { showBrain = true }
+                QuickTile(title: "Second brain", icon: "brain.head.profile.fill", color: .pink) { showBrain = true }
                 QuickTile(title: "Vault", icon: "archivebox.fill", color: .brown) { showVault = true }
                 QuickTile(title: "Canvas", icon: "rectangle.on.rectangle.angled.fill", color: .teal) { opened = KeelCanvas.create(ctx: ctx, folder: nil) }
                 QuickTile(title: "Reorganize", icon: "sparkles.rectangle.stack.fill", color: .indigo) { showReorganize = true }
