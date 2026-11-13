@@ -5,10 +5,10 @@ import UserNotifications
 /// The smart parts of Inbox: tabs, learning from how you treat senders, VIPs, quick-win estimates,
 /// batched delivery and which mail deserves a notification.
 enum InboxTab: String, CaseIterable, Identifiable {
-    case priority, updates, newsletters, quick
+    case all, priority, updates, newsletters, quick       // All: every account, newest first, nothing hidden
     var id: String { rawValue }
-    var title: String { switch self { case .priority: "Priority"; case .updates: "Updates"; case .newsletters: "Newsletters"; case .quick: "Quick wins" } }
-    var icon: String { switch self { case .priority: "person.fill"; case .updates: "bell"; case .newsletters: "newspaper"; case .quick: "bolt.fill" } }
+    var title: String { switch self { case .all: "All"; case .priority: "Priority"; case .updates: "Updates"; case .newsletters: "Newsletters"; case .quick: "Quick wins" } }
+    var icon: String { switch self { case .all: "tray.full"; case .priority: "person.fill"; case .updates: "bell"; case .newsletters: "newspaper"; case .quick: "bolt.fill" } }
 }
 
 @MainActor

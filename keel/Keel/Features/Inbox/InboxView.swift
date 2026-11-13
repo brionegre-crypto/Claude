@@ -33,7 +33,8 @@ struct InboxView: View {
     @Query private var rules: [SenderRule]
     @AppStorage("focus.hideInbox") private var hiddenByFocus = false
     @State private var mailbox: Mailbox = .inbox
-    @AppStorage("inbox.tab") private var tabRaw = InboxTab.priority.rawValue
+    @AppStorage("inbox.tab") private var tabRaw = InboxTab.all.rawValue
+    @AppStorage("inbox.allTabIntroduced") private var allTabIntroduced = false
     @Query private var senderScores: [SenderScore]
     @State private var batchTick = 0
     @State private var accountFilter: String? = nil
@@ -85,6 +86,8 @@ struct InboxView: View {
             return pool.filter { q.matches($0, isVIP: scores[$0.from.lowercased()]?.isVIP == true) }
         }
         guard mailbox == .inbox else { return base }
+        // All: a regular inbox. Every account, newest first, nothing sorted away or held back.
+        if tab == .all { return base.filter { !$0.isPinned }.sorted { $0.receivedAt > $1.receivedAt } }
         let scores = scoreMap
         let shown = base.filter { !$0.isPinned && !InboxBrain.isHeld($0, score: scores[$0.from.lowercased()]) }
         if tab == .quick {
@@ -99,7 +102,23 @@ struct InboxView: View {
 
     private var mailQuery: MailQuery { MailQueryParser.parse(search) }
 
-    private var tab: InboxTab { InboxTab(rawValue: tabRaw) ?? .priority }
+    /// Which inbox each email came to, when there's more than one account.
+    private var accountTags: [String: AccountTag] {
+        guard accounts.count > 1 else { return [:] }
+        let palette: [Color] = [.blue, .orange, .green, .purple, .pink, .teal, .indigo, .brown]
+        let sorted = accounts.sorted { $0.address < $1.address }
+        let locals = sorted.map { String($0.address.split(separator: "@").first ?? "") }
+        var out: [String: AccountTag] = [:]
+        for (i, a) in sorted.enumerated() {
+            // The part before @, unless two accounts share it (then the provider).
+            let local = locals[i]
+            let label = locals.filter { $0 == local }.count > 1 ? a.provider.displayName : local
+            out[a.id] = AccountTag(label: String(label.prefix(12)), color: palette[i % palette.count])
+        }
+        return out
+    }
+
+    private var tab: InboxTab { InboxTab(rawValue: tabRaw) ?? .all }
     private var scoreMap: [String: SenderScore] {
         if let m = memo.scores { return m }
         let m = Dictionary(senderScores.map { ($0.sender, $0) }, uniquingKeysWith: { a, _ in a })
@@ -129,6 +148,7 @@ struct InboxView: View {
         var c: [InboxTab: Int] = [:]
         for e in live { c[InboxBrain.tab(e, score: scores[e.from.lowercased()]), default: 0] += 1 }
         c[.quick] = mailboxEmails.filter { InboxBrain.isQuickWin($0, score: scores[$0.from.lowercased()]) }.count
+        c[.all] = mailboxEmails.filter { !$0.isRead }.count
         return c
     }
     private var heldCount: Int {
@@ -243,6 +263,8 @@ struct InboxView: View {
             // Housekeeping waits until the tab has finished sliding in, and runs at most every few minutes,
             // so switching to Inbox never hitches while it scans thousands of emails.
             .task {
+                // Once, after this update: open on All so nothing new is tucked away in another tab.
+                if !allTabIntroduced { allTabIntroduced = true; tabRaw = InboxTab.all.rawValue }
                 try? await Task.sleep(for: .milliseconds(450))
                 guard !Task.isCancelled else { return }
                 if Date().timeIntervalSince(Self.lastHousekeeping) > 180 || unsubCandidates.isEmpty {
@@ -284,7 +306,7 @@ struct InboxView: View {
                     .listRowSeparator(.hidden)
                     .listRowInsets(EdgeInsets(top: 4, leading: 12, bottom: 4, trailing: 12))
                     .selectionDisabled()
-                if heldCount > 0 {
+                if heldCount > 0 && tab != .all {
                     BatchBanner(waiting: heldCount) { InboxBrain.revealNow(); batchTick += 1; Haptics.tap() }
                         .listRowSeparator(.hidden)
                         .listRowInsets(EdgeInsets(top: 4, leading: 12, bottom: 4, trailing: 12))
@@ -340,6 +362,7 @@ struct InboxView: View {
             }
         }
         .listStyle(.plain)
+        .environment(\.accountTags, accountTags)
         .environment(\.editMode, .constant(selecting ? .active : .inactive))
         .safeAreaInset(edge: .bottom) { if selecting { bulkBar } }
         .refreshable {
@@ -354,6 +377,26 @@ struct InboxView: View {
     @ViewBuilder
     private var inboxContent: some View {
         switch tab {
+        case .all:
+            // New at the top (unread from the last two days, from every account), then everything else by date.
+            let items = collapse(visible)
+            let since = Date().addingTimeInterval(-48 * 3600)
+            let fresh = items.filter { !$0.isRead && $0.receivedAt > since }
+            let freshIds = Set(fresh.map(\.id))
+            if !fresh.isEmpty {
+                Section {
+                    ForEach(fresh) { e in row(e) }
+                } header: {
+                    Label("New · \(fresh.count)", systemImage: "circle.fill").textCase(nil).foregroundStyle(DS.Palette.accent)
+                }
+            }
+            let rest = items.filter { !freshIds.contains($0.id) }
+            ForEach(["Today", "Yesterday", "This week", "Older"], id: \.self) { name in
+                let group = rest.filter { InboxBrain.section(for: $0.receivedAt) == name }
+                if !group.isEmpty {
+                    Section(name) { ForEach(group) { e in row(e) } }
+                }
+            }
         case .priority:
             let items = collapse(visible)
             otherTabsCard
@@ -669,7 +712,18 @@ struct InboxView: View {
     }
 }
 
+/// With more than one account, each row carries a small tag saying which inbox it came to (like Spark).
+struct AccountTag: Equatable { let label: String; let color: Color }
+private struct AccountTagsKey: EnvironmentKey { static let defaultValue: [String: AccountTag] = [:] }
+extension EnvironmentValues {
+    var accountTags: [String: AccountTag] {
+        get { self[AccountTagsKey.self] }
+        set { self[AccountTagsKey.self] = newValue }
+    }
+}
+
 struct EmailRow: View {
+    @Environment(\.accountTags) private var accountTags
     let email: EmailMessage
     var count: Int = 1
     var unreadInThread = false
@@ -710,6 +764,12 @@ struct EmailRow: View {
                     if count > 1 { Text("\(count)").font(.caption2.weight(.semibold)).foregroundStyle(DS.Palette.inkSoft) }
                     if email.isStarred { Image(systemName: "flag.fill").font(.caption2).foregroundStyle(.orange) }
                     Spacer()
+                    if let tag = accountTags[email.accountId] {
+                        Text(tag.label).font(.caption2.weight(.semibold)).lineLimit(1)
+                            .padding(.horizontal, 5).padding(.vertical, 1)
+                            .foregroundStyle(tag.color).background(tag.color.opacity(0.14), in: Capsule())
+                            .accessibilityLabel("To \(tag.label)")
+                    }
                     Text(Self.time(email.receivedAt)).font(DS.Font.caption).foregroundStyle(unread ? DS.Palette.accent : DS.Palette.inkSoft)
                 }
                 Text(email.subject).font(DS.Font.body).foregroundStyle(unread ? DS.Palette.ink : DS.Palette.inkSoft).lineLimit(1)
