@@ -1,10 +1,13 @@
 import Foundation
 import SwiftUI
 import SwiftData
+#if !targetEnvironment(macCatalyst)
 import AlarmKit
 import ActivityKit
+#endif
 import AppIntents
 
+#if !targetEnvironment(macCatalyst)
 /// Full-screen task alarms (iOS 26 AlarmKit): a due task takes over the Lock Screen like an alarm clock,
 /// with Done and Snooze buttons, and breaks through Silent mode and Focus. Banners stay the default.
 struct KeelAlarmMetadata: AlarmMetadata {
@@ -53,8 +56,27 @@ enum TaskAlarms {
     }
 }
 
+#else
+/// Full-screen alarms are an iPhone feature; on Mac, tasks use regular Time Sensitive notifications.
+@MainActor
+enum TaskAlarms {
+    static let globalKey = "tasks.fullScreenAlarms"
+    static var globalOn: Bool { false }
+    static func wanted(_ t: TaskItem) -> Bool { false }
+    static func authorize() async -> Bool { false }
+    static func schedule(_ t: TaskItem, at fire: Date) async {}
+    static func cancel(_ t: TaskItem) {}
+}
+#endif
+
+#if targetEnvironment(macCatalyst)
+typealias KeelAlarmIntent = AppIntent
+#else
+typealias KeelAlarmIntent = LiveActivityIntent
+#endif
+
 /// "Done" on the alarm.
-struct CompleteTaskFromAlarmIntent: LiveActivityIntent {
+struct CompleteTaskFromAlarmIntent: KeelAlarmIntent {
     static let title: LocalizedStringResource = "Complete Task"
     static let isDiscoverable = false
     @Parameter(title: "Task ID") var taskId: String
@@ -74,7 +96,7 @@ struct CompleteTaskFromAlarmIntent: LiveActivityIntent {
 }
 
 /// "Snooze 10 min" on the alarm.
-struct SnoozeTaskAlarmIntent: LiveActivityIntent {
+struct SnoozeTaskAlarmIntent: KeelAlarmIntent {
     static let title: LocalizedStringResource = "Snooze Task"
     static let isDiscoverable = false
     @Parameter(title: "Task ID") var taskId: String

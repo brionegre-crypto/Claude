@@ -1,6 +1,8 @@
 import SwiftUI
 import SwiftData
+#if !targetEnvironment(macCatalyst)
 import VisionKit
+#endif
 import PhotosUI
 
 /// Your workspace: favorites, a tree of pages and databases, folders and templates.

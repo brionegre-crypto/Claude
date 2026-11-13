@@ -17,8 +17,11 @@ targets:
     sources: [Keel]
     dependencies:
       - target: KeelWidgets               # widgets + focus Live Activity, embedded in the app
+        platformFilter: iOS               # (iPhone/iPad only for now; the Mac app ships without them)
       - target: KeelShare                 # "Save to Keel" in the share sheet
+        platformFilter: iOS
       - target: KeelWatch                 # Apple Watch companion
+        platformFilter: iOS
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.briangreenejr.keel   # must be unique across all Apple developers
@@ -28,7 +31,10 @@ targets:
         ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES: "AppIcon-Steady AppIcon-OneThing AppIcon-CheckK AppIcon-Sunset"
         ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS: YES
         CODE_SIGN_STYLE: Automatic
-        TARGETED_DEVICE_FAMILY: "1"          # iPhone only (an iPad build would need every rotation supported)
+        TARGETED_DEVICE_FAMILY: "1,2"        # iPhone + iPad (full screen); iPad is also what the Mac app is built from
+        SUPPORTS_MACCATALYST: YES            # the Mac app: the same Keel, built for macOS
+        DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER: NO   # same app record, so one purchase covers iPhone, iPad and Mac
+        "CODE_SIGN_ENTITLEMENTS[sdk=macosx*]": Keel/KeelMac.entitlements
     entitlements:
       path: Keel/Keel.entitlements
       properties:
@@ -56,6 +62,8 @@ targets:
         NSRemindersUsageDescription: Keel syncs with Apple Reminders so your tasks live in one place.
         NSContactsUsageDescription: Keel shows who's invited to your calendar events.
         UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
+        UISupportedInterfaceOrientations~ipad: [UIInterfaceOrientationPortrait, UIInterfaceOrientationPortraitUpsideDown, UIInterfaceOrientationLandscapeLeft, UIInterfaceOrientationLandscapeRight]
+        LSApplicationCategoryType: public.app-category.productivity
         UIRequiresFullScreen: true
         NSSupportsLiveActivities: true
         NSHealthUpdateUsageDescription: When you turn it on, Keel saves the meals you log (calories, protein, carbs, fat, fiber, sugar, sodium and caffeine) to Health, and removes them if you delete them in Keel.

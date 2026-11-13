@@ -1,5 +1,7 @@
 import Foundation
+#if !targetEnvironment(macCatalyst)
 import ActivityKit
+#endif
 
 /// Shared between the app and the widget extension. The app writes a small snapshot of your day
 /// into the App Group; widgets read it (no database access needed in the extension).
@@ -70,6 +72,7 @@ struct WidgetSnapshot: Codable {
         tasksLeftToday: 4, tasksDoneToday: 3)
 }
 
+#if !targetEnvironment(macCatalyst)   // Live Activities are iPhone-only
 /// Live Activity for a running focus session (Lock Screen + Dynamic Island).
 struct FocusActivityAttributes: ActivityAttributes {
     struct ContentState: Codable, Hashable {
@@ -97,3 +100,4 @@ struct MeetingActivityAttributes: ActivityAttributes {
         return URL(string: "com.keel.app://join?url=\(q)")
     }
 }
+#endif

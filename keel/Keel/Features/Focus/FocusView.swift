@@ -1,6 +1,8 @@
 import SwiftUI
 import SwiftData
+#if !targetEnvironment(macCatalyst)
 import FamilyControls
+#endif
 import UserNotifications
 
 /// Deep work with escalating Shutdown, a visual time ring, optional body-double mode,
@@ -49,7 +51,9 @@ struct FocusView: View {
                 }
             }
             .sheet(isPresented: $showRitual) { ShutdownRitualView() }
+            #if !targetEnvironment(macCatalyst)
             .familyActivityPicker(isPresented: $showPicker, selection: Binding(get: { shutdown.selection }, set: { shutdown.selection = $0 }))
+            #endif
             .onReceive(tick) { now = $0; if coolDownLeft > 0 { coolDownLeft -= 1 } }
     }
 

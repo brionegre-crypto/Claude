@@ -1,8 +1,10 @@
 import Foundation
-import ActivityKit
 import Observation
+#if !targetEnvironment(macCatalyst)
+import ActivityKit
 import FamilyControls
 import ManagedSettings
+#endif
 import AppIntents
 import UserNotifications
 
@@ -28,8 +30,10 @@ final class ShutdownManager {
         }
     }
 
+    #if !targetEnvironment(macCatalyst)
     private let store = ManagedSettingsStore(named: .init("keel.focus"))
     var selection = FamilyActivitySelection()       // apps/sites picked via FamilyActivityPicker
+    #endif
     private(set) var isAuthorized = false
     private(set) var active: FocusSession?
     private(set) var level: Level = .soft
@@ -39,6 +43,10 @@ final class ShutdownManager {
     private(set) var blockingUnavailableReason: String?
 
     func authorize() async {
+        #if targetEnvironment(macCatalyst)
+        isAuthorized = false
+        blockingUnavailableReason = "Blocking apps uses Screen Time on iPhone. On Mac, focus hides your inbox and holds Keel's alerts."
+        #else
         do {
             try await AuthorizationCenter.shared.requestAuthorization(for: .individual)
             isAuthorized = AuthorizationCenter.shared.authorizationStatus == .approved
@@ -48,6 +56,7 @@ final class ShutdownManager {
             // Simulator, or a TestFlight build before Apple approves the FamilyControls entitlement.
             blockingUnavailableReason = "App blocking isn't available in this build yet. Soft focus still hides your inbox and holds Keel's alerts."
         }
+        #endif
     }
 
     func start(minutes: Int, level: Level, task: TaskItem?) -> FocusSession {
@@ -55,11 +64,13 @@ final class ShutdownManager {
         active = s
         BreakReminders.schedule(skipUntil: Date().addingTimeInterval(Double(minutes * 60)))   // no breaks mid-focus
         self.level = level
+        #if !targetEnvironment(macCatalyst)
         if level != .soft, isAuthorized {
             store.shield.applications = selection.applicationTokens.isEmpty ? nil : selection.applicationTokens
             store.shield.applicationCategories = selection.categoryTokens.isEmpty ? nil : .specific(selection.categoryTokens)
             store.shield.webDomains = selection.webDomainTokens.isEmpty ? nil : selection.webDomainTokens
         }
+        #endif
         scheduleTransitionNudges(minutes: minutes)
         startLiveActivity(endsAt: s.startedAt.addingTimeInterval(Double(minutes * 60)), task: task?.title)
         FocusSound.shared.play(FocusSound.Kind(rawValue: UserDefaults.standard.string(forKey: "focus.sound") ?? "off") ?? .off)
@@ -69,18 +80,22 @@ final class ShutdownManager {
 
     /// Lock Screen + Dynamic Island countdown.
     private func startLiveActivity(endsAt: Date, task: String?) {
+        #if !targetEnvironment(macCatalyst)
         guard ActivityAuthorizationInfo().areActivitiesEnabled else { return }
         let content = ActivityContent(state: FocusActivityAttributes.ContentState(endsAt: endsAt, taskTitle: task),
                                       staleDate: endsAt.addingTimeInterval(60))
         _ = try? Activity.request(attributes: FocusActivityAttributes(startedAt: Date()), content: content)
+        #endif
     }
 
     private func endLiveActivities() {
+        #if !targetEnvironment(macCatalyst)
         Task {
             for activity in Activity<FocusActivityAttributes>.activities {
                 await activity.end(nil, dismissalPolicy: .immediate)
             }
         }
+        #endif
     }
 
     func end(early: Bool) {
@@ -89,7 +104,9 @@ final class ShutdownManager {
         UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: (0..<12).map { "room.checkin.\($0)" })
         endLiveActivities()
         FocusSound.shared.stop()
+        #if !targetEnvironment(macCatalyst)
         store.clearAllSettings()
+        #endif
         active?.endedAt = Date()
         active?.brokeEarly = early
         active = nil

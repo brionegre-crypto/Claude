@@ -44,6 +44,7 @@ struct KeelApp: App {
                 }
         }
         .modelContainer(container)
+        .commands { KeelCommands() }          // menu bar on Mac (and keyboard shortcuts on iPad)
         .onChange(of: scenePhase) { _, phase in
             if phase == .active {
                 WidgetActions.applyPending(ctx: container.mainContext)   // taps on interactive widgets
@@ -97,12 +98,13 @@ struct RootView: View {
 
     var body: some View {
         TabView(selection: $router.tab) {
-            TodayView().tabItem { Label("Today", systemImage: "sun.max") }.tag(Tab.today)
-            InboxView().tabItem { Label("Inbox", systemImage: "tray") }.tag(Tab.inbox)
-            CalendarView().tabItem { Label("Calendar", systemImage: "calendar") }.tag(Tab.calendar)
-            TasksView().tabItem { Label("Tasks", systemImage: "checklist") }.tag(Tab.tasks)
-            NotesView().tabItem { Label("Notes", systemImage: "note.text") }.tag(Tab.notes)
+            SwiftUI.Tab("Today", systemImage: "sun.max", value: Tab.today) { TodayView() }
+            SwiftUI.Tab("Inbox", systemImage: "tray", value: Tab.inbox) { InboxView() }
+            SwiftUI.Tab("Calendar", systemImage: "calendar", value: Tab.calendar) { CalendarView() }
+            SwiftUI.Tab("Tasks", systemImage: "checklist", value: Tab.tasks) { TasksView() }
+            SwiftUI.Tab("Notes", systemImage: "note.text", value: Tab.notes) { NotesView() }
         }
+        .tabViewStyle(.sidebarAdaptable)      // tabs on iPhone; a sidebar on Mac and iPad
         // Focus lives above the tab bar (like Music's mini-player): always one tap away, shows the live timer.
         .tabViewBottomAccessory { FocusAccessory { router.showFocus = true } }
         .overlay(alignment: .bottom) { UndoToast() }
@@ -198,5 +200,39 @@ struct FocusAccessory: View {
         }
         .buttonStyle(.plain)
         .accessibilityLabel(shutdown.active == nil ? "Start a focus session" : "Open focus session")
+    }
+}
+
+/// Menu bar commands and keyboard shortcuts (Mac, and iPad with a keyboard).
+struct KeelCommands: Commands {
+    var body: some Commands {
+        CommandGroup(replacing: .newItem) {
+            Button("New Task") { AppRouter.shared.showCapture = true }
+                .keyboardShortcut("n")
+            Button("New Note") { KeelCommands.newNote() }
+                .keyboardShortcut("n", modifiers: [.command, .shift])
+            Button("Record a Meeting") { AppRouter.shared.showRecorder = true }
+                .keyboardShortcut("r", modifiers: [.command, .shift])
+        }
+        CommandMenu("Go") {
+            Button("Today") { AppRouter.shared.tab = .today }.keyboardShortcut("1")
+            Button("Inbox") { AppRouter.shared.tab = .inbox }.keyboardShortcut("2")
+            Button("Calendar") { AppRouter.shared.tab = .calendar }.keyboardShortcut("3")
+            Button("Tasks") { AppRouter.shared.tab = .tasks }.keyboardShortcut("4")
+            Button("Notes") { AppRouter.shared.tab = .notes }.keyboardShortcut("5")
+            Divider()
+            Button("Search Everything") { AppRouter.shared.showSearch = true }.keyboardShortcut("f")
+            Button("Start Focus") { AppRouter.shared.showFocus = true }.keyboardShortcut("f", modifiers: [.command, .shift])
+            Button("Plan My Day") { AppRouter.shared.showPlan = true }.keyboardShortcut("p", modifiers: [.command, .shift])
+            Button("Journal") { AppRouter.shared.showJournal = true }.keyboardShortcut("j", modifiers: [.command, .shift])
+        }
+    }
+
+    @MainActor static func newNote() {
+        let n = Note(title: "")
+        KeelStore.container.mainContext.insert(n)
+        try? KeelStore.container.mainContext.save()
+        AppRouter.shared.tab = .notes
+        AppRouter.shared.openNoteId = n.id
     }
 }

@@ -2,7 +2,9 @@ import SwiftUI
 import SwiftData
 import PhotosUI
 import PencilKit
+#if !targetEnvironment(macCatalyst)
 import VisionKit
+#endif
 import Vision
 
 /// A photo, sketch or scanned page inside a note.
@@ -126,6 +128,7 @@ private struct CanvasRepresentable: UIViewRepresentable {
     final class Coordinator { var picker: PKToolPicker? }
 }
 
+#if !targetEnvironment(macCatalyst)
 /// Apple's document camera: finds page edges, flattens and cleans up the scan.
 struct DocumentScanner: UIViewControllerRepresentable {
     var onScan: ([UIImage]) -> Void
@@ -148,3 +151,4 @@ struct DocumentScanner: UIViewControllerRepresentable {
         func documentCameraViewController(_ controller: VNDocumentCameraViewController, didFailWithError error: Error) { controller.dismiss(animated: true) }
     }
 }
+#endif

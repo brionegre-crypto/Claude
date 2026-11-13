@@ -1,7 +1,9 @@
 import Foundation
 import EventKit
 import UserNotifications
+#if !targetEnvironment(macCatalyst)
 import ActivityKit
+#endif
 import UIKit
 
 /// Finds the video-call link in a calendar event (Zoom, Google Meet, Teams, Webex, FaceTime and others).
@@ -122,6 +124,7 @@ enum MeetingAutopilot {
     }
 
     static func startActivity(for e: EKEvent) {
+        #if !targetEnvironment(macCatalyst)
         guard liveTimerOn, ActivityAuthorizationInfo().areActivitiesEnabled, e.endDate > Date() else { return }
         let id = e.calendarItemIdentifier
         if Activity<MeetingActivityAttributes>.activities.contains(where: { $0.attributes.eventId == id && $0.activityState == .active }) { return }
@@ -135,10 +138,12 @@ enum MeetingAutopilot {
             for a in Activity<MeetingActivityAttributes>.activities { await a.end(nil, dismissalPolicy: .immediate) }
             _ = try? Activity.request(attributes: attrs, content: content)
         }
+            #endif
     }
 
     /// Shows a red dot on the Lock Screen timer while Keel is recording the meeting.
     static func setRecording(_ on: Bool) {
+        #if !targetEnvironment(macCatalyst)
         Task {
             for a in Activity<MeetingActivityAttributes>.activities where a.activityState == .active {
                 var s = a.content.state
@@ -147,20 +152,25 @@ enum MeetingAutopilot {
                 await a.update(ActivityContent(state: s, staleDate: s.end.addingTimeInterval(60)))
             }
         }
+            #endif
     }
 
     static func endFinished() {
+        #if !targetEnvironment(macCatalyst)
         Task {
             let now = Date()
             for a in Activity<MeetingActivityAttributes>.activities where a.content.state.end <= now {
                 await a.end(nil, dismissalPolicy: .immediate)
             }
         }
+            #endif
     }
 
     static func endAll() {
+        #if !targetEnvironment(macCatalyst)
         Task {
             for a in Activity<MeetingActivityAttributes>.activities { await a.end(nil, dismissalPolicy: .immediate) }
         }
+            #endif
     }
 }

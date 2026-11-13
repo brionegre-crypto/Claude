@@ -1,7 +1,9 @@
 import SwiftUI
 import SwiftData
 import PhotosUI
+#if !targetEnvironment(macCatalyst)
 import VisionKit
+#endif
 
 /// A page: cover, icon, title and blocks. Type "/" for any block, "@" to mention a page, person or date,
 /// and markdown shortcuts ("- ", "[] ", "# ", "> ") as you type. Return starts the next block.
@@ -127,6 +129,7 @@ struct NoteEditor: View {
             ShareSheet(url: f.url).presentationDetents([.medium, .large])
         }
         .sheet(isPresented: $asking) { askSheet }
+        #if !targetEnvironment(macCatalyst)
         .fullScreenCover(isPresented: $showScanner) {
             DocumentScanner { pages in
                 Task {
@@ -140,6 +143,7 @@ struct NoteEditor: View {
             }
             .ignoresSafeArea()
         }
+        #endif
         .overlay { if scanning || aiWorking { ProgressView(scanning ? "Reading the scan…" : "Thinking…").padding().background(.regularMaterial, in: .rect(cornerRadius: 12)) } }
     }
 
@@ -667,9 +671,11 @@ struct NoteEditor: View {
             Menu {
                 Button("Photo", systemImage: "photo") { imageTarget = nil; showPhotoPicker = true }
                 Button("Sketch", systemImage: "pencil.tip") { showSketch = true }
+                #if !targetEnvironment(macCatalyst)
                 if VNDocumentCameraViewController.isSupported {
                     Button("Scan document", systemImage: "doc.viewfinder") { showScanner = true }
                 }
+                #endif
                 Button("AI meeting notes", systemImage: "waveform.badge.mic") { recording = true }
                 Divider()
                 Button("Sub-page", systemImage: "doc.badge.plus") {

@@ -1,6 +1,8 @@
 import SwiftUI
 import SwiftData
+#if !targetEnvironment(macCatalyst)
 import VisionKit
+#endif
 
 /// Logging what you ate, from a scanned product or a description.
 @MainActor
@@ -54,18 +56,38 @@ struct FoodScanView: View {
     @State private var typed = ""
     @State private var lastCode = ""
 
-    private var cameraOK: Bool { DataScannerViewController.isSupported && DataScannerViewController.isAvailable }
+    private var cameraOK: Bool {
+        #if targetEnvironment(macCatalyst)
+        return false              // Macs don't have the live scanner: type the barcode or paste the label
+        #else
+        return DataScannerViewController.isSupported && DataScannerViewController.isAvailable
+        #endif
+    }
 
     var body: some View {
         VStack(spacing: 0) {
             ZStack(alignment: .bottom) {
                 if cameraOK {
+                    #if !targetEnvironment(macCatalyst)
                     ScannerCamera(mode: mode, onBarcode: handle, onText: { labelText = $0 })
                         .id(mode)
                         .ignoresSafeArea(edges: .horizontal)
+                    #endif
+                } else if mode == .label {
+                    TextEditor(text: $labelText)
+                        .scrollContentBackground(.hidden)
+                        .padding(10)
+                        .background(DS.Palette.elevated, in: .rect(cornerRadius: DS.Radius.card))
+                        .overlay(alignment: .topLeading) {
+                            if labelText.isEmpty {
+                                Text("Paste or type the ingredients and nutrition facts from the label.")
+                                    .foregroundStyle(DS.Palette.inkSoft).padding(18).allowsHitTesting(false)
+                            }
+                        }
+                        .padding()
                 } else {
                     ContentUnavailableView("Camera unavailable", systemImage: "camera.slash",
-                                           description: Text("Type the barcode number below, or allow camera access in Settings."))
+                                           description: Text("Type the barcode number below, or switch to Label and paste the ingredients."))
                 }
                 VStack(spacing: 8) {
                     if busy { ProgressView().padding(10).background(.ultraThinMaterial, in: Capsule()) }
@@ -73,7 +95,7 @@ struct FoodScanView: View {
                         Text(message).font(DS.Font.caption).multilineTextAlignment(.center)
                             .padding(.horizontal, 14).padding(.vertical, 8).background(.ultraThinMaterial, in: Capsule())
                     }
-                    if mode == .label {
+                    if mode == .label && cameraOK {
                         Text(labelText.isEmpty ? "Hold the ingredients list and nutrition panel in view" : "Reading… \(labelText.count) characters")
                             .font(DS.Font.caption).padding(.horizontal, 14).padding(.vertical, 8).background(.ultraThinMaterial, in: Capsule())
                     }
@@ -139,6 +161,7 @@ struct FoodScanView: View {
     }
 }
 
+#if !targetEnvironment(macCatalyst)
 /// VisionKit's live scanner: barcodes, or all the text in view.
 private struct ScannerCamera: UIViewControllerRepresentable {
     let mode: FoodScanView.Mode
@@ -189,6 +212,7 @@ private struct ScannerCamera: UIViewControllerRepresentable {
         }
     }
 }
+#endif
 
 /// "Two eggs scrambled in butter with spinach": checked against your diet and estimated on device.
 struct DescribeMealView: View {
