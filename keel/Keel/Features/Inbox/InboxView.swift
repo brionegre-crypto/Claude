@@ -240,8 +240,23 @@ struct InboxView: View {
                 }
                 .presentationDetents([.medium, .large])
             }
-            .task { wakeSnoozed(); refreshUnsubscribe() }
-            .onChange(of: allEmails.count) { refreshUnsubscribe() }
+            // Housekeeping waits until the tab has finished sliding in, and runs at most every few minutes,
+            // so switching to Inbox never hitches while it scans thousands of emails.
+            .task {
+                try? await Task.sleep(for: .milliseconds(450))
+                guard !Task.isCancelled else { return }
+                if Date().timeIntervalSince(Self.lastHousekeeping) > 180 || unsubCandidates.isEmpty {
+                    Self.lastHousekeeping = Date()
+                    wakeSnoozed()
+                    refreshUnsubscribe()
+                }
+            }
+            .onChange(of: allEmails.count) {
+                Task {
+                    try? await Task.sleep(for: .milliseconds(600))
+                    refreshUnsubscribe()
+                }
+            }
             .onChange(of: mailbox) { if mailbox == .sent { Task { await loadSent() } } }
         }
     }
@@ -498,7 +513,9 @@ struct InboxView: View {
     // MARK: Actions (local first, then the server)
 
     private func refreshUnsubscribe() {
-        withAnimation(DS.spring) { unsubCandidates = UnsubscribeSuggestions.candidates(allEmails) }
+        let fresh = UnsubscribeSuggestions.candidates(allEmails)
+        guard fresh.map(\.id) != unsubCandidates.map(\.id) else { return }      // unchanged: no redraw
+        withAnimation(DS.spring) { unsubCandidates = fresh }
     }
 
     private func provider(for e: EmailMessage) -> MailProvider? {
@@ -594,8 +611,11 @@ struct InboxView: View {
         return out
     }
 
+    @MainActor private static var lastHousekeeping = Date.distantPast
+
     private func wakeSnoozed() {
-        for e in allEmails where (e.snoozedUntil ?? .distantFuture) <= Date() {
+        let now = Date()
+        for e in allEmails where (e.snoozedUntil ?? .distantFuture) <= now {
             e.snoozedUntil = nil
             e.isArchived = false
         }

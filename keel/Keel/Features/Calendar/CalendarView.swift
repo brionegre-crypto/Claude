@@ -116,7 +116,10 @@ struct CalendarView: View {
                     } label: { Image(systemName: "plus") }.accessibilityLabel("Add")
                 }
             }
-            .task { await CalendarService.shared.requestAccess(); load() }
+            .task {
+                if !CalendarService.shared.hasCalendarAccess { await CalendarService.shared.requestAccess() }
+                load()
+            }
             .onChange(of: anchor) { load() }
             .onChange(of: modeRaw) { load() }
             .onChange(of: hiddenRaw) { load() }

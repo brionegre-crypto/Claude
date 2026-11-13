@@ -60,6 +60,9 @@ struct TodayView: View {
             .refreshable { await SyncEngine.shared.syncAll() }
             .task {
                 // Short night → suggest a gentler day, unless you've already picked your energy today.
+                // Once is enough: asking Health again on every return to Today redrew the screen mid-transition.
+                guard sleepHours == nil else { return }
+                try? await Task.sleep(for: .milliseconds(400))
                 sleepHours = await HealthService.shared.lastNightSleepHours()
                 let today = Date().formatted(.iso8601.year().month().day())
                 if let h = sleepHours, energyDay != today {
