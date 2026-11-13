@@ -174,6 +174,9 @@ struct ComposeView: View {
                 ToolbarItem(placement: .confirmationAction) {
                     Menu {
                         Section("Send later") {
+                            if let first = recipients(draft.to).first, let best = BestSendTime.suggest(for: first) {
+                                Button("Best time · \(best.formatted(.dateTime.weekday(.abbreviated).hour().minute()))", systemImage: "sparkles") { scheduleSend(at: best) }
+                            }
                             ForEach(SendLater.presets(), id: \.1) { p in
                                 Button(p.0, systemImage: "clock") { scheduleSend(at: p.1) }
                             }

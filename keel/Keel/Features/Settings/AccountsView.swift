@@ -490,6 +490,9 @@ struct MailSettings: View {
                 Toggle("Group by Conversation", isOn: Binding(get: { UserDefaults.standard.object(forKey: MailSwipe.threadsKey) as? Bool ?? true },
                                                                set: { UserDefaults.standard.set($0, forKey: MailSwipe.threadsKey) }))
                 NavigationLink("Swipe Actions") { SwipeSettingsView() }
+                NavigationLink("Layout") { MailLayoutSettings() }
+                NavigationLink("Inbox Tabs") { InboxTabsSettings() }
+                Toggle("Draft Replies in Advance", isOn: Binding(get: { AutoDrafts.isOn }, set: { UserDefaults.standard.set($0, forKey: AutoDrafts.onKey) }))
                 NavigationLink("VIPs") { VIPListView() }
                 Picker("Notify Me About", selection: Binding(get: { InboxBrain.notifyMode }, set: { UserDefaults.standard.set($0, forKey: InboxBrain.notifyKey) })) {
                     Text("VIPs and urgent mail").tag("urgent"); Text("VIPs only").tag("vip"); Text("Nothing").tag("off")

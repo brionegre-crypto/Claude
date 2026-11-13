@@ -154,7 +154,7 @@ struct FollowUpsView: View {
                     Text("Sent \(f.sentAt.formatted(.relative(presentation: .named)))").font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
                 }
                 .contentShape(Rectangle())
-                .onTapGesture { compose = FollowUps.nudgeDraft(f) }
+                .onTapGesture { Task { compose = await SmartNudge.draft(f) } }
                 .swipeActions {
                     Button { FollowUps.resolve(f) } label: { Label("Got a reply", systemImage: "checkmark") }.tint(DS.Palette.calm)
                 }

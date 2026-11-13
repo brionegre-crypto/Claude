@@ -230,6 +230,7 @@ struct InboxView: View {
                         Button("Mark All as Read", systemImage: "envelope.open") { confirmReadAll = true }
                             .disabled(!visible.contains { !$0.isRead })
                         Divider()
+                        NavigationLink { AskInboxView() } label: { Label("Ask your inbox", systemImage: "questionmark.bubble") }
                         NavigationLink { QuickRepliesView() } label: { Label("Clear 5 quick replies", systemImage: "bolt.horizontal.circle") }
                         NavigationLink { ScheduledMailView() } label: { Label("Scheduled", systemImage: "clock.arrow.circlepath") }
                         NavigationLink { DigestView() } label: { Label("Newsletter digest", systemImage: "newspaper") }
@@ -794,6 +795,7 @@ struct EmailRow: View {
         if email.category == .calendar { out.append(("Invite", "calendar", .blue)) }
         if InboxBrain.isQuickWin(email, score: score) { out.append(("2 min", "bolt.fill", DS.Palette.calm)) }
         if email.hasAttachments { out.append(("Attachment", "paperclip", DS.Palette.inkSoft)) }
+        if AutoDrafts.has(email.id) && !email.isRead { out.insert(("Draft ready", "pencil.line", DS.Palette.accent), at: 0) }
         if let task = email.extractedTaskTitle, out.count < 3 { out.append((task, "checklist", DS.Palette.accent)) }
         return Array(out.prefix(3))
     }
@@ -854,6 +856,7 @@ struct EmailDetailView: View {
     @Query private var accounts: [MailAccount]
     @State private var intent = ""
     @State private var draft = ""
+    @State private var autoDrafted = false
     @State private var drafting = false
     @State private var htmlHeight: CGFloat = 200
     @State private var loadRemote = false
@@ -936,6 +939,8 @@ struct EmailDetailView: View {
         .translationPresentation(isPresented: $showTranslate, text: email.subject + "\n\n" + email.bodyPlain)
         #endif
         .task {
+            // A reply Keel wrote while syncing is ready to edit or send.
+            if draft.isEmpty, let pre = AutoDrafts.draft(for: email.id) { draft = pre; autoDrafted = true }
             Dread.recordOpen(email.id)          // Dread Radar notices emails opened again and again
             if !email.isRead {
                 InboxBrain.record(.open, sender: email.from, name: email.fromName, ctx: ctx)
@@ -1055,6 +1060,10 @@ struct EmailDetailView: View {
                 .onSubmit { Task { await makeDraft() } }
             if drafting { ProgressView() }
             if !draft.isEmpty {
+                if autoDrafted {
+                    Label("Keel drafted this reply in your voice. Check it, then send.", systemImage: "sparkles")
+                        .font(DS.Font.caption).foregroundStyle(DS.Palette.accent)
+                }
                 TextEditor(text: $draft).frame(minHeight: 140)
                     .padding(DS.Space.s).background(DS.Palette.elevated, in: .rect(cornerRadius: DS.Radius.chip))
                 HStack {
@@ -1078,6 +1087,7 @@ struct EmailDetailView: View {
     }
 
     private func quickSend() {
+        AutoDrafts.clear(email.id)
         let body = draft
         InboxBrain.record(.reply, sender: email.from, name: email.fromName, ctx: ctx)
         Task {
