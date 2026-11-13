@@ -328,7 +328,7 @@ enum StarterSetup {
 
     /// AI decides Projects (active, with an end), Areas (ongoing), Resources (reference) or Archive (done or untouched for months).
     static func plan(_ notes: [Note], progress: @escaping (Int, Int) -> Void) async -> [Move] {
-        let pages = notes.filter { !$0.isTemplate && !$0.isLocked && $0.parentId == nil && !areas.contains(where: { a in ($0.folder ?? "").hasPrefix(a) }) }
+        let pages = notes.filter { n in !n.isTemplate && !n.isLocked && n.parentId == nil && !areas.contains(where: { a in (n.folder ?? "").hasPrefix(a) }) }
         var out: [Move] = []
         for start in stride(from: 0, to: pages.count, by: 10) {
             progress(start, pages.count)
