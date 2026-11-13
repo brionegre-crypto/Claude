@@ -411,6 +411,7 @@ struct NotificationSettings: View {
                     ForEach(TaskAlerts.offsets.compactMap { $0.minutes == nil ? nil : $0 }, id: \.label) { Text($0.label).tag($0.minutes ?? 0) }
                 }
                 Toggle("Time Sensitive Reminders", isOn: $timeSensitive)
+                Toggle("Weekly Digest on Sunday", isOn: Binding(get: { WeeklyDigest.isOn }, set: { UserDefaults.standard.set($0, forKey: WeeklyDigest.onKey) }))
                     .onChange(of: timeSensitive) {
                         TaskAlerts.rescheduleAll((try? KeelStore.container.mainContext.fetch(FetchDescriptor<TaskItem>())) ?? [])
                     }

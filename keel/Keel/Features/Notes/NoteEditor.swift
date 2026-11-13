@@ -520,6 +520,11 @@ struct NoteEditor: View {
                 return
             }
             b.wrappedValue.text = before
+            // "remind me to call mom friday 5pm" → a real reminder, linked back to this page.
+            if let task = NoteReminders.capture(before, in: note, ctx: ctx) {
+                b.wrappedValue.text = "⏰ \(task.title)" + (task.dueDate.map { " · " + $0.formatted(date: .abbreviated, time: task.hasDueTime ? .shortened : .omitted) } ?? "")
+                UndoCenter.shared.notify("Reminder set: \(task.title)")
+            }
             let next: BlockKind = [.bullet, .todo, .numbered].contains(kind) ? kind : .text
             // Inside a toggle, the next line goes inside it too.
             let level = kind == .toggle ? (b.wrappedValue.indent ?? 0) + 1 : b.wrappedValue.indent

@@ -439,7 +439,7 @@ struct DatabaseRowProperties: View {
         switch k {
         case .text: "text.alignleft"; case .number: "number"; case .select: "chevron.down.circle"; case .multiSelect: "list.bullet"
         case .status: "circle.dotted"; case .date: "calendar"; case .checkbox: "checkmark.square"; case .url: "link"; case .person: "person"
-        case .relation: "arrow.up.right"; case .formula: "function"
+        case .relation: "arrow.up.right"; case .formula: "function"; case .ai: "sparkles"
         }
     }
 }
@@ -466,6 +466,10 @@ struct SchemaEditor: View {
                                 Text("Choose a database").tag("")
                                 ForEach(databases) { d in Text(d.title.isEmpty ? "Untitled" : d.title).tag(d.id.uuidString) }
                             }
+                        }
+                        if p.kind == .ai {
+                            TextField("What to fill, e.g. one-line summary, or category: work/home/admin", text: Binding(get: { p.options.first ?? "" }, set: { p.options = [$0] }), axis: .vertical)
+                            DBAutofillButton(property: p, db: db)
                         }
                         if p.kind == .formula {
                             TextField("e.g. {Price} * {Quantity}", text: Binding(get: { p.options.first ?? "" }, set: { p.options = [$0] }))
@@ -504,7 +508,7 @@ struct SchemaEditor: View {
         switch k {
         case .text: "Text"; case .number: "Number"; case .select: "Select"; case .multiSelect: "Multi-select"
         case .status: "Status"; case .date: "Date"; case .checkbox: "Checkbox"; case .url: "URL"; case .person: "Person"
-        case .relation: "Relation"; case .formula: "Formula"
+        case .relation: "Relation"; case .formula: "Formula"; case .ai: "AI autofill"
         }
     }
 }

@@ -164,6 +164,8 @@ final class AppRouter {
             openTool = ToolRoute(id: id)
         case "groceries": openTool = ToolRoute(id: "mealplan")
         case "open": showQuickOpen = true
+        case "note":
+            if let id = url.pathComponents.dropFirst().first.flatMap(UUID.init(uuidString:)) { openNoteId = id }
         case "nownext":    // Start the next task with a Now timer
             let ctx = KeelStore.container.mainContext
             let open = ((try? ctx.fetch(FetchDescriptor<TaskItem>(predicate: #Predicate { !$0.isDone }))) ?? [])

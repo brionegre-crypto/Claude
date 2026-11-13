@@ -57,6 +57,7 @@ struct KeelApp: App {
                 LinkSaver.importShared(into: container.mainContext)     // links saved from Safari's share sheet
                 LinkSaver.importSharedNotes(into: container.mainContext) // text/images shared from Notes, Messages, Photos…
                 MeetingAutopilot.syncActivity()                         // Lock Screen timer for a meeting in progress
+                WeeklyDigest.makeIfDue(ctx: container.mainContext)      // Sunday evening: last week on one page
             }
             if phase == .background {
                 WidgetSync.updateNow(container.mainContext)

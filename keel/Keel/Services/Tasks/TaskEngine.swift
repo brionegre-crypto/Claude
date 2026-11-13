@@ -264,7 +264,19 @@ enum QuickAdd {
         "sun": 1, "mon": 2, "tue": 3, "tues": 3, "wed": 4, "thu": 5, "thur": 5, "thurs": 5, "fri": 6, "sat": 7,
     ]
 
-    static func parse(_ input: String) -> QuickAddResult {
+    static func parse(_ raw: String) -> QuickAddResult {
+        // "Remind me to…", "Don't forget to…": the task is what comes after.
+        var input = raw
+        for lead in ["remind me to ", "remind me ", "don't forget to ", "dont forget to ", "i need to ", "need to "] where input.lowercased().hasPrefix(lead) {
+            input = String(input.dropFirst(lead.count)); break
+        }
+        // "every other week / Tuesday" → every 2.
+        input = input.replacingOccurrences(of: #"\bevery other (day|week|month|year)\b"#, with: "every 2 $1", options: [.regularExpression, .caseInsensitive])
+        var everyOtherWeek = false
+        if input.range(of: #"\bevery other (sun|mon|tue|wed|thu|fri|sat)"#, options: [.regularExpression, .caseInsensitive]) != nil {
+            input = input.replacingOccurrences(of: "every other", with: "every", options: .caseInsensitive)
+            everyOtherWeek = true
+        }
         var words = input.split(separator: " ", omittingEmptySubsequences: true).map(String.init)
         var r = QuickAddResult(title: input)
 
@@ -308,7 +320,7 @@ enum QuickAdd {
                 .replacingOccurrences(of: "and", with: " ")
                 .split(whereSeparator: { " ,".contains($0) }).compactMap { weekdayNames[String($0)] }
             if !days.isEmpty {
-                r.recurrence = Recurrence(frequency: .weekly, weekdays: Array(Set(days)).sorted())
+                r.recurrence = Recurrence(frequency: .weekly, interval: everyOtherWeek ? 2 : 1, weekdays: Array(Set(days)).sorted())
                 text.removeSubrange(range)
             }
         }
@@ -344,6 +356,7 @@ enum QuickAdd {
         t.recurrence = r.recurrence
         t.tags = r.tags
         if let list = r.list ?? defaultList ?? UserDefaults.standard.string(forKey: Prefs.defaultList) { t.listName = list }
+        LocationPhrase.apply(to: t, ctx: ctx)              // "…when I leave work", "…when I get home"
         if t.hasDueTime {
             let alert = UserDefaults.standard.integer(forKey: Prefs.defaultAlert)   // unset = 0 = at time
             t.alertOffsetMinutes = alert < 0 ? nil : alert

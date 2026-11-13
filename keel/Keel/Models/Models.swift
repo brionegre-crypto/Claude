@@ -267,6 +267,7 @@ struct DBProperty: Codable, Identifiable, Hashable {
     enum Kind: String, Codable, CaseIterable {
         case text, number, select, multiSelect, status, date, checkbox, url, person
         case relation, formula              // relation: options[0] = target database id; formula: options[0] = expression
+        case ai                             // filled by AI for every row; options[0] = the instruction
         /// Unknown kinds (from a newer Keel on another device) read as text instead of failing the whole page.
         init(from decoder: Decoder) throws {
             self = Kind(rawValue: try decoder.singleValueContainer().decode(String.self)) ?? .text

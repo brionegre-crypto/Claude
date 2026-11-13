@@ -142,6 +142,7 @@ struct NotesView: View {
                 ToolbarItem(placement: .topBarTrailing) {
                     Menu {
                         Button("New page", systemImage: "doc") { newPage() }
+                        Button("Ask my notes", systemImage: "text.bubble") { showAskNotes = true }
                         Button("New database", systemImage: "tablecells") { opened = NotesDatabase.create(title: "Untitled database", parent: nil, ctx: ctx) }
                         Button("New canvas", systemImage: "rectangle.on.rectangle.angled") { opened = KeelCanvas.create(ctx: ctx, folder: nil) }
                         if !templates.isEmpty {
@@ -216,6 +217,7 @@ struct NotesView: View {
             .navigationDestination(isPresented: $showVault) { VaultView() }
             .navigationDestination(isPresented: $showTags) { TagBrowserView() }
             .task { await NotesOrganizer.autoFile(ctx: ctx) }
+            .navigationDestination(isPresented: $showAskNotes) { AskNotesView() }
         }
     }
 
@@ -237,6 +239,7 @@ struct NotesView: View {
     @State private var showHelp = false
     @State private var showVault = false
     @State private var showTags = false
+    @State private var showAskNotes = false
     @AppStorage("notes.emptyFolders") private var emptyFoldersRaw = ""      // folders you made that have no pages yet
 
     // MARK: Pieces
