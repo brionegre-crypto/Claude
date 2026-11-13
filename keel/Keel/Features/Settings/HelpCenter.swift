@@ -243,8 +243,8 @@ enum HelpLibrary {
 
         // AI
         HowTo(id: "claude", area: .ai, question: "Use Claude in Keel",
-              steps: ["Settings → AI & Privacy → Connect Server…", "Enter your Keel server address and your access code.", "Keel then uses Claude for bigger jobs like day plans and meeting notes."],
-              keywords: "claude ai server connect key"),
+              steps: ["Get an API key at console.anthropic.com (Settings → API keys). Add a payment method there; Anthropic bills you per use, usually a few dollars a month.", "In Keel: Settings → AI & Privacy → AI Model → Claude → Claude Key, paste it and tap Test & Save.", "Keel then uses Claude for bigger jobs like day plans, drafts and meeting notes. A Claude Pro or Max chat subscription can't be connected; it has to be an API key."],
+              keywords: "claude ai key api anthropic connect pro max subscription own"),
         HowTo(id: "private", area: .ai, question: "Keep everything on my iPhone",
               steps: ["Settings → AI & Privacy → turn on Private Mode.", "Keel then uses only Apple Intelligence on your iPhone."],
               keywords: "privacy private offline on device"),

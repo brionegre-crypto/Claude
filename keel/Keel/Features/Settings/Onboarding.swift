@@ -18,7 +18,11 @@ struct OnboardingFlow: View {
     @State private var focusTime = ""
     @State private var aboutMe = ""
 
-    private let steps = 7
+    private let steps = 8
+    @State private var claudeKey = ""
+    @State private var keyTesting = false
+    @State private var keyResult: String?
+    @State private var keyOK = DirectAI.isConfigured
     @State private var tryTool: ToolRoute?
 
     var body: some View {
@@ -32,7 +36,8 @@ struct OnboardingFlow: View {
                     case 2: permissions
                     case 3: today
                     case 4: you
-                    case 5: discover
+                    case 5: ownClaude
+                    case 6: discover
                     default: finished
                     }
                 }
@@ -161,6 +166,59 @@ struct OnboardingFlow: View {
                 Button { showHabits = true } label: { Label("Pick a habit", systemImage: "link") }.buttonStyle(.bordered)
             }
             .font(DS.Font.caption)
+        }
+    }
+
+    private var ownClaude: some View {
+        VStack(spacing: DS.Space.l) {
+            hero("sparkles", .orange, "Use your own Claude", "Optional. Keel's AI already works for free on this device. Add your own Claude key for smarter plans, drafts and meeting notes.")
+            VStack(alignment: .leading, spacing: DS.Space.m) {
+                bullet("iphone", "Free without a key", "Apple Intelligence runs on your device. Nothing to set up, nothing to pay.")
+                bullet("key.fill", "Your key, your bill", "With a Claude API key, requests go straight from your device to Anthropic, which bills you per use. Most people spend a few dollars a month.")
+                bullet("exclamationmark.circle", "Not the same as Claude Pro", "A Claude Pro or Max chat subscription can't be connected to other apps. You need an API key from the Anthropic Console, with a payment method added there.")
+            }
+            if keyOK {
+                Label("Claude is connected", systemImage: "checkmark.circle.fill").font(DS.Font.headline).foregroundStyle(DS.Palette.calm)
+            } else if KeelServer.isConfigured {
+                Label("Claude is already set up through your Keel server", systemImage: "checkmark.circle.fill").font(DS.Font.caption).foregroundStyle(DS.Palette.calm)
+            } else {
+                VStack(spacing: DS.Space.s) {
+                    if let page = AIProvider.claude.keyPage {
+                        Link(destination: page) {
+                            Label("1. Get a key from Anthropic", systemImage: "arrow.up.right.square").frame(maxWidth: .infinity)
+                        }
+                        .buttonStyle(.bordered).controlSize(.large)
+                    }
+                    SecureField("2. Paste your key (starts with sk-ant-)", text: $claudeKey)
+                        .textInputAutocapitalization(.never).autocorrectionDisabled().textFieldStyle(.roundedBorder)
+                    Button { Task { await saveClaudeKey() } } label: {
+                        Label(keyTesting ? "Checking…" : "3. Connect Claude", systemImage: "link").frame(maxWidth: .infinity)
+                    }
+                    .buttonStyle(.borderedProminent).controlSize(.large).tint(DS.Palette.accent)
+                    .disabled(claudeKey.trimmingCharacters(in: .whitespacesAndNewlines).count < 20 || keyTesting)
+                    if let keyResult {
+                        Text(keyResult).font(DS.Font.caption).foregroundStyle(.red).multilineTextAlignment(.center)
+                    }
+                    Text("The key is stored only in this device's Keychain. Change or remove it any time in Settings → AI & Privacy.")
+                        .font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft).multilineTextAlignment(.center)
+                }
+            }
+        }
+    }
+
+    private func saveClaudeKey() async {
+        keyTesting = true; defer { keyTesting = false }
+        let key = claudeKey.trimmingCharacters(in: .whitespacesAndNewlines)
+        if let error = await DirectAI.test(.claude, key: key, model: AIProvider.claude.defaultModel) {
+            keyResult = error
+            Haptics.tap()
+        } else {
+            KeychainStore.save(key, for: AIProvider.claude.keychainKey)
+            UserDefaults.standard.set(AIProvider.claude.rawValue, forKey: "ai.provider")
+            claudeKey = ""
+            keyResult = nil
+            withAnimation(DS.spring) { keyOK = true }
+            Haptics.success()
         }
     }
 
