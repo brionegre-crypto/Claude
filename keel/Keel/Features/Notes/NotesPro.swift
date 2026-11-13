@@ -16,6 +16,7 @@ enum SpecialBlock {
     static let math = "keel-math"            // text = LaTeX
     static let mermaid = "keel-mermaid"      // text = Mermaid diagram source
     static let dbview = "keel-dbview"        // refId = a database shown inline
+    static let blockref = "keel-blockref"    // refId = "noteId/blockId": one line from another page, live
 
     static func kind(_ b: NoteBlock) -> String? {
         guard b.kind == .code, let l = b.lang, l.hasPrefix("keel-"), l != "keel-canvas" else { return nil }
@@ -28,11 +29,13 @@ enum SpecialBlock {
         .init(id: "dbview", title: "Linked database", subtitle: "Show a database inside this page", icon: "tablecells.badge.ellipsis", keywords: ["database", "view", "linked", "table", "board"], kind: .code),
         .init(id: "toc", title: "Table of contents", subtitle: "Every heading on this page", icon: "list.bullet.indent", keywords: ["toc", "outline", "contents"], kind: .code),
         .init(id: "math", title: "Equation", subtitle: "Math written in LaTeX", icon: "function", keywords: ["math", "latex", "katex", "formula", "equation", "tex"], kind: .code),
+        lineEmbed,
         .init(id: "mermaid", title: "Diagram", subtitle: "Flowcharts and sequence diagrams (Mermaid)", icon: "point.3.connected.trianglepath.dotted", keywords: ["mermaid", "flowchart", "diagram", "chart", "graph"], kind: .code),
     ]
     static let commandIds: Set<String> = Set(commands.map(\.id))
+    static let lineEmbed = SlashCommand(id: "blockref", title: "Line embed", subtitle: "Show a line copied with “Copy line embed”", icon: "text.quote", keywords: ["block", "reference", "line", "embed", "(("], kind: .code)
     static func lang(for commandId: String) -> String? {
-        ["embed": embed, "dbview": dbview, "toc": toc, "math": math, "mermaid": mermaid][commandId]
+        ["embed": embed, "dbview": dbview, "toc": toc, "math": math, "mermaid": mermaid, "blockref": blockref][commandId]
     }
 }
 
@@ -507,11 +510,11 @@ struct UnlinkedMentions: View {
 
     var body: some View {
         let title = note.title.trimmingCharacters(in: .whitespaces)
+        let texts = LinkIndex.texts(notes)
+        let lowTitle = title.lowercased(), url = RichText.pageURL(note.id)
         let hits: [Note] = title.count < 3 ? [] : notes.filter { other in
-            other.id != note.id && !other.isLocked && !other.isTemplate &&
-            other.blocks.contains { $0.text.range(of: title, options: [.caseInsensitive]) != nil } &&
-            !other.plainText.localizedCaseInsensitiveContains("[[\(title)]]") &&
-            !other.plainText.contains(RichText.pageURL(note.id))
+            guard other.id != note.id, !other.isLocked, !other.isTemplate, let low = texts.lower[other.id], low.contains(lowTitle) else { return false }
+            return !low.contains("[[\(lowTitle)]]") && !(texts.raw[other.id] ?? "").contains(url)
         }
         if !hits.isEmpty {
             Text("MENTIONED IN").font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft).padding(.top, DS.Space.s)

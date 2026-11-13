@@ -10,6 +10,8 @@ import VisionKit
 struct NoteEditor: View {
     @Environment(\.modelContext) private var ctx
     @Bindable var note: Note
+    /// Open scrolled to this line (from a line link, supertag collection or search).
+    var focusBlock: UUID? = nil
     @Query private var allNotes: [Note]
     @Query(sort: \Person.name) private var people: [Person]
 
@@ -48,6 +50,9 @@ struct NoteEditor: View {
     @State private var showOutline = false
     @State private var pickBlock: BlockPickTarget?
     @State private var scrollTarget: UUID?
+    @State private var zoomRoot: UUID?              // outliner: show one line and what's under it
+    @State private var supertagDefs: [SupertagDef] = []
+    @State private var openAt: UUID?
 
     var body: some View {
         editorBody.savePoint { SavePoints.note(note, focusedBlock: focused ?? editing) }
@@ -116,8 +121,13 @@ struct NoteEditor: View {
                     .listRowInsets(EdgeInsets(top: 0, leading: 8, bottom: 0, trailing: 8))
             } else {
                 let hidden = hiddenBlocks
+                let zoomed = zoomSet
+                if zoomRoot != nil {
+                    Button { withAnimation(DS.spring) { zoomRoot = nil } } label: { Label("Back to the whole page", systemImage: "arrow.up.left") }
+                        .font(DS.Font.caption).buttonStyle(.borderless).listRowSeparator(.hidden)
+                }
                 ForEach($note.blocks) { $b in
-                    if !hidden.contains(b.id) { row($b) }      // inside a closed toggle
+                    if !hidden.contains(b.id) && (zoomed == nil || zoomed!.contains(b.id)) { row($b) }      // folded or zoomed out
                 }
                     .onMove { note.blocks.move(fromOffsets: $0, toOffset: $1) }
                     .onDelete { note.blocks.remove(atOffsets: $0) }
@@ -139,9 +149,18 @@ struct NoteEditor: View {
                 openPage = target
                 return .handled
             }
+            if let link = BlockLinks.parse(url) {
+                let (nid, bid) = link
+                if nid == note.id { scrollTarget = bid } else if let target = allNotes.first(where: { $0.id == nid }) { openAt = bid; openPage = target }
+                return .handled
+            }
             return .systemAction
         })
-        .navigationDestination(item: $openPage) { NoteEditor(note: $0) }
+        .navigationDestination(item: $openPage) { NoteEditor(note: $0, focusBlock: openAt) }
+        .task {
+            supertagDefs = Supertags.all(ctx)
+            if let focusBlock { try? await Task.sleep(for: .milliseconds(350)); scrollTarget = focusBlock }
+        }
         .navigationBarTitleDisplayMode(.inline)
         .toolbar { toolbar }
         .onChange(of: note.blocks) { note.updatedAt = Date() }
@@ -244,6 +263,7 @@ struct NoteEditor: View {
                 }
             }
             NoteLinksSection(note: note)
+            RelatedSection(note: note, allNotes: allNotes, open: { openPage = $0 })
         }
     }
 
@@ -255,6 +275,14 @@ struct NoteEditor: View {
         let colors = BlockColor.parse(blk.color)
         VStack(alignment: .leading, spacing: 4) {
             HStack(alignment: .firstTextBaseline, spacing: 8) {
+                if blk.kind != .toggle && hasChildren(blk) {
+                    Button { withAnimation(DS.spring) { b.wrappedValue.collapsed = !(blk.collapsed ?? false) } } label: {
+                        Image(systemName: "chevron.right").font(.caption2.weight(.bold)).foregroundStyle(DS.Palette.inkSoft)
+                            .rotationEffect(.degrees((blk.collapsed ?? false) ? 0 : 90))
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel((blk.collapsed ?? false) ? "Unfold" : "Fold")
+                }
                 prefix(b)
                 content(b)
             }
@@ -270,6 +298,10 @@ struct NoteEditor: View {
                 }
                 .buttonStyle(.plain).foregroundStyle(.orange)
                 .padding(.leading, CGFloat(min(blk.indent ?? 0, 8)) * 24)
+            }
+            if !supertagDefs.isEmpty && blk.text.contains("#") {
+                SupertagChips(note: note, block: blk, defs: supertagDefs)
+                    .padding(.leading, CGFloat(min(blk.indent ?? 0, 8)) * 24 + 4)
             }
             if slashFor == blk.id { slashMenu(b) }
             if mentionFor == blk.id { mentionMenu(b) }
@@ -394,6 +426,10 @@ struct NoteEditor: View {
             } else {
                 Button { pickBlock = BlockPickTarget(id: blk.id, databasesOnly: true) } label: { Label("Choose a database to show here", systemImage: "tablecells.badge.ellipsis") }
             }
+        case SpecialBlock.blockref:
+            BlockRefView(ref: blk.refId, allNotes: allNotes) { n, bid in
+                if n.id == note.id { scrollTarget = bid } else { openAt = bid; openPage = n }
+            }
         case SpecialBlock.toc:
             TableOfContentsView(note: note) { scrollTarget = $0 }
         case SpecialBlock.math:
@@ -483,7 +519,7 @@ struct NoteEditor: View {
                 if l > c { hidden.insert(b.id); continue }
                 closedAt = nil
             }
-            if b.kind == .toggle && (b.collapsed ?? false) { closedAt = l }
+            if (b.collapsed ?? false) { closedAt = l }          // toggles, and any folded line in the outliner
         }
         return hidden
     }
@@ -612,6 +648,7 @@ struct NoteEditor: View {
             editing = nil
             if cmd.id == "embed" || cmd.id == "dbview" { pickBlock = BlockPickTarget(id: b.wrappedValue.id, databasesOnly: cmd.id == "dbview") }
             if cmd.id == "toc" { insertBlock(after: b.wrappedValue.id, kind: .text, text: "") }
+            if cmd.id == "blockref" { b.wrappedValue.refId = BlockLinks.clipboard }
             Haptics.tap()
             return
         }
@@ -718,6 +755,22 @@ struct NoteEditor: View {
             }
         }
         Button("Comment", systemImage: "text.bubble") { commentTarget = CommentTarget(blockId: b.wrappedValue.id) }
+        Menu("Link to this line", systemImage: "link") {
+            Button("Copy line link", systemImage: "link") {
+                let t = RichText.plain(b.wrappedValue.text)
+                UIPasteboard.general.string = "[\(t.isEmpty ? "line" : String(t.prefix(60)))](\(BlockLinks.url(note: note.id, block: b.wrappedValue.id)))"
+                UndoCenter.shared.notify("Line link copied. Paste it anywhere.")
+            }
+            Button("Copy line embed", systemImage: "text.quote") {
+                BlockLinks.clipboard = "\(note.id.uuidString)/\(b.wrappedValue.id.uuidString)"
+                UndoCenter.shared.notify("Copied. Type /line embed on any page.")
+            }
+        }
+        if hasChildren(b.wrappedValue) || zoomRoot != nil {
+            Button(zoomRoot == b.wrappedValue.id ? "Zoom out" : "Zoom in", systemImage: "arrow.up.left.and.arrow.down.right") {
+                withAnimation(DS.spring) { zoomRoot = zoomRoot == b.wrappedValue.id ? nil : b.wrappedValue.id }
+            }
+        }
         Button("Make it a task", systemImage: "checklist") {
             let title = b.wrappedValue.text.replacingOccurrences(of: #"[*_=`]"#, with: "", options: .regularExpression)
             guard !title.isEmpty else { return }
@@ -748,11 +801,41 @@ struct NoteEditor: View {
         }
     }
 
+    /// Moves a line with everything under it (outliner-style), past the neighbouring branch at the same level.
     private func move(_ id: UUID, by delta: Int) {
         guard let i = note.blocks.firstIndex(where: { $0.id == id }) else { return }
-        let j = i + delta
-        guard note.blocks.indices.contains(j) else { return }
-        note.blocks.swapAt(i, j)
+        let level = note.blocks[i].indent ?? 0
+        func branchEnd(_ start: Int) -> Int {
+            let l = note.blocks[start].indent ?? 0
+            var e = start + 1
+            while e < note.blocks.count, (note.blocks[e].indent ?? 0) > l { e += 1 }
+            return e
+        }
+        let end = branchEnd(i)
+        let branch = Array(note.blocks[i..<end])
+        if delta < 0 {
+            var p = i - 1
+            while p >= 0, (note.blocks[p].indent ?? 0) > level { p -= 1 }
+            guard p >= 0 else { return }
+            note.blocks.removeSubrange(i..<end)
+            note.blocks.insert(contentsOf: branch, at: p)
+        } else {
+            guard end < note.blocks.count else { return }
+            let nextEnd = branchEnd(end)
+            note.blocks.removeSubrange(i..<end)
+            note.blocks.insert(contentsOf: branch, at: nextEnd - branch.count)
+        }
+        Haptics.tap()
+    }
+
+    /// The zoomed line and everything under it.
+    private var zoomSet: Set<UUID>? {
+        guard let root = zoomRoot, let i = note.blocks.firstIndex(where: { $0.id == root }) else { return nil }
+        let l = note.blocks[i].indent ?? 0
+        var ids: Set<UUID> = [root]
+        var j = i + 1
+        while j < note.blocks.count, (note.blocks[j].indent ?? 0) > l { ids.insert(note.blocks[j].id); j += 1 }
+        return ids
     }
 
     // MARK: Toolbar

@@ -817,6 +817,7 @@ struct DataSettings: View {
                     Button { zipURL = try? ExportAll.make(ctx: ctx) } label: { Label("Export Everything (ZIP)", systemImage: "archivebox") }
                 }
             } footer: { Text("Export Everything makes a ZIP anyone can open: every note as a Markdown file in its folders, plus tasks, habits, journal and food as spreadsheets. Your data is always yours.") }
+            BackupsSection()
             MarkdownMirrorSection()
             DiagnosticsSection()
             Section { NavigationLink { ImportView() } label: { Label("Move to Keel (Import)", systemImage: "square.and.arrow.down") } }

@@ -58,6 +58,9 @@ struct KeelApp: App {
                 LinkSaver.importSharedNotes(into: container.mainContext) // text/images shared from Notes, Messages, Photos…
                 MeetingAutopilot.syncActivity()                         // Lock Screen timer for a meeting in progress
                 WeeklyDigest.makeIfDue(ctx: container.mainContext)      // Sunday evening: last week on one page
+                BrainIndex.shared.refresh(ctx: container.mainContext)   // meaning index for related pages (only what changed)
+                BrainBackup.backupIfDue(ctx: container.mainContext)     // a daily safety copy
+                NoteTrash.purgeOld()
             }
             if phase == .background {
                 WidgetSync.updateNow(container.mainContext)

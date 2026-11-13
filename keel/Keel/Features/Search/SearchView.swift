@@ -49,6 +49,18 @@ struct SearchView: View {
 
     var body: some View {
         List {
+            if live.count >= 3, !smart.isStructured {
+                let meaning = BrainIndex.shared.search(live, kinds: ["note"], limit: 5)
+                if !meaning.isEmpty {
+                    Section("Related by meaning") {
+                        ForEach(meaning) { h in
+                            if let n = notes.first(where: { $0.id.uuidString == h.id }) {
+                                NavigationLink { NoteOrCanvas(note: n) } label: { Label(n.title.isEmpty ? "Untitled" : n.title, systemImage: "sparkle.magnifyingglass") }
+                            }
+                        }
+                    }
+                }
+            }
             if live.count < 2 || (!smart.isStructured && smart.words.isEmpty) {
                 ContentUnavailableView("Search everything", systemImage: "magnifyingglass",
                                        description: Text("Tasks, notes, email, events, links, goals and people.\nTry “emails from sam last week”, “overdue tasks” or “notes about budget this month”."))

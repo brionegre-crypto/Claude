@@ -370,7 +370,8 @@ struct NotesView: View {
         for child in notes where child.parentId == n.id {
             if n.isDatabase { ctx.delete(child) } else { child.parentId = n.parentId }
         }
-        ctx.delete(n)
+        NoteTrash.delete(n, ctx: ctx)            // kept in Recently deleted for 30 days
+        UndoCenter.shared.notify("Moved to Recently deleted")
         Haptics.tap()
     }
 

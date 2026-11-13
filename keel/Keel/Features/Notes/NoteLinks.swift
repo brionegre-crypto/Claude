@@ -18,9 +18,11 @@ struct NoteLinksSection: View {
     var body: some View {
         let outgoing = Self.linkTitles(in: note.plainText)
         let url = RichText.pageURL(note.id)
+        let texts = LinkIndex.texts(notes)          // cached: pages are read once per change, not on every redraw
+        let wiki = "[[\(note.title.lowercased())]]"
         let backlinks = notes.filter { other in
             other.id != note.id && !other.isLocked &&
-            (other.plainText.contains(url) || (!note.title.isEmpty && other.plainText.localizedCaseInsensitiveContains("[[\(note.title)]]"))
+            ((texts.raw[other.id] ?? "").contains(url) || (!note.title.isEmpty && (texts.lower[other.id] ?? "").contains(wiki))
              || other.blocks.contains { $0.kind == .page && $0.refId == note.id.uuidString })
         }
         UnlinkedMentions(note: note, notes: notes)

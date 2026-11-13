@@ -442,6 +442,8 @@ enum HubCatalog {
             t("rewards", "Rewards & buddy", "gift.fill", "rewards xp level coins treat accountability buddy friend") { RewardsView() },
             t("automations", "Automations", "bolt.horizontal.fill", "automation rules when then") { AutomationsView() },
             t("tags", "Tags & searches", "number", "tags hashtags saved searches") { TagBrowserView() },
+            t("supertags", "Supertags", "tag.fill", "supertags types objects person book project collection tana") { SupertagsView() },
+            t("trash", "Recently deleted", "trash", "trash deleted restore undo pages") { TrashView() },
             t("askNotes", "Ask my notes", "text.bubble", "ask question notes search ai answer workspace") { AskNotesView() },
             t("askInbox", "Ask your inbox", "questionmark.bubble", "ask question email mail search ai answer") { AskInboxView() },
             t("digest", "This week's digest", "calendar.badge.checkmark", "weekly digest summary week review") { WeeklyDigestView() },
