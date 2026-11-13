@@ -20,6 +20,9 @@ enum WidgetSync {
         let doneToday = all.filter { ($0.completedAt.map { cal.isDateInToday($0) } ?? false) || ($0.lastCompletedOccurrence.map { cal.isDateInToday($0) } ?? false) }
         let energy = EnergyLevel(rawValue: UserDefaults.standard.integer(forKey: "energy")) ?? .medium
         let next = ADHDCoach.nextThing(tasks: open, energy: energy)
+        let xp = Rewards.xp(ctx: ctx)
+        let lv = Rewards.level(xp)
+        let rewards = (level: lv.level, progress: Double(lv.into) / Double(max(1, lv.next)), coins: max(0, xp - Rewards.spent))
 
         let events = CalendarService.shared.events(from: now, to: now.addingTimeInterval(36 * 3600))
             .filter { !$0.isAllDay }
@@ -43,7 +46,16 @@ enum WidgetSync {
             nextMed: nextMed(ctx)?.name,
             nextMedAt: nextMed(ctx)?.at,
             medsLeftToday: medsLeft(ctx),
-            momentum: Momentum.today(ctx: ctx).total
+            momentum: Momentum.today(ctx: ctx).total,
+            groceries: open.filter { $0.listName == MealPlanner.groceryList }.sorted { $0.createdAt < $1.createdAt }.prefix(12)
+                .map { WidgetSnapshot.TaskLine(title: $0.title, due: nil, priority: 0, id: $0.id) },
+            evening: open.filter { TaskMeta.isEvening($0) }.prefix(6)
+                .map { WidgetSnapshot.TaskLine(title: $0.title, due: nil, priority: $0.priority.rawValue, id: $0.id) },
+            deadlines: open.compactMap { t in TaskMeta.deadline(t).map { (t, $0) } }.sorted { $0.1 < $1.1 }.prefix(6)
+                .map { WidgetSnapshot.TaskLine(title: $0.0.title, due: $0.1, priority: $0.0.priority.rawValue, id: $0.0.id) },
+            level: rewards.level,
+            levelProgress: rewards.progress,
+            coins: rewards.coins
         ).save()
         WidgetCenter.shared.reloadAllTimelines()
         WatchBridge.shared.push(ctx)          // keep Apple Watch in step
@@ -108,6 +120,7 @@ final class AppRouter {
     var showMoney = false
     var showLeaving = false
     var showJournal = false
+    var openTool: ToolRoute?
 
     func handle(_ url: URL) -> Bool {
         guard url.scheme == "com.keel.app" else { return false }
@@ -128,6 +141,16 @@ final class AppRouter {
         case "money": showMoney = true
         case "leaving": showLeaving = true
         case "journal": showJournal = true
+        case "tool":       // com.keel.app://tool/vault (any tool in Today → ⊞)
+            let id = url.pathComponents.dropFirst().first ?? ""
+            guard HubCatalog.tool(id) != nil else { return false }
+            openTool = ToolRoute(id: id)
+        case "groceries": openTool = ToolRoute(id: "mealplan")
+        case "nownext":    // Start the next task with a Now timer
+            let ctx = KeelStore.container.mainContext
+            let open = ((try? ctx.fetch(FetchDescriptor<TaskItem>(predicate: #Predicate { !$0.isDone }))) ?? [])
+            let energy = EnergyLevel(rawValue: UserDefaults.standard.integer(forKey: "energy")) ?? .medium
+            if let t = ADHDCoach.nextThing(tasks: open, energy: energy) { NowTimer.start(t, ctx: ctx); try? ctx.save(); showFocus = true }
         case "resume":
             // After a meeting: offer the latest save point.
             if let p = SavePoints.latest { SavePointCenter.shared.showing = p }

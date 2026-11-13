@@ -366,6 +366,8 @@ enum HubCatalog {
         HubTool(id: id, title: title, icon: icon, keywords: keywords, dest: { AnyView(dest()) })
     }
 
+    static func tool(_ id: String) -> HubTool? { groups.lazy.flatMap(\.tools).first { $0.id == id } }
+
     static let groups: [HubGroup] = [
         HubGroup(id: "go", title: "Get going", subtitle: "Start, and keep going", icon: "bolt.fill", color: DS.Palette.accent, tools: [
             t("focusRoom", "Focus room", "person.2.wave.2.fill", "body double start focus work timer companion") { FocusRoomView() },

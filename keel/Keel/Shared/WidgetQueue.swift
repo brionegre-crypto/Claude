@@ -42,6 +42,8 @@ struct WidgetCompleteTaskIntent: AppIntent {
         WidgetQueue.append(.completeTask(id))
         if var s = WidgetSnapshot.load() {
             s.tasks.removeAll { $0.id == id }
+            s.groceries?.removeAll { $0.id == id }
+            s.evening?.removeAll { $0.id == id }
             s.tasksLeftToday = max(0, s.tasksLeftToday - 1)
             s.tasksDoneToday += 1
             s.save()

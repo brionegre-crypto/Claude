@@ -63,3 +63,22 @@ export async function isSession(bearer: string | undefined, env: Env): Promise<b
   if (!bearer || !bearer.startsWith("ks_")) return false;
   return (await env.KEEL.get(`session:${bearer}`)) !== null;
 }
+
+/** Deletes the signed-in person's Keel account on this server: every device key issued to their Apple ID.
+ *  (App Store rule: apps with sign-in must let people delete their account from inside the app.) */
+export async function handleDeleteAccount(bearer: string | undefined, env: Env): Promise<Response> {
+  if (!bearer || !bearer.startsWith("ks_")) return json({ error: "not signed in" }, 401);
+  const raw = await env.KEEL.get(`session:${bearer}`);
+  if (!raw) return json({ deleted: true });
+  const sub = (JSON.parse(raw) as { sub: string }).sub;
+  let cursor: string | undefined;
+  do {
+    const page = await env.KEEL.list({ prefix: "session:", cursor });
+    for (const k of page.keys) {
+      const v = await env.KEEL.get(k.name);
+      if (v && (JSON.parse(v) as { sub: string }).sub === sub) await env.KEEL.delete(k.name);
+    }
+    cursor = page.list_complete ? undefined : page.cursor;
+  } while (cursor);
+  return json({ deleted: true });
+}

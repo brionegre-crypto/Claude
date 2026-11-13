@@ -97,7 +97,7 @@ struct OpenPromisesIntent: AppIntent {
 }
 
 struct KeelShortcuts: AppShortcutsProvider {
-    // Apple allows up to 10 spoken shortcuts per app. Everything else is in the Shortcuts app.
+    // Apple allows up to 10 spoken shortcuts per app. Everything else (End Focus, Inbox, Deadlines, Open Tool…) is in the Shortcuts app.
     static var appShortcuts: [AppShortcut] {
         AppShortcut(intent: AskKeelIntent(), phrases: ["Ask \(.applicationName)", "Ask \(.applicationName) something", "Talk to \(.applicationName)"],
                     shortTitle: "Ask Keel", systemImageName: "sparkles")
@@ -109,14 +109,14 @@ struct KeelShortcuts: AppShortcutsProvider {
                     shortTitle: "Today", systemImageName: "sun.max")
         AppShortcut(intent: BrainDumpIntent(), phrases: ["Brain dump in \(.applicationName)", "Empty my head with \(.applicationName)"],
                     shortTitle: "Brain Dump", systemImageName: "brain.head.profile")
-        AppShortcut(intent: InboxSummaryIntent(), phrases: ["Check my inbox in \(.applicationName)", "Any important email in \(.applicationName)"],
-                    shortTitle: "Inbox", systemImageName: "tray")
+        AppShortcut(intent: StartNowIntent(), phrases: ["Start my next task in \(.applicationName)", "Start now in \(.applicationName)", "Get me going with \(.applicationName)"],
+                    shortTitle: "Start Now", systemImageName: "timer")
         AppShortcut(intent: WhatNowIntent(), phrases: ["What should I do now in \(.applicationName)", "Ask \(.applicationName) what's next"],
                     shortTitle: "What Now?", systemImageName: "scope")
         AppShortcut(intent: StartFocusIntent(), phrases: ["Start focus in \(.applicationName)", "Shut down distractions with \(.applicationName)"],
                     shortTitle: "Focus", systemImageName: "moon.zzz")
-        AppShortcut(intent: EndFocusIntent(), phrases: ["End focus in \(.applicationName)", "Stop focus in \(.applicationName)"],
-                    shortTitle: "End Focus", systemImageName: "moon.zzz.fill")
+        AppShortcut(intent: AddGroceryIntent(), phrases: ["Add to groceries in \(.applicationName)", "Add to my \(.applicationName) grocery list", "\(.applicationName) groceries"],
+                    shortTitle: "Add Groceries", systemImageName: "cart.badge.plus")
         AppShortcut(intent: DidITakeMedsIntent(), phrases: ["Did I take my meds in \(.applicationName)", "Check my medication in \(.applicationName)"],
                     shortTitle: "Did I Take My Meds?", systemImageName: "pills")
     }

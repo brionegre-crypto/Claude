@@ -18,7 +18,8 @@ struct OnboardingFlow: View {
     @State private var focusTime = ""
     @State private var aboutMe = ""
 
-    private let steps = 6
+    private let steps = 7
+    @State private var tryTool: ToolRoute?
 
     var body: some View {
         VStack(spacing: 0) {
@@ -31,6 +32,7 @@ struct OnboardingFlow: View {
                     case 2: permissions
                     case 3: today
                     case 4: you
+                    case 5: discover
                     default: finished
                     }
                 }
@@ -52,6 +54,7 @@ struct OnboardingFlow: View {
         .background(DS.Palette.canvas)
         .sheet(isPresented: $showMail) { NavigationStack { MailAccountsSettings().toolbar { Button("Done") { showMail = false } } } }
         .sheet(isPresented: $showMeds) { NavigationStack { MedsView().toolbar { Button("Done") { showMeds = false } } } }
+        .sheet(item: $tryTool) { ToolSheet(id: $0.id) }
         .sheet(isPresented: $showHabits) { NavigationStack { HabitLibraryView().toolbar { Button("Done") { showHabits = false } } } }
     }
 
@@ -161,6 +164,13 @@ struct OnboardingFlow: View {
         }
     }
 
+    private var discover: some View {
+        VStack(spacing: DS.Space.l) {
+            hero("square.grid.2x2.fill", .purple, "A few things Keel can do", "Tap any of them to take a look. Nothing here needs setting up now.")
+            DiscoverList { tryTool = ToolRoute(id: $0) }
+        }
+    }
+
     private var finished: some View {
         VStack(spacing: DS.Space.l) {
             hero("checkmark.seal.fill", DS.Palette.calm, "You're all set", "A few things to try first:")
@@ -198,6 +208,7 @@ struct OnboardingFlow: View {
 
     private func finish() {
         done = true
+        UserDefaults.standard.set(Discover.version, forKey: Discover.seenKey)   // they just saw it in the tour
         Haptics.success()
         dismiss()
     }

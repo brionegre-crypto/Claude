@@ -15,11 +15,15 @@ struct KeelWidgetBundle: WidgetBundle {
         HabitsCheckWidget()
         MedsWidget()
         MomentumWidget()
+        GroceriesWidget()
+        TonightWidget()
+        LevelWidget()
         #if !targetEnvironment(macCatalyst)       // Live Activities and Control Center are iPhone-only
         FocusLiveActivity()
         MeetingLiveActivity()
         CaptureControl()
         FocusControl()
+        StartNowControl()
         #endif
     }
 }
@@ -346,6 +350,20 @@ struct FocusControl: ControlWidget {
 
 #endif
 
+#if !targetEnvironment(macCatalyst)
+struct StartNowControl: ControlWidget {
+    var body: some ControlWidgetConfiguration {
+        StaticControlConfiguration(kind: "KeelStartNow") {
+            ControlWidgetButton(action: OpenURLIntent(URL(string: "com.keel.app://nownext")!)) {
+                Label("Start Now", systemImage: "timer")
+            }
+        }
+        .displayName("Start Next Task")
+        .description("Starts your next task with a countdown.")
+    }
+}
+#endif
+
 // MARK: - Countdown widget
 
 struct CountdownWidget: Widget {
@@ -553,5 +571,175 @@ struct MomentumWidget: Widget {
         .configurationDisplayName("Momentum")
         .description("Today's momentum score. It only goes up.")
         .supportedFamilies([.accessoryCircular])
+    }
+}
+
+
+// MARK: - Groceries (tap to check off)
+
+struct GroceriesWidget: Widget {
+    var body: some WidgetConfiguration {
+        StaticConfiguration(kind: "KeelGroceries", provider: KeelProvider()) { entry in
+            GroceriesView(entry: entry)
+                .containerBackground(for: .widget) { Color(.systemBackground) }
+                .widgetURL(URL(string: "com.keel.app://groceries"))
+        }
+        .configurationDisplayName("Groceries")
+        .description("Your grocery list. Tap the circle to check something off in the store.")
+        .supportedFamilies([.systemSmall, .systemMedium, .systemLarge])
+    }
+}
+
+struct GroceriesView: View {
+    let entry: KeelEntry
+    @Environment(\.widgetFamily) private var family
+
+    var body: some View {
+        let items = entry.snapshot.groceries ?? []
+        let limit = family == .systemLarge ? 12 : (family == .systemMedium ? 4 : 4)
+        VStack(alignment: .leading, spacing: 5) {
+            HStack {
+                Label("GROCERIES", systemImage: "cart.fill").font(.caption2.weight(.bold)).foregroundStyle(.green)
+                Spacer()
+                if !items.isEmpty { Text("\(items.count)").font(.caption2).foregroundStyle(.secondary) }
+            }
+            if items.isEmpty {
+                Spacer()
+                Text("List is empty").font(.headline).frame(maxWidth: .infinity)
+                Text("Say “Add milk to groceries in Keel”").font(.caption2).foregroundStyle(.secondary).multilineTextAlignment(.center).frame(maxWidth: .infinity)
+                Spacer()
+            } else {
+                let cols = family == .systemMedium ? 2 : 1
+                let shown = Array(items.prefix(family == .systemMedium ? 8 : limit))
+                LazyVGrid(columns: Array(repeating: GridItem(.flexible(), alignment: .leading), count: cols), alignment: .leading, spacing: 5) {
+                    ForEach(shown, id: \.self) { t in
+                        HStack(spacing: 6) {
+                            if let id = t.id {
+                                Button(intent: WidgetCompleteTaskIntent(id: id)) {
+                                    Image(systemName: "circle").foregroundStyle(.green)
+                                }
+                                .buttonStyle(.plain)
+                            }
+                            Text(t.title).font(.subheadline).lineLimit(1)
+                        }
+                    }
+                }
+                Spacer(minLength: 0)
+            }
+        }
+    }
+}
+
+// MARK: - Tonight & deadlines
+
+struct TonightWidget: Widget {
+    var body: some WidgetConfiguration {
+        StaticConfiguration(kind: "KeelTonight", provider: KeelProvider()) { entry in
+            TonightView(entry: entry)
+                .containerBackground(for: .widget) { LinearGradient(colors: [Color.indigo.opacity(0.18), .clear], startPoint: .top, endPoint: .bottom) }
+                .widgetURL(URL(string: "com.keel.app://tasks"))
+        }
+        .configurationDisplayName("Tonight & Deadlines")
+        .description("What you saved for this evening, and the deadlines coming up.")
+        .supportedFamilies([.systemSmall, .systemMedium])
+    }
+}
+
+struct TonightView: View {
+    let entry: KeelEntry
+    @Environment(\.widgetFamily) private var family
+
+    var body: some View {
+        let evening = entry.snapshot.evening ?? []
+        let deadlines = entry.snapshot.deadlines ?? []
+        HStack(alignment: .top, spacing: 12) {
+            if family == .systemMedium || deadlines.isEmpty {
+                VStack(alignment: .leading, spacing: 5) {
+                    Label("TONIGHT", systemImage: "moon.stars.fill").font(.caption2.weight(.bold)).foregroundStyle(.indigo)
+                    if evening.isEmpty {
+                        Text("Nothing saved for tonight").font(.caption).foregroundStyle(.secondary)
+                    } else {
+                        ForEach(evening.prefix(4), id: \.self) { t in
+                            HStack(spacing: 6) {
+                                if let id = t.id {
+                                    Button(intent: WidgetCompleteTaskIntent(id: id)) { Image(systemName: "circle").foregroundStyle(.indigo) }.buttonStyle(.plain)
+                                }
+                                Text(t.title).font(.subheadline).lineLimit(1)
+                            }
+                        }
+                    }
+                    Spacer(minLength: 0)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+            }
+            if !deadlines.isEmpty {
+                VStack(alignment: .leading, spacing: 5) {
+                    Label("DEADLINES", systemImage: "flag.fill").font(.caption2.weight(.bold)).foregroundStyle(.red)
+                    ForEach(deadlines.prefix(4), id: \.self) { t in
+                        VStack(alignment: .leading, spacing: 0) {
+                            Text(t.title).font(.subheadline).lineLimit(1)
+                            if let d = t.due { Text(daysLeft(d)).font(.caption2).foregroundStyle(daysUntil(d) <= 1 ? .red : .secondary) }
+                        }
+                    }
+                    Spacer(minLength: 0)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+            }
+        }
+    }
+
+    private func daysUntil(_ d: Date) -> Int {
+        let cal = Calendar.current
+        return cal.dateComponents([.day], from: cal.startOfDay(for: Date()), to: cal.startOfDay(for: d)).day ?? 0
+    }
+    private func daysLeft(_ d: Date) -> String {
+        switch daysUntil(d) {
+        case ..<0: "Overdue"
+        case 0: "Today"
+        case 1: "Tomorrow"
+        case let n: "In \(n) days"
+        }
+    }
+}
+
+// MARK: - Level & coins
+
+struct LevelWidget: Widget {
+    var body: some WidgetConfiguration {
+        StaticConfiguration(kind: "KeelLevel", provider: KeelProvider()) { entry in
+            LevelView(entry: entry)
+                .containerBackground(for: .widget) { LinearGradient(colors: [Color.orange.opacity(0.2), .clear], startPoint: .top, endPoint: .bottom) }
+                .widgetURL(URL(string: "com.keel.app://tool/rewards"))
+        }
+        .configurationDisplayName("Level & Coins")
+        .description("Your Keel level, progress to the next one, and coins to spend on rewards.")
+        .supportedFamilies([.systemSmall, .accessoryCircular])
+    }
+}
+
+struct LevelView: View {
+    let entry: KeelEntry
+    @Environment(\.widgetFamily) private var family
+
+    var body: some View {
+        let level = entry.snapshot.level ?? 1
+        let progress = entry.snapshot.levelProgress ?? 0
+        if family == .accessoryCircular {
+            Gauge(value: progress) { Text("Lv") } currentValueLabel: { Text("\(level)") }
+                .gaugeStyle(.accessoryCircularCapacity)
+        } else {
+            VStack(spacing: 6) {
+                ZStack {
+                    Circle().stroke(Color.orange.opacity(0.2), lineWidth: 8)
+                    Circle().trim(from: 0, to: progress).stroke(Color.orange, style: StrokeStyle(lineWidth: 8, lineCap: .round)).rotationEffect(.degrees(-90))
+                    VStack(spacing: 0) {
+                        Text("LEVEL").font(.system(size: 9, weight: .bold)).foregroundStyle(.secondary)
+                        Text("\(level)").font(.title.weight(.bold)).monospacedDigit()
+                    }
+                }
+                .frame(width: 84, height: 84)
+                Label("\(entry.snapshot.coins ?? 0) coins", systemImage: "circle.hexagongrid.fill").font(.caption.weight(.semibold)).foregroundStyle(.orange)
+            }
+        }
     }
 }

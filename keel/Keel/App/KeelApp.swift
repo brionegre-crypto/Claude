@@ -242,6 +242,7 @@ struct RootView: View {
         .modifier(RouterSheets(router: router, mailRouter: mailRouter))
         .modifier(OpenItemSheets(router: router))
         .fullScreenCover(isPresented: Binding(get: { !onboarded }, set: { if !$0 { onboarded = true } })) { OnboardingFlow() }
+        .modifier(WhatsNewModifier())
         .preferredColorScheme(appearance == "light" ? .light : appearance == "dark" ? .dark : nil)
         .tint(Theme(rawValue: accentName)?.color ?? DS.Palette.accent)
         .id(accentName)          // redraw everything with the new accent
@@ -297,7 +298,7 @@ private struct OpenItemSheets: ViewModifier {
                 NavigationStack { TaskDetailView(task: t) }
             }
             .sheet(item: Binding(get: { router.openNoteId.flatMap { id in openNote(id) } }, set: { if $0 == nil { router.openNoteId = nil } })) { n in
-                NavigationStack { NoteEditor(note: n) }
+                NavigationStack { NoteOrCanvas(note: n) }
             }
             // Tapping a Keel result in iPhone search
             .onContinueUserActivity(CSSearchableItemActionType) { activity in
@@ -320,6 +321,7 @@ private struct MoreRouterSheets: ViewModifier {
             .sheet(isPresented: $router.showMoney) { NavigationStack { SubscriptionsView() } }
             .sheet(isPresented: $router.showLeaving) { LeavingChecklistView() }
             .sheet(isPresented: $router.showJournal) { JournalEntryView() }
+            .sheet(item: $router.openTool) { r in ToolSheet(id: r.id) }
     }
 }
 

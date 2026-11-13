@@ -102,6 +102,26 @@ final class KeelAccount {
         UserDefaults.standard.set(false, forKey: KeelStore.syncKey)
     }
 
+    /// Deletes your Keel account: removes every device key your Keel server issued to your Apple ID,
+    /// signs out on this device and forgets your name and email. Notes, tasks and the rest stay yours,
+    /// on this device and in your own iCloud (erase them in Settings → Data & Storage if you want them gone).
+    func deleteAccount() async {
+        if let code = KeelServer.accessCode, code.hasPrefix("ks_"), let url = KeelServer.endpoint("auth/account") {
+            var req = URLRequest(url: url)
+            req.httpMethod = "DELETE"
+            req.setValue("Bearer \(code)", forHTTPHeaderField: "Authorization")
+            req.timeoutInterval = 20
+            _ = try? await URLSession.shared.data(for: req)
+            if let base = KeelServer.baseURL { KeelServer.save(address: base.absoluteString, accessCode: "") }
+        }
+        signOut()
+        name = ""; email = ""
+        UserDefaults.standard.removeObject(forKey: "keel.account.name")
+        UserDefaults.standard.removeObject(forKey: "keel.account.email")
+        serverMessage = "Your Keel account is deleted. To also stop Keel using Sign in with Apple, go to iPhone Settings → your name → Sign in with Apple → Keel → Stop Using."
+        Haptics.success()
+    }
+
     #if DEBUG
     /// Developer-only: creates the iCloud record types for every synced model in the Development environment,
     /// so they can be deployed to Production in the CloudKit Console (TestFlight and App Store use Production).
@@ -128,6 +148,7 @@ struct AccountView: View {
     @AppStorage(KeelStore.syncKey) private var syncOn = false
     @State private var bridge = RemindersBridge.isThisDevice
     @State private var schemaResult: String?
+    @State private var confirmDelete = false
     @Environment(\.colorScheme) private var scheme
 
     var body: some View {
@@ -189,8 +210,14 @@ struct AccountView: View {
                         account.serverMessage = "Sign out and sign back in to reconnect; Apple only shares the sign-in proof at sign in."
                     }
                     Button("Sign Out on This Device", role: .destructive) { account.signOut() }
+                    Button("Delete Account…", systemImage: "person.crop.circle.badge.xmark", role: .destructive) { confirmDelete = true }
                 } footer: {
-                    Text("Signing out keeps everything on this device and stops syncing after Keel restarts. Your iCloud copy is untouched.")
+                    Text("Signing out keeps everything on this device and stops syncing after Keel restarts. Your iCloud copy is untouched. Deleting your account also removes it from the Keel server.")
+                }
+                .confirmationDialog("Delete your Keel account?", isPresented: $confirmDelete, titleVisibility: .visible) {
+                    Button("Delete Account", role: .destructive) { Task { await account.deleteAccount() } }
+                } message: {
+                    Text("This removes your account from the Keel server and signs you out on this device. Your notes, tasks and other content stay on your devices and in your iCloud.")
                 }
             }
 

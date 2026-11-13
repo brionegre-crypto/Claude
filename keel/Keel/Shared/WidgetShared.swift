@@ -39,6 +39,13 @@ struct WidgetSnapshot: Codable {
     var nextMedAt: Date? = nil
     var medsLeftToday: Int? = nil
     var momentum: Int? = nil
+    // Newer widgets (optional so older snapshots still load)
+    var groceries: [TaskLine]? = nil       // open items in the Groceries list
+    var evening: [TaskLine]? = nil         // This Evening
+    var deadlines: [TaskLine]? = nil       // due = the deadline
+    var level: Int? = nil
+    var levelProgress: Double? = nil       // 0…1 toward the next level
+    var coins: Int? = nil
 
     struct CountdownLine: Codable, Hashable {
         var title: String
