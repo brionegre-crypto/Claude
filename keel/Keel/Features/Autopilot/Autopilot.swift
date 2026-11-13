@@ -207,6 +207,8 @@ enum Autopilot {
             let due: Date? = s.kind == "bill" ? billDue : cal.startOfDay(for: Date())
             _ = QuickAdd.create(s.payload, in: ctx, defaultDue: due)
             return "Added to your tasks."
+        case "appointment":
+            return AppointmentFinder.addToCalendar(s)
         case "prep":
             let parts = s.payload.split(separator: "|", maxSplits: 1)
             let title = parts.first.map(String.init) ?? "Meeting"

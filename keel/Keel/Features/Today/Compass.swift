@@ -382,6 +382,7 @@ enum HubCatalog {
             t("dopamine", "Dopamine menu", "dice.fill", "boost bored reward motivation") { DopamineMenuView() },
         ]),
         HubGroup(id: "top", title: "Stay on top", subtitle: "Money, promises and things in motion", icon: "checkmark.shield.fill", color: .orange, tools: [
+            t("appointments", "Appointments from email", "calendar.badge.plus", "appointment doctor dentist booking confirmation calendar email find schedule") { AppointmentsView() },
             t("bills", "Bills & money", "creditcard.fill", "subscriptions trial renewal payment cost") { SubscriptionsView() },
             t("meds", "Medications", "pills.fill", "meds pills dose refill") { MedsView() },
             t("promises", "Promises", "hand.raised.fill", "commitments owe said i would") { PromisesView() },

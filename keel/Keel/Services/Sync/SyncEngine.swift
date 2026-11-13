@@ -124,6 +124,9 @@ final class SyncEngine {
         }
         await worker.applyTriage(updates)
 
+        // 2c. Appointments in email (doctor, dentist, interviews…) → one-tap "Add to Calendar".
+        await AppointmentFinder.scan(ctx: ctx)
+
         // 2b. A heads-up only for VIPs and urgent mail.
         await InboxBrain.notify(fresh, ctx: ctx)
 
