@@ -203,7 +203,8 @@ enum KeelLinks {
 struct ConnectedStrip: View {
     let key: String
     @Environment(\.modelContext) private var ctx
-    @State private var items: [String] = []
+    struct Item: Identifiable { let id: String; let icon: String; let title: String }
+    @State private var items: [Item] = []
     @State private var linking = false
     @State private var open: CanvasRefTarget?
     @State private var openNote: Note?
@@ -220,16 +221,14 @@ struct ConnectedStrip: View {
             }
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 6) {
-                    ForEach(items, id: \.self) { k in
-                        if let d = KeelLinks.describe(k, ctx: ctx) {
-                            Button { openItem(k) } label: {
-                                Label(d.title, systemImage: d.icon).font(.caption).lineLimit(1)
-                                    .padding(.horizontal, 10).padding(.vertical, 6)
-                                    .background(DS.Palette.elevated, in: Capsule())
-                            }
-                            .buttonStyle(.plain)
-                            .contextMenu { Button("Unlink", systemImage: "link.badge.minus", role: .destructive) { KeelLinks.remove(key, k, ctx: ctx); refresh() } }
+                    ForEach(items) { it in
+                        Button { openItem(it.id) } label: {
+                            Label(it.title, systemImage: it.icon).font(.caption).lineLimit(1)
+                                .padding(.horizontal, 10).padding(.vertical, 6)
+                                .background(DS.Palette.elevated, in: Capsule())
                         }
+                        .buttonStyle(.plain)
+                        .contextMenu { Button("Unlink", systemImage: "link.badge.minus", role: .destructive) { KeelLinks.remove(key, it.id, ctx: ctx); refresh() } }
                     }
                 }
             }
@@ -242,7 +241,10 @@ struct ConnectedStrip: View {
         .sheet(item: $openNote) { n in NavigationStack { NoteOrCanvas(note: n) } }
     }
 
-    private func refresh() { items = KeelLinks.connected(key, ctx: ctx) }
+    /// Looked up once (not on every redraw).
+    private func refresh() {
+        items = KeelLinks.connected(key, ctx: ctx).compactMap { k in KeelLinks.describe(k, ctx: ctx).map { Item(id: k, icon: $0.icon, title: $0.title) } }
+    }
     private func openItem(_ k: String) {
         if k.hasPrefix("note:"), let u = UUID(uuidString: String(k.dropFirst(5))),
            let n = try? ctx.fetch(FetchDescriptor<Note>(predicate: #Predicate { $0.id == u })).first { openNote = n }
@@ -359,9 +361,10 @@ struct ProjectPilotSection: View {
     @State private var status: String?
     @State private var working = false
     @State private var compose: ComposeDraft?
+    @State private var report: ProjectPilot.Report?
 
     var body: some View {
-        let r = ProjectPilot.report(project, tasks: tasks, ctx: ctx)
+        let r = report ?? ProjectPilot.Report(emails: [], notes: [], events: [], done: tasks.filter(\.isDone).count, total: tasks.count, stuck: [], quiet: false)
         Section {
             if r.total > 0 {
                 ProgressView(value: Double(r.done), total: Double(max(1, r.total))) {
@@ -383,6 +386,7 @@ struct ProjectPilotSection: View {
             }
         } header: { Text("Autopilot") } footer: { Text("Gathered automatically: emails, pages and meetings about “\(project.name)”, plus what's stuck.") }
         .sheet(item: $compose) { ComposeView(draft: $0) }
+        .task(id: tasks.count) { report = ProjectPilot.report(project, tasks: tasks, ctx: ctx) }      // gathered once, not every redraw
     }
 }
 
@@ -603,5 +607,16 @@ enum SearchActions {
         let named = all.filter { a in ["focus": ["focus", "concentrate"], "plan": ["plan"], "record": ["record", "meeting"], "journal": ["journal"]][a.id]?.contains { l.contains($0) } ?? false }
         let isQuestion = l.hasSuffix("?") || ["what", "when", "where", "who", "how", "why", "did", "do i", "is "].contains { l.hasPrefix($0) }
         return named + (isQuestion ? [] : all.filter { $0.id == "task" || $0.id == "note" })
+    }
+}
+
+/// "Has it been long enough since this last ran?" (and marks it as run).
+enum Throttle {
+    static func due(_ key: String, every seconds: TimeInterval) -> Bool {
+        let k = "throttle." + key
+        let last = UserDefaults.standard.double(forKey: k)
+        guard Date().timeIntervalSince1970 - last > seconds else { return false }
+        UserDefaults.standard.set(Date().timeIntervalSince1970, forKey: k)
+        return true
     }
 }

@@ -35,7 +35,11 @@ final class BrainIndex {
         try? enc.encode(items).write(to: url, options: .atomic)
     }
 
+    /// The language model isn't safe to use from two threads at once: one request at a time.
+    nonisolated private static let embedLock = NSLock()
+
     nonisolated static func embed(_ text: String) -> [Float]? {
+        embedLock.lock(); defer { embedLock.unlock() }
         let clean = text.replacingOccurrences(of: #"[*_=`#>\[\]()]"#, with: " ", options: .regularExpression)
             .trimmingCharacters(in: .whitespacesAndNewlines)
         guard clean.count > 2, let model = NLEmbedding.sentenceEmbedding(for: .english),
@@ -47,7 +51,10 @@ final class BrainIndex {
         return f
     }
     nonisolated private static func pack(_ f: [Float]) -> Data { f.withUnsafeBufferPointer { Data(buffer: $0) } }
-    nonisolated private static func unpack(_ d: Data) -> [Float] { d.withUnsafeBytes { Array($0.bindMemory(to: Float.self)) } }
+    /// Reads the floats without assuming the bytes are aligned (saved data often isn't).
+    nonisolated private static func unpack(_ d: Data) -> [Float] {
+        d.withUnsafeBytes { raw in (0..<(raw.count / 4)).map { raw.loadUnaligned(fromByteOffset: $0 * 4, as: Float.self) } }
+    }
     nonisolated private static func dot(_ a: [Float], _ b: [Float]) -> Float {
         var s: Float = 0
         for i in 0..<min(a.count, b.count) { s += a[i] * b[i] }

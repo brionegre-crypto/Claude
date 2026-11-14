@@ -115,13 +115,14 @@ struct HorizonHeader: View {
         }
     }
 
+    /// The water drifts by sliding a pre-drawn wave sideways (cheap for the GPU), instead of redrawing it every frame.
     private var water: some View {
-        TimelineView(.animation(minimumInterval: 1 / 20, paused: reduceMotion)) { t in
-            let phase = reduceMotion ? 0 : t.date.timeIntervalSinceReferenceDate.truncatingRemainder(dividingBy: 2 * .pi * 3) / 3
+        GeometryReader { g in
             ZStack(alignment: .bottom) {
-                WaveShape(phase: phase, amplitude: 3).fill(.white.opacity(0.10)).frame(height: compact ? 26 : 34)
-                WaveShape(phase: -phase * 1.3, amplitude: 4).fill(LinearGradient(colors: [Color(red: 0.10, green: 0.30, blue: 0.48).opacity(0.75), Color(red: 0.05, green: 0.18, blue: 0.32).opacity(0.85)], startPoint: .top, endPoint: .bottom))
-                    .frame(height: compact ? 20 : 26)
+                DriftingWave(width: g.size.width, height: compact ? 26 : 34, amplitude: 3, duration: 9, reverse: false)
+                    .foregroundStyle(.white.opacity(0.10))
+                DriftingWave(width: g.size.width, height: compact ? 20 : 26, amplitude: 4, duration: 6, reverse: true)
+                    .foregroundStyle(LinearGradient(colors: [Color(red: 0.10, green: 0.30, blue: 0.48).opacity(0.75), Color(red: 0.05, green: 0.18, blue: 0.32).opacity(0.85)], startPoint: .top, endPoint: .bottom))
             }
             .frame(maxHeight: .infinity, alignment: .bottom)
         }
@@ -137,17 +138,36 @@ struct SeededRandom {
     }
 }
 
+/// A wave twice as wide as the space, slid sideways forever; the wave repeats every half, so the loop is seamless.
+struct DriftingWave: View {
+    let width: CGFloat
+    let height: CGFloat
+    let amplitude: CGFloat
+    let duration: Double
+    let reverse: Bool
+    @State private var go = false
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    var body: some View {
+        WaveShape(phase: 0, amplitude: amplitude)
+            .frame(width: max(1, width) * 2, height: height)
+            .offset(x: (go ? (reverse ? 0 : -width) : (reverse ? -width : 0)))
+            .frame(width: max(1, width), height: height, alignment: .leading)
+            .clipped()
+            .onAppear {
+                guard !reduceMotion else { return }
+                withAnimation(.linear(duration: duration).repeatForever(autoreverses: false)) { go = true }
+            }
+    }
+}
+
 /// The line between what needs you now and what can wait.
 struct Waterline: View {
     var label = "Below the waterline · can wait"
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     var body: some View {
         VStack(spacing: 4) {
-            TimelineView(.animation(minimumInterval: 1 / 15, paused: reduceMotion)) { t in
-                let phase = reduceMotion ? 0 : t.date.timeIntervalSinceReferenceDate.truncatingRemainder(dividingBy: 2 * .pi * 4) / 4
-                WaveLine(phase: phase).stroke(DS.Palette.accent.opacity(0.45), style: StrokeStyle(lineWidth: 1.5, lineCap: .round))
-                    .frame(height: 10)
-            }
+            WaveLine(phase: 0).stroke(DS.Palette.accent.opacity(0.45), style: StrokeStyle(lineWidth: 1.5, lineCap: .round))
+                .frame(height: 10)          // still, so long lists never redraw it
             Text(label).font(.caption2.weight(.semibold)).foregroundStyle(DS.Palette.inkSoft).textCase(.uppercase)
         }
         .padding(.vertical, 6)
