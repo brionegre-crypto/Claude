@@ -101,6 +101,7 @@ final class WatchBridge: NSObject, WCSessionDelegate {
             payload.focusWindow = f.peaks.first { $0.end > Date() }?.label
         }
         payload.food = Self.foodLines(ctx: ctx)
+        payload.body = BodyScores.today()
         payload.suggestions = Autopilot.pending(ctx: ctx).prefix(8).map {
             .init(id: $0.id, title: $0.title, detail: $0.kind == "reply" ? String($0.payload.prefix(240)) : $0.detail, accept: $0.acceptLabel, icon: $0.icon)
         }
@@ -279,5 +280,25 @@ extension WatchBridge {
         lines.append(today.contains { $0.tags.contains("pumpkin") } ? "✓ Pumpkin seeds today" : "Pumpkin seeds: not yet today")
         lines += today.suffix(6).map { "\($0.verdict.emoji) \($0.name)" }
         return lines
+    }
+}
+
+
+/// Bundles Apple Watch updates: building the watch's snapshot reads tasks, mail and habits, so doing it on every
+/// small change made taps feel heavy. Now it happens once, a moment after things settle (at most every 10 seconds).
+@MainActor
+enum WatchPushQueue {
+    private static var pending: Task<Void, Never>?
+    private static var last = Date.distantPast
+
+    static func schedule(_ ctx: ModelContext) {
+        pending?.cancel()
+        let wait = max(1.5, 10 - Date().timeIntervalSince(last))
+        pending = Task { @MainActor in
+            try? await Task.sleep(for: .seconds(wait))
+            guard !Task.isCancelled else { return }
+            last = Date()
+            WatchBridge.shared.push(ctx)
+        }
     }
 }

@@ -3,7 +3,7 @@ import SwiftUI
 /// The cards Today can show, in an order you choose (or Keel's automatic, time-of-day order).
 enum TodayCard: String, CaseIterable, Identifiable {
     case autopilot, meds, planRitual, checkIn, energy, oneThing, aiPlan, upNext, needsYou, pinned, mail, trip,
-         dayReview, countdown, promises, followUps, keepInTouch, weeklyReview, avoided, forecast
+         dayReview, countdown, promises, followUps, keepInTouch, weeklyReview, avoided, forecast, body
     var id: String { rawValue }
 
     var title: String {
@@ -14,6 +14,7 @@ enum TodayCard: String, CaseIterable, Identifiable {
         case .trip: "Next trip"; case .dayReview: "Day in review (evening)"; case .countdown: "Countdown"; case .promises: "Promises"
         case .followUps: "Awaiting reply"; case .keepInTouch: "Keep in touch"; case .weeklyReview: "Weekly review"; case .avoided: "Dread radar (avoided tasks & email)"
         case .forecast: "Focus forecast"
+        case .body: "Body (Tide, Swell, Anchor)"
         }
     }
     var icon: String {
@@ -24,15 +25,16 @@ enum TodayCard: String, CaseIterable, Identifiable {
         case .dayReview: "moon.stars.fill"; case .countdown: "hourglass"; case .promises: "hand.raised.fill"; case .followUps: "bubble.left.and.exclamationmark.bubble.right"
         case .keepInTouch: "person.2.fill"; case .weeklyReview: "chart.bar.doc.horizontal"; case .avoided: "tortoise.fill"
         case .forecast: "waveform.path.ecg"
+        case .body: "water.waves"
         }
     }
 
     /// Keel's automatic order: plan in the morning, do in the day, wind down at night.
     static func automatic(_ phase: DayPhase) -> [TodayCard] {
         switch phase {
-        case .morning: [.autopilot, .meds, .planRitual, .checkIn, .energy, .forecast, .oneThing, .upNext, .needsYou, .aiPlan, .pinned, .mail, .trip, .countdown, .promises, .followUps, .keepInTouch, .weeklyReview, .avoided]
-        case .day: [.autopilot, .meds, .energy, .forecast, .oneThing, .upNext, .needsYou, .pinned, .aiPlan, .mail, .trip, .checkIn, .countdown, .promises, .followUps, .keepInTouch, .weeklyReview, .avoided]
-        case .evening: [.dayReview, .autopilot, .meds, .checkIn, .upNext, .needsYou, .oneThing, .pinned, .mail, .trip, .countdown, .promises, .followUps, .keepInTouch, .weeklyReview, .avoided]
+        case .morning: [.autopilot, .body, .meds, .planRitual, .checkIn, .energy, .forecast, .oneThing, .upNext, .needsYou, .aiPlan, .pinned, .mail, .trip, .countdown, .promises, .followUps, .keepInTouch, .weeklyReview, .avoided]
+        case .day: [.autopilot, .meds, .energy, .body, .forecast, .oneThing, .upNext, .needsYou, .pinned, .aiPlan, .mail, .trip, .checkIn, .countdown, .promises, .followUps, .keepInTouch, .weeklyReview, .avoided]
+        case .evening: [.dayReview, .body, .autopilot, .meds, .checkIn, .upNext, .needsYou, .oneThing, .pinned, .mail, .trip, .countdown, .promises, .followUps, .keepInTouch, .weeklyReview, .avoided]
         }
     }
     static let calm: [TodayCard] = [.autopilot, .meds, .oneThing, .upNext]

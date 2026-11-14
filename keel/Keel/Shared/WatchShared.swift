@@ -119,6 +119,36 @@ struct WatchPayload: Codable {
     var savePoint: String? = nil              // "Replying to Sam: Budget", what you were in the middle of
     var focusWindow: String? = nil            // today's best focus window, e.g. "10:00 AM–12:30 PM"
     var food: [String]? = nil                 // today's food: goals, 🟢🟡🔴, brain foods, what you ate
+    var body: BodyScores? = nil               // Tide, Swell, Anchor
+}
+
+/// Today's Tide (recovery), Swell (effort) and Anchor (sleep): shared by the app, its widgets, Apple Watch and its complications.
+struct BodyScores: Codable, Hashable {
+    var day: Date
+    var tide: Int?
+    var swell: Int
+    var anchor: Int?
+    var asleepMinutes: Int?
+    var bedtime: Date?            // recommended tonight
+    var calibrating: Bool
+    var swellLow: Int = 30
+    var swellHigh: Int = 60
+    var calmHours: [Int] = []     // hours you're usually calmest (for focus)
+
+    static let key = "body.scores"
+    static let group = "group.com.briangreenejr.keel"
+    func save() {
+        if let d = try? JSONEncoder().encode(self) { UserDefaults(suiteName: Self.group)?.set(d, forKey: Self.key) }
+    }
+    static func load() -> BodyScores? {
+        guard let d = UserDefaults(suiteName: group)?.data(forKey: key) else { return nil }
+        return try? JSONDecoder().decode(BodyScores.self, from: d)
+    }
+    /// Only today's scores count; yesterday's would be misleading on a widget.
+    static func today() -> BodyScores? {
+        guard let s = load(), Calendar.current.isDateInToday(s.day) else { return nil }
+        return s
+    }
 }
 
 /// A step-by-step routine (morning, evening, leaving the house). Shared by iPhone and Apple Watch.

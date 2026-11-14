@@ -70,7 +70,10 @@ struct TodayView: View {
                 try? await Task.sleep(for: .milliseconds(400))
                 sleepHours = await HealthService.shared.lastNightSleepHours()
                 let today = Date().formatted(.iso8601.year().month().day())
-                if let h = sleepHours, energyDay != today {
+                // Tide (recovery) is the better guide when there is one; otherwise hours of sleep.
+                if energyDay != today, let tide = BodyScores.today()?.tide {
+                    energyRaw = BodyEngine.energy(forTide: tide).rawValue
+                } else if let h = sleepHours, energyDay != today {
                     energyRaw = HealthService.energy(forSleep: h).rawValue
                 }
             }
@@ -144,6 +147,7 @@ struct TodayView: View {
             }
         case .avoided: DreadTodayCard()
         case .forecast: FocusForecastCard()
+        case .body: BodyTodayCard()
         }
     }
 

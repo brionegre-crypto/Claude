@@ -398,6 +398,7 @@ enum HubCatalog {
         ]),
         HubGroup(id: "food", title: "Eat well", subtitle: "Scan it, check it against your plan, log it", icon: "fork.knife", color: .green, tools: [
             t("scanFood", "Scan food", "barcode.viewfinder", "barcode scan grocery diet allowed can i eat label ingredients") { FoodScanView() },
+            t("body", "Body: Tide, Swell, Anchor", "water.waves", "health recovery strain sleep score hrv heart rate stress readiness workout body battery fitness") { BodyView() },
             t("food", "Food today", "fork.knife.circle.fill", "nutrition protein fiber sugar meals log calories health brain food fish") { NutritionView() },
             t("describeMeal", "Log a meal", "text.bubble.fill", "ate lunch dinner breakfast describe meal") { DescribeMealView() },
             t("foodLibrary", "Food library", "books.vertical.fill", "scanned products saved history") { FoodLibraryView() },

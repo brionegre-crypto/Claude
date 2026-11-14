@@ -9,6 +9,7 @@ struct KeelWatchWidgetBundle: WidgetBundle {
         NextEventComplication()
         TasksLeftComplication()
         CountdownComplication()
+        BodyComplication()
     }
 }
 
@@ -167,6 +168,49 @@ struct CountdownFace: View {
             }
         } else {
             Text("No countdowns").font(.caption2)
+        }
+    }
+}
+
+
+/// Tide on your watch face (with Swell and Anchor in the bigger sizes).
+struct BodyComplication: Widget {
+    var body: some WidgetConfiguration {
+        StaticConfiguration(kind: "KeelWatchBody", provider: WatchProvider()) { entry in
+            BodyFace(entry: entry).containerBackground(for: .widget) { Color.clear }
+        }
+        .configurationDisplayName("Tide")
+        .description("How recovered you are, with today's effort and last night's sleep.")
+        .supportedFamilies([.accessoryCircular, .accessoryRectangular, .accessoryInline, .accessoryCorner])
+    }
+}
+
+struct BodyFace: View {
+    let entry: WatchEntry
+    @Environment(\.widgetFamily) private var family
+    private let tideColor = Color(red: 0.16, green: 0.62, blue: 0.80)
+    var body: some View {
+        let b = entry.payload.body.flatMap { Calendar.current.isDateInToday($0.day) ? $0 : nil }
+        let tide = b?.tide
+        switch family {
+        case .accessoryInline:
+            Text(tide.map { "Tide \($0)% · Swell \(b?.swell ?? 0)" } ?? "Tide –")
+        case .accessoryCorner:
+            Image(systemName: "water.waves").widgetLabel { Text(tide.map { "Tide \($0)%" } ?? "Tide") }
+        case .accessoryRectangular:
+            VStack(alignment: .leading, spacing: 1) {
+                Text("Tide \(tide.map { "\($0)%" } ?? "–")").font(.headline).foregroundStyle(tideColor)
+                Text("Swell \(b?.swell ?? 0) · Anchor \(b?.anchor.map { "\($0)" } ?? "–")").font(.caption2)
+                if let bed = b?.bedtime { Text("Bed by \(bed.formatted(date: .omitted, time: .shortened))").font(.caption2).foregroundStyle(.secondary) }
+            }
+        default:
+            Gauge(value: Double(tide ?? 0), in: 0...100) {
+                Image(systemName: "water.waves")
+            } currentValueLabel: {
+                Text(tide.map { "\($0)" } ?? "–")
+            }
+            .gaugeStyle(.accessoryCircular)
+            .tint(tideColor)
         }
     }
 }

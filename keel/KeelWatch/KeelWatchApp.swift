@@ -178,6 +178,9 @@ struct WatchRoot: View {
 
                 if store.payload.checkedInMood == nil { CheckInRow() }
 
+                if let b = store.payload.body {
+                    link("Body", "water.waves", Color(red: 0.16, green: 0.62, blue: 0.80), b.tide.map { "Tide \($0)%" }) { WatchBodyPage(scores: b) }
+                }
                 Section {
                     link("Today", "checklist", accent, "\(store.payload.tasks.count)") { TasksPage() }
                     link("Calendar", "calendar", .red, store.payload.events.first(where: { $0.end > Date() }).map { $0.start.formatted(date: .omitted, time: .shortened) }) { AgendaPage() }
@@ -881,5 +884,38 @@ struct RoutineWatchPlayer: View {
         }
         .navigationTitle(routine.name)
         .onAppear { if steps.isEmpty { steps = routine.steps; started = Date() } }
+    }
+}
+
+
+/// Tide (recovery), Swell (effort) and Anchor (sleep), from your iPhone.
+struct WatchBodyPage: View {
+    let scores: BodyScores
+    private let tide = Color(red: 0.16, green: 0.62, blue: 0.80)
+    private let swell = Color(red: 0.98, green: 0.52, blue: 0.36)
+    private let anchor = Color(red: 0.42, green: 0.40, blue: 0.86)
+
+    var body: some View {
+        List {
+            row("Tide", "how recovered you are", scores.tide.map { "\($0)%" } ?? "–", tide)
+            row("Swell", "effort today · aim \(scores.swellLow)–\(scores.swellHigh)", "\(scores.swell)", swell)
+            row("Anchor", scores.asleepMinutes.map { "slept \($0 / 60)h \($0 % 60)m" } ?? "sleep score", scores.anchor.map { "\($0)" } ?? "–", anchor)
+            if let bed = scores.bedtime {
+                Label("Bed by \(bed.formatted(date: .omitted, time: .shortened))", systemImage: "bed.double.fill").font(.caption)
+            }
+            if scores.calibrating { Text("Learning your normal: wear your watch to bed.").font(.caption2).foregroundStyle(.secondary) }
+        }
+        .navigationTitle("Body")
+    }
+
+    private func row(_ name: String, _ detail: String, _ value: String, _ c: Color) -> some View {
+        HStack {
+            VStack(alignment: .leading) {
+                Text(name).font(.headline).foregroundStyle(c)
+                Text(detail).font(.caption2).foregroundStyle(.secondary)
+            }
+            Spacer()
+            Text(value).font(.title3.weight(.bold)).monospacedDigit()
+        }
     }
 }

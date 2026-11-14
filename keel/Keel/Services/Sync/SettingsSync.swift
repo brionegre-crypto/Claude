@@ -21,7 +21,7 @@ final class SettingsSync {
 
     /// Kept on this device.
     static let deny: [String] = [
-        "settingsSync.", "sync.", "throttle.", "push.", "keychain.", "reminders.bridge", "store.split", "calendar.hidden",
+        "settingsSync.", "sync.", "throttle.", "push.", "keychain.", "mac.", "body.connected", "body.alerted", "body.refresh", "reminders.bridge", "store.split", "calendar.hidden",
         "mail.notified", "mail.retriage", "scanners.", "trips.backfilled", "appointments.scanned",
         "savepoints.", "timer.", "backup.", "mirror.", "briefing.text", "briefing.polishedAt",
         "health.connected", "nutrition.health.sync", "printableRect", "paperRect", "autopilot.notified",

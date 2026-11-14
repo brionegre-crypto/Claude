@@ -20,6 +20,7 @@ struct KeelWidgetBundle: WidgetBundle {
         LevelWidget()
         InboxWidget()
         NotesWidget()
+        BodyWidget()
         #if !targetEnvironment(macCatalyst)       // Live Activities and Control Center are iPhone-only
         FocusLiveActivity()
         MeetingLiveActivity()
@@ -447,7 +448,7 @@ struct TasksCheckWidget: Widget {
     var body: some WidgetConfiguration {
         StaticConfiguration(kind: "KeelTasksCheck", provider: KeelProvider()) { entry in
             TasksCheckView(entry: entry)
-                .containerBackground(for: .widget) { Color(.systemBackground) }
+                .containerBackground(for: .widget) { LinearGradient(colors: [Color(red: 0.16, green: 0.62, blue: 0.80).opacity(0.16), .clear], startPoint: .top, endPoint: .bottom) }
                 .widgetURL(URL(string: "com.keel.app://tasks"))
         }
         .configurationDisplayName("Today's Tasks")
@@ -613,7 +614,7 @@ struct GroceriesWidget: Widget {
     var body: some WidgetConfiguration {
         StaticConfiguration(kind: "KeelGroceries", provider: KeelProvider()) { entry in
             GroceriesView(entry: entry)
-                .containerBackground(for: .widget) { Color(.systemBackground) }
+                .containerBackground(for: .widget) { LinearGradient(colors: [Color(red: 0.16, green: 0.62, blue: 0.80).opacity(0.16), .clear], startPoint: .top, endPoint: .bottom) }
                 .widgetURL(URL(string: "com.keel.app://groceries"))
         }
         .configurationDisplayName("Groceries")
@@ -783,7 +784,7 @@ struct InboxWidget: Widget {
     var body: some WidgetConfiguration {
         StaticConfiguration(kind: "KeelInbox", provider: KeelProvider()) { entry in
             InboxWidgetView(entry: entry)
-                .containerBackground(for: .widget) { Color(.systemBackground) }
+                .containerBackground(for: .widget) { LinearGradient(colors: [Color(red: 0.16, green: 0.62, blue: 0.80).opacity(0.16), .clear], startPoint: .top, endPoint: .bottom) }
                 .widgetURL(URL(string: "com.keel.app://inbox"))
         }
         .configurationDisplayName("Inbox")
@@ -836,7 +837,7 @@ struct NotesWidget: Widget {
     var body: some WidgetConfiguration {
         StaticConfiguration(kind: "KeelNotes", provider: KeelProvider()) { entry in
             NotesWidgetView(entry: entry)
-                .containerBackground(for: .widget) { Color(.systemBackground) }
+                .containerBackground(for: .widget) { LinearGradient(colors: [Color(red: 0.16, green: 0.62, blue: 0.80).opacity(0.16), .clear], startPoint: .top, endPoint: .bottom) }
                 .widgetURL(URL(string: "com.keel.app://notes"))
         }
         .configurationDisplayName("Favorite Notes")
@@ -877,5 +878,92 @@ struct NotesWidgetView: View {
                 Spacer(minLength: 0)
             }
         }
+    }
+}
+
+
+// MARK: - Body: Tide, Swell, Anchor
+
+struct BodyEntry: TimelineEntry {
+    let date: Date
+    let scores: BodyScores?
+}
+
+struct BodyProvider: TimelineProvider {
+    func placeholder(in context: Context) -> BodyEntry {
+        BodyEntry(date: Date(), scores: BodyScores(day: Date(), tide: 72, swell: 38, anchor: 84, asleepMinutes: 455,
+                                                   bedtime: Date().addingTimeInterval(4 * 3600), calibrating: false))
+    }
+    func getSnapshot(in context: Context, completion: @escaping (BodyEntry) -> Void) {
+        completion(context.isPreview ? placeholder(in: context) : BodyEntry(date: Date(), scores: BodyScores.today()))
+    }
+    func getTimeline(in context: Context, completion: @escaping (Timeline<BodyEntry>) -> Void) {
+        completion(Timeline(entries: [BodyEntry(date: Date(), scores: BodyScores.today())], policy: .after(Date().addingTimeInterval(1_800))))
+    }
+}
+
+struct BodyWidget: Widget {
+    var body: some WidgetConfiguration {
+        StaticConfiguration(kind: "KeelBody", provider: BodyProvider()) { entry in
+            BodyWidgetView(entry: entry)
+                .containerBackground(for: .widget) { LinearGradient(colors: [Color(red: 0.16, green: 0.62, blue: 0.80).opacity(0.16), .clear], startPoint: .top, endPoint: .bottom) }
+                .widgetURL(URL(string: "com.keel.app://tool/body"))
+        }
+        .configurationDisplayName("Body")
+        .description("Tide (how recovered you are), Swell (effort today) and Anchor (last night's sleep).")
+        .supportedFamilies([.systemSmall, .systemMedium, .accessoryCircular, .accessoryRectangular, .accessoryInline])
+    }
+}
+
+struct BodyWidgetView: View {
+    let entry: BodyEntry
+    @Environment(\.widgetFamily) private var family
+    private let tideC = Color(red: 0.16, green: 0.62, blue: 0.80)
+    private let swellC = Color(red: 0.98, green: 0.52, blue: 0.36)
+    private let anchorC = Color(red: 0.42, green: 0.40, blue: 0.86)
+
+    var body: some View {
+        let s = entry.scores
+        switch family {
+        case .accessoryInline:
+            Text(s?.tide.map { "Tide \($0)% · Swell \(s?.swell ?? 0)" } ?? "Open Keel for Tide")
+        case .accessoryCircular:
+            Gauge(value: Double(s?.tide ?? 0), in: 0...100) { Image(systemName: "water.waves") } currentValueLabel: { Text(s?.tide.map { "\($0)" } ?? "–") }
+                .gaugeStyle(.accessoryCircular)
+        case .accessoryRectangular:
+            VStack(alignment: .leading, spacing: 1) {
+                Text("Tide \(s?.tide.map { "\($0)%" } ?? "–")").font(.headline)
+                Text("Swell \(s?.swell ?? 0) · Anchor \(s?.anchor.map { "\($0)" } ?? "–")").font(.caption)
+                if let bed = s?.bedtime { Text("Bed by \(bed.formatted(date: .omitted, time: .shortened))").font(.caption2).foregroundStyle(.secondary) }
+            }
+        case .systemMedium:
+            HStack(spacing: 10) {
+                ring("Tide", s?.tide, tideC, "%")
+                ring("Swell", s.map { $0.swell }, swellC, "")
+                ring("Anchor", s?.anchor, anchorC, "")
+            }
+        default:
+            VStack(alignment: .leading, spacing: 6) {
+                Label("Body", systemImage: "water.waves").font(.caption.weight(.semibold)).foregroundStyle(tideC)
+                Text(s?.tide.map { "\($0)%" } ?? "–").font(.system(size: 34, weight: .bold, design: .rounded)).foregroundStyle(tideC)
+                Text("Tide").font(.caption2).foregroundStyle(.secondary)
+                Spacer(minLength: 0)
+                Text("Swell \(s?.swell ?? 0) · Anchor \(s?.anchor.map { "\($0)" } ?? "–")").font(.caption2)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
+    }
+
+    private func ring(_ name: String, _ v: Int?, _ c: Color, _ suffix: String) -> some View {
+        VStack(spacing: 4) {
+            ZStack {
+                Circle().stroke(c.opacity(0.18), lineWidth: 8)
+                Circle().trim(from: 0, to: CGFloat(min(100, v ?? 0)) / 100).stroke(c, style: StrokeStyle(lineWidth: 8, lineCap: .round)).rotationEffect(.degrees(-90))
+                Text(v.map { "\($0)\(suffix)" } ?? "–").font(.system(size: 15, weight: .bold, design: .rounded))
+            }
+            .frame(width: 66, height: 66)
+            Text(name).font(.caption2.weight(.semibold)).foregroundStyle(c)
+        }
+        .frame(maxWidth: .infinity)
     }
 }

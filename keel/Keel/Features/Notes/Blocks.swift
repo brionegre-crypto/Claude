@@ -71,7 +71,24 @@ enum BlockColor: String, CaseIterable {
 
 /// Renders inline markdown (**bold**, *italic*, `code`, [link](url), ~~strike~~) plus ==highlight==.
 enum RichText {
+    /// Formatted lines are remembered, so redrawing a long page doesn't re-parse every line (opening and
+    /// scrolling stay smooth). Cleared when it gets big.
+    private static var renderCache: [String: AttributedString] = [:]
+    private static let renderLock = NSLock()
+
     static func render(_ text: String) -> AttributedString {
+        renderLock.lock()
+        if let hit = renderCache[text] { renderLock.unlock(); return hit }
+        renderLock.unlock()
+        let out = renderUncached(text)
+        renderLock.lock()
+        if renderCache.count > 4_000 { renderCache.removeAll(keepingCapacity: true) }
+        renderCache[text] = out
+        renderLock.unlock()
+        return out
+    }
+
+    private static func renderUncached(_ text: String) -> AttributedString {
         guard text.contains("{") else { return renderBasic(text) }
         // Coloured and underlined spans: {c:red}text{/}, {b:yellow}text{/}, {u}text{/}
         guard let re = try? NSRegularExpression(pattern: #"\{(c|b):([a-z]+)\}(.*?)\{/\}|\{u\}(.*?)\{/\}"#) else { return renderBasic(text) }

@@ -101,10 +101,17 @@ enum FocusForecast {
         if total.values.reduce(0, +) >= 8 { reasons.append("your past focus sessions") }
 
         let sleepFactor: Double
-        if let s = sleepHours {
+        let body = BodyScores.today()
+        if let tide = body?.tide {
+            // Your recovery (Tide) says more than hours of sleep alone.
+            sleepFactor = tide < 34 ? 0.78 : tide < 67 ? 0.92 : 1
+            reasons.append("Tide \(tide)%")
+        } else if let s = sleepHours ?? body?.asleepMinutes.map({ Double($0) / 60 }) {
             sleepFactor = s < 5.5 ? 0.75 : s < 6.5 ? 0.87 : 1
             reasons.append(String(format: "%.1f h of sleep", s))
         } else { sleepFactor = 1 }
+        let calm = Set(body?.calmHours ?? [])
+        if !calm.isEmpty { reasons.append("the hours your heart is usually calmest") }
 
         var hours: [Hour] = []
         for h in 7...22 {
@@ -129,6 +136,7 @@ enum FocusForecast {
                     med = max(med, v) + (v < 0 ? v : 0)
                 }
                 var score = base + med * 0.35
+                if calm.contains(h) { score += 0.06 }          // you're usually calm then (from your heart rate)
                 if let tot = total[h], tot >= 2 {
                     score += (Double(good[h] ?? 0) / Double(tot) - 0.6) * 0.15
                 }

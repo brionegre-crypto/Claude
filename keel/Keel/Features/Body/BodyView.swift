@@ -1,0 +1,408 @@
+import SwiftUI
+import Charts
+
+enum BodyStyle {
+    static let tide = Color(red: 0.16, green: 0.62, blue: 0.80)      // sea blue
+    static let swell = Color(red: 0.98, green: 0.52, blue: 0.36)     // breaking-wave coral
+    static let anchor = Color(red: 0.42, green: 0.40, blue: 0.86)    // night indigo
+    static func stressColor(_ v: Int?) -> Color {
+        switch v { case 0: Color(red: 0.36, green: 0.75, blue: 0.62); case 1: .orange; case 2: .red; default: Color.gray.opacity(0.18) }
+    }
+}
+
+/// A ring with a number in the middle.
+struct ScoreRing: View {
+    let title: String
+    let value: Int?
+    let max: Int
+    let color: Color
+    var suffix = ""
+    var size: CGFloat = 92
+
+    var body: some View {
+        VStack(spacing: 6) {
+            ZStack {
+                Circle().stroke(color.opacity(0.16), lineWidth: size * 0.11)
+                Circle().trim(from: 0, to: CGFloat(Swift.min(1, Double(value ?? 0) / Double(max))))
+                    .stroke(color.gradient, style: StrokeStyle(lineWidth: size * 0.11, lineCap: .round))
+                    .rotationEffect(.degrees(-90))
+                    .animation(.smooth(duration: 0.6), value: value)
+                VStack(spacing: 0) {
+                    Text(value.map { "\($0)" } ?? "–").font(.system(size: size * 0.28, weight: .bold, design: .rounded)).monospacedDigit()
+                        .contentTransition(.numericText())
+                    if !suffix.isEmpty { Text(suffix).font(.system(size: size * 0.12, weight: .semibold)).foregroundStyle(.secondary) }
+                }
+            }
+            .frame(width: size, height: size)
+            Text(title).font(DS.Font.caption.weight(.semibold)).foregroundStyle(color)
+        }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(title): \(value.map { "\($0)\(suffix == "%" ? " percent" : "")" } ?? "no data")")
+    }
+}
+
+// MARK: - Today card
+
+struct BodyTodayCard: View {
+    @State private var engine = BodyEngine.shared
+    var body: some View {
+        NavigationLink { BodyView() } label: {
+            VStack(alignment: .leading, spacing: 10) {
+                HStack {
+                    Label("Body", systemImage: "water.waves").font(DS.Font.headline)
+                    Spacer()
+                    if engine.loading { ProgressView().controlSize(.small) }
+                    Image(systemName: "chevron.right").font(.caption).foregroundStyle(DS.Palette.inkSoft)
+                }
+                if !BodyHealth.available {
+                    Text("Body tracking uses Apple Health on your iPhone.").font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
+                } else if !engine.connected {
+                    Text("See how recovered you are, how hard your body worked and how well you slept. Tap to connect Apple Health.")
+                        .font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
+                } else {
+                    let t = engine.today
+                    HStack(spacing: 0) {
+                        ScoreRing(title: "Tide", value: t?.tide, max: 100, color: BodyStyle.tide, suffix: "%", size: 64).frame(maxWidth: .infinity)
+                        ScoreRing(title: "Swell", value: t?.swell, max: 100, color: BodyStyle.swell, size: 64).frame(maxWidth: .infinity)
+                        ScoreRing(title: "Anchor", value: t?.anchor, max: 100, color: BodyStyle.anchor, size: 64).frame(maxWidth: .infinity)
+                    }
+                    Text(BodyEngine.advice(t?.tide)).font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft).lineLimit(2)
+                }
+            }
+            .padding(DS.Space.m)
+            .background(DS.Palette.elevated, in: .rect(cornerRadius: DS.Radius.card, style: .continuous))
+        }
+        .buttonStyle(.plain)
+        .task { await engine.refresh() }
+    }
+}
+
+// MARK: - Body screen
+
+struct BodyView: View {
+    @State private var engine = BodyEngine.shared
+    @State private var journalTick = 0
+    @AppStorage(BodyPrefs.needKey) private var need = 8.0
+    @AppStorage(BodyPrefs.maxHRKey) private var maxHR = 0
+    @AppStorage(BodyPrefs.morningKey) private var morning = true
+    @AppStorage(BodyPrefs.windDownKey) private var windDown = true
+
+    var body: some View {
+        ScrollView {
+            LazyVStack(alignment: .leading, spacing: DS.Space.l) {
+                if !BodyHealth.available {
+                    ContentUnavailableView("Open Keel on your iPhone", systemImage: "iphone",
+                                           description: Text("Body tracking reads Apple Health, which lives on your iPhone (and Apple Watch)."))
+                } else if !engine.connected {
+                    connectCard
+                } else {
+                    header
+                    adviceCard
+                    tideCard
+                    anchorCard
+                    swellCard
+                    stressCard
+                    vitalsCard
+                    journalCard
+                    settingsCard
+                    explainer
+                }
+            }
+            .padding(DS.Space.m)
+        }
+        .background(DS.Palette.canvas)
+        .navigationTitle("Body")
+        .navigationBarTitleDisplayMode(.inline)
+        .refreshable { await engine.refresh(force: true) }
+        .task { await engine.refresh() }
+    }
+
+    private var t: BodyDay? { engine.today }
+    private var recent: [BodyDay] { Array(engine.days.suffix(30)) }
+
+    private func card<C: View>(_ title: String, _ icon: String, _ color: Color, @ViewBuilder _ content: () -> C) -> some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Label(title, systemImage: icon).font(DS.Font.headline).foregroundStyle(color)
+            content()
+        }
+        .padding(DS.Space.m)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(DS.Palette.elevated, in: .rect(cornerRadius: DS.Radius.card, style: .continuous))
+    }
+
+    private var connectCard: some View {
+        card("Body", "water.waves", BodyStyle.tide) {
+            Text("Keel reads Apple Health to show three scores each day, all worked out privately on this iPhone:")
+            VStack(alignment: .leading, spacing: 6) {
+                Label("Tide: how recovered you are", systemImage: "water.waves").foregroundStyle(BodyStyle.tide)
+                Label("Swell: how hard your body worked", systemImage: "wind").foregroundStyle(BodyStyle.swell)
+                Label("Anchor: how well you slept", systemImage: "moon.zzz.fill").foregroundStyle(BodyStyle.anchor)
+            }
+            .font(DS.Font.caption.weight(.semibold))
+            Text("Wearing an Apple Watch (also to bed) makes them much more accurate.").font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
+            Button { Task { await engine.connect() } } label: { Label("Connect Apple Health", systemImage: "heart.fill").frame(maxWidth: .infinity) }
+                .buttonStyle(.borderedProminent).tint(BodyStyle.tide)
+        }
+    }
+
+    private var header: some View {
+        VStack(spacing: 12) {
+            HStack(spacing: 0) {
+                ScoreRing(title: "Tide", value: t?.tide, max: 100, color: BodyStyle.tide, suffix: "%").frame(maxWidth: .infinity)
+                ScoreRing(title: "Swell", value: t?.swell, max: 100, color: BodyStyle.swell).frame(maxWidth: .infinity)
+                ScoreRing(title: "Anchor", value: t?.anchor, max: 100, color: BodyStyle.anchor).frame(maxWidth: .infinity)
+            }
+            if engine.loading { ProgressView("Reading Apple Health…").font(DS.Font.caption) }
+            if t?.calibrating ?? true {
+                Label("Learning your normal: Tide gets accurate after about 5 nights with your Apple Watch.", systemImage: "hourglass")
+                    .font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
+            }
+        }
+        .padding(.vertical, 6)
+    }
+
+    private var adviceCard: some View {
+        let target = BodyMath.swellTarget(t?.tide)
+        let swell = t?.swell ?? 0
+        return card("Today", "sun.horizon.fill", DS.Palette.accent) {
+            Text(BodyEngine.advice(t?.tide))
+            VStack(alignment: .leading, spacing: 4) {
+                GeometryReader { g in
+                    ZStack(alignment: .leading) {
+                        Capsule().fill(BodyStyle.swell.opacity(0.12))
+                        Capsule().fill(BodyStyle.swell.opacity(0.25))
+                            .frame(width: g.size.width * CGFloat(target.upperBound - target.lowerBound) / 100)
+                            .offset(x: g.size.width * CGFloat(target.lowerBound) / 100)
+                        Capsule().fill(BodyStyle.swell.gradient).frame(width: max(6, g.size.width * CGFloat(swell) / 100))
+                    }
+                }
+                .frame(height: 10)
+                Text(swell < target.lowerBound ? "Swell \(swell): room to do more today (aim for \(target.lowerBound)–\(target.upperBound))."
+                     : swell > target.upperBound ? "Swell \(swell): you've done plenty. Ease off and recover."
+                     : "Swell \(swell): right in your target range.")
+                    .font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
+            }
+        }
+    }
+
+    private var tideCard: some View {
+        card("Tide · recovery", "water.waves", BodyStyle.tide) {
+            if let notes = t?.tideNotes, !notes.isEmpty {
+                ForEach(notes, id: \.self) { Text("• \($0)").font(DS.Font.caption) }
+            } else {
+                Text("No overnight heart data yet. Wear your Apple Watch to bed.").font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
+            }
+            trend(\.tide, color: BodyStyle.tide, max: 100)
+        }
+    }
+
+    private var anchorCard: some View {
+        let tn = BodyMath.tonight(engine.days, base: need)
+        return card("Anchor · sleep", "moon.zzz.fill", BodyStyle.anchor) {
+            if let d = t, d.hasSleep {
+                HStack(alignment: .firstTextBaseline) {
+                    Text(hm(d.asleep)).font(.title2.weight(.bold)).monospacedDigit()
+                    Text("of \(hm((d.need ?? need) * 60)) you needed").font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
+                }
+                if d.deep + d.rem + d.core > 0 {
+                    GeometryReader { g in
+                        let total = max(1, d.deep + d.rem + d.core + d.awake)
+                        HStack(spacing: 2) {
+                            stage(g.size.width * d.deep / total, Color(red: 0.25, green: 0.25, blue: 0.70))
+                            stage(g.size.width * d.core / total, BodyStyle.anchor.opacity(0.7))
+                            stage(g.size.width * d.rem / total, Color(red: 0.55, green: 0.70, blue: 1))
+                            stage(g.size.width * d.awake / total, Color.orange.opacity(0.6))
+                        }
+                    }
+                    .frame(height: 12)
+                    Text("Deep \(hm(d.deep)) · Core \(hm(d.core)) · REM \(hm(d.rem)) · Awake \(hm(d.awake))")
+                        .font(.caption2).foregroundStyle(DS.Palette.inkSoft)
+                }
+                if let b = d.bedtime, let w = d.wake {
+                    Text("Asleep \(b.formatted(date: .omitted, time: .shortened)) – \(w.formatted(date: .omitted, time: .shortened))")
+                        .font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
+                }
+            } else {
+                Text("No sleep recorded for last night.").font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
+            }
+            Divider()
+            Label {
+                Text("Tonight: about \(hm(tn.need * 60)). Lights out by **\(tn.bedtime.formatted(date: .omitted, time: .shortened))** to wake at \(tn.wake.formatted(date: .omitted, time: .shortened)).")
+                    .font(DS.Font.caption)
+            } icon: { Image(systemName: "bed.double.fill").foregroundStyle(BodyStyle.anchor) }
+            trend(\.anchor, color: BodyStyle.anchor, max: 100)
+        }
+    }
+
+    private func stage(_ w: CGFloat, _ c: Color) -> some View {
+        RoundedRectangle(cornerRadius: 3).fill(c).frame(width: max(0, w - 2))
+    }
+
+    private var swellCard: some View {
+        card("Swell · effort", "wind", BodyStyle.swell) {
+            if let w = t?.workouts, !w.isEmpty {
+                ForEach(w) { x in
+                    HStack {
+                        Text(x.name).font(DS.Font.body.weight(.medium))
+                        Text("\(x.minutes) min" + (x.kcal.map { " · \($0) kcal" } ?? "")).font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
+                        Spacer()
+                        Text("Swell \(x.swell)").font(DS.Font.caption.weight(.semibold)).foregroundStyle(BodyStyle.swell)
+                    }
+                }
+            } else {
+                Text("No workouts today. Everyday movement still counts toward Swell.").font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
+            }
+            trendInt(\.swell, color: BodyStyle.swell)
+        }
+    }
+
+    private var stressCard: some View {
+        card("Stress through the day", "waveform.path.ecg", .orange) {
+            if let s = t?.stress, s.contains(where: { $0 != nil }) {
+                HStack(alignment: .bottom, spacing: 3) {
+                    ForEach(Array(s.enumerated()), id: \.offset) { i, v in
+                        VStack(spacing: 3) {
+                            RoundedRectangle(cornerRadius: 3).fill(BodyStyle.stressColor(v)).frame(height: CGFloat(14 + (v ?? 0) * 14))
+                            if i % 3 == 0 { Text(hourLabel(8 + i)).font(.system(size: 8)).foregroundStyle(DS.Palette.inkSoft) } else { Text(" ").font(.system(size: 8)) }
+                        }
+                        .frame(maxWidth: .infinity)
+                    }
+                }
+                .frame(height: 50, alignment: .bottom)
+                let high = s.compactMap { $0 }.filter { $0 == 2 }.count
+                Text(high == 0 ? "A calm day so far." : "\(high) hour\(high == 1 ? "" : "s") of high stress. A 2-minute breather can help (Compass → Breathe).")
+                    .font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
+            } else {
+                Text("Shows when you wear your Apple Watch during the day.").font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
+            }
+        }
+    }
+
+    private var vitalsCard: some View {
+        card("Vital signs", "heart.text.square.fill", .pink) {
+            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], alignment: .leading, spacing: 12) {
+                vital("Heart rate variability", t?.hrv.map { "\(Int($0)) ms" }, normal(\.hrv), higherIsBetter: true, value: t?.hrv)
+                vital("Resting heart rate", t?.rhr.map { "\(Int($0)) bpm" }, normal(\.rhr), higherIsBetter: false, value: t?.rhr)
+                vital("Breathing rate", t?.resp.map { String(format: "%.1f /min", $0) }, normal(\.resp), higherIsBetter: nil, value: t?.resp)
+                vital("Blood oxygen", t?.spo2.map { String(format: "%.0f%%", $0) }, normal(\.spo2), higherIsBetter: true, value: t?.spo2)
+                vital("Wrist temperature", t?.temp.map { String(format: "%+.1f°C", $0) }, nil, higherIsBetter: nil, value: t?.temp)
+                vital("Cardio fitness (VO₂ max)", t?.vo2.map { String(format: "%.1f", $0) }, nil, higherIsBetter: true, value: t?.vo2)
+            }
+        }
+    }
+
+    /// Your usual range: average ± one standard deviation over the last 30 days.
+    private func normal(_ kp: KeyPath<BodyDay, Double?>) -> ClosedRange<Double>? {
+        let v = engine.days.dropLast().suffix(30).compactMap { $0[keyPath: kp] }
+        guard v.count >= 5 else { return nil }
+        let m = v.reduce(0, +) / Double(v.count)
+        let sd = sqrt(v.reduce(0) { $0 + pow($1 - m, 2) } / Double(v.count - 1))
+        return (m - sd)...(m + sd)
+    }
+
+    private func vital(_ name: String, _ shown: String?, _ range: ClosedRange<Double>?, higherIsBetter: Bool?, value: Double?) -> some View {
+        VStack(alignment: .leading, spacing: 2) {
+            Text(name).font(.caption2).foregroundStyle(DS.Palette.inkSoft).lineLimit(1)
+            Text(shown ?? "–").font(DS.Font.headline).monospacedDigit()
+            if let r = range, let v = value {
+                let out = v < r.lowerBound || v > r.upperBound
+                Text(out ? (v > r.upperBound ? "Above your normal" : "Below your normal") : "Normal for you")
+                    .font(.caption2).foregroundStyle(out ? .orange : .green)
+            }
+        }
+        .accessibilityElement(children: .combine)
+    }
+
+    private var journalCard: some View {
+        let yesterday = Calendar.current.date(byAdding: .day, value: -1, to: Date()) ?? Date()
+        let logged = Set(engine.journal[BodyMath.dayKey(yesterday)] ?? [])
+        let impact = BodyMath.habitImpact(journal: engine.journal, days: engine.days)
+        _ = journalTick
+        return card("Habit impact", "checklist", .green) {
+            Text("What did you do yesterday? Keel learns which habits raise or lower your Tide the next morning.")
+                .font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
+            FlowLayout(spacing: 8) {
+                ForEach(BodyEngine.journalTags, id: \.self) { tag in
+                    let on = logged.contains(tag)
+                    Button { engine.toggle(tag, on: yesterday); journalTick += 1; Haptics.tap() } label: {
+                        Text(tag).font(DS.Font.caption).padding(.horizontal, 10).padding(.vertical, 6)
+                            .background(on ? Color.green.opacity(0.22) : DS.Palette.canvas, in: Capsule())
+                            .overlay(Capsule().strokeBorder(on ? Color.green : Color.gray.opacity(0.3)))
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityAddTraits(on ? .isSelected : [])
+                }
+            }
+            if impact.isEmpty {
+                Text("Log a few days (at least 3 with and 3 without a habit) to see its effect.").font(.caption2).foregroundStyle(DS.Palette.inkSoft)
+            } else {
+                ForEach(impact.prefix(6), id: \.tag) { i in
+                    HStack {
+                        Text(i.tag).font(DS.Font.caption)
+                        Spacer()
+                        Text("\(i.delta > 0 ? "+" : "")\(i.delta)% Tide").font(DS.Font.caption.weight(.semibold))
+                            .foregroundStyle(i.delta > 0 ? .green : i.delta < 0 ? .red : DS.Palette.inkSoft)
+                    }
+                }
+            }
+        }
+    }
+
+    private var settingsCard: some View {
+        card("Settings", "slider.horizontal.3", DS.Palette.inkSoft) {
+            Stepper("Sleep you need: \(need.formatted(.number.precision(.fractionLength(0...2)))) h", value: $need, in: 6...10, step: 0.25)
+                .onChange(of: need) { Task { await engine.refresh(force: true) } }
+            Stepper(maxHR == 0 ? "Max heart rate: automatic" : "Max heart rate: \(maxHR)", value: $maxHR, in: 0...220, step: 1)
+                .onChange(of: maxHR) { if maxHR > 0 && maxHR < 120 { maxHR = 120 } }
+            Toggle("Morning readiness alert", isOn: $morning)
+            Toggle("Wind-down reminder before bed", isOn: $windDown)
+                .onChange(of: windDown) { engine.scheduleWindDown() }
+        }
+        .font(DS.Font.caption)
+    }
+
+    private var explainer: some View {
+        DisclosureGroup("How the scores work") {
+            VStack(alignment: .leading, spacing: 8) {
+                Text("**Tide (0–100%)** compares last night's heart rate variability and resting heart rate with your own normal over the last 30 days, then adds how well you slept. Faster breathing or a raised wrist temperature overnight lowers it, since they can be early signs of illness or stress.")
+                Text("**Swell (0–100)** counts time spent in each heart-rate zone today, weighting harder zones more. It rises quickly at first and levels off, so going from 80 to 90 takes much more than going from 10 to 20.")
+                Text("**Anchor (0–100)** is your sleep: how much you got compared with what you needed (55 points), how much of your time in bed you were asleep (15), deep and REM sleep (15), and how close your bedtime was to your usual one (15).")
+                Text("**Sleep need** is your base (\(need.formatted(.number.precision(.fractionLength(0...2)))) h) plus a little after a hard day, plus a third of any sleep debt from the last few nights.")
+                Text("Everything is worked out on this iPhone from Apple Health. Keel doesn't send any of it anywhere. These scores are for everyday wellbeing, not medical advice.")
+            }
+            .font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft).padding(.top, 6)
+        }
+        .padding(DS.Space.m)
+        .background(DS.Palette.elevated, in: .rect(cornerRadius: DS.Radius.card, style: .continuous))
+    }
+
+    // MARK: Charts
+
+    private func trend(_ kp: KeyPath<BodyDay, Int?>, color: Color, max: Int) -> some View {
+        Chart(recent) { d in
+            if let v = d[keyPath: kp] {
+                LineMark(x: .value("Day", d.day, unit: .day), y: .value("Score", v)).foregroundStyle(color).interpolationMethod(.catmullRom)
+                PointMark(x: .value("Day", d.day, unit: .day), y: .value("Score", v)).foregroundStyle(color).symbolSize(14)
+            }
+        }
+        .chartYScale(domain: 0...max)
+        .chartXAxis { AxisMarks(values: .stride(by: .day, count: 7)) { _ in AxisGridLine(); AxisValueLabel(format: .dateTime.month(.abbreviated).day()) } }
+        .frame(height: 110)
+        .accessibilityLabel("Last 30 days")
+    }
+
+    private func trendInt(_ kp: KeyPath<BodyDay, Int>, color: Color) -> some View {
+        Chart(Array(engine.days.suffix(14))) { d in
+            BarMark(x: .value("Day", d.day, unit: .day), y: .value("Swell", d[keyPath: kp])).foregroundStyle(color.gradient).cornerRadius(3)
+        }
+        .chartYScale(domain: 0...100)
+        .frame(height: 90)
+        .accessibilityLabel("Last 14 days")
+    }
+
+    private func hm(_ minutes: Double) -> String {
+        let m = Int(minutes.rounded())
+        return "\(m / 60)h \(String(format: "%02d", m % 60))m"
+    }
+    private func hourLabel(_ h: Int) -> String { h == 12 ? "12p" : h > 12 ? "\(h - 12)p" : "\(h)a" }
+}

@@ -221,6 +221,7 @@ struct RootView: View {
 
     enum Tab: Hashable { case today, inbox, calendar, tasks, notes, settings, tool(String) }
     @AppStorage(TabBarConfig.revKey) private var tabBarRev = 0
+    @AppStorage(SidebarStyle.key) private var sidebarHidden = false
     @State private var hiddenSection: HiddenSection?
 
     private func openTask(_ id: UUID) -> TaskItem? {
@@ -263,7 +264,7 @@ struct RootView: View {
         .onContinueUserActivity(KeelHandoff.taskType) { a in
             if let s = a.userInfo?["id"] as? String, let id = UUID(uuidString: s) { router.openTaskId = id }
         }
-        .tabViewStyle(.sidebarAdaptable)      // tabs on iPhone; a sidebar on Mac and iPad
+        .modifier(SidebarStyle(hidden: sidebarHidden && showsSidebarSettings))   // tabs on iPhone; a sidebar on Mac and iPad (hideable)
         // Focus lives above the tab bar (like Music's mini-player): always one tap away, shows the live timer.
         .tabViewBottomAccessory { FocusAccessory { router.showFocus = true } }
         .overlay(alignment: .bottom) { UndoToast() }
@@ -417,6 +418,7 @@ struct FocusAccessory: View {
 
 /// Menu bar commands and keyboard shortcuts (Mac, and iPad with a keyboard).
 struct KeelCommands: Commands {
+    @AppStorage(SidebarStyle.key) private var sidebarHidden = false
     var body: some Commands {
         CommandGroup(replacing: .newItem) {
             Button("New Task") { AppRouter.shared.showCapture = true }
@@ -433,6 +435,10 @@ struct KeelCommands: Commands {
         }
         CommandGroup(replacing: .appSettings) {
             Button("Settings…") { AppRouter.shared.showSettings = true }.keyboardShortcut(",")
+        }
+        CommandGroup(before: .sidebar) {
+            Button(sidebarHidden ? "Show Sidebar" : "Hide Sidebar") { withAnimation(.smooth(duration: 0.3)) { sidebarHidden.toggle() } }
+                .keyboardShortcut("s", modifiers: [.command, .control])
         }
         CommandMenu("Go") {
             Button("Today") { AppRouter.shared.tab = .today }.keyboardShortcut("1")
@@ -532,4 +538,14 @@ struct SettingsButton: ViewModifier {
 
 extension View {
     func keelSettingsButton() -> some View { modifier(SettingsButton()) }
+}
+
+
+/// Mac and iPad: the sidebar, or (hidden with View → Hide Sidebar, ⌃⌘S) a compact tab strip so the page gets the room.
+struct SidebarStyle: ViewModifier {
+    static let key = "mac.sidebarHidden"          // per device (the Mac's choice shouldn't change the iPad)
+    let hidden: Bool
+    func body(content: Content) -> some View {
+        if hidden { content.tabViewStyle(.tabBarOnly) } else { content.tabViewStyle(.sidebarAdaptable) }
+    }
 }

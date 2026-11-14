@@ -89,7 +89,7 @@ targets:
         UIRequiresFullScreen: true
         NSSupportsLiveActivities: true
         NSHealthUpdateUsageDescription: When you turn it on, Keel saves the meals you log (calories, protein, carbs, fat, fiber, sugar, sodium and caffeine) to Health, and removes them if you delete them in Keel.
-        NSHealthShareUsageDescription: Keel reads your sleep to suggest today's energy, steps, exercise and mindful minutes to tick off habits, and food other apps logged plus your weight for your nutrition totals and protein goal.
+        NSHealthShareUsageDescription: Keel reads your sleep, heart rate, heart rate variability, breathing rate, blood oxygen, wrist temperature, workouts and cardio fitness to work out your daily recovery, effort and sleep scores on this iPhone, plus your sleep to suggest today's energy, steps, exercise and mindful minutes to tick off habits, and food other apps logged plus your weight for your nutrition totals and protein goal.
         NSPhotoLibraryUsageDescription: Keel reads your recent screenshots on this iPhone to suggest tasks, and lets you add photos to notes.
         NSLocationWhenInUseUsageDescription: Keel uses your location for today's weather, time-to-leave alerts for events, and finding places for location reminders.
         NSCameraUsageDescription: Keel uses the camera to scan documents into your notes and to scan food barcodes and labels to check them against your diet.

@@ -76,7 +76,7 @@ enum WidgetSync {
             notes: favoriteNotes(ctx)
         ).save()
         WidgetCenter.shared.reloadAllTimelines()
-        WatchBridge.shared.push(ctx)          // keep Apple Watch in step
+        WatchPushQueue.schedule(ctx)          // keep Apple Watch in step (bundled, so taps stay instant)
     }
 
     private static func unreadMail(_ ctx: ModelContext) -> [WidgetSnapshot.MailLine] {

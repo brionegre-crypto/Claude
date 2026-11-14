@@ -178,6 +178,8 @@ final class SyncEngine {
 
         // 3b. Booking link: new bookings onto your calendar; keep the open times fresh.
         await BookingLink.refreshIfDue()
+        // 3b2. Body: Tide, Swell and Anchor from Apple Health (every 15 minutes at most; morning alert once a day).
+        await BodyEngine.shared.refresh()
         // 3c. Instant mail: keep Gmail and Outlook telling your server about new mail.
         await MailPush.refresh(ctx: ctx)
 

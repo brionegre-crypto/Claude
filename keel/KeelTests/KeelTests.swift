@@ -449,4 +449,69 @@ final class KeelTests: XCTestCase {
         XCTAssertFalse(SettingsSync.syncs("NSInterfaceStyle"))
         XCTAssertFalse(SettingsSync.syncs("com.apple.something"))
     }
+
+    // MARK: Body (Tide, Swell, Anchor)
+
+    func testSwellRisesThenLevelsOff() {
+        XCTAssertEqual(BodyMath.swell(0), 0)
+        XCTAssertLessThan(BodyMath.swell(60), BodyMath.swell(180))
+        XCTAssertLessThan(BodyMath.swell(1_000), 100 + 1)
+        XCTAssertGreaterThan(BodyMath.swell(180) - BodyMath.swell(60), BodyMath.swell(600) - BodyMath.swell(480))   // levels off
+    }
+
+    func testHeartRateZonesCountHarderMinutesMore() {
+        let start = Date()
+        func hr(_ bpm: Double) -> [BodyRaw.Q] { (0..<30).map { BodyRaw.Q(start: start.addingTimeInterval(Double($0) * 60), end: start.addingTimeInterval(Double($0) * 60), value: bpm) } }
+        let easy = BodyMath.trimp(hr(115), maxHR: 190, from: start, to: start.addingTimeInterval(3600))
+        let hard = BodyMath.trimp(hr(175), maxHR: 190, from: start, to: start.addingTimeInterval(3600))
+        let resting = BodyMath.trimp(hr(60), maxHR: 190, from: start, to: start.addingTimeInterval(3600))
+        XCTAssertEqual(resting, 0)
+        XCTAssertGreaterThan(hard, easy * 2)
+    }
+
+    func testTideFollowsYourOwnNormal() {
+        let cal = Calendar.current
+        var days: [BodyDay] = (0..<12).map { i in
+            var d = BodyDay(day: cal.date(byAdding: .day, value: i - 12, to: cal.startOfDay(for: Date()))!)
+            d.hrv = 50 + Double(i % 3); d.rhr = 55 + Double(i % 2); d.asleep = 450; d.inBed = 480
+            return d
+        }
+        var good = BodyDay(day: cal.startOfDay(for: Date())); good.hrv = 70; good.rhr = 50; good.asleep = 470; good.inBed = 490
+        var bad = good; bad.hrv = 32; bad.rhr = 64; bad.asleep = 280; bad.inBed = 400
+        var a = days + [good], b = days + [bad]
+        BodyMath.score(&a, base: 8)
+        BodyMath.score(&b, base: 8)
+        XCTAssertGreaterThan(a.last!.tide!, 67)
+        XCTAssertLessThan(b.last!.tide!, 34)
+        XCTAssertGreaterThan(a.last!.anchor!, b.last!.anchor!)
+        XCTAssertFalse(a.last!.calibrating)
+        days.removeAll()
+    }
+
+    func testSwellTargetAndSleepNeed() {
+        XCTAssertEqual(BodyMath.swellTarget(80), 60...80)
+        XCTAssertEqual(BodyMath.swellTarget(20), 15...35)
+        XCTAssertEqual(BodyMath.effortExtra(30), 0)
+        XCTAssertGreaterThan(BodyMath.effortExtra(80), 0)
+        let tn = BodyMath.tonight([], base: 8)
+        XCTAssertEqual(tn.need, 8, accuracy: 0.01)
+        XCTAssertEqual(tn.wake.timeIntervalSince(tn.bedtime), 8 * 3600 + 15 * 60, accuracy: 1)
+    }
+
+    func testHabitImpactNeedsEnoughDays() {
+        let cal = Calendar.current
+        var days: [BodyDay] = []
+        var journal: [String: [String]] = [:]
+        for i in 0..<10 {
+            let d = cal.date(byAdding: .day, value: i - 10, to: cal.startOfDay(for: Date()))!
+            var b = BodyDay(day: cal.date(byAdding: .day, value: 1, to: d)!)
+            let drank = i % 2 == 0
+            b.tide = drank ? 40 : 70
+            days.append(b)
+            if drank { journal[BodyMath.dayKey(d)] = ["Alcohol"] } else { journal[BodyMath.dayKey(d)] = ["Read before bed"] }
+        }
+        let impact = BodyMath.habitImpact(journal: journal, days: days)
+        XCTAssertEqual(impact.first { $0.tag == "Alcohol" }?.delta, -30)
+        XCTAssertEqual(BodyMath.habitImpact(journal: [:], days: days).count, 0)
+    }
 }
