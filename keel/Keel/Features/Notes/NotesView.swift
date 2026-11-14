@@ -547,6 +547,18 @@ struct NotesView: View {
 
     // MARK: Notion-style home
 
+    /// Pages inside pages, worked out once per screen update (not once per row), so big libraries stay instant.
+    private final class TreeMemo { var kids: [UUID: [Note]]?; var stamp = "" }
+    private let treeMemo = TreeMemo()
+    private var childMap: [UUID: [Note]] {
+        let stamp = "\(allNotes.count)|\(allNotes.first?.updatedAt.timeIntervalSince1970 ?? 0)"
+        if let k = treeMemo.kids, treeMemo.stamp == stamp { return k }
+        let k = Dictionary(grouping: notes.filter { $0.parentId != nil }, by: { $0.parentId! })
+            .mapValues { $0.sorted { ($0.sortIndex, $1.updatedAt) < ($1.sortIndex, $0.updatedAt) } }
+        treeMemo.kids = k; treeMemo.stamp = stamp
+        return k
+    }
+
     @AppStorage("notes.tree.expanded") private var expandedRaw = ""
     private var expanded: Set<String> { Set(expandedRaw.split(separator: "\n").map(String.init)) }
     private func toggleExpanded(_ key: String) {
@@ -607,7 +619,7 @@ struct NotesView: View {
 
     /// A page in the tree, with the pages inside it one tap away (databases open as tables instead).
     private func pageTree(_ n: Note, depth: Int) -> AnyView {
-        let kids = n.isDatabase ? [] : notes.filter { $0.parentId == n.id }.sorted { ($0.sortIndex, $1.updatedAt) < ($1.sortIndex, $0.updatedAt) }
+        let kids = n.isDatabase ? [] : (childMap[n.id] ?? [])
         let open = expanded.contains("p:" + n.id.uuidString)
         return AnyView(Group {
             HStack(spacing: 6) {

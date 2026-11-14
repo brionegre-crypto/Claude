@@ -49,6 +49,14 @@ struct SearchView: View {
 
     var body: some View {
         List {
+            if live.count >= 3 {
+                Section {
+                    NavigationLink { AskEverythingView(initial: live) } label: { Label("Ask Keel: “\(live)”", systemImage: "sparkle.magnifyingglass") }
+                    ForEach(SearchActions.matching(live)) { a in
+                        Button { a.run(live) } label: { Label(a.title(live), systemImage: a.icon) }
+                    }
+                } footer: { Text("Find anything, ask a question, or do something, all from here.") }
+            }
             if live.count >= 3, !smart.isStructured {
                 let meaning = BrainIndex.shared.search(live, kinds: ["note"], limit: 5)
                 if !meaning.isEmpty {

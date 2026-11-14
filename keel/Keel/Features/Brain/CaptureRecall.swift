@@ -555,6 +555,7 @@ enum PDFImport {
 // MARK: - Ask everything (notes, mail, tasks, calendar, meetings)
 
 struct AskEverythingView: View {
+    var initial: String? = nil
     @Environment(\.modelContext) private var ctx
     @Query(sort: \Note.updatedAt, order: .reverse) private var notes: [Note]
     @Query(InboxView.recentMail) private var mail: [EmailMessage]
@@ -601,6 +602,7 @@ struct AskEverythingView: View {
         }
         .navigationTitle("Ask everything")
         .navigationDestination(item: $saved) { NoteEditor(note: $0) }
+        .task { if let initial, question.isEmpty { question = initial; await ask() } }
     }
 
     private func ask() async {

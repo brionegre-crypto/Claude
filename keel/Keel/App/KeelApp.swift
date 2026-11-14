@@ -243,6 +243,8 @@ struct RootView: View {
         // Focus lives above the tab bar (like Music's mini-player): always one tap away, shows the live timer.
         .tabViewBottomAccessory { FocusAccessory { router.showFocus = true } }
         .overlay(alignment: .bottom) { UndoToast() }
+        .overlay(alignment: .bottom) { HandoffBanner().animation(DS.spring, value: Handoff.shared.current?.id) }      // the natural next step
+        .overlay(alignment: .bottomTrailing) { CaptureButton().padding(.trailing, 18).padding(.bottom, 104) }       // capture anything, from anywhere
         .safeAreaInset(edge: .top) {
             if let err = KeelStore.loadError {
                 Text(err).font(DS.Font.caption).foregroundStyle(.white).padding(10).frame(maxWidth: .infinity)

@@ -267,6 +267,41 @@ final class KeelTests: XCTestCase {
         XCTAssertNil(VoiceLoop.wakeMatch(""))
     }
 
+    // MARK: Flow
+
+    func testCaptureGuessesWhatYouMeant() {
+        XCTAssertEqual(CaptureClassifier.guess("Lunch with Sam tomorrow 1pm"), .event)
+        XCTAssertEqual(CaptureClassifier.guess("remind me to water plants"), .reminder)
+        XCTAssertEqual(CaptureClassifier.guess("buy milk"), .task)
+        XCTAssertEqual(CaptureClassifier.guess("Idea: a bakery app\nthat delivers"), .note)
+    }
+
+    func testLifeAreasFromTitles() {
+        XCTAssertEqual(LifeBalance.area(for: "Gym with Alex"), .health)
+        XCTAssertEqual(LifeBalance.area(for: "Pay the electric bill"), .wealth)
+        XCTAssertEqual(LifeBalance.area(for: "Dinner with mom"), .relationships)
+        XCTAssertEqual(LifeBalance.area(for: "Quarterly planning"), .work)
+    }
+
+    func testLinksBetweenAnything() throws {
+        let ctx = try makeContext()
+        let n = Note(title: "Plan"); let t = TaskItem(title: "Do it")
+        ctx.insert(n); ctx.insert(t)
+        t.sourceNoteId = n.id
+        KeelLinks.add("note:\(n.id.uuidString)", "person:abc", ctx: ctx)
+        let c = KeelLinks.connected("note:\(n.id.uuidString)", ctx: ctx)
+        XCTAssertTrue(c.contains("person:abc"))
+        XCTAssertTrue(c.contains("task:\(t.id.uuidString)"))             // made from this page, linked for free
+        KeelLinks.remove("note:\(n.id.uuidString)", "person:abc", ctx: ctx)
+        XCTAssertFalse(KeelLinks.connected("note:\(n.id.uuidString)", ctx: ctx).contains("person:abc"))
+    }
+
+    func testOpenWaterLabel() {
+        let a = Date(), b = a.addingTimeInterval(2 * 3600 + 30 * 60)
+        XCTAssertEqual(VoyageView.span(a, b), "Open water · 2h 30m")
+        XCTAssertEqual(VoyageView.span(a, a.addingTimeInterval(50 * 60)), "Open water · 50 min")
+    }
+
     // MARK: Layout settings
 
     func testTabBarAlwaysStartsWithToday() {

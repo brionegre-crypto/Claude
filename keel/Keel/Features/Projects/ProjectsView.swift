@@ -106,6 +106,7 @@ struct ProjectDetailView: View {
                         }
                         addField(milestone: nil)
                     }
+                    ProjectPilotSection(project: project, tasks: tasks)
                     Section("Milestones") {
                         ForEach(project.milestones, id: \.self) { Text("◆ \($0)") }
                             .onDelete { project.milestones.remove(atOffsets: $0) }

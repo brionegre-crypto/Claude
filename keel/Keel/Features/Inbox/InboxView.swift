@@ -906,7 +906,9 @@ struct EmailDetailView: View {
                 if !attachments.isEmpty { attachmentStrip }
                 bodyView
                 Divider()
+                ConversationMemoryCard(email: email.from, name: email.fromName)
                 quickReply
+                ConnectedStrip(key: "mail:" + email.id)
             }
             .padding()
         }

@@ -42,6 +42,7 @@ enum TaskActions {
         Task { @MainActor in try? CalendarService.shared.push(t) }
         TaskAlerts.schedule(t)
         if done, t.isDone, let ctx = t.modelContext { notifyUnblocked(by: t, ctx: ctx) }
+        if done, t.isDone { Handoff.shared.taskDone(t, ctx: t.modelContext) }      // suggest the next thing
         if let ctx = t.modelContext { WidgetSync.update(ctx) }
         return rolledTo
     }

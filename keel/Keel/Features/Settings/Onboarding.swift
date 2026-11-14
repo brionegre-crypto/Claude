@@ -78,7 +78,9 @@ struct OnboardingFlow: View {
 
     private var welcome: some View {
         VStack(spacing: DS.Space.l) {
-            hero("sailboat.fill", DS.Palette.accent, "Welcome to Keel", "Email, calendar, tasks, notes and habits in one calm place, built for busy brains.")
+            HorizonHeader(title: "Welcome to Keel", detail: "Your second brain, on calm water")
+            Text("Email, calendar, tasks, notes and habits in one calm place, built for busy brains. The sky above every screen follows your day; what needs you sits above the waterline.")
+                .font(DS.Font.body).foregroundStyle(DS.Palette.inkSoft).multilineTextAlignment(.center)
             VStack(alignment: .leading, spacing: DS.Space.m) {
                 bullet("1.circle.fill", "One thing at a time", "Today shows your single best next step, not a wall of everything.")
                 bullet("sparkles", "Keel does the prep", "Replies drafted, your day balanced, inbox sorted. You approve with a tap.")

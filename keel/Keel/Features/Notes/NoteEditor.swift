@@ -331,6 +331,7 @@ struct NoteEditor: View {
             PageStats(note: note).padding(.top, DS.Space.s)
             NoteLinksSection(note: note)
             RelatedSection(note: note, allNotes: allNotes, open: { openPage = $0 })
+            ConnectedStrip(key: "note:" + note.id.uuidString).padding(.top, DS.Space.s)
         }
     }
 

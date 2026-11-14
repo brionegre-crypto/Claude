@@ -959,6 +959,10 @@ struct MeetingRecorderView: View {
             }
         }
         savedNote = note
+        let made = makeTasks ? w.actions.count : 0
+        Handoff.shared.suggest("Notes ready: \(note.title)\(made > 0 ? " · \(made) task\(made == 1 ? "" : "s") added" : "")", action: "Send recap") {
+            compose = followUpDraft(w)
+        }
         result = w
         recorder.finishMeeting()             // saved in the note; clear the recorder and its audio for next time
         Haptics.milestone()

@@ -585,6 +585,7 @@ struct TaskDetailView: View {
             }
 
             TaskTimerSection(task: task)
+            Section { ConnectedStrip(key: "task:" + task.id.uuidString) }
             Section("When") {
                 Toggle("Due date", isOn: Binding(
                     get: { task.dueDate != nil },
