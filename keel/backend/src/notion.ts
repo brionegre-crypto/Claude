@@ -131,21 +131,48 @@ export function infoPage(req: Request, env: Env): Response {
 export function privacyPage(): Response {
   return html(`
     <h1>Keel privacy policy</h1>
-    <p>Keel is a personal productivity app. When you connect Notion, Keel reads the pages and databases you choose to share,
-    only to copy them into Keel on your iPhone.</p>
+    <p>Keel is a personal productivity app for iPhone, iPad, Mac and Apple Watch. It's built so your information stays with you.
+    Keel doesn't sell your data, show ads, or track you across apps and websites.</p>
+
+    <h2>On your devices and in your iCloud</h2>
+    <p>Your tasks, notes, habits, calendar, health and nutrition entries, and settings are stored on your devices. If you turn on iCloud sync,
+    they're also kept in your own private iCloud, which only you can read. Email is downloaded by each device directly from your
+    mail provider (Gmail, Outlook, iCloud or another) and stays on that device. Passwords, AI keys and mail sign-ins are kept in your iCloud Keychain.</p>
+
+    <h2>AI</h2>
     <ul>
-      <li>Your Notion content is downloaded directly to your iPhone and stored there. This server never stores your pages.</li>
-      <li>This server only exchanges the one-time sign-in code for an access token and passes it to your iPhone within five minutes. It keeps nothing afterwards.</li>
-      <li>The access token is stored in your iPhone's Keychain. You can disconnect at any time in Notion (Settings → Connections) or in Keel.</li>
-      <li>Keel doesn't sell, share or use your data for advertising.</li>
+      <li><b>Apple Intelligence</b> runs on your device; nothing is sent anywhere.</li>
+      <li>If you add <b>your own Claude, ChatGPT or Gemini key</b>, the text you ask about goes from your device straight to that company (Anthropic, OpenAI or Google) under their terms. Keel's server isn't involved.</li>
+      <li>Features that use <b>your Keel server's Claude</b> (such as meeting notes) send the text to Anthropic through the server. The server keeps only a daily count of requests, not the text.</li>
+      <li>Private mode keeps everything on your device.</li>
+    </ul>
+
+    <h2>What Keel's server keeps, and when</h2>
+    <ul>
+      <li><b>Sign in with Apple</b>: an anonymous Apple ID number (and the name and email Apple shares, if any) so your devices stay signed in.</li>
+      <li><b>Things you choose to share</b>: shared lists, published pages and shared spaces, until you remove them.</li>
+      <li><b>Booking link</b>: the open times your device works out (never your events), and, for each booking, the person's name, email and note until your device picks it up.</li>
+      <li><b>Instant mail alerts</b>: your device's push address. Gmail and Outlook only tell the server "new mail arrived"; no email content reaches it.</li>
+      <li><b>Claude connector</b> (only if you connect it): a short summary of your day, tasks, notes and promises, so Claude can read it after you approve the connection. Tasks Claude adds wait there until your device picks them up.</li>
+      <li><b>Notion import</b>: the one-time sign-in code is exchanged for an access token and handed to your device within five minutes; nothing else is kept. Your pages go straight to your device.</li>
+      <li><b>Crash reports</b>: only if you turn on Share crash reports; they describe what code was running, never your content, and are deleted after 30 days.</li>
+      <li><b>Support messages</b> you send from the support page, with your email if you give it, for 90 days.</li>
+    </ul>
+
+    <h2>Your choices</h2>
+    <ul>
+      <li><b>Delete your account</b>: Settings → Account → Delete Account removes your sign-ins and everything above that belongs to you (connector summary, booking page and bookings, push addresses, connector access, crash reports). Shared lists and spaces stay for the people you shared them with until you remove them.</li>
+      <li>Disconnect Notion at any time in Notion (Settings → Connections) or in Keel; disconnect Claude in Claude's connector settings.</li>
+      <li>Questions: <a href="/support">keel support</a>.</li>
     </ul>`);
 }
 
 export function termsPage(): Response {
   return html(`
     <h1>Keel terms of use</h1>
-    <p>Keel's Notion import copies content you choose into the Keel app on your device. Use it only with workspaces you're allowed to export.
-    The service is provided as is, without warranty. You can stop using it at any time by disconnecting Keel in Notion.</p>`);
+    <p>Keel helps you organize your own email, calendar, tasks and notes. Use it only with accounts and content you're allowed to use.
+    Features that call AI services use your own keys or your own Keel server, and those services' terms apply.
+    Keel is provided as is, without warranty. You can stop using it at any time and delete your account in Settings.</p>`);
 }
 
 function page(message: string, status = 200): Response {

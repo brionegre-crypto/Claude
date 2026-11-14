@@ -64,6 +64,8 @@ struct NoteEditor: View {
     @State private var personSheet: Person?
     @State private var aiWrite: AIWriteRequest?
     @AppStorage(PageLook.widthKey) private var pageWidth = "comfortable"
+    @AppStorage("notes.autoHideBars") private var autoHideBars = true
+    @State private var barsHidden = false              // bars slide away while you read or type; tap to bring them back
     @Environment(\.openWindow) private var openWindow
     @Environment(\.supportsMultipleWindows) private var multiWindow
 
@@ -98,7 +100,15 @@ struct NoteEditor: View {
     // MARK: Page
 
     private var page: some View {
-        ScrollViewReader { proxy in pageList.onChange(of: scrollTarget) { _, id in
+        ScrollViewReader { proxy in pageList
+            // Reading: scroll down and the bars slide away; scroll up, reach the top, or tap the page to bring them back.
+            .onScrollGeometryChange(for: CGFloat.self) { $0.contentOffset.y + $0.contentInsets.top } action: { old, new in
+                if new < 30 || new < old - 12 { setBars(hidden: false) } else if new > old + 12 { setBars(hidden: true) }
+            }
+            .simultaneousGesture(TapGesture().onEnded { setBars(hidden: false) })
+            .onChange(of: editing) { _, id in if id != nil { setBars(hidden: true) } }      // typing: just you and the page
+            .onDisappear { setBars(hidden: false) }
+            .onChange(of: scrollTarget) { _, id in
             guard let id else { return }
             withAnimation(DS.spring) { proxy.scrollTo(id, anchor: .top) }
             scrollTarget = nil
@@ -136,7 +146,8 @@ struct NoteEditor: View {
         .sheet(item: $aiWrite) { r in
             AIWriteSheet(request: r, pageTitle: note.title, pageText: note.plainText) { text, replace in applyAI(r, text: text, replace: replace) }
         }
-        .toolbar(zen ? .hidden : .automatic, for: .navigationBar)
+        .toolbar(zen || barsHidden ? .hidden : .automatic, for: .navigationBar)
+        .toolbar(zen || barsHidden ? .hidden : .automatic, for: .tabBar)
         // Handoff: this page shows up on your other iPhone, iPad and Mac to carry on where you are.
         .userActivity(KeelHandoff.noteType, isActive: !note.isLocked) { a in
             a.title = note.title.isEmpty ? "Untitled page" : note.title
@@ -1071,6 +1082,11 @@ struct NoteEditor: View {
                 Button("Outline", systemImage: "list.bullet.indent") { showOutline = true }
                 Button("Local graph", systemImage: "point.3.filled.connected.trianglepath.dotted") { showLocalGraph = true }
                 Button("Focus mode", systemImage: "arrow.up.left.and.arrow.down.right") { withAnimation(DS.spring) { zen = true } }
+                if UIDevice.current.userInterfaceIdiom == .phone {
+                    Toggle(isOn: Binding(get: { autoHideBars }, set: { autoHideBars = $0; if !$0 { setBars(hidden: false) } })) {
+                        Label("Hide bars while reading", systemImage: "rectangle.expand.vertical")
+                    }
+                }
                 Picker("Page width", selection: $pageWidth) {
                     Text("Comfortable").tag("comfortable"); Text("Wide").tag("wide"); Text("Full width").tag("full")
                 }
@@ -1137,6 +1153,14 @@ struct NoteEditor: View {
     // MARK: AI
 
     private var pageText: String { "Title: \(note.title)\n" + note.plainText }
+
+    /// Slides the top bar, tab bar and + button away (or back). iPhone only; off with ⋯ → Hide bars while reading.
+    private func setBars(hidden: Bool) {
+        let want = hidden && autoHideBars && UIDevice.current.userInterfaceIdiom == .phone
+        guard want != barsHidden else { return }
+        withAnimation(.easeInOut(duration: 0.25)) { barsHidden = want }
+        AppRouter.shared.chromeHidden = want
+    }
 
     /// The selected words (or the whole line) go to AI to rewrite.
     private func editWithAI(_ i: Int, preset: AIAction?) {

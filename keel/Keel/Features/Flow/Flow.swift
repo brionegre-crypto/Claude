@@ -106,8 +106,9 @@ struct UniversalCaptureSheet: View {
 struct CaptureButton: View {
     @State private var open = false
     @AppStorage("capture.fab") private var on = true
+    private var router = AppRouter.shared
     var body: some View {
-        if on {
+        if on && !router.chromeHidden {
             Button { open = true; Haptics.tap() } label: {
                 Image(systemName: "plus").font(.title2.weight(.semibold)).foregroundStyle(.white)
                     .frame(width: 56, height: 56)

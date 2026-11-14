@@ -80,5 +80,19 @@ export async function handleDeleteAccount(bearer: string | undefined, env: Env):
     }
     cursor = page.list_complete ? undefined : page.cursor;
   } while (cursor);
+  // Everything else this server holds for you: the Claude connector's copy of your day, queued actions,
+  // push addresses, your booking page and pending bookings, Claude connector sign-ins, and crash reports.
+  for (const k of ["snapshot", "actions", "push:devices", "push:last", "push:jwt", "booking:requests"]) await env.KEEL.delete(k);
+  const bid = await env.KEEL.get("booking:id");
+  if (bid) await env.KEEL.delete(`book:${bid}`);
+  await env.KEEL.delete("booking:id");
+  for (const prefix of ["oauth:at:", "oauth:rt:", "oauth:client:", "oauth:code:", "diag:"]) {
+    let c: string | undefined;
+    do {
+      const pg = await env.KEEL.list({ prefix, cursor: c });
+      for (const k of pg.keys) await env.KEEL.delete(k.name);
+      c = pg.list_complete ? undefined : pg.cursor;
+    } while (c);
+  }
   return json({ deleted: true });
 }

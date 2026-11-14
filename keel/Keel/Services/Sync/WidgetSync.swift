@@ -141,6 +141,7 @@ final class AppRouter {
     var showCapture = false
     var openTaskId: UUID?
     var openNoteId: UUID?
+    var chromeHidden = false          // a page is hiding its bars while you read; the + button steps aside too
     var showSearch = false
     var showSettings = false
     var showPlan = false
