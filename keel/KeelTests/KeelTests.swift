@@ -357,4 +357,21 @@ final class KeelTests: XCTestCase {
         XCTAssertTrue(SlashCommand.matching("ai").contains { $0.id == "ai" })
         XCTAssertEqual(SpecialBlock.lang(for: "aiblock"), SpecialBlock.aiblock)
     }
+
+    // MARK: Duplicate tasks
+
+    func testDuplicateTasksAreMerged() throws {
+        let ctx = try makeContext()
+        let due = Date().addingTimeInterval(3600)
+        let a = TaskItem(title: "Empty trash if bin is full", dueDate: due); a.ekReminderId = "r1"
+        let b = TaskItem(title: "Empty  trash if bin is full", dueDate: due); b.notes = "kept"
+        let c = TaskItem(title: "Rub her feet", dueDate: due)
+        let d = TaskItem(title: "Buy milk"), e = TaskItem(title: "Buy milk")       // no date, not linked: left alone
+        [a, b, c, d, e].forEach { ctx.insert($0) }
+        XCTAssertEqual(TaskDedupe.run(ctx: ctx), 1)
+        let left = try ctx.fetch(FetchDescriptor<TaskItem>())
+        XCTAssertEqual(left.count, 4)
+        XCTAssertTrue(left.contains { $0.ekReminderId == "r1" && $0.notes == "kept" })    // the linked copy stays, with the notes
+        XCTAssertEqual(TaskDedupe.run(ctx: ctx), 0)
+    }
 }

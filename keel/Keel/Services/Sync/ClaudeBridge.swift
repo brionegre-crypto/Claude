@@ -53,6 +53,10 @@ enum ClaudeBridge {
             let args = a["args"] as? [String: Any] ?? [:]
             switch a["type"] as? String {
             case "add_task":
+                // The server's queue can be read twice within a minute; never add the same task twice.
+                let title = args["title"] as? String ?? "From Claude"
+                let existing = (try? ctx.fetch(FetchDescriptor<TaskItem>(predicate: #Predicate { !$0.isDone && $0.title == title }))) ?? []
+                guard existing.isEmpty else { continue }
                 let t = TaskItem(title: args["title"] as? String ?? "From Claude",
                                  dueDate: (args["due"] as? String).flatMap { ISO8601DateFormatter().date(from: $0) })
                 t.listName = args["list"] as? String ?? "Inbox"

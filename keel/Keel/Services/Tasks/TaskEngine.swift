@@ -368,3 +368,42 @@ enum QuickAdd {
         return t
     }
 }
+
+// MARK: - Duplicate cleanup
+
+/// Merges exact duplicates of open tasks: same title and same due time (or, without a date, the same reminder).
+/// Keeps the copy linked to Apple Reminders (then the oldest) and removes the extra copy from Reminders too,
+/// so it can't come back on the next sync.
+@MainActor
+enum TaskDedupe {
+    static func key(_ t: TaskItem) -> String {
+        let title = t.title.lowercased().split(whereSeparator: \.isWhitespace).joined(separator: " ")
+        if let d = t.dueDate { return title + "|" + String(Int(d.timeIntervalSince1970 / 60)) }
+        return title + "|nodate|" + (t.ekReminderId ?? t.id.uuidString)
+    }
+
+    @discardableResult
+    static func run(ctx: ModelContext) -> Int {
+        let open = (try? ctx.fetch(FetchDescriptor<TaskItem>(predicate: #Predicate { !$0.isDone }))) ?? []
+        guard open.count > 1 else { return 0 }
+        let ordered = open.sorted { a, b in
+            if (a.ekReminderId != nil) != (b.ekReminderId != nil) { return a.ekReminderId != nil }
+            return a.createdAt < b.createdAt
+        }
+        var keep: [String: TaskItem] = [:]
+        var removed = 0
+        for t in ordered {
+            let k = key(t)
+            guard let kept = keep[k] else { keep[k] = t; continue }
+            if kept.notes.isEmpty { kept.notes = t.notes }
+            if kept.microSteps.isEmpty { kept.microSteps = t.microSteps }
+            if kept.estimatedMinutes == nil { kept.estimatedMinutes = t.estimatedMinutes }
+            if let id = t.ekReminderId, id != kept.ekReminderId { CalendarService.shared.removeReminder(id: id) }
+            TaskAlerts.cancel(t)
+            ctx.delete(t)
+            removed += 1
+        }
+        if removed > 0 { try? ctx.save() }
+        return removed
+    }
+}

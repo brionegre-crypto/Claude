@@ -43,6 +43,8 @@ struct KeelApp: App {
                     MedEngine.scheduleAll(ctx: container.mainContext)
                     if TaskAlarms.globalOn { _ = await TaskAlarms.authorize() }   // asks once for full-screen task alarms
                     BreakReminders.schedule()
+                    TaskDedupe.run(ctx: container.mainContext)           // clears duplicate tasks left by older builds
+                    try? await Task.sleep(for: .seconds(1.5))           // let the first screen draw before the big sync
                     await SyncEngine.shared.syncAll()
                     SyncEngine.scheduleNextRefresh()
                 }
@@ -63,6 +65,7 @@ struct KeelApp: App {
                     try? await Task.sleep(for: .seconds(2.5))
                     guard UIApplication.shared.applicationState == .active else { return }
                     let ctx = container.mainContext
+                    if Throttle.due("dedupe", every: 600) { TaskDedupe.run(ctx: ctx) }
                     WeeklyDigest.makeIfDue(ctx: ctx)
                     SmartTemplates.runScheduled(ctx: ctx)
                     OvernightAgent.runIfDue(ctx: ctx)

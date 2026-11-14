@@ -138,25 +138,17 @@ struct SeededRandom {
     }
 }
 
-/// A wave twice as wide as the space, slid sideways forever; the wave repeats every half, so the loop is seamless.
+/// The water: drawn once and still. (A forever-running animation kept the main thread busy on every screen.)
 struct DriftingWave: View {
     let width: CGFloat
     let height: CGFloat
     let amplitude: CGFloat
     let duration: Double
     let reverse: Bool
-    @State private var go = false
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     var body: some View {
-        WaveShape(phase: 0, amplitude: amplitude)
-            .frame(width: max(1, width) * 2, height: height)
-            .offset(x: (go ? (reverse ? 0 : -width) : (reverse ? -width : 0)))
-            .frame(width: max(1, width), height: height, alignment: .leading)
-            .clipped()
-            .onAppear {
-                guard !reduceMotion else { return }
-                withAnimation(.linear(duration: duration).repeatForever(autoreverses: false)) { go = true }
-            }
+        WaveShape(phase: reverse ? .pi / 2 : 0, amplitude: amplitude)
+            .frame(width: max(1, width), height: height)
+            .drawingGroup()
     }
 }
 
@@ -230,9 +222,7 @@ struct VoyageView: View {
     @State private var addingInto: VoyageStop?
     @State private var newTask = ""
 
-    private var next: TaskItem? { ADHDCoach.nextThing(tasks: open, energy: EnergyLevel(rawValue: energyRaw) ?? .medium) }
-
-    private var stops: [VoyageStop] {
+    private func stops(next: TaskItem?, live: [TaskItem]) -> [VoyageStop] {
         let cal = Calendar.current, now = Date()
         let anchor = cal.date(bySettingHour: bedtime / 60, minute: bedtime % 60, second: 0, of: now) ?? now.addingTimeInterval(4 * 3600)
         var out: [VoyageStop] = []
@@ -240,7 +230,7 @@ struct VoyageView: View {
             out.append(VoyageStop(id: "e" + (e.calendarItemIdentifier) + "\(e.startDate.timeIntervalSince1970)", kind: .port, time: e.startDate,
                                   title: e.title ?? "Event", detail: "\(e.startDate.formatted(date: .omitted, time: .shortened))–\(e.endDate.formatted(date: .omitted, time: .shortened))", gapEnd: e.endDate))
         }
-        for t in open where t.hasDueTime && t.id != next?.id {
+        for t in live where t.hasDueTime && t.id != next?.id {
             if let d = t.dueDate, cal.isDateInToday(d), d >= now.addingTimeInterval(-3600), d < anchor {
                 out.append(VoyageStop(id: "t" + t.id.uuidString, kind: .waypoint, time: d, title: t.title, task: t))
             }
@@ -269,9 +259,12 @@ struct VoyageView: View {
     }
 
     var body: some View {
+        // Worked out once per redraw (it was twice), skipping anything just deleted by a sync.
+        let live = open.filter { !$0.isDeleted && $0.modelContext != nil }
+        let next = ADHDCoach.nextThing(tasks: live, energy: EnergyLevel(rawValue: energyRaw) ?? .medium)
         VStack(alignment: .leading, spacing: 0) {
-            bow
-            ForEach(stops) { s in stopRow(s) }
+            bow(next)
+            ForEach(stops(next: next, live: live)) { s in stopRow(s) }
         }
         .padding(DS.Space.m)
         .background(DS.Palette.elevated, in: .rect(cornerRadius: 22, style: .continuous))
@@ -299,7 +292,7 @@ struct VoyageView: View {
     }
 
     /// The bow: your one next step, right now.
-    private var bow: some View {
+    private func bow(_ next: TaskItem?) -> some View {
         HStack(alignment: .top, spacing: 12) {
             VStack(spacing: 0) {
                 Text("⛵").font(.title2)
@@ -361,7 +354,7 @@ struct VoyageView: View {
                             Text(s.detail.isEmpty ? s.time.formatted(date: .omitted, time: .shortened) : s.detail).font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
                         }
                         Spacer()
-                        if let t = s.task { Button { TaskActions.setDone(t, true) } label: { Image(systemName: "circle").font(.title3).foregroundStyle(DS.Palette.inkSoft) }.buttonStyle(.plain).accessibilityLabel("Mark \(t.title) done") }
+                        if let t = s.task, !t.isDeleted { Button { TaskActions.setDone(t, true) } label: { Image(systemName: "circle").font(.title3).foregroundStyle(DS.Palette.inkSoft) }.buttonStyle(.plain).accessibilityLabel("Mark \(t.title) done") }
                     }
                 }
             }

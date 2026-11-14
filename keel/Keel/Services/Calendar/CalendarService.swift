@@ -156,8 +156,15 @@ final class CalendarService {
         let reminders = await fetchReminders()
         let byId = Dictionary(tasks.compactMap { t in t.ekReminderId.map { ($0, t) } }, uniquingKeysWith: { a, _ in a })
         var seen = Set<String>()
+        // A Keel task that lost its link (e.g. a sync was interrupted) is matched by title and time instead of copied again.
+        func key(_ title: String, _ due: Date?) -> String {
+            title.lowercased().trimmingCharacters(in: .whitespaces) + "|" + (due.map { String(Int($0.timeIntervalSince1970 / 60)) } ?? "-")
+        }
+        var unlinked: [String: TaskItem] = [:]
+        for t in tasks where t.ekReminderId == nil && !t.isDone { unlinked[key(t.title, t.dueDate)] = t }
 
         for r in reminders {
+            guard !seen.contains(r.calendarItemIdentifier) else { continue }
             seen.insert(r.calendarItemIdentifier)
             if let t = byId[r.calendarItemIdentifier] {
                 let rModified = r.lastModifiedDate ?? .distantPast
@@ -174,6 +181,9 @@ final class CalendarService {
                 } else if t.updatedAt.timeIntervalSince(rModified) > 1 {   // changed in Keel → update Reminders
                     try? push(t)
                 }
+            } else if !r.isCompleted, let t = unlinked.removeValue(forKey: key(r.title ?? "Untitled", Self.date(from: r.dueDateComponents))) {
+                t.ekReminderId = r.calendarItemIdentifier
+                t.updatedAt = r.lastModifiedDate ?? Date()
             } else if !r.isCompleted {
                 let t = TaskItem(title: r.title ?? "Untitled", dueDate: Self.date(from: r.dueDateComponents),
                                  priority: Self.priority(fromEK: r.priority))
@@ -225,6 +235,12 @@ final class CalendarService {
         try store.save(r, commit: true)
         t.ekReminderId = r.calendarItemIdentifier
         t.updatedAt = r.lastModifiedDate ?? Date()     // both sides now agree, so the next sync leaves it alone
+    }
+
+    /// Removes one reminder by its id (used to clear an exact duplicate).
+    func removeReminder(id: String) {
+        guard let r = store.calendarItem(withIdentifier: id) as? EKReminder else { return }
+        try? store.remove(r, commit: true)
     }
 
     func removeReminder(for t: TaskItem) {

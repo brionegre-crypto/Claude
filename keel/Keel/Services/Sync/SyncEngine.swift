@@ -38,20 +38,37 @@ final class SyncEngine {
     }
 
     func scheduleReminderSync() {
+        // Keel's own writes to Reminders also post this notification. Ignoring the echo of a sync that just ran
+        // stops the sync → write → notification → sync loop that made Keel crawl.
+        guard !reminderSyncRunning, Date().timeIntervalSince(lastReminderSync) > 10 else { return }
         pendingReminderSync?.cancel()
         pendingReminderSync = Task {
-            try? await Task.sleep(for: .seconds(2))
+            try? await Task.sleep(for: .seconds(3))
             guard !Task.isCancelled else { return }
             await syncRemindersOnly()
         }
     }
 
     func syncRemindersOnly() async {
-        guard let container, !isSyncing else { return }
+        guard let container else { return }
         let ctx = container.mainContext
+        await runReminderSync(ctx)
+        TaskAlerts.rescheduleAll((try? ctx.fetch(FetchDescriptor<TaskItem>(predicate: #Predicate { !$0.isDone }))) ?? [])
+        try? ctx.save()
+    }
+
+    private var reminderSyncRunning = false
+    private var lastReminderSync = Date.distantPast
+
+    /// Only one Reminders sync at a time. Two at once each saw the same new reminder and both added it:
+    /// that's where duplicate tasks came from.
+    private func runReminderSync(_ ctx: ModelContext) async {
+        guard !reminderSyncRunning else { return }
+        reminderSyncRunning = true
+        defer { reminderSyncRunning = false; lastReminderSync = Date() }
         let tasks = (try? ctx.fetch(FetchDescriptor<TaskItem>())) ?? []
         await CalendarService.shared.syncReminders(tasks: tasks, insert: { ctx.insert($0) }, delete: { ctx.delete($0) })
-        TaskAlerts.rescheduleAll((try? ctx.fetch(FetchDescriptor<TaskItem>())) ?? [])
+        TaskDedupe.run(ctx: ctx)
         try? ctx.save()
     }
 
@@ -145,17 +162,19 @@ final class SyncEngine {
 
         // 2a. Replies close "remind me if no reply" follow-ups; blocked senders are archived;
         //     mail from people on your Keep in touch list counts as contact.
+        await Task.yield()
         FollowUps.check(ctx: ctx)
         Screener.archiveBlocked(ctx: ctx)
-        KeepInTouch.updateFromMail(ctx: ctx)
+        if Throttle.due("sync.keepintouch", every: 900) { KeepInTouch.updateFromMail(ctx: ctx) }
+        await Task.yield()
 
         // 2b. Promise tracker: commitments you made in sent mail
         await PromiseTracker.scan(accounts: accounts, ctx: ctx)
 
-        // 3. Apple Reminders ⇄ Keel tasks
-        let tasks = (try? ctx.fetch(FetchDescriptor<TaskItem>())) ?? []
-        await CalendarService.shared.syncReminders(tasks: tasks, insert: { ctx.insert($0) }, delete: { ctx.delete($0) })
-        TaskAlerts.rescheduleAll((try? ctx.fetch(FetchDescriptor<TaskItem>())) ?? [])
+        // 3. Apple Reminders ⇄ Keel tasks (one at a time, then duplicates are merged)
+        await Task.yield()
+        await runReminderSync(ctx)
+        TaskAlerts.rescheduleAll((try? ctx.fetch(FetchDescriptor<TaskItem>(predicate: #Predicate { !$0.isDone }))) ?? [])
 
         // 4. Claude connector: apply what Claude queued, then publish a fresh snapshot
         await ClaudeBridge.applyQueuedActions(ctx: ctx)
@@ -165,9 +184,11 @@ final class SyncEngine {
         await Briefing.refresh(ctx: ctx)
         await MeetingPrep.scheduleReminders(ctx: ctx)
         await Autopilot.refresh(ctx: ctx)
-        await ClaudeBridge.uploadSnapshot(ctx: ctx)
+        await Task.yield()
+        // Heavy whole-library jobs: at most every 15 minutes, not on every pull-to-refresh.
+        if Throttle.due("sync.snapshot", every: 900) { await ClaudeBridge.uploadSnapshot(ctx: ctx) }
         WidgetSync.update(ctx)
-        SpotlightIndex.refresh(ctx)
+        if Throttle.due("sync.spotlight", every: 900) { SpotlightIndex.refresh(ctx) }
     }
 
     // MARK: Background
