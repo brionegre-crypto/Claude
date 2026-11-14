@@ -468,7 +468,9 @@ struct DecisionJournalView: View {
     @Environment(\.modelContext) private var ctx
     @Query(sort: \Note.createdAt, order: .reverse) private var notes: [Note]
     @State private var adding = false
-    @State private var title = "", why = "", expect = ""
+    @State private var title = ""
+    @State private var why = ""
+    @State private var expect = ""
     @State private var days = 30
 
     var body: some View {
