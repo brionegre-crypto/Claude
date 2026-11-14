@@ -232,11 +232,11 @@ struct LifeTimelineView: View {
         List {
             Section {
                 HStack {
-                    Button { shift(-1) } label: { Image(systemName: "chevron.left") }
+                    Button { shift(-1) } label: { Image(systemName: "chevron.left") }.accessibilityLabel("Previous month")
                     Spacer()
                     Text(month.formatted(.dateTime.month(.wide).year())).font(DS.Font.headline)
                     Spacer()
-                    Button { shift(1) } label: { Image(systemName: "chevron.right") }.disabled(Calendar.current.isDate(month, equalTo: Date(), toGranularity: .month))
+                    Button { shift(1) } label: { Image(systemName: "chevron.right") }.accessibilityLabel("Next month").disabled(Calendar.current.isDate(month, equalTo: Date(), toGranularity: .month))
                 }
                 .buttonStyle(.borderless)
                 if !photos {
@@ -542,7 +542,7 @@ struct SharedPageView: View {
             TextField("Title", text: $pageTitle).font(DS.Font.title).onChange(of: pageTitle) { dirty = true }
             ForEach($blocks) { $b in
                 HStack(alignment: .firstTextBaseline) {
-                    if b.kind == .todo { Button { b.checked.toggle(); dirty = true } label: { Image(systemName: b.checked ? "checkmark.square.fill" : "square") }.buttonStyle(.plain) }
+                    if b.kind == .todo { Button { b.checked.toggle(); dirty = true } label: { Image(systemName: b.checked ? "checkmark.square.fill" : "square") }.buttonStyle(.plain).accessibilityLabel(b.checked ? "Done" : "Not done") }
                     if b.kind == .bullet { Text("•") }
                     TextField("Write…", text: $b.text, axis: .vertical)
                         .font(b.kind == .heading || b.kind == .heading2 ? DS.Font.headline : DS.Font.body)
@@ -569,11 +569,13 @@ struct SharedPageView: View {
         guard let p = try? await Spaces.page(pageId) else { if force { error = "Couldn't open this page right now." }; return }
         viewers = p.viewers.filter { $0 != SharedLists.myName }
         if force || p.version != version { blocks = p.blocks; pageTitle = p.title; version = p.version }
+        SpaceChanges.markSeen(pageId, version: p.version)
     }
     private func push() async {
         dirty = false
         if let p = try? await Spaces.save(pageId, title: pageTitle, blocks: blocks, base: version) {
             version = p.version
+            SpaceChanges.markSeen(pageId, version: p.version)
             if p.blocks.map(\.id) != blocks.map(\.id) { blocks = p.blocks }       // someone else added lines meanwhile
             viewers = p.viewers.filter { $0 != SharedLists.myName }
         }

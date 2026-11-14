@@ -47,6 +47,7 @@ struct TasksView: View {
     @State private var deadlineFor: TaskItem?
     @State private var editingSmart: SmartList?
     @State private var selecting = false
+    @State private var planning = false
     @State private var selectedTasks = Set<UUID>()
     @State private var newSmart = false
     @AppStorage("tasks.filter") private var filterKey = "today"
@@ -184,6 +185,7 @@ struct TasksView: View {
                         Button(selecting ? "Done Selecting" : "Select Tasks", systemImage: "checkmark.circle") {
                             withAnimation { selecting.toggle(); selectedTasks = [] }
                         }
+                        Button("Plan my day (drag onto hours)", systemImage: "calendar.day.timeline.left") { planning = true }
                         Button("Auto-schedule today", systemImage: "wand.and.stars") {
                             let r = AutoScheduler.scheduleToday(tasks: tasks)
                             withAnimation { toast = r.scheduled == 0 ? "Nothing fit today" : "Scheduled \(r.scheduled) on your calendar" }
@@ -217,6 +219,7 @@ struct TasksView: View {
                 }
             }
             .refreshable { await SyncEngine.shared.syncAll() }
+            .sheet(isPresented: $planning) { DayPlannerView() }
             .sheet(item: Binding(get: { sharingList.map { ListName(name: $0) } }, set: { sharingList = $0?.name })) { ShareListSheet(listName: $0.name) }
             .sheet(isPresented: $newSmart) { SmartListEditor(list: nil, allLists: lists, allTags: tags) }
             .sheet(item: $deadlineFor) { DeadlineSheet(task: $0) }
@@ -725,6 +728,7 @@ struct TaskDetailView: View {
             if let g = goals.first(where: { $0.id == task.goalId }), !g.why.isEmpty {
                 Section("Why this matters") { Text("\(g.emoji) \(g.why)").foregroundStyle(DS.Palette.inkSoft) }
             }
+            AssignSection(task: task)                       // hand it to someone
             Section("Notes") { BufferedTextEditor(text: $task.notes).frame(minHeight: 100) }
             TaskAttachmentsSection(task: task)
 
@@ -733,6 +737,11 @@ struct TaskDetailView: View {
             }
         }
         .navigationTitle("Task")
+        .userActivity(KeelHandoff.taskType) { a in            // Handoff to your other devices
+            a.title = task.title
+            a.userInfo = ["id": task.id.uuidString]
+            a.isEligibleForHandoff = true
+        }
         .toolbar { EditButton() }
         .sheet(isPresented: $showLocation) { LocationPicker(task: task) }
         .sheet(isPresented: $showRepeat) { RecurrenceEditor(rule: $task.recurrence, anchor: task.dueDate ?? Date()) }

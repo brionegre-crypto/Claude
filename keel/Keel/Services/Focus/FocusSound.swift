@@ -10,9 +10,17 @@ final class FocusSound {
     static let shared = FocusSound()
 
     enum Kind: String, CaseIterable, Identifiable {
-        case off, brown, pink, white, ocean
+        case off, brown, pink, white, ocean, rain, fan
         var id: String { rawValue }
-        var label: String { rawValue == "off" ? "Off" : rawValue.capitalized + (self == .ocean ? " waves" : " noise") }
+        var label: String {
+            switch self {
+            case .off: "Off"
+            case .ocean: "Ocean waves"
+            case .rain: "Rain"
+            case .fan: "Fan"
+            default: rawValue.capitalized + " noise"
+            }
+        }
     }
 
     /// Audio-thread state (kept off the main actor; only the render block touches it).
@@ -23,6 +31,8 @@ final class FocusSound {
         var phase: Double = 0
         var sampleRate: Double = 44_100
         var volume: Float = 0.35
+        var drop: Float = 0          // rain: the current droplet, fading out
+        var low: Float = 0           // fan: a smooth low hum
 
         func next() -> Float {
             let white = Float.random(in: -1...1)
@@ -32,6 +42,19 @@ final class FocusSound {
             case .brown:
                 brown = (brown + 0.02 * white) / 1.02
                 return brown * 3.5
+            case .fan:
+                // Brown noise smoothed again: a steady, soft whoosh like a fan across the room.
+                brown = (brown + 0.02 * white) / 1.02
+                low += (brown - low) * 0.08
+                return low * 4.2
+            case .rain:
+                // Soft hiss plus scattered droplets.
+                b0 = 0.99886 * b0 + white * 0.0555179; b1 = 0.99332 * b1 + white * 0.0750759
+                b2 = 0.96900 * b2 + white * 0.1538520
+                let hiss = (b0 + b1 + b2 + white * 0.3) * 0.16
+                if Float.random(in: 0...1) < 0.0009 { drop = Float.random(in: 0.25...0.7) }
+                drop *= 0.985
+                return hiss + white * drop
             case .pink, .ocean:
                 // Paul Kellet's pink-noise filter
                 b0 = 0.99886 * b0 + white * 0.0555179; b1 = 0.99332 * b1 + white * 0.0750759

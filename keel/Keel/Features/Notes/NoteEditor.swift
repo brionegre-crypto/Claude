@@ -137,6 +137,12 @@ struct NoteEditor: View {
             AIWriteSheet(request: r, pageTitle: note.title, pageText: note.plainText) { text, replace in applyAI(r, text: text, replace: replace) }
         }
         .toolbar(zen ? .hidden : .automatic, for: .navigationBar)
+        // Handoff: this page shows up on your other iPhone, iPad and Mac to carry on where you are.
+        .userActivity(KeelHandoff.noteType, isActive: !note.isLocked) { a in
+            a.title = note.title.isEmpty ? "Untitled page" : note.title
+            a.userInfo = ["id": note.id.uuidString]
+            a.isEligibleForHandoff = true
+        }
         .statusBarHidden(zen)
         .overlay(alignment: .topTrailing) {
             if zen {

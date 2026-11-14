@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import TipKit
 
 /// Databases: a page whose sub-pages are rows with properties, shown as a table, board, calendar,
 /// gallery or list, with sorting and filtering.
@@ -7,7 +8,7 @@ import SwiftData
 enum NotesDatabase {
     static let views: [(id: String, title: String, icon: String)] = [
         ("table", "Table", "tablecells"), ("board", "Board", "rectangle.split.3x1"), ("calendar", "Calendar", "calendar"),
-        ("gallery", "Gallery", "square.grid.2x2"), ("list", "List", "list.bullet"),
+        ("gallery", "Gallery", "square.grid.2x2"), ("list", "List", "list.bullet"), ("timeline", "Timeline", "chart.bar.xaxis"),
     ]
 
     @discardableResult
@@ -83,6 +84,7 @@ struct DatabaseView: View {
             case "calendar": calendar
             case "gallery": gallery
             case "list": list
+            case "timeline": timeline
             default: table
             }
             Button { open(NotesDatabase.newRow(in: db, ctx: ctx)) } label: { Label("New", systemImage: "plus") }
@@ -267,6 +269,80 @@ struct DatabaseView: View {
                 }
                 .buttonStyle(.plain)
                 Divider()
+            }
+        }
+    }
+
+    // MARK: Timeline: each row is a bar from its first date to its second (if there is one)
+
+    @State private var timelineStart = Calendar.current.date(byAdding: .day, value: -7, to: Calendar.current.startOfDay(for: Date())) ?? Date()
+
+    private var timeline: some View {
+        let cal = Calendar.current
+        let dateProps = db.schema.filter { $0.kind == .date }
+        let span = 42
+        let dayW: CGFloat = 30
+        let start = timelineStart
+        return VStack(alignment: .leading, spacing: 8) {
+            TipView(TimelineTip())
+            HStack {
+                Button { withAnimation(DS.spring) { timelineStart = cal.date(byAdding: .day, value: -28, to: start) ?? start } } label: { Image(systemName: "chevron.left") }
+                    .accessibilityLabel("Earlier")
+                Spacer()
+                Button("Today") { withAnimation(DS.spring) { timelineStart = cal.date(byAdding: .day, value: -7, to: cal.startOfDay(for: Date())) ?? Date() } }
+                    .font(DS.Font.caption)
+                Spacer()
+                Button { withAnimation(DS.spring) { timelineStart = cal.date(byAdding: .day, value: 28, to: start) ?? start } } label: { Image(systemName: "chevron.right") }
+                    .accessibilityLabel("Later")
+            }
+            .buttonStyle(.plain)
+            if let sp = dateProps.first {
+                let ep = dateProps.dropFirst().first
+                ScrollView(.horizontal, showsIndicators: false) {
+                    VStack(alignment: .leading, spacing: 5) {
+                        HStack(spacing: 0) {
+                            ForEach(0..<span, id: \.self) { i in
+                                let d = cal.date(byAdding: .day, value: i, to: start) ?? start
+                                VStack(spacing: 1) {
+                                    Text(cal.component(.day, from: d) == 1 || i == 0 ? d.formatted(.dateTime.month(.abbreviated)) : " ")
+                                        .font(.caption2.weight(.semibold)).foregroundStyle(DS.Palette.inkSoft)
+                                    Text("\(cal.component(.day, from: d))").font(.caption2)
+                                        .foregroundStyle(cal.isDateInToday(d) ? .white : DS.Palette.inkSoft)
+                                        .frame(width: 22, height: 22)
+                                        .background(cal.isDateInToday(d) ? DS.Palette.accent : .clear, in: Circle())
+                                }
+                                .frame(width: dayW)
+                            }
+                        }
+                        ForEach(rows) { r in
+                            if let s = NotesDatabase.date(r.props[sp.id]) {
+                                let e = ep.flatMap { NotesDatabase.date(r.props[$0.id]) } ?? s
+                                let off = cal.dateComponents([.day], from: start, to: cal.startOfDay(for: s)).day ?? 0
+                                let len = max(1, (cal.dateComponents([.day], from: cal.startOfDay(for: s), to: cal.startOfDay(for: max(e, s))).day ?? 0) + 1)
+                                let o = max(0, off)
+                                let l = min(span - o, len - (o - off))
+                                if off < span && l > 0 {
+                                    Button { open(r) } label: {
+                                        Text(r.title.isEmpty ? "Untitled" : r.title).font(.caption).lineLimit(1)
+                                            .padding(.horizontal, 7)
+                                            .frame(width: max(dayW - 2, CGFloat(l) * dayW - 2), height: 26, alignment: .leading)
+                                            .background(DS.Palette.accent.opacity(0.22), in: .rect(cornerRadius: 7))
+                                            .overlay(alignment: .leading) { RoundedRectangle(cornerRadius: 2).fill(DS.Palette.accent).frame(width: 3) }
+                                    }
+                                    .buttonStyle(.plain)
+                                    .padding(.leading, CGFloat(o) * dayW)
+                                    .transition(.opacity)
+                                }
+                            }
+                        }
+                    }
+                }
+                let undated = rows.filter { NotesDatabase.date($0.props[sp.id]) == nil }.count
+                Text(ep == nil ? "Bars use “\(sp.name)”. Add a second date property to give rows an end date." : "Bars run from “\(sp.name)” to “\(ep!.name)”.")
+                    .font(.caption2).foregroundStyle(DS.Palette.inkSoft)
+                if undated > 0 { Text("\(undated) without a date aren't shown.").font(.caption2).foregroundStyle(DS.Palette.inkSoft) }
+            } else {
+                Text("Add a Date property (Properties) to see rows on a timeline.").font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
             }
         }
     }

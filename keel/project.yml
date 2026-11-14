@@ -57,6 +57,7 @@ targets:
         ITSAppUsesNonExemptEncryption: false   # only standard HTTPS, so TestFlight skips the export-compliance question
         UILaunchScreen: {}
         UIBackgroundModes: [fetch, processing, audio, remote-notification]
+        NSUserActivityTypes: [com.keel.note, com.keel.task]   # Handoff between iPhone, iPad and Mac
         BGTaskSchedulerPermittedIdentifiers:
           - com.keel.sync.refresh
           - com.keel.sync.process

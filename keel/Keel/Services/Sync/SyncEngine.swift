@@ -176,6 +176,9 @@ final class SyncEngine {
         await runReminderSync(ctx)
         TaskAlerts.rescheduleAll((try? ctx.fetch(FetchDescriptor<TaskItem>(predicate: #Predicate { !$0.isDone }))) ?? [])
 
+        // 3b. Booking link: new bookings onto your calendar; keep the open times fresh.
+        await BookingLink.refreshIfDue()
+
         // 4. Claude connector: apply what Claude queued, then publish a fresh snapshot
         await ClaudeBridge.applyQueuedActions(ctx: ctx)
         try? ctx.save()

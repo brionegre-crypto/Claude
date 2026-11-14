@@ -13,7 +13,7 @@ type Item = { id: string; text: string; done: boolean; by?: string };
 type SharedList = { title: string; items: Item[]; comments: { text: string; by: string; at: number }[]; updated: number };
 
 type Space = { name: string; pages: { id: string; title: string }[]; lists: { id: string; title: string; url: string }[]; members: string[] };
-type SPage = { title: string; blocks: unknown[]; version: number; updated: number };
+type SPage = { title: string; blocks: unknown[]; version: number; updated: number; lastBy?: string };
 
 const rid = (n = 16) => Array.from(crypto.getRandomValues(new Uint8Array(n)), (b) => b.toString(16).padStart(2, "0")).join("");
 const esc = (s: string) => s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
@@ -31,13 +31,24 @@ export async function handleShare(req: Request, env: Env, url: URL, device: bool
     await env.KEEL.put(`space:${id}`, JSON.stringify(space));
     return json({ id, url: `${url.origin}/space/${id}` });
   }
-  const sm = p.match(/^\/space\/([a-f0-9]{32})(\/(page|list))?$/);
+  const sm = p.match(/^\/space\/([a-f0-9]{32})(\/(page|list|changes))?$/);
   if (sm) {
     const key = `space:${sm[1]}`;
     const raw = await env.KEEL.get(key);
     if (!raw) return json({ error: "not found" }, 404);
     const space = JSON.parse(raw) as Space;
     if (!sm[3] && req.method === "GET") return json(space);
+    // What changed: each page's version and who edited it last (so the app can say "Sam updated Groceries").
+    if (sm[3] === "changes" && req.method === "GET") {
+      const out = [];
+      for (const pg of space.pages.slice(0, 60)) {
+        const r = await env.KEEL.get(`spage:${pg.id}`);
+        if (!r) continue;
+        const sp = JSON.parse(r) as SPage;
+        out.push({ id: pg.id, title: sp.title, version: sp.version, updated: sp.updated, lastBy: sp.lastBy ?? "" });
+      }
+      return json(out);
+    }
     if (sm[3] === "page" && req.method === "POST") {
       const b = (await req.json()) as { title?: string; blocks?: unknown[]; by?: string };
       const pid = rid();
@@ -83,6 +94,7 @@ export async function handleShare(req: Request, env: Env, url: URL, device: bool
       if (b.title) page.title = b.title.slice(0, 200);
       page.version += 1;
       page.updated = Date.now();
+      if (b.by) page.lastBy = b.by.slice(0, 40);
       await env.KEEL.put(key, JSON.stringify(page));
       if (b.by) { here[b.by.slice(0, 40)] = Date.now(); await env.KEEL.put(hereKey, JSON.stringify(here), { expirationTtl: 3600 }); }
       return json({ ...page, viewers: viewers() });

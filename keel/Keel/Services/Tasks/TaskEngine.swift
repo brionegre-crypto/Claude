@@ -135,7 +135,7 @@ enum TaskAlerts {
         let med = UNNotificationCategory(identifier: MedEngine.category,
                                          actions: [UNNotificationAction(identifier: MedEngine.takenAction, title: "Taken ✓", options: [])],
                                          intentIdentifiers: [])
-        UNUserNotificationCenter.current().setNotificationCategories([task, habit, promise, med, MeetingAutopilot.categoryDefinition])
+        UNUserNotificationCenter.current().setNotificationCategories([task, habit, promise, med, MeetingAutopilot.categoryDefinition, MailNotify.categoryDefinition])
     }
 
     static func schedule(_ t: TaskItem) {
@@ -210,6 +210,10 @@ final class NotificationHandler: NSObject, UNUserNotificationCenterDelegate {
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse) async {
         let action = response.actionIdentifier
         let info = response.notification.request.content.userInfo
+        if let emailId = info["emailId"] as? String, action != UNNotificationDefaultActionIdentifier {
+            let text = (response as? UNTextInputNotificationResponse)?.userText
+            if await MailNotify.handle(action: action, emailId: emailId, replyText: text) { return }
+        }
         if let link = info["deeplink"] as? String, let url = URL(string: link) {
             await MainActor.run { _ = AppRouter.shared.handle(url) }
             return

@@ -1,4 +1,5 @@
 import SwiftUI
+import TipKit
 import SwiftData
 import EventKit
 
@@ -43,6 +44,8 @@ struct TodayView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: DS.Space.l) {
                     greeting
+                    TipView(OpenWaterTip())                         // each tip shows once, at most one new tip a day
+                    TipView(CaptureTip())
                     VoyageView()                                    // your day as a route: now, ports, open water, anchor
                     Waterline(label: "Below the waterline · the rest of your day")
                     ForEach((calm ? TodayCard.calm : TodayCard.current(phase: DayPhase.now)).filter { $0 != .upNext && $0 != .oneThing }) { card($0) }

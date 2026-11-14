@@ -30,6 +30,7 @@ struct CalendarView: View {
     @State private var taskGroup: TaskGroupRef?
     @State private var showQuick = false
     @State private var quickText = ""
+    @State private var planning = false
     @AppStorage("calendar.showTasks") private var showTasks = true
 
     private let cal = Calendar.current
@@ -93,6 +94,8 @@ struct CalendarView: View {
                         Button("Choose calendars…", systemImage: "calendar.badge.checkmark") { showCalendars = true }
                         Toggle(isOn: $showTasks) { Label("Show tasks on calendar", systemImage: "checklist") }
                         Divider()
+                        Button("Plan my day (drag tasks onto hours)", systemImage: "calendar.day.timeline.left") { planning = true }
+                        NavigationLink { BookingLinkView() } label: { Label("Booking link", systemImage: "link.badge.plus") }
                         ShareLink(item: Availability.text()) { Label("Share my availability", systemImage: "calendar.badge.clock") }
                         NavigationLink { WorldClockView() } label: { Label("World clock", systemImage: "globe") }
                         NavigationLink { SharedCalendarsView() } label: { Label("Shared calendars", systemImage: "person.3") }
@@ -132,6 +135,7 @@ struct CalendarView: View {
             }
             .sheet(item: $openTask) { t in NavigationStack { TaskDetailView(task: t) } }
             .sheet(isPresented: $showCalendars) { CalendarPicker(hiddenRaw: $hiddenRaw) }
+            .sheet(isPresented: $planning, onDismiss: { load() }) { DayPlannerView() }
             .sheet(item: $taskGroup) { TaskGroupSheet(tasks: $0.tasks) }
             .alert("Quick event", isPresented: $showQuick) {
                 TextField("Lunch with Sam Thu 1pm for 90 min", text: $quickText)
@@ -402,10 +406,10 @@ struct TimelineGrid: View {
                 Button { onTapDay(day) } label: {
                     VStack(spacing: 3) {
                         Text(day.formatted(.dateTime.weekday(.abbreviated)).uppercased())
-                            .font(.system(size: 10, weight: .semibold, design: .rounded))
+                            .scaledFont(size: 10, weight: .semibold, design: .rounded, maxScale: 1.4)
                             .foregroundStyle(today ? DS.Palette.accent : DS.Palette.inkSoft)
                         Text(day.formatted(.dateTime.day()))
-                            .font(.system(size: 16, weight: today ? .bold : .medium, design: .rounded))
+                            .scaledFont(size: 16, weight: today ? .bold : .medium, design: .rounded, maxScale: 1.4)
                             .frame(width: 30, height: 30)
                             .background(today ? DS.Palette.accent : .clear, in: Circle())
                             .foregroundStyle(today ? .white : DS.Palette.ink)
@@ -433,7 +437,7 @@ struct TimelineGrid: View {
         return Group {
             if !isEmpty {
                 HStack(alignment: .top, spacing: 0) {
-                    Text("all-day").font(.system(size: 10, weight: .medium)).foregroundStyle(DS.Palette.inkSoft)
+                    Text("all-day").scaledFont(size: 10, weight: .medium, maxScale: 1.4).foregroundStyle(DS.Palette.inkSoft)
                         .frame(width: gutter - 6, alignment: .trailing).padding(.trailing, 6).padding(.top, 5)
                     ForEach(Array(perDay.enumerated()), id: \.offset) { _, entry in
                         VStack(alignment: .leading, spacing: 3) {
@@ -447,7 +451,7 @@ struct TimelineGrid: View {
                             }
                             let extra = entry.events.count + entry.tasks.count - limit
                             if extra > 0 {
-                                Text("+\(extra) more").font(.system(size: 10, weight: .medium)).foregroundStyle(DS.Palette.accent)
+                                Text("+\(extra) more").scaledFont(size: 10, weight: .medium, maxScale: 1.4).foregroundStyle(DS.Palette.accent)
                             }
                         }
                         .frame(width: colWidth - 2, alignment: .topLeading)
@@ -466,7 +470,7 @@ struct TimelineGrid: View {
             ForEach(0..<24, id: \.self) { h in
                 HStack(alignment: .top, spacing: 0) {
                     Text(hourLabel(h))
-                        .font(.system(size: 10, weight: .medium, design: .rounded))
+                        .scaledFont(size: 10, weight: .medium, design: .rounded, maxScale: 1.4)
                         .foregroundStyle(DS.Palette.inkSoft.opacity(0.8))
                         .frame(width: gutter - 8, alignment: .trailing)
                         .padding(.trailing, 8)
@@ -605,12 +609,12 @@ struct EventCard: View {
                 } else {
                     Text(title).lineLimit(compact ? 4 : 3)
                     Text("\(start.formatted(date: .omitted, time: .shortened)) – \(end.formatted(date: .omitted, time: .shortened))")
-                        .font(.system(size: compact ? 9 : 11, weight: .medium))
+                        .scaledFont(size: compact ? 9 : 11, weight: .medium, maxScale: 1.4)
                         .foregroundStyle(DS.Palette.inkSoft)
                         .lineLimit(1)
                 }
             }
-            .font(.system(size: compact ? 10.5 : 13, weight: .semibold))
+            .scaledFont(size: compact ? 10.5 : 13, weight: .semibold, maxScale: 1.4)
             .foregroundStyle(DS.Palette.ink)
             .padding(.horizontal, compact ? 4 : 7)
             .padding(.vertical, compact ? 3 : 5)
@@ -634,18 +638,18 @@ struct TaskPill: View {
                 TaskActions.setDone(task, true)
             } label: {
                 Image(systemName: "circle")
-                    .font(.system(size: compact ? 10 : 13, weight: .semibold))
+                    .scaledFont(size: compact ? 10 : 13, weight: .semibold, maxScale: 1.4)
                     .foregroundStyle(task.priority == .none ? DS.Palette.accent : task.priority.color)
             }
             .buttonStyle(.plain)
             .accessibilityLabel("Complete \(task.title)")
             Text(task.title)
-                .font(.system(size: compact ? 10.5 : 13, weight: .medium))
+                .scaledFont(size: compact ? 10.5 : 13, weight: .medium, maxScale: 1.4)
                 .foregroundStyle(DS.Palette.ink)
                 .lineLimit(1)
             Spacer(minLength: 0)
             if !compact, task.recurrence != nil {
-                Image(systemName: "repeat").font(.system(size: 10)).foregroundStyle(DS.Palette.inkSoft)
+                Image(systemName: "repeat").scaledFont(size: 10, maxScale: 1.4).foregroundStyle(DS.Palette.inkSoft)
             }
         }
         .padding(.horizontal, compact ? 4 : 8)
@@ -663,16 +667,16 @@ struct TaskGroupPill: View {
     var body: some View {
         HStack(spacing: 5) {
             Image(systemName: "checklist")
-                .font(.system(size: compact ? 10 : 12, weight: .semibold))
+                .scaledFont(size: compact ? 10 : 12, weight: .semibold, maxScale: 1.4)
                 .foregroundStyle(DS.Palette.accent)
             Text(compact ? "\(tasks.count) tasks" : (tasks.first?.title ?? "Tasks"))
-                .font(.system(size: compact ? 10.5 : 13, weight: .medium))
+                .scaledFont(size: compact ? 10.5 : 13, weight: .medium, maxScale: 1.4)
                 .foregroundStyle(DS.Palette.ink)
                 .lineLimit(1)
             Spacer(minLength: 0)
             if !compact {
                 Text("+\(tasks.count - 1)")
-                    .font(.system(size: 11, weight: .bold, design: .rounded))
+                    .scaledFont(size: 11, weight: .bold, design: .rounded, maxScale: 1.4)
                     .padding(.horizontal, 6).padding(.vertical, 2)
                     .background(DS.Palette.accent, in: Capsule())
                     .foregroundStyle(.white)
@@ -694,10 +698,10 @@ struct AllDayChip: View {
     let compact: Bool
     var body: some View {
         HStack(spacing: 4) {
-            if isTask { Image(systemName: "circle").font(.system(size: compact ? 8 : 10, weight: .semibold)).foregroundStyle(color) }
+            if isTask { Image(systemName: "circle").scaledFont(size: compact ? 8 : 10, weight: .semibold, maxScale: 1.4).foregroundStyle(color) }
             Text(title).lineLimit(1)
         }
-        .font(.system(size: compact ? 10 : 12, weight: .semibold))
+        .scaledFont(size: compact ? 10 : 12, weight: .semibold, maxScale: 1.4)
         .foregroundStyle(DS.Palette.ink)
         .padding(.horizontal, 6).padding(.vertical, 3)
         .frame(maxWidth: .infinity, alignment: .leading)

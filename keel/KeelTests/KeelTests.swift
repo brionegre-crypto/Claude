@@ -1,5 +1,6 @@
 import XCTest
 import SwiftData
+import UserNotifications
 @testable import Keel
 
 /// Keel's automated tests. Xcode Cloud runs these on an iPhone simulator with every build (Test action),
@@ -384,5 +385,53 @@ final class KeelTests: XCTestCase {
         XCTAssertTrue(BlockTextField.needsNow(old: "", new: "- "))                                            // Markdown shortcut
         XCTAssertTrue(BlockTextField.needsNow(old: "Hello", new: "Hello there, pasted text"))                  // paste
         XCTAssertTrue(BlockTextField.needsNow(old: "Call ", new: "Call @"))                                   // a mention
+    }
+
+    // MARK: Booking link, assigning, alerts
+
+    func testBookingSlotsFitYourHoursAndLength() {
+        let keys = [BookingLink.minutesKey, BookingLink.daysKey, BookingLink.startKey, BookingLink.endKey, BookingLink.weekendsKey]
+        let saved = keys.map { UserDefaults.standard.object(forKey: $0) }
+        defer { for (k, v) in zip(keys, saved) { if let v { UserDefaults.standard.set(v, forKey: k) } else { UserDefaults.standard.removeObject(forKey: k) } } }
+        UserDefaults.standard.set(30, forKey: BookingLink.minutesKey)
+        UserDefaults.standard.set(7, forKey: BookingLink.daysKey)
+        UserDefaults.standard.set(9, forKey: BookingLink.startKey)
+        UserDefaults.standard.set(17, forKey: BookingLink.endKey)
+        UserDefaults.standard.set(false, forKey: BookingLink.weekendsKey)
+        let iso = ISO8601DateFormatter(), cal = Calendar.current
+        let slots = BookingLink.slots()
+        for s in slots {
+            let a = iso.date(from: s["start"]!)!, b = iso.date(from: s["end"]!)!
+            XCTAssertEqual(b.timeIntervalSince(a), 30 * 60)
+            XCTAssertGreaterThanOrEqual(cal.component(.hour, from: a), 9)
+            XCTAssertLessThanOrEqual(b, cal.date(bySettingHour: 17, minute: 0, second: 0, of: a)!)
+            XCTAssertFalse([1, 7].contains(cal.component(.weekday, from: a)))       // no weekends
+            XCTAssertGreaterThan(a, Date().addingTimeInterval(2 * 3600 - 60))        // never in the next two hours
+        }
+    }
+
+    func testAssigningATaskMovesItToWaiting() throws {
+        let ctx = try makeContext()
+        let t = TaskItem(title: "Book the venue"); ctx.insert(t)
+        TaskAssign.assign(t, to: "Sam Lee", email: "sam@example.com", ctx: ctx)
+        XCTAssertTrue(t.isWaitingOn)
+        XCTAssertEqual(TaskAssign.who(t, ctx: ctx)?.name, "Sam Lee")
+        let mail = TaskAssign.handoffEmail(t, to: TaskAssign.who(t, ctx: ctx)!)
+        XCTAssertEqual(mail.to, "sam@example.com")
+        XCTAssertTrue(mail.body.contains("Book the venue") && mail.body.hasPrefix("Hi Sam"))
+        TaskAssign.unassign(t, ctx: ctx)
+        XCTAssertFalse(t.isWaitingOn)
+        XCTAssertNil(TaskAssign.who(t, ctx: ctx))
+    }
+
+    func testMailAlertsHaveReplyArchiveAndRead() {
+        let ids = MailNotify.categoryDefinition.actions.map(\.identifier)
+        XCTAssertEqual(Set(ids), [MailNotify.replyAction, MailNotify.archiveAction, MailNotify.readAction])
+        XCTAssertTrue(MailNotify.categoryDefinition.actions.first is UNTextInputNotificationAction)
+    }
+
+    func testDatabaseHasTimelineView() {
+        XCTAssertTrue(NotesDatabase.views.contains { $0.id == "timeline" })
+        XCTAssertTrue(FocusSound.Kind.allCases.contains(.rain) && FocusSound.Kind.allCases.contains(.fan))
     }
 }

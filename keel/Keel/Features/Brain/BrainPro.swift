@@ -132,7 +132,7 @@ struct ColumnsBlockView: View {
             Menu {
                 Button("Two columns") { var p = parts; while p.count > 2 { let last = p.removeLast(); p[p.count - 1] += "\n" + last }; block.text = p.joined(separator: "\n|||\n") }
                 Button("Three columns") { var p = parts; while p.count < 3 { p.append("") }; block.text = p.joined(separator: "\n|||\n") }
-            } label: { Image(systemName: "rectangle.split.3x1").font(.caption) }
+            } label: { Image(systemName: "rectangle.split.3x1").font(.caption) }.accessibilityLabel("Columns")
         }
     }
 }
@@ -148,7 +148,7 @@ struct ButtonBlockView: View {
         let label = parts.first.flatMap { $0.isEmpty ? nil : $0 } ?? "Button"
         HStack {
             Button(label) { run(parts.count > 1 ? parts[1] : "") }.buttonStyle(.borderedProminent).tint(DS.Palette.accent)
-            Button { editing = true } label: { Image(systemName: "slider.horizontal.3") }.buttonStyle(.borderless).foregroundStyle(DS.Palette.inkSoft)
+            Button { editing = true } label: { Image(systemName: "slider.horizontal.3") }.accessibilityLabel("Edit button").buttonStyle(.borderless).foregroundStyle(DS.Palette.inkSoft)
         }
         .alert("Button", isPresented: $editing) {
             TextField("Label | task: … / url: … / template: …", text: $block.text)

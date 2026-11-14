@@ -1,4 +1,5 @@
 import SwiftUI
+import TipKit
 import SwiftData
 #if !targetEnvironment(macCatalyst)
 import VisionKit
@@ -13,7 +14,7 @@ struct NotesView: View {
     @Environment(\.supportsMultipleWindows) private var multiWindow
     @Query(sort: \Note.updatedAt, order: .reverse) private var allNotes: [Note]
     private var notes: [Note] { allNotes.filter { !$0.isTemplate } }
-    private var templates: [Note] { allNotes.filter { $0.isTemplate && $0.title != Supertags.pageTitle } }
+    private var templates: [Note] { allNotes.filter { $0.isTemplate && !$0.title.hasPrefix("⚙︎") } }     // Keel's hidden settings pages (supertags, links, assignments) never show
     @State private var search = ""
     @State private var newFolderFor: Note?
     @State private var newFolderName = ""
@@ -46,6 +47,8 @@ struct NotesView: View {
                             .listRowBackground(Color.clear)
                         quickActions
                             .listRowInsets(EdgeInsets(top: 8, leading: 0, bottom: 8, trailing: 0))
+                            .listRowBackground(Color.clear)
+                        TipView(AskAITip())                             // shown once: how to write with AI
                             .listRowBackground(Color.clear)
                     }
                     if recent.count >= 2 {

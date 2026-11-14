@@ -3,6 +3,7 @@ import { handleMCP } from "./mcp";
 import { handleNotion, infoPage, privacyPage, termsPage } from "./notion";
 import { handleAppleAuth, handleDeleteAccount, isSession } from "./auth";
 import { handleShare } from "./share";
+import { handleBooking } from "./booking";
 
 export interface Env {
   KEEL: KVNamespace;
@@ -42,6 +43,10 @@ export default {
     if (url.pathname.startsWith("/notion/")) return handleNotion(req, env);
     if (url.pathname === "/auth/apple" && req.method === "POST") return handleAppleAuth(req, env);
     if (url.pathname === "/auth/account" && req.method === "DELETE") return handleDeleteAccount(bearer, env);
+    if (/^\/(booking|b)(\/|$)/.test(url.pathname)) {
+      const r = await handleBooking(req, env, url, device);
+      if (r) return r;
+    }
     if (/^\/(share|l|publish|p|diagnostics|space|spage)(\/|$)/.test(url.pathname)) {
       const r = await handleShare(req, env, url, device);
       if (r) return r;

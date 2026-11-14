@@ -15,7 +15,8 @@ struct KeelApp: App {
         UNUserNotificationCenter.current().delegate = NotificationHandler.shared
         TaskAlerts.registerCategories()
         WatchBridge.shared.activate()
-        KeelDiagnostics.shared.start()           // crash & hang reports (kept on device; shared only if you turn it on)
+        KeelDiagnostics.shared.start()
+        KeelTips.configure()                     // one-time tips that explain features where you use them           // crash & hang reports (kept on device; shared only if you turn it on)
         if !UserDefaults.standard.bool(forKey: Prefs.reviewReminderOff) { WeeklyReview.scheduleReminder() }
         if !UserDefaults.standard.bool(forKey: "dayReview.off") { DayReviewView.scheduleReminder() }
         Journal.scheduleReminder()
@@ -75,6 +76,7 @@ struct KeelApp: App {
                     if Throttle.due("backup", every: 6 * 3600) { BrainBackup.backupIfDue(ctx: ctx) }
                     if Throttle.due("trash", every: 24 * 3600) { NoteTrash.purgeOld() }
                     if MarkdownMirror.isOn, Throttle.due("mdpull", every: 600) { _ = MarkdownMirror.pull(ctx: ctx) }
+                    if Throttle.due("spaces.changes", every: 600) { await SpaceChanges.check() }     // "Sam updated Groceries"
                 }
             }
             if phase == .background {
@@ -249,6 +251,13 @@ struct RootView: View {
             hiddenSection = HiddenSection(id: id)
         }
         .sheet(item: $hiddenSection) { HiddenSectionSheet(sectionId: $0.id) }
+        // Handoff: pick up the page or task you had open on another device.
+        .onContinueUserActivity(KeelHandoff.noteType) { a in
+            if let s = a.userInfo?["id"] as? String, let id = UUID(uuidString: s) { router.tab = .notes; router.openNoteId = id }
+        }
+        .onContinueUserActivity(KeelHandoff.taskType) { a in
+            if let s = a.userInfo?["id"] as? String, let id = UUID(uuidString: s) { router.openTaskId = id }
+        }
         .tabViewStyle(.sidebarAdaptable)      // tabs on iPhone; a sidebar on Mac and iPad
         // Focus lives above the tab bar (like Music's mini-player): always one tap away, shows the live timer.
         .tabViewBottomAccessory { FocusAccessory { router.showFocus = true } }

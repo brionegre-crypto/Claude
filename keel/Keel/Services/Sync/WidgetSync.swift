@@ -216,3 +216,9 @@ enum WidgetActions {
         for a in actions { WatchBridge.shared.apply(a) }
     }
 }
+
+/// Handoff activity types (also listed under NSUserActivityTypes in Info.plist).
+enum KeelHandoff {
+    static let noteType = "com.keel.note"
+    static let taskType = "com.keel.task"
+}
