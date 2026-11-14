@@ -56,7 +56,7 @@ enum HelpLibrary {
               steps: ["iPhone: touch and hold the Home Screen or Lock Screen → Edit → Add Widget → Keel → Body.", "Apple Watch: touch and hold your watch face → Edit → Complications → Keel → Tide. The Keel watch app also shows a Body page."],
               keywords: "widget complication watch face lock screen tide"),
         HowTo(id: "sidebar", area: .settings, question: "Hide the sidebar on Mac or iPad",
-              steps: ["Choose View → Hide Sidebar, or press Control-Command-S. Your sections move to a small tab strip at the top.", "Do the same again to bring the sidebar back."],
+              steps: ["Choose View → Hide Keel Sidebar, or press Option-Command-S. Your sections move to a small tab strip at the top.", "Do the same again to bring the sidebar back."],
               keywords: "sidebar hide show mac ipad full screen tabs"),
         HowTo(id: "settingssync", area: .start, question: "Have my settings and AI keys on my Mac and iPad too",
               steps: ["Use the same Apple Account on each device, with iCloud Keychain turned on (Settings → your name → iCloud → Passwords and Keychain).", "Your AI keys (Claude, ChatGPT, Gemini), mail sign-ins, Notion and your Keel account arrive by themselves through iCloud Keychain.", "Your settings follow too: look and fonts, AI model, mail layout and tabs, focus, notes, booking link and more. Change one anywhere and the others match within a minute or so.", "Mail accounts you add on one device are set up on the others once their sign-in arrives."],

@@ -440,9 +440,10 @@ struct KeelCommands: Commands {
         CommandGroup(replacing: .appSettings) {
             Button("Settings…") { AppRouter.shared.showSettings = true }.keyboardShortcut(",")
         }
-        CommandGroup(before: .sidebar) {
-            Button(sidebarHidden ? "Show Sidebar" : "Hide Sidebar") { withAnimation(.smooth(duration: 0.3)) { sidebarHidden.toggle() } }
-                .keyboardShortcut("s", modifiers: [.command, .control])
+        // Not ⌃⌘S: the system already uses it, and two menu items with the same shortcut crash the app at launch.
+        CommandGroup(after: .sidebar) {
+            Button(sidebarHidden ? "Show Keel Sidebar" : "Hide Keel Sidebar") { withAnimation(.smooth(duration: 0.3)) { sidebarHidden.toggle() } }
+                .keyboardShortcut("s", modifiers: [.command, .option])
         }
         CommandMenu("Go") {
             Button("Today") { AppRouter.shared.tab = .today }.keyboardShortcut("1")
@@ -545,7 +546,7 @@ extension View {
 }
 
 
-/// Mac and iPad: the sidebar, or (hidden with View → Hide Sidebar, ⌃⌘S) a compact tab strip so the page gets the room.
+/// Mac and iPad: the sidebar, or (hidden with View → Hide Keel Sidebar, ⌥⌘S) a compact tab strip so the page gets the room.
 struct SidebarStyle: ViewModifier {
     static let key = "mac.sidebarHidden"          // per device (the Mac's choice shouldn't change the iPad)
     let hidden: Bool
