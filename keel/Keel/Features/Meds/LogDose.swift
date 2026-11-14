@@ -4,6 +4,7 @@ import UserNotifications
 
 // MARK: - Log a dose: any medication, any time (earlier today, yesterday, an extra dose, or something new)
 
+@MainActor
 enum MedLog {
     /// Slots at or above this are extra doses, not one of the scheduled times.
     static let extraBase = 1440
