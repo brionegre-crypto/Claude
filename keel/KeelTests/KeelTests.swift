@@ -626,4 +626,27 @@ final class KeelTests: XCTestCase {
         let days = (0..<5).map { i -> BodyDay in var b = BodyDay(day: cal.date(byAdding: .day, value: i - 4, to: cal.startOfDay(for: Date()))!); b.asleep = i == 0 ? 300 : 450; return b }
         XCTAssertEqual(BodyMath.streak(days) { $0.asleep >= 420 }, 4)
     }
+
+    func testLogDoseCountsAsClosestSlotThenExtra() throws {
+        let ctx = try makeContext()
+        let m = Medication(name: "Test med", dose: "10 mg", times: [8 * 60, 20 * 60])
+        m.pillsLeft = 10
+        ctx.insert(m)
+        let cal = Calendar.current
+        let morning = cal.date(bySettingHour: 7, minute: 40, second: 0, of: Date())!
+        let open = MedLog.openSlots(m, on: morning, doses: [])
+        XCTAssertEqual(MedLog.bestSlot(open, at: morning), 8 * 60)
+        let first = MedLog.log(m, slot: MedLog.bestSlot(open, at: morning), at: morning, ctx: ctx)
+        XCTAssertEqual(first.slot, 8 * 60)
+        XCTAssertEqual(first.takenAt, morning)
+        XCTAssertFalse(MedLog.isExtra(first))
+        // Same slot again becomes an extra dose instead of overwriting.
+        let again = MedLog.log(m, slot: 8 * 60, at: morning, ctx: ctx)
+        XCTAssertTrue(MedLog.isExtra(again))
+        let extra2 = MedLog.log(m, slot: nil, at: morning, ctx: ctx)
+        XCTAssertNotEqual(again.slot, extra2.slot)
+        XCTAssertEqual(m.pillsLeft, 7)
+        let doses = try ctx.fetch(FetchDescriptor<MedDose>())
+        XCTAssertEqual(MedLog.openSlots(m, on: morning, doses: doses), [20 * 60])
+    }
 }

@@ -8,6 +8,7 @@ struct BodyMedsCard: View {
     @Query(sort: \Medication.createdAt) private var meds: [Medication]
     @Query(sort: \MedDose.takenAt, order: .reverse) private var doses: [MedDose]
     @State private var adding = false
+    @State private var logging = false
     @State private var tick = 0
 
     var body: some View {
@@ -19,8 +20,10 @@ struct BodyMedsCard: View {
             HStack {
                 Label("Medications", systemImage: "pills.fill").font(DS.Font.headline).foregroundStyle(.mint)
                 Spacer()
-                Button { adding = true } label: { Label("Add medication", systemImage: "plus.circle.fill").font(DS.Font.caption.weight(.semibold)) }
+                Button { logging = true } label: { Label("Log a dose", systemImage: "checkmark.circle.fill").font(DS.Font.caption.weight(.semibold)) }
                     .buttonStyle(.borderedProminent).tint(.mint)
+                Button { adding = true } label: { Label("Add", systemImage: "plus").font(DS.Font.caption.weight(.semibold)) }
+                    .buttonStyle(.bordered).tint(.mint)
             }
             if active.isEmpty {
                 Text("Add your medications to get reminders with a Taken button, refill warnings, and always know whether you already took it.")
@@ -67,10 +70,12 @@ struct BodyMedsCard: View {
                     }
                 }
             }
+            RecentDosesList(meds: meds, doses: doses)
             NavigationLink { MedsView() } label: { Label("All medications & history", systemImage: "list.bullet").font(DS.Font.caption) }
         }
         .bodyCard()
         .sheet(isPresented: $adding) { MedEditor(med: nil) }
+        .sheet(isPresented: $logging, onDismiss: { tick += 1 }) { LogDoseSheet() }
     }
 }
 

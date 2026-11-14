@@ -8,6 +8,7 @@ struct MedsView: View {
     @Query(sort: \MedDose.takenAt, order: .reverse) private var doses: [MedDose]
     @State private var editing: Medication?
     @State private var adding = false
+    @State private var logging = false
 
     var body: some View {
         List {
@@ -18,9 +19,14 @@ struct MedsView: View {
                     Text("Add a medication to get reminders with a Taken button, and always know whether you already took it.")
                 } actions: {
                     Button("Add medication") { adding = true }.buttonStyle(.borderedProminent).tint(DS.Palette.accent)
+                    Button("Log a dose") { logging = true }
                 }
             } else {
-                Section { Text(MedEngine.statusSentence(ctx: ctx)).font(.callout) } header: { Text("Did I take it?") }
+                Section {
+                    Text(MedEngine.statusSentence(ctx: ctx)).font(.callout)
+                    Button { logging = true } label: { Label("Log a dose", systemImage: "checkmark.circle.fill") }
+                    RecentDosesList(meds: meds, doses: doses)
+                } header: { Text("Did I take it?") }
                 Section("Today") {
                     ForEach(meds.filter(\.isActive)) { m in
                         ForEach(m.times.sorted(), id: \.self) { slot in MedDoseRow(med: m, slot: slot, doses: doses) }
@@ -48,8 +54,12 @@ struct MedsView: View {
             }
         }
         .navigationTitle("Medications")
-        .toolbar { Button("Add", systemImage: "plus") { adding = true } }
+        .toolbar {
+            Button("Log a dose", systemImage: "checkmark.circle") { logging = true }
+            Button("Add", systemImage: "plus") { adding = true }
+        }
         .sheet(isPresented: $adding) { MedEditor(med: nil) }
+        .sheet(isPresented: $logging) { LogDoseSheet() }
         .sheet(item: $editing) { MedEditor(med: $0) }
     }
 
@@ -61,7 +71,7 @@ struct MedsView: View {
         return HStack(spacing: 4) {
             ForEach((0..<14).reversed(), id: \.self) { i in
                 let d = cal.date(byAdding: .day, value: -i, to: today)!
-                let n = doses.filter { $0.day == d }.count
+                let n = doses.filter { $0.day == d && !MedLog.isExtra($0) }.count
                 VStack(spacing: 2) {
                     RoundedRectangle(cornerRadius: 3)
                         .fill(n >= perDay ? DS.Palette.calm : n > 0 ? DS.Palette.warmth : Color.secondary.opacity(0.2))
