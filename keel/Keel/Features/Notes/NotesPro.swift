@@ -916,16 +916,14 @@ enum SmartPaste {
         }.joined(separator: "\n\n")
     }
 
-    /// Even spacing: no empty blocks at the ends, never two empty lines in a row, no trailing spaces.
+    /// Even spacing: every paragraph is its own block and the page spaces blocks evenly, so blank lines from the
+    /// clipboard are dropped instead of becoming uneven gaps. Extra spaces are trimmed too.
     static func tidy(_ blocks: [NoteBlock]) -> [NoteBlock] {
-        var out: [NoteBlock] = []
-        for var b in blocks {
+        blocks.compactMap { raw in
+            var b = raw
             b.text = b.text.trimmingCharacters(in: .whitespaces)
-            let empty = b.text.isEmpty && [.text, .bullet, .numbered, .quote].contains(b.kind)
-            if empty && (out.isEmpty || (out.last.map { $0.text.isEmpty && $0.kind == .text } ?? false)) { continue }
-            out.append(b)
+            let empty = b.text.isEmpty && [.text, .bullet, .numbered, .quote, .todo].contains(b.kind)
+            return empty ? nil : b
         }
-        while let last = out.last, last.kind == .text, last.text.isEmpty { out.removeLast() }
-        return out
     }
 }
