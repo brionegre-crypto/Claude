@@ -216,7 +216,7 @@ struct VoyageStop: Identifiable {
 /// Your day as a route: now at the bow, meetings as ports, timed tasks as waypoints, free time as open water, bedtime as the anchor.
 struct VoyageView: View {
     @Environment(\.modelContext) private var ctx
-    @Query(filter: #Predicate<TaskItem> { !$0.isDone }) private var open: [TaskItem]
+    @Query(filter: #Predicate<TaskItem> { !$0.isDone }, animation: .snappy) private var open: [TaskItem]
     @AppStorage("energy") private var energyRaw = 2
     @AppStorage("voyage.bedtime") private var bedtime = 22 * 60 + 30
     @State private var addingInto: VoyageStop?

@@ -179,7 +179,7 @@ struct PersonEditor: View {
     var body: some View {
         NavigationStack {
             Form {
-                TextField("Name", text: $person.name)
+                BufferedTextField("Name", text: $person.name)
                 TextField("Email", text: $person.email).keyboardType(.emailAddress).textInputAutocapitalization(.never)
                 TextField("Phone", text: $person.phone).keyboardType(.phonePad)
                 Picker("Be in touch every", selection: $person.cadenceDays) {

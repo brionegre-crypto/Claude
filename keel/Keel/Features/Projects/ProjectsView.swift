@@ -76,7 +76,7 @@ struct ProjectDetailView: View {
                     Section {
                         HStack {
                             TextField("📁", text: $project.emoji).frame(width: 40).font(.title)
-                            TextField("Project", text: $project.name).font(DS.Font.title)
+                            BufferedTextField("Project", text: $project.name).font(DS.Font.title)
                         }
                         Picker("Life area", selection: $project.area) { ForEach(LifeArea.allCases) { Label($0.title, systemImage: $0.icon).tag($0) } }
                         Picker("Goal", selection: $project.goalId) {

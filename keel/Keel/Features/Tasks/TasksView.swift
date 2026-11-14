@@ -42,7 +42,7 @@ enum TaskFilter: Hashable {
 
 struct TasksView: View {
     @Environment(\.modelContext) private var ctx
-    @Query(sort: \TaskItem.createdAt, order: .reverse) private var tasks: [TaskItem]
+    @Query(sort: \TaskItem.createdAt, order: .reverse, animation: .snappy) private var tasks: [TaskItem]
     @Query(sort: \SmartList.createdAt) private var smartLists: [SmartList]
     @State private var deadlineFor: TaskItem?
     @State private var editingSmart: SmartList?
@@ -576,7 +576,7 @@ struct TaskDetailView: View {
     @ViewBuilder private var detailBody: some View {
         Form {
             Section {
-                TextField("Title", text: $task.title, axis: .vertical).font(DS.Font.headline)
+                BufferedTextField("Title", text: $task.title, axis: .vertical).font(DS.Font.headline)
                 Picker("Priority", selection: $task.priority) {
                     ForEach(TaskPriority.allCases.reversed(), id: \.self) { p in
                         Label(p.label, systemImage: p == .none ? "flag.slash" : "flag.fill").tint(p.color).tag(p)
@@ -725,7 +725,7 @@ struct TaskDetailView: View {
             if let g = goals.first(where: { $0.id == task.goalId }), !g.why.isEmpty {
                 Section("Why this matters") { Text("\(g.emoji) \(g.why)").foregroundStyle(DS.Palette.inkSoft) }
             }
-            Section("Notes") { TextEditor(text: $task.notes).frame(minHeight: 100) }
+            Section("Notes") { BufferedTextEditor(text: $task.notes).frame(minHeight: 100) }
             TaskAttachmentsSection(task: task)
 
             Section {

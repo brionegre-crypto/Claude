@@ -21,7 +21,7 @@ struct NoteEditor: View {
     @State private var showHistory = false
     @State private var publishedURL: URL?
     @State private var publishError: String?
-    @State private var selection: TextSelection?
+    @State private var buffer = TypingBuffer()       // the line being typed saves after a pause, so typing never redraws the page
     @State private var slashFor: UUID?
     @State private var slashQuery = ""
     @State private var mentionFor: UUID?
@@ -309,7 +309,7 @@ struct NoteEditor: View {
                     }
                 }
                 .font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft).buttonStyle(.plain)
-                TextField("Untitled", text: $note.title, axis: .vertical).font(DS.Font.hero)
+                BufferedTextField("Untitled", text: $note.title, axis: .vertical).font(DS.Font.hero)
                 if let db = parent, db.isDatabase {
                     DatabaseRowProperties(row: note, db: db).padding(.top, 4)
                     Divider()
@@ -530,11 +530,12 @@ struct NoteEditor: View {
     private func editableText(_ b: Binding<NoteBlock>, font: Font) -> some View {
         let blk = b.wrappedValue
         if editing == blk.id {
-            TextField(placeholder(blk.kind), text: b.text, selection: $selection, axis: .vertical)
-                .font(font)
-                .focused($focused, equals: blk.id)
-                .onChange(of: blk.text) { old, new in handleTyping(b, old: old, new: new) }
-                .onAppear { focused = blk.id }
+            BlockTextField(placeholder: placeholder(blk.kind), font: font, committed: blk.text, id: blk.id,
+                           focus: $focused, buffer: buffer) { new in
+                let old = b.wrappedValue.text
+                b.wrappedValue.text = new
+                handleTyping(b, old: old, new: new)
+            }
         } else {
             Group {
                 if blk.text.isEmpty {
@@ -719,6 +720,7 @@ struct NoteEditor: View {
     }
 
     private func pasteFromClipboard() {
+        buffer.flush?()
         let pasted = SmartPaste.fromPasteboard()
         guard !pasted.isEmpty else { UndoCenter.shared.notify("Nothing to paste"); return }
         if let id = focused ?? editing, let i = note.blocks.firstIndex(where: { $0.id == id }) {
@@ -1099,16 +1101,16 @@ struct NoteEditor: View {
         }
         ToolbarItemGroup(placement: .keyboard) {
             if let id = focused, let i = note.blocks.firstIndex(where: { $0.id == id }) {
-                Button { RichText.wrap(&note.blocks[i].text, selection: selection, left: "**", right: "**") } label: { Image(systemName: "bold") }.accessibilityLabel("Bold")
-                Button { RichText.wrap(&note.blocks[i].text, selection: selection, left: "*", right: "*") } label: { Image(systemName: "italic") }.accessibilityLabel("Italic")
-                Button { RichText.wrap(&note.blocks[i].text, selection: selection, left: "==", right: "==") } label: { Image(systemName: "highlighter") }.accessibilityLabel("Highlight")
-                Button { RichText.wrap(&note.blocks[i].text, selection: selection, left: "`", right: "`") } label: { Image(systemName: "chevron.left.forwardslash.chevron.right") }.accessibilityLabel("Code")
-                Button { RichText.wrap(&note.blocks[i].text, selection: selection, left: "[", right: "](https://)") } label: { Image(systemName: "link") }.accessibilityLabel("Add link")
-                Button { note.blocks[i].text += (note.blocks[i].text.isEmpty || note.blocks[i].text.hasSuffix(" ") ? "@" : " @") } label: { Image(systemName: "at") }.accessibilityLabel("Mention")
-                Button { if note.blocks[i].text.isEmpty { note.blocks[i].text = "/" } else { insertBlock(after: id, kind: .text, text: "/") } } label: { Image(systemName: "plus.square") }.accessibilityLabel("Insert block")
-                Button { setIndent(i, by: -1) } label: { Image(systemName: "decrease.indent") }.accessibilityLabel("Outdent")
+                Button { let sel = buffer.flushed(); RichText.wrap(&note.blocks[i].text, selection: sel, left: "**", right: "**") } label: { Image(systemName: "bold") }.accessibilityLabel("Bold")
+                Button { let sel = buffer.flushed(); RichText.wrap(&note.blocks[i].text, selection: sel, left: "*", right: "*") } label: { Image(systemName: "italic") }.accessibilityLabel("Italic")
+                Button { let sel = buffer.flushed(); RichText.wrap(&note.blocks[i].text, selection: sel, left: "==", right: "==") } label: { Image(systemName: "highlighter") }.accessibilityLabel("Highlight")
+                Button { let sel = buffer.flushed(); RichText.wrap(&note.blocks[i].text, selection: sel, left: "`", right: "`") } label: { Image(systemName: "chevron.left.forwardslash.chevron.right") }.accessibilityLabel("Code")
+                Button { let sel = buffer.flushed(); RichText.wrap(&note.blocks[i].text, selection: sel, left: "[", right: "](https://)") } label: { Image(systemName: "link") }.accessibilityLabel("Add link")
+                Button { buffer.flush?(); note.blocks[i].text += (note.blocks[i].text.isEmpty || note.blocks[i].text.hasSuffix(" ") ? "@" : " @"); mentionFor = id; mentionQuery = "" } label: { Image(systemName: "at") }.accessibilityLabel("Mention")
+                Button { buffer.flush?(); if note.blocks[i].text.isEmpty { note.blocks[i].text = "/"; slashFor = id; slashQuery = "" } else { insertBlock(after: id, kind: .text, text: "/"); slashFor = editing; slashQuery = "" } } label: { Image(systemName: "plus.square") }.accessibilityLabel("Insert block")
+                Button { buffer.flush?(); setIndent(i, by: -1) } label: { Image(systemName: "decrease.indent") }.accessibilityLabel("Outdent")
                     .disabled((note.blocks[i].indent ?? 0) == 0)
-                Button { setIndent(i, by: 1) } label: { Image(systemName: "increase.indent") }.accessibilityLabel("Indent")
+                Button { buffer.flush?(); setIndent(i, by: 1) } label: { Image(systemName: "increase.indent") }.accessibilityLabel("Indent")
                 Button { pasteFromClipboard() } label: { Image(systemName: "doc.on.clipboard") }.accessibilityLabel("Paste with formatting")
                 Menu {
                     Button("Ask AI…", systemImage: "sparkles") { aiWrite = AIWriteRequest(mode: .ask, blockId: id) }
@@ -1122,7 +1124,7 @@ struct NoteEditor: View {
                 .disabled(note.isLocked)
             }
             Spacer()
-            Button("Done") { focused = nil; editing = nil; slashFor = nil; mentionFor = nil }
+            Button("Done") { buffer.flush?(); focused = nil; editing = nil; slashFor = nil; mentionFor = nil }
         }
     }
 
@@ -1132,9 +1134,10 @@ struct NoteEditor: View {
 
     /// The selected words (or the whole line) go to AI to rewrite.
     private func editWithAI(_ i: Int, preset: AIAction?) {
+        buffer.flush?()
         let text = note.blocks[i].text
         var range: Range<String.Index>?
-        if case .selection(let r)? = selection?.indices, !r.isEmpty, r.lowerBound >= text.startIndex, r.upperBound <= text.endIndex { range = r }
+        if case .selection(let r)? = buffer.selection?.indices, !r.isEmpty, r.lowerBound >= text.startIndex, r.upperBound <= text.endIndex { range = r }
         let source = range.map { String(text[$0]) } ?? text
         guard !source.trimmingCharacters(in: .whitespaces).isEmpty else {
             aiWrite = AIWriteRequest(mode: .ask, blockId: note.blocks[i].id); return

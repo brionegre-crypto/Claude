@@ -374,4 +374,15 @@ final class KeelTests: XCTestCase {
         XCTAssertTrue(left.contains { $0.ekReminderId == "r1" && $0.notes == "kept" })    // the linked copy stays, with the notes
         XCTAssertEqual(TaskDedupe.run(ctx: ctx), 0)
     }
+
+    // MARK: Typing
+
+    func testTypingSavesRightAwayOnlyWhenThePageMustReact() {
+        XCTAssertFalse(BlockTextField.needsNow(old: "Groceries for the wee", new: "Groceries for the week"))   // plain typing waits
+        XCTAssertTrue(BlockTextField.needsNow(old: "Milk", new: "Milk\n"))                                    // Return makes a new line
+        XCTAssertTrue(BlockTextField.needsNow(old: "", new: "/"))                                             // the / menu
+        XCTAssertTrue(BlockTextField.needsNow(old: "", new: "- "))                                            // Markdown shortcut
+        XCTAssertTrue(BlockTextField.needsNow(old: "Hello", new: "Hello there, pasted text"))                  // paste
+        XCTAssertTrue(BlockTextField.needsNow(old: "Call ", new: "Call @"))                                   // a mention
+    }
 }

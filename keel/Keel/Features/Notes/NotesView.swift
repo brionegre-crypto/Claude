@@ -52,7 +52,7 @@ struct NotesView: View {
                         Section {
                             ScrollView(.horizontal, showsIndicators: false) {
                                 LazyHStack(spacing: DS.Space.m) {
-                                    ForEach(recent) { n in NoteCard(note: n) { opened = n } }
+                                    ForEach(recent) { n in NoteCard(note: n) { opened = n }.matchedTransitionSource(id: "n" + n.id.uuidString, in: zoom) }
                                 }
                                 .scrollTargetLayout()
                                 .padding(.horizontal, 20).padding(.vertical, 4)
@@ -128,7 +128,7 @@ struct NotesView: View {
             }
             .listStyle(.insetGrouped)
             .searchable(text: $search, prompt: "Search titles and text")
-            .navigationDestination(item: $opened) { NoteOrCanvas(note: $0) }
+            .navigationDestination(item: $opened) { n in NoteOrCanvas(note: n).navigationTransition(.zoom(sourceID: "n" + n.id.uuidString, in: zoom)) }   // the card grows into the page
             .alert("New folder", isPresented: Binding(get: { newFolderFor != nil }, set: { if !$0 { newFolderFor = nil } })) {
                 TextField("Name", text: $newFolderName)
                 Button("Create") {
@@ -346,7 +346,7 @@ struct NotesView: View {
 
     @ViewBuilder
     private func row(_ n: Note, showSnippet: Bool) -> some View {
-        let children = notes.filter { $0.parentId == n.id }.count
+        let children = childMap[n.id]?.count ?? 0          // looked up, not a scan of every note per row
         Button { opened = n } label: {
             HStack(spacing: DS.Space.m) {
                 Text(n.icon ?? (n.isDatabase ? "🗃️" : "📄"))
@@ -549,7 +549,7 @@ struct NotesView: View {
 
     /// Pages inside pages, worked out once per screen update (not once per row), so big libraries stay instant.
     private final class TreeMemo { var kids: [UUID: [Note]]?; var stamp = "" }
-    private let treeMemo = TreeMemo()
+    @State private var treeMemo = TreeMemo()           // kept between redraws (a plain let was rebuilt every time)
     private var childMap: [UUID: [Note]] {
         let stamp = "\(allNotes.count)|\(allNotes.first?.updatedAt.timeIntervalSince1970 ?? 0)"
         if let k = treeMemo.kids, treeMemo.stamp == stamp { return k }

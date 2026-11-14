@@ -100,7 +100,7 @@ struct GoalDetailView: View {
             Section {
                 HStack {
                     TextField("🎯", text: $goal.emoji).frame(width: 44).font(.title)
-                    TextField("Goal", text: $goal.title, axis: .vertical).font(DS.Font.title)
+                    BufferedTextField("Goal", text: $goal.title, axis: .vertical).font(DS.Font.title)
                 }
                 Picker("Life area", selection: $goal.area) {
                     ForEach(LifeArea.allCases) { Label($0.title, systemImage: $0.icon).tag($0) }
@@ -112,7 +112,7 @@ struct GoalDetailView: View {
                 }
             }
             Section {
-                TextField("Why does this matter to you?", text: $goal.why, axis: .vertical)
+                BufferedTextField("Why does this matter to you?", text: $goal.why, axis: .vertical)
             } header: { Text("Why") } footer: { Text("Keel shows this on the goal's tasks when motivation dips.") }
             Section {
                 if let data = goal.visionImage, let img = UIImage(data: data) {
