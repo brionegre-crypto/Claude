@@ -59,10 +59,14 @@ export async function handleMCP(req: Request, env: Env): Promise<Response> {
   const msg = (await req.json()) as { id?: number | string; method: string; params?: any };
   const reply = (result: unknown) => json({ jsonrpc: "2.0", id: msg.id, result });
 
+  // Notifications (no id) just need an OK.
+  if (msg.id === undefined || msg.id === null) return new Response(null, { status: 202 });
   switch (msg.method) {
+    case "ping":
+      return reply({});
     case "initialize":
       return reply({
-        protocolVersion: "2025-06-18",
+        protocolVersion: typeof msg.params?.protocolVersion === "string" ? msg.params.protocolVersion : "2025-06-18",
         capabilities: { tools: {} },
         serverInfo: { name: "keel", version: "0.1.0" },
       });

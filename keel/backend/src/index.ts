@@ -6,6 +6,7 @@ import { handleShare } from "./share";
 import { handleBooking } from "./booking";
 import { handlePush } from "./push";
 import { handleSupport } from "./support";
+import { handleOAuth, isMcpAccess, mcpUnauthorized } from "./oauth";
 
 export interface Env {
   KEEL: KVNamespace;
@@ -86,8 +87,17 @@ export default {
       await env.KEEL.put("actions", "[]");
       return new Response(actions, { headers: { "content-type": "application/json" } });
     }
-    if (url.pathname === "/mcp" && req.method === "POST") {
-      return mcp ? handleMCP(req, env) : unauthorized();
+    // Claude connector: signed in through OAuth (oauth.ts), or with the KEEL_MCP_TOKEN directly.
+    if (url.pathname.startsWith("/.well-known/") || url.pathname.startsWith("/oauth/") || (url.pathname === "/mcp" && req.method === "OPTIONS")) {
+      const r = await handleOAuth(req, env, url);
+      if (r) return r;
+    }
+    if (url.pathname === "/mcp") {
+      if (!(mcp || (await isMcpAccess(bearer, env)))) return mcpUnauthorized(url);
+      if (req.method !== "POST") return new Response(null, { status: 405, headers: { allow: "POST", "access-control-allow-origin": "*" } });
+      const r = await handleMCP(req, env);
+      const h = new Headers(r.headers); h.set("access-control-allow-origin", "*");
+      return new Response(r.body, { status: r.status, headers: h });
     }
     return json({ error: "not found" }, 404);
   },
