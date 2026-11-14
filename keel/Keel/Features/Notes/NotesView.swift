@@ -275,6 +275,7 @@ struct NotesView: View {
                 QuickTile(title: "Today", icon: "calendar", color: .orange) { opened = DailyNote.today(ctx) }
                 QuickTile(title: "Record", icon: "waveform.badge.mic", color: .red) { recording = true }
                 QuickTile(title: "Capture", icon: "tray.and.arrow.down.fill", color: .blue) { AppRouter.shared.openTool = ToolRoute(id: "capture") }
+                QuickTile(title: "Import", icon: "square.and.arrow.down.on.square.fill", color: .gray) { showImport = true }
                 QuickTile(title: "Journal", icon: "book.fill", color: .pink) { createJournalPage() }
                 QuickTile(title: "Second brain", icon: "brain.head.profile.fill", color: .pink) { showBrain = true }
                 QuickTile(title: "Vault", icon: "archivebox.fill", color: .brown) { showVault = true }

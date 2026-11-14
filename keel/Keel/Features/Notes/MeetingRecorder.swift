@@ -398,29 +398,28 @@ enum MeetingTitler {
         return t.count < 3 || generic.contains(t)
     }
 
+    /// The title comes from what was actually said, once the transcript has been read. The calendar event is only
+    /// background (who was there); its name is used only if the AI can't write a title.
     static func title(event: EKEvent?, summary: String, topics: [String], transcript: String) async -> String {
-        if let e = event, !isGeneric(e.title) { return e.title ?? "Meeting" }
         let basis = summary.isEmpty ? String(transcript.prefix(3_000)) : summary + (topics.isEmpty ? "" : "\nTopics: " + topics.joined(separator: "; "))
-        var subject: String?
+        let people = (event?.attendees ?? []).compactMap(\.name).prefix(4).joined(separator: ", ")
         if basis.count > 40 {
             let prompt = """
-            Write a short, specific title for these meeting notes: 3 to 7 words naming the main subject and, if clear, who it was with             (like "Q3 budget review with Dana" or "Kitchen remodel quote"). No quotes, no date, no ending period. Reply with only the title.
+            Write a short, specific title for these meeting notes based only on what was discussed: 3 to 7 words naming the main subject \
+            and, if clear, who it was with (like "Q3 budget review with Dana" or "Kitchen remodel quote"). \
+            No quotes, no date, no ending period. Reply with only the title.\(people.isEmpty ? "" : "\nPeople there: \(people)")
 
             \(basis.prefix(3_000))
             """
             if let r = await AIRouter.shared.write(prompt) {
                 let clean = r.split(separator: "\n").first.map(String.init)?
                     .trimmingCharacters(in: CharacterSet(charactersIn: "\"'“”‘’*#. ").union(.whitespaces)) ?? ""
-                if clean.count >= 3 && clean.count <= 80 && !clean.lowercased().hasPrefix("title") { subject = clean }
+                if clean.count >= 3 && clean.count <= 80 && !clean.lowercased().hasPrefix("title") { return clean }
             }
         }
         let date = (event?.startDate ?? Date()).formatted(date: .abbreviated, time: .omitted)
-        switch (event?.title, subject) {
-        case let (eventTitle?, subject?) where !eventTitle.isEmpty: return "\(eventTitle): \(subject)"
-        case let (_, subject?): return subject
-        case let (eventTitle?, nil) where !eventTitle.isEmpty: return "\(eventTitle) · \(date)"
-        default: return "Meeting · \(date)"
-        }
+        if let t = event?.title, !t.isEmpty, !isGeneric(t) { return "\(t) · \(date)" }
+        return "Meeting · \(date)"
     }
 }
 
@@ -609,7 +608,8 @@ struct MeetingRecorderView: View {
     @State private var asking = false
 
     private var template: MeetingTemplate { MeetingTemplate(rawValue: templateRaw) ?? .general }
-    private var title: String { event?.title ?? (target?.title.isEmpty == false ? target!.title : "Meeting") }
+    /// Until the transcript is read, the screen just says "Meeting notes"; the real title comes from what was said.
+    private var title: String { savedNote?.title ?? (target?.title.isEmpty == false ? target!.title : "Meeting notes") }
 
     var body: some View {
         VStack(spacing: DS.Space.m) {
@@ -620,15 +620,14 @@ struct MeetingRecorderView: View {
                         Section("Which meeting is this?") {
                             ForEach(candidates, id: \.calendarItemIdentifier) { e in
                                 Button {
-                                    event = e; eventChosen = true; recorder.liveTitle = e.title
-                                    if recorder.isRecording { MeetingAutopilot.startActivity(for: e) }
+                                    event = e; eventChosen = true
                                 } label: {
                                     Label("\(e.title ?? "Event") · \(e.startDate.formatted(date: .omitted, time: .shortened))",
                                           systemImage: event?.calendarItemIdentifier == e.calendarItemIdentifier ? "checkmark" : "calendar")
                                 }
                             }
                         }
-                        Button("Not a calendar event", systemImage: "calendar.badge.minus") { event = nil; eventChosen = true; recorder.liveTitle = nil }
+                        Button("Not a calendar event", systemImage: "calendar.badge.minus") { event = nil; eventChosen = true }
                     } label: {
                         HStack(spacing: 4) {
                             if let e = event {
@@ -720,12 +719,11 @@ struct MeetingRecorderView: View {
                 event = MeetingEventMatcher.best(at: at)
             }
             candidates = MeetingEventMatcher.candidates(around: at)
-            recorder.liveTitle = event?.title
+            recorder.liveTitle = nil          // named from the transcript once it's written up, not from the calendar
             // A finished meeting from hours ago shouldn't leak into this one.
             if !recorder.isRecording, let s = recorder.startedAt, Date().timeIntervalSince(s) > 4 * 3600 { recorder.reset() }
             if autoStart && !recorder.isRecording && recorder.transcript.isEmpty {
                 await recorder.start()
-                if let event { MeetingAutopilot.startActivity(for: event) }
             }
             sources = MeetingContext.build(event: event, title: title, ctx: ctx).sources
             // A quick look at the web (company sites, invite links) so you can see what Keel will use.
@@ -743,7 +741,6 @@ struct MeetingRecorderView: View {
                         if recorder.isRecording { recorder.stop() } else {
                             let first = recorder.transcript.isEmpty
                             await recorder.start(resume: !first)
-                            if first, let event { MeetingAutopilot.startActivity(for: event) }
                         }
                     }
                 } label: {
