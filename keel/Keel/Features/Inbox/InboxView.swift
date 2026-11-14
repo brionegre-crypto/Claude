@@ -104,6 +104,12 @@ struct InboxView: View {
 
     private var mailQuery: MailQuery { MailQueryParser.parse(search) }
 
+    private var inboxHorizonDetail: String {
+        let unread = mailboxEmails.filter { !$0.isRead }
+        let people = unread.filter { AutoDrafts.isRealPerson($0) }.count
+        return unread.isEmpty ? "All caught up · \(HorizonSky.daylightLeft())" : "\(people) need you · \(unread.count - people) can wait"
+    }
+
     /// Which inbox each email came to, when there's more than one account.
     private var accountTags: [String: AccountTag] {
         guard accounts.count > 1 else { return [:] }
@@ -319,6 +325,10 @@ struct InboxView: View {
                 }
             }
             if mailbox == .inbox && search.isEmpty && !selecting {
+                HorizonHeader(title: "Inbox", detail: inboxHorizonDetail, compact: true)
+                    .listRowSeparator(.hidden)
+                    .listRowInsets(EdgeInsets(top: 6, leading: 12, bottom: 4, trailing: 12))
+                    .selectionDisabled()
                 InboxTabBar(items: MailTabs.visibleItems, selected: $tabRaw, counts: tabBarCounts, hideCounts: calm)
                     .listRowSeparator(.hidden)
                     .listRowInsets(EdgeInsets(top: 4, leading: 12, bottom: 4, trailing: 12))
@@ -396,28 +406,32 @@ struct InboxView: View {
     private var inboxContent: some View {
         switch tab {
         case .all:
-            // New at the top (unread from the last two days, from every account), then everything else by date.
+            // Above the waterline: new mail from real people, every account, newest first. Below: everything else, quieter.
             let items = collapse(visible)
-            let since = Date().addingTimeInterval(-48 * 3600)
-            let fresh = items.filter { !$0.isRead && $0.receivedAt > since }
+            let since = Date().addingTimeInterval(-72 * 3600)
+            let fresh = items.filter { !$0.isRead && $0.receivedAt > since && (AutoDrafts.isRealPerson($0) || scoreMap[$0.from.lowercased()]?.isVIP == true) }
             let freshIds = Set(fresh.map(\.id))
-            if !fresh.isEmpty {
-                Section {
-                    ForEach(fresh) { e in row(e) }
-                } header: {
-                    HStack {
-                        Label("New · \(fresh.count)", systemImage: "circle.fill").foregroundStyle(DS.Palette.accent)
-                        Spacer()
-                        Button("Mark all read") { markAllRead(fresh) }.font(DS.Font.caption).buttonStyle(.borderless)
-                    }
-                    .textCase(nil)
+            let newOther = items.filter { !$0.isRead && !freshIds.contains($0.id) && $0.receivedAt > since }
+            Section {
+                if fresh.isEmpty {
+                    Label("Nobody's waiting on you. Calm waters.", systemImage: "sailboat").font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
                 }
+                ForEach(fresh) { e in row(e) }
+            } header: {
+                HStack {
+                    Label("Needs you · \(fresh.count)", systemImage: "person.wave.2.fill").foregroundStyle(DS.Palette.accent)
+                    Spacer()
+                    if !(fresh + newOther).isEmpty { Button("Mark all read") { markAllRead(fresh + newOther) }.font(DS.Font.caption).buttonStyle(.borderless) }
+                }
+                .textCase(nil)
             }
+            Section { Waterline(label: "Below the waterline · updates, newsletters, everything else") }
+                .listRowBackground(Color.clear)
             let rest = items.filter { !freshIds.contains($0.id) }
             ForEach(["Today", "Yesterday", "This week", "Older"], id: \.self) { name in
                 let group = rest.filter { InboxBrain.section(for: $0.receivedAt) == name }
                 if !group.isEmpty {
-                    Section(name) { ForEach(group) { e in row(e) } }
+                    Section(name) { ForEach(group) { e in row(e).opacity(e.isRead ? 0.72 : 0.9) } }
                 }
             }
         case .priority:

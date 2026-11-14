@@ -99,8 +99,8 @@ struct LookSettingsSection: View {
 
 struct MailLayout: Equatable {
     enum Density: String, CaseIterable, Identifiable { case compact, comfortable, spacious; var id: String { rawValue } }
-    var density: Density = .comfortable
-    var previewLines: Int = 2
+    var density: Density = .compact            // Superhuman-dense by default; roomier in Settings → Mail → Layout
+    var previewLines: Int = 1
     var avatars = true
     var aiSummary = true
 
@@ -119,19 +119,19 @@ extension EnvironmentValues {
 
 /// Reads the mail layout settings once for the whole list (instead of in every row).
 struct MailLayoutReader: ViewModifier {
-    @AppStorage(MailLayout.densityKey) private var density = MailLayout.Density.comfortable.rawValue
-    @AppStorage(MailLayout.linesKey) private var lines = 2
+    @AppStorage(MailLayout.densityKey) private var density = MailLayout.Density.compact.rawValue
+    @AppStorage(MailLayout.linesKey) private var lines = 1
     @AppStorage(MailLayout.avatarsKey) private var avatars = true
     @AppStorage(MailLayout.summaryKey) private var summary = true
     func body(content: Content) -> some View {
-        content.environment(\.mailLayout, MailLayout(density: MailLayout.Density(rawValue: density) ?? .comfortable,
+        content.environment(\.mailLayout, MailLayout(density: MailLayout.Density(rawValue: density) ?? .compact,
                                                      previewLines: lines, avatars: avatars, aiSummary: summary))
     }
 }
 
 struct MailLayoutSettings: View {
-    @AppStorage(MailLayout.densityKey) private var density = MailLayout.Density.comfortable.rawValue
-    @AppStorage(MailLayout.linesKey) private var lines = 2
+    @AppStorage(MailLayout.densityKey) private var density = MailLayout.Density.compact.rawValue
+    @AppStorage(MailLayout.linesKey) private var lines = 1
     @AppStorage(MailLayout.avatarsKey) private var avatars = true
     @AppStorage(MailLayout.summaryKey) private var summary = true
 
@@ -147,7 +147,7 @@ struct MailLayoutSettings: View {
                 Toggle("Show AI summary instead of the first lines", isOn: $summary)
             } header: { Text("Email list") }
             Section("Preview") {
-                SampleMailRow(layout: MailLayout(density: MailLayout.Density(rawValue: density) ?? .comfortable, previewLines: lines, avatars: avatars, aiSummary: summary))
+                SampleMailRow(layout: MailLayout(density: MailLayout.Density(rawValue: density) ?? .compact, previewLines: lines, avatars: avatars, aiSummary: summary))
             }
             Section {
                 Text("On iPad and Mac, Inbox shows the list and the email side by side. Rotate your iPad or widen the window to see both.")

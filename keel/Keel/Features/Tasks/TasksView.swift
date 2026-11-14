@@ -282,8 +282,19 @@ struct TasksView: View {
             if filter == .completed {
                 ForEach(filtered) { t in row(t) }
             } else {
-                ForEach(groups, id: \.title) { g in
-                    Section(g.title) { ForEach(g.items) { t in row(t) } }
+                if !selecting {
+                    HorizonHeader(title: screenTitle, detail: tasksHorizonDetail, compact: true)
+                        .listRowInsets(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
+                        .listRowBackground(Color.clear)
+                }
+                // Above the waterline: what's pinned, overdue, today and tonight. Below: what can wait, quieter.
+                let above: Set<String> = ["Pinned", "Overdue", "Today", "This Evening"]
+                let gs = groups
+                ForEach(gs, id: \.title) { g in
+                    if !above.contains(g.title), gs.first(where: { !above.contains($0.title) })?.title == g.title, gs.contains(where: { above.contains($0.title) }) {
+                        Section { Waterline() }.listRowBackground(Color.clear)
+                    }
+                    Section(g.title) { ForEach(g.items) { t in row(t).opacity(above.contains(g.title) ? 1 : 0.82) } }
                 }
                 let waiting = filtered.filter(\.isWaitingOn)
                 if !waiting.isEmpty {
@@ -311,6 +322,13 @@ struct TasksView: View {
         case .tag(let t): return filtered + done.filter { $0.tags.contains(t) }
         default: return filtered + done.filter { $0.completedAt.map { Calendar.current.isDateInToday($0) } ?? false }
         }
+    }
+
+    private var tasksHorizonDetail: String {
+        let end = cal.startOfDay(for: Date()).addingTimeInterval(86_400)
+        let due = filtered.filter { ($0.dueDate ?? .distantFuture) < end }.count
+        let done = tasks.filter { $0.completedAt.map { cal.isDateInToday($0) } ?? false }.count
+        return due == 0 ? (done > 0 ? "\(done) done today · clear sailing" : "Clear sailing · \(HorizonSky.daylightLeft())") : "\(due) to do today\(done > 0 ? " · \(done) done" : "")"
     }
 
     private var groups: [(title: String, items: [TaskItem])] {

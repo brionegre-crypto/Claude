@@ -43,7 +43,9 @@ struct TodayView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: DS.Space.l) {
                     greeting
-                    ForEach(calm ? TodayCard.calm : TodayCard.current(phase: DayPhase.now)) { card($0) }
+                    VoyageView()                                    // your day as a route: now, ports, open water, anchor
+                    Waterline(label: "Below the waterline · the rest of your day")
+                    ForEach((calm ? TodayCard.calm : TodayCard.current(phase: DayPhase.now)).filter { $0 != .upNext && $0 != .oneThing }) { card($0) }
                     if calm {
                         Label("Calm mode is on. Everything else is still here when you want it.", systemImage: "leaf")
                             .font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
@@ -143,10 +145,8 @@ struct TodayView: View {
     }
 
     private var greeting: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            Text(Date.now, format: .dateTime.weekday(.wide).month().day())
-                .font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft).textCase(.uppercase)
-            Text(greetingText).font(DS.Font.hero)
+        VStack(alignment: .leading, spacing: 8) {
+            HorizonHeader(title: Date.now.formatted(.dateTime.weekday(.wide).month().day()), detail: "\(greetingText) · \(HorizonSky.daylightLeft())")
             WeatherRow()
             if !yearTheme.isEmpty {
                 Label(yearTheme, systemImage: "sparkle").font(DS.Font.caption).foregroundStyle(DS.Palette.accent)

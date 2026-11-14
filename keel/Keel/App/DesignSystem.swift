@@ -113,6 +113,7 @@ struct CompletionCheck: View {
                 .foregroundStyle(isDone ? DS.Palette.calm : DS.Palette.inkSoft)
                 .symbolEffect(.bounce, value: isDone)
                 .contentTransition(.symbolEffect(.replace))
+                .modifier(RippleOnDone(done: isDone))           // Horizon: finishing sends a small ripple
         }
         .buttonStyle(.plain)
         .accessibilityLabel(isDone ? "Mark not done" : "Mark done")

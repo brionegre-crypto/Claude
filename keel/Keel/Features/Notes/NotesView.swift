@@ -76,6 +76,9 @@ struct NotesView: View {
                         Section { organizeBanner(unfiled) }
                             .listRowInsets(EdgeInsets(top: 10, leading: 16, bottom: 10, trailing: 16))
                     }
+                    Section { Waterline(label: "Below the waterline · your library") }
+                        .listRowBackground(Color.clear)
+                        .listRowInsets(EdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16))
                     // Notion-style page tree: workspaces → folders → pages (and pages inside pages). Tap a folder's name to open it.
                     ForEach(Array(groups.enumerated()), id: \.element.id) { i, g in
                         Section {
@@ -557,13 +560,9 @@ struct NotesView: View {
         let h = Calendar.current.component(.hour, from: Date())
         let part = h < 12 ? "Good morning" : h < 17 ? "Good afternoon" : "Good evening"
         let name = KeelAccount.shared.name.split(separator: " ").first.map(String.init) ?? ""
-        return VStack(alignment: .leading, spacing: 2) {
-            Text(name.isEmpty ? part : "\(part), \(name)").font(.system(.title2, design: .default).weight(.bold))
-            Text("\(notes.count) page\(notes.count == 1 ? "" : "s")\(editedToday > 0 ? " · \(editedToday) edited today" : "")")
-                .font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .accessibilityElement(children: .combine)
+        return HorizonHeader(title: name.isEmpty ? part : "\(part), \(name)",
+                             detail: "\(notes.count) page\(notes.count == 1 ? "" : "s")\(editedToday > 0 ? " · \(editedToday) edited today" : "")",
+                             compact: true)
     }
 
     /// One folder in the tree: chevron to open it in place, name to go into it.
