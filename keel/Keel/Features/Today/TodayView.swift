@@ -150,6 +150,7 @@ struct TodayView: View {
         case .avoided: DreadTodayCard()
         case .forecast: FocusForecastCard()
         case .body: BodyTodayCard()
+        case .intention: IntentionCard()
         }
     }
 

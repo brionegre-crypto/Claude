@@ -98,23 +98,46 @@ struct BodyView: View {
     @AppStorage(SmartWake.key) private var wakeAlarm = false
     @AppStorage(Drinks.goalKey) private var waterGoal = 2_000
     @AppStorage("drinks.nudge") private var waterNudge = true
+    @State private var extras = HealthExtras()
 
     var body: some View {
         ScrollView {
             LazyVStack(alignment: .leading, spacing: DS.Space.l) {
                 if !BodyHealth.available {
-                    ContentUnavailableView("Open Keel on your iPhone", systemImage: "iphone",
-                                           description: Text("Body tracking reads Apple Health, which lives on your iPhone (and Apple Watch)."))
+                    // On Mac and iPad: today's scores from your iPhone.
+                    if let sc = BodyScores.fromYourIPhone() {
+                        HStack(spacing: 0) {
+                            ScoreRing(title: "Tide", value: sc.tide, max: 100, color: BodyStyle.tide, suffix: "%").frame(maxWidth: .infinity)
+                            ScoreRing(title: "Swell", value: sc.swell, max: 100, color: BodyStyle.swell).frame(maxWidth: .infinity)
+                            ScoreRing(title: "Anchor", value: sc.anchor, max: 100, color: BodyStyle.anchor).frame(maxWidth: .infinity)
+                        }
+                        Text("From your iPhone. " + BodyEngine.advice(sc.tide)).font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
+                    } else {
+                        Text("Recovery, effort and sleep scores come from Apple Health on your iPhone and show here once it has them.")
+                            .font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
+                    }
                 } else if !engine.connected {
                     connectCard
                 } else {
                     header
                     if !engine.loading, engine.days.suffix(3).allSatisfy({ !$0.hasSleep && $0.hrv == nil && $0.swell == 0 }) { noDataCard }
                     adviceCard
+                    EnergyLeftCard(day: t)
+                    NapAdvisorCard(tide: t?.tide)
                     WorkoutPickCard(tide: t?.tide, swell: t?.swell ?? 0)
+                }
+                // Always here, Health connected or not: medications and every health screen.
+                BodyMedsCard()
+                HealthTilesSection(extras: extras)
+                EnergyCheckCard()
+                if BodyHealth.available && engine.connected {
+                    ActivityTodayCard(x: extras)
+                    if extras.zoneMinutes.reduce(0, +) > 0 { ZonesCard(minutes: extras.zoneMinutes) }
+                    CycleCard(x: extras)
                     DrinksCard()
                     tideCard
                     anchorCard
+                    SleepDebtCard(days: engine.days, base: need)
                     swellCard
                     stressCard
                     vitalsCard
@@ -122,6 +145,8 @@ struct BodyView: View {
                     MoodBodyCard()
                     settingsCard
                     explainer
+                } else {
+                    DrinksCard()
                 }
             }
             .padding(DS.Space.m)
@@ -130,7 +155,10 @@ struct BodyView: View {
         .navigationTitle("Body")
         .navigationBarTitleDisplayMode(.inline)
         .refreshable { await engine.refresh(force: true) }
-        .task { await engine.refresh() }
+        .task {
+            await engine.refresh()
+            if engine.connected { extras = await HealthExtras.load() }
+        }
     }
 
     private var t: BodyDay? { engine.today }

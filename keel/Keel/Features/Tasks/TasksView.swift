@@ -187,7 +187,6 @@ struct TasksView: View {
                             withAnimation { selecting.toggle(); selectedTasks = [] }
                         }
                         Button("Plan my day (drag onto hours)", systemImage: "calendar.day.timeline.left") { planning = true }
-                        Button("Plan my week", systemImage: "calendar.badge.clock") { planningWeek = true }
                         Button("Auto-schedule today", systemImage: "wand.and.stars") {
                             let r = AutoScheduler.scheduleToday(tasks: tasks)
                             withAnimation { toast = r.scheduled == 0 ? "Nothing fit today" : "Scheduled \(r.scheduled) on your calendar" }
@@ -202,7 +201,7 @@ struct TasksView: View {
                             Button("Share “\(name)”…", systemImage: "person.2") { sharingList = name }
                         }
                         NavigationLink { TemplatesView() } label: { Label("Templates", systemImage: "doc.on.doc") }
-                        NavigationLink { WeekPlannerView() } label: { Label("Plan the week", systemImage: "calendar.day.timeline.left") }
+                        NavigationLink { PlanMyWeekView(embedded: true) } label: { Label("Plan the week", systemImage: "calendar.day.timeline.left") }
                         NavigationLink { StatsView() } label: { Label("Statistics", systemImage: "chart.xyaxis.line") }
                         NavigationLink { TagsManagerView() } label: { Label("Manage tags", systemImage: "number") }
                         NavigationLink { ErrandsView() } label: { Label("Errands by place", systemImage: "car") }
@@ -222,7 +221,6 @@ struct TasksView: View {
             }
             .refreshable { await SyncEngine.shared.syncAll() }
             .sheet(isPresented: $planning) { DayPlannerView() }
-            .sheet(isPresented: $planningWeek) { WeekPlannerView() }
             .sheet(item: Binding(get: { sharingList.map { ListName(name: $0) } }, set: { sharingList = $0?.name })) { ShareListSheet(listName: $0.name) }
             .sheet(isPresented: $newSmart) { SmartListEditor(list: nil, allLists: lists, allTags: tags) }
             .sheet(item: $deadlineFor) { DeadlineSheet(task: $0) }

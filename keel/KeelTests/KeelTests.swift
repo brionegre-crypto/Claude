@@ -577,4 +577,53 @@ final class KeelTests: XCTestCase {
         XCTAssertTrue(out[0].contains("lower"))
         XCTAssertTrue(BodyMath.moodInsights(moods: [], focus: [], days: days).isEmpty)
     }
+
+    // MARK: Health tools
+
+    func testAsNeededMedicineWaitsLongEnough() {
+        let m = PRNMed(name: "Ibuprofen", dose: "400 mg", minHours: 4, maxPerDay: 3)
+        let now = Date()
+        XCTAssertNil(PRN.check(m, doses: [], now: now))
+        XCTAssertNotNil(PRN.check(m, doses: [PRNDose(medId: m.id, at: now.addingTimeInterval(-2 * 3600))], now: now))
+        XCTAssertNil(PRN.check(m, doses: [PRNDose(medId: m.id, at: now.addingTimeInterval(-5 * 3600))], now: now))
+    }
+
+    func testBloodPressureCategories() {
+        XCTAssertEqual(BloodPressure.category(115, 75).0, "Normal")
+        XCTAssertEqual(BloodPressure.category(125, 78).0, "Elevated")
+        XCTAssertEqual(BloodPressure.category(135, 85).0, "High (stage 1)")
+        XCTAssertEqual(BloodPressure.category(150, 95).0, "High (stage 2)")
+    }
+
+    func testCaffeineHalvesEveryFiveHours() {
+        let t = Date()
+        let d = [Drink(kind: "coffee", at: t.addingTimeInterval(-5 * 3600), caffeine: 100, water: 0)]
+        XCTAssertEqual(BodyMath.caffeineNow(d, at: t), 50, accuracy: 0.5)
+        XCTAssertEqual(BodyMath.caffeineNow(d, at: t.addingTimeInterval(-6 * 3600)), 0)       // before you drank it
+    }
+
+    func testBodyMapKnowsWhatARunWorks() {
+        XCTAssertTrue(BodyRegions.worked(by: "Run").contains("f.quadL"))
+        XCTAssertTrue(BodyRegions.worked(by: "Swim").contains("b.upperback"))
+        XCTAssertEqual(Set(BodyRegions.all.map(\.id)).count, BodyRegions.all.count)          // every region has its own id
+        XCTAssertTrue(BodyRegions.worked(by: "Strength").allSatisfy { BodyRegions.region($0) != nil })
+    }
+
+    func testCycleEstimate() {
+        let cal = Calendar.current
+        let today = cal.startOfDay(for: Date())
+        let starts = [-62, -34, -6].compactMap { cal.date(byAdding: .day, value: $0, to: today) }
+        let days = starts.flatMap { s in (0..<4).compactMap { cal.date(byAdding: .day, value: $0, to: s) } }
+        let c = BodyMath.cycle(periodDays: days)
+        XCTAssertEqual(c?.length, 28)
+        XCTAssertEqual(c?.day, 7)
+    }
+
+    func testEnergyLeftAndStreak() {
+        var d = BodyDay(day: Date()); d.tide = 80; d.swell = 40; d.wake = Date().addingTimeInterval(-6 * 3600)
+        XCTAssertEqual(BodyMath.energyLeft(d), 66)
+        let cal = Calendar.current
+        let days = (0..<5).map { i -> BodyDay in var b = BodyDay(day: cal.date(byAdding: .day, value: i - 4, to: cal.startOfDay(for: Date()))!); b.asleep = i == 0 ? 300 : 450; return b }
+        XCTAssertEqual(BodyMath.streak(days) { $0.asleep >= 420 }, 4)
+    }
 }

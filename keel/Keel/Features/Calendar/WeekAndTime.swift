@@ -8,12 +8,12 @@ import TipKit
 
 /// The week ahead as seven days: each day's meetings and free time, and the tasks due that day.
 /// Drag a task onto a day (or tap it, then tap the day) to give it that date.
-struct WeekPlannerView: View {
+struct PlanMyWeekView: View {
     var embedded = false                       // opened inside another navigation stack (Compass)
     @Environment(\.modelContext) private var ctx
     @Environment(\.dismiss) private var dismiss
     @Query(filter: #Predicate<TaskItem> { !$0.isDone }, animation: .snappy) private var open: [TaskItem]
-    @State private var weekStart = WeekPlannerView.startOfWeek(Date())
+    @State private var weekStart = PlanMyWeekView.startOfWeek(Date())
     @State private var picked: TaskItem?
     @State private var target: Date?
     @State private var events: [Date: [EKEvent]] = [:]
@@ -158,7 +158,7 @@ struct WeekPlannerView: View {
 struct TimeReportView: View {
     @Query(sort: \FocusSession.startedAt, order: .reverse) private var sessions: [FocusSession]
     @Query private var tasks: [TaskItem]
-    @State private var weekStart = WeekPlannerView.startOfWeek(Date())
+    @State private var weekStart = PlanMyWeekView.startOfWeek(Date())
     @State private var report: (this: Week, last: Week)?
 
     struct Week {
@@ -179,7 +179,7 @@ struct TimeReportView: View {
                     Spacer()
                     Button { weekStart = Calendar.current.date(byAdding: .weekOfYear, value: 1, to: weekStart) ?? weekStart } label: { Image(systemName: "chevron.right") }
                         .accessibilityLabel("Next week")
-                        .disabled(weekStart >= WeekPlannerView.startOfWeek(Date()))
+                        .disabled(weekStart >= PlanMyWeekView.startOfWeek(Date()))
                 }
                 if let r = report {
                     LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {

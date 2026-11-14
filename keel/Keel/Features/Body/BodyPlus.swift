@@ -212,6 +212,7 @@ struct WorkoutPickCard: View {
                 else { message = "No free \(p.minutes)-minute slot left today." }
             } label: { Label("Put it on my calendar", systemImage: "calendar.badge.plus") }
                 .buttonStyle(.bordered).font(DS.Font.caption)
+            if let c = BodyMapData.caution() { Label(c, systemImage: "figure.stand").font(.caption).foregroundStyle(.orange) }
             if let message { Text(message).font(.caption2).foregroundStyle(DS.Palette.inkSoft) }
         }
         .padding(DS.Space.m)

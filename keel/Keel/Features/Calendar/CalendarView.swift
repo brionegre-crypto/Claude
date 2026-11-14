@@ -139,7 +139,7 @@ struct CalendarView: View {
             .sheet(item: $openTask) { t in NavigationStack { TaskDetailView(task: t) } }
             .sheet(isPresented: $showCalendars) { CalendarPicker(hiddenRaw: $hiddenRaw) }
             .sheet(isPresented: $planning, onDismiss: { load() }) { DayPlannerView() }
-            .sheet(isPresented: $planningWeek, onDismiss: { load() }) { WeekPlannerView() }
+            .sheet(isPresented: $planningWeek, onDismiss: { load() }) { PlanMyWeekView() }
             .sheet(item: $taskGroup) { TaskGroupSheet(tasks: $0.tasks) }
             .alert("Quick event", isPresented: $showQuick) {
                 TextField("Lunch with Sam Thu 1pm for 90 min", text: $quickText)

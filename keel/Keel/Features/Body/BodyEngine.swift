@@ -75,6 +75,7 @@ enum BodyHealth {
             HKCharacteristicType(.dateOfBirth),
         ]
         s.insert(HKQuantityType(.appleSleepingWristTemperature))
+        s.formUnion(HealthExtras.readTypes)        // steps, daylight, mindful minutes, weight, cycle
         return s
     }
 
@@ -440,6 +441,7 @@ final class BodyEngine {
         scheduleWindDown()
         await SmartWake.schedule(at: BodyMath.tonight(all, base: base).wake)
         Drinks.scheduleWaterNudge()
+        WeeklyBodyReport.schedule(days: all)
         await morningAlertIfDue()
     }
 
