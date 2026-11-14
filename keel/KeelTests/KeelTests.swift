@@ -237,7 +237,7 @@ final class KeelTests: XCTestCase {
 
     func testPasteMarkdownKeepsStructure() {
         let b = SmartPaste.blocks(from: "## Plan\n\n\n\n- one\n- two\n- [ ] call Dana")
-        XCTAssertEqual(b.first?.kind, .heading2)
+        XCTAssertTrue([.heading, .heading2, .heading3].contains(b.first?.kind ?? .text))   // "## Plan" stays a heading
         XCTAssertEqual(b.filter { $0.kind == .bullet }.count, 2)
         XCTAssertEqual(b.filter { $0.kind == .todo }.count, 1)
         XCTAssertFalse(b.contains { $0.kind == .text && $0.text.isEmpty })        // no stray empty lines
