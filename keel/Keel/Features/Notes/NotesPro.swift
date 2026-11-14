@@ -829,3 +829,103 @@ struct PagePickerSheet: View {
 }
 
 struct BlockPickTarget: Identifiable { let id: UUID; let databasesOnly: Bool }
+
+// MARK: - Smart paste: whatever you paste becomes the right blocks, evenly spaced
+
+@MainActor
+enum SmartPaste {
+    /// What's on the clipboard, as blocks. Rich text from web pages and apps (HTML) keeps its headings, lists and links.
+    static func fromPasteboard() -> [NoteBlock] {
+        let pb = UIPasteboard.general
+        if let data = pb.data(forPasteboardType: "public.html"), let html = String(data: data, encoding: .utf8), html.count > 20 {
+            let b = blocks(from: HTMLImport.toMarkdown(html), markdown: true)
+            if !b.isEmpty { return b }
+        }
+        if let s = pb.string { return blocks(from: s) }
+        if let u = pb.url { return [NoteBlock(kind: .bookmark, text: "", refId: u.absoluteString)] }
+        return []
+    }
+
+    /// Plain text → blocks: a link, a table (tabs or CSV, e.g. from a spreadsheet), code, or Markdown and paragraphs.
+    static func blocks(from raw: String, markdown: Bool = false) -> [NoteBlock] {
+        let text = raw.replacingOccurrences(of: "\r\n", with: "\n").replacingOccurrences(of: "\u{00A0}", with: " ")
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !text.isEmpty else { return [] }
+        let lines = text.components(separatedBy: "\n")
+        let nonEmpty = lines.filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty }
+
+        // One link → a bookmark card.
+        if nonEmpty.count == 1, !text.contains(" "), let u = URL(string: text), ["http", "https"].contains(u.scheme ?? "") {
+            return [NoteBlock(kind: .bookmark, text: "", refId: text)]
+        }
+        // Spreadsheet cells (tab-separated) or CSV → a table.
+        if !markdown, nonEmpty.count >= 2 {
+            let tabs = nonEmpty.map { $0.components(separatedBy: "\t").count }
+            if let first = tabs.first, first >= 2, tabs.allSatisfy({ $0 == first }) {
+                var b = NoteBlock(kind: .table, text: "")
+                b.rows = nonEmpty.map { $0.components(separatedBy: "\t").map { $0.trimmingCharacters(in: .whitespaces) } }
+                return [b]
+            }
+            let rows = ReadingImport.parseCSV(nonEmpty.joined(separator: "\n"))
+            if let first = rows.first?.count, first >= 2, rows.count >= 2, rows.allSatisfy({ $0.count == first }),
+               rows.joined().allSatisfy({ $0.count < 60 }) {          // short cells: data, not sentences with commas
+                var b = NoteBlock(kind: .table, text: "")
+                b.rows = rows.map { $0.map { $0.trimmingCharacters(in: .whitespaces) } }
+                return [b]
+            }
+        }
+        // Code: many lines ending in ; { } or starting with typical keywords.
+        if !markdown, nonEmpty.count >= 3, !text.contains("```") {
+            let codeish = nonEmpty.filter { l in
+                let t = l.trimmingCharacters(in: .whitespaces)
+                return t.hasSuffix(";") || t.hasSuffix("{") || t == "}" || ["func ", "let ", "var ", "const ", "def ", "import ", "return ", "if (", "class ", "#include"].contains { t.hasPrefix($0) }
+            }.count
+            if Double(codeish) / Double(nonEmpty.count) > 0.5 {
+                var b = NoteBlock(kind: .code, text: text)
+                b.lang = ""
+                return [b]
+            }
+        }
+        // Markdown (or plain paragraphs, which Markdown reads too).
+        let looksMarkdown = markdown || lines.contains { l in
+            let t = l.trimmingCharacters(in: .whitespaces)
+            return t.hasPrefix("#") || t.hasPrefix("- ") || t.hasPrefix("* ") || t.hasPrefix("> ") || t.hasPrefix("|") || t.hasPrefix("```")
+                || t.range(of: #"^\d+[.)] "#, options: .regularExpression) != nil || t.hasPrefix("[ ]") || t.hasPrefix("- [")
+                || t.hasPrefix("• ") || t.hasPrefix("◦ ")
+        }
+        let source = looksMarkdown ? text.replacingOccurrences(of: "• ", with: "- ").replacingOccurrences(of: "◦ ", with: "    - ") : rejoin(text)
+        let r = MarkdownImport.parse(source, dir: "")
+        var out = r.blocks
+        if let t = r.title, !t.isEmpty, !out.contains(where: { $0.text == t }) { out.insert(NoteBlock(kind: .heading, text: t), at: 0) }
+        return tidy(out.isEmpty ? [NoteBlock(kind: .text, text: text)] : out)
+    }
+
+    /// Joins lines that were hard-wrapped mid-sentence (emails, PDFs) back into paragraphs; blank lines stay as breaks.
+    static func rejoin(_ text: String) -> String {
+        let paras = text.components(separatedBy: "\n\n")
+        return paras.map { p in
+            let ls = p.components(separatedBy: "\n").map { $0.trimmingCharacters(in: .whitespaces) }.filter { !$0.isEmpty }
+            var out = ""
+            for l in ls {
+                if out.isEmpty { out = l; continue }
+                let endsSentence = out.last.map { ".!?:;\"”)".contains($0) } ?? true
+                let startsLower = l.first.map { $0.isLowercase } ?? false
+                out += (!endsSentence || startsLower) ? " " + l : "\n\n" + l
+            }
+            return out
+        }.joined(separator: "\n\n")
+    }
+
+    /// Even spacing: no empty blocks at the ends, never two empty lines in a row, no trailing spaces.
+    static func tidy(_ blocks: [NoteBlock]) -> [NoteBlock] {
+        var out: [NoteBlock] = []
+        for var b in blocks {
+            b.text = b.text.trimmingCharacters(in: .whitespaces)
+            let empty = b.text.isEmpty && [.text, .bullet, .numbered, .quote].contains(b.kind)
+            if empty && (out.isEmpty || (out.last.map { $0.text.isEmpty && $0.kind == .text } ?? false)) { continue }
+            out.append(b)
+        }
+        while let last = out.last, last.kind == .text, last.text.isEmpty { out.removeLast() }
+        return out
+    }
+}

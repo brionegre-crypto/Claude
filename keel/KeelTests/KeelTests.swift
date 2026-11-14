@@ -220,6 +220,35 @@ final class KeelTests: XCTestCase {
         XCTAssertFalse(r.paras.joined().contains("var x"))
     }
 
+    // MARK: Smart paste
+
+    func testPasteSpreadsheetBecomesTable() {
+        let b = SmartPaste.blocks(from: "Name\tQty\nApples\t3\nPears\t5")
+        XCTAssertEqual(b.count, 1)
+        XCTAssertEqual(b.first?.kind, .table)
+        XCTAssertEqual(b.first?.rows?[2], ["Pears", "5"])
+    }
+
+    func testPasteLinkBecomesBookmark() {
+        let b = SmartPaste.blocks(from: "https://example.com/article")
+        XCTAssertEqual(b.first?.kind, .bookmark)
+        XCTAssertEqual(b.first?.refId, "https://example.com/article")
+    }
+
+    func testPasteMarkdownKeepsStructure() {
+        let b = SmartPaste.blocks(from: "## Plan\n\n\n\n- one\n- two\n- [ ] call Dana")
+        XCTAssertEqual(b.first?.kind, .heading2)
+        XCTAssertEqual(b.filter { $0.kind == .bullet }.count, 2)
+        XCTAssertEqual(b.filter { $0.kind == .todo }.count, 1)
+        XCTAssertFalse(b.contains { $0.kind == .text && $0.text.isEmpty })        // no stray empty lines
+    }
+
+    func testPasteRejoinsHardWrappedParagraphs() {
+        let b = SmartPaste.blocks(from: "This sentence was wrapped\nin the middle by an email app.\n\nSecond paragraph.")
+        XCTAssertEqual(b.count, 2)
+        XCTAssertEqual(b.first?.text, "This sentence was wrapped in the middle by an email app.")
+    }
+
     // MARK: Layout settings
 
     func testTabBarAlwaysStartsWithToday() {

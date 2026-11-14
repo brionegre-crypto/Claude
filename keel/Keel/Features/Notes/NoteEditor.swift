@@ -356,6 +356,7 @@ struct NoteEditor: View {
             .padding(.leading, CGFloat(min(blk.indent ?? 0, 8)) * 24)
             .foregroundStyle(colors.text ?? DS.Palette.ink)
             .padding(.vertical, blk.kind == .callout || colors.background != nil ? 8 : 2)
+            .padding(.top, [.heading, .heading2, .heading3].contains(blk.kind) && note.blocks.first?.id != blk.id ? (blk.kind == .heading ? 14 : 8) : 0)   // room above headings
             .padding(.horizontal, blk.kind == .callout || colors.background != nil ? 10 : 0)
             .background(blk.kind == .callout ? (colors.background ?? DS.Palette.elevated) : (colors.background ?? .clear), in: .rect(cornerRadius: 8))
             let n = NoteComments.open(note, block: blk.id)
@@ -624,6 +625,18 @@ struct NoteEditor: View {
 
     private func handleTyping(_ b: Binding<NoteBlock>, old: String, new: String) {
         let id = b.wrappedValue.id
+        // A paste with several lines: turn it into proper blocks (headings, lists, tables, links) instead of one long line.
+        if new.count - old.count > 1, b.wrappedValue.kind != .code {
+            let prefix = new.commonPrefix(with: old)
+            let suffixLen = zip(old.reversed(), new.reversed()).prefix { $0 == $1 }.count
+            let start = new.index(new.startIndex, offsetBy: prefix.count)
+            let end = new.index(new.endIndex, offsetBy: -min(suffixLen, new.count - prefix.count))
+            let inserted = start <= end ? String(new[start..<end]) : ""
+            if inserted.contains("\n") {
+                pasteBlocks(SmartPaste.blocks(from: inserted), into: b, keeping: prefix + String(old.suffix(suffixLen)))
+                return
+            }
+        }
         // Return → next block (lists continue; an empty list item ends the list).
         if new.contains("\n") {
             let parts = new.split(separator: "\n", maxSplits: 1, omittingEmptySubsequences: false)
@@ -671,6 +684,43 @@ struct NoteEditor: View {
             if startsWord && !word.contains(" ") && word.count <= 24 { mentionFor = id; mentionQuery = String(word) }
             else if mentionFor == id { mentionFor = nil }
         } else if mentionFor == id { mentionFor = nil }
+    }
+
+    /// Puts pasted blocks in place of (or after) the block you were typing in.
+    private func pasteBlocks(_ pasted: [NoteBlock], into b: Binding<NoteBlock>, keeping: String) {
+        guard !pasted.isEmpty, let i = note.blocks.firstIndex(where: { $0.id == b.wrappedValue.id }) else { return }
+        let kept = keeping.trimmingCharacters(in: .whitespaces)
+        var list = pasted
+        if kept.isEmpty {
+            list[0].id = note.blocks[i].id
+            note.blocks[i] = list[0]
+            note.blocks.insert(contentsOf: list.dropFirst(), at: i + 1)
+        } else {
+            note.blocks[i].text = kept
+            note.blocks.insert(contentsOf: list, at: i + 1)
+        }
+        editing = nil; focused = nil
+        UndoCenter.shared.notify("Pasted \(pasted.count) block\(pasted.count == 1 ? "" : "s")")
+        Haptics.tap()
+    }
+
+    private func pasteFromClipboard() {
+        let pasted = SmartPaste.fromPasteboard()
+        guard !pasted.isEmpty else { UndoCenter.shared.notify("Nothing to paste"); return }
+        if let id = focused ?? editing, let i = note.blocks.firstIndex(where: { $0.id == id }) {
+            if note.blocks[i].text.isEmpty && note.blocks[i].kind == .text {
+                var list = pasted; list[0].id = note.blocks[i].id
+                note.blocks[i] = list[0]; note.blocks.insert(contentsOf: list.dropFirst(), at: i + 1)
+            } else {
+                note.blocks.insert(contentsOf: pasted, at: i + 1)
+            }
+        } else {
+            if let last = note.blocks.last, last.kind == .text, last.text.isEmpty { note.blocks.removeLast() }
+            note.blocks += pasted
+        }
+        editing = nil; focused = nil
+        UndoCenter.shared.notify("Pasted \(pasted.count) block\(pasted.count == 1 ? "" : "s")")
+        Haptics.tap()
     }
 
     private func insertBlock(after id: UUID, kind: BlockKind, text: String, indent: Int? = nil) {
@@ -935,6 +985,7 @@ struct NoteEditor: View {
                 #endif
                 Button("AI meeting notes", systemImage: "waveform.badge.mic") { recording = true }
                 Button("PDF to read and highlight", systemImage: "doc.richtext") { importingPDF = true }
+                Button("Paste with formatting", systemImage: "doc.on.clipboard") { pasteFromClipboard() }
                 Divider()
                 Button("Sub-page", systemImage: "doc.badge.plus") {
                     let nb = NoteBlock(kind: .text, text: "")
@@ -1011,6 +1062,7 @@ struct NoteEditor: View {
                 Button { setIndent(i, by: -1) } label: { Image(systemName: "decrease.indent") }.accessibilityLabel("Outdent")
                     .disabled((note.blocks[i].indent ?? 0) == 0)
                 Button { setIndent(i, by: 1) } label: { Image(systemName: "increase.indent") }.accessibilityLabel("Indent")
+                Button { pasteFromClipboard() } label: { Image(systemName: "doc.on.clipboard") }.accessibilityLabel("Paste with formatting")
             }
             Spacer()
             Button("Done") { focused = nil; editing = nil; slashFor = nil; mentionFor = nil }
