@@ -178,6 +178,8 @@ final class SyncEngine {
 
         // 3b. Booking link: new bookings onto your calendar; keep the open times fresh.
         await BookingLink.refreshIfDue()
+        // 3c. Instant mail: keep Gmail and Outlook telling your server about new mail.
+        await MailPush.refresh(ctx: ctx)
 
         // 4. Claude connector: apply what Claude queued, then publish a fresh snapshot
         await ClaudeBridge.applyQueuedActions(ctx: ctx)

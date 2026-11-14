@@ -4,6 +4,8 @@ import { handleNotion, infoPage, privacyPage, termsPage } from "./notion";
 import { handleAppleAuth, handleDeleteAccount, isSession } from "./auth";
 import { handleShare } from "./share";
 import { handleBooking } from "./booking";
+import { handlePush } from "./push";
+import { handleSupport } from "./support";
 
 export interface Env {
   KEEL: KVNamespace;
@@ -14,6 +16,12 @@ export interface Env {
   NOTION_CLIENT_ID: string;      // public integration (Sign in with Notion)
   NOTION_CLIENT_SECRET: string;
   OWNER_APPLE_SUB?: string;      // optional: pin the owner's Apple account (otherwise the first sign-in claims it)
+  APNS_KEY?: string;             // instant mail alerts (see push.ts)
+  APNS_KEY_ID?: string;
+  APNS_TEAM_ID?: string;
+  PUSH_SECRET?: string;
+  GMAIL_PUBSUB_TOPIC?: string;
+  SUPPORT_EMAIL?: string;        // shown on /support
 }
 
 /**
@@ -23,8 +31,8 @@ export interface Env {
  *   POST /snapshot      iPhone uploads a small JSON snapshot for the Claude connector.            [device token]
  *   GET  /actions       iPhone pulls actions Claude queued (add_task, start_focus), then clears. [device token]
  *   POST /mcp           Remote MCP server for Claude / Claude Duet custom connectors.             [MCP token]
- *   POST /push/gmail    Gmail Pub/Sub push → silent APNs to wake the app.        (TODO: APNs key)
- *   POST /push/graph    Microsoft Graph change notifications → silent APNs.      (TODO: APNs key)
+ *   POST /push/*        Instant mail alerts: Gmail/Outlook notices → silent push to wake the app (see push.ts).
+ *   GET  /support       Support page and contact form (App Store Support URL).
  *   GET  /              Status page: what's set up, and the Notion redirect URI to copy.          [public]
  *   GET  /privacy /terms Pages Notion asks public integrations to link to.                       [public]
  *   /notion/start, /notion/callback, /notion/redeem, /notion/refresh   Sign in with Notion.     [public, see notion.ts]
@@ -43,6 +51,14 @@ export default {
     if (url.pathname.startsWith("/notion/")) return handleNotion(req, env);
     if (url.pathname === "/auth/apple" && req.method === "POST") return handleAppleAuth(req, env);
     if (url.pathname === "/auth/account" && req.method === "DELETE") return handleDeleteAccount(bearer, env);
+    if (url.pathname === "/support" || url.pathname === "/support/messages") {
+      const r = await handleSupport(req, env, url, device);
+      if (r) return r;
+    }
+    if (url.pathname.startsWith("/push/")) {
+      const r = await handlePush(req, env, url, device);
+      if (r) return r;
+    }
     if (/^\/(booking|b)(\/|$)/.test(url.pathname)) {
       const r = await handleBooking(req, env, url, device);
       if (r) return r;
@@ -72,14 +88,6 @@ export default {
     }
     if (url.pathname === "/mcp" && req.method === "POST") {
       return mcp ? handleMCP(req, env) : unauthorized();
-    }
-    if (url.pathname === "/push/gmail" || url.pathname === "/push/graph") {
-      // Graph validation handshake: echo validationToken.
-      const v = url.searchParams.get("validationToken");
-      if (v) return new Response(v, { headers: { "content-type": "text/plain" } });
-      // TODO: send a silent APNs push (content-available: 1) to the device so it runs SyncEngine.syncAll().
-      // Requires an APNs auth key (.p8) from developer.apple.com stored as a secret, and the device token.
-      return new Response(null, { status: 202 });
     }
     return json({ error: "not found" }, 404);
   },

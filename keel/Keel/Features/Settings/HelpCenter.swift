@@ -495,6 +495,9 @@ struct HelpCenterView: View {
                 Section {
                     NavigationLink { FeatureGuideView() } label: { Label("Every feature, explained", systemImage: "book.pages") }
                     NavigationLink { AssistantView() } label: { Label("Ask Keel anything", systemImage: "bubble.left.and.text.bubble.right") }
+                    if let support = KeelServer.baseURL?.appendingPathComponent("support") {
+                        Link(destination: support) { Label("Contact support", systemImage: "envelope") }
+                    }
                 }
             }
         }

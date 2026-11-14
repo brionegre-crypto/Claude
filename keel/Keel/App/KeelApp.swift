@@ -461,6 +461,22 @@ struct KeelCommands: Commands {
 
 /// Press and hold the Keel icon: New Task, New Note, Start Focus, Record a Meeting, Search.
 final class KeelAppDelegate: NSObject, UIApplicationDelegate {
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
+        application.registerForRemoteNotifications()       // silent pushes for instant mail (no permission prompt needed)
+        return true
+    }
+
+    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        MainActor.assumeIsolated { MailPush.register(deviceToken) }
+    }
+
+    /// Your Keel server says new mail arrived: fetch it now (alerts come from Keel's usual rules).
+    func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any]) async -> UIBackgroundFetchResult {
+        guard userInfo["keel"] as? String == "mail" else { return .noData }
+        await SyncEngine.shared.syncAll()
+        return .newData
+    }
+
     func application(_ application: UIApplication, configurationForConnecting session: UISceneSession,
                      options: UIScene.ConnectionOptions) -> UISceneConfiguration {
         if let item = options.shortcutItem { KeelQuickActions.perform(item.type, delay: 0.6) }   // Keel wasn't running yet

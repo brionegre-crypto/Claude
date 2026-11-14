@@ -98,7 +98,7 @@ Why these:
 **Keywords (100 characters, commas, no spaces):**
 `adhd,planner,focus,to do,tasks,habits,email,calendar,notes,routine,reminders,executive function`
 
-**Support URL:** required. Either a simple page, or for now `https://keel-backend.bbritt2223.workers.dev/privacy` plus your support email in the description. A real page is better; Claude can add a `/support` page to the server.
+**Support URL:** `https://keel-backend.bbritt2223.workers.dev/support` (answers to common questions plus a contact form). To also show an email address there, add a variable `SUPPORT_EMAIL` in Cloudflare → Workers & Pages → keel-backend → Settings → Variables and Secrets. Messages sent with the form are kept on your server for 90 days.
 
 **Marketing URL:** optional, leave blank.
 
