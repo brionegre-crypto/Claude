@@ -105,25 +105,52 @@ extension Data {
 
 /// Tokens and passwords live in the Keychain, never in SwiftData or UserDefaults.
 enum KeychainStore {
+    // Saved to iCloud Keychain (synchronizable), so AI keys, mail sign-ins and your Keel account are already there
+    // on your Mac and iPad. Still end-to-end encrypted by Apple and readable only by Keel.
+    private static let any = kSecAttrSynchronizableAny
+
     static func save(_ value: String, for key: String) {
-        let q: [String: Any] = [kSecClass as String: kSecClassGenericPassword, kSecAttrAccount as String: key]
-        SecItemDelete(q as CFDictionary)
-        var add = q
-        add[kSecValueData as String] = Data(value.utf8)
-        add[kSecAttrAccessible as String] = kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly // allows background sync
+        SecItemDelete([kSecClass as String: kSecClassGenericPassword, kSecAttrAccount as String: key,
+                       kSecAttrSynchronizable as String: any] as CFDictionary)
+        let add: [String: Any] = [kSecClass as String: kSecClassGenericPassword, kSecAttrAccount as String: key,
+                                  kSecValueData as String: Data(value.utf8),
+                                  kSecAttrSynchronizable as String: true,
+                                  kSecAttrAccessible as String: kSecAttrAccessibleAfterFirstUnlock]   // allows background sync
         SecItemAdd(add as CFDictionary, nil)
     }
 
     static func read(_ key: String) -> String? {
         let q: [String: Any] = [kSecClass as String: kSecClassGenericPassword, kSecAttrAccount as String: key,
+                                kSecAttrSynchronizable as String: any,
                                 kSecReturnData as String: true, kSecMatchLimit as String: kSecMatchLimitOne]
         var out: AnyObject?
         guard SecItemCopyMatching(q as CFDictionary, &out) == errSecSuccess, let d = out as? Data else { return nil }
         return String(data: d, encoding: .utf8)
     }
 
+    /// Removes it here and on your other devices.
     static func delete(_ key: String) {
-        SecItemDelete([kSecClass as String: kSecClassGenericPassword, kSecAttrAccount as String: key] as CFDictionary)
+        SecItemDelete([kSecClass as String: kSecClassGenericPassword, kSecAttrAccount as String: key,
+                       kSecAttrSynchronizable as String: any] as CFDictionary)
+    }
+
+    /// One time: sign-ins saved before (this-device-only) move to iCloud Keychain so your other devices get them.
+    static func moveToICloudKeychain() {
+        let flag = "keychain.icloud.v1"
+        guard !UserDefaults.standard.bool(forKey: flag) else { return }
+        let q: [String: Any] = [kSecClass as String: kSecClassGenericPassword, kSecAttrSynchronizable as String: false,
+                                kSecReturnAttributes as String: true, kSecReturnData as String: true,
+                                kSecMatchLimit as String: kSecMatchLimitAll]
+        var out: AnyObject?
+        if SecItemCopyMatching(q as CFDictionary, &out) == errSecSuccess, let items = out as? [[String: Any]] {
+            for item in items {
+                guard let account = item[kSecAttrAccount as String] as? String, !account.isEmpty,
+                      item[kSecAttrService as String] == nil || (item[kSecAttrService as String] as? String ?? "").isEmpty,
+                      let data = item[kSecValueData as String] as? Data, let value = String(data: data, encoding: .utf8) else { continue }
+                save(value, for: account)
+            }
+        }
+        UserDefaults.standard.set(true, forKey: flag)
     }
 
     static func saveTokens(_ t: OAuthManager.Tokens, account: String) {

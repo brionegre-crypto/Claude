@@ -191,6 +191,7 @@ struct MailAccountsSettings: View {
                                 colorHex: kind == .gmail ? "#EA4335" : "#0A64D6")
             KeychainStore.saveTokens(tokens, account: a.id)
             ctx.insert(a)
+            MailAccountSync.didAdd(a.id, ctx: ctx)               // set it up on your other devices too
             Haptics.success()
             await SyncEngine.shared.syncAll()
         } catch { self.error = error.localizedDescription }
@@ -262,6 +263,7 @@ struct MailAccountDetail: View {
         KeychainStore.delete("tokens.\(id)")
         KeychainStore.delete("imap.\(id)")
         ctx.delete(account)
+        MailAccountSync.didRemove(id, ctx: ctx)
         try? ctx.save()
         dismiss()
     }
@@ -968,6 +970,7 @@ struct ICloudSetupView: View {
             KeychainStore.save(pass, for: "imap.\(a.id)")
             if kind != .icloud { verified.save(accountId: a.id) }
             ctx.insert(a)
+            MailAccountSync.didAdd(a.id, ctx: ctx)               // set it up on your other devices too
             Haptics.success()
             dismiss()
             await SyncEngine.shared.syncAll()

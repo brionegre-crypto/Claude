@@ -39,6 +39,10 @@ enum HelpArea: String, CaseIterable, Identifiable {
 enum HelpLibrary {
     static let all: [HowTo] = [
         // Getting started
+        HowTo(id: "settingssync", area: .start, question: "Have my settings and AI keys on my Mac and iPad too",
+              steps: ["Use the same Apple Account on each device, with iCloud Keychain turned on (Settings → your name → iCloud → Passwords and Keychain).", "Your AI keys (Claude, ChatGPT, Gemini), mail sign-ins, Notion and your Keel account arrive by themselves through iCloud Keychain.", "Your settings follow too: look and fonts, AI model, mail layout and tabs, focus, notes, booking link and more. Change one anywhere and the others match within a minute or so.", "Mail accounts you add on one device are set up on the others once their sign-in arrives."],
+              tip: "A few things stay per device on purpose: which device syncs Apple Reminders, which calendars are shown, and Apple Health.",
+              keywords: "sync settings mac ipad keys api key claude chatgpt gemini same everywhere icloud keychain"),
         HowTo(id: "booking", area: .calendar, question: "Let people book time with me (booking link)",
               steps: ["Calendar → the options button (top left) → Booking link.", "Name the meeting, pick its length, your hours and how far ahead people can book, then turn on Booking link.", "Share or copy the link. People see only your free times (in their own time zone), pick one, and leave their name and email.", "The booking lands on your calendar with their details, and you get a notification."],
               tip: "Only the open times are sent to your Keel server, never your events. Keel refreshes them about every 30 minutes and right after each booking.",

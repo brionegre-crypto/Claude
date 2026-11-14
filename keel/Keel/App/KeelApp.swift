@@ -16,7 +16,8 @@ struct KeelApp: App {
         TaskAlerts.registerCategories()
         WatchBridge.shared.activate()
         KeelDiagnostics.shared.start()
-        KeelTips.configure()                     // one-time tips that explain features where you use them           // crash & hang reports (kept on device; shared only if you turn it on)
+        KeelTips.configure()
+        KeychainStore.moveToICloudKeychain()     // AI keys and sign-ins follow you to your Mac and iPad                     // one-time tips that explain features where you use them           // crash & hang reports (kept on device; shared only if you turn it on)
         if !UserDefaults.standard.bool(forKey: Prefs.reviewReminderOff) { WeeklyReview.scheduleReminder() }
         if !UserDefaults.standard.bool(forKey: "dayReview.off") { DayReviewView.scheduleReminder() }
         Journal.scheduleReminder()
@@ -40,6 +41,9 @@ struct KeelApp: App {
                 .task {
                     // Task, focus, habit and promise alerts all need this once.
                     _ = try? await UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge])
+                    SettingsSync.shared.start()                          // your settings on every device
+                    MailAccountSync.adopt(ctx: container.mainContext)    // mail accounts added on your other devices
+                    MailAccountSync.publish(ctx: container.mainContext)
                     SyncEngine.shared.configure(container: container)
                     MedEngine.scheduleAll(ctx: container.mainContext)
                     if TaskAlarms.globalOn { _ = await TaskAlarms.authorize() }   // asks once for full-screen task alarms
@@ -76,7 +80,8 @@ struct KeelApp: App {
                     if Throttle.due("backup", every: 6 * 3600) { BrainBackup.backupIfDue(ctx: ctx) }
                     if Throttle.due("trash", every: 24 * 3600) { NoteTrash.purgeOld() }
                     if MarkdownMirror.isOn, Throttle.due("mdpull", every: 600) { _ = MarkdownMirror.pull(ctx: ctx) }
-                    if Throttle.due("spaces.changes", every: 600) { await SpaceChanges.check() }     // "Sam updated Groceries"
+                    if Throttle.due("spaces.changes", every: 600) { await SpaceChanges.check() }
+                    MailAccountSync.adopt(ctx: ctx)                     // sign-ins may arrive from iCloud Keychain a little later     // "Sam updated Groceries"
                 }
             }
             if phase == .background {

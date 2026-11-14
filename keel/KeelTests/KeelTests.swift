@@ -434,4 +434,19 @@ final class KeelTests: XCTestCase {
         XCTAssertTrue(NotesDatabase.views.contains { $0.id == "timeline" })
         XCTAssertTrue(FocusSound.Kind.allCases.contains(.rain) && FocusSound.Kind.allCases.contains(.fan))
     }
+
+    // MARK: Settings on every device
+
+    func testOnlyKeelSettingsSyncAndDeviceOnesStayLocal() {
+        XCTAssertTrue(SettingsSync.syncs("ai.provider"))
+        XCTAssertTrue(SettingsSync.syncs("ai.writer.default"))
+        XCTAssertTrue(SettingsSync.syncs("look.theme"))
+        XCTAssertTrue(SettingsSync.syncs("imap.server.icloud:me@icloud.com"))      // so mail works on the Mac too
+        XCTAssertFalse(SettingsSync.syncs("reminders.bridge"))                    // only one device syncs Reminders
+        XCTAssertFalse(SettingsSync.syncs("calendar.hidden"))                     // calendar ids differ per device
+        XCTAssertFalse(SettingsSync.syncs("throttle.backup"))
+        XCTAssertFalse(SettingsSync.syncs("AppleLanguages"))                      // iOS's own settings
+        XCTAssertFalse(SettingsSync.syncs("NSInterfaceStyle"))
+        XCTAssertFalse(SettingsSync.syncs("com.apple.something"))
+    }
 }

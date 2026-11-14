@@ -32,7 +32,7 @@ fi
 if [ "${KEEL_ICLOUD:-0}" != "1" ]; then
   sed -i '' '/KEEL_ICLOUD/d' project.yml
   sed -i '' '/com.apple.developer.applesignin/d' project.yml
-  for key in com.apple.developer.icloud-container-identifiers com.apple.developer.icloud-services com.apple.developer.aps-environment com.apple.developer.applesignin; do
+  for key in com.apple.developer.ubiquity-kvstore-identifier com.apple.developer.icloud-container-identifiers com.apple.developer.icloud-services com.apple.developer.aps-environment com.apple.developer.applesignin; do
     /usr/libexec/PlistBuddy -c "Delete :$key" Keel/KeelMac.entitlements 2>/dev/null || true
   done
   echo "iCloud sync and Sign in with Apple left out of this build (set KEEL_ICLOUD=1 once the App ID has them)."
