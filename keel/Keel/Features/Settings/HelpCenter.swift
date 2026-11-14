@@ -39,6 +39,14 @@ enum HelpArea: String, CaseIterable, Identifiable {
 enum HelpLibrary {
     static let all: [HowTo] = [
         // Getting started
+        HowTo(id: "aiwrite", area: .notes, question: "Write with AI in a page (Claude, ChatGPT, Gemini or Apple Intelligence)",
+              steps: ["Ask anywhere: on an empty line press space, or type /ai and pick Ask AI. Say what you want (\"draft an agenda for Monday\") and watch it write.",
+                      "Pick the model with the chip at the top of the AI box. Your default is in Settings → AI & Privacy → AI Writing in Notes.",
+                      "Edit what you select: select words (or put the cursor on a line), tap ✨ above the keyboard and choose Improve, Shorten, Fix grammar, Change tone, Turn into a list or table, or tell it what to change. Then Replace, Insert below, Retry or discard.",
+                      "Live AI blocks: type /AI block and write what it should always show, like \"Summarize this page\" or \"List open questions\". Tap ↻ to refresh; it also refreshes itself when you open the page after a few hours.",
+                      "Whole page: tap ✨ in the top bar → Page actions for a summary, TL;DR at the top, action items, a better title, added structure or open questions."],
+              tip: "Apple Intelligence is free and stays on your device. Claude, ChatGPT and Gemini use your own API key (Settings → AI & Privacy) and bill you per use. Every AI change is saved in Version history, so you can undo it.",
+              keywords: "ai write notion ai claude chatgpt gpt openai gemini model rewrite summarize generate draft brainstorm selection tone grammar"),
         HowTo(id: "signin", area: .start, question: "Use the same Keel on iPhone, iPad and Mac",
               steps: ["Open Settings → Sign in to Keel (top of Settings) and tap Sign in with Apple.", "Do the same on your other devices with the same Apple Account.", "Close and reopen Keel once. Your tasks, notes, habits and everything you make now sync through your private iCloud.", "Add your mail accounts on each device in Settings → Mail Accounts; email is fetched by each device, not copied to iCloud."],
               tip: "Signing in also connects this device to your Keel server, so Claude works without typing an access code.",

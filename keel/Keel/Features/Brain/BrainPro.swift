@@ -105,8 +105,10 @@ extension SpecialBlock {
         .init(id: "progress", title: "Progress bar", subtitle: "How many to-dos on this page are done", icon: "chart.bar.fill", keywords: ["progress", "percent", "done"], kind: .code),
         .init(id: "chart", title: "Database chart", subtitle: "Count a database's rows by a property", icon: "chart.pie.fill", keywords: ["chart", "graph", "database", "pie", "bar"], kind: .code),
         .init(id: "file", title: "File", subtitle: "Attach any file", icon: "paperclip", keywords: ["file", "attachment", "upload"], kind: .code),
+        .init(id: "aiblock", title: "AI block", subtitle: "A live AI answer that refreshes itself, e.g. a page summary", icon: "sparkles.rectangle.stack", keywords: ["ai", "live", "summary", "auto", "smart"], kind: .code),
     ]
-    static let moreLangs = ["columns": columns, "button": button, "progress": progress, "chart": chart, "file": file]
+    static let aiblock = "keel-aiblock"     // text = instruction, body = last answer, refId = model
+    static let moreLangs = ["columns": columns, "button": button, "progress": progress, "chart": chart, "file": file, "aiblock": aiblock]
 }
 
 struct ColumnsBlockView: View {

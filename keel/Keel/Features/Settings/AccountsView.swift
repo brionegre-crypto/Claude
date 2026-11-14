@@ -761,6 +761,7 @@ struct PrivacySettings: View {
                      ? "Free and private. Runs on this iPhone."
                      : "Used for planning, drafts and summaries when Apple Intelligence isn't enough. Requests go from this iPhone straight to the provider, and they bill you per use. Ask Keel and email sorting stay on Apple Intelligence.")
             }
+            AIWriterSettings()
             Section {
                 LabeledContent("Apple Intelligence", value: AIRouter.shared.onDeviceAvailable ? "On" : "Off")
                 if !AIRouter.shared.onDeviceAvailable {

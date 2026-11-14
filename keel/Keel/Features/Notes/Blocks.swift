@@ -27,6 +27,7 @@ struct SlashCommand: Identifiable {
         .init(id: "page", title: "Page", subtitle: "A sub-page inside this one", icon: "doc", keywords: ["subpage", "nested"], kind: .page),
         .init(id: "bookmark", title: "Web bookmark", subtitle: "Save a link", icon: "link", keywords: ["url", "link", "web"], kind: .bookmark),
         .init(id: "image", title: "Image", subtitle: "Photo from your library", icon: "photo", keywords: ["picture", "photo"], kind: .image),
+        .init(id: "ai", title: "Ask AI", subtitle: "Write, brainstorm or draft with the model you choose", icon: "sparkles", keywords: ["ai", "write", "draft", "generate", "brainstorm", "claude", "chatgpt", "gemini", "gpt"], kind: .text),
         .init(id: "meeting", title: "AI meeting notes", subtitle: "Record, transcribe and write up with context", icon: "waveform.badge.mic", keywords: ["meeting", "record", "transcribe", "notes", "ai"], kind: .text),
     ] + SpecialBlock.commands + SpecialBlock.moreCommands
 

@@ -62,6 +62,7 @@ struct NoteEditor: View {
     @State private var zen = false
     @State private var showLocalGraph = false
     @State private var personSheet: Person?
+    @State private var aiWrite: AIWriteRequest?
     @AppStorage(PageLook.widthKey) private var pageWidth = "comfortable"
     @Environment(\.openWindow) private var openWindow
     @Environment(\.supportsMultipleWindows) private var multiWindow
@@ -132,6 +133,9 @@ struct NoteEditor: View {
             }
         } message: { Text("It stays in Recently deleted for 30 days, so you can bring it back.") }
         .sheet(item: $personSheet) { p in NavigationStack { PersonPageView(person: p) } }
+        .sheet(item: $aiWrite) { r in
+            AIWriteSheet(request: r, pageTitle: note.title, pageText: note.plainText) { text, replace in applyAI(r, text: text, replace: replace) }
+        }
         .toolbar(zen ? .hidden : .automatic, for: .navigationBar)
         .statusBarHidden(zen)
         .overlay(alignment: .topTrailing) {
@@ -500,6 +504,8 @@ struct NoteEditor: View {
         case SpecialBlock.progress: ProgressBlockView(note: note)
         case SpecialBlock.chart: ChartBlockView(dbId: blk.refId) { pickBlock = BlockPickTarget(id: blk.id, databasesOnly: true) }
         case SpecialBlock.file: FileBlockView(attachmentId: blk.refId)
+        case SpecialBlock.aiblock:
+            AIBlockView(block: b, pageTitle: note.title, pageText: note.plainText)
         case "keel-audio":
             AudioBlockView(attachmentId: blk.refId)
         case "keel-pdf":
@@ -665,6 +671,13 @@ struct NoteEditor: View {
             insertBlock(after: id, kind: next, text: after, indent: level)
             return
         }
+        // Space on an empty line: Ask AI (like Notion). Turn off in Settings → AI & Privacy.
+        if old.isEmpty, new == " ", b.wrappedValue.kind == .text, !note.isLocked,
+           UserDefaults.standard.object(forKey: AIWriter.spaceKey) as? Bool ?? true {
+            b.wrappedValue.text = ""
+            aiWrite = AIWriteRequest(mode: .ask, blockId: id)
+            return
+        }
         // Markdown shortcuts at the start of a block.
         if b.wrappedValue.kind == .text {
             let shortcuts: [(String, BlockKind)] = [("- ", .bullet), ("* ", .bullet), ("[] ", .todo), ("[ ] ", .todo), ("1. ", .numbered),
@@ -764,6 +777,19 @@ struct NoteEditor: View {
     private func apply(_ cmd: SlashCommand, to b: Binding<NoteBlock>) {
         slashFor = nil
         b.wrappedValue.text = ""
+        if cmd.id == "ai" {                        // Ask AI: the answer is written right here
+            editing = nil
+            aiWrite = AIWriteRequest(mode: .ask, blockId: b.wrappedValue.id)
+            return
+        }
+        if cmd.id == "aiblock" {
+            b.wrappedValue.kind = .code
+            b.wrappedValue.lang = SpecialBlock.aiblock
+            editing = nil
+            insertBlock(after: b.wrappedValue.id, kind: .text, text: "")
+            Haptics.tap()
+            return
+        }
         if cmd.id == "meeting" {                   // AI meeting notes go straight into this page
             editing = nil
             recording = true
@@ -870,7 +896,7 @@ struct NoteEditor: View {
     @ViewBuilder
     private func blockMenu(_ b: Binding<NoteBlock>) -> some View {
         Menu("Turn into", systemImage: "arrow.triangle.2.circlepath") {
-            ForEach(SlashCommand.all.filter { ![.page, .image, .table, .bookmark, .divider].contains($0.kind) && $0.id != "meeting" && !SpecialBlock.commandIds.contains($0.id) }) { cmd in
+            ForEach(SlashCommand.all.filter { ![.page, .image, .table, .bookmark, .divider].contains($0.kind) && $0.id != "meeting" && $0.id != "ai" && !SpecialBlock.commandIds.contains($0.id) }) { cmd in
                 Button(cmd.title, systemImage: cmd.icon) { b.wrappedValue.kind = cmd.kind; if cmd.kind == .code && SpecialBlock.kind(b.wrappedValue) != nil { b.wrappedValue.lang = nil }; if cmd.kind == .callout && b.wrappedValue.icon == nil { b.wrappedValue.icon = "💡" } }
             }
         }
@@ -908,7 +934,14 @@ struct NoteEditor: View {
             let t = QuickAdd.create(title, in: ctx); t.sourceNoteId = note.id
             UndoCenter.shared.notify("Added “\(t.title)” to Tasks")
         }
-        Button("Improve writing", systemImage: "sparkles") {
+        Menu("Edit with AI", systemImage: "sparkles") {
+            ForEach(AIAction.edits) { a in
+                Button(a.title, systemImage: a.icon) { aiWrite = AIWriteRequest(mode: .edit, blockId: b.wrappedValue.id, source: b.wrappedValue.text, preset: a) }
+            }
+            Button("Tell AI what to change…", systemImage: "text.cursor") { aiWrite = AIWriteRequest(mode: .edit, blockId: b.wrappedValue.id, source: b.wrappedValue.text) }
+        }
+        .disabled(b.wrappedValue.text.isEmpty || note.isLocked)
+        Button("Quick improve", systemImage: "wand.and.stars") {
             let original = b.wrappedValue.text
             Task {
                 aiWorking = true
@@ -1001,6 +1034,19 @@ struct NoteEditor: View {
             } label: { Image(systemName: "plus.circle") }
             .accessibilityLabel("Insert")
             Menu {
+                Button("Ask AI…", systemImage: "sparkles") { aiWrite = AIWriteRequest(mode: .ask, blockId: note.blocks.last?.id) }
+                Menu("Page actions", systemImage: "doc.text.magnifyingglass") {
+                    ForEach(AIAction.page) { a in
+                        Button(a.title, systemImage: a.icon) { aiWrite = AIWriteRequest(mode: .page, blockId: note.blocks.last?.id, preset: a) }
+                    }
+                }
+                Button("Add a live AI block", systemImage: "sparkles.rectangle.stack") {
+                    var nb = NoteBlock(kind: .code, text: "")
+                    nb.lang = SpecialBlock.aiblock
+                    note.blocks.append(nb)
+                    scrollTarget = nb.id
+                }
+                Divider()
                 Button("Continue writing", systemImage: "text.append") { Task { await continueWriting() } }
                 Button("Summarize", systemImage: "text.line.first.and.arrowtriangle.forward") { Task { await summarize() } }
                 Button("Ask this page", systemImage: "questionmark.bubble") { answer = nil; question = ""; asking = true }
@@ -1064,6 +1110,16 @@ struct NoteEditor: View {
                     .disabled((note.blocks[i].indent ?? 0) == 0)
                 Button { setIndent(i, by: 1) } label: { Image(systemName: "increase.indent") }.accessibilityLabel("Indent")
                 Button { pasteFromClipboard() } label: { Image(systemName: "doc.on.clipboard") }.accessibilityLabel("Paste with formatting")
+                Menu {
+                    Button("Ask AI…", systemImage: "sparkles") { aiWrite = AIWriteRequest(mode: .ask, blockId: id) }
+                    Divider()
+                    ForEach(AIAction.edits) { a in
+                        Button(a.title, systemImage: a.icon) { editWithAI(i, preset: a) }
+                    }
+                    Button("Tell AI what to change…", systemImage: "text.cursor") { editWithAI(i, preset: nil) }
+                } label: { Image(systemName: "sparkles") }
+                .accessibilityLabel("AI")
+                .disabled(note.isLocked)
             }
             Spacer()
             Button("Done") { focused = nil; editing = nil; slashFor = nil; mentionFor = nil }
@@ -1073,6 +1129,61 @@ struct NoteEditor: View {
     // MARK: AI
 
     private var pageText: String { "Title: \(note.title)\n" + note.plainText }
+
+    /// The selected words (or the whole line) go to AI to rewrite.
+    private func editWithAI(_ i: Int, preset: AIAction?) {
+        let text = note.blocks[i].text
+        var range: Range<String.Index>?
+        if case .selection(let r)? = selection?.indices, !r.isEmpty, r.lowerBound >= text.startIndex, r.upperBound <= text.endIndex { range = r }
+        let source = range.map { String(text[$0]) } ?? text
+        guard !source.trimmingCharacters(in: .whitespaces).isEmpty else {
+            aiWrite = AIWriteRequest(mode: .ask, blockId: note.blocks[i].id); return
+        }
+        aiWrite = AIWriteRequest(mode: .edit, blockId: note.blocks[i].id, source: source, preset: preset, range: range)
+    }
+
+    /// Puts AI's answer into the page.
+    private func applyAI(_ r: AIWriteRequest, text: String, replace: Bool) {
+        guard !text.isEmpty else { return }
+        NoteHistory.snapshot(note)                 // so any AI change can be undone from Version history
+        let idx = r.blockId.flatMap { id in note.blocks.firstIndex { $0.id == id } }
+        let newBlocks = SmartPaste.blocks(from: text, markdown: true)
+        switch r.mode {
+        case .edit where replace:
+            guard let i = idx else { return }
+            let current = note.blocks[i].text
+            if let range = r.range, range.upperBound <= current.endIndex, String(current[range]) == r.source {
+                note.blocks[i].text.replaceSubrange(range, with: text.replacingOccurrences(of: "\n", with: " "))
+            } else if newBlocks.count > 1 {
+                var first = newBlocks; first[0].indent = note.blocks[i].indent
+                note.blocks.replaceSubrange(i...i, with: first)
+            } else {
+                note.blocks[i].text = newBlocks.first?.text ?? text
+            }
+        case .page where r.preset?.id == "title":
+            note.title = text.components(separatedBy: "\n").first?.trimmingCharacters(in: CharacterSet(charactersIn: "\"'# ")) ?? note.title
+        case .page where r.preset?.id == "tldr":
+            var c = NoteBlock(kind: .callout, text: "**TL;DR** " + text.replacingOccurrences(of: "\n", with: " "))
+            c.icon = "✨"
+            note.blocks.insert(c, at: 0)
+        case .page where r.preset?.id == "actions" && text.lowercased().hasPrefix("none"):
+            UndoCenter.shared.notify("No action items on this page")
+        case .page where r.preset?.id == "outline":
+            note.blocks = newBlocks
+            UndoCenter.shared.notify("Restructured. The old version is in Version history.")
+        default:
+            var add = newBlocks
+            if r.mode == .page, let p = r.preset, p.id != "continue" { add.insert(NoteBlock(kind: .heading3, text: p.title.replacingOccurrences(of: " page", with: "")), at: 0) }
+            // An empty line you asked from gets replaced; otherwise it goes just below.
+            if let i = idx, note.blocks[i].kind == .text, note.blocks[i].text.trimmingCharacters(in: .whitespaces).isEmpty {
+                note.blocks.replaceSubrange(i...i, with: add)
+            } else if let i = idx {
+                note.blocks.insert(contentsOf: add, at: i + 1)
+            } else {
+                note.blocks.append(contentsOf: add)
+            }
+        }
+    }
 
     private func continueWriting() async {
         aiWorking = true; defer { aiWorking = false }

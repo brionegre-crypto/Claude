@@ -320,4 +320,41 @@ final class KeelTests: XCTestCase {
         XCTAssertEqual(StarterSetup.distance("", "abc"), 3)
         XCTAssertEqual(StarterSetup.distance("same", "same"), 0)
     }
+
+    // MARK: AI writing
+
+    func testWriterModelRoundTrip() {
+        let m = WriterModel(provider: .claude, model: "claude-sonnet-5-5")
+        XCTAssertEqual(WriterModel(id: m.id), m)
+        XCTAssertEqual(m.label, "Claude Sonnet")
+        XCTAssertEqual(WriterModel(id: "apple|")?.provider, .apple)
+        XCTAssertNil(WriterModel(id: "nope|x"))
+    }
+
+    func testStreamedTextIsReadFromEachProvider() throws {
+        let claude: [String: Any] = ["type": "content_block_delta", "delta": ["type": "text_delta", "text": "Hel"]]
+        XCTAssertEqual(try WriterStreams.text(in: claude, provider: .claude), "Hel")
+        XCTAssertNil(try WriterStreams.text(in: ["type": "message_start"], provider: .claude))
+        XCTAssertThrowsError(try WriterStreams.text(in: ["type": "message_delta", "delta": ["stop_reason": "refusal"]], provider: .claude))
+        let openai: [String: Any] = ["choices": [["delta": ["content": "lo"]]]]
+        XCTAssertEqual(try WriterStreams.text(in: openai, provider: .openai), "lo")
+        let gemini: [String: Any] = ["candidates": [["content": ["parts": [["text": "!"]]]]]]
+        XCTAssertEqual(try WriterStreams.text(in: gemini, provider: .gemini), "!")
+    }
+
+    func testStreamRequestsAreBuiltForEachProvider() throws {
+        for p in [AIProvider.claude, .openai, .gemini] {
+            let r = try WriterStreams.request(p, model: "m", key: "k", system: "s", user: "u")
+            XCTAssertEqual(r.httpMethod, "POST")
+            let body = try XCTUnwrap(r.httpBody.flatMap { try JSONSerialization.jsonObject(with: $0) as? [String: Any] })
+            if p == .gemini { XCTAssertTrue(r.url!.absoluteString.contains("alt=sse")) } else { XCTAssertEqual(body["stream"] as? Bool, true) }
+        }
+    }
+
+    func testAIPromptCarriesThePage() {
+        let p = AIWriter.prompt(for: .edit, instruction: "Shorter", source: "a long line", title: "Trip", page: "Pack bags")
+        XCTAssertTrue(p.contains("a long line") && p.contains("Trip") && p.contains("Shorter"))
+        XCTAssertTrue(SlashCommand.matching("ai").contains { $0.id == "ai" })
+        XCTAssertEqual(SpecialBlock.lang(for: "aiblock"), SpecialBlock.aiblock)
+    }
 }
