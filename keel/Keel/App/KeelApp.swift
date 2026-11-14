@@ -15,9 +15,11 @@ struct KeelApp: App {
         UNUserNotificationCenter.current().delegate = NotificationHandler.shared
         TaskAlerts.registerCategories()
         WatchBridge.shared.activate()
-        KeelDiagnostics.shared.start()
-        KeelTips.configure()
-        KeychainStore.moveToICloudKeychain()     // AI keys and sign-ins follow you to your Mac and iPad                     // one-time tips that explain features where you use them           // crash & hang reports (kept on device; shared only if you turn it on)
+        KeelDiagnostics.shared.start()           // crash & hang reports (kept on device; shared only if you turn it on)
+        if !KeelRuntime.isTesting {
+            KeelTips.configure()                 // one-time tips that explain features where you use them
+            KeychainStore.moveToICloudKeychain() // AI keys and sign-ins follow you to your Mac and iPad
+        }
         if !UserDefaults.standard.bool(forKey: Prefs.reviewReminderOff) { WeeklyReview.scheduleReminder() }
         if !UserDefaults.standard.bool(forKey: "dayReview.off") { DayReviewView.scheduleReminder() }
         Journal.scheduleReminder()
@@ -41,9 +43,11 @@ struct KeelApp: App {
                 .task {
                     // Task, focus, habit and promise alerts all need this once.
                     _ = try? await UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge])
-                    SettingsSync.shared.start()                          // your settings on every device
-                    MailAccountSync.adopt(ctx: container.mainContext)    // mail accounts added on your other devices
-                    MailAccountSync.publish(ctx: container.mainContext)
+                    if !KeelRuntime.isTesting {
+                        SettingsSync.shared.start()                          // your settings on every device
+                        MailAccountSync.adopt(ctx: container.mainContext)    // mail accounts added on your other devices
+                        MailAccountSync.publish(ctx: container.mainContext)
+                    }
                     SyncEngine.shared.configure(container: container)
                     MedEngine.scheduleAll(ctx: container.mainContext)
                     if TaskAlarms.globalOn { _ = await TaskAlarms.authorize() }   // asks once for full-screen task alarms
@@ -468,7 +472,7 @@ struct KeelCommands: Commands {
 /// Press and hold the Keel icon: New Task, New Note, Start Focus, Record a Meeting, Search.
 final class KeelAppDelegate: NSObject, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
-        application.registerForRemoteNotifications()       // silent pushes for instant mail (no permission prompt needed)
+        if !KeelRuntime.isTesting { application.registerForRemoteNotifications() }   // silent pushes for instant mail (no prompt needed)
         return true
     }
 
@@ -548,4 +552,12 @@ struct SidebarStyle: ViewModifier {
     func body(content: Content) -> some View {
         if hidden { content.tabViewStyle(.tabBarOnly) } else { content.tabViewStyle(.sidebarAdaptable) }
     }
+}
+
+
+enum KeelRuntime {
+    /// True while the automated tests run (Xcode Cloud's Test action). The app then skips iCloud, push and
+    /// Health sign-ins, which a test simulator doesn't have and which have nothing to do with the tests.
+    static let isTesting = ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil
+        || NSClassFromString("XCTestCase") != nil
 }

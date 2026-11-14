@@ -30,7 +30,8 @@ final class SettingsSync {
 
     /// Keel's own settings start with a lowercase letter; iOS and its frameworks use NS…, Apple…, com.apple… and so on.
     static func syncs(_ key: String) -> Bool {
-        guard let first = key.first, first.isLowercase, !key.hasPrefix("com."), key.count < 120 else { return false }
+        // iCloud allows keys of at most 64 bytes ("s:" + the setting's name).
+        guard let first = key.first, first.isLowercase, !key.hasPrefix("com."), key.utf8.count <= 60 else { return false }
         return !deny.contains { key == $0 || key.hasPrefix($0) }
     }
 

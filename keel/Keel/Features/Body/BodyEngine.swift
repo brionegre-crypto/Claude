@@ -414,7 +414,7 @@ final class BodyEngine {
 
     /// Reads Health (60 days the first time, then just the last few) and recomputes the scores.
     func refresh(force: Bool = false) async {
-        guard connected, BodyHealth.available, !loading else { return }
+        guard connected, BodyHealth.available, !loading, !KeelRuntime.isTesting else { return }
         guard force || Throttle.due("body.refresh", every: 15 * 60) else { return }
         loading = true
         defer { loading = false }
