@@ -8,31 +8,35 @@ import EventKit
 // much daylight is left, and calm water sits below. What needs you is above the waterline; what can wait sits below it.
 
 enum HorizonSky {
-    /// Sky colors for this moment: dawn, day, golden hour, dusk, night.
+    /// Sky colors for this moment, following today's real dawn, sunrise, sunset and dusk where you are.
     static func colors(at d: Date = Date()) -> [Color] {
-        let h = Double(Calendar.current.component(.hour, from: d)) + Double(Calendar.current.component(.minute, from: d)) / 60
-        switch h {
-        case 5..<7.5: return [Color(red: 0.36, green: 0.42, blue: 0.70), Color(red: 0.96, green: 0.66, blue: 0.56), Color(red: 1.0, green: 0.85, blue: 0.66)]
-        case 7.5..<16: return [Color(red: 0.30, green: 0.58, blue: 0.93), Color(red: 0.55, green: 0.76, blue: 0.97), Color(red: 0.86, green: 0.93, blue: 1.0)]
-        case 16..<18.5: return [Color(red: 0.34, green: 0.46, blue: 0.86), Color(red: 0.98, green: 0.62, blue: 0.40), Color(red: 1.0, green: 0.82, blue: 0.55)]
-        case 18.5..<20.5: return [Color(red: 0.16, green: 0.18, blue: 0.42), Color(red: 0.55, green: 0.32, blue: 0.56), Color(red: 0.95, green: 0.52, blue: 0.45)]
-        default: return [Color(red: 0.04, green: 0.06, blue: 0.16), Color(red: 0.09, green: 0.12, blue: 0.28), Color(red: 0.17, green: 0.20, blue: 0.40)]
-        }
+        let sun = SunClock.today(d)
+        let dawnColors = [Color(red: 0.36, green: 0.42, blue: 0.70), Color(red: 0.96, green: 0.66, blue: 0.56), Color(red: 1.0, green: 0.85, blue: 0.66)]
+        let dayColors = [Color(red: 0.30, green: 0.58, blue: 0.93), Color(red: 0.55, green: 0.76, blue: 0.97), Color(red: 0.86, green: 0.93, blue: 1.0)]
+        let goldenColors = [Color(red: 0.34, green: 0.46, blue: 0.86), Color(red: 0.98, green: 0.62, blue: 0.40), Color(red: 1.0, green: 0.82, blue: 0.55)]
+        let duskColors = [Color(red: 0.16, green: 0.18, blue: 0.42), Color(red: 0.55, green: 0.32, blue: 0.56), Color(red: 0.95, green: 0.52, blue: 0.45)]
+        let nightColors = [Color(red: 0.04, green: 0.06, blue: 0.16), Color(red: 0.09, green: 0.12, blue: 0.28), Color(red: 0.17, green: 0.20, blue: 0.40)]
+        if d < sun.dawn || d > sun.dusk { return nightColors }
+        if d < sun.rise.addingTimeInterval(45 * 60) { return dawnColors }
+        if d < sun.set.addingTimeInterval(-90 * 60) { return dayColors }
+        if d < sun.set { return goldenColors }
+        return duskColors
     }
-    static func isNight(_ d: Date = Date()) -> Bool { let h = Calendar.current.component(.hour, from: d); return h >= 21 || h < 5 }
+    static func isNight(_ d: Date = Date()) -> Bool { let s = SunClock.today(d); return d < s.dawn || d > s.dusk }
 
-    /// 0 at 6 AM, 1 at 9 PM: where the sun is on its arc. Nil at night.
+    /// 0 at sunrise, 1 at sunset: where the sun is on its arc. Nil before sunrise and after sunset.
     static func dayFraction(_ d: Date = Date()) -> Double? {
-        let c = Calendar.current.dateComponents([.hour, .minute], from: d)
-        let m = Double((c.hour ?? 0) * 60 + (c.minute ?? 0))
-        let f = (m - 360) / (1_260 - 360)
+        let s = SunClock.today(d)
+        let f = d.timeIntervalSince(s.rise) / s.set.timeIntervalSince(s.rise)
         return (0...1).contains(f) ? f : nil
     }
     static func daylightLeft(_ d: Date = Date()) -> String {
-        let c = Calendar.current.dateComponents([.hour, .minute], from: d)
-        let left = 1_260 - ((c.hour ?? 0) * 60 + (c.minute ?? 0))
-        guard left > 0, (c.hour ?? 0) >= 5 else { return "Night · time to rest" }
-        return left >= 60 ? "\(left / 60)h \(left % 60 > 0 ? "\(left % 60)m " : "")of daylight left" : "\(left) min of daylight left"
+        let s = SunClock.today(d)
+        if d < s.rise { return "Sunrise at \(s.rise.formatted(date: .omitted, time: .shortened))" }
+        let left = Int(s.set.timeIntervalSince(d) / 60)
+        guard left > 0 else { return d < s.dusk ? "Sunset at \(s.set.formatted(date: .omitted, time: .shortened))" : "Night · time to rest" }
+        let text = left >= 60 ? "\(left / 60)h \(left % 60 > 0 ? "\(left % 60)m " : "")of daylight left" : "\(left) min of daylight left"
+        return text + " · sunset \(s.set.formatted(date: .omitted, time: .shortened))"
     }
 }
 

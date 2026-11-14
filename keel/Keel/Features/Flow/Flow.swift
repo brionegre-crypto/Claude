@@ -97,7 +97,7 @@ struct UniversalCaptureSheet: View {
             UndoCenter.shared.notify("Captured")
         }
         try? ctx.save()
-        Haptics.success()
+        Haptics.capture()
         dismiss()
     }
 }
@@ -609,7 +609,13 @@ enum SearchActions {
         let l = q.lowercased()
         let named = all.filter { a in ["focus": ["focus", "concentrate"], "plan": ["plan"], "record": ["record", "meeting"], "journal": ["journal"]][a.id]?.contains { l.contains($0) } ?? false }
         let isQuestion = l.hasSuffix("?") || ["what", "when", "where", "who", "how", "why", "did", "do i", "is "].contains { l.hasPrefix($0) }
-        return named + (isQuestion ? [] : all.filter { $0.id == "task" || $0.id == "note" })
+        // Any Keel tool by name or what it does ("water", "packing", "passport", "time report"…).
+        let words = l.split(separator: " ").map(String.init).filter { $0.count >= 3 }
+        let tools: [SearchAction] = words.isEmpty ? [] : HubCatalog.groups.flatMap(\.tools)
+            .filter { t in words.allSatisfy { w in (t.title + " " + t.keywords).lowercased().contains(w) } }
+            .prefix(3)
+            .map { t in SearchAction(id: "tool:" + t.id, icon: t.icon, title: { _ in "Open \(t.title)" }) { _ in AppRouter.shared.openTool = ToolRoute(id: t.id) } }
+        return named + tools + (isQuestion ? [] : all.filter { $0.id == "task" || $0.id == "note" })
     }
 }
 

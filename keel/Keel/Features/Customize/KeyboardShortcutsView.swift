@@ -5,8 +5,8 @@ struct KeyboardShortcutsView: View {
     @Environment(\.dismiss) private var dismiss
     private let groups: [(String, [(String, String)])] = [
         ("Anywhere", [("⌘K", "Command bar: do anything"), ("⌘O", "Open a page"), ("⌘F", "Search everything"), ("⌘N", "New task"),
-                      ("⇧⌘N", "New note"), ("⌘1 – ⌘5", "Today, Inbox, Calendar, Tasks, Notes"), ("⇧⌘F", "Start focus"),
-                      ("⇧⌘P", "Plan my day"), ("⇧⌘J", "Journal"), ("⇧⌘R", "Record a meeting"), ("⌘,", "Settings"), ("⌘/", "This list")]),
+                      ("⇧⌘N", "New note"), ("⌘1 – ⌘5", "Today, Inbox, Calendar, Tasks, Notes"), ("⌥⌘F", "Start focus"),
+                      ("⇧⌘P", "Plan my day"), ("⇧⌘J", "Journal"), ("⌥⌘R", "Record a meeting"), ("⌘,", "Settings"), ("⌘/", "This list")]),
         ("Reading email", [("⌘R", "Reply"), ("⇧⌘R", "Reply all"), ("⇧⌘F", "Forward"), ("⌃⌘A", "Archive"), ("⇧⌘L", "Flag or unflag"),
                            ("⇧⌘U", "Mark unread"), ("⌘⌫", "Delete")]),
         ("In a page", [("/", "Insert any block"), ("@", "Mention a page, person or date"), ("[[", "Link to a page"),

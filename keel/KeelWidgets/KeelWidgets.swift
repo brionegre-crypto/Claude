@@ -21,7 +21,9 @@ struct KeelWidgetBundle: WidgetBundle {
         InboxWidget()
         NotesWidget()
         BodyWidget()
-        #if !targetEnvironment(macCatalyst)       // Live Activities and Control Center are iPhone-only
+        VoyageWidget()
+        #if !targetEnvironment(macCatalyst)
+        DayLiveActivity()       // Live Activities and Control Center are iPhone-only
         FocusLiveActivity()
         MeetingLiveActivity()
         CaptureControl()
@@ -967,3 +969,121 @@ struct BodyWidgetView: View {
         .frame(maxWidth: .infinity)
     }
 }
+
+
+// MARK: - Voyage: your day as a route
+
+struct VoyageWidget: Widget {
+    var body: some WidgetConfiguration {
+        StaticConfiguration(kind: "KeelVoyage", provider: KeelProvider()) { entry in
+            VoyageWidgetView(entry: entry)
+                .containerBackground(for: .widget) { LinearGradient(colors: [Color(red: 0.30, green: 0.58, blue: 0.93).opacity(0.18), .clear], startPoint: .top, endPoint: .bottom) }
+                .widgetURL(URL(string: "com.keel.app://today"))
+        }
+        .configurationDisplayName("Voyage")
+        .description("Your day as a route: now, meetings, open water and bedtime.")
+        .supportedFamilies([.systemMedium, .systemLarge])
+    }
+}
+
+struct VoyageWidgetView: View {
+    let entry: KeelEntry
+    @Environment(\.widgetFamily) private var family
+
+    struct Stop: Hashable { let icon: String; let title: String; let time: Date; let tint: Color }
+
+    private var stops: [Stop] {
+        let now = entry.date
+        let cal = Calendar.current
+        var out: [Stop] = []
+        for e in entry.snapshot.events where e.end > now && cal.isDate(e.start, inSameDayAs: now) {
+            out.append(Stop(icon: "circle.fill", title: e.title, time: e.start, tint: Color(hex: e.colorHex)))
+        }
+        for t in entry.snapshot.tasks {
+            if let d = t.due, d > now, cal.isDate(d, inSameDayAs: now), cal.component(.hour, from: d) + cal.component(.minute, from: d) > 0 {
+                out.append(Stop(icon: "diamond.fill", title: t.title, time: d, tint: .orange))
+            }
+        }
+        out.sort { $0.time < $1.time }
+        // Open water: a free stretch of 45 minutes or more before the next stop.
+        var withWater: [Stop] = []
+        var cursor = now
+        for s in out {
+            if s.time.timeIntervalSince(cursor) >= 45 * 60 {
+                withWater.append(Stop(icon: "water.waves", title: "Open water", time: cursor, tint: Color(red: 0.2, green: 0.5, blue: 0.75)))
+            }
+            withWater.append(s)
+            cursor = max(cursor, s.time.addingTimeInterval(30 * 60))
+        }
+        if let bed = BodyScores.today()?.bedtime, bed > now { withWater.append(Stop(icon: "moon.zzz.fill", title: "Drop anchor", time: bed, tint: .indigo)) }
+        return Array(withWater.prefix(family == .systemLarge ? 8 : 4))
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            HStack {
+                Text("⛵ Now").font(.caption.weight(.bold)).foregroundStyle(Color(red: 0.30, green: 0.58, blue: 0.93))
+                Text(entry.snapshot.nextThing ?? "Clear sailing").font(.caption.weight(.semibold)).lineLimit(1)
+            }
+            if stops.isEmpty {
+                Text("Nothing else today. Open water.").font(.caption).foregroundStyle(.secondary)
+            }
+            ForEach(stops, id: \.self) { s in
+                HStack(spacing: 8) {
+                    Image(systemName: s.icon).font(.system(size: 9)).foregroundStyle(s.tint).frame(width: 12)
+                    Text(s.title).font(.caption).lineLimit(1)
+                    Spacer()
+                    Text(s.time, style: .time).font(.caption2).foregroundStyle(.secondary)
+                }
+            }
+            Spacer(minLength: 0)
+        }
+    }
+}
+
+#if !targetEnvironment(macCatalyst)
+// MARK: - My day on the Lock Screen
+
+struct DayLiveActivity: Widget {
+    private let sea = Color(red: 0.30, green: 0.58, blue: 0.93)
+    var body: some WidgetConfiguration {
+        ActivityConfiguration(for: DayActivityAttributes.self) { context in
+            HStack(spacing: 12) {
+                Image(systemName: "water.waves").font(.title2).foregroundStyle(sea)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(context.state.nowTitle).font(.headline).lineLimit(1)
+                    if let n = context.state.nextTitle, let at = context.state.nextAt {
+                        Text("Next: \(n) · \(at.formatted(date: .omitted, time: .shortened))").font(.caption).foregroundStyle(.secondary).lineLimit(1)
+                    }
+                }
+                Spacer()
+                if let ends = context.state.nowEnds, ends > Date() {
+                    Text(timerInterval: Date()...ends, countsDown: true)
+                        .font(.system(.title3, design: .rounded).weight(.semibold).monospacedDigit())
+                        .multilineTextAlignment(.trailing).frame(maxWidth: 90)
+                }
+            }
+            .padding()
+            .activityBackgroundTint(Color.black.opacity(0.55))
+            .widgetURL(URL(string: "com.keel.app://today"))
+        } dynamicIsland: { context in
+            DynamicIsland {
+                DynamicIslandExpandedRegion(.leading) { Label(context.state.nowTitle, systemImage: "water.waves").foregroundStyle(sea).lineLimit(1) }
+                DynamicIslandExpandedRegion(.trailing) {
+                    if let ends = context.state.nowEnds, ends > Date() { Text(timerInterval: Date()...ends, countsDown: true).monospacedDigit().frame(maxWidth: 70) }
+                }
+                DynamicIslandExpandedRegion(.bottom) {
+                    if let n = context.state.nextTitle { Text("Next: \(n)").font(.caption).lineLimit(1) }
+                }
+            } compactLeading: {
+                Image(systemName: "water.waves").foregroundStyle(sea)
+            } compactTrailing: {
+                if let ends = context.state.nowEnds, ends > Date() { Text(timerInterval: Date()...ends, countsDown: true).monospacedDigit().frame(maxWidth: 44) }
+            } minimal: {
+                Image(systemName: "water.waves").foregroundStyle(sea)
+            }
+            .widgetURL(URL(string: "com.keel.app://today"))
+        }
+    }
+}
+#endif

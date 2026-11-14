@@ -115,6 +115,10 @@ final class KeelAccount {
             if let base = KeelServer.baseURL { KeelServer.save(address: base.absoluteString, accessCode: "") }
         }
         signOut()
+        // The server no longer holds your booking page or push address, so turn those off here too.
+        UserDefaults.standard.set(false, forKey: BookingLink.onKey)
+        UserDefaults.standard.removeObject(forKey: BookingLink.urlKey)
+        UserDefaults.standard.removeObject(forKey: MailPush.tokenKey)
         name = ""; email = ""
         UserDefaults.standard.removeObject(forKey: "keel.account.name")
         UserDefaults.standard.removeObject(forKey: "keel.account.email")

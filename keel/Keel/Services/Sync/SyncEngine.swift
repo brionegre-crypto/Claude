@@ -180,6 +180,8 @@ final class SyncEngine {
         await BookingLink.refreshIfDue()
         // 3b2. Body: Tide, Swell and Anchor from Apple Health (every 15 minutes at most; morning alert once a day).
         await BodyEngine.shared.refresh()
+        // 3b3. A packing list for any trip starting within a week (made once).
+        if Throttle.due("packing.auto", every: 6 * 3600) { await Packing.autoIfDue(ctx: ctx) }
         // 3c. Instant mail: keep Gmail and Outlook telling your server about new mail.
         await MailPush.refresh(ctx: ctx)
 

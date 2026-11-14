@@ -272,6 +272,8 @@ struct RootView: View {
         // Focus lives above the tab bar (like Music's mini-player): always one tap away, shows the live timer.
         .tabViewBottomAccessory { FocusAccessory { router.showFocus = true } }
         .overlay(alignment: .bottom) { UndoToast() }
+        .overlay { EveningCalm() }                                   // warmer after sunset
+        .safeAreaInset(edge: .top, spacing: 0) { OfflineBanner() }   // says so when there's no internet
         .overlay(alignment: .bottom) { HandoffBanner().animation(DS.spring, value: Handoff.shared.current?.id) }      // the natural next step
         .overlay(alignment: .bottomTrailing) { CaptureButton().padding(.trailing, 18).padding(.bottom, 104) }       // capture anything, from anywhere
         .safeAreaInset(edge: .top) {
@@ -430,7 +432,7 @@ struct KeelCommands: Commands {
             Button("New Note") { KeelCommands.newNote() }
                 .keyboardShortcut("n", modifiers: [.command, .shift])
             Button("Record a Meeting") { AppRouter.shared.showRecorder = true }
-                .keyboardShortcut("r", modifiers: [.command, .shift])
+                .keyboardShortcut("r", modifiers: [.command, .option])       // ⇧⌘R is Reply All while reading email
             Button("Open Page…") { AppRouter.shared.showQuickOpen = true }
                 .keyboardShortcut("o")
         }
@@ -453,7 +455,7 @@ struct KeelCommands: Commands {
             Button("Notes") { AppRouter.shared.tab = .notes }.keyboardShortcut("5")
             Divider()
             Button("Search Everything") { AppRouter.shared.showSearch = true }.keyboardShortcut("f")
-            Button("Start Focus") { AppRouter.shared.showFocus = true }.keyboardShortcut("f", modifiers: [.command, .shift])
+            Button("Start Focus") { AppRouter.shared.showFocus = true }.keyboardShortcut("f", modifiers: [.command, .option])   // ⇧⌘F is Forward in email
             Button("Plan My Day") { AppRouter.shared.showPlan = true }.keyboardShortcut("p", modifiers: [.command, .shift])
             Button("Journal") { AppRouter.shared.showJournal = true }.keyboardShortcut("j", modifiers: [.command, .shift])
         }

@@ -35,10 +35,12 @@ final class KeelWeather {
         if let last = lastFetch, Date().timeIntervalSince(last) < 30 * 60, today != nil { return }
         if manager.authorizationStatus == .notDetermined { manager.requestWhenInUseAuthorization() }
         guard let location = await currentLocation() else { return }
+        SunClock.remember(location: location)                 // the Horizon's sun follows your real sunrise and sunset
         do {
             let w = try await WeatherService.shared.weather(for: location)
             let style = Measurement<UnitTemperature>.FormatStyle(width: .narrow, usage: .weather, numberFormatStyle: .number.precision(.fractionLength(0)))
             let day = w.dailyForecast.first
+            if let day { SunClock.remember(rise: day.sun.sunrise, set: day.sun.sunset, dawn: day.sun.civilDawn, dusk: day.sun.civilDusk, for: day.date) }
             let rain = w.hourlyForecast.forecast.prefix(12).first { $0.precipitationChance >= 0.5 && $0.date > Date() }
             today = Today(
                 temperature: w.currentWeather.temperature.formatted(style),

@@ -6,6 +6,7 @@ import TipKit
 
 enum KeelTips {
     static func configure() {
+        TipsReset.applyIfAsked()                 // "Show all tips again" (Settings → Keel status)
         try? Tips.configure([.displayFrequency(.daily)])
     }
 }

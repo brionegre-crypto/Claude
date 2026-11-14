@@ -31,6 +31,7 @@ struct CalendarView: View {
     @State private var showQuick = false
     @State private var quickText = ""
     @State private var planning = false
+    @State private var planningWeek = false
     @AppStorage("calendar.showTasks") private var showTasks = true
 
     private let cal = Calendar.current
@@ -95,6 +96,8 @@ struct CalendarView: View {
                         Toggle(isOn: $showTasks) { Label("Show tasks on calendar", systemImage: "checklist") }
                         Divider()
                         Button("Plan my day (drag tasks onto hours)", systemImage: "calendar.day.timeline.left") { planning = true }
+                        Button("Plan my week", systemImage: "calendar.badge.clock") { planningWeek = true }
+                        NavigationLink { TimeReportView() } label: { Label("Where my time went", systemImage: "chart.bar.xaxis") }
                         NavigationLink { BookingLinkView() } label: { Label("Booking link", systemImage: "link.badge.plus") }
                         ShareLink(item: Availability.text()) { Label("Share my availability", systemImage: "calendar.badge.clock") }
                         NavigationLink { WorldClockView() } label: { Label("World clock", systemImage: "globe") }
@@ -136,6 +139,7 @@ struct CalendarView: View {
             .sheet(item: $openTask) { t in NavigationStack { TaskDetailView(task: t) } }
             .sheet(isPresented: $showCalendars) { CalendarPicker(hiddenRaw: $hiddenRaw) }
             .sheet(isPresented: $planning, onDismiss: { load() }) { DayPlannerView() }
+            .sheet(isPresented: $planningWeek, onDismiss: { load() }) { WeekPlannerView() }
             .sheet(item: $taskGroup) { TaskGroupSheet(tasks: $0.tasks) }
             .alert("Quick event", isPresented: $showQuick) {
                 TextField("Lunch with Sam Thu 1pm for 90 min", text: $quickText)

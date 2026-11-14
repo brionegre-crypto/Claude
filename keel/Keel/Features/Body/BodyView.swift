@@ -55,7 +55,16 @@ struct BodyTodayCard: View {
                     Image(systemName: "chevron.right").font(.caption).foregroundStyle(DS.Palette.inkSoft)
                 }
                 if !BodyHealth.available {
-                    Text("Body tracking uses Apple Health on your iPhone.").font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
+                    if let s = BodyScores.fromYourIPhone() {
+                        HStack(spacing: 0) {
+                            ScoreRing(title: "Tide", value: s.tide, max: 100, color: BodyStyle.tide, suffix: "%", size: 64).frame(maxWidth: .infinity)
+                            ScoreRing(title: "Swell", value: s.swell, max: 100, color: BodyStyle.swell, size: 64).frame(maxWidth: .infinity)
+                            ScoreRing(title: "Anchor", value: s.anchor, max: 100, color: BodyStyle.anchor, size: 64).frame(maxWidth: .infinity)
+                        }
+                        Text("From your iPhone. " + BodyEngine.advice(s.tide)).font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft).lineLimit(2)
+                    } else {
+                        Text("Body tracking uses Apple Health on your iPhone. Today's scores show here once your iPhone has them.").font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
+                    }
                 } else if !engine.connected {
                     Text("See how recovered you are, how hard your body worked and how well you slept. Tap to connect Apple Health.")
                         .font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
@@ -86,6 +95,9 @@ struct BodyView: View {
     @AppStorage(BodyPrefs.maxHRKey) private var maxHR = 0
     @AppStorage(BodyPrefs.morningKey) private var morning = true
     @AppStorage(BodyPrefs.windDownKey) private var windDown = true
+    @AppStorage(SmartWake.key) private var wakeAlarm = false
+    @AppStorage(Drinks.goalKey) private var waterGoal = 2_000
+    @AppStorage("drinks.nudge") private var waterNudge = true
 
     var body: some View {
         ScrollView {
@@ -97,13 +109,17 @@ struct BodyView: View {
                     connectCard
                 } else {
                     header
+                    if !engine.loading, engine.days.suffix(3).allSatisfy({ !$0.hasSleep && $0.hrv == nil && $0.swell == 0 }) { noDataCard }
                     adviceCard
+                    WorkoutPickCard(tide: t?.tide, swell: t?.swell ?? 0)
+                    DrinksCard()
                     tideCard
                     anchorCard
                     swellCard
                     stressCard
                     vitalsCard
                     journalCard
+                    MoodBodyCard()
                     settingsCard
                     explainer
                 }
@@ -128,6 +144,16 @@ struct BodyView: View {
         .padding(DS.Space.m)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(DS.Palette.elevated, in: .rect(cornerRadius: DS.Radius.card, style: .continuous))
+    }
+
+    /// Connected, but Health is giving Keel nothing: usually permissions were left off.
+    private var noDataCard: some View {
+        card("No Health data yet", "exclamationmark.heart", .orange) {
+            Text("Keel can't see any sleep, heart or workout data for the last few days. In the Health app, tap your picture → Apps → Keel and turn on every category. Wearing an Apple Watch (also to bed) gives Keel what it needs.")
+                .font(DS.Font.caption)
+            Button("Open the Health app") { if let u = URL(string: "x-apple-health://") { UIApplication.shared.open(u) } }
+                .font(DS.Font.caption)
+        }
     }
 
     private var connectCard: some View {
@@ -357,6 +383,13 @@ struct BodyView: View {
             Toggle("Morning readiness alert", isOn: $morning)
             Toggle("Wind-down reminder before bed", isOn: $windDown)
                 .onChange(of: windDown) { engine.scheduleWindDown() }
+            Toggle("Wake me with an alarm at my planned time", isOn: $wakeAlarm)
+                .onChange(of: wakeAlarm) {
+                    Task { if wakeAlarm { await SmartWake.schedule(at: BodyMath.tonight(engine.days, base: need).wake) } else { SmartWake.cancel() } }
+                }
+            Stepper("Water goal: \(waterGoal) ml", value: $waterGoal, in: 1_000...4_000, step: 250)
+            Toggle("Remind me to drink water", isOn: $waterNudge)
+                .onChange(of: waterNudge) { Drinks.scheduleWaterNudge() }
         }
         .font(DS.Font.caption)
     }

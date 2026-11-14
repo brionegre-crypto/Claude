@@ -48,6 +48,7 @@ struct TasksView: View {
     @State private var editingSmart: SmartList?
     @State private var selecting = false
     @State private var planning = false
+    @State private var planningWeek = false
     @State private var selectedTasks = Set<UUID>()
     @State private var newSmart = false
     @AppStorage("tasks.filter") private var filterKey = "today"
@@ -186,6 +187,7 @@ struct TasksView: View {
                             withAnimation { selecting.toggle(); selectedTasks = [] }
                         }
                         Button("Plan my day (drag onto hours)", systemImage: "calendar.day.timeline.left") { planning = true }
+                        Button("Plan my week", systemImage: "calendar.badge.clock") { planningWeek = true }
                         Button("Auto-schedule today", systemImage: "wand.and.stars") {
                             let r = AutoScheduler.scheduleToday(tasks: tasks)
                             withAnimation { toast = r.scheduled == 0 ? "Nothing fit today" : "Scheduled \(r.scheduled) on your calendar" }
@@ -220,6 +222,7 @@ struct TasksView: View {
             }
             .refreshable { await SyncEngine.shared.syncAll() }
             .sheet(isPresented: $planning) { DayPlannerView() }
+            .sheet(isPresented: $planningWeek) { WeekPlannerView() }
             .sheet(item: Binding(get: { sharingList.map { ListName(name: $0) } }, set: { sharingList = $0?.name })) { ShareListSheet(listName: $0.name) }
             .sheet(isPresented: $newSmart) { SmartListEditor(list: nil, allLists: lists, allTags: tags) }
             .sheet(item: $deadlineFor) { DeadlineSheet(task: $0) }
@@ -301,7 +304,13 @@ struct TasksView: View {
                 }
                 let waiting = filtered.filter(\.isWaitingOn)
                 if !waiting.isEmpty {
-                    Section("Waiting on others") { ForEach(waiting) { row($0) } }
+                    Section {
+                        ForEach(waiting) { row($0) }
+                    } header: { Text("Waiting on others") } footer: {
+                        // Who has what: "With Sam: 2 · With Alex: 1".
+                        let who = Dictionary(grouping: waiting.compactMap { TaskAssign.who($0, ctx: ctx)?.name }, by: { $0 })
+                        if !who.isEmpty { Text(who.map { "With \($0.key): \($0.value.count)" }.sorted().joined(separator: " · ")) }
+                    }
                 }
             }
 
@@ -729,6 +738,7 @@ struct TaskDetailView: View {
                 Section("Why this matters") { Text("\(g.emoji) \(g.why)").foregroundStyle(DS.Palette.inkSoft) }
             }
             AssignSection(task: task)                       // hand it to someone
+            WorkBackSection(task: task)                     // split a big deadline into dated steps
             Section("Notes") { BufferedTextEditor(text: $task.notes).frame(minHeight: 100) }
             TaskAttachmentsSection(task: task)
 

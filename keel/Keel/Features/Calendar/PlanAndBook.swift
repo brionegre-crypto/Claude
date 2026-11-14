@@ -69,7 +69,18 @@ struct DayPlannerView: View {
             }
             .navigationTitle("Plan my day")
             .navigationBarTitleDisplayMode(.inline)
-            .toolbar { ToolbarItem(placement: .confirmationAction) { Button("Done") { try? ctx.save(); dismiss() } } }
+            .toolbar {
+                ToolbarItem(placement: .confirmationAction) { Button("Done") { try? ctx.save(); dismiss() } }
+                if cal.isDateInToday(day) {
+                    ToolbarItem(placement: .cancellationAction) {
+                        Button("Fill my day", systemImage: "wand.and.stars") {
+                            let r = AutoScheduler.scheduleToday(tasks: Array(open))
+                            UndoCenter.shared.notify(r.scheduled == 0 ? "Nothing more fits today" : "Planned \(r.scheduled) task\(r.scheduled == 1 ? "" : "s")")
+                            load()
+                        }
+                    }
+                }
+            }
             .task(id: day) { load() }
         }
     }
@@ -323,6 +334,19 @@ struct BookingLinkView: View {
                 Text(KeelServer.isConfigured
                      ? "People pick one of your free times and it's added to your calendar. Only the open times are sent to your Keel server, never your events."
                      : "Needs your Keel server (Settings → Sign in to Keel, or Optional AI Server).")
+            }
+            if on {
+                let booked = CalendarService.shared.events(from: Date(), to: Date().addingTimeInterval(30 * 86_400))
+                    .filter { ($0.notes ?? "").hasPrefix("Booked through your Keel link") }
+                Section("Upcoming bookings") {
+                    if booked.isEmpty { Text("None yet.").foregroundStyle(DS.Palette.inkSoft) }
+                    ForEach(booked, id: \.eventIdentifier) { e in
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(e.title ?? "Booking")
+                            Text(e.startDate.formatted(date: .abbreviated, time: .shortened)).font(.caption).foregroundStyle(DS.Palette.inkSoft)
+                        }
+                    }
+                }
             }
             Section("What people book") {
                 TextField("Name it, e.g. Intro call", text: $title)

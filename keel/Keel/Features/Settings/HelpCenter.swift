@@ -39,6 +39,54 @@ enum HelpArea: String, CaseIterable, Identifiable {
 enum HelpLibrary {
     static let all: [HowTo] = [
         // Getting started
+        HowTo(id: "wakealarm", area: .health, question: "Wake up with an alarm at the right time",
+              steps: ["Body → Settings → turn on “Wake me with an alarm at my planned time”.", "Keel sets a real alarm (it rings even on Silent) for the wake time the sleep coach planned, and moves it if your plan changes."],
+              keywords: "alarm wake up morning sleep coach"),
+        HowTo(id: "drinks", area: .health, question: "Track caffeine and water",
+              steps: ["Body → Caffeine & water (or Compass → Caffeine & water). Tap Coffee, Tea, Water… each time.", "Keel shows your last-caffeine time for tonight's bedtime and nudges you to drink water if you're behind.", "Caffeine after 2 PM is ticked in Habit impact for you, so you'll see what it does to your sleep."],
+              keywords: "coffee caffeine water hydration drink cutoff"),
+        HowTo(id: "workoutpick", area: .health, question: "Know how hard to work out today",
+              steps: ["Body → Today's workout suggests rest, steady or push, from your Tide and today's Swell.", "Tap “Put it on my calendar” to block it in your first free slot."],
+              keywords: "workout exercise training intensity tide"),
+        HowTo(id: "weekplan", area: .calendar, question: "Plan my whole week",
+              steps: ["Calendar or Tasks → ⋯ → Plan my week (or Compass → Plan my week).", "Each day shows its meetings, free hours and tasks. Drag a task onto a day, or tap a task then a day.", "Days that look full turn orange, so you can spread things out."],
+              keywords: "week plan schedule balance days drag"),
+        HowTo(id: "timereport", area: .calendar, question: "See where my time went",
+              steps: ["Calendar → options → Where my time went (or Compass).", "Meetings, deep focus and planned task time for the week, compared with the week before, day by day."],
+              keywords: "time report meetings focus analytics week"),
+        HowTo(id: "workback", area: .tasks, question: "Break a big deadline into dated steps",
+              steps: ["Open a task due more than two days from now → Work back from the deadline.", "Keel uses the task's steps (or writes some) and gives each one a date between today and the day before it's due."],
+              keywords: "deadline project steps plan backward schedule"),
+        HowTo(id: "upkeep", area: .tasks, question: "Remember home and car upkeep",
+              steps: ["Compass → Home & car upkeep. Turn on what applies (HVAC filter, smoke alarms, oil change…) and say when you last did it.", "Each becomes a repeating task in your Home list; finishing it schedules the next one."],
+              keywords: "maintenance home car filter oil change chores"),
+        HowTo(id: "voicejournal", area: .today, question: "Journal by talking",
+              steps: ["Compass → Voice journal → Start talking. Say how your day went and anything you need to do.", "Keel writes the entry, suggests your mood and lists the “I need to…” tasks to add. Edit anything, then Save."],
+              keywords: "journal voice talk diary mood"),
+        HowTo(id: "gifts", area: .today, question: "Never miss a birthday",
+              steps: ["Compass → Birthdays & gifts shows birthdays from your Contacts (and ones you add) for the next 3 months.", "Add gift ideas whenever you think of them; a week before, Keel reminds you with your ideas."],
+              keywords: "birthday gift present contacts reminder"),
+        HowTo(id: "packing", area: .calendar, question: "Get a packing list for a trip",
+              steps: ["Keel finds flights, hotels and trains in your email. A week before, it makes a packing list with the weather there and your medications.", "Compass → Packing lists to make one sooner or see what's packed."],
+              keywords: "packing travel trip suitcase list weather"),
+        HowTo(id: "documents", area: .settings, question: "Track passports, licenses and warranties",
+              steps: ["Compass → Documents → + to add one with its expiry date (or scan it into the Vault).", "Keel reminds you 45 days before an ID expires and 14 days before anything else."],
+              keywords: "passport license insurance warranty expire renew document"),
+        HowTo(id: "evening", area: .settings, question: "Make evenings calmer",
+              steps: ["Settings → Appearance → Evening calm warms Keel's colors after your real sunset.", "Soft sounds and My day on the Lock Screen are in the same place."],
+              keywords: "evening night warm calm sunset sounds lock screen live activity"),
+        HowTo(id: "status", area: .settings, question: "Check that everything is connected",
+              steps: ["Help → Keel status shows iCloud, sync, notifications, instant mail alerts, Apple Health, your Keel server, AI and Apple Watch, each with a green tick or what's missing.", "You can also bring back all the one-time tips from there."],
+              keywords: "status connected sync notifications problem troubleshoot not working tips"),
+        HowTo(id: "showkey", area: .ai, question: "See an AI key I saved",
+              steps: ["Settings → AI & Privacy → AI Model → choose the model → its Key screen → Show Key.", "Unlock with Face ID; copy it if you need it (it clears from the clipboard after 2 minutes)."],
+              keywords: "api key show copy claude chatgpt gemini lost"),
+        HowTo(id: "connector", area: .ai, question: "Let Claude read my Keel day",
+              steps: ["In Claude: Settings → Connectors → Add custom connector → your Keel server address followed by /mcp.", "Tap Connect and enter your connector password (KEEL_MCP_TOKEN from Cloudflare), then Allow.", "Claude can then see your plan, tasks, notes and promises, and add tasks."],
+              keywords: "claude connector mcp chat assistant"),
+        HowTo(id: "instantmail", area: .inbox, question: "Get new-mail alerts instantly",
+              steps: ["Needs your Keel server with its Apple push key. Help → Keel status shows whether it's on.", "Outlook works once that's set; Gmail also needs Google's notice service (see the setup guide). iCloud and other mail use background refresh."],
+              keywords: "instant push notifications new mail alerts"),
         HowTo(id: "body", area: .health, question: "See how recovered I am (Tide, Swell and Anchor)",
               steps: ["Open the Body card on Today (or Compass → Body) and tap Connect Apple Health.", "Tide is how recovered you are (0–100%). It compares last night's heart rate variability and resting heart rate with your own normal, plus your sleep.", "Swell is how hard your body worked today, from time in each heart-rate zone. Keel suggests a Swell range that suits your Tide.", "Anchor is your sleep score: enough sleep for what you needed, time asleep vs in bed, deep and REM sleep, and a steady bedtime."],
               tip: "Wear your Apple Watch, including to bed. Tide needs about 5 nights to learn your normal. Everything is worked out on your iPhone and never leaves it.",
@@ -451,7 +499,7 @@ enum HelpLibrary {
               steps: ["Install Keel from the Watch app on your iPhone.", "Your tasks, habits, meds, routines, food and focus show up on your wrist. Add the complication for one-tap access."],
               keywords: "apple watch wrist complication"),
         HowTo(id: "mac", area: .settings, question: "Use Keel on my Mac",
-              steps: ["Install Keel on your Mac from TestFlight (or the App Store once it's out).", "The tabs become a sidebar, and the menu bar has commands: ⌘N new task, ⇧⌘N new note, ⌘F search, ⇧⌘F focus, ⌘1–⌘5 to switch sections, ⌘K the command bar.", "Food scanning, full-screen alarms and app blocking stay on iPhone; on Mac you can type a barcode or paste a label instead."],
+              steps: ["Install Keel on your Mac from TestFlight (or the App Store once it's out).", "The tabs become a sidebar, and the menu bar has commands: ⌘N new task, ⇧⌘N new note, ⌘F search, ⌥⌘F focus, ⌘1–⌘5 to switch sections, ⌘K the command bar.", "Food scanning, full-screen alarms and app blocking stay on iPhone; on Mac you can type a barcode or paste a label instead."],
               keywords: "mac macbook desktop computer keyboard shortcuts"),
         HowTo(id: "widgets", area: .settings, question: "Add Keel widgets",
               steps: ["Touch and hold your Home Screen → Edit → Add Widget.", "Search Keel and pick a widget."],
@@ -514,8 +562,10 @@ struct HelpCenterView: View {
                 Section {
                     NavigationLink { FeatureGuideView() } label: { Label("Every feature, explained", systemImage: "book.pages") }
                     NavigationLink { AssistantView() } label: { Label("Ask Keel anything", systemImage: "bubble.left.and.text.bubble.right") }
+                    NavigationLink { KeelStatusView() } label: { Label("Keel status (is everything connected?)", systemImage: "checkmark.seal") }
                     if let support = KeelServer.baseURL?.appendingPathComponent("support") {
                         Link(destination: support) { Label("Contact support", systemImage: "envelope") }
+                        NavigationLink { SupportMessagesView() } label: { Label("Messages from your support page", systemImage: "tray") }
                     }
                 }
             }

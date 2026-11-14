@@ -75,8 +75,15 @@ final class SettingsSync {
         try? PropertyListSerialization.data(fromPropertyList: v, format: .binary, options: 0)
     }
 
+    /// When settings last went to or came from iCloud (shown in Keel status).
+    static var lastSync: Date? {
+        let t = UserDefaults.standard.double(forKey: "settingsSync.last"); return t > 0 ? Date(timeIntervalSince1970: t) : nil
+    }
+    private func stamp() { UserDefaults.standard.set(Date().timeIntervalSince1970, forKey: "settingsSync.last") }
+
     /// Sends this device's settings up (only what changed).
     private func push(overwrite: Bool, deleteMissing: Bool) {
+        defer { stamp() }
         let mine = defaults.dictionaryRepresentation().filter { Self.syncs($0.key) }
         var used = 0
         for (k, v) in mine.sorted(by: { $0.key < $1.key }) {
@@ -99,6 +106,7 @@ final class SettingsSync {
 
     /// Takes settings saved on your other devices.
     private func pull(_ changed: [String]?, onlyMissing: Bool = false) {
+        defer { stamp() }
         let keys = changed ?? Array(kvs.dictionaryRepresentation.keys)
         for rk in keys where rk.hasPrefix(Self.prefix) {
             let k = String(rk.dropFirst(Self.prefix.count))

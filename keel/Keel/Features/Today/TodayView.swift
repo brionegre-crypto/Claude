@@ -24,6 +24,7 @@ struct TodayView: View {
     @Query(sort: \Person.name) private var people: [Person]
     @State private var scheduleMessage: String?
     @State private var sleepHours: Double?
+    @State private var tideForEnergy: Int?
     @AppStorage("energy.day") private var energyDay = ""
     @Query(sort: \Countdown.date) private var countdowns: [Countdown]
     @State private var plan: DayPlan?
@@ -73,6 +74,7 @@ struct TodayView: View {
                 // Tide (recovery) is the better guide when there is one; otherwise hours of sleep.
                 if energyDay != today, let tide = BodyScores.today()?.tide {
                     energyRaw = BodyEngine.energy(forTide: tide).rawValue
+                    tideForEnergy = tide
                 } else if let h = sleepHours, energyDay != today {
                     energyRaw = HealthService.energy(forSleep: h).rawValue
                 }
@@ -172,7 +174,9 @@ struct TodayView: View {
     private var energyPicker: some View {
         VStack(alignment: .leading, spacing: 4) {
             energyButtons
-            if let h = sleepHours {
+            if let tide = tideForEnergy {
+                Text("Suggested from your Tide (\(tide)%). Tap to change.").font(.caption2).foregroundStyle(DS.Palette.inkSoft)
+            } else if let h = sleepHours {
                 Text("Suggested from \(Int(h))h \(Int((h - Double(Int(h))) * 60))m of sleep").font(.caption2).foregroundStyle(DS.Palette.inkSoft)
             }
         }

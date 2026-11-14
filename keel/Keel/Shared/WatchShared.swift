@@ -138,7 +138,15 @@ struct BodyScores: Codable, Hashable {
     static let key = "body.scores"
     static let group = "group.com.briangreenejr.keel"
     func save() {
-        if let d = try? JSONEncoder().encode(self) { UserDefaults(suiteName: Self.group)?.set(d, forKey: Self.key) }
+        guard let d = try? JSONEncoder().encode(self) else { return }
+        UserDefaults(suiteName: Self.group)?.set(d, forKey: Self.key)
+        UserDefaults.standard.set(d, forKey: "body.shared")      // follows you to your Mac and iPad (settings sync)
+    }
+    /// On a Mac or iPad (no Apple Health): today's scores from your iPhone.
+    static func fromYourIPhone() -> BodyScores? {
+        guard let d = UserDefaults.standard.data(forKey: "body.shared"), let s = try? JSONDecoder().decode(BodyScores.self, from: d),
+              Calendar.current.isDateInToday(s.day) else { return nil }
+        return s
     }
     static func load() -> BodyScores? {
         guard let d = UserDefaults(suiteName: group)?.data(forKey: key) else { return nil }

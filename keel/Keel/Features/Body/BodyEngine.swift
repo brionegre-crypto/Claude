@@ -338,7 +338,8 @@ enum BodyMath {
         let need = base + effortExtra(today?.swell ?? 0) + debt / 3
         let wakes = days.suffix(7).compactMap(\.wake).map { d -> Int in let c = cal.dateComponents([.hour, .minute], from: d); return (c.hour ?? 7) * 60 + (c.minute ?? 0) }.sorted()
         let wakeMin = wakes.isEmpty ? 7 * 60 : wakes[wakes.count / 2]
-        let tomorrow = cal.date(byAdding: .day, value: 1, to: cal.startOfDay(for: now)) ?? now
+        // After midnight (before 4 AM), "tonight" means the wake-up later this morning.
+        let tomorrow = cal.component(.hour, from: now) < 4 ? cal.startOfDay(for: now) : (cal.date(byAdding: .day, value: 1, to: cal.startOfDay(for: now)) ?? now)
         let wake = cal.date(byAdding: .minute, value: wakeMin, to: tomorrow) ?? tomorrow
         let bed = wake.addingTimeInterval(-(need * 3600) - 15 * 60)      // ~15 minutes to fall asleep
         return (need, bed, wake)
@@ -437,6 +438,8 @@ final class BodyEngine {
         if let data = try? JSONEncoder().encode(all) { try? data.write(to: cacheURL, options: .atomic) }
         share()
         scheduleWindDown()
+        await SmartWake.schedule(at: BodyMath.tonight(all, base: base).wake)
+        Drinks.scheduleWaterNudge()
         await morningAlertIfDue()
     }
 
@@ -475,6 +478,10 @@ final class BodyEngine {
         c.title = t.tide.map { "Tide \($0)% · Anchor \(t.anchor ?? 0)" } ?? "Good morning"
         let target = BodyMath.swellTarget(t.tide)
         c.body = Self.advice(t.tide) + " Aim for Swell \(target.lowerBound)–\(target.upperBound)."
+        let end = cal.date(byAdding: .day, value: 1, to: cal.startOfDay(for: Date())) ?? Date()
+        if let first = CalendarService.shared.events(from: Date(), to: end).first(where: { !$0.isAllDay }) {
+            c.body += " First up: \(first.title ?? "a meeting") at \(first.startDate.formatted(date: .omitted, time: .shortened))."
+        }
         c.userInfo = ["deeplink": "com.keel.app://tool/body"]
         try? await UNUserNotificationCenter.current().add(UNNotificationRequest(identifier: "body.morning.\(key)", content: c, trigger: nil))
     }

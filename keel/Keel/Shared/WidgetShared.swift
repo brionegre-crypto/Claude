@@ -84,6 +84,18 @@ struct WidgetSnapshot: Codable {
 }
 
 #if !targetEnvironment(macCatalyst)   // Live Activities are iPhone-only
+/// Live Activity for your day: what you're in now, what's next, bedtime.
+struct DayActivityAttributes: ActivityAttributes {
+    struct ContentState: Codable, Hashable {
+        var nowTitle: String
+        var nowEnds: Date?
+        var nextTitle: String?
+        var nextAt: Date?
+        var bedtime: Date?
+    }
+    var day: Date
+}
+
 /// Live Activity for a running focus session (Lock Screen + Dynamic Island).
 struct FocusActivityAttributes: ActivityAttributes {
     struct ContentState: Codable, Hashable {

@@ -77,6 +77,9 @@ enum WidgetSync {
         ).save()
         WidgetCenter.shared.reloadAllTimelines()
         WatchPushQueue.schedule(ctx)          // keep Apple Watch in step (bundled, so taps stay instant)
+        #if !targetEnvironment(macCatalyst)
+        Task { await DayActivity.refresh() }  // my day on the Lock Screen, if it's on
+        #endif
     }
 
     private static func unreadMail(_ ctx: ModelContext) -> [WidgetSnapshot.MailLine] {

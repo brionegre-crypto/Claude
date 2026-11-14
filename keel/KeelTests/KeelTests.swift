@@ -514,4 +514,67 @@ final class KeelTests: XCTestCase {
         XCTAssertEqual(impact.first { $0.tag == "Alcohol" }?.delta, -30)
         XCTAssertEqual(BodyMath.habitImpact(journal: [:], days: days).count, 0)
     }
+
+    // MARK: Sun, journal, gifts, upkeep, insights
+
+    func testSunriseAndSunsetMatchTheRealSky() throws {
+        // New York, 21 June 2026: sunrise about 5:25 AM, sunset about 8:31 PM (EDT).
+        let ny = try XCTUnwrap(TimeZone(identifier: "America/New_York"))
+        var cal = Calendar(identifier: .gregorian); cal.timeZone = ny
+        let day = try XCTUnwrap(cal.date(from: DateComponents(year: 2026, month: 6, day: 21, hour: 12)))
+        let rise = try XCTUnwrap(SunClock.solar(day, lat: 40.7128, lon: -74.0060, rising: true, zenith: 90.833, timeZone: ny))
+        let set = try XCTUnwrap(SunClock.solar(day, lat: 40.7128, lon: -74.0060, rising: false, zenith: 90.833, timeZone: ny))
+        let r = cal.dateComponents([.hour, .minute], from: rise), s = cal.dateComponents([.hour, .minute], from: set)
+        XCTAssertEqual(Double(r.hour! * 60 + r.minute!), 5 * 60 + 25, accuracy: 5)
+        XCTAssertEqual(Double(s.hour! * 60 + s.minute!), 20 * 60 + 31, accuracy: 5)
+        // Far north in midsummer the sun doesn't set.
+        XCTAssertNil(SunClock.solar(day, lat: 78, lon: 15, rising: false, zenith: 90.833, timeZone: ny))
+    }
+
+    func testVoiceJournalFindsTasks() {
+        let t = VoiceJournal.tasks("Today was long. I need to call the dentist and I should email Sam about the budget. Remember to buy milk!")
+        XCTAssertEqual(t, ["Call the dentist", "Email Sam about the budget", "Buy milk"])
+        XCTAssertTrue((1...5).contains(VoiceJournal.mood("I had a wonderful, happy day with friends")))
+    }
+
+    func testNextBirthday() {
+        let cal = Calendar.current
+        let now = cal.date(from: DateComponents(year: 2026, month: 11, day: 14))!
+        let soon = Gifts.nextOccurrence(month: 11, day: 20, year: 1990, from: now)
+        XCTAssertEqual(soon?.1, 36)
+        XCTAssertEqual(cal.component(.year, from: soon!.0), 2026)
+        let passed = Gifts.nextOccurrence(month: 3, day: 2, year: nil, from: now)
+        XCTAssertEqual(cal.component(.year, from: passed!.0), 2027)
+        XCTAssertNil(passed?.1)
+    }
+
+    func testUpkeepRepeats() {
+        XCTAssertEqual(Upkeep.recurrence(90).frequency, .monthly)
+        XCTAssertEqual(Upkeep.recurrence(90).interval, 3)
+        XCTAssertEqual(Upkeep.recurrence(365).frequency, .yearly)
+        XCTAssertEqual(Upkeep.recurrence(10).frequency, .daily)
+        XCTAssertEqual(Upkeep.recurrence(180).fromCompletion, true)
+    }
+
+    func testWorkoutPickFollowsTide() {
+        XCTAssertEqual(WorkoutPick.pick(tide: 80, swell: 10).title, "Push day")
+        XCTAssertEqual(WorkoutPick.pick(tide: 20, swell: 5).title, "Recovery day")
+        XCTAssertEqual(WorkoutPick.pick(tide: 80, swell: 95).title, "You've done enough today")
+    }
+
+    func testMoodInsightsNeedEnoughDays() {
+        let cal = Calendar.current
+        var days: [BodyDay] = []
+        var moods: [(day: Date, mood: Int)] = []
+        for i in 0..<8 {
+            let d = cal.date(byAdding: .day, value: -i, to: cal.startOfDay(for: Date()))!
+            var b = BodyDay(day: d); b.asleep = i % 2 == 0 ? 300 : 480
+            days.append(b)
+            moods.append((day: d, mood: i % 2 == 0 ? 2 : 4))
+        }
+        let out = BodyMath.moodInsights(moods: moods, focus: [], days: days)
+        XCTAssertEqual(out.count, 1)
+        XCTAssertTrue(out[0].contains("lower"))
+        XCTAssertTrue(BodyMath.moodInsights(moods: [], focus: [], days: days).isEmpty)
+    }
 }
