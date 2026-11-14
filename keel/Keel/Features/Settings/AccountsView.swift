@@ -1087,6 +1087,8 @@ struct AIKeySettings: View {
     @State private var testing = false
     @State private var result: String?
     @State private var ok = false
+    @State private var revealed: String?
+    @State private var hideTask: Task<Void, Never>?
 
     var body: some View {
         Form {
@@ -1094,7 +1096,7 @@ struct AIKeySettings: View {
                 SecureField("API key", text: $key).textInputAutocapitalization(.never).autocorrectionDisabled()
                 TextField(provider.defaultModel, text: $model).textInputAutocapitalization(.never).autocorrectionDisabled()
             } header: { Text("\(provider.company) API") } footer: {
-                Text("Leave the model blank to use \(provider.defaultModel). The key is stored only in this iPhone's Keychain.")
+                Text("Leave the model blank to use \(provider.defaultModel). The key is kept in your iCloud Keychain, so your Mac and iPad have it too. Only Keel can read it.")
             }
             if let page = provider.keyPage {
                 Section { Link("Get a \(provider.company) API key", destination: page) } footer: {
@@ -1106,15 +1108,46 @@ struct AIKeySettings: View {
                     .disabled(key.isEmpty || testing)
                 if let result { Label(result, systemImage: ok ? "checkmark.circle.fill" : "exclamationmark.triangle").foregroundStyle(ok ? .green : .red) }
             }
-            if DirectAI.key(for: provider) != nil {
+            if let saved = DirectAI.key(for: provider) {
+                // See the saved key (after Face ID), e.g. to put the same key on your Keel server.
+                Section {
+                    if let revealed {
+                        Text(revealed).font(.system(.footnote, design: .monospaced)).textSelection(.enabled)
+                            .accessibilityLabel("Your \(provider.name) key")
+                        Button("Copy Key", systemImage: "doc.on.doc") {
+                            // Copied to this device only, and cleared from the clipboard after 2 minutes.
+                            UIPasteboard.general.setItems([[UIPasteboard.typeAutomatic: revealed]],
+                                                          options: [.localOnly: true, .expirationDate: Date().addingTimeInterval(120)])
+                            UndoCenter.shared.notify("Key copied (clears in 2 minutes)")
+                        }
+                        Button("Hide Key", systemImage: "eye.slash") { hide() }
+                    } else {
+                        Button("Show Key", systemImage: "eye") {
+                            Task {
+                                guard await AppLock.authenticate("Show your \(provider.name) key") else { return }
+                                withAnimation { revealed = saved }
+                                hideTask?.cancel()
+                                hideTask = Task { try? await Task.sleep(for: .seconds(60)); if !Task.isCancelled { hide() } }
+                            }
+                        }
+                    }
+                } footer: {
+                    Text(revealed == nil ? "Unlocks with Face ID or your passcode." : "Hides again in a minute. Don't paste it into chats or emails.")
+                }
                 Section { Button("Remove Key", role: .destructive) { KeychainStore.delete(provider.keychainKey); key = ""; result = "Removed." ; ok = true } }
             }
         }
         .navigationTitle(provider.name)
+        .onDisappear { hide() }
         .onAppear {
             key = DirectAI.key(for: provider) ?? ""
             model = UserDefaults.standard.string(forKey: "ai.model.\(provider.rawValue)") ?? ""
         }
+    }
+
+    private func hide() {
+        hideTask?.cancel(); hideTask = nil
+        withAnimation { revealed = nil }
     }
 
     private func testAndSave() async {
