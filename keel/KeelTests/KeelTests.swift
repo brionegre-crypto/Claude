@@ -249,6 +249,24 @@ final class KeelTests: XCTestCase {
         XCTAssertEqual(b.first?.text, "This sentence was wrapped in the middle by an email app.")
     }
 
+    // MARK: Hey Keel
+
+    func testHeyKeelHeardManyWays() {
+        XCTAssertEqual(VoiceLoop.wakeMatch("Hey, Keel. What's next?")?.rest, "what's next")
+        XCTAssertEqual(VoiceLoop.wakeMatch("hey kiel add milk to groceries")?.rest, "add milk to groceries")
+        XCTAssertEqual(VoiceLoop.wakeMatch("so anyway Hey Kyle read my email")?.rest, "read my email")
+        XCTAssertNotNil(VoiceLoop.wakeMatch("Okay Keel"))
+        XCTAssertNotNil(VoiceLoop.wakeMatch("heykeel"))
+        XCTAssertEqual(VoiceLoop.wakeMatch("Hey Keel")?.rest, "")
+    }
+
+    func testHeyKeelIgnoresOtherSpeech() {
+        XCTAssertNil(VoiceLoop.wakeMatch("hey Kelly how are you"))
+        XCTAssertNil(VoiceLoop.wakeMatch("the keel of the boat"))
+        XCTAssertNil(VoiceLoop.wakeMatch("hey there"))
+        XCTAssertNil(VoiceLoop.wakeMatch(""))
+    }
+
     // MARK: Layout settings
 
     func testTabBarAlwaysStartsWithToday() {

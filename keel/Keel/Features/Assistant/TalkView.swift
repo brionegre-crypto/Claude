@@ -21,7 +21,9 @@ final class VoiceLoop: NSObject, AVSpeechSynthesizerDelegate {
     private var request: SFSpeechAudioBufferRecognitionRequest?
     private var task: SFSpeechRecognitionTask?
     private var silence: Task<Void, Never>?
-    private var wakeOffset = 0
+    private var wakeWords = 0                 // words before your request ("hey keel"), dropped from what Keel hears
+    /// What Keel hears while waiting for "Hey Keel", shown on screen so you can see it's listening.
+    var hearing = ""
     private let synth = AVSpeechSynthesizer()
     private var active = false
     /// Hands-free: Keel listens on the device for "Hey Keel" while this screen is open, then takes your request.
@@ -29,7 +31,6 @@ final class VoiceLoop: NSObject, AVSpeechSynthesizerDelegate {
     private var awaitingWake = false
     private var restart: Task<Void, Never>?
     private var followUp: Task<Void, Never>?
-    static let wakePhrases = ["hey keel", "hey kiel", "hey keal", "hey keele", "hey kee l", "hey keil", "hay keel", "a keel", "hey cheel", "hey kneel"]
 
     override init() {
         super.init()
@@ -49,10 +50,7 @@ final class VoiceLoop: NSObject, AVSpeechSynthesizerDelegate {
         let speechOK = await withCheckedContinuation { c in SFSpeechRecognizer.requestAuthorization { c.resume(returning: $0 == .authorized) } }
         let micOK = await AVAudioApplication.requestRecordPermission()
         guard speechOK, micOK else { error = "Keel needs microphone and speech recognition access. Turn them on in Settings → Keel."; return }
-        guard recognizer?.supportsOnDeviceRecognition == true else {
-            error = "“Hey Keel” needs on-device speech recognition, which this device doesn't have for your language. Tap the button to talk instead."
-            return
-        }
+        error = nil
         handsFree = true
         active = true
         awaitingWake = true
@@ -100,10 +98,12 @@ final class VoiceLoop: NSObject, AVSpeechSynthesizerDelegate {
                             self.checkWake(heard)
                             if r.isFinal && self.awaitingWake { self.endRecognition(); self.listen() }   // keep listening after a pause
                         } else {
-                            let u = Array(heard.utf16)
-                            self.partial = self.wakeOffset > 0 && self.wakeOffset <= u.count
-                                ? String(decoding: u[self.wakeOffset...], as: UTF16.self).trimmingCharacters(in: CharacterSet.punctuationCharacters.union(.whitespaces))
-                                : heard
+                            if self.wakeWords > 0 {
+                                // Recognition may rewrite earlier words; find the wake phrase again and keep what follows.
+                                self.partial = Self.wakeMatch(heard)?.rest ?? Self.words(heard).dropFirst(self.wakeWords).joined(separator: " ")
+                            } else {
+                                self.partial = heard
+                            }
                             self.followUp?.cancel()
                             self.armSilenceTimer()
                         }
@@ -116,9 +116,45 @@ final class VoiceLoop: NSObject, AVSpeechSynthesizerDelegate {
         }
     }
 
+    /// "Hey Keel" however speech recognition writes it: "Hey, Keel.", "hey kiel", "Hey Kyle", "heykeel", "okay Keel"…
+    /// Returns how many words the wake phrase used and the request said after it.
+    nonisolated static func wakeMatch(_ heard: String) -> (words: Int, rest: String)? {
+        let w = Self.words(heard)
+        guard !w.isEmpty else { return nil }
+        let leads: Set<String> = ["hey", "hi", "hay", "a", "okay", "ok", "hello", "yo", "eh", "hei"]
+        var i = w.count - 1
+        while i >= 0 {
+            if w[i].hasPrefix("hey") && w[i].count > 3 && isKeel(String(w[i].dropFirst(3))) {        // "heykeel"
+                return (i + 1, w[(i + 1)...].joined(separator: " "))
+            }
+            if i + 1 < w.count, leads.contains(w[i]), isKeel(w[i + 1]) {
+                return (i + 2, w[(i + 2)...].joined(separator: " "))
+            }
+            i -= 1
+        }
+        return nil
+    }
+    nonisolated static func words(_ s: String) -> [String] {
+        s.lowercased().components(separatedBy: CharacterSet.alphanumerics.union(CharacterSet(charactersIn: "'")).inverted).filter { !$0.isEmpty }
+    }
+    nonisolated static func isKeel(_ w: String) -> Bool {
+        let close: Set<String> = ["keel", "kiel", "keal", "keele", "keil", "kiehl", "kheel", "keels", "keel's", "kyle", "kill", "kil", "keyl", "kneel", "ceil", "keal's", "kale", "cheel", "kiehls", "keelie"]
+        if close.contains(w) { return true }
+        guard w.count >= 3 && w.count <= 6, w.first == "k" || w.first == "c" else { return false }
+        // One letter off "keel" (k-e-e-l) counts too.
+        let a = Array("keel"), b = Array(w)
+        var row = Array(0...b.count)
+        for x in 1...a.count {
+            var prev = row[0]; row[0] = x
+            for y in 1...b.count { let t = row[y]; row[y] = min(row[y] + 1, row[y - 1] + 1, prev + (a[x - 1] == b[y - 1] ? 0 : 1)); prev = t }
+        }
+        return row[b.count] <= 1
+    }
+
     /// Waiting for the wake phrase: everything said after "Hey Keel" is your request.
     private func checkWake(_ heard: String) {
-        guard let r = Self.wakePhrases.compactMap({ heard.range(of: $0, options: [.backwards, .caseInsensitive]) }).max(by: { $0.lowerBound < $1.lowerBound }) else {
+        hearing = String(heard.suffix(60))
+        guard let m = Self.wakeMatch(heard) else {
             if heard.count > 220 { endRecognition(); listen() }       // keep the rolling transcript short
             return
         }
@@ -127,9 +163,10 @@ final class VoiceLoop: NSObject, AVSpeechSynthesizerDelegate {
         AudioServicesPlaySystemSound(1113)                          // a soft "I'm listening" tone
         Haptics.tap()
         state = .listening
-        let rest = String(heard[r.upperBound...]).trimmingCharacters(in: CharacterSet.punctuationCharacters.union(.whitespaces))
+        let rest = m.rest
         // Keep listening in the same recognition: the request continues after the wake words.
-        wakeOffset = r.upperBound.utf16Offset(in: heard)
+        wakeWords = m.words
+        hearing = ""
         partial = rest
         if rest.isEmpty { armFollowUpWindow(seconds: 6) } else { armSilenceTimer() }
     }
@@ -178,7 +215,7 @@ final class VoiceLoop: NSObject, AVSpeechSynthesizerDelegate {
     private func finishUtterance() async {
         let text = partial.trimmingCharacters(in: .whitespacesAndNewlines)
         endRecognition()
-        wakeOffset = 0
+        wakeWords = 0
         guard active else { return }
         guard !text.isEmpty else { if handsFree { awaitingWake = true }; listen(); return }
         let lower = text.lowercased()
@@ -231,6 +268,10 @@ struct TalkView: View {
                                 .background(l.fromUser ? DS.Palette.accent.opacity(0.15) : DS.Palette.elevated, in: .rect(cornerRadius: 16))
                                 .frame(maxWidth: .infinity, alignment: l.fromUser ? .trailing : .leading)
                                 .id(l.id)
+                        }
+                        if loop.state == .waiting && !loop.hearing.isEmpty {
+                            Text("Hearing: “\(loop.hearing)”").font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
+                                .frame(maxWidth: .infinity, alignment: .center).accessibilityHidden(true)
                         }
                         if !loop.partial.isEmpty {
                             Text(loop.partial).italic().foregroundStyle(DS.Palette.inkSoft).frame(maxWidth: .infinity, alignment: .trailing)
