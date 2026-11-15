@@ -207,7 +207,8 @@ struct DiscoverList: View {
     var onOpen: (String) -> Void
     var body: some View {
         VStack(spacing: DS.Space.s) {
-            ForEach(Discover.items) { item in
+            // By title: several tips share an empty tool id, and duplicate ids made one row show up twice.
+            ForEach(Discover.items, id: \.title) { item in
                 Button { if !item.id.isEmpty { onOpen(item.id) } } label: {
                     HStack(alignment: .top, spacing: DS.Space.m) {
                         Image(systemName: item.icon).font(.title3).foregroundStyle(item.color.gradient)

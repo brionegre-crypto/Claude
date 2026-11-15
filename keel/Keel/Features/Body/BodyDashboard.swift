@@ -47,8 +47,11 @@ struct BodyPageBar: View {
                 }
             }
             .padding(4)
-            .background(DS.Palette.elevated, in: Capsule())
         }
+        // The capsule goes around the scroller, not the pills: five pages are wider than the screen, so a capsule
+        // on the pills ran off the right edge and looked cut off.
+        .background(DS.Palette.elevated, in: Capsule())
+        .clipShape(Capsule())
         .padding(.vertical, 6)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(DS.Palette.canvas.opacity(0.94))

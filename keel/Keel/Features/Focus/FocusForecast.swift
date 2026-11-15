@@ -344,11 +344,12 @@ struct FocusForecastCard: View {
     @Query(sort: \CheckIn.day, order: .reverse) private var checkIns: [CheckIn]
 
     var body: some View {
-        let sleep = checkIns.first { Calendar.current.isDateInToday($0.day) }?.sleepHours
-        let f = FocusForecast.build(meds: meds, doses: doses, sleepHours: sleep, sessions: sessions)
         // Only once it's personal: a focus med is set up, or there's enough focus history to learn from.
-        let personal = meds.contains { FocusForecast.timing(for: $0).profile != .none } || sessions.count >= 8
-        if FocusForecast.isOn, personal, let best = f.peaks.first(where: { $0.end > Date() }) {
+        // Checked before building the forecast, which is too much work to do on every redraw of Today for nothing.
+        let personal = FocusForecast.isOn && (sessions.count >= 8 || meds.contains { FocusForecast.timing(for: $0).profile != .none })
+        let sleep = personal ? checkIns.first { Calendar.current.isDateInToday($0.day) }?.sleepHours : nil
+        let f = personal ? FocusForecast.build(meds: meds, doses: doses, sleepHours: sleep, sessions: sessions) : nil
+        if let best = f?.peaks.first(where: { $0.end > Date() }) {
             NavigationLink { LazyView(FocusForecastView()) } label: {
                 GlassCard(tint: DS.Palette.focus) {
                     HStack(spacing: DS.Space.m) {

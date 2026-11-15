@@ -158,11 +158,16 @@ struct TasksView: View {
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
-                filterBar
+                // The chips scroll with the content as its first row (as Inbox does). Sitting above the list or
+                // matrix, under the large title and search field, they were drawn invisible: a blank strip that
+                // still took taps, so you could get into Matrix and not see the way back.
                 if filter == .matrix {
-                    MatrixView(tasks: filtered.filter { !$0.isWaitingOn }, onRolled: showRolled)
+                    MatrixView(tasks: filtered.filter { !$0.isWaitingOn }, onRolled: showRolled, header: AnyView(filterBar))
                 } else if boardMode && filter != .completed {
-                    BoardView(tasks: boardTasks)
+                    ScrollView {
+                        filterBar
+                        BoardView(tasks: boardTasks).containerRelativeFrame(.vertical)   // columns keep their own scrolling
+                    }
                 } else {
                     list
                 }
@@ -282,6 +287,11 @@ struct TasksView: View {
 
     private var list: some View {
         List(selection: $selectedTasks) {
+            filterBar
+                .listRowInsets(EdgeInsets())
+                .listRowBackground(Color.clear)
+                .listRowSeparator(.hidden)
+                .selectionDisabled()
             if filter != .completed && !selecting {
                 Section {
                     HStack {
@@ -536,6 +546,8 @@ struct TaskRow: View {
 struct MatrixView: View {
     let tasks: [TaskItem]
     var onRolled: (Date) -> Void
+    /// Shown above the quadrants, inside the scroll view (the Tasks filter chips).
+    var header: AnyView? = nil
 
     private func urgent(_ t: TaskItem) -> Bool {
         (t.dueDate ?? .distantFuture) < Calendar.current.date(byAdding: .day, value: 2, to: Calendar.current.startOfDay(for: Date()))!
@@ -550,6 +562,7 @@ struct MatrixView: View {
             ("Later / drop", "Neither", DS.Palette.inkSoft, tasks.filter { !urgent($0) && !important($0) }),
         ]
         ScrollView {
+            if let header { header }
             FlexGrid(columns: 2, spacing: DS.Space.s) {
                 ForEach(quadrants, id: \.0) { q in
                     GlassCard(tint: q.2) {

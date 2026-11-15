@@ -105,6 +105,7 @@ struct HubView: View {
                 .scrollTargetLayout()
             }
             .scrollTargetBehavior(.viewAligned)
+            .scrollClipDisabled()          // the cards' soft shadow was cut off in a hard line under the row
         }
         .id(stateRaw)
         .transition(.opacity.combined(with: .move(edge: .trailing)))

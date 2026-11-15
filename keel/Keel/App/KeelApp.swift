@@ -50,7 +50,11 @@ struct KeelApp: App {
                     }
                     SyncEngine.shared.configure(container: container)
                     MedEngine.scheduleAll(ctx: container.mainContext)
-                    if TaskAlarms.globalOn { _ = await TaskAlarms.authorize() }   // asks once for full-screen task alarms
+                    // Asks once for full-screen task alarms, but never on top of onboarding or What's new.
+                    let d = UserDefaults.standard
+                    if TaskAlarms.globalOn, d.bool(forKey: "onboarding.done"), d.string(forKey: Discover.seenKey) == Discover.version {
+                        _ = await TaskAlarms.authorize()
+                    }
                     BreakReminders.schedule()
                     TaskDedupe.run(ctx: container.mainContext)           // clears duplicate tasks left by older builds
                     try? await Task.sleep(for: .seconds(1.5))           // let the first screen draw before the big sync

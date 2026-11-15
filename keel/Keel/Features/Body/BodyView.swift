@@ -308,9 +308,11 @@ struct BodyView: View {
 
     private func linkTile(_ title: String, _ icon: String, _ color: Color) -> some View {
         HStack {
-            Image(systemName: icon).foregroundStyle(color)
+            // Fixed icon width and one line of text, so titles line up and every tile in the grid is the same height.
+            Image(systemName: icon).foregroundStyle(color).frame(width: 24)
             Text(title).font(DS.Font.caption.weight(.semibold)).foregroundStyle(DS.Palette.ink)
-            Spacer()
+                .lineLimit(1).minimumScaleFactor(0.8)
+            Spacer(minLength: 0)
             Image(systemName: "chevron.right").font(.caption2).foregroundStyle(DS.Palette.inkSoft)
         }
         .padding(14)

@@ -12,6 +12,14 @@ enum CalendarMode: String, CaseIterable, Identifiable {
 }
 
 struct EventRef: Identifiable { let id = UUID(); let event: EKEvent }
+
+/// "Share my availability": the free times are worked out when you share, not on every redraw of the Calendar
+/// (the menu's contents are built with the screen, so the text used to be recomputed each time).
+struct AvailabilityShare: Transferable {
+    static var transferRepresentation: some TransferRepresentation {
+        ProxyRepresentation { (_: AvailabilityShare) in await MainActor.run { Availability.text() } }
+    }
+}
 struct EventDraft: Identifiable { let id = UUID(); let event: EKEvent?; let start: Date? }
 
 struct CalendarView: View {
@@ -111,7 +119,7 @@ struct CalendarView: View {
                         }
                         Section("Share") {
                             NavigationLink { LazyView(BookingLinkView()) } label: { Label("Booking link", systemImage: "link.badge.plus") }
-                            ShareLink(item: Availability.text()) { Label("Share my availability", systemImage: "calendar.badge.clock") }
+                            ShareLink(item: AvailabilityShare(), preview: SharePreview("My availability")) { Label("Share my availability", systemImage: "calendar.badge.clock") }
                             NavigationLink { LazyView(SharedCalendarsView()) } label: { Label("Shared calendars", systemImage: "person.3") }
                         }
                         Menu("More", systemImage: "ellipsis") {
@@ -418,6 +426,7 @@ struct TimelineGrid: View {
                         }
                         .padding(.bottom, 80)        // room above the Focus bar
                     }
+                    .contentMargins(.top, 10, for: .scrollContent)   // hour labels sit slightly above their line; don't clip the top one
                     .onAppear { proxy.scrollTo(max(0, cal.component(.hour, from: Date()) - 1), anchor: .top) }
                 }
             }
@@ -426,7 +435,8 @@ struct TimelineGrid: View {
 
     private func dayHeader(_ colWidth: CGFloat) -> some View {
         HStack(spacing: 0) {
-            Color.clear.frame(width: gutter)
+            // Zero height: a bare Color takes all the height it's offered, which pushed the week grid halfway down.
+            Color.clear.frame(width: gutter, height: 0)
             ForEach(days, id: \.self) { day in
                 let today = cal.isDateInToday(day)
                 Button { onTapDay(day) } label: {
@@ -512,9 +522,17 @@ struct TimelineGrid: View {
         }
     }
 
+    /// "1 PM" … "11 PM", formatted once (per locale) instead of 24 date formats on every redraw of the grid.
+    private static var hourLabels: (locale: String, labels: [String])?
     private func hourLabel(_ h: Int) -> String {
-        guard h > 0, let d = cal.date(bySettingHour: h, minute: 0, second: 0, of: Date()) else { return "" }
-        return d.formatted(.dateTime.hour())
+        let locale = Locale.current.identifier
+        if Self.hourLabels?.locale != locale {
+            Self.hourLabels = (locale, (0..<24).map { h in
+                guard h > 0, let d = Calendar.current.date(bySettingHour: h, minute: 0, second: 0, of: Date()) else { return "" }
+                return d.formatted(.dateTime.hour())
+            })
+        }
+        return Self.hourLabels?.labels[h] ?? ""
     }
 
     @ViewBuilder

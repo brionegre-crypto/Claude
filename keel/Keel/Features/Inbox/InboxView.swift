@@ -372,7 +372,17 @@ struct InboxView: View {
                 .accessibilityLabel("Filters: " + mailQuery.chips.joined(separator: ", "))
             }
 
-            if visible.isEmpty && pinned.isEmpty && !loadingSent && serverResults.isEmpty {
+            if accounts.isEmpty && search.isEmpty {
+                // No mail connected yet: "All clear" here read as if your mail had been checked.
+                ContentUnavailableView {
+                    Label("Connect your email", systemImage: "envelope.badge")
+                } description: {
+                    Text("Add Gmail, Outlook, iCloud or any IMAP account to see your mail here.")
+                } actions: {
+                    Button("Add a mail account") { AppRouter.shared.showSettings = true }.buttonStyle(.borderedProminent)
+                }
+                .listRowBackground(Color.clear)
+            } else if visible.isEmpty && pinned.isEmpty && !loadingSent && serverResults.isEmpty {
                 ContentUnavailableView(search.isEmpty ? "All clear" : "No matches on this phone",
                                        systemImage: search.isEmpty ? "checkmark.seal" : "magnifyingglass",
                                        description: Text(search.isEmpty ? "Nothing here. Nice." : "Press Search to look through all your mail."))

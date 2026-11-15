@@ -81,25 +81,39 @@ final class SettingsSync {
     }
     private func stamp() { UserDefaults.standard.set(Date().timeIntervalSince1970, forKey: "settingsSync.last") }
 
+    /// What this device last sent (value and size), so settings that haven't changed aren't re-encoded every time.
+    private var sent: [String: (value: NSObject, size: Int)] = [:]
+
     /// Sends this device's settings up (only what changed).
     private func push(overwrite: Bool, deleteMissing: Bool) {
-        defer { stamp() }
+        var changed = false
+        // Stamp only when something went up: the stamp is itself a settings write, so stamping every time
+        // scheduled another push 2 s later, forever (a main-thread pass over every setting every 2 seconds).
+        defer { if changed { stamp() } }
         let mine = defaults.dictionaryRepresentation().filter { Self.syncs($0.key) }
         var used = 0
         for (k, v) in mine.sorted(by: { $0.key < $1.key }) {
+            let obj = v as? NSObject
+            if let obj, let prev = sent[k], prev.value.isEqual(obj) {          // unchanged since last time
+                used += prev.size
+                guard used < 900_000 else { break }
+                continue
+            }
             guard let data = blob(v), data.count < 64_000 else { continue }       // big blobs stay local
             used += data.count
             guard used < 900_000 else { break }                                  // iCloud allows 1 MB in total
+            if let obj { sent[k] = (obj, data.count) }
             let rk = Self.prefix + k
             if let cur = kvs.object(forKey: rk) {
                 if !overwrite || blob(cur) == data { continue }
             }
             kvs.set(v, forKey: rk)
+            changed = true
         }
         if deleteMissing {
             for rk in kvs.dictionaryRepresentation.keys where rk.hasPrefix(Self.prefix) {
                 let k = String(rk.dropFirst(Self.prefix.count))
-                if Self.syncs(k) && mine[k] == nil { kvs.removeObject(forKey: rk) }    // you cleared it here
+                if Self.syncs(k) && mine[k] == nil { kvs.removeObject(forKey: rk); sent[k] = nil; changed = true }    // you cleared it here
             }
         }
     }

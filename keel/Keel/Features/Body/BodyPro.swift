@@ -53,7 +53,12 @@ enum WorkoutBuilder {
             return Plan(name: "Recovery mobility", session: s, why: ["Your Tide is low (\(t)%), so today is light movement to help you recover, not a hard session."])
         }
         let sets = t >= 67 ? 4 : 3
-        why.append(t >= 67 ? "High tide (\(t)%): a full session, \(sets) sets each." : "Steady tide (\(t)%): a normal session, \(sets) sets each.")
+        if tide == nil {
+            // No recovery score (Apple Health not connected or no data yet): don't quote a made-up percentage.
+            why.append("No Tide score yet, so a normal session, \(sets) sets each. Once Apple Health gives Keel a Tide, sessions match your recovery.")
+        } else {
+            why.append(t >= 67 ? "High tide (\(t)%): a full session, \(sets) sets each." : "Steady tide (\(t)%): a normal session, \(sets) sets each.")
+        }
         // Muscles that are fresh enough, most in need of work first.
         let ready = Muscle.allCases.filter { (fatigue[$0] ?? 0) < 0.35 }
         let ranked = ready.sorted { (weekSets[$0] ?? 0) < (weekSets[$1] ?? 0) }
@@ -106,7 +111,7 @@ struct BuildWorkoutCard: View {
             Text(plan.session.exercises.compactMap { ExerciseLibrary.exercise($0.exerciseId)?.name }.joined(separator: " · "))
                 .font(.callout.weight(.semibold))
             ForEach(plan.why, id: \.self) { Text("• \($0)").font(.caption).foregroundStyle(DS.Palette.inkSoft) }
-            Button { active = plan.session; Haptics.start() } label: { Label("Start it", systemImage: "play.fill").frame(maxWidth: .infinity) }
+            Button { active = plan.session; Haptics.start() } label: { Label("Start it", systemImage: "play.fill").foregroundStyle(.white).frame(maxWidth: .infinity) }
                 .buttonStyle(.borderedProminent).tint(BodyStyle.swell)
         }
         .bodyCard()
