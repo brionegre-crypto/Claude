@@ -95,6 +95,7 @@ struct PersonContactSection: View {
 
 struct NextMeetingPeopleCard: View {
     @State private var next: (event: EKEvent, people: [String])?
+    private static var cache: (at: Date, value: (event: EKEvent, people: [String])?)?
 
     var body: some View {
         Group {
@@ -115,6 +116,12 @@ struct NextMeetingPeopleCard: View {
                 .background(DS.Palette.elevated, in: .rect(cornerRadius: DS.Radius.card, style: .continuous))
             }
         }
-        .task { next = KeelContacts.nextMeeting() }
+        .task {
+            if let c = Self.cache, Date().timeIntervalSince(c.at) < 300 { next = c.value; return }
+            try? await Task.sleep(for: .milliseconds(300))            // after Today has finished appearing
+            let n = KeelContacts.nextMeeting()
+            Self.cache = (Date(), n)
+            next = n
+        }
     }
 }

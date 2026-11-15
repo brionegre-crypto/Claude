@@ -74,18 +74,20 @@ struct KeelApp: App {
                     try? await Task.sleep(for: .seconds(2.5))
                     guard UIApplication.shared.applicationState == .active else { return }
                     let ctx = container.mainContext
+                    // One small job at a time with a pause between, so a tap or a swipe never waits behind them.
+                    func breathe() async { try? await Task.sleep(for: .milliseconds(250)) }
                     if Throttle.due("dedupe", every: 600) { TaskDedupe.run(ctx: ctx) }
-                    WeeklyDigest.makeIfDue(ctx: ctx)
-                    SmartTemplates.runScheduled(ctx: ctx)
-                    OvernightAgent.runIfDue(ctx: ctx)
-                    Coach.weeklyIfDue(ctx: ctx)
+                    await breathe(); WeeklyDigest.makeIfDue(ctx: ctx)
+                    await breathe(); SmartTemplates.runScheduled(ctx: ctx)
+                    await breathe(); OvernightAgent.runIfDue(ctx: ctx)
+                    await breathe(); Coach.weeklyIfDue(ctx: ctx)
                     try? await Task.sleep(for: .seconds(1.5))
                     BrainIndex.shared.refresh(ctx: ctx)                 // only what changed, at most every 2 minutes
-                    if Throttle.due("backup", every: 6 * 3600) { BrainBackup.backupIfDue(ctx: ctx) }
-                    if Throttle.due("trash", every: 24 * 3600) { NoteTrash.purgeOld() }
-                    if MarkdownMirror.isOn, Throttle.due("mdpull", every: 600) { _ = MarkdownMirror.pull(ctx: ctx) }
+                    await breathe(); if Throttle.due("backup", every: 6 * 3600) { BrainBackup.backupIfDue(ctx: ctx) }
+                    await breathe(); if Throttle.due("trash", every: 24 * 3600) { NoteTrash.purgeOld() }
+                    await breathe(); if MarkdownMirror.isOn, Throttle.due("mdpull", every: 600) { _ = MarkdownMirror.pull(ctx: ctx) }
                     if Throttle.due("spaces.changes", every: 600) { await SpaceChanges.check() }
-                    MailAccountSync.adopt(ctx: ctx)                     // sign-ins may arrive from iCloud Keychain a little later     // "Sam updated Groceries"
+                    await breathe(); if Throttle.due("mail.adopt", every: 300) { MailAccountSync.adopt(ctx: ctx) }                     // sign-ins may arrive from iCloud Keychain a little later     // "Sam updated Groceries"
                 }
             }
             if phase == .background {
@@ -244,9 +246,7 @@ struct RootView: View {
         TabView(selection: $router.tab) {
             // Your tab bar (Settings → Look & Feel → Tab bar).
             ForEach(tabBarItems, id: \.self) { id in
-                SwiftUI.Tab(TabBarConfig.title(id), systemImage: TabBarConfig.icon(id), value: TabBarConfig.value(id)) {
-                    TabBarConfig.content(id).modifier(TabArrival(active: router.tab == TabBarConfig.value(id)))
-                }
+                SwiftUI.Tab(TabBarConfig.title(id), systemImage: TabBarConfig.icon(id), value: TabBarConfig.value(id)) { TabBarConfig.content(id) }
             }
             // Mac and iPad: Settings sits at the bottom of the sidebar. iPhone uses the gear on each tab.
             // Left out of the iPhone tab bar entirely: a sixth tab pushes Notes behind "More".
@@ -298,7 +298,10 @@ struct RootView: View {
         }
         .onChange(of: phase) { _, p in
             if p == .background { savePoints.showing = nil; SavePoints.didEnterBackground() }
-            if p == .active { ClaudeBridge.openPendingDrafts(); Task { await TeamAPI.checkForNews() } }   // drafts Claude left; team news for you      // a draft email or text Claude left for you to check and send
+            if p == .active {
+                ClaudeBridge.openPendingDrafts()
+                Task { try? await Task.sleep(for: .seconds(4)); if Throttle.due("team.news", every: 600) { await TeamAPI.checkForNews() } }
+            }   // drafts Claude left; team news for you      // a draft email or text Claude left for you to check and send
             if p == .active, let sp = SavePoints.pendingResume() {
                 UserDefaults.standard.removeObject(forKey: SavePoints.awayKey)
                 withAnimation(DS.spring) { savePoints.showing = sp }
