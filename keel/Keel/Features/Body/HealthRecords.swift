@@ -278,7 +278,7 @@ struct HealthRecordsView: View {
         }
         #endif
         .sheet(isPresented: Binding(get: { review != nil }, set: { if !$0 { review = nil } })) {
-            if let review { BiomarkerReviewSheet(record: review.0, found: review.1) { review = nil } }
+            if let review { BiomarkerReviewSheet(record: review.0, found: review.1) { self.review = nil } }
         }
     }
 
