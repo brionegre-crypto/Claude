@@ -99,69 +99,208 @@ struct BodyView: View {
     @AppStorage(Drinks.goalKey) private var waterGoal = 2_000
     @AppStorage("drinks.nudge") private var waterNudge = true
     @State private var extras = HealthExtras()
+    @AppStorage("body.page") private var pageRaw = BodyPage.today.rawValue
+    @State private var selectedDay: Date?
+    @State private var logDose = false
+    @State private var logDest: BodyLogDest?
+
+    enum BodyLogDest: Hashable { case symptoms, bp, sore, prn, fasting }
+
+    private var page: Binding<BodyPage> {
+        Binding(get: { BodyPage(rawValue: pageRaw) ?? .today }, set: { pageRaw = $0.rawValue })
+    }
+    private var live: Bool { BodyHealth.available && engine.connected }
+    private var isToday: Bool { selectedDay == nil }
 
     var body: some View {
         ScrollView {
-            LazyVStack(alignment: .leading, spacing: DS.Space.l) {
-                if !BodyHealth.available {
-                    // On Mac and iPad: today's scores from your iPhone.
-                    if let sc = BodyScores.fromYourIPhone() {
-                        HStack(spacing: 0) {
-                            ScoreRing(title: "Tide", value: sc.tide, max: 100, color: BodyStyle.tide, suffix: "%").frame(maxWidth: .infinity)
-                            ScoreRing(title: "Swell", value: sc.swell, max: 100, color: BodyStyle.swell).frame(maxWidth: .infinity)
-                            ScoreRing(title: "Anchor", value: sc.anchor, max: 100, color: BodyStyle.anchor).frame(maxWidth: .infinity)
+            LazyVStack(alignment: .leading, spacing: DS.Space.m, pinnedViews: [.sectionHeaders]) {
+                if !BodyHealth.available { iPhoneScores }
+                Section {
+                    Group {
+                        switch page.wrappedValue {
+                        case .today: todayPage
+                        case .sleep: sleepPage
+                        case .effort: effortPage
+                        case .health: healthPage
+                        case .habits: habitsPage
                         }
-                        Text("From your iPhone. " + BodyEngine.advice(sc.tide)).font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
-                    } else {
-                        Text("Recovery, effort and sleep scores come from Apple Health on your iPhone and show here once it has them.")
-                            .font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
                     }
-                } else if !engine.connected {
-                    connectCard
-                } else {
-                    header
-                    if !engine.loading, engine.days.suffix(3).allSatisfy({ !$0.hasSleep && $0.hrv == nil && $0.swell == 0 }) { noDataCard }
-                    adviceCard
-                    EnergyLeftCard(day: t)
-                    NapAdvisorCard(tide: t?.tide)
-                    WorkoutPickCard(tide: t?.tide, swell: t?.swell ?? 0)
-                }
-                // Always here, Health connected or not: medications and every health screen.
-                BodyMedsCard()
-                HealthTilesSection(extras: extras)
-                EnergyCheckCard()
-                if BodyHealth.available && engine.connected {
-                    ActivityTodayCard(x: extras)
-                    if extras.zoneMinutes.reduce(0, +) > 0 { ZonesCard(minutes: extras.zoneMinutes) }
-                    CycleCard(x: extras)
-                    DrinksCard()
-                    tideCard
-                    anchorCard
-                    SleepDebtCard(days: engine.days, base: need)
-                    swellCard
-                    stressCard
-                    vitalsCard
-                    journalCard
-                    MoodBodyCard()
-                    settingsCard
-                    explainer
-                } else {
-                    DrinksCard()
+                    .transition(.opacity.combined(with: .offset(y: 6)))
+                } header: {
+                    BodyPageBar(page: page)
                 }
             }
-            .padding(DS.Space.m)
+            .padding(.horizontal, DS.Space.m)
+            .padding(.bottom, DS.Space.l)
+            .animation(.smooth(duration: 0.28), value: pageRaw)
         }
         .background(DS.Palette.canvas)
         .navigationTitle("Body")
         .navigationBarTitleDisplayMode(.inline)
-        .refreshable { await engine.refresh(force: true) }
+        .toolbar { ToolbarItem(placement: .topBarTrailing) { logMenu } }
+        .sheet(isPresented: $logDose) { LogDoseSheet() }
+        .navigationDestination(item: $logDest) { d in
+            switch d {
+            case .symptoms: SymptomsView()
+            case .bp: BloodPressureView()
+            case .sore: BodyMapView()
+            case .prn: PRNView()
+            case .fasting: FastingView()
+            }
+        }
+        .refreshable { await engine.refresh(force: true); if engine.connected { extras = await HealthExtras.load() } }
         .task {
             await engine.refresh()
             if engine.connected { extras = await HealthExtras.load() }
         }
     }
 
-    private var t: BodyDay? { engine.today }
+    /// One menu for everything you might log, plus jumping between pages.
+    private var logMenu: some View {
+        Menu {
+            Section("Log") {
+                Button("Medication dose", systemImage: "pills.fill") { logDose = true }
+                Button("As-needed medicine", systemImage: "cross.case.fill") { logDest = .prn }
+                Button("Symptom", systemImage: "thermometer.medium") { logDest = .symptoms }
+                Button("Blood pressure", systemImage: "heart.text.square.fill") { logDest = .bp }
+                Button("Sore spot", systemImage: "figure.stand") { logDest = .sore }
+                Button("Fast", systemImage: "timer") { logDest = .fasting }
+            }
+            Section("Go to") {
+                ForEach(BodyPage.allCases) { p in
+                    Button(p.rawValue, systemImage: p.icon) { withAnimation(.smooth) { pageRaw = p.rawValue } }
+                }
+            }
+            if live {
+                Button("Refresh from Apple Health", systemImage: "arrow.clockwise") {
+                    Task { await engine.refresh(force: true); extras = await HealthExtras.load() }
+                }
+            }
+        } label: {
+            Label("Log", systemImage: "plus.circle.fill").symbolRenderingMode(.hierarchical)
+        }
+        .accessibilityLabel("Log or go to")
+    }
+
+    @ViewBuilder private var iPhoneScores: some View {
+        // On Mac and iPad: today's scores from your iPhone.
+        if let sc = BodyScores.fromYourIPhone() {
+            HStack(spacing: 0) {
+                ScoreRing(title: "Tide", value: sc.tide, max: 100, color: BodyStyle.tide, suffix: "%").frame(maxWidth: .infinity)
+                ScoreRing(title: "Swell", value: sc.swell, max: 100, color: BodyStyle.swell).frame(maxWidth: .infinity)
+                ScoreRing(title: "Anchor", value: sc.anchor, max: 100, color: BodyStyle.anchor).frame(maxWidth: .infinity)
+            }
+            Text("From your iPhone. " + BodyEngine.advice(sc.tide)).font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
+        } else {
+            Text("Recovery, effort and sleep scores come from Apple Health on your iPhone and show here once it has them.")
+                .font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
+        }
+    }
+
+    @ViewBuilder private var todayPage: some View {
+        if live {
+            BodyDayStrip(days: engine.days, selected: $selectedDay)
+            BodyHeroCard(day: t, days: engine.days, isToday: isToday)
+            if engine.loading { ProgressView("Reading Apple Health…").font(DS.Font.caption).frame(maxWidth: .infinity) }
+            if t?.calibrating ?? true {
+                Label("Learning your normal: Tide gets accurate after about 5 nights with your Apple Watch.", systemImage: "hourglass")
+                    .font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
+            }
+            if !engine.loading, engine.days.suffix(3).allSatisfy({ !$0.hasSleep && $0.hrv == nil && $0.swell == 0 }) { noDataCard }
+            if isToday { adviceCard }
+            BodyMetricsGrid(day: t, days: engine.days)
+            if isToday {
+                EnergyLeftCard(day: t)
+                stressCard
+                NapAdvisorCard(tide: t?.tide)
+                WorkoutPickCard(tide: t?.tide, swell: t?.swell ?? 0)
+            } else {
+                stressCard
+            }
+            BodyWeekCard(days: engine.days)
+        } else if BodyHealth.available {
+            connectCard
+        }
+        EnergyCheckCard()
+        if !live { DrinksCard() }
+    }
+
+    @ViewBuilder private var sleepPage: some View {
+        if live {
+            BodyDayStrip(days: engine.days, selected: $selectedDay)
+            anchorCard
+            BodyMetricsGrid(day: t, days: engine.days, metrics: [.sleep, .efficiency, .deep, .rem], title: "Sleep metrics")
+            SleepScheduleCard(days: engine.days)
+            SleepDebtCard(days: engine.days, base: need)
+            tideCard
+        } else if BodyHealth.available {
+            BodyNeedsHealthCard(what: "your sleep stages, schedule and sleep debt") { Task { await engine.connect() } }
+        }
+        NavigationLink { SleepSoundsView() } label: {
+            Label("Sleep sounds", systemImage: "moon.zzz.fill").font(DS.Font.headline).frame(maxWidth: .infinity, alignment: .leading).bodyCard()
+        }
+        .buttonStyle(.plain)
+    }
+
+    @ViewBuilder private var effortPage: some View {
+        if live {
+            BodyDayStrip(days: engine.days, selected: $selectedDay)
+            swellCard
+            if isToday {
+                ActivityTodayCard(x: extras)
+                if extras.zoneMinutes.reduce(0, +) > 0 { ZonesCard(minutes: extras.zoneMinutes) }
+                WorkoutPickCard(tide: t?.tide, swell: t?.swell ?? 0)
+            }
+            BodyMetricsGrid(day: t, days: engine.days, metrics: [.vo2, .rhr], title: "Fitness")
+        } else if BodyHealth.available {
+            BodyNeedsHealthCard(what: "your effort, heart-rate zones and workouts") { Task { await engine.connect() } }
+        }
+        HStack(spacing: 10) {
+            NavigationLink { WorkoutHistoryView() } label: { linkTile("Workouts", "figure.run", BodyStyle.swell) }
+            NavigationLink { BodyTrendsView() } label: { linkTile("90-day trends", "chart.xyaxis.line", .purple) }
+        }
+        .buttonStyle(.plain)
+    }
+
+    @ViewBuilder private var healthPage: some View {
+        BodyMedsCard()
+        if live {
+            vitalsCard
+            CycleCard(x: extras)
+        }
+        HealthTilesSection(extras: extras)
+        DrinksCard()
+        MoodBodyCard()
+    }
+
+    @ViewBuilder private var habitsPage: some View {
+        if live {
+            journalCard
+            settingsCard
+            explainer
+        } else if BodyHealth.available {
+            BodyNeedsHealthCard(what: "which habits raise or lower your recovery") { Task { await engine.connect() } }
+        }
+        EnergyCheckCard()
+    }
+
+    private func linkTile(_ title: String, _ icon: String, _ color: Color) -> some View {
+        HStack {
+            Image(systemName: icon).foregroundStyle(color)
+            Text(title).font(DS.Font.caption.weight(.semibold)).foregroundStyle(DS.Palette.ink)
+            Spacer()
+            Image(systemName: "chevron.right").font(.caption2).foregroundStyle(DS.Palette.inkSoft)
+        }
+        .padding(14)
+        .background(DS.Palette.elevated, in: .rect(cornerRadius: 16, style: .continuous))
+    }
+
+    /// The day you're looking at: today unless you picked an earlier day in the strip.
+    private var t: BodyDay? {
+        guard let d = selectedDay else { return engine.today }
+        return engine.days.first { Calendar.current.isDate($0.day, inSameDayAs: d) } ?? engine.today
+    }
     private var recent: [BodyDay] { Array(engine.days.suffix(30)) }
 
     private func card<C: View>(_ title: String, _ icon: String, _ color: Color, @ViewBuilder _ content: () -> C) -> some View {

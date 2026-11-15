@@ -649,4 +649,25 @@ final class KeelTests: XCTestCase {
         let doses = try ctx.fetch(FetchDescriptor<MedDose>())
         XCTAssertEqual(MedLog.openSlots(m, on: morning, doses: doses), [20 * 60])
     }
+
+    func testBodyMetricFormatAndBaseline() {
+        XCTAssertEqual(BodyMetric.sleep.format(7.5), "7h 30m")
+        XCTAssertEqual(BodyMetric.sleep.format(7.999), "8h 00m")
+        XCTAssertEqual(BodyMetric.hrv.format(54.4), "54 ms")
+        let cal = Calendar.current
+        let today = cal.startOfDay(for: Date())
+        var days: [BodyDay] = []
+        for i in (1...10).reversed() {
+            var d = BodyDay(day: cal.date(byAdding: .day, value: -i, to: today)!)
+            d.hrv = i.isMultiple(of: 2) ? 50 : 60
+            days.append(d)
+        }
+        let base = BodyDash.baseline(.hrv, days: days, before: today)
+        XCTAssertNotNil(base)
+        XCTAssertEqual(base?.mean ?? 0, 55, accuracy: 0.01)
+        XCTAssertTrue(base?.range.contains(55) ?? false)
+        XCTAssertEqual(SleepScheduleCard.hoursFrom6pm(cal.date(bySettingHour: 23, minute: 0, second: 0, of: today)!), 5, accuracy: 0.01)
+        XCTAssertEqual(SleepScheduleCard.hoursFrom6pm(cal.date(bySettingHour: 7, minute: 30, second: 0, of: today)!), 13.5, accuracy: 0.01)
+        XCTAssertEqual(SleepScheduleCard.clock(5), "11p")
+    }
 }
