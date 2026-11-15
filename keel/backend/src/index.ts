@@ -3,6 +3,7 @@ import { handleMCP } from "./mcp";
 import { handleNotion, infoPage, privacyPage, termsPage } from "./notion";
 import { handleAppleAuth, handleDeleteAccount, isSession } from "./auth";
 import { handleShare } from "./share";
+import { handleTeam } from "./team";
 import { handleBooking } from "./booking";
 import { handlePush } from "./push";
 import { handleSupport } from "./support";
@@ -31,6 +32,7 @@ export interface Env {
  *   POST /v1/messages   AI proxy: holds the Claude key, routes model/effort, enforces a daily cap.   [device token]
  *   POST /snapshot      iPhone uploads a small JSON snapshot for the Claude connector.            [device token]
  *   GET  /actions       iPhone pulls actions Claude queued (add_task, start_focus), then clears. [device token]
+ *   /team, /t/:id       Team boards: shared tasks with assignees, comments, @mentions, activity.   [link]
  *   POST /mcp           Remote MCP server for Claude / Claude Duet custom connectors.             [MCP token]
  *   POST /push/*        Instant mail alerts: Gmail/Outlook notices → silent push to wake the app (see push.ts).
  *   GET  /support       Support page and contact form (App Store Support URL).
@@ -62,6 +64,10 @@ export default {
     }
     if (/^\/(booking|b)(\/|$)/.test(url.pathname)) {
       const r = await handleBooking(req, env, url, device);
+      if (r) return r;
+    }
+    if (/^\/(team|t)(\/|$)/.test(url.pathname)) {
+      const r = await handleTeam(req, env, url, device);
       if (r) return r;
     }
     if (/^\/(share|l|publish|p|diagnostics|space|spage)(\/|$)/.test(url.pathname)) {

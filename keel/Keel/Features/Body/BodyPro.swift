@@ -47,8 +47,8 @@ enum WorkoutBuilder {
         var why: [String] = []
         let t = tide ?? 60
         if t < 34 {
-            let s = StrengthSession(name: "Recovery mobility", exercises: ["glute-bridge", "dead-bug", "side-plank", "bodyweight-squat"].map {
-                LoggedExercise(exerciseId: $0, sets: [LiftSet(reps: 12, weight: 0), LiftSet(reps: 12, weight: 0)])
+            let s = StrengthSession(name: "Recovery mobility", exercises: [("cat-cow", 60), ("worlds-greatest-stretch", 45), ("glute-bridge", 12), ("dead-bug", 12), ("90/90-hip-switch", 45), ("childs-pose", 60)].map {
+                LoggedExercise(exerciseId: $0.0, sets: [LiftSet(reps: $0.1, weight: 0), LiftSet(reps: $0.1, weight: 0)])
             })
             return Plan(name: "Recovery mobility", session: s, why: ["Your Tide is low (\(t)%), so today is light movement to help you recover, not a hard session."])
         }
@@ -63,7 +63,7 @@ enum WorkoutBuilder {
         if !targets.isEmpty { why.append("Focus: \(targets.map { $0.name.lowercased() }.joined(separator: ", ")), the fresh muscles with the fewest sets this week.") }
         if let cycle { why.append(cycle) }
         var picked: [Exercise] = []
-        let pool = ExerciseLibrary.all.filter { kit.allows.contains($0.equipment) }
+        let pool = ExerciseLibrary.all.filter { kit.allows.contains($0.equipment) && $0.isLoad }
         for m in targets {
             // Prefer moves that hit this muscle first and don't load a tired one.
             let options = pool.filter { $0.primary.first == m && !$0.primary.contains(where: { tired.contains($0) }) && !picked.contains($0) }

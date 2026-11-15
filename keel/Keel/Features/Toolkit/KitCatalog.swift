@@ -40,6 +40,9 @@ enum KitCatalog {
             t("biology", "Biology", "drop.fill", "blood results biomarkers cholesterol vitamin d ferritin a1c") { BiologyView() },
             t("askBody", "Ask about my body", "sparkles", "health coach ai question recovery training sleep") { AskBodyView() },
         ],
+        "people": [
+            t("teamBoards", "Team boards", "person.3.fill", "team shared board assign tasks collaborate family work project comments mentions") { TeamBoardsView() },
+        ],
         "calm": [
             t("reframe", "Reframe a thought", "arrow.triangle.2.circlepath", "cbt thought record reframe anxious negative trap") { KitReframeView() },
             t("worry", "Worry time", "cloud.drizzle.fill", "worry anxiety park later") { KitWorryTimeView() },

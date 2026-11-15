@@ -709,7 +709,7 @@ final class KeelTests: XCTestCase {
     }
 
     func testToolkitIsInCompass() {
-        XCTAssertEqual(KitCatalog.count, 57)          // 50 everyday tools + 7 body tools
+        XCTAssertEqual(KitCatalog.count, 58)          // 50 everyday tools + 7 body tools + team boards
         let ids = HubCatalog.groups.flatMap(\.tools).map(\.id)
         XCTAssertEqual(ids.count, Set(ids).count, "every Compass tool needs its own id")
         for id in ["top3", "parking", "reframe", "lifeWeeks", "morningPages"] { XCTAssertNotNil(HubCatalog.tool(id), id) }
@@ -871,6 +871,32 @@ final class KeelTests: XCTestCase {
         XCTAssertNotNil(p.eta)
         XCTAssertNil(BodyGoals.projection(BodyGoal(metric: "rhr", target: 70), days: trend).eta, "heading the wrong way")
 
-        XCTAssertEqual(ExerciseLibrary.all.count, 210)
+        XCTAssertGreaterThanOrEqual(ExerciseLibrary.all.count, 700)
+        XCTAssertEqual(Set(ExerciseLibrary.all.map(\.id)).count, ExerciseLibrary.all.count)
+        for kind in ["Strength", "Cardio", "Mobility", "Yoga"] { XCTAssertGreaterThan(ExerciseLibrary.all.filter { $0.category == kind }.count, 20, kind) }
+        // Stretching doesn't count as lifting volume.
+        var stretch = StrengthSession(name: "S"); stretch.end = Date()
+        stretch.exercises = [LoggedExercise(exerciseId: "pigeon-stretch", sets: [LiftSet(reps: 60, weight: 0, done: true)])]
+        XCTAssertTrue(StrengthStore.setsPerMuscle(in: [stretch]).isEmpty)
+        XCTAssertEqual(StrengthStore.strain(stretch), 0)
+        XCTAssertEqual(ExerciseLibrary.exercise("pigeon-stretch")?.amount(60), "60 s")
+    }
+
+    func testTeamBoards() throws {
+        let id = "0f2596bc4e06751c98f7b05bfba10c68"
+        XCTAssertEqual(TeamAPI.boardId(from: "https://keel-backend.example.dev/t/\(id)"), id)
+        XCTAssertEqual(TeamAPI.boardId(from: "  \(id.uppercased())\n"), id)
+        XCTAssertNil(TeamAPI.boardId(from: "https://example.com/t/123"))
+        let json = """
+        {"name":"Launch","owner":"Brian","members":["Brian","Sam Lee"],"version":3,"updated":1,
+         "tasks":[{"id":"a1","title":"Write email","notes":"","status":"doing","assignee":"Sam Lee","due":"2026-11-20","createdBy":"Brian","created":1,"updated":2,
+                   "comments":[{"id":"c1","by":"Brian","text":"@Sam pricing?","at":3,"mentions":["Sam Lee"]}]}],
+         "activity":[{"at":4,"by":"Brian","text":"added it","task":"a1","for":["Sam Lee"]},{"at":5,"by":"Sam Lee","text":"joined the board"}]}
+        """
+        let b = try JSONDecoder().decode(TeamBoardData.self, from: Data(json.utf8))
+        XCTAssertEqual(b.activity.first?.forWhom, ["Sam Lee"])
+        XCTAssertNil(b.activity.last?.forWhom)
+        XCTAssertEqual(b.tasks.first?.dueDate.map { Calendar.current.component(.day, from: $0) }, 20)
+        XCTAssertEqual(TeamAPI.dueString(b.tasks.first?.dueDate), "2026-11-20")
     }
 }

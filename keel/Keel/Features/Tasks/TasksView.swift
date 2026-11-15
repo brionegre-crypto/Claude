@@ -221,6 +221,7 @@ struct TasksView: View {
                                 }
                             }
                             NavigationLink { LazyView(TemplatesView()) } label: { Label("Templates", systemImage: "doc.on.doc") }
+                            NavigationLink { LazyView(TeamBoardsView()) } label: { Label("Team boards", systemImage: "person.3") }
                             NavigationLink { LazyView(SharedListsView()) } label: { Label("Shared lists", systemImage: "person.2") }
                             NavigationLink { LazyView(ErrandsView()) } label: { Label("Errands by place", systemImage: "car") }
                         }
@@ -665,6 +666,7 @@ struct TaskDetailView: View {
             Section {
                 Button { AppleMessages.compose(TextDraft(context: task.title)) } label: { Label("Text someone about this", systemImage: "message") }
                     .foregroundStyle(DS.Palette.ink)
+                ShareToTeamMenu(task: task)
             }
 
             Section {

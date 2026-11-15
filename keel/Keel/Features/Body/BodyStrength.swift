@@ -54,7 +54,22 @@ struct Exercise: Identifiable, Hashable {
     let equipment: String
     let primary: [Muscle]
     let secondary: [Muscle]
-    var bodyweight: Bool { equipment == "Bodyweight" }
+    /// No weight to set: bodyweight moves, stretches, yoga and cardio.
+    var bodyweight: Bool { ["Bodyweight", "Mobility", "Yoga", "Cardio"].contains(equipment) }
+    /// Logged in seconds (stretches, yoga, holds) or minutes (cardio) rather than reps.
+    var timed: Bool { ["Mobility", "Yoga"].contains(equipment) || name.contains("Plank") || name.contains("Hold") || name.hasSuffix("Sit") }
+    var minutes: Bool { equipment == "Cardio" }
+    /// Counts toward muscle load and strength stats (stretching, yoga and cardio don't).
+    var isLoad: Bool { !["Mobility", "Yoga", "Cardio"].contains(equipment) }
+    var category: String {
+        switch equipment {
+        case "Mobility": "Mobility"
+        case "Yoga": "Yoga"
+        case "Cardio": "Cardio"
+        default: "Strength"
+        }
+    }
+    func amount(_ n: Int) -> String { minutes ? "\(n) min" : timed ? "\(n) s" : "× \(n)" }
 }
 
 @MainActor
@@ -271,6 +286,511 @@ enum ExerciseLibrary {
     Band Overhead Press|Band|shoulders|triceps
     Band Curl|Band|biceps|
     Band Tricep Extension|Band|triceps|
+    Smith Machine Press|Machine|chest|triceps
+    Cable Chest Press|Cable|chest|triceps
+    Machine Chest Press|Machine|chest|triceps
+    Incline Smith Machine Press|Machine|chest,shoulders|triceps
+    Incline Cable Chest Press|Cable|chest,shoulders|triceps
+    Incline Kettlebell Press|Kettlebell|chest,shoulders|triceps
+    Incline Band Chest Press|Band|chest,shoulders|triceps
+    Incline Machine Chest Press|Machine|chest,shoulders|triceps
+    Decline Smith Machine Press|Machine|chest|triceps
+    Decline Cable Chest Press|Cable|chest|triceps
+    Decline Kettlebell Press|Kettlebell|chest|triceps
+    Decline Band Chest Press|Band|chest|triceps
+    Decline Machine Chest Press|Machine|chest|triceps
+    Single-Arm Dumbbell Bench Press|Dumbbell|chest|triceps,abs
+    Single-Arm Dumbbell Shoulder Press|Dumbbell|shoulders|triceps,abs
+    Single-Arm Lat Pulldown|Cable|lats|biceps
+    Single-Arm Cable Fly|Cable|chest|
+    Single-Arm Cable Lateral Raise|Cable|shoulders|
+    Single-Arm Cable Curl|Cable|biceps|
+    Single-Arm Overhead Tricep Extension|Dumbbell|triceps|
+    Single-Arm Dumbbell Snatch|Dumbbell|shoulders,glutes|hamstrings
+    Single-Arm Kettlebell Swing|Kettlebell|glutes,hamstrings|abs
+    Single-Arm Farmer's Carry|Dumbbell|abs,forearms|upperBack
+    Single-Arm Landmine Row|Barbell|lats|biceps
+    Single-Arm Machine Row|Machine|lats,upperBack|biceps
+    Single-Arm Chest Press Machine|Machine|chest|triceps
+    Single-Arm Preacher Curl|Dumbbell|biceps|
+    Single-Arm Rear Delt Fly|Cable|rearDelts|
+    Single-Arm Dumbbell Row (Bench)|Dumbbell|lats|biceps
+    Single-Arm Push-up|Bodyweight|chest,triceps|abs
+    Single-Leg Glute Bridge|Bodyweight|glutes|hamstrings
+    Single-Leg Leg Extension|Machine|quads|
+    Single-Leg Leg Curl|Machine|hamstrings|
+    Single-Leg Box Squat|Bodyweight|quads,glutes|
+    Single-Leg Dumbbell Calf Raise|Dumbbell|calves|
+    Single-Leg Kettlebell Deadlift|Kettlebell|hamstrings,glutes|abs
+    Single-Leg Hip Thrust (Barbell)|Barbell|glutes|hamstrings
+    Single-Leg Press Calf Raise|Machine|calves|
+    Wide-Grip Lat Pulldown|Cable|lats|upperBack
+    Neutral-Grip Lat Pulldown|Cable|lats|biceps
+    Reverse-Grip Lat Pulldown|Cable|lats,biceps|
+    Behind-the-Neck Pulldown|Cable|lats|upperBack
+    Kneeling Lat Pulldown|Cable|lats|abs
+    Underhand Barbell Row|Barbell|lats,upperBack|biceps
+    Wide-Grip Seated Row|Cable|upperBack,rearDelts|lats
+    Rope Cable Row|Cable|upperBack|biceps,rearDelts
+    Incline Dumbbell Row|Dumbbell|upperBack,lats|rearDelts
+    Yates Row|Barbell|lats,upperBack|biceps
+    Smith Machine Row|Machine|upperBack,lats|biceps
+    Gironda Pulldown|Cable|lats|biceps
+    Wide-Grip Barbell Curl|Barbell|biceps|
+    Close-Grip Barbell Curl|Barbell|biceps|forearms
+    Cable Hammer Curl|Cable|biceps,forearms|
+    Rope Hammer Curl|Cable|biceps,forearms|
+    Cross-Body Hammer Curl|Dumbbell|biceps,forearms|
+    Dumbbell Preacher Curl|Dumbbell|biceps|
+    Machine Curl|Machine|biceps|
+    High Cable Curl|Cable|biceps|
+    Kettlebell Curl|Kettlebell|biceps|forearms
+    21s Curl|Barbell|biceps|
+    Waiter Curl|Dumbbell|biceps|
+    Seated Dumbbell Curl|Dumbbell|biceps|
+    Alternating Dumbbell Curl|Dumbbell|biceps|forearms
+    Close-Grip Push-up|Bodyweight|triceps,chest|
+    Cable Overhead Tricep Extension (Rope)|Cable|triceps|
+    Cross-Body Tricep Extension|Cable|triceps|
+    Dumbbell Skull Crusher|Dumbbell|triceps|
+    EZ-Bar Skull Crusher|Barbell|triceps|
+    Machine Tricep Extension|Machine|triceps|
+    Machine Dip|Machine|triceps,chest|
+    Assisted Dip|Machine|triceps,chest|shoulders
+    Reverse-Grip Pushdown|Cable|triceps|
+    V-Bar Pushdown|Cable|triceps|
+    Dumbbell Floor Press|Dumbbell|chest,triceps|
+    Close-Grip Dumbbell Press|Dumbbell|triceps,chest|
+    Plate Front Raise|Plate|shoulders|
+    Cable Front Raise|Cable|shoulders|
+    Leaning Lateral Raise|Dumbbell|shoulders|
+    Machine Lateral Raise|Machine|shoulders|
+    Seated Lateral Raise|Dumbbell|shoulders|
+    Bent-Over Lateral Raise|Dumbbell|rearDelts|upperBack
+    Cable Upright Row|Cable|shoulders,upperBack|biceps
+    Dumbbell Upright Row|Dumbbell|shoulders,upperBack|
+    Cable Shrug|Cable|upperBack|
+    Smith Machine Shrug|Machine|upperBack|
+    Behind-the-Back Shrug|Barbell|upperBack|
+    Smith Machine Overhead Press|Machine|shoulders|triceps
+    Z Press|Barbell|shoulders|triceps,abs
+    Bradford Press|Barbell|shoulders|triceps
+    Kettlebell Bottoms-Up Press|Kettlebell|shoulders|forearms,abs
+    Heels-Elevated Goblet Squat|Dumbbell|quads|glutes
+    Landmine Squat|Barbell|quads,glutes|
+    Kettlebell Front Squat|Kettlebell|quads|abs
+    Dumbbell Front Squat|Dumbbell|quads|glutes,abs
+    Overhead Squat|Barbell|quads,shoulders|abs,upperBack
+    Anderson Squat|Barbell|quads,glutes|
+    Tempo Squat|Barbell|quads,glutes|
+    Low-Bar Squat|Barbell|glutes,quads|hamstrings,lowerBack
+    High-Bar Squat|Barbell|quads|glutes
+    Dumbbell Squat|Dumbbell|quads,glutes|
+    Sumo Squat|Dumbbell|quads,hips,glutes|
+    Smith Machine Split Squat|Machine|quads,glutes|
+    Front-Foot-Elevated Split Squat|Dumbbell|quads,glutes|
+    Deficit Reverse Lunge|Dumbbell|glutes,quads|
+    Barbell Lunge|Barbell|quads,glutes|
+    Smith Machine Lunge|Machine|quads,glutes|
+    Jumping Lunge|Bodyweight|quads,glutes|calves
+    Bodyweight Lunge|Bodyweight|quads,glutes|
+    Lateral Step-up|Dumbbell|quads,glutes|hips
+    Barbell Step-up|Barbell|quads,glutes|
+    Snatch-Grip Deadlift|Barbell|upperBack,hamstrings,glutes|lowerBack
+    Paused Deadlift|Barbell|hamstrings,glutes,lowerBack|
+    Block Pull|Barbell|glutes,upperBack|hamstrings
+    Dumbbell Deadlift|Dumbbell|hamstrings,glutes|lowerBack
+    Smith Machine Romanian Deadlift|Machine|hamstrings,glutes|
+    Cable Romanian Deadlift|Cable|hamstrings,glutes|
+    Cable Pull-Through|Cable|glutes,hamstrings|
+    Banded Good Morning|Band|hamstrings,lowerBack|
+    Seated Good Morning|Barbell|lowerBack|hamstrings
+    45-Degree Back Extension|Bodyweight|lowerBack,glutes|hamstrings
+    Hip Thrust Machine|Machine|glutes|
+    Smith Machine Hip Thrust|Machine|glutes|hamstrings
+    Dumbbell Hip Thrust|Dumbbell|glutes|hamstrings
+    Banded Hip Thrust|Band|glutes|
+    B-Stance Hip Thrust|Barbell|glutes|hamstrings
+    Kas Glute Bridge|Barbell|glutes|
+    Glute Kickback Machine|Machine|glutes|
+    Lying Leg Curl|Machine|hamstrings|
+    Standing Leg Curl|Machine|hamstrings|
+    Swiss Ball Leg Curl|Other|hamstrings|glutes
+    Slider Leg Curl|Bodyweight|hamstrings|glutes
+    Dumbbell Leg Curl|Dumbbell|hamstrings|
+    V-Squat Machine|Machine|quads,glutes|
+    Leg Press Calf Raise|Machine|calves|
+    Smith Machine Calf Raise|Machine|calves|
+    Dumbbell Calf Raise|Dumbbell|calves|
+    Cable Hip Abduction|Cable|hips,glutes|
+    Cable Hip Adduction|Cable|hips|
+    Cable Squat|Cable|quads,glutes|
+    Cable Lunge|Cable|quads,glutes|
+    Spanish Squat|Band|quads|
+    Reverse Nordic|Bodyweight|quads|
+    Hip Airplane|Bodyweight|glutes,hips|abs
+    Shoulder Tap Plank|Bodyweight|abs|shoulders
+    Plank Jack|Bodyweight|abs|shoulders
+    Side Plank Dip|Bodyweight|abs|hips
+    Stir the Pot|Other|abs|
+    Hanging Knee Raise|Bodyweight|abs|forearms
+    Windshield Wiper|Bodyweight|abs|
+    Dragon Flag|Bodyweight|abs|lats
+    Flutter Kick|Bodyweight|abs|hips
+    Scissor Kick|Bodyweight|abs|hips
+    Heel Tap|Bodyweight|abs|
+    Sit-up|Bodyweight|abs|hips
+    Weighted Crunch|Plate|abs|
+    Ab Crunch Machine|Machine|abs|
+    Reverse Crunch|Bodyweight|abs|
+    Jackknife|Bodyweight|abs|hips
+    Oblique Crunch|Bodyweight|abs|
+    Suitcase Deadlift|Dumbbell|abs,glutes|forearms
+    Landmine Rotation|Barbell|abs|shoulders
+    Half-Kneeling Cable Chop|Cable|abs|
+    High-to-Low Woodchop|Cable|abs|shoulders
+    Low-to-High Woodchop|Cable|abs|shoulders
+    Hollow Rock|Bodyweight|abs|
+    Superman|Bodyweight|lowerBack,glutes|
+    Stability Ball Crunch|Other|abs|
+    Stability Ball Rollout|Other|abs|lats
+    Suspension Fallout|Other|abs|lats,shoulders
+    Kneeling Cable Crunch|Cable|abs|
+    Weighted Plank|Plate|abs|shoulders
+    Plank to Push-up|Bodyweight|abs,triceps|chest
+    Side Plank Reach-Through|Bodyweight|abs|
+    Captain's Chair Leg Raise|Machine|abs|hips
+    Decline Crunch|Bodyweight|abs|
+    Toe Touch Crunch|Bodyweight|abs|
+    Seated Knee Tuck|Bodyweight|abs|
+    Kettlebell Windmill|Kettlebell|abs,shoulders|hamstrings
+    Kettlebell Halo|Kettlebell|shoulders|abs
+    Waiter's Carry|Kettlebell|shoulders,abs|
+    Overhead Carry|Dumbbell|shoulders,abs|upperBack
+    Bear Plank Hold|Bodyweight|abs|shoulders,quads
+    Archer Push-up|Bodyweight|chest|triceps
+    Pseudo Planche Push-up|Bodyweight|shoulders,chest|triceps,abs
+    Clapping Push-up|Bodyweight|chest|triceps
+    Hindu Push-up|Bodyweight|chest,shoulders|triceps
+    Dive Bomber Push-up|Bodyweight|chest,shoulders|triceps
+    Knee Push-up|Bodyweight|chest|triceps
+    Wall Push-up|Bodyweight|chest|triceps
+    Typewriter Pull-up|Bodyweight|lats|biceps
+    L-Sit Pull-up|Bodyweight|lats,abs|biceps
+    Archer Pull-up|Bodyweight|lats|biceps
+    Negative Pull-up|Bodyweight|lats|biceps
+    Scapular Pull-up|Bodyweight|upperBack,lats|
+    Scapular Push-up|Bodyweight|shoulders|chest
+    Australian Chin-up|Bodyweight|lats,biceps|
+    Tuck Front Lever|Bodyweight|lats,abs|
+    Tuck Back Lever|Bodyweight|shoulders,abs|chest
+    Skin the Cat|Bodyweight|shoulders,lats|abs
+    Ring Dip|Other|chest,triceps|shoulders
+    Ring Row|Other|upperBack,lats|biceps
+    Ring Push-up|Other|chest|triceps,abs
+    Ring Muscle-up|Other|lats,chest|triceps,biceps
+    Wall Handstand Hold|Bodyweight|shoulders|triceps,abs
+    Planche Lean|Bodyweight|shoulders|chest,abs
+    Shrimp Squat|Bodyweight|quads,glutes|
+    Dragon Squat|Bodyweight|quads,glutes|hips
+    Straight-Bar Dip|Bodyweight|chest,triceps|
+    Tricep Dip (Parallel Bars)|Bodyweight|triceps|chest
+    Hanging Scapular Shrug|Bodyweight|upperBack|lats
+    Wall Slide|Bodyweight|upperBack,rearDelts|
+    Broad Jump|Bodyweight|quads,glutes|calves
+    Tuck Jump|Bodyweight|quads,glutes|abs
+    Lateral Bound|Bodyweight|glutes,quads|hips
+    Skater Jump|Bodyweight|glutes,quads|hips
+    Depth Jump|Bodyweight|quads,calves|glutes
+    Single-Leg Hop|Bodyweight|calves,quads|
+    Plyo Push-up|Bodyweight|chest|triceps
+    Medicine Ball Chest Pass|Other|chest|triceps
+    Medicine Ball Rotational Throw|Other|abs|shoulders
+    Medicine Ball Overhead Throw|Other|shoulders,abs|lats
+    Jumping Jack|Bodyweight|calves|shoulders
+    Star Jump|Bodyweight|quads,calves|shoulders
+    Split Jump|Bodyweight|quads,glutes|
+    Box Step-over|Bodyweight|quads,glutes|
+    Pogo Hops|Bodyweight|calves|
+    High Knees|Bodyweight|quads,hips|calves
+    Butt Kicks|Bodyweight|hamstrings|calves
+    A-Skip|Bodyweight|hips,calves|
+    B-Skip|Bodyweight|hamstrings,hips|
+    Lateral Shuffle|Bodyweight|hips,quads|
+    Carioca|Bodyweight|hips|calves
+    Sprint|Cardio|quads,hamstrings|calves,glutes
+    Hill Sprint|Cardio|quads,glutes|calves
+    Shuttle Run|Cardio|quads|calves
+    Agility Ladder Drill|Bodyweight|calves|quads
+    Kettlebell Thruster|Kettlebell|quads,shoulders|glutes
+    Dumbbell Thruster|Dumbbell|quads,shoulders|glutes
+    Devil Press|Dumbbell|shoulders,glutes|chest,quads
+    Man Maker|Dumbbell|shoulders,chest|quads,lats
+    Sandbag Clean|Other|glutes,upperBack|hamstrings
+    Squat Thrust|Bodyweight|quads|abs,shoulders
+    Frog Jump|Bodyweight|quads,glutes|
+    Treadmill Run|Cardio|quads,calves|
+    Incline Treadmill Walk|Cardio|glutes,calves|
+    Stair Climber|Cardio|glutes,quads|
+    Stationary Bike|Cardio|quads|
+    Spin Class|Cardio|quads,calves|
+    Ski Erg|Cardio|lats,triceps|
+    Swimming|Cardio|lats,shoulders|
+    Outdoor Run|Cardio|quads,calves|
+    Outdoor Cycling|Cardio|quads,glutes|
+    Hiking|Cardio|quads,glutes|
+    Rucking|Cardio|glutes,upperBack|
+    Double-Unders|Cardio|calves|
+    Rowing Intervals|Cardio|upperBack,quads|
+    Elliptical Trainer|Cardio|quads,glutes|
+    Air Bike Intervals|Cardio|quads,shoulders|
+    Brisk Walk|Cardio|calves|
+    Trail Run|Cardio|quads,calves|
+    Step Aerobics|Cardio|quads,calves|
+    Dance Cardio|Cardio|quads,calves|
+    Boxing (Bag Work)|Cardio|shoulders,abs|
+    Shadow Boxing|Cardio|shoulders|
+    Kickboxing|Cardio|hips,shoulders|
+    Water Aerobics|Cardio|quads,shoulders|
+    Stair Sprints|Cardio|quads,glutes|
+    Standing Hamstring Stretch|Mobility|hamstrings|
+    Seated Hamstring Stretch|Mobility|hamstrings|
+    Standing Quad Stretch|Mobility|quads|
+    Kneeling Hip Flexor Stretch|Mobility|hips|
+    Couch Stretch|Mobility|quads,hips|
+    Pigeon Stretch|Mobility|glutes,hips|
+    Figure-Four Stretch|Mobility|glutes|
+    Butterfly Stretch|Mobility|hips|
+    Frog Stretch|Mobility|hips|
+    90/90 Hip Switch|Mobility|hips,glutes|
+    World's Greatest Stretch|Mobility|hips,hamstrings|
+    Cat-Cow|Mobility|lowerBack,upperBack|
+    Thread the Needle|Mobility|upperBack|
+    Calf Stretch (Wall)|Mobility|calves|
+    Soleus Stretch|Mobility|calves|
+    Ankle Dorsiflexion Rock|Mobility|calves|
+    Doorway Pec Stretch|Mobility|chest|
+    Cross-Body Shoulder Stretch|Mobility|rearDelts|
+    Overhead Triceps Stretch|Mobility|triceps|
+    Sleeper Stretch|Mobility|shoulders|
+    Wrist Flexor Stretch|Mobility|forearms|
+    Wrist Extensor Stretch|Mobility|forearms|
+    Neck Side Stretch|Mobility|upperBack|
+    Chin Tuck|Mobility|upperBack|
+    Levator Scapulae Stretch|Mobility|upperBack|
+    Thoracic Extension on Roller|Mobility|upperBack|
+    Open Book Rotation|Mobility|upperBack|
+    Seated Spinal Twist|Mobility|lowerBack|
+    Supine Twist|Mobility|lowerBack|
+    Lat Stretch (Kneeling)|Mobility|lats|
+    Band Shoulder Dislocate|Mobility|shoulders|
+    Wall Angel|Mobility|upperBack,shoulders|
+    Adductor Rock Back|Mobility|hips|
+    Lizard Stretch|Mobility|hips|
+    Hip CARs|Mobility|hips|
+    Shoulder CARs|Mobility|shoulders|
+    Ankle Circles|Mobility|calves|
+    Front Leg Swing|Mobility|hips,hamstrings|
+    Side Leg Swing|Mobility|hips|
+    Arm Circles|Mobility|shoulders|
+    Inchworm|Mobility|hamstrings,shoulders|
+    Spiderman Lunge|Mobility|hips|
+    Deep Squat Hold|Mobility|hips,quads|
+    Jefferson Curl|Mobility|lowerBack,hamstrings|
+    Sciatic Nerve Glide|Mobility|hamstrings|
+    Foam Roll Quads|Mobility|quads|
+    Foam Roll Hamstrings|Mobility|hamstrings|
+    Foam Roll Calves|Mobility|calves|
+    Foam Roll Upper Back|Mobility|upperBack|
+    Foam Roll Lats|Mobility|lats|
+    Foam Roll Glutes|Mobility|glutes|
+    Foam Roll IT Band|Mobility|quads|
+    Lacrosse Ball Foot Roll|Mobility|calves|
+    Lacrosse Ball Pec Release|Mobility|chest|
+    Knee-to-Chest Stretch|Mobility|lowerBack,glutes|
+    Standing Side Bend|Mobility|abs|
+    Prone Press-up|Mobility|lowerBack|
+    Hip Flexor Stretch (Standing)|Mobility|hips|
+    Groin Stretch (Side Lunge)|Mobility|hips|
+    Tricep Wall Stretch|Mobility|triceps|
+    Bicep Wall Stretch|Mobility|biceps|
+    Kneeling Shin Stretch|Mobility|quads|
+    Half-Kneeling Ankle Mobilisation|Mobility|calves|
+    Scorpion Stretch|Mobility|hips,lowerBack|
+    Quadruped Rock Back|Mobility|hips|
+    Shoulder Pass-through (Stick)|Mobility|shoulders|
+    Thoracic Rotation (Side-Lying)|Mobility|upperBack|
+    Downward Dog|Yoga|hamstrings,shoulders|
+    Upward Dog|Yoga|lowerBack,chest|
+    Cobra Pose|Yoga|lowerBack|
+    Child's Pose|Yoga|lowerBack,hips|
+    Warrior I|Yoga|quads,hips|
+    Warrior II|Yoga|quads,hips|
+    Warrior III|Yoga|glutes,hamstrings|
+    Triangle Pose|Yoga|hamstrings,hips|
+    Extended Side Angle|Yoga|quads,hips|
+    Chair Pose|Yoga|quads,glutes|
+    Tree Pose|Yoga|calves,hips|
+    Mountain Pose|Yoga|abs|
+    Bridge Pose|Yoga|glutes,lowerBack|
+    Wheel Pose|Yoga|lowerBack,shoulders|
+    Camel Pose|Yoga|quads,chest|
+    Bow Pose|Yoga|lowerBack,quads|
+    Locust Pose|Yoga|lowerBack,glutes|
+    Boat Pose|Yoga|abs,hips|
+    Crow Pose|Yoga|shoulders,abs|
+    Plank Pose|Yoga|abs,shoulders|
+    Side Plank Pose|Yoga|abs,shoulders|
+    Pigeon Pose|Yoga|glutes,hips|
+    Low Lunge|Yoga|hips,quads|
+    High Lunge|Yoga|quads,hips|
+    Half Moon Pose|Yoga|glutes,hips|
+    Seated Forward Fold|Yoga|hamstrings,lowerBack|
+    Standing Forward Fold|Yoga|hamstrings|
+    Happy Baby|Yoga|hips,lowerBack|
+    Reclined Bound Angle|Yoga|hips|
+    Legs Up the Wall|Yoga|hamstrings|
+    Garland Pose|Yoga|hips,calves|
+    Goddess Pose|Yoga|quads,hips|
+    Eagle Pose|Yoga|shoulders,hips|
+    Cow Face Pose|Yoga|shoulders,hips|
+    Fish Pose|Yoga|chest,upperBack|
+    Plow Pose|Yoga|upperBack,hamstrings|
+    Shoulder Stand|Yoga|shoulders,abs|
+    Headstand|Yoga|shoulders,abs|
+    Dolphin Pose|Yoga|shoulders|
+    Puppy Pose|Yoga|shoulders,upperBack|
+    Sphinx Pose|Yoga|lowerBack|
+    Revolved Triangle|Yoga|hamstrings,abs|
+    Revolved Chair|Yoga|quads,abs|
+    Dancer Pose|Yoga|quads,shoulders|
+    Gate Pose|Yoga|abs,hips|
+    Half Splits|Yoga|hamstrings|
+    Front Splits|Yoga|hamstrings,hips|
+    Sun Salutation A|Yoga|hamstrings,shoulders|
+    Sun Salutation B|Yoga|quads,shoulders|
+    Chaturanga|Yoga|triceps,chest|
+    Wide-Legged Forward Fold|Yoga|hamstrings,hips|
+    Reverse Warrior|Yoga|hips,abs|
+    Humble Warrior|Yoga|hips,shoulders|
+    Lizard Pose|Yoga|hips|
+    Firefly Pose|Yoga|abs,triceps|
+    Side Crow|Yoga|abs,shoulders|
+    Reclined Pigeon|Yoga|glutes|
+    Thread the Needle Pose|Yoga|upperBack|
+    Supported Bridge|Yoga|lowerBack,glutes|
+    Easy Seated Twist|Yoga|lowerBack|
+    Clamshell|Band|glutes,hips|
+    Side-Lying Leg Raise|Bodyweight|hips,glutes|
+    Fire Hydrant|Bodyweight|glutes,hips|
+    Monster Walk|Band|hips,glutes|
+    Terminal Knee Extension|Band|quads|
+    Straight Leg Raise|Bodyweight|quads,hips|
+    Heel Slide|Bodyweight|hamstrings|
+    Quad Set|Bodyweight|quads|
+    Glute Squeeze|Bodyweight|glutes|
+    McGill Curl-up|Bodyweight|abs|
+    Prone Y Raise|Bodyweight|upperBack,rearDelts|
+    Prone T Raise|Bodyweight|rearDelts,upperBack|
+    Prone W Raise|Bodyweight|upperBack,rearDelts|
+    Band External Rotation|Band|rearDelts|shoulders
+    Band Internal Rotation|Band|shoulders|
+    Cable External Rotation|Cable|rearDelts|
+    Scapular Retraction|Band|upperBack|
+    Eccentric Calf Raise|Bodyweight|calves|
+    Towel Scrunch|Bodyweight|calves|
+    Single-Leg Balance|Bodyweight|calves,glutes|
+    Hip Hinge Drill|Bodyweight|hamstrings,glutes|
+    Step-down|Bodyweight|quads,glutes|
+    Lateral Step-down|Bodyweight|quads,glutes|hips
+    Wrist Roller|Other|forearms|
+    Finger Extension (Band)|Band|forearms|
+    Neck Isometrics|Bodyweight|upperBack|
+    Cuban Rotation|Dumbbell|rearDelts|shoulders
+    Serratus Wall Slide|Bodyweight|shoulders|
+    Bird Dog Row|Dumbbell|lats,abs|
+    Pelvic Tilt|Bodyweight|abs,lowerBack|
+    Isometric Hip Adduction (Ball Squeeze)|Other|hips|
+    Banded Ankle Eversion|Band|calves|
+    Seated Knee Extension (Band)|Band|quads|
+    Shoulder Pendulum|Bodyweight|shoulders|
+    Wall Sit Hold (Single-Leg)|Bodyweight|quads|glutes
+    Dead Bug with Band|Band|abs|
+    Atlas Stone Lift|Other|glutes,upperBack|hamstrings,lowerBack
+    Yoke Walk|Other|quads,upperBack|abs
+    Log Press|Other|shoulders|triceps,upperBack
+    Axle Deadlift|Barbell|hamstrings,glutes,forearms|lowerBack
+    Sandbag Carry|Other|abs,upperBack|glutes
+    Tire Flip|Other|glutes,quads|upperBack,lowerBack
+    Keg Carry|Other|abs,upperBack|
+    Zercher Carry|Barbell|abs,upperBack|biceps
+    Backward Sled Drag|Other|quads|calves
+    Prowler Sprint|Other|quads,glutes|calves
+    Battle Rope Slam|Other|shoulders,abs|
+    Landmine Thruster|Barbell|quads,shoulders|glutes
+    Landmine Row|Barbell|lats,upperBack|biceps
+    Trap Bar Jump|Trap bar|quads,glutes|calves
+    Hang Snatch|Barbell|glutes,shoulders,upperBack|hamstrings
+    Power Snatch|Barbell|glutes,shoulders,upperBack|hamstrings
+    Push Jerk|Barbell|shoulders,quads|triceps
+    Split Jerk|Barbell|shoulders,quads|triceps
+    Snatch Balance|Barbell|quads,shoulders|abs
+    Clean Pull|Barbell|hamstrings,glutes,upperBack|
+    Snatch Pull|Barbell|hamstrings,glutes,upperBack|
+    Muscle Snatch|Barbell|shoulders,upperBack|
+    Hang Power Clean|Barbell|glutes,upperBack|quads
+    Front Rack Lunge|Barbell|quads,glutes|abs
+    Drop Snatch|Barbell|quads,shoulders|
+    Iso-Lateral Row|Machine|lats,upperBack|biceps
+    Low Row Machine|Machine|lats|biceps
+    High Row Machine|Machine|lats,upperBack|biceps
+    Pullover Machine|Machine|lats|
+    Back Extension Machine|Machine|lowerBack|
+    Glute Drive Machine|Machine|glutes|
+    Plate-Loaded Lat Pulldown|Machine|lats|biceps
+    Seated Dip Machine|Machine|triceps|
+    Cable Crossover|Cable|chest|
+    Cable Shoulder Press|Cable|shoulders|triceps
+    Cable Y-Raise|Cable|shoulders,upperBack|
+    Cable Glute Kickback (Ankle Strap)|Cable|glutes|
+    Cable Hip Flexion|Cable|hips|
+    Cable Reverse Curl|Cable|forearms,biceps|
+    Cable Wrist Curl|Cable|forearms|
+    Cable Kickback (Triceps)|Cable|triceps|
+    Cable Pullover (Rope)|Cable|lats|
+    Leg Press (Narrow Stance)|Machine|quads|
+    Leg Press (Wide Stance)|Machine|glutes,hips|quads
+    Seated Hip Abduction (Lean Forward)|Machine|glutes|
+    Pec Deck Rear Delt|Machine|rearDelts|
+    Assisted Chin-up|Machine|lats,biceps|
+    Smith Machine Bulgarian Split Squat|Machine|quads,glutes|
+    Smith Machine Good Morning|Machine|hamstrings,lowerBack|
+    Smith Machine Upright Row|Machine|shoulders,upperBack|
+    Smith Machine Close-Grip Press|Machine|triceps,chest|
+    Jumping Pull-up|Bodyweight|lats|biceps
+    Kipping Pull-up|Bodyweight|lats|abs,biceps
+    Burpee Box Jump|Bodyweight|quads,chest|glutes
+    Burpee Pull-up|Bodyweight|lats,chest|quads
+    Box Jump Over|Bodyweight|quads,glutes|calves
+    Wall Walk|Bodyweight|shoulders,abs|triceps
+    Handstand Walk|Bodyweight|shoulders|triceps,abs
+    Rope Climb|Other|lats,biceps|forearms
+    Goblet Reverse Lunge|Kettlebell|glutes,quads|
+    Goblet Lateral Lunge|Kettlebell|quads,hips|
+    Barbell Walking Lunge|Barbell|quads,glutes|hamstrings
+    Overhead Walking Lunge|Dumbbell|quads,shoulders|abs
+    Plate Pinch Hold|Plate|forearms|
+    Towel Pull-up|Bodyweight|lats,forearms|biceps
+    Fat Grip Curl|Dumbbell|biceps,forearms|
+    Bench Hop|Bodyweight|calves,quads|
+    Lateral Box Jump|Bodyweight|quads,glutes|hips
+    Seated Box Jump|Bodyweight|quads,glutes|
+    American Kettlebell Swing|Kettlebell|glutes,shoulders|hamstrings
+    Medicine Ball Squat Throw|Other|quads,shoulders|glutes
+    Medicine Ball Lunge Rotation|Other|quads,abs|
+    Glute Bridge March|Bodyweight|glutes|abs
+    Sled Row|Other|upperBack,lats|biceps
+    Turkish Sit-up|Kettlebell|abs|shoulders
     """
 
     static let all: [Exercise] = raw.split(separator: "\n").compactMap { line in
@@ -450,7 +970,7 @@ enum StrengthStore {
         let since = now.addingTimeInterval(-Double(days) * 86_400)
         for s in (list ?? sessions) where s.start > since {
             for (e, _) in s.workingSets {
-                guard let ex = ExerciseLibrary.exercise(e.exerciseId) else { continue }
+                guard let ex = ExerciseLibrary.exercise(e.exerciseId), ex.isLoad else { continue }
                 for m in ex.primary { out[m, default: 0] += 1 }
                 for m in ex.secondary { out[m, default: 0] += 0.5 }
             }
@@ -466,7 +986,7 @@ enum StrengthStore {
             guard hours >= 0, hours < 96 else { continue }
             let fade = exp(-hours / 36)
             for (e, set) in s.workingSets {
-                guard let ex = ExerciseLibrary.exercise(e.exerciseId) else { continue }
+                guard let ex = ExerciseLibrary.exercise(e.exerciseId), ex.isLoad else { continue }
                 let effort = 0.12 * (Double(set.rpe ?? 8) / 8)
                 for m in ex.primary { out[m, default: 0] += effort * fade }
                 for m in ex.secondary { out[m, default: 0] += effort * 0.5 * fade }
@@ -477,7 +997,7 @@ enum StrengthStore {
 
     /// Muscular strain for one session, 0–100: more hard sets → higher, levelling off like Swell.
     static func strain(_ s: StrengthSession) -> Int {
-        let hard = s.workingSets.reduce(0.0) { $0 + Double($1.1.rpe ?? 8) / 8 }
+        let hard = s.workingSets.filter { ExerciseLibrary.exercise($0.0.exerciseId)?.isLoad ?? true }.reduce(0.0) { $0 + Double($1.1.rpe ?? 8) / 8 }
         return Int((100 * (1 - exp(-hard / 18))).rounded())
     }
 
@@ -658,7 +1178,7 @@ struct ActiveWorkoutView: View {
                                     }
                                     .fixedSize()
                                 }
-                                Stepper(value: $set.reps, in: 0...100) { Text("× \(set.reps)").monospacedDigit().font(.callout) }.fixedSize()
+                                Stepper(value: $set.reps, in: 0...(ex.timed ? 600 : 300), step: ex.timed ? 5 : 1) { Text(ex.amount(set.reps)).monospacedDigit().font(.callout) }.fixedSize()
                                 Spacer(minLength: 0)
                                 Button {
                                     set.done.toggle()
@@ -768,11 +1288,16 @@ struct ExercisePicker: View {
     var pick: (Exercise) -> Void
     @State private var search = ""
     @State private var muscle: Muscle?
+    @State private var category = "All"
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
         NavigationStack {
             List {
+                Picker("Kind", selection: $category) {
+                    ForEach(["All", "Strength", "Cardio", "Mobility", "Yoga"], id: \.self) { Text($0) }
+                }
+                .pickerStyle(.segmented)
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack {
                         chip("All", muscle == nil) { muscle = nil }
@@ -798,7 +1323,8 @@ struct ExercisePicker: View {
 
     private var results: [Exercise] {
         (ExerciseLibrary.all + StrengthStore.custom).filter { ex in
-            (muscle == nil || ex.primary.contains(muscle!) || ex.secondary.contains(muscle!))
+            (category == "All" || ex.category == category)
+                && (muscle == nil || ex.primary.contains(muscle!) || ex.secondary.contains(muscle!))
                 && (search.isEmpty || ex.name.localizedCaseInsensitiveContains(search) || ex.equipment.localizedCaseInsensitiveContains(search))
         }
     }

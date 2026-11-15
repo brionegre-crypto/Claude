@@ -298,7 +298,7 @@ struct RootView: View {
         }
         .onChange(of: phase) { _, p in
             if p == .background { savePoints.showing = nil; SavePoints.didEnterBackground() }
-            if p == .active { ClaudeBridge.openPendingDrafts() }      // a draft email or text Claude left for you to check and send
+            if p == .active { ClaudeBridge.openPendingDrafts(); Task { await TeamAPI.checkForNews() } }   // drafts Claude left; team news for you      // a draft email or text Claude left for you to check and send
             if p == .active, let sp = SavePoints.pendingResume() {
                 UserDefaults.standard.removeObject(forKey: SavePoints.awayKey)
                 withAnimation(DS.spring) { savePoints.showing = sp }
