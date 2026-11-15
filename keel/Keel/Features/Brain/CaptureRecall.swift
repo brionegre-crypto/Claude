@@ -784,6 +784,7 @@ struct PersonPageView: View {
         let meetings = CalendarService.shared.events(from: Date().addingTimeInterval(-30 * 86_400), to: Date().addingTimeInterval(30 * 86_400))
             .filter { e in (e.attendees ?? []).contains { ($0.url.absoluteString.lowercased().contains(email) && !email.isEmpty) || ($0.name ?? "").localizedCaseInsensitiveContains(person.name) } }
         List {
+            PersonContactSection(person: person)
             Section {
                 if !person.email.isEmpty { LabeledContent("Email", value: person.email) }
                 if !person.phone.isEmpty { LabeledContent("Phone", value: person.phone) }

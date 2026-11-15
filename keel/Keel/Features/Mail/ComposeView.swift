@@ -182,6 +182,11 @@ struct ComposeView: View {
                             }
                             Button("Pick a time…", systemImage: "calendar.badge.clock") { pickSendTime = true }
                         }
+                        Button("Send from Apple Mail instead", systemImage: "envelope.arrow.triangle.branch") {
+                            let d = MailHandoffDraft(to: recipients(draft.to), cc: recipients(draft.cc), subject: draft.subject, body: draft.body)
+                            dismiss()
+                            Task { @MainActor in try? await Task.sleep(for: .milliseconds(400)); AppRouter.shared.mailHandoff = d }
+                        }
                     } label: { Image(systemName: "paperplane.fill") } primaryAction: { startSend() }
                         .disabled(recipients(draft.to).isEmpty || sendCountdown != nil)
                         .accessibilityLabel("Send. Hold for send later")

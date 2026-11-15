@@ -714,4 +714,21 @@ final class KeelTests: XCTestCase {
         XCTAssertEqual(ids.count, Set(ids).count, "every Compass tool needs its own id")
         for id in ["top3", "parking", "reframe", "lifeWeeks", "morningPages"] { XCTAssertNotNil(HubCatalog.tool(id), id) }
     }
+
+    func testAppleIntegrationsHelpers() {
+        let d = TextDraft(recipients: ["+1 555 0100", "ana@example.com"], body: "On my way!")
+        let url = AppleMessages.url(for: d)?.absoluteString ?? ""
+        XCTAssertTrue(url.hasPrefix("sms:/open?addresses=+15550100,ana@example.com"), url)
+        XCTAssertTrue(url.contains("body=On%20my%20way!"), url)
+        XCTAssertTrue((AppleMessages.url(for: TextDraft(body: "hi"))?.absoluteString ?? "").hasPrefix("sms:&body=hi"))
+
+        let start = Calendar.current.date(bySettingHour: 15, minute: 30, second: 0, of: Date())!
+        let late = AppleMessages.runningLate("Design review", start: start, minutes: 10)
+        XCTAssertTrue(late.contains("10 min late for Design review"), late)
+        XCTAssertTrue(late.contains(start.addingTimeInterval(600).formatted(date: .omitted, time: .shortened)), late)
+
+        let mail = MailHandoff.url(for: MailHandoffDraft(to: ["a@x.com", "b@y.com"], subject: "Hi there", body: "Line"))?.absoluteString ?? ""
+        XCTAssertTrue(mail.hasPrefix("mailto:a@x.com,b@y.com?"), mail)
+        XCTAssertTrue(mail.contains("subject=Hi%20there"), mail)
+    }
 }

@@ -158,6 +158,11 @@ struct FollowUpsView: View {
                 .swipeActions {
                     Button { FollowUps.resolve(f) } label: { Label("Got a reply", systemImage: "checkmark") }.tint(DS.Palette.calm)
                 }
+                .swipeActions(edge: .leading) {
+                    Button {
+                        AppleMessages.compose(email: f.recipient, name: f.recipientName.isEmpty ? nil : f.recipientName, context: "a gentle nudge about my email")
+                    } label: { Label("Text", systemImage: "message") }.tint(.green)
+                }
             }
         }
         .navigationTitle("Awaiting reply")

@@ -50,6 +50,7 @@ enum MeetingAutopilot {
     static let category = "MEETING_START"
     static let joinAction = "MEETING_JOIN"
     static let recordAction = "MEETING_RECORD"
+    static let lateAction = "MEETING_LATE"
 
     static var isOn: Bool { UserDefaults.standard.object(forKey: "meeting.autopilot.on") as? Bool ?? true }
     static var leadMinutes: Int { UserDefaults.standard.object(forKey: "meeting.autopilot.lead") as? Int ?? 1 }
@@ -63,6 +64,7 @@ enum MeetingAutopilot {
         UNNotificationCategory(identifier: category, actions: [
             UNNotificationAction(identifier: joinAction, title: "Join", options: [.foreground]),
             UNNotificationAction(identifier: recordAction, title: "Record notes", options: [.foreground]),
+            UNNotificationAction(identifier: lateAction, title: "Text: running late", options: [.foreground]),
         ], intentIdentifiers: [])
     }
 
@@ -105,6 +107,7 @@ enum MeetingAutopilot {
         switch action {
         case joinAction: if let link { UIApplication.shared.open(link) }
         case recordAction: AppRouter.shared.showRecorder = true
+        case lateAction: if let event { AppleMessages.runningLate(for: event) }
         default: if let event, MeetingLink.find(event) == nil { AppRouter.shared.tab = .calendar }
         }
     }

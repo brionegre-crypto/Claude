@@ -411,8 +411,10 @@ struct SourceGuideSheet: View {
             "Choose the exported folder or .zip here. Images inside TextBundles come along.",
         ]
         case .markdown: [
-            "In the Notes app: open a note, tap Share → Keel. It arrives as a note in Keel.",
-            "For many at once: on a Mac, export or copy them as text, Markdown or HTML files into a folder, then choose the folder here.",
+            "One note: in the Notes app, open it, tap Share → Keel. It arrives as a note in Keel.",
+            "All your notes, automatically: in the Shortcuts app make a shortcut with Find All Notes → Repeat with Each → Save to Keel Notes (Title: Name, Text: Body). Run it once; notes already in Keel are skipped, so you can run it again any time.",
+            "Everything at once: at privacy.apple.com, request a copy of your iCloud Notes, unzip it, then choose its folder here.",
+            "On a Mac you can also export or copy notes as text, Markdown or HTML files into a folder and choose it here.",
             "Any .md, .txt or .html files work, and any .csv becomes a database.",
         ]
         }

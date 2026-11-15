@@ -62,6 +62,9 @@ struct PromisesView: View {
                                 Button("Mark kept", systemImage: "checkmark") { close(c, as: .done) }
                                 Button("Make it a task", systemImage: "checklist") { makeTask(c) }
                                 Button("Draft a follow-up", systemImage: "envelope") { followUp = c }
+                                Button("Text them about it", systemImage: "message") {
+                                    AppleMessages.compose(email: c.recipient, name: c.displayName, context: "an update on: \(c.promise)")
+                                }
                                 Button("Not a promise", systemImage: "xmark") { close(c, as: .dismissed) }
                             }
                             .onTapGesture { followUp = c }

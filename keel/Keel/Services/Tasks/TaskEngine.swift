@@ -118,6 +118,7 @@ enum TaskAlerts {
     static let category = "TASK_ALERT"
     static let completeAction = "TASK_COMPLETE"
     static let snoozeAction = "TASK_SNOOZE"
+    static let textAction = "TASK_TEXT"
 
     static let offsets: [(label: String, minutes: Int?)] = [
         ("None", nil), ("At time of task", 0), ("5 minutes before", 5), ("15 minutes before", 15),
@@ -129,7 +130,8 @@ enum TaskAlerts {
     static func registerCategories() {
         let complete = UNNotificationAction(identifier: completeAction, title: "Complete", options: [])
         let snooze = UNNotificationAction(identifier: snoozeAction, title: "Snooze 10 min", options: [])
-        let task = UNNotificationCategory(identifier: category, actions: [complete, snooze], intentIdentifiers: [])
+        let text = UNNotificationAction(identifier: textAction, title: "Reply by text", options: [.foreground])
+        let task = UNNotificationCategory(identifier: category, actions: [complete, snooze, text], intentIdentifiers: [])
         let habit = UNNotificationCategory(identifier: "HABIT_STACK", actions: [], intentIdentifiers: [])
         let promise = UNNotificationCategory(identifier: "PROMISE", actions: [], intentIdentifiers: [])
         let med = UNNotificationCategory(identifier: MedEngine.category,
@@ -245,6 +247,18 @@ final class NotificationHandler: NSObject, UNUserNotificationCenterDelegate {
             switch action {
             case TaskAlerts.completeAction: TaskActions.setDone(task, true)
             case TaskAlerts.snoozeAction: TaskAlerts.snooze(task)
+            case TaskAlerts.textAction:
+                // Text whoever the task is about (a person whose name is in it), or start a blank text about it.
+                let people = (try? ctx.fetch(FetchDescriptor<Person>())) ?? []
+                let lower = task.title.lowercased()
+                if let p = people.first(where: { p in
+                    let first = p.name.split(separator: " ").first.map { String($0).lowercased() } ?? ""
+                    return first.count > 2 && lower.contains(first)
+                }) {
+                    AppleMessages.compose(person: p, context: task.title)
+                } else {
+                    AppleMessages.compose(TextDraft(body: "", context: task.title))
+                }
             default: break
             }
             try? ctx.save()

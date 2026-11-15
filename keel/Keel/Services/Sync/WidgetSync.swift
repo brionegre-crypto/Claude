@@ -158,6 +158,8 @@ final class AppRouter {
     var showQuickOpen = false
     var showShortcuts = false
     var showVoice = false
+    var textDraft: TextDraft?            // Keel's text composer (Messages)
+    var mailHandoff: MailHandoffDraft?   // a draft for Apple Mail
 
     func handle(_ url: URL) -> Bool {
         guard url.scheme == "com.keel.app" else { return false }
@@ -185,6 +187,7 @@ final class AppRouter {
         case "groceries": openTool = ToolRoute(id: "mealplan")
         case "open": showQuickOpen = true
         case "voice": showVoice = true
+        case "claude-drafts": ClaudeBridge.openPendingDrafts()
         case "extension": _ = Extensions.importLink(url)
         case "person":
             if let id = url.pathComponents.dropFirst().first, UUID(uuidString: id) != nil { openTool = ToolRoute(id: "person:" + id) }

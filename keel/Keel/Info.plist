@@ -48,7 +48,7 @@
 	<key>NSCameraUsageDescription</key>
 	<string>Keel uses the camera to scan documents into your notes.</string>
 	<key>NSContactsUsageDescription</key>
-	<string>Keel shows who's invited to your calendar events.</string>
+	<string>Keel shows who's invited to your events, links your people to their contacts, and finds their number when you text or call them.</string>
 	<key>NSFaceIDUsageDescription</key>
 	<string>Keel uses Face ID to unlock the app and your locked notes.</string>
 	<key>NSHealthShareUsageDescription</key>

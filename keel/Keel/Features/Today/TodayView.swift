@@ -52,6 +52,7 @@ struct TodayView: View {
                     TipView(OpenWaterTip())                         // each tip shows once, at most one new tip a day
                     TipView(CaptureTip())
                     VoyageView()                                    // your day as a route: now, ports, open water, anchor
+                    NextMeetingPeopleCard()                         // who you're meeting next, with Running late and Prep
                     Waterline(label: "Below the waterline · the rest of your day")
                     ForEach((calm ? TodayCard.calm : TodayCard.current(phase: DayPhase.now)).filter { $0 != .upNext && $0 != .oneThing }) { card($0) }
                     if calm {

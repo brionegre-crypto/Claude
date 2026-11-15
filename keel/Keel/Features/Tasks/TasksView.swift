@@ -656,6 +656,11 @@ struct TaskDetailView: View {
             }
 
             Section {
+                Button { AppleMessages.compose(TextDraft(context: task.title)) } label: { Label("Text someone about this", systemImage: "message") }
+                    .foregroundStyle(DS.Palette.ink)
+            }
+
+            Section {
                 Button { showLocation = true } label: {
                     LabeledContent {
                         Text(task.locationName.map { "\(task.remindOnArrive ? "Arriving at" : "Leaving") \($0)" } ?? "None")

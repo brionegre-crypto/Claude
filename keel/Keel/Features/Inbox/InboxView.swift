@@ -935,6 +935,12 @@ struct EmailDetailView: View {
                 Menu {
                     Button("Mark unread", systemImage: "envelope.badge") { email.isRead = false; Task { try? await provider?.markRead(email.providerMessageId, read: false) } }
                     Button("Make it a task", systemImage: "checklist") { makeTask() }
+                    Button("Text \(email.fromName.isEmpty ? "the sender" : email.fromName)", systemImage: "message") {
+                        AppleMessages.compose(email: email.from, name: email.fromName.isEmpty ? nil : email.fromName, context: "about their email: \(email.subject)")
+                    }
+                    Button("Open draft in Apple Mail", systemImage: "envelope.arrow.triangle.branch") {
+                        AppRouter.shared.mailHandoff = MailHandoffDraft(to: [email.from], subject: "Re: \(email.subject)", body: "")
+                    }
                     Button("Mark sender as VIP", systemImage: "star.circle") {
                         InboxBrain.setVIP(true, sender: email.from, name: email.fromName, ctx: ctx); Haptics.success()
                         UndoCenter.shared.notify("\(email.fromName.isEmpty ? email.from : email.fromName) is a VIP")

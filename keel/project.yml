@@ -67,7 +67,7 @@ targets:
         NSCalendarsWriteOnlyAccessUsageDescription: Keel adds focus blocks and events you create to your calendar.
         NSCalendarsUsageDescription: Keel shows your events next to your tasks and email so it can plan your day.
         NSRemindersUsageDescription: Keel syncs with Apple Reminders so your tasks live in one place.
-        NSContactsUsageDescription: Keel shows who's invited to your calendar events.
+        NSContactsUsageDescription: Keel shows who's invited to your events, links your people to their contacts, and finds their number when you text or call them.
         UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
         UISupportedInterfaceOrientations~ipad: [UIInterfaceOrientationPortrait, UIInterfaceOrientationPortraitUpsideDown, UIInterfaceOrientationLandscapeLeft, UIInterfaceOrientationLandscapeRight]
         LSApplicationCategoryType: public.app-category.productivity

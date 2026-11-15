@@ -298,6 +298,7 @@ struct RootView: View {
         }
         .onChange(of: phase) { _, p in
             if p == .background { savePoints.showing = nil; SavePoints.didEnterBackground() }
+            if p == .active { ClaudeBridge.openPendingDrafts() }      // a draft email or text Claude left for you to check and send
             if p == .active, let sp = SavePoints.pendingResume() {
                 UserDefaults.standard.removeObject(forKey: SavePoints.awayKey)
                 withAnimation(DS.spring) { savePoints.showing = sp }
@@ -338,6 +339,8 @@ private struct RouterSheets: ViewModifier {
     func body(content: Content) -> some View {
         content
             .sheet(isPresented: $router.showFocus) { NavigationStack { FocusView() } }
+            .sheet(item: $router.textDraft) { TextComposerView(draft: $0) }
+            .sheet(item: $router.mailHandoff) { MailHandoffSheet(draft: $0) }
             .sheet(item: $mailRouter.pending) { ComposeView(draft: $0) }
             .sheet(isPresented: $router.showSearch) { NavigationStack { SearchView() } }
             .sheet(isPresented: $router.showSettings) { AccountsView() }

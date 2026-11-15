@@ -146,7 +146,7 @@ struct ReachOutButtons: View {
             let digits = person.phone.filter { $0.isNumber || $0 == "+" }
             if !digits.isEmpty {
                 circle("phone.fill") { open("tel:\(digits)") }
-                circle("message.fill") { open("sms:\(digits)") }
+                circle("message.fill") { AppleMessages.compose(person: person) }
             }
             if !person.email.isEmpty {
                 circle("envelope.fill") {
