@@ -279,10 +279,13 @@ struct RootView: View {
         .tabViewBottomAccessory { FocusAccessory { router.showFocus = true } }
         .overlay(alignment: .bottom) { UndoToast() }
         .overlay { EveningCalm() }                                   // warmer after sunset
-        .safeAreaInset(edge: .top, spacing: 0) { OfflineBanner() }   // says so when there's no internet
+        // Top banners float over the screen. As safe-area insets wrapping the whole TabView they changed every tab's
+        // layout (one even added its default gap while empty), so each tab's bar and title re-settled after
+        // appearing: the "snap into place" on every switch.
+        .overlay(alignment: .top) { OfflineBanner() }                // says so when there's no internet
         .overlay(alignment: .bottom) { HandoffBanner().animation(DS.spring, value: Handoff.shared.current?.id) }      // the natural next step
         .overlay(alignment: .bottomTrailing) { CaptureButton().padding(.trailing, 18).padding(.bottom, 104) }       // capture anything, from anywhere
-        .safeAreaInset(edge: .top) {
+        .overlay(alignment: .top) {
             if let err = KeelStore.loadError {
                 Text(err).font(DS.Font.caption).foregroundStyle(.white).padding(10).frame(maxWidth: .infinity)
                     .background(.red.gradient).textSelection(.enabled)
