@@ -235,15 +235,30 @@ struct InboxView: View {
                         }
                         Button("Mark All as Read", systemImage: "envelope.open") { confirmReadAll = true }
                             .disabled(!visible.contains { !$0.isRead })
-                        Divider()
-                        NavigationLink { AskInboxView() } label: { Label("Ask your inbox", systemImage: "questionmark.bubble") }
-                        NavigationLink { QuickRepliesView() } label: { Label("Clear 5 quick replies", systemImage: "bolt.horizontal.circle") }
-                        NavigationLink { ScheduledMailView() } label: { Label("Scheduled", systemImage: "clock.arrow.circlepath") }
-                        NavigationLink { DigestView() } label: { Label("Newsletter digest", systemImage: "newspaper") }
-                        NavigationLink { AttachmentsView() } label: { Label("Attachments", systemImage: "paperclip") }
-                        NavigationLink { SubscriptionsView() } label: { Label("Bills & money", systemImage: "creditcard") }
-                        NavigationLink { DeliveriesView() } label: { Label("Deliveries", systemImage: "shippingbox") }
-                        NavigationLink { TripsView() } label: { Label("Trips", systemImage: "airplane") }
+                        Section("Get through it") {
+                            NavigationLink { CatchUpView() } label: { Label("Catch me up", systemImage: "sparkles") }
+                            NavigationLink { QuickRepliesView() } label: { Label("Clear 5 quick replies", systemImage: "bolt.horizontal.circle") }
+                            NavigationLink { FollowUpsView() } label: { Label("Waiting on a reply", systemImage: "arrowshape.turn.up.left") }
+                            NavigationLink { ScreenerView() } label: { Label("Screen new senders", systemImage: "person.crop.circle.badge.questionmark") }
+                        }
+                        Section("Find") {
+                            NavigationLink { AskInboxView() } label: { Label("Ask your inbox", systemImage: "questionmark.bubble") }
+                            NavigationLink { AttachmentsView() } label: { Label("Attachments", systemImage: "paperclip") }
+                            NavigationLink { ScheduledMailView() } label: { Label("Scheduled to send", systemImage: "clock.arrow.circlepath") }
+                            NavigationLink { DigestView() } label: { Label("Newsletter digest", systemImage: "newspaper") }
+                        }
+                        Section("Life admin from your mail") {
+                            NavigationLink { SubscriptionsView() } label: { Label("Bills & money", systemImage: "creditcard") }
+                            NavigationLink { DeliveriesView() } label: { Label("Deliveries", systemImage: "shippingbox") }
+                            NavigationLink { TripsView() } label: { Label("Trips", systemImage: "airplane") }
+                        }
+                        Menu("Set up", systemImage: "gearshape") {
+                            NavigationLink { VIPListView() } label: { Label("VIPs", systemImage: "star") }
+                            NavigationLink { MailRulesView() } label: { Label("Rules", systemImage: "line.3.horizontal.decrease") }
+                            NavigationLink { SnippetsView() } label: { Label("Snippets", systemImage: "text.badge.plus") }
+                            NavigationLink { SwipeSettingsView() } label: { Label("Swipe actions", systemImage: "hand.draw") }
+                            NavigationLink { WritingStyleView() } label: { Label("My writing style", systemImage: "pencil.and.scribble") }
+                        }
                     } label: { Image(systemName: "ellipsis.circle") }
                     .accessibilityLabel("More mail tools")
                 }

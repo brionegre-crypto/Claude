@@ -162,28 +162,42 @@ struct NotesView: View {
                 }
                 ToolbarItem(placement: .topBarTrailing) {
                     Menu {
-                        Button("New page", systemImage: "doc") { newPage() }
-                        Button("Ask my notes", systemImage: "text.bubble") { showAskNotes = true }
-                        Button("Second-brain setup", systemImage: "square.grid.2x2") { showSetup = true }
-                        Button("Brain health", systemImage: "stethoscope") { showHealth = true }
-                        Button("Recently deleted", systemImage: "trash") { showTrash = true }
-                        Button("New database", systemImage: "tablecells") { opened = NotesDatabase.create(title: "Untitled database", parent: nil, ctx: ctx) }
-                        Button("New canvas", systemImage: "rectangle.on.rectangle.angled") { opened = KeelCanvas.create(ctx: ctx, folder: nil) }
-                        if !templates.isEmpty {
-                            Menu("From template", systemImage: "doc.on.doc") {
-                                ForEach(templates) { t in Button(t.title) { create(fromTemplate: t) } }
+                        Section("Create") {
+                            Button("New page", systemImage: "doc") { newPage() }
+                            Button("Today's note", systemImage: "calendar") { opened = DailyNote.today(ctx) }
+                            Button("Meeting notes for next event", systemImage: "person.2") { createMeetingNote() }
+                            Button("Daily journal", systemImage: "book") { createJournalPage() }
+                            Button("Voice note", systemImage: "waveform") { AppRouter.shared.showVoice = true }
+                            Menu("More kinds", systemImage: "plus.square.on.square") {
+                                Button("New database", systemImage: "tablecells") { opened = NotesDatabase.create(title: "Untitled database", parent: nil, ctx: ctx) }
+                                Button("New canvas", systemImage: "rectangle.on.rectangle.angled") { opened = KeelCanvas.create(ctx: ctx, folder: nil) }
+                                if !templates.isEmpty {
+                                    Menu("From template", systemImage: "doc.on.doc") {
+                                        ForEach(templates) { t in Button(t.title) { create(fromTemplate: t) } }
+                                    }
+                                }
                             }
                         }
-                        Divider()
-                        Button("Meeting notes for next event", systemImage: "person.2") { createMeetingNote() }
-                        Button("Today's note", systemImage: "calendar") { opened = DailyNote.today(ctx) }
-                        Button("Daily journal", systemImage: "book") { createJournalPage() }
-                        Divider()
-                        Button("Paperwork vault", systemImage: "archivebox") { showVault = true }
-                        Button("Tags & saved searches", systemImage: "number") { showTags = true }
-                        Button("Reorganize everything…", systemImage: "sparkles.rectangle.stack") { showReorganize = true }
-                        Button("Sort loose pages…", systemImage: "wand.and.stars") { showOrganize = true }
-                        Button("Import from another app…", systemImage: "square.and.arrow.down") { showImport = true }
+                        Section("Your second brain") {
+                            Button("Ask my notes", systemImage: "text.bubble") { showAskNotes = true }
+                            NavigationLink { CaptureInboxView() } label: { Label("Capture inbox", systemImage: "tray.and.arrow.down.fill") }
+                            NavigationLink { ReadLaterView() } label: { Label("Read later", systemImage: "bookmark") }
+                            NavigationLink { FlashcardReviewView() } label: { Label("Review flashcards", systemImage: "rectangle.on.rectangle.angled") }
+                            Button("Brain map", systemImage: "point.3.connected.trianglepath.dotted") { showBrain = true }
+                        }
+                        Section("Organize") {
+                            Button("Sort loose pages…", systemImage: "wand.and.stars") { showOrganize = true }
+                            Button("Reorganize everything…", systemImage: "sparkles.rectangle.stack") { showReorganize = true }
+                            Button("Tags & saved searches", systemImage: "number") { showTags = true }
+                            NavigationLink { SupertagsView() } label: { Label("Supertags", systemImage: "tag.square") }
+                            Button("Paperwork vault", systemImage: "archivebox") { showVault = true }
+                        }
+                        Menu("Maintain", systemImage: "gearshape") {
+                            Button("Brain health", systemImage: "stethoscope") { showHealth = true }
+                            Button("Second-brain setup", systemImage: "square.grid.2x2") { showSetup = true }
+                            Button("Import from another app…", systemImage: "square.and.arrow.down") { showImport = true }
+                            Button("Recently deleted", systemImage: "trash") { showTrash = true }
+                        }
                     } label: { Image(systemName: "square.and.pencil") } primaryAction: { newPage() }
                     .accessibilityLabel("New page. Hold for more")
                 }

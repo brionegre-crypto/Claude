@@ -32,6 +32,10 @@ struct TodayView: View {
     @State private var showSettings = false
     @State private var showBrainDump = false
     @State private var showSOS = false
+    @State private var showRitual = false
+    @State private var dest: TodayDest?
+
+    enum TodayDest: Hashable { case compass, quickWins, timer, customize, focusRoom, forecast, savePoints, dopamine, breathe, dread, dayReview }
     @AppStorage(Prefs.calm) private var calm = false
 
     private var energy: EnergyLevel { EnergyLevel(rawValue: energyRaw) ?? .medium }
@@ -98,17 +102,67 @@ struct TodayView: View {
                     NavigationLink { SearchView() } label: { Image(systemName: "magnifyingglass") }
                         .accessibilityLabel("Search everything")
                 }
-                ToolbarItem(placement: .topBarTrailing) {
-                    NavigationLink { HubView() } label: { Image(systemName: "square.grid.2x2") }
-                        .accessibilityLabel("Compass: every Keel tool")
-                }
+                ToolbarItem(placement: .topBarTrailing) { dayMenu }
                 ToolbarItem(placement: .topBarTrailing) {
                     Button { AppRouter.shared.showSettings = true } label: { Image(systemName: "gearshape") }.accessibilityLabel("Settings")
                 }
             }
             .sheet(isPresented: $showBrainDump) { BrainDumpView() }
             .fullScreenCover(isPresented: $showSOS) { OverwhelmedView() }
+            .sheet(isPresented: $showRitual) { ShutdownRitualView() }
+            .navigationDestination(item: $dest) { d in
+                switch d {
+                case .compass: HubView()
+                case .quickWins: QuickWinsView()
+                case .timer: VisualTimerView()
+                case .customize: CustomizeTodayView()
+                case .focusRoom: FocusRoomView()
+                case .forecast: FocusForecastView()
+                case .savePoints: SavePointsView()
+                case .dopamine: DopamineMenuView()
+                case .breathe: BreatheView()
+                case .dread: DreadRadarView()
+                case .dayReview: DayReviewView()
+                }
+            }
         }
+    }
+
+    /// Tap: Compass (every tool). Hold: the day, from planning it to closing it down, in the order you'd need it.
+    private var dayMenu: some View {
+        Menu {
+            Button("Open Compass: every tool", systemImage: "square.grid.2x2") { dest = .compass }
+            Section("Start the day") {
+                Button("Plan my day", systemImage: "list.bullet.clipboard") { AppRouter.shared.showPlan = true }
+                Button("Quick wins (5 minutes or less)", systemImage: "bolt.fill") { dest = .quickWins }
+                Button("Visual timer", systemImage: "timer") { dest = .timer }
+            }
+            Section("Stay on track") {
+                Button("Start focus", systemImage: "scope") { AppRouter.shared.showFocus = true }
+                Button("Focus room (work alongside someone)", systemImage: "person.2.wave.2.fill") { dest = .focusRoom }
+                Button("My best focus hours", systemImage: "chart.bar.fill") { dest = .forecast }
+                Button("Where was I? (save points)", systemImage: "bookmark.fill") { dest = .savePoints }
+                Button("Dopamine menu", systemImage: "dice.fill") { dest = .dopamine }
+            }
+            Section("When it's hard") {
+                Button("I'm overwhelmed", systemImage: "lifepreserver") { showSOS = true }
+                Button("Brain dump", systemImage: "brain.head.profile") { showBrainDump = true }
+                Button("Breathe for 2 minutes", systemImage: "wind") { dest = .breathe }
+                Button("What am I avoiding?", systemImage: "tortoise.fill") { dest = .dread }
+            }
+            Section("Close the day") {
+                Button("Review today", systemImage: "checkmark.seal") { dest = .dayReview }
+                Button("Shutdown ritual", systemImage: "moon.stars") { showRitual = true }
+                Button("Weekly review", systemImage: "calendar.badge.checkmark") { AppRouter.shared.showReview = true }
+                Button("Journal", systemImage: "book") { AppRouter.shared.showJournal = true }
+            }
+            Button("Customize Today", systemImage: "slider.horizontal.3") { dest = .customize }
+        } label: {
+            Image(systemName: "square.grid.2x2")
+        } primaryAction: {
+            dest = .compass
+        }
+        .accessibilityLabel("Compass. Hold for day tools")
     }
 
     /// "in 44 min", "in 2 hr 10 min": calm, readable, no ticking seconds.

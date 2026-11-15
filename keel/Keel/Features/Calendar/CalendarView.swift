@@ -93,17 +93,31 @@ struct CalendarView: View {
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     Menu {
-                        Button("Choose calendars…", systemImage: "calendar.badge.checkmark") { showCalendars = true }
-                        Toggle(isOn: $showTasks) { Label("Show tasks on calendar", systemImage: "checklist") }
-                        Divider()
-                        Button("Plan my day (drag tasks onto hours)", systemImage: "calendar.day.timeline.left") { planning = true }
-                        Button("Plan my week", systemImage: "calendar.badge.clock") { planningWeek = true }
-                        NavigationLink { TimeReportView() } label: { Label("Where my time went", systemImage: "chart.bar.xaxis") }
-                        NavigationLink { BookingLinkView() } label: { Label("Booking link", systemImage: "link.badge.plus") }
-                        ShareLink(item: Availability.text()) { Label("Share my availability", systemImage: "calendar.badge.clock") }
-                        NavigationLink { WorldClockView() } label: { Label("World clock", systemImage: "globe") }
-                        NavigationLink { SharedCalendarsView() } label: { Label("Shared calendars", systemImage: "person.3") }
-                        NavigationLink { EventTemplatesView() } label: { Label("Event templates", systemImage: "square.on.square") }
+                        Button("Go to today", systemImage: "calendar.circle") { withAnimation(DS.spring) { anchor = cal.startOfDay(for: Date()) } }
+                        Section("Show") {
+                            Button("Choose calendars…", systemImage: "calendar.badge.checkmark") { showCalendars = true }
+                            Toggle(isOn: $showTasks) { Label("Show tasks on calendar", systemImage: "checklist") }
+                        }
+                        Section("Plan") {
+                            Button("Plan my day (drag tasks onto hours)", systemImage: "calendar.day.timeline.left") { planning = true }
+                            Button("Plan my week", systemImage: "calendar.badge.clock") { planningWeek = true }
+                            NavigationLink { IdealWeekView() } label: { Label("My ideal week", systemImage: "square.grid.3x3.topleft.filled") }
+                            NavigationLink { CountdownsView() } label: { Label("Countdowns", systemImage: "hourglass") }
+                            NavigationLink { AppointmentsView() } label: { Label("Appointments", systemImage: "stethoscope") }
+                        }
+                        Section("Look back") {
+                            NavigationLink { TimeReportView() } label: { Label("Where my time went", systemImage: "chart.bar.xaxis") }
+                            NavigationLink { TimeAuditView() } label: { Label("Time audit", systemImage: "clock.badge.questionmark") }
+                        }
+                        Section("Share") {
+                            NavigationLink { BookingLinkView() } label: { Label("Booking link", systemImage: "link.badge.plus") }
+                            ShareLink(item: Availability.text()) { Label("Share my availability", systemImage: "calendar.badge.clock") }
+                            NavigationLink { SharedCalendarsView() } label: { Label("Shared calendars", systemImage: "person.3") }
+                        }
+                        Menu("More", systemImage: "ellipsis") {
+                            NavigationLink { WorldClockView() } label: { Label("World clock", systemImage: "globe") }
+                            NavigationLink { EventTemplatesView() } label: { Label("Event templates", systemImage: "square.on.square") }
+                        }
                     } label: { Image(systemName: "line.3.horizontal.decrease.circle") }
                     .accessibilityLabel("Calendar options")
                 }

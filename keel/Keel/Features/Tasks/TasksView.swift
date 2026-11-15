@@ -186,34 +186,49 @@ struct TasksView: View {
                         Button(selecting ? "Done Selecting" : "Select Tasks", systemImage: "checkmark.circle") {
                             withAnimation { selecting.toggle(); selectedTasks = [] }
                         }
-                        Button("Plan my day (drag onto hours)", systemImage: "calendar.day.timeline.left") { planning = true }
-                        Button("Auto-schedule today", systemImage: "wand.and.stars") {
-                            let r = AutoScheduler.scheduleToday(tasks: tasks)
-                            withAnimation { toast = r.scheduled == 0 ? "Nothing fit today" : "Scheduled \(r.scheduled) on your calendar" }
-                            Task { try? await Task.sleep(for: .seconds(2.5)); withAnimation { toast = nil } }
-                        }
-                        Button("Clear today's time blocks", systemImage: "calendar.badge.minus") { AutoScheduler.clearToday(tasks: tasks) }
-                        Divider()
                         Button(boardMode ? "Show as list" : "Show as board", systemImage: boardMode ? "list.bullet" : "rectangle.split.3x1") {
                             withAnimation { boardMode.toggle() }
                         }
-                        if case .list(let name) = filter {
-                            Button("Share “\(name)”…", systemImage: "person.2") { sharingList = name }
-                        }
-                        NavigationLink { TemplatesView() } label: { Label("Templates", systemImage: "doc.on.doc") }
-                        NavigationLink { PlanMyWeekView(embedded: true) } label: { Label("Plan the week", systemImage: "calendar.day.timeline.left") }
-                        NavigationLink { StatsView() } label: { Label("Statistics", systemImage: "chart.xyaxis.line") }
-                        NavigationLink { TagsManagerView() } label: { Label("Manage tags", systemImage: "number") }
-                        NavigationLink { ErrandsView() } label: { Label("Errands by place", systemImage: "car") }
-                        NavigationLink { SharedListsView() } label: { Label("Shared lists", systemImage: "person.2") }
-                        NavigationLink { AutomationsView() } label: { Label("Automations", systemImage: "bolt.horizontal") }
-                        NavigationLink { ScreenshotTasksView() } label: { Label("From screenshots", systemImage: "camera.viewfinder") }
-                        if case .list(let name) = filter {
-                            Button("Save “\(name)” as a template", systemImage: "square.and.arrow.down") {
-                                TemplateSaver.save(listName: name, tasks: tasks.filter { !$0.isDone }, ctx: ctx)
-                                withAnimation { toast = "Saved as a template" }
-                                Task { try? await Task.sleep(for: .seconds(2)); withAnimation { toast = nil } }
+                        Section("Schedule") {
+                            Button("Plan my day (drag onto hours)", systemImage: "calendar.day.timeline.left") { planning = true }
+                            Button("Auto-schedule today", systemImage: "wand.and.stars") {
+                                let r = AutoScheduler.scheduleToday(tasks: tasks)
+                                withAnimation { toast = r.scheduled == 0 ? "Nothing fit today" : "Scheduled \(r.scheduled) on your calendar" }
+                                Task { try? await Task.sleep(for: .seconds(2.5)); withAnimation { toast = nil } }
                             }
+                            Button("Clear today's time blocks", systemImage: "calendar.badge.minus") { AutoScheduler.clearToday(tasks: tasks) }
+                            NavigationLink { PlanMyWeekView(embedded: true) } label: { Label("Plan the week", systemImage: "calendar.day.timeline.left") }
+                        }
+                        Section("Get unstuck") {
+                            NavigationLink { DoneForYouView() } label: { Label("Break it down for me", systemImage: "sparkles") }
+                            NavigationLink { DreadRadarView() } label: { Label("What am I avoiding?", systemImage: "tortoise.fill") }
+                            NavigationLink { QuickWinsView() } label: { Label("Quick wins", systemImage: "bolt.fill") }
+                        }
+                        Section("Bigger picture") {
+                            NavigationLink { GoalsView() } label: { Label("Goals", systemImage: "flag.checkered") }
+                            NavigationLink { HabitsView() } label: { Label("Habits", systemImage: "repeat") }
+                            NavigationLink { RoutinesView() } label: { Label("Routines", systemImage: "list.bullet.rectangle") }
+                            NavigationLink { StatsView() } label: { Label("Statistics", systemImage: "chart.xyaxis.line") }
+                            NavigationLink { RewardsView() } label: { Label("Rewards", systemImage: "gift") }
+                        }
+                        Section("Lists") {
+                            if case .list(let name) = filter {
+                                Button("Share “\(name)”…", systemImage: "person.2") { sharingList = name }
+                                Button("Save “\(name)” as a template", systemImage: "square.and.arrow.down") {
+                                    TemplateSaver.save(listName: name, tasks: tasks.filter { !$0.isDone }, ctx: ctx)
+                                    withAnimation { toast = "Saved as a template" }
+                                    Task { try? await Task.sleep(for: .seconds(2)); withAnimation { toast = nil } }
+                                }
+                            }
+                            NavigationLink { TemplatesView() } label: { Label("Templates", systemImage: "doc.on.doc") }
+                            NavigationLink { SharedListsView() } label: { Label("Shared lists", systemImage: "person.2") }
+                            NavigationLink { ErrandsView() } label: { Label("Errands by place", systemImage: "car") }
+                        }
+                        Menu("Set up", systemImage: "gearshape") {
+                            NavigationLink { TagsManagerView() } label: { Label("Manage tags", systemImage: "number") }
+                            NavigationLink { AutomationsView() } label: { Label("Automations", systemImage: "bolt.horizontal") }
+                            NavigationLink { ScreenshotTasksView() } label: { Label("Tasks from screenshots", systemImage: "camera.viewfinder") }
+                            NavigationLink { TaskCSVImportView() } label: { Label("Import a spreadsheet", systemImage: "tablecells") }
                         }
                     } label: { Image(systemName: "wand.and.stars") }
                     .accessibilityLabel("Schedule")
