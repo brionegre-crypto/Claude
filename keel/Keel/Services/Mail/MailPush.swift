@@ -20,6 +20,7 @@ enum MailPush {
             let sandbox = false                          // TestFlight and App Store use the real one
             #endif
             _ = try? await KeelCloud.call("push/register", method: "POST", body: ["token": hex, "sandbox": sandbox], auth: true)
+            for host in Set(TeamAPI.boards.map(\.host)) { await TeamAPI.registerPush(host) }   // instant team alerts
         }
     }
 

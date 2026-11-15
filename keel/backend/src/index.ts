@@ -66,7 +66,7 @@ export default {
       const r = await handleBooking(req, env, url, device);
       if (r) return r;
     }
-    if (/^\/(team|t)(\/|$)/.test(url.pathname)) {
+    if (/^\/(team|t|join)(\/|$)/.test(url.pathname)) {
       const r = await handleTeam(req, env, url, device);
       if (r) return r;
     }

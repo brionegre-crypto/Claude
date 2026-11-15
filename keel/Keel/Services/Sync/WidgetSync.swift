@@ -160,6 +160,8 @@ final class AppRouter {
     var showVoice = false
     var textDraft: TextDraft?            // Keel's text composer (Messages)
     var mailHandoff: MailHandoffDraft?   // a draft for Apple Mail
+    var teamInvite: TeamInvite?          // an invitation link was opened
+    var openTeamBoard: TeamBoardRef?     // a team alert was tapped
 
     func handle(_ url: URL) -> Bool {
         guard url.scheme == "com.keel.app" else { return false }
@@ -188,6 +190,17 @@ final class AppRouter {
         case "open": showQuickOpen = true
         case "voice": showVoice = true
         case "claude-drafts": ClaudeBridge.openPendingDrafts()
+        case "join":
+            // com.keel.app://join?code=…&host=…  (from an invitation page)
+            let q = URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems ?? []
+            if let code = q.first(where: { $0.name == "code" })?.value, let host = q.first(where: { $0.name == "host" })?.value,
+               code.range(of: #"^[a-f0-9]{24}$"#, options: .regularExpression) != nil, host.hasPrefix("https://") || host.hasPrefix("http://127.0.0.1") {
+                teamInvite = TeamInvite(code: code, host: host)
+            }
+        case "team":
+            // com.keel.app://team?id=…  (tapping a team alert)
+            let id = URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems?.first(where: { $0.name == "id" })?.value ?? ""
+            if let ref = TeamAPI.boards.first(where: { $0.id == id }) { openTeamBoard = ref }
         case "extension": _ = Extensions.importLink(url)
         case "person":
             if let id = url.pathComponents.dropFirst().first, UUID(uuidString: id) != nil { openTool = ToolRoute(id: "person:" + id) }

@@ -341,6 +341,8 @@ private struct RouterSheets: ViewModifier {
             .sheet(isPresented: $router.showFocus) { NavigationStack { FocusView() } }
             .sheet(item: $router.textDraft) { TextComposerView(draft: $0) }
             .sheet(item: $router.mailHandoff) { MailHandoffSheet(draft: $0) }
+            .sheet(item: $router.teamInvite) { TeamJoinView(invite: $0) }
+            .sheet(item: $router.openTeamBoard) { ref in NavigationStack { TeamBoardView(ref: ref) } }
             .sheet(item: $mailRouter.pending) { ComposeView(draft: $0) }
             .sheet(isPresented: $router.showSearch) { NavigationStack { SearchView() } }
             .sheet(isPresented: $router.showSettings) { AccountsView() }

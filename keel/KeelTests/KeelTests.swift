@@ -898,5 +898,24 @@ final class KeelTests: XCTestCase {
         XCTAssertNil(b.activity.last?.forWhom)
         XCTAssertEqual(b.tasks.first?.dueDate.map { Calendar.current.component(.day, from: $0) }, 20)
         XCTAssertEqual(TeamAPI.dueString(b.tasks.first?.dueDate), "2026-11-20")
+
+        // Invitations carry their server; boards remember theirs.
+        let inv = TeamAPI.invite(from: "https://keel-backend.example.dev/join/9327c9076f94ec811fd201b8")
+        XCTAssertEqual(inv?.code, "9327c9076f94ec811fd201b8")
+        XCTAssertEqual(inv?.host, "https://keel-backend.example.dev")
+        XCTAssertNil(TeamAPI.invite(from: "https://keel-backend.example.dev/join/nope"))
+        XCTAssertEqual(TeamBoardRef(id: id, name: "B", url: "https://teams.example.com/t/\(id)").host, "https://teams.example.com")
+        // A private board tells you your role; viewers can't edit, admins can manage.
+        let secureJSON = """
+        {"name":"Launch","owner":"Brian","members":["Brian","Vic"],"version":1,"updated":1,"tasks":[],"activity":[],"secure":true,
+         "roles":{"Brian":"owner","Vic":"viewer"},"me":{"name":"Vic","role":"viewer"},"chat":[{"id":"m1","by":"Brian","text":"hi","at":1}],
+         "events":[{"id":"e1","title":"Review","start":"2026-11-20T15:00:00Z","end":"2026-11-20T16:00:00Z","notes":"","by":"Brian"}]}
+        """
+        var sb = try JSONDecoder().decode(TeamBoardData.self, from: Data(secureJSON.utf8))
+        XCTAssertFalse(sb.canEdit); XCTAssertFalse(sb.canManage)
+        XCTAssertEqual(sb.events?.first?.startDate, ISO8601DateFormatter().date(from: "2026-11-20T15:00:00Z"))
+        sb.me = TeamMe(name: "Vic", role: "admin")
+        XCTAssertTrue(sb.canEdit); XCTAssertTrue(sb.canManage)
+        XCTAssertTrue(b.canEdit, "link boards: everyone edits")
     }
 }

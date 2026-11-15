@@ -57,7 +57,7 @@ export async function handlePush(req: Request, env: Env, url: URL, device: boole
   return null;
 }
 
-function apnsReady(env: Env): boolean {
+export function apnsReady(env: Env): boolean {
   return !!(env.APNS_KEY && env.APNS_KEY_ID && env.APNS_TEAM_ID);
 }
 
@@ -90,7 +90,7 @@ async function wake(env: Env): Promise<void> {
 }
 
 /** APNs sign-in token (ES256 JWT), reused for 50 minutes as Apple asks. */
-async function providerToken(env: Env): Promise<string> {
+export async function providerToken(env: Env): Promise<string> {
   const cached = await env.KEEL.get("push:jwt");
   if (cached) return cached;
   const b64url = (b: ArrayBuffer | Uint8Array) =>

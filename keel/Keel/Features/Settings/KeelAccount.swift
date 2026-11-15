@@ -106,6 +106,7 @@ final class KeelAccount {
     /// signs out on this device and forgets your name and email. Notes, tasks and the rest stay yours,
     /// on this device and in your own iCloud (erase them in Settings → Data & Storage if you want them gone).
     func deleteAccount() async {
+        await TeamAPI.deleteAccounts()               // team sign-ins, alert addresses and memberships on every board server
         if let code = KeelServer.accessCode, code.hasPrefix("ks_"), let url = KeelServer.endpoint("auth/account") {
             var req = URLRequest(url: url)
             req.httpMethod = "DELETE"

@@ -17,7 +17,7 @@ function b64urlToBytes(s: string): Uint8Array {
   return Uint8Array.from(bin, (c) => c.charCodeAt(0));
 }
 
-async function verifyAppleToken(token: string): Promise<{ sub: string; email?: string } | null> {
+export async function verifyAppleToken(token: string): Promise<{ sub: string; email?: string } | null> {
   const parts = token.split(".");
   if (parts.length !== 3) return null;
   const header = JSON.parse(new TextDecoder().decode(b64urlToBytes(parts[0]))) as { kid: string; alg: string };
