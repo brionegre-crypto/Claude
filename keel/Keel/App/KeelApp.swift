@@ -244,7 +244,9 @@ struct RootView: View {
         TabView(selection: $router.tab) {
             // Your tab bar (Settings → Look & Feel → Tab bar).
             ForEach(tabBarItems, id: \.self) { id in
-                SwiftUI.Tab(TabBarConfig.title(id), systemImage: TabBarConfig.icon(id), value: TabBarConfig.value(id)) { TabBarConfig.content(id) }
+                SwiftUI.Tab(TabBarConfig.title(id), systemImage: TabBarConfig.icon(id), value: TabBarConfig.value(id)) {
+                    TabBarConfig.content(id).modifier(TabArrival(active: router.tab == TabBarConfig.value(id)))
+                }
             }
             // Mac and iPad: Settings sits at the bottom of the sidebar. iPhone uses the gear on each tab.
             // Left out of the iPhone tab bar entirely: a sixth tab pushes Notes behind "More".

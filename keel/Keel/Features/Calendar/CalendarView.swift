@@ -21,6 +21,7 @@ struct CalendarView: View {
     @AppStorage("calendar.hidden") private var hiddenRaw = ""
     @State private var anchor = Calendar.current.startOfDay(for: Date())
     @State private var events: [EKEvent] = []
+    @State private var loadedAt: Date?
     @State private var draft: EventDraft?
     @State private var viewing: EventRef?
     @State private var openTask: TaskItem?
@@ -124,6 +125,11 @@ struct CalendarView: View {
             }
             .task {
                 if !CalendarService.shared.hasCalendarAccess { await CalendarService.shared.requestAccess() }
+                // Coming back to this tab: changes already arrive through EKEventStoreChanged, so only reload
+                // when it's been a while, and after the tab has finished appearing (no hitch on switching).
+                if let at = loadedAt, Date().timeIntervalSince(at) < 120, !events.isEmpty { return }
+                if loadedAt != nil { try? await Task.sleep(for: .milliseconds(300)) }
+                guard !Task.isCancelled else { return }
                 load()
             }
             .onChange(of: anchor) { load() }
@@ -199,8 +205,10 @@ struct CalendarView: View {
         guard let first = visibleDays.first, let last = visibleDays.last,
               let end = cal.date(byAdding: .day, value: 1, to: last) else { return }
         let hiddenIds = hidden
-        events = CalendarService.shared.events(from: first, to: end)
+        let fresh = CalendarService.shared.events(from: first, to: end)
             .filter { !hiddenIds.contains($0.calendar.calendarIdentifier) }
+        loadedAt = Date()
+        events = fresh
     }
 
     private func moveEvent(_ e: EKEvent, to start: Date) {

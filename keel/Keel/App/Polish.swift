@@ -117,3 +117,27 @@ enum DayActivity {
     }
 }
 #endif
+
+// MARK: - Tab switches glide instead of cutting
+
+/// The system tab bar swaps screens instantly, which reads as a snap. The newly chosen tab eases in
+/// (a quick fade and a few points of lift) so it feels continuous. Reduce Motion keeps just the fade.
+struct TabArrival: ViewModifier {
+    let active: Bool
+    @State private var shown = true
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+    func body(content: Content) -> some View {
+        content
+            .opacity(shown ? 1 : 0.35)
+            .offset(y: shown || reduceMotion ? 0 : 6)
+            .onChange(of: active) { _, isActive in
+                guard isActive else { return }
+                var t = Transaction(); t.disablesAnimations = true
+                withTransaction(t) { shown = false }
+                DispatchQueue.main.async {
+                    withAnimation(.smooth(duration: 0.24)) { shown = true }
+                }
+            }
+    }
+}
