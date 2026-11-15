@@ -78,8 +78,12 @@ struct BodyTimelineItem: Identifiable, Hashable {
 struct BodyTimelineCard: View {
     let day: BodyDay?
     var date: Date = Date()
-    @Query private var doses: [MedDose]
+    @Query(BodyTimelineCard.recentDoses) private var doses: [MedDose]      // the last 2 days only, not years of history
     @Query private var meds: [Medication]
+    static var recentDoses: FetchDescriptor<MedDose> {
+        let since = Calendar.current.startOfDay(for: Date()).addingTimeInterval(-86_400)
+        return FetchDescriptor<MedDose>(predicate: #Predicate { $0.takenAt >= since })
+    }
     @Query(NutritionScoreCard.today) private var food: [FoodEntry]
     @State private var expanded = false
 

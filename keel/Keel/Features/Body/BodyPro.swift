@@ -295,7 +295,18 @@ struct RecoveryDriver: Identifiable, Hashable { let id: String; let label: Strin
 @MainActor
 enum RecoveryDrivers {
     /// For each automatic signal on a day, the average next-morning Tide with it versus without it.
+    private static var memo: (key: String, value: [RecoveryDriver])?
+
     static func compute(days: [BodyDay], food: [FoodEntry], strength: [StrengthSession], drinks: [Drink]) -> [RecoveryDriver] {
+        // Same inputs as last time (the usual case while scrolling): reuse the answer.
+        let key = "\(days.count)|\(days.last?.day.timeIntervalSince1970 ?? 0)|\(days.last?.tide ?? -1)|\(food.count)|\(strength.count)|\(drinks.count)"
+        if let memo, memo.key == key { return memo.value }
+        let value = computeFresh(days: days, food: food, strength: strength, drinks: drinks)
+        memo = (key, value)
+        return value
+    }
+
+    private static func computeFresh(days: [BodyDay], food: [FoodEntry], strength: [StrengthSession], drinks: [Drink]) -> [RecoveryDriver] {
         let cal = Calendar.current
         guard days.count >= 10 else { return [] }
         let usualBed: Double = {

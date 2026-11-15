@@ -863,9 +863,17 @@ enum StrengthStore {
         }
         set {
             cached = newValue
-            if let d = try? JSONEncoder().encode(newValue) { try? d.write(to: url, options: .atomic) }
+            lastCache = nil; bestsCache = nil; fatigueCache = nil
+            let copy = newValue, file = url
+            // Write in the background so finishing a workout never waits on the disk.
+            Task.detached(priority: .utility) { if let d = try? JSONEncoder().encode(copy) { try? d.write(to: file, options: .atomic) } }
         }
     }
+
+    // Worked out once and reused until a workout is saved: these were recomputed on every redraw.
+    private static var lastCache: [String: LoggedExercise]?
+    private static var bestsCache: [String: Double]?
+    private static var fatigueCache: (at: Date, value: [Muscle: Double])?
 
     static let unitKey = "strength.unit"
     static var unit: String { UserDefaults.standard.string(forKey: unitKey) ?? (Locale.current.measurementSystem == .metric ? "kg" : "lb") }
@@ -914,12 +922,14 @@ enum StrengthStore {
 
     /// Best estimated 1RM per exercise, before a given session (for spotting new records).
     static func bests(before date: Date = .distantFuture, in list: [StrengthSession]? = nil) -> [String: Double] {
+        if list == nil, date == .distantFuture, let bestsCache { return bestsCache }
         var out: [String: Double] = [:]
         for s in (list ?? sessions) where s.start < date {
             for e in s.exercises {
                 for set in e.sets where set.done && !set.warmup { out[e.exerciseId] = max(out[e.exerciseId] ?? 0, e1RM(set)) }
             }
         }
+        if list == nil, date == .distantFuture { bestsCache = out }
         return out
     }
 
@@ -938,6 +948,16 @@ enum StrengthStore {
 
     /// The last time you did this exercise.
     static func last(_ exerciseId: String, before date: Date = .distantFuture, in list: [StrengthSession]? = nil) -> LoggedExercise? {
+        if list == nil, date == .distantFuture {
+            if lastCache == nil {
+                var map: [String: LoggedExercise] = [:]
+                for s in sessions.sorted(by: { $0.start > $1.start }) {
+                    for e in s.exercises where map[e.exerciseId] == nil && e.sets.contains(where: { $0.done && !$0.warmup }) { map[e.exerciseId] = e }
+                }
+                lastCache = map
+            }
+            return lastCache?[exerciseId]
+        }
         for s in (list ?? sessions).sorted(by: { $0.start > $1.start }) where s.start < date {
             if let e = s.exercises.first(where: { $0.exerciseId == exerciseId && $0.sets.contains { $0.done && !$0.warmup } }) { return e }
         }
@@ -980,6 +1000,7 @@ enum StrengthStore {
 
     /// How tired each muscle still is (0 fresh … 1 just hammered), fading over about 3 days.
     static func fatigue(now: Date = Date(), in list: [StrengthSession]? = nil) -> [Muscle: Double] {
+        if list == nil, let c = fatigueCache, abs(now.timeIntervalSince(c.at)) < 300 { return c.value }
         var out: [Muscle: Double] = [:]
         for s in (list ?? sessions) {
             let hours = now.timeIntervalSince(s.end ?? s.start) / 3600
@@ -992,7 +1013,9 @@ enum StrengthStore {
                 for m in ex.secondary { out[m, default: 0] += effort * 0.5 * fade }
             }
         }
-        return out.mapValues { min(1, $0) }
+        let result = out.mapValues { min(1, $0) }
+        if list == nil { fatigueCache = (now, result) }
+        return result
     }
 
     /// Muscular strain for one session, 0–100: more hard sets → higher, levelling off like Swell.

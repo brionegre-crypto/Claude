@@ -217,7 +217,11 @@ struct HubView: View {
     }
 
     /// Live lines for the tiles, worked out once when the Compass opens.
+    private static var statsMemo: (at: Date, value: [String: String])?
+
     private func loadStats() async {
+        // Opened again within 2 minutes: show the numbers we just worked out, instantly.
+        if let m = Self.statsMemo, Date().timeIntervalSince(m.at) < 120 { if stats != m.value { stats = m.value }; return }
         // Let the screen finish sliding in first; the live numbers then fade in without hitching the animation.
         try? await Task.sleep(for: .milliseconds(stats.isEmpty ? 380 : 0))
         guard !Task.isCancelled else { return }
@@ -241,12 +245,16 @@ struct HubView: View {
         let meds = ((try? ctx.fetch(FetchDescriptor<Medication>())) ?? []).filter(\.isActive)
         if !meds.isEmpty {
             let total = meds.reduce(0) { $0 + $1.times.count }
-            let taken = ((try? ctx.fetch(FetchDescriptor<MedDose>())) ?? []).filter { cal.isDateInToday($0.day) }.count
+            let todayStart = cal.startOfDay(for: Date())
+            let taken = ((try? ctx.fetch(FetchDescriptor<MedDose>(predicate: #Predicate { $0.day >= todayStart }))) ?? []).count
             s["meds"] = "\(min(taken, total)) of \(total) today"
         }
 
         let tasks = (try? ctx.fetch(FetchDescriptor<TaskItem>())) ?? []
-        let mail = ((try? ctx.fetch(FetchDescriptor<EmailMessage>(predicate: #Predicate { !$0.isArchived }))) ?? [])
+        // Recent mail is all these counts need (not the whole mailbox).
+        var mailFetch = FetchDescriptor<EmailMessage>(predicate: #Predicate { !$0.isArchived }, sortBy: [SortDescriptor(\.receivedAt, order: .reverse)])
+        mailFetch.fetchLimit = 600
+        let mail = (try? ctx.fetch(mailFetch)) ?? []
         let sessions = (try? ctx.fetch(FetchDescriptor<FocusSession>(sortBy: [SortDescriptor(\.startedAt)]))) ?? []
         let accounts = (try? ctx.fetch(FetchDescriptor<MailAccount>())) ?? []
         let dread = Dread.items(tasks: tasks, mail: mail, sessions: sessions, accounts: accounts).count
@@ -258,7 +266,8 @@ struct HubView: View {
 
         if meds.contains(where: { FocusForecast.timing(for: $0).profile != .none }) || sessions.count >= 8 {
             let sleep = ((try? ctx.fetch(FetchDescriptor<CheckIn>())) ?? []).first { cal.isDateInToday($0.day) }?.sleepHours
-            let f = FocusForecast.build(meds: meds, doses: (try? ctx.fetch(FetchDescriptor<MedDose>())) ?? [], sleepHours: sleep, sessions: sessions)
+            let twoWeeks = Date().addingTimeInterval(-14 * 86_400)
+            let f = FocusForecast.build(meds: meds, doses: (try? ctx.fetch(FetchDescriptor<MedDose>(predicate: #Predicate { $0.takenAt >= twoWeeks }))) ?? [], sleepHours: sleep, sessions: sessions)
             if let w = f.peaks.first(where: { $0.end > Date() }) { s["forecast"] = "Best: \(w.label)" }
         }
         let log = DailyLog.summary(for: Date(), ctx: ctx)
@@ -274,6 +283,7 @@ struct HubView: View {
         }
         let routines = RoutineStore.all.count
         if routines > 0 { s["routines"] = "\(routines) ready to run" }
+        Self.statsMemo = (Date(), s)
         withAnimation(DS.spring) { stats = s }
     }
 }

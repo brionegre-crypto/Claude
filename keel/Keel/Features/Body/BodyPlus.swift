@@ -63,7 +63,7 @@ enum Drinks {
 
     static var goal: Int { let g = UserDefaults.standard.integer(forKey: goalKey); return g > 0 ? g : 2_000 }
     static var all: [Drink] {
-        get { UserDefaults.standard.data(forKey: key).flatMap { try? JSONDecoder().decode([Drink].self, from: $0) } ?? [] }
+        get { LocalLog.load(key) }
         set {
             let keep = newValue.filter { $0.at > Date().addingTimeInterval(-14 * 86_400) }
             UserDefaults.standard.set(try? JSONEncoder().encode(keep), forKey: key)

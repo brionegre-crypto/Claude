@@ -133,12 +133,15 @@ enum TeamAPI {
         let data = try await request(host, "team/auth", method: "POST", body: ["identityToken": identityToken, "name": name])
         guard let json = try JSONSerialization.jsonObject(with: data) as? [String: Any], let token = json["token"] as? String else { throw TeamError.http(500) }
         KeychainStore.save(token, for: tokenKey(host))
-        await registerPush(host)
+        await registerPush(host, force: true)
         await restoreBoards(host)
     }
 
-    static func registerPush(_ host: String) async {
+    static func registerPush(_ host: String, force: Bool = false) async {
         guard signedIn(host), let hex = UserDefaults.standard.string(forKey: MailPush.tokenKey) else { return }
+        let stampKey = "team.pushed." + host + "." + String(hex.prefix(12))
+        if !force, Date().timeIntervalSince1970 - UserDefaults.standard.double(forKey: stampKey) < 12 * 3600 { return }
+        UserDefaults.standard.set(Date().timeIntervalSince1970, forKey: stampKey)
         #if DEBUG
         let sandbox = true
         #else
@@ -396,8 +399,16 @@ struct TeamBoardsView: View {
 
     private func loadMine() async {
         var out: [TeamMine] = []
-        for ref in TeamAPI.boards {
-            guard let b = try? await TeamAPI.get(ref) else { continue }
+        // All boards at once rather than one after another.
+        let refs = TeamAPI.boards
+        let fetched: [(TeamBoardRef, TeamBoardData?)] = await withTaskGroup(of: (TeamBoardRef, TeamBoardData?).self) { group in
+            for ref in refs { group.addTask { (ref, try? await TeamAPI.get(ref)) } }
+            var all: [(TeamBoardRef, TeamBoardData?)] = []
+            for await r in group { all.append(r) }
+            return all
+        }
+        for (ref, board) in fetched {
+            guard let b = board else { continue }
             let myName = b.me?.name ?? TeamAPI.me
             out += b.tasks.filter { $0.assignee == myName && $0.status != "done" }.map { TeamMine(ref: ref, task: $0) }
         }
@@ -492,8 +503,11 @@ struct TeamBoardView: View {
         }
         .task {
             while !Task.isCancelled {
-                do { board = try await TeamAPI.get(ref); error = nil }
-                catch let e { if board == nil { self.error = e.localizedDescription } }
+                do {
+                    let fresh = try await TeamAPI.get(ref)
+                    if fresh.version != board?.version || fresh.me != board?.me { board = fresh }   // unchanged: don't redraw
+                    error = nil
+                } catch let e { if board == nil { self.error = e.localizedDescription } }
                 try? await Task.sleep(for: .seconds(8))
             }
         }

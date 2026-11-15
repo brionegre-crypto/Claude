@@ -7,8 +7,19 @@ import UserNotifications
 // synced database. Each one has its own screen, all reachable from Body.
 
 enum LocalLog {
+    // Decoded lists are kept until their saved bytes change, so screens that read the same log several
+    // times while drawing don't decode it again each time.
+    nonisolated(unsafe) private static var memo: [String: (data: Data, value: Any)] = [:]
+    private static let lock = NSLock()
+
     static func load<T: Codable>(_ key: String, as: T.Type = T.self) -> [T] {
-        UserDefaults.standard.data(forKey: key).flatMap { try? JSONDecoder().decode([T].self, from: $0) } ?? []
+        guard let data = UserDefaults.standard.data(forKey: key) else { return [] }
+        lock.lock()
+        if let m = memo[key], m.data == data, let v = m.value as? [T] { lock.unlock(); return v }
+        lock.unlock()
+        let value = (try? JSONDecoder().decode([T].self, from: data)) ?? []
+        lock.lock(); memo[key] = (data, value); lock.unlock()
+        return value
     }
     static func save<T: Codable>(_ items: [T], _ key: String) {
         UserDefaults.standard.set(try? JSONEncoder().encode(items), forKey: key)
