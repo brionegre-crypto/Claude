@@ -85,7 +85,6 @@ struct HorizonHeader: View {
                 water
                 VStack(alignment: .leading, spacing: 2) {
                     Text(title).font(compact ? .title3.weight(.bold) : .title.weight(.bold)).foregroundStyle(.white)
-                        .shadow(color: .black.opacity(0.18), radius: 4, y: 1)
                     Text(detail ?? HorizonSky.daylightLeft(now)).font(DS.Font.caption.weight(.semibold)).foregroundStyle(.white.opacity(0.88))
                 }
                 .padding(.horizontal, 18).padding(.bottom, compact ? 22 : 30)
@@ -151,8 +150,7 @@ struct DriftingWave: View {
     let reverse: Bool
     var body: some View {
         WaveShape(phase: reverse ? .pi / 2 : 0, amplitude: amplitude)
-            .frame(width: max(1, width), height: height)
-            .drawingGroup()
+            .frame(width: max(1, width), height: height)      // a plain still shape: no offscreen render pass needed
     }
 }
 

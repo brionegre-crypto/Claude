@@ -72,6 +72,9 @@ enum DS {
 // MARK: - Components
 
 /// Liquid Glass card (iOS 26).
+/// A content card. Solid on purpose: Liquid Glass is for floating controls (toolbars, toasts), not content.
+/// Glass on every card re-renders what's behind it every frame and plays its "materialize" animation each time
+/// a screen appears, which made switching tabs and scrolling lag. This keeps the same shape, padding and tint.
 struct GlassCard<Content: View>: View {
     var tint: Color? = nil
     @ViewBuilder var content: Content
@@ -79,8 +82,12 @@ struct GlassCard<Content: View>: View {
         content
             .padding(DS.Space.m)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .glassEffect(tint.map { .regular.tint($0.opacity(0.18)) } ?? .regular,
-                         in: .rect(cornerRadius: DS.Radius.card))
+            .background {
+                let shape = RoundedRectangle(cornerRadius: DS.Radius.card, style: .continuous)
+                shape.fill(DS.Palette.elevated)
+                    .overlay { if let tint { shape.fill(tint.opacity(0.10)) } }
+                    .overlay { shape.strokeBorder(Color.primary.opacity(0.06), lineWidth: 0.5) }
+            }
     }
 }
 
