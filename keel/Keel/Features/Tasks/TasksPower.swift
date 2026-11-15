@@ -76,7 +76,7 @@ enum NowTimer {
     /// Starts the task with a live countdown on the Lock Screen, Dynamic Island and Watch, sized to how long
     /// tasks like it really take you, with a gentle tap halfway and at the end.
     static func start(_ t: TaskItem, ctx: ModelContext) {
-        let minutes = max(5, ADHDCoach.calibratedMinutes(t))
+        let minutes = max(1, ADHDCoach.calibratedMinutes(t))
         let session = ShutdownManager.shared.start(minutes: minutes, level: .soft, task: t)
         ctx.insert(session)
         if minutes >= 10 {

@@ -28,20 +28,42 @@ enum ADHDCoach {
     // MARK: 2. Time-blindness calibrator — learns how long things REALLY take you
 
     /// Your personal multiplier, e.g. 1.6 means "you estimate 30 min, it takes 48".
+    /// Only used once Keel has actually timed a few of your tasks (and padding is on in Settings → Tasks);
+    /// until then a task takes exactly as long as its duration says.
     static var estimateMultiplier: Double {
-        get { max(1.0, UserDefaults.standard.double(forKey: "adhd.multiplier").nonZero ?? 1.5) }
+        get {
+            let d = UserDefaults.standard
+            guard d.object(forKey: padKey) as? Bool ?? true, d.integer(forKey: samplesKey) >= 3 else { return 1.0 }
+            return max(1.0, d.double(forKey: "adhd.multiplier").nonZero ?? 1.0)
+        }
         set { UserDefaults.standard.set(newValue, forKey: "adhd.multiplier") }
     }
+    static let samplesKey = "adhd.multiplier.samples"
+    static let padKey = "tasks.padEstimates"
+    static let defaultMinutesKey = "tasks.defaultMinutes"
+
+    /// How long a task without its own duration takes (Settings → Tasks → Default length). 5 minutes unless you change it.
+    static var defaultMinutes: Int {
+        let m = UserDefaults.standard.integer(forKey: defaultMinutesKey)
+        return m > 0 ? m : 5
+    }
+
+    /// The task's own duration, or the default.
+    static func minutes(_ t: TaskItem) -> Int { t.estimatedMinutes ?? defaultMinutes }
 
     static func calibratedMinutes(_ t: TaskItem) -> Int {
-        Int(Double(t.estimatedMinutes ?? 25) * estimateMultiplier)
+        Int((Double(minutes(t)) * estimateMultiplier).rounded())
     }
 
     static func recordActual(_ t: TaskItem, minutes: Int) {
         t.actualMinutes = minutes
         guard let est = t.estimatedMinutes, est > 0 else { return }
         let ratio = Double(minutes) / Double(est)
-        estimateMultiplier = estimateMultiplier * 0.8 + ratio * 0.2       // smoothed running average
+        let d = UserDefaults.standard
+        let samples = d.integer(forKey: samplesKey)
+        let old = samples == 0 ? ratio : (d.double(forKey: "adhd.multiplier").nonZero ?? ratio)
+        d.set(old * 0.8 + ratio * 0.2, forKey: "adhd.multiplier")        // smoothed running average
+        d.set(samples + 1, forKey: samplesKey)
     }
 
     // MARK: 3. Wall of Awful detector — tasks you keep avoiding

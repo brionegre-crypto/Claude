@@ -546,6 +546,7 @@ struct TaskSettings: View {
                     ForEach(TaskAlerts.offsets.compactMap { $0.minutes == nil ? nil : $0 }, id: \.label) { Text($0.label).tag($0.minutes ?? 0) }
                 }
             } footer: { Text("Applies to new tasks that have a time.") }
+            TaskDurationSettings()
             Section {
                 NavigationLink { LazyView(PlacesView()) } label: { Label("Places & Leaving Home", systemImage: "mappin.and.ellipse") }
                 NavigationLink { LazyView(RoutinesView()) } label: { Label("Routines", systemImage: "list.number") }

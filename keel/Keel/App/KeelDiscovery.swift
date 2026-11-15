@@ -73,7 +73,7 @@ struct StartNowIntent: AppIntent {
         NowTimer.start(t, ctx: ctx)
         try? ctx.save()
         WidgetSync.updateNow(ctx)
-        return .result(dialog: "Starting “\(t.title)”. \(max(5, ADHDCoach.calibratedMinutes(t))) minutes on the clock.")
+        return .result(dialog: "Starting “\(t.title)”. \(max(1, ADHDCoach.calibratedMinutes(t))) minutes on the clock.")
     }
 }
 

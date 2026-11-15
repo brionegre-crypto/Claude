@@ -731,4 +731,25 @@ final class KeelTests: XCTestCase {
         XCTAssertTrue(mail.hasPrefix("mailto:a@x.com,b@y.com?"), mail)
         XCTAssertTrue(mail.contains("subject=Hi%20there"), mail)
     }
+
+    func testTaskDurationDefaultsAndPadding() {
+        let d = UserDefaults.standard
+        let saved = [ADHDCoach.defaultMinutesKey, ADHDCoach.samplesKey, "adhd.multiplier", ADHDCoach.padKey].map { ($0, d.object(forKey: $0)) }
+        defer { for (k, v) in saved { d.set(v, forKey: k) } }
+        d.removeObject(forKey: ADHDCoach.defaultMinutesKey); d.removeObject(forKey: ADHDCoach.samplesKey); d.removeObject(forKey: ADHDCoach.padKey)
+        d.set(1.5, forKey: "adhd.multiplier")
+        let t = TaskItem(title: "Reply to Ana")
+        XCTAssertEqual(ADHDCoach.minutes(t), 5, "no length set: the 5-minute default")
+        XCTAssertEqual(ADHDCoach.calibratedMinutes(t), 5, "no padding before Keel has timed anything")
+        t.estimatedMinutes = 20
+        XCTAssertEqual(ADHDCoach.calibratedMinutes(t), 20)
+        d.set(3, forKey: ADHDCoach.samplesKey)
+        XCTAssertEqual(ADHDCoach.calibratedMinutes(t), 30, "after 3 timed tasks, padded by what was learned")
+        d.set(false, forKey: ADHDCoach.padKey)
+        XCTAssertEqual(ADHDCoach.calibratedMinutes(t), 20, "padding off")
+        d.set(10, forKey: ADHDCoach.defaultMinutesKey)
+        XCTAssertEqual(ADHDCoach.minutes(TaskItem(title: "x")), 10)
+        XCTAssertEqual(TaskDuration.step(up: 5), 6); XCTAssertEqual(TaskDuration.step(up: 30), 35); XCTAssertEqual(TaskDuration.step(down: 90), 75)
+        XCTAssertEqual(TaskDuration.label(90), "1 h 30 min")
+    }
 }

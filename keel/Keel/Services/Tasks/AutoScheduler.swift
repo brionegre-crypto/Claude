@@ -30,7 +30,7 @@ enum AutoScheduler {
         var leftover: [String] = []
 
         for task in candidates {
-            let minutes = max(15, ADHDCoach.calibratedMinutes(task))
+            let minutes = max(5, ADHDCoach.calibratedMinutes(task))
             var placed = false
             while slotIndex < slots.count {
                 let slot = slots[slotIndex]

@@ -167,7 +167,7 @@ struct DayPlannerView: View {
 
     private func place(_ t: TaskItem, hour: Int, half: Bool) {
         guard let start = cal.date(bySettingHour: hour, minute: half ? 30 : 0, second: 0, of: day) else { return }
-        let minutes = max(15, ADHDCoach.calibratedMinutes(t))
+        let minutes = max(5, ADHDCoach.calibratedMinutes(t))
         removeBlocks(of: t)
         do {
             try CalendarService.shared.timeBlock(t, start: start, minutes: minutes)

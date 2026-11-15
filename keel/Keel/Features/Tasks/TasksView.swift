@@ -413,7 +413,14 @@ struct TasksView: View {
                 }
             }
             #endif
-            Button("Start now (\(max(5, ADHDCoach.calibratedMinutes(t))) min)", systemImage: "timer") { NowTimer.start(t, ctx: ctx) }
+            Button("Start now (\(max(1, ADHDCoach.calibratedMinutes(t))) min)", systemImage: "timer") { NowTimer.start(t, ctx: ctx) }
+            Menu("Duration: \(TaskDuration.label(ADHDCoach.minutes(t)))", systemImage: "clock") {
+                ForEach(TaskDuration.presets, id: \.self) { m in
+                    Button { t.estimatedMinutes = m; t.updatedAt = Date(); Haptics.tap() } label: {
+                        if ADHDCoach.minutes(t) == m { Label(TaskDuration.label(m), systemImage: "checkmark") } else { Text(TaskDuration.label(m)) }
+                    }
+                }
+            }
             Divider()
             Button("Today", systemImage: "sun.max") { TaskMeta.setEvening(t, false); move(t, days: 0) }
             Button(TaskMeta.isEvening(t) ? "Not This Evening" : "This Evening", systemImage: "moon.stars") {
@@ -693,8 +700,7 @@ struct TaskDetailView: View {
 
             Section("Plan") {
                 Picker("Energy needed", selection: $task.energy) { ForEach(EnergyLevel.allCases) { Text($0.label).tag($0) } }
-                Stepper("Estimate: \(task.estimatedMinutes ?? 25) min  (really ~\(ADHDCoach.calibratedMinutes(task)))",
-                        value: Binding(get: { task.estimatedMinutes ?? 25 }, set: { task.estimatedMinutes = $0 }), in: 5...480, step: 5)
+                TaskDurationEditor(task: task)
                 Toggle("Waiting on someone else", isOn: $task.isWaitingOn)
                 Picker("Blocked By", selection: $task.blockedById) {
                     Text("Nothing").tag(UUID?.none)
