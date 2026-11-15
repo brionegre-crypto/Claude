@@ -209,9 +209,14 @@ struct BodyView: View {
             }
             if !engine.loading, engine.days.suffix(3).allSatisfy({ !$0.hasSleep && $0.hrv == nil && $0.swell == 0 }) { noDataCard }
             if isToday { adviceCard }
+            EnergyBankCard(day: t, days: engine.days)
             BodyMetricsGrid(day: t, days: engine.days)
+            BodyTimelineCard(day: t, date: t?.day ?? Date())
+            NavigationLink { LazyView(AskBodyView()) } label: {
+                Label("Ask about my body", systemImage: "sparkles").font(DS.Font.headline).frame(maxWidth: .infinity, alignment: .leading).bodyCard()
+            }
+            .buttonStyle(.plain)
             if isToday {
-                EnergyLeftCard(day: t)
                 stressCard
                 NapAdvisorCard(tide: t?.tide)
                 WorkoutPickCard(tide: t?.tide, swell: t?.swell ?? 0)
@@ -252,19 +257,31 @@ struct BodyView: View {
                 if extras.zoneMinutes.reduce(0, +) > 0 { ZonesCard(minutes: extras.zoneMinutes) }
                 WorkoutPickCard(tide: t?.tide, swell: t?.swell ?? 0)
             }
+            CardioLoadCard(days: engine.days)
             BodyMetricsGrid(day: t, days: engine.days, metrics: [.vo2, .rhr], title: "Fitness")
         } else if BodyHealth.available {
             BodyNeedsHealthCard(what: "your effort, heart-rate zones and workouts") { Task { await engine.connect() } }
         }
-        HStack(spacing: 10) {
+        LazyVGrid(columns: [GridItem(.flexible(), spacing: 10), GridItem(.flexible(), spacing: 10)], spacing: 10) {
+            NavigationLink { LazyView(StrengthHomeView()) } label: { linkTile("Strength", "dumbbell.fill", BodyStyle.swell) }
+            NavigationLink { LazyView(MuscleFreshnessView()) } label: { linkTile("Muscle freshness", "figure.stand", .green) }
+            NavigationLink { LazyView(CardioChartsView()) } label: { linkTile("Cardio", "heart.circle.fill", .pink) }
             NavigationLink { LazyView(WorkoutHistoryView()) } label: { linkTile("Workouts", "figure.run", BodyStyle.swell) }
             NavigationLink { LazyView(BodyTrendsView()) } label: { linkTile("90-day trends", "chart.xyaxis.line", .purple) }
+            NavigationLink { LazyView(BodyMapView()) } label: { linkTile("Body map", "figure.stand.line.dotted.figure.stand", .orange) }
         }
         .buttonStyle(.plain)
     }
 
     @ViewBuilder private var healthPage: some View {
         BodyMedsCard()
+        if BodyHealth.available { BioAgeCard() }
+        NutritionScoreCard()
+        HStack(spacing: 10) {
+            NavigationLink { LazyView(HealthRecordsView()) } label: { linkTile("Health records", "cross.vial.fill", .red) }
+            NavigationLink { LazyView(BiologyView()) } label: { linkTile("Biology", "drop.fill", .red) }
+        }
+        .buttonStyle(.plain)
         if live {
             vitalsCard
             CycleCard(x: extras)

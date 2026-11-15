@@ -85,8 +85,13 @@ enum BodyMapData {
         set { LocalLog.save(Array(newValue.suffix(400)), key) }
     }
 
-    /// How hard each region worked in the last 3 days (0–1), fading as it recovers.
+    /// How hard each region worked in the last 3 days (0–1), fading as it recovers: workouts plus logged strength sets.
     static func load(days: [BodyDay], now: Date = Date()) -> [String: Double] {
+        cardioLoad(days: days, now: now).merging(StrengthStore.regionLoad(now: now)) { max($0, $1) }
+    }
+
+    /// From workouts recorded in Apple Health only.
+    static func cardioLoad(days: [BodyDay], now: Date = Date()) -> [String: Double] {
         var out: [String: Double] = [:]
         for d in days.suffix(4) {
             for w in d.workouts {

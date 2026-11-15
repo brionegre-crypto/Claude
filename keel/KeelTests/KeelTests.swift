@@ -709,7 +709,7 @@ final class KeelTests: XCTestCase {
     }
 
     func testToolkitIsInCompass() {
-        XCTAssertEqual(KitCatalog.count, 50)
+        XCTAssertEqual(KitCatalog.count, 57)          // 50 everyday tools + 7 body tools
         let ids = HubCatalog.groups.flatMap(\.tools).map(\.id)
         XCTAssertEqual(ids.count, Set(ids).count, "every Compass tool needs its own id")
         for id in ["top3", "parking", "reframe", "lifeWeeks", "morningPages"] { XCTAssertNotNil(HubCatalog.tool(id), id) }
@@ -751,5 +751,79 @@ final class KeelTests: XCTestCase {
         XCTAssertEqual(ADHDCoach.minutes(TaskItem(title: "x")), 10)
         XCTAssertEqual(TaskDuration.step(up: 5), 6); XCTAssertEqual(TaskDuration.step(up: 30), 35); XCTAssertEqual(TaskDuration.step(down: 90), 75)
         XCTAssertEqual(TaskDuration.label(90), "1 h 30 min")
+    }
+
+    func testStrengthMath() {
+        XCTAssertGreaterThan(ExerciseLibrary.all.count, 100)
+        XCTAssertEqual(Set(ExerciseLibrary.all.map(\.id)).count, ExerciseLibrary.all.count, "exercise ids are unique")
+        XCTAssertTrue(ExerciseLibrary.all.allSatisfy { !$0.primary.isEmpty }, "every exercise works a muscle")
+        XCTAssertEqual(StrengthStore.e1RM(LiftSet(reps: 10, weight: 60)), 80, accuracy: 0.01)
+
+        let now = Date()
+        var s1 = StrengthSession(name: "A", start: now.addingTimeInterval(-3 * 86_400))
+        s1.exercises = [LoggedExercise(exerciseId: "bench-press", sets: [LiftSet(reps: 8, weight: 60, done: true), LiftSet(reps: 8, weight: 60, done: true)])]
+        s1.end = s1.start.addingTimeInterval(3600)
+        // Hit every set: add weight next time.
+        let sug = StrengthStore.suggestion("bench-press", targetReps: 8, in: [s1])
+        XCTAssertEqual(sug?.weight ?? 0, 60 + StrengthStore.increment, accuracy: 0.01)
+        // Missed reps: repeat the weight.
+        var s0 = s1; s0.exercises[0].sets[1].reps = 6
+        XCTAssertEqual(StrengthStore.suggestion("bench-press", targetReps: 8, in: [s0])?.weight ?? 0, 60, accuracy: 0.01)
+
+        var s2 = StrengthSession(name: "B", start: now.addingTimeInterval(-3600))
+        s2.exercises = [LoggedExercise(exerciseId: "bench-press", sets: [LiftSet(reps: 8, weight: 65, done: true)])]
+        s2.end = now
+        XCTAssertEqual(StrengthStore.records(in: s2, history: [s1, s2]).map(\.id), ["bench-press"], "a heavier set is a new record")
+        let sets = StrengthStore.setsPerMuscle(now: now, in: [s1, s2])
+        XCTAssertEqual(sets[.chest] ?? 0, 3, accuracy: 0.01)
+        XCTAssertEqual(sets[.triceps] ?? 0, 1.5, accuracy: 0.01)
+        let tired = StrengthStore.fatigue(now: now, in: [s1, s2])
+        XCTAssertGreaterThan(tired[.chest] ?? 0, tired[.quads] ?? 0)
+        XCTAssertGreaterThan(StrengthStore.strain(s1), 0)
+    }
+
+    func testBiomarkerExtraction() {
+        let report = """
+        LIPID PANEL
+        Total Cholesterol      212   mg/dL   <200   H
+        HDL Cholesterol 48 mg/dL
+        LDL Cholesterol (calc)
+        138 mg/dL
+        Hemoglobin A1c 5.8 %
+        Fasting status: 12 hours
+        Vitamin D, 25-Hydroxy  22.5 ng/mL  30-100
+        """
+        let found = Dictionary(uniqueKeysWithValues: Biomarkers.extract(from: report).map { ($0.id, $0.value) })
+        XCTAssertEqual(found["chol"], 212)
+        XCTAssertEqual(found["hdl"], 48)
+        XCTAssertEqual(found["ldl"], 138)
+        XCTAssertEqual(found["a1c"], 5.8)
+        XCTAssertEqual(found["vitd"], 22.5)
+        XCTAssertNil(found["ast"], "\"fasting\" must not read as AST")
+        let d = Biomarkers.def("vitd")!
+        XCTAssertEqual(Biomarkers.status(d, 22.5).0, "Low")
+    }
+
+    func testBioAgeAndEnergyAndNutrition() {
+        let fit = BioAge.estimate(BioAgeInputs(age: 40, vo2: 50, rhr: 52, hrv: 60, sleepHours: 7.6, steps: 11000, bmi: 23, systolic: 115))
+        let unfit = BioAge.estimate(BioAgeInputs(age: 40, vo2: 28, rhr: 78, hrv: 25, sleepHours: 5.5, steps: 3000, bmi: 32, systolic: 145))
+        XCTAssertLessThan(fit.bioAge, 40); XCTAssertGreaterThan(unfit.bioAge, 40)
+        XCTAssertGreaterThanOrEqual(fit.confidence, 90)
+        XCTAssertEqual(BioAge.estimate(BioAgeInputs(age: 30)).bioAge, 30, accuracy: 0.01, "no data: same as real age")
+
+        let cal = Calendar.current
+        var day = BodyDay(day: cal.startOfDay(for: Date()))
+        day.tide = 80; day.anchor = 80
+        day.wake = cal.date(bySettingHour: 7, minute: 0, second: 0, of: Date())
+        let bed = cal.date(bySettingHour: 22, minute: 30, second: 0, of: Date())!
+        let line = EnergyBank.timeline(day, bedtime: bed, now: cal.date(bySettingHour: 12, minute: 0, second: 0, of: Date())!)
+        XCTAssertEqual(line.first?.level ?? 0, EnergyBank.charge(day), accuracy: 0.01)
+        XCTAssertLessThan(line.last?.level ?? 100, line.first?.level ?? 0, "energy drains through the day")
+        XCTAssertTrue(line.contains { $0.forecast } && line.contains { !$0.forecast })
+
+        let good = FoodEntry(name: "Salmon salad", facts: NutritionFacts(calories: 600, protein: 95, fiber: 30, addedSugar: 5, sodiumMg: 900), meal: "lunch", verdict: .green)
+        let bad = FoodEntry(name: "Soda and fries", facts: NutritionFacts(calories: 900, protein: 8, fiber: 3, addedSugar: 70, sodiumMg: 3000), meal: "lunch", verdict: .red)
+        XCTAssertGreaterThan(NutritionScore.score([good])!.score, NutritionScore.score([bad])!.score)
+        XCTAssertNil(NutritionScore.score([]))
     }
 }

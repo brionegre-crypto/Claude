@@ -1,5 +1,7 @@
 import SwiftUI
 import SwiftData
+import PhotosUI
+import Vision
 #if !targetEnvironment(macCatalyst)
 import VisionKit
 #endif
@@ -226,9 +228,19 @@ struct DescribeMealView: View {
     @State private var ingredients = ""
     @State private var facts: NutritionFacts?
     @State private var result: DietResult?
+    @State private var photoItem: PhotosPickerItem?
+    @State private var photo: UIImage?
 
     var body: some View {
         Form {
+            Section {
+                PhotosPicker(selection: $photoItem, matching: .images) {
+                    Label(photo == nil ? "Log it from a photo" : "Use a different photo", systemImage: "camera.fill")
+                }
+                if let photo {
+                    Image(uiImage: photo).resizable().scaledToFill().frame(height: 160).clipShape(.rect(cornerRadius: 12))
+                }
+            } footer: { Text("Keel recognises the food in your photo on this iPhone, then you can fix the description before checking it.") }
             Section {
                 TextField("What did you eat?", text: $text, axis: .vertical).lineLimit(2...5)
                 Picker("Meal", selection: $meal) {
@@ -259,6 +271,19 @@ struct DescribeMealView: View {
             }
         }
         .navigationTitle("Describe a meal")
+        .onChange(of: photoItem) {
+            guard let photoItem else { return }
+            Task {
+                busy = true
+                if let data = try? await photoItem.loadTransferable(type: Data.self), let img = UIImage(data: data) {
+                    photo = img
+                    let labels = await FoodPhoto.labels(img)
+                    if !labels.isEmpty { text = labels.joined(separator: ", ") }
+                }
+                busy = false
+                if !text.isEmpty { await check() }
+            }
+        }
     }
 
     private func check() async {
@@ -269,5 +294,32 @@ struct DescribeMealView: View {
         ingredients = est?.ingredients ?? ""
         facts = est?.facts
         result = DietChecker.check(name: text, ingredientsText: text + ", " + ingredients, facts: facts)
+    }
+}
+
+
+// MARK: - Recognising food in a photo (on this device)
+
+enum FoodPhoto {
+    private static let generic: Set<String> = ["food", "meal", "dish", "plate", "table", "tableware", "dining", "cuisine", "produce", "dinnerware",
+                                               "kitchen", "restaurant", "bowl", "cup", "drink", "beverage", "utensil", "fork", "spoon", "structure",
+                                               "people", "adult", "hand", "indoor", "outdoor", "container", "wood", "textile"]
+
+    /// The most likely foods in the photo, best first, like ["pizza", "salad"].
+    static func labels(_ image: UIImage) async -> [String] {
+        guard let cg = image.cgImage else { return [] }
+        return await Task.detached(priority: .userInitiated) {
+            let req = VNClassifyImageRequest()
+            try? VNImageRequestHandler(cgImage: cg).perform([req])
+            let obs = (req.results ?? []).filter { $0.confidence > 0.25 }.sorted { $0.confidence > $1.confidence }
+            var out: [String] = []
+            for o in obs {
+                let name = o.identifier.replacingOccurrences(of: "_", with: " ")
+                guard !generic.contains(name), !out.contains(name) else { continue }
+                out.append(name)
+                if out.count == 3 { break }
+            }
+            return out
+        }.value
     }
 }
