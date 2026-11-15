@@ -38,7 +38,11 @@
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>KeelAIProxyURL</key>
-	<string>https://YOUR-BACKEND.example.com/v1/messages</string>
+	<string>https://keel-backend.bbritt2223.workers.dev/v1/messages</string>
+	<key>LSApplicationCategoryType</key>
+	<string>public.app-category.productivity</string>
+	<key>NSAlarmKitUsageDescription</key>
+	<string>Keel shows full-screen alarms for tasks you choose, so important ones are impossible to miss.</string>
 	<key>NSCalendarsFullAccessUsageDescription</key>
 	<string>Keel shows your events next to your tasks and email so it can plan your day.</string>
 	<key>NSCalendarsUsageDescription</key>
@@ -46,13 +50,15 @@
 	<key>NSCalendarsWriteOnlyAccessUsageDescription</key>
 	<string>Keel adds focus blocks and events you create to your calendar.</string>
 	<key>NSCameraUsageDescription</key>
-	<string>Keel uses the camera to scan documents into your notes.</string>
+	<string>Keel uses the camera to scan documents into your notes and to scan food barcodes and labels to check them against your diet.</string>
 	<key>NSContactsUsageDescription</key>
 	<string>Keel shows who's invited to your events, links your people to their contacts, and finds their number when you text or call them.</string>
 	<key>NSFaceIDUsageDescription</key>
 	<string>Keel uses Face ID to unlock the app and your locked notes.</string>
 	<key>NSHealthShareUsageDescription</key>
-	<string>Keel reads your sleep to suggest today's energy, and steps, exercise and mindful minutes to tick off habits for you. Nothing is written to Health.</string>
+	<string>Keel reads your sleep, heart rate, heart rate variability, breathing rate, blood oxygen, wrist temperature, workouts and cardio fitness to work out your daily recovery, effort and sleep scores on this iPhone, plus your sleep to suggest today's energy, steps, exercise and mindful minutes to tick off habits, and food other apps logged plus your weight for your nutrition totals and protein goal.</string>
+	<key>NSHealthUpdateUsageDescription</key>
+	<string>Keel saves the strength workouts you log in Keel to Health, and, when you turn it on, the meals you log (calories, protein, carbs, fat, fiber, sugar, sodium and caffeine), removing them if you delete them in Keel.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Keel uses your location for today's weather, time-to-leave alerts for events, and finding places for location reminders.</string>
 	<key>NSMicrophoneUsageDescription</key>
@@ -69,12 +75,57 @@
 	<string>Keel transcribes your meeting recordings on this iPhone.</string>
 	<key>NSSupportsLiveActivities</key>
 	<true/>
+	<key>NSUserActivityTypes</key>
+	<array>
+		<string>com.keel.note</string>
+		<string>com.keel.task</string>
+	</array>
+	<key>UIApplicationSceneManifest</key>
+	<dict>
+		<key>UIApplicationSupportsMultipleScenes</key>
+		<true/>
+	</dict>
+	<key>UIApplicationShortcutItems</key>
+	<array>
+		<dict>
+			<key>UIApplicationShortcutItemIconSymbolName</key>
+			<string>plus.circle.fill</string>
+			<key>UIApplicationShortcutItemTitle</key>
+			<string>New Task</string>
+			<key>UIApplicationShortcutItemType</key>
+			<string>com.keel.app.capture</string>
+		</dict>
+		<dict>
+			<key>UIApplicationShortcutItemIconSymbolName</key>
+			<string>square.and.pencil</string>
+			<key>UIApplicationShortcutItemTitle</key>
+			<string>New Note</string>
+			<key>UIApplicationShortcutItemType</key>
+			<string>com.keel.app.note</string>
+		</dict>
+		<dict>
+			<key>UIApplicationShortcutItemIconSymbolName</key>
+			<string>moon.zzz.fill</string>
+			<key>UIApplicationShortcutItemTitle</key>
+			<string>Start Focus</string>
+			<key>UIApplicationShortcutItemType</key>
+			<string>com.keel.app.focus</string>
+		</dict>
+		<dict>
+			<key>UIApplicationShortcutItemIconSymbolName</key>
+			<string>waveform.badge.mic</string>
+			<key>UIApplicationShortcutItemTitle</key>
+			<string>Record a Meeting</string>
+			<key>UIApplicationShortcutItemType</key>
+			<string>com.keel.app.record</string>
+		</dict>
+	</array>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>
 		<string>processing</string>
-		<string>remote-notification</string>
 		<string>audio</string>
+		<string>remote-notification</string>
 	</array>
 	<key>UILaunchScreen</key>
 	<dict/>
@@ -83,6 +134,13 @@
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
+	</array>
+	<key>UISupportedInterfaceOrientations~ipad</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationPortraitUpsideDown</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 </dict>
 </plist>

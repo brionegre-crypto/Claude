@@ -148,7 +148,12 @@ targets:
     platform: iOS
     sources:
       - path: KeelSafari/SafariWebExtensionHandler.swift
+      # Web extension files go at the top of the .appex (as Xcode's Safari template does). Copying a folder
+      # named "Resources" there makes iOS read the extension as an old-style bundle and miss its Info.plist.
       - path: KeelSafari/Resources
+        buildPhase: resources
+        excludes: ["_locales/**"]
+      - path: KeelSafari/Resources/_locales
         type: folder
         buildPhase: resources
     settings:
