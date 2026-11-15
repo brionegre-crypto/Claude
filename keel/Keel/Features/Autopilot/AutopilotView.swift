@@ -86,7 +86,7 @@ struct AutopilotTodayCard: View {
     @Query(filter: #Predicate<Suggestion> { $0.status == "pending" }) private var items: [Suggestion]
     var body: some View {
         if !items.isEmpty {
-            NavigationLink { AutopilotView() } label: {
+            NavigationLink { LazyView(AutopilotView()) } label: {
                 GlassCard(tint: DS.Palette.accent) {
                     HStack(spacing: DS.Space.m) {
                         Image(systemName: "sparkles").font(.title2).foregroundStyle(DS.Palette.accent)

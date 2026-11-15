@@ -670,4 +670,48 @@ final class KeelTests: XCTestCase {
         XCTAssertEqual(SleepScheduleCard.hoursFrom6pm(cal.date(bySettingHour: 7, minute: 30, second: 0, of: today)!), 13.5, accuracy: 0.01)
         XCTAssertEqual(SleepScheduleCard.clock(5), "11p")
     }
+
+    func testToolkitMath() {
+        // Time estimator learns how far off guesses run.
+        let est = [KitEstimate(what: "a", guess: 10, actual: 20), KitEstimate(what: "b", guess: 10, actual: 15), KitEstimate(what: "c", guess: 20, actual: 20)]
+        XCTAssertEqual(KitEstimator.multiplier(est) ?? 0, 1.5, accuracy: 0.001)
+        XCTAssertNil(KitEstimator.multiplier(Array(est.prefix(2))))
+        // Chimes every 30 minutes from 9 to 11: 9:30, 10:00, 10:30, 11:00.
+        XCTAssertEqual(KitChimes.slots(every: 30, from: 9, to: 11), [570, 600, 630, 660])
+        XCTAssertEqual(KitChimes.slots(every: 30, from: 11, to: 9), [])
+        // Tip & split.
+        let r = KitSplit.perPerson(bill: 100, tipPercent: 20, people: 4)
+        XCTAssertEqual(r.total, 120, accuracy: 0.001); XCTAssertEqual(r.each, 30, accuracy: 0.001)
+        // Unit price: 1000 g for 3 beats 500 g for 2 by 25%.
+        let d = KitDeal.compare(priceA: 2, qtyA: 500, priceB: 3, qtyB: 1000)
+        XCTAssertNotNil(d); XCTAssertEqual(d?.saving ?? 0, 25, accuracy: 0.01); XCTAssertNil(KitDeal.compare(priceA: 1, qtyA: 0, priceB: 1, qtyB: 1))
+        // Chores rotate one place each week.
+        let people = ["Ana", "Ben", "Cy"]
+        XCTAssertEqual(KitChoreRotation.person(for: 0, week: 0, people: people), "Ana")
+        XCTAssertEqual(KitChoreRotation.person(for: 0, week: 1, people: people), "Ben")
+        XCTAssertEqual(KitChoreRotation.person(for: 2, week: 1, people: people), "Ana")
+        XCTAssertNil(KitChoreRotation.person(for: 0, week: 0, people: []))
+        // Streaks count back from today (or yesterday if today isn't done yet).
+        let cal = Calendar.current
+        let today = Date()
+        let y = cal.date(byAdding: .day, value: -1, to: today)!, y2 = cal.date(byAdding: .day, value: -2, to: today)!
+        XCTAssertEqual(Kit.streak([Kit.dayKey(today), Kit.dayKey(y), Kit.dayKey(y2)]), 3)
+        XCTAssertEqual(Kit.streak([Kit.dayKey(y), Kit.dayKey(y2)]), 2)
+        XCTAssertEqual(Kit.streak([Kit.dayKey(y2)]), 0)
+        // Top 3: a day counts only when every written item is done.
+        let full = KitTop3Day(day: "2026-01-01", items: ["a", "b", ""], done: [true, true, false])
+        let part = KitTop3Day(day: "2026-01-02", items: ["a", "b", "c"], done: [true, false, true])
+        XCTAssertEqual(KitTop3.fullDays([full, part]), ["2026-01-01"])
+        XCTAssertEqual(KitWords.count("one two\nthree  four"), 4)
+        XCTAssertEqual(Kit.clock(65), "1:05"); XCTAssertEqual(Kit.clock(3725), "1:02:05")
+        let born = cal.date(byAdding: .day, value: -70, to: today)!
+        XCTAssertEqual(KitLifeWeeks.lived(born: born, now: today), 10)
+    }
+
+    func testToolkitIsInCompass() {
+        XCTAssertEqual(KitCatalog.count, 50)
+        let ids = HubCatalog.groups.flatMap(\.tools).map(\.id)
+        XCTAssertEqual(ids.count, Set(ids).count, "every Compass tool needs its own id")
+        for id in ["top3", "parking", "reframe", "lifeWeeks", "morningPages"] { XCTAssertNotNil(HubCatalog.tool(id), id) }
+    }
 }

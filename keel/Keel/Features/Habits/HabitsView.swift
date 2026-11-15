@@ -28,7 +28,7 @@ struct HabitsView: View {
             }
             .navigationTitle("Habits")
             .toolbar {
-                NavigationLink { HabitLibraryView() } label: { Image(systemName: "books.vertical") }.accessibilityLabel("Habit library")
+                NavigationLink { LazyView(HabitLibraryView()) } label: { Image(systemName: "books.vertical") }.accessibilityLabel("Habit library")
                 Button { showNew = true } label: { Image(systemName: "plus") }.accessibilityLabel("Add")
             }
             .sheet(isPresented: $showNew) { NewStackView() }

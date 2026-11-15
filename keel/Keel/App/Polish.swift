@@ -141,3 +141,14 @@ struct TabArrival: ViewModifier {
             }
     }
 }
+
+// MARK: - Build a screen only when it's opened
+
+/// SwiftUI builds a NavigationLink's destination as soon as the link appears, and again on every redraw of the
+/// screen it's on. Many screens read saved data when they're created, so a menu or list full of links did that
+/// work over and over, which showed up as stutter. Wrapped in LazyView, a destination is built only when you open it.
+struct LazyView<Content: View>: View {
+    private let build: () -> Content
+    init(_ build: @autoclosure @escaping () -> Content) { self.build = build }
+    var body: Content { build() }
+}

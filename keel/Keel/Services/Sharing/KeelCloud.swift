@@ -110,7 +110,7 @@ struct SharedListsView: View {
         List {
             Section {
                 ForEach(lists) { l in
-                    NavigationLink { SharedListView(ref: l) } label: { Label(l.title, systemImage: "person.2.fill") }
+                    NavigationLink { LazyView(SharedListView(ref: l)) } label: { Label(l.title, systemImage: "person.2.fill") }
                 }
                 .onDelete { idx in lists.remove(atOffsets: idx); SharedLists.all = lists }
                 HStack {

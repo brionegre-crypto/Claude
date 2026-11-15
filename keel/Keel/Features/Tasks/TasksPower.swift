@@ -286,7 +286,7 @@ struct MealPlanView: View {
                     }
                 }
                 Section {
-                    NavigationLink { SharedListsView() } label: { Label("Share the grocery list", systemImage: "person.2") }
+                    NavigationLink { LazyView(SharedListsView()) } label: { Label("Share the grocery list", systemImage: "person.2") }
                 } footer: { Text("Scanning a product with the food scanner also checks it off.") }
             }
         }

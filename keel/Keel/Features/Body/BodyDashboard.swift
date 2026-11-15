@@ -370,7 +370,7 @@ struct BodyHeroCard: View {
     }
 
     private func ring(_ m: BodyMetric, _ v: Int?, suffix: String) -> some View {
-        NavigationLink { BodyMetricDetailView(metric: m) } label: {
+        NavigationLink { LazyView(BodyMetricDetailView(metric: m)) } label: {
             VStack(spacing: 6) {
                 ZStack {
                     Circle().stroke(.white.opacity(0.22), lineWidth: 9)
@@ -584,10 +584,10 @@ struct BodyMetricsGrid: View {
             Text(title).font(DS.Font.headline)
             LazyVGrid(columns: [GridItem(.adaptive(minimum: 150), spacing: 10)], spacing: 10) {
                 ForEach(metrics) { m in
-                    NavigationLink { BodyMetricDetailView(metric: m) } label: { BodyMetricTile(metric: m, day: day, days: days) }
+                    NavigationLink { LazyView(BodyMetricDetailView(metric: m)) } label: { BodyMetricTile(metric: m, day: day, days: days) }
                         .buttonStyle(.plain)
                         .contextMenu {
-                            NavigationLink { BodyMetricDetailView(metric: m) } label: { Label("Show history", systemImage: "chart.xyaxis.line") }
+                            NavigationLink { LazyView(BodyMetricDetailView(metric: m)) } label: { Label("Show history", systemImage: "chart.xyaxis.line") }
                         } preview: {
                             BodyMetricTile(metric: m, day: day, days: days).frame(width: 220)
                         }

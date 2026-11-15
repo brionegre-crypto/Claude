@@ -56,7 +56,7 @@ struct ThreadView: View {
                             .buttonStyle(.plain)
                             if open {
                                 Text(m.bodyPlain.isEmpty ? m.snippet : m.bodyPlain).font(DS.Font.body).textSelection(.enabled)
-                                NavigationLink { EmailDetailView(email: m) } label: {
+                                NavigationLink { LazyView(EmailDetailView(email: m)) } label: {
                                     Label("Open message", systemImage: "arrow.up.right").font(DS.Font.caption)
                                 }
                             } else {

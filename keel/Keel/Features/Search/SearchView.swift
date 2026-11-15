@@ -51,7 +51,7 @@ struct SearchView: View {
         List {
             if live.count >= 3 {
                 Section {
-                    NavigationLink { AskEverythingView(initial: live) } label: { Label("Ask Keel: “\(live)”", systemImage: "sparkle.magnifyingglass") }
+                    NavigationLink { LazyView(AskEverythingView(initial: live)) } label: { Label("Ask Keel: “\(live)”", systemImage: "sparkle.magnifyingglass") }
                     ForEach(SearchActions.matching(live)) { a in
                         Button { a.run(live) } label: { Label(a.title(live), systemImage: a.icon) }
                     }
@@ -63,7 +63,7 @@ struct SearchView: View {
                     Section("Related by meaning") {
                         ForEach(meaning) { h in
                             if let n = notes.first(where: { $0.id.uuidString == h.id }) {
-                                NavigationLink { NoteOrCanvas(note: n) } label: { Label(n.title.isEmpty ? "Untitled" : n.title, systemImage: "sparkle.magnifyingglass") }
+                                NavigationLink { LazyView(NoteOrCanvas(note: n)) } label: { Label(n.title.isEmpty ? "Untitled" : n.title, systemImage: "sparkle.magnifyingglass") }
                             }
                         }
                     }
@@ -85,14 +85,14 @@ struct SearchView: View {
                 }
                 let t = tasks.filter(taskOK).prefix(smart.isStructured ? 30 : 8)
                 if !t.isEmpty {
-                    Section("Tasks") { ForEach(Array(t)) { task in NavigationLink { TaskDetailView(task: task) } label: { TaskRow(task: task) } } }
+                    Section("Tasks") { ForEach(Array(t)) { task in NavigationLink { LazyView(TaskDetailView(task: task)) } label: { TaskRow(task: task) } } }
                 }
                 let n = smart.allows("note") && smart.flags.isEmpty && smart.from == nil
                     ? Array(notes.filter { !$0.isTemplate && smart.matches($0.title, $0.isLocked ? "" : $0.plainText) && smart.inRange($0.updatedAt) }.prefix(smart.isStructured ? 20 : 6)) : []
                 if !n.isEmpty {
                     Section("Notes") {
                         ForEach(n) { note in
-                            NavigationLink { NoteEditor(note: note) } label: {
+                            NavigationLink { LazyView(NoteEditor(note: note)) } label: {
                                 VStack(alignment: .leading) {
                                     Text(note.title).font(DS.Font.headline)
                                     Text(note.plainText).font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft).lineLimit(2)
@@ -103,7 +103,7 @@ struct SearchView: View {
                 }
                 let m = mail.filter(mailOK).prefix(smart.isStructured ? 30 : 8)
                 if !m.isEmpty {
-                    Section("Email") { ForEach(Array(m)) { e in NavigationLink { EmailDetailView(email: e) } label: { EmailRow(email: e) } } }
+                    Section("Email") { ForEach(Array(m)) { e in NavigationLink { LazyView(EmailDetailView(email: e)) } label: { EmailRow(email: e) } } }
                 }
                 if !events.isEmpty {
                     Section("Calendar") {
@@ -126,7 +126,7 @@ struct SearchView: View {
                 }
                 let g = plainOnly && smart.range == nil ? goals.filter { smart.matches($0.title, $0.why) } : []
                 if !g.isEmpty {
-                    Section("Goals") { ForEach(g) { goal in NavigationLink { GoalDetailView(goal: goal) } label: { Text("\(goal.emoji) \(goal.title)") } } }
+                    Section("Goals") { ForEach(g) { goal in NavigationLink { LazyView(GoalDetailView(goal: goal)) } label: { Text("\(goal.emoji) \(goal.title)") } } }
                 }
                 let p = plainOnly && smart.range == nil ? people.filter { smart.matches($0.name, $0.email, $0.notes) } : []
                 if !p.isEmpty {

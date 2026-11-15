@@ -205,13 +205,13 @@ struct FoundInMailTodayCard: View {
             GlassCard {
                 VStack(alignment: .leading, spacing: 6) {
                     if !today.isEmpty {
-                        NavigationLink { DeliveriesView() } label: {
+                        NavigationLink { LazyView(DeliveriesView()) } label: {
                             Label("\(today.count) package\(today.count == 1 ? "" : "s") arriving today", systemImage: "truck.box.fill").font(DS.Font.headline)
                         }.buttonStyle(.plain)
                         ForEach(today.prefix(3)) { Text("· \($0.title)").font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft).lineLimit(1) }
                     }
                     if !bills.isEmpty {
-                        NavigationLink { SubscriptionsView() } label: {
+                        NavigationLink { LazyView(SubscriptionsView()) } label: {
                             Label("\(bills.count) bill\(bills.count == 1 ? "" : "s") due soon", systemImage: "creditcard.fill").font(DS.Font.headline)
                         }.buttonStyle(.plain)
                         ForEach(bills) { b in

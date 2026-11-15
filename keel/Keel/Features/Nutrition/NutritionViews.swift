@@ -209,8 +209,8 @@ struct NutritionView: View {
         List {
             Section {
                 HStack(spacing: 12) {
-                    NavigationLink { FoodScanView() } label: { BigAction(title: "Scan", icon: "barcode.viewfinder", color: DS.Palette.accent) }
-                    NavigationLink { DescribeMealView() } label: { BigAction(title: "Describe", icon: "text.bubble.fill", color: .orange) }
+                    NavigationLink { LazyView(FoodScanView()) } label: { BigAction(title: "Scan", icon: "barcode.viewfinder", color: DS.Palette.accent) }
+                    NavigationLink { LazyView(DescribeMealView()) } label: { BigAction(title: "Describe", icon: "text.bubble.fill", color: .orange) }
                 }
                 .buttonStyle(.plain)
                 .listRowInsets(EdgeInsets(top: 8, leading: 0, bottom: 8, trailing: 0))
@@ -266,9 +266,9 @@ struct NutritionView: View {
             } header: { Text("Eaten today") }
 
             Section {
-                NavigationLink { FoodLibraryView() } label: { Label("Your food library", systemImage: "books.vertical.fill") }
-                NavigationLink { DietGuideView() } label: { Label("Your diet guide", systemImage: "book.closed.fill") }
-                NavigationLink { NutritionSettingsView() } label: { Label("Goals & Apple Health", systemImage: "heart.text.square.fill") }
+                NavigationLink { LazyView(FoodLibraryView()) } label: { Label("Your food library", systemImage: "books.vertical.fill") }
+                NavigationLink { LazyView(DietGuideView()) } label: { Label("Your diet guide", systemImage: "book.closed.fill") }
+                NavigationLink { LazyView(NutritionSettingsView()) } label: { Label("Goals & Apple Health", systemImage: "heart.text.square.fill") }
             }
         }
         .navigationTitle("Food")
@@ -362,7 +362,7 @@ struct FoodLibraryView: View {
                 .pickerStyle(.segmented)
             } footer: { Text("\(products.count) products. Checked here first on every scan, even offline.") }
             ForEach(shown) { p in
-                NavigationLink { FoodResultView(product: p) } label: {
+                NavigationLink { LazyView(FoodResultView(product: p)) } label: {
                     HStack {
                         Text(p.verdict.emoji)
                         VStack(alignment: .leading, spacing: 1) {

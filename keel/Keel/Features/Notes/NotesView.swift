@@ -180,16 +180,16 @@ struct NotesView: View {
                         }
                         Section("Your second brain") {
                             Button("Ask my notes", systemImage: "text.bubble") { showAskNotes = true }
-                            NavigationLink { CaptureInboxView() } label: { Label("Capture inbox", systemImage: "tray.and.arrow.down.fill") }
-                            NavigationLink { ReadLaterView() } label: { Label("Read later", systemImage: "bookmark") }
-                            NavigationLink { FlashcardReviewView() } label: { Label("Review flashcards", systemImage: "rectangle.on.rectangle.angled") }
+                            NavigationLink { LazyView(CaptureInboxView()) } label: { Label("Capture inbox", systemImage: "tray.and.arrow.down.fill") }
+                            NavigationLink { LazyView(ReadLaterView()) } label: { Label("Read later", systemImage: "bookmark") }
+                            NavigationLink { LazyView(FlashcardReviewView()) } label: { Label("Review flashcards", systemImage: "rectangle.on.rectangle.angled") }
                             Button("Brain map", systemImage: "point.3.connected.trianglepath.dotted") { showBrain = true }
                         }
                         Section("Organize") {
                             Button("Sort loose pages…", systemImage: "wand.and.stars") { showOrganize = true }
                             Button("Reorganize everything…", systemImage: "sparkles.rectangle.stack") { showReorganize = true }
                             Button("Tags & saved searches", systemImage: "number") { showTags = true }
-                            NavigationLink { SupertagsView() } label: { Label("Supertags", systemImage: "tag.square") }
+                            NavigationLink { LazyView(SupertagsView()) } label: { Label("Supertags", systemImage: "tag.square") }
                             Button("Paperwork vault", systemImage: "archivebox") { showVault = true }
                         }
                         Menu("Maintain", systemImage: "gearshape") {

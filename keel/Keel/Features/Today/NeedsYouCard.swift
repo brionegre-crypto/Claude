@@ -28,7 +28,7 @@ struct NeedsYouCard: View {
                     Text("Needs you").font(DS.Font.title)
                     Spacer()
                     if list.count > 3 {
-                        NavigationLink { CatchUpView() } label: { Text("All \(list.count)").font(DS.Font.caption) }
+                        NavigationLink { LazyView(CatchUpView()) } label: { Text("All \(list.count)").font(DS.Font.caption) }
                     }
                 }
                 ForEach(list.prefix(3)) { e in row(e) }
@@ -40,7 +40,7 @@ struct NeedsYouCard: View {
     private func row(_ e: EmailMessage) -> some View {
         GlassCard {
             VStack(alignment: .leading, spacing: 6) {
-                NavigationLink { EmailDetailView(email: e) } label: {
+                NavigationLink { LazyView(EmailDetailView(email: e)) } label: {
                     VStack(alignment: .leading, spacing: 2) {
                         HStack {
                             Text(e.fromName.isEmpty ? e.from : e.fromName).font(DS.Font.headline).foregroundStyle(DS.Palette.ink).lineLimit(1)

@@ -25,9 +25,9 @@ struct SettingsRow<Destination: View>: View {
     let symbol: String
     let color: Color
     var value: String? = nil
-    @ViewBuilder var destination: Destination
+    @ViewBuilder var destination: () -> Destination        // built only when the row is opened
     var body: some View {
-        NavigationLink { destination } label: {
+        NavigationLink { LazyView(destination()) } label: {
             HStack(spacing: 12) {
                 SettingsIcon(symbol: symbol, color: color)
                 Text(title)
@@ -82,7 +82,7 @@ struct AccountsView: View {
                     SettingsSearchResults(query: query)
                 } else {
                 Section {
-                    NavigationLink { AccountView() } label: { AccountRow() }
+                    NavigationLink { LazyView(AccountView()) } label: { AccountRow() }
                 }
                 Section {
                     SettingsRow(title: "Mail Accounts", symbol: "envelope.fill", color: .blue, value: accounts.isEmpty ? "None" : "\(accounts.count)") { MailAccountsSettings() }
@@ -152,7 +152,7 @@ struct MailAccountsSettings: View {
         List {
             Section {
                 ForEach(accounts) { a in
-                    NavigationLink { MailAccountDetail(account: a) } label: {
+                    NavigationLink { LazyView(MailAccountDetail(account: a)) } label: {
                         HStack(spacing: 12) {
                             SettingsIcon(symbol: "envelope.fill", color: Color(hex: a.colorHex))
                             VStack(alignment: .leading, spacing: 2) {
@@ -227,7 +227,7 @@ struct MailAccountDetail: View {
                     .lineLimit(2...6)
             } header: { Text("Signature") } footer: { Text("Added to emails you send from \(account.address). Leave empty to use the signature in Settings → Mail.") }
             Section {
-                NavigationLink { AliasesView(account: account) } label: {
+                NavigationLink { LazyView(AliasesView(account: account)) } label: {
                     LabeledContent("Send As", value: MailAliases.list(account.id).isEmpty ? "None" : "\(MailAliases.list(account.id).count)")
                 }
             } footer: { Text("Other addresses you can send from with this account. Replies go out from the address the email was sent to.") }
@@ -547,8 +547,8 @@ struct TaskSettings: View {
                 }
             } footer: { Text("Applies to new tasks that have a time.") }
             Section {
-                NavigationLink { PlacesView() } label: { Label("Places & Leaving Home", systemImage: "mappin.and.ellipse") }
-                NavigationLink { RoutinesView() } label: { Label("Routines", systemImage: "list.number") }
+                NavigationLink { LazyView(PlacesView()) } label: { Label("Places & Leaving Home", systemImage: "mappin.and.ellipse") }
+                NavigationLink { LazyView(RoutinesView()) } label: { Label("Routines", systemImage: "list.number") }
             } footer: { Text("Location reminders fire when you arrive at or leave a place, even when Keel is closed.") }
             Section {
                 VStack(alignment: .leading, spacing: 6) {
@@ -742,7 +742,7 @@ struct PrivacySettings: View {
                 Text("Keel locks when you leave it and hides its contents in the app switcher. Lock single notes from a note's ⋯ menu.")
             }
             Section {
-                NavigationLink { MemoryView() } label: { LabeledContent("What Keel Knows", value: "\(KeelMemory.shared.facts.count)") }
+                NavigationLink { LazyView(MemoryView()) } label: { LabeledContent("What Keel Knows", value: "\(KeelMemory.shared.facts.count)") }
                 Toggle("Look Up Context on the Web", isOn: Binding(get: { UserDefaults.standard.object(forKey: WebContext.onKey) as? Bool ?? true },
                                                                   set: { UserDefaults.standard.set($0, forKey: WebContext.onKey) }))
                 Toggle("Autopilot", isOn: Binding(get: { UserDefaults.standard.object(forKey: "autopilot.on") as? Bool ?? true },
@@ -755,7 +755,7 @@ struct PrivacySettings: View {
                     ForEach(AIProvider.allCases) { Text($0.name).tag($0.rawValue) }
                 }
                 if let p = AIProvider(rawValue: providerRaw), p != .apple {
-                    NavigationLink { AIKeySettings(provider: p) } label: {
+                    NavigationLink { LazyView(AIKeySettings(provider: p)) } label: {
                         LabeledContent("\(p.name) Key", value: DirectAI.key(for: p) == nil ? "Not added" : "Added")
                     }
                 }
@@ -824,7 +824,7 @@ struct DataSettings: View {
             BackupsSection()
             MarkdownMirrorSection()
             DiagnosticsSection()
-            Section { NavigationLink { ImportView() } label: { Label("Move to Keel (Import)", systemImage: "square.and.arrow.down") } }
+            Section { NavigationLink { LazyView(ImportView()) } label: { Label("Move to Keel (Import)", systemImage: "square.and.arrow.down") } }
             BackupSection()
             Section {
                 Button("Erase All Keel Data", role: .destructive) { confirmErase = true }
@@ -1386,7 +1386,7 @@ private struct SettingsSearchResults: View {
             .listRowBackground(Color.clear)
         } else {
             ForEach(hits) { h in
-                NavigationLink { h.destination() } label: {
+                NavigationLink { LazyView(h.destination()) } label: {
                     HStack(spacing: 12) { SettingsIcon(symbol: h.icon, color: h.color); Text(h.title) }
                 }
             }

@@ -21,7 +21,7 @@ struct ProjectsView: View {
                 .listRowBackground(Color.clear)
             }
             ForEach(projects) { p in
-                NavigationLink { ProjectDetailView(project: p) } label: { ProjectRow(project: p, tasks: tasks.filter { $0.projectId == p.id }) }
+                NavigationLink { LazyView(ProjectDetailView(project: p)) } label: { ProjectRow(project: p, tasks: tasks.filter { $0.projectId == p.id }) }
             }
         }
         .navigationTitle("Projects")
@@ -94,7 +94,7 @@ struct ProjectDetailView: View {
                     ForEach(project.milestones, id: \.self) { m in
                         let mt = tasks.filter { $0.tags.contains(m) }
                         Section {
-                            ForEach(mt) { t in NavigationLink { TaskDetailView(task: t) } label: { TaskRow(task: t, showList: false) } }
+                            ForEach(mt) { t in NavigationLink { LazyView(TaskDetailView(task: t)) } label: { TaskRow(task: t, showList: false) } }
                             addField(milestone: m)
                         } header: {
                             HStack { Text("◆ \(m)"); Spacer(); Text("\(mt.filter(\.isDone).count)/\(mt.count)") }
@@ -102,7 +102,7 @@ struct ProjectDetailView: View {
                     }
                     Section(project.milestones.isEmpty ? "Tasks" : "Other tasks") {
                         ForEach(tasks.filter { t in !project.milestones.contains(where: { t.tags.contains($0) }) }) { t in
-                            NavigationLink { TaskDetailView(task: t) } label: { TaskRow(task: t, showList: false) }
+                            NavigationLink { LazyView(TaskDetailView(task: t)) } label: { TaskRow(task: t, showList: false) }
                         }
                         addField(milestone: nil)
                     }

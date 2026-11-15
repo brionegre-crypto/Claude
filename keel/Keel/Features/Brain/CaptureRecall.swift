@@ -523,7 +523,7 @@ struct PDFBlockView: View {
     @Query private var attachments: [NoteAttachment]
     var body: some View {
         if let id = attachmentId.flatMap(UUID.init(uuidString:)), let a = attachments.first(where: { $0.id == id }) {
-            NavigationLink { PDFReaderView(attachment: a, note: note) } label: {
+            NavigationLink { LazyView(PDFReaderView(attachment: a, note: note)) } label: {
                 Label("\(a.recognizedText.isEmpty ? "PDF" : a.recognizedText) · open to read and highlight", systemImage: "doc.richtext")
                     .padding(10).frame(maxWidth: .infinity, alignment: .leading)
                     .background(DS.Palette.elevated, in: .rect(cornerRadius: 8))
@@ -591,12 +591,12 @@ struct AskEverythingView: View {
             }
             if !srcNotes.isEmpty {
                 Section("Pages") {
-                    ForEach(srcNotes) { n in NavigationLink { NoteOrCanvas(note: n) } label: { Label(n.title.isEmpty ? "Untitled" : n.title, systemImage: "doc.text") } }
+                    ForEach(srcNotes) { n in NavigationLink { LazyView(NoteOrCanvas(note: n)) } label: { Label(n.title.isEmpty ? "Untitled" : n.title, systemImage: "doc.text") } }
                 }
             }
             if !srcMail.isEmpty {
                 Section("Emails") {
-                    ForEach(srcMail) { e in NavigationLink { EmailDetailView(email: e) } label: { Label(e.subject, systemImage: "envelope").lineLimit(1) } }
+                    ForEach(srcMail) { e in NavigationLink { LazyView(EmailDetailView(email: e)) } label: { Label(e.subject, systemImage: "envelope").lineLimit(1) } }
                 }
             }
         }
@@ -799,10 +799,10 @@ struct PersonPageView: View {
                 }
             }
             if !theirMail.isEmpty {
-                Section("Email") { ForEach(theirMail) { e in NavigationLink { EmailDetailView(email: e) } label: { Text(e.subject).lineLimit(1) } } }
+                Section("Email") { ForEach(theirMail) { e in NavigationLink { LazyView(EmailDetailView(email: e)) } label: { Text(e.subject).lineLimit(1) } } }
             }
             if !pages.isEmpty {
-                Section("Pages that mention them") { ForEach(Array(pages)) { n in NavigationLink { NoteOrCanvas(note: n) } label: { Label(n.title.isEmpty ? "Untitled" : n.title, systemImage: "doc.text") } } }
+                Section("Pages that mention them") { ForEach(Array(pages)) { n in NavigationLink { LazyView(NoteOrCanvas(note: n)) } label: { Label(n.title.isEmpty ? "Untitled" : n.title, systemImage: "doc.text") } } }
             }
             if !theirTasks.isEmpty { Section("Tasks") { ForEach(Array(theirTasks)) { Label($0.title, systemImage: "checklist") } } }
         }
@@ -833,16 +833,16 @@ struct BrainHomeView: View {
                 Button("Open the brain map full screen", systemImage: "arrow.up.left.and.arrow.down.right") { fullMap = true }.font(DS.Font.caption)
             }
             Section {
-                NavigationLink { CaptureInboxView() } label: { LabeledContent { Text("\(inbox)") } label: { Label("Capture inbox", systemImage: "tray.and.arrow.down.fill") } }
-                NavigationLink { FlashcardReviewView() } label: { LabeledContent { Text("\(due)") } label: { Label("Flashcards due", systemImage: "rectangle.on.rectangle.angled") } }
-                NavigationLink { AskEverythingView() } label: { Label("Ask everything", systemImage: "sparkle.magnifyingglass") }
+                NavigationLink { LazyView(CaptureInboxView()) } label: { LabeledContent { Text("\(inbox)") } label: { Label("Capture inbox", systemImage: "tray.and.arrow.down.fill") } }
+                NavigationLink { LazyView(FlashcardReviewView()) } label: { LabeledContent { Text("\(due)") } label: { Label("Flashcards due", systemImage: "rectangle.on.rectangle.angled") } }
+                NavigationLink { LazyView(AskEverythingView()) } label: { Label("Ask everything", systemImage: "sparkle.magnifyingglass") }
             }
             if !surf.old.isEmpty || !surf.onThisDay.isEmpty {
                 Section("Worth another look") {
-                    ForEach(surf.onThisDay) { n in NavigationLink { NoteOrCanvas(note: n) } label: { Label("On this day: \(n.title)", systemImage: "calendar.badge.clock") } }
-                    ForEach(surf.old) { n in NavigationLink { NoteOrCanvas(note: n) } label: { Label(n.title.isEmpty ? "Untitled" : n.title, systemImage: "arrow.counterclockwise") } }
+                    ForEach(surf.onThisDay) { n in NavigationLink { LazyView(NoteOrCanvas(note: n)) } label: { Label("On this day: \(n.title)", systemImage: "calendar.badge.clock") } }
+                    ForEach(surf.old) { n in NavigationLink { LazyView(NoteOrCanvas(note: n)) } label: { Label(n.title.isEmpty ? "Untitled" : n.title, systemImage: "arrow.counterclockwise") } }
                     ForEach(Resurface.highlights(links)) { p in
-                        NavigationLink { ReaderView(link: p.link) } label: { Text("“\(p.highlight.text.prefix(160))”").font(DS.Font.caption).italic() }
+                        NavigationLink { LazyView(ReaderView(link: p.link)) } label: { Text("“\(p.highlight.text.prefix(160))”").font(DS.Font.caption).italic() }
                     }
                 }
             }
@@ -854,7 +854,7 @@ struct BrainHomeView: View {
                             Text(e.title ?? "Meeting").font(DS.Font.headline)
                             ForEach(rel) { h in
                                 if let n = notes.first(where: { $0.id.uuidString == h.id }) {
-                                    NavigationLink { NoteOrCanvas(note: n) } label: { Label(n.title, systemImage: "doc.text").font(DS.Font.caption) }
+                                    NavigationLink { LazyView(NoteOrCanvas(note: n)) } label: { Label(n.title, systemImage: "doc.text").font(DS.Font.caption) }
                                 }
                             }
                         }
@@ -862,10 +862,10 @@ struct BrainHomeView: View {
                 }
             }
             if !projects.isEmpty {
-                Section("Projects") { ForEach(Array(projects)) { n in NavigationLink { NoteOrCanvas(note: n) } label: { Label(n.title.isEmpty ? "Untitled" : n.title, systemImage: "folder") } } }
+                Section("Projects") { ForEach(Array(projects)) { n in NavigationLink { LazyView(NoteOrCanvas(note: n)) } label: { Label(n.title.isEmpty ? "Untitled" : n.title, systemImage: "folder") } } }
             }
             Section("Recent") {
-                ForEach(notes.filter { !$0.isTemplate }.prefix(6)) { n in NavigationLink { NoteOrCanvas(note: n) } label: { Label(n.title.isEmpty ? "Untitled" : n.title, systemImage: "clock") } }
+                ForEach(notes.filter { !$0.isTemplate }.prefix(6)) { n in NavigationLink { LazyView(NoteOrCanvas(note: n)) } label: { Label(n.title.isEmpty ? "Untitled" : n.title, systemImage: "clock") } }
             }
         }
         .navigationTitle("Second brain")

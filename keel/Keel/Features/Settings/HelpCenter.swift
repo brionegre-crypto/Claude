@@ -45,6 +45,9 @@ enum HelpLibrary {
         HowTo(id: "bodymap", area: .health, question: "Log where it's sore or hurts (body map)",
               steps: ["Body → Body map. Muscles you've worked in the last three days glow and fade as they recover.", "Tap a body part to log a bit sore, sore or pain. Today's workout suggestion tells you to go easy on sore areas."],
               keywords: "body map sore muscle pain injury"),
+        HowTo(id: "toolkit", area: .health, question: "Use the 50 everyday tools (timers, money, mood, growth)",
+              steps: ["Open Compass (the four squares on Today) and search, or browse the groups. Every tool explains itself at the top of its screen.", "Get going: Top 3, Eat the frog, Timebox list, Time estimator, Transition timer, Time chimes, Phone down, Timers, Workday left, Task roulette, What fits, Spoons, Mind sweep, Morning pages, Writing sprint, Meeting timer, Tomorrow's first step.", "Calm down: Reframe a thought, Worry time, Name the feeling, Grounding 5-4-3-2-1, Social battery, Affirmations.", "Stay on top: Where did I put it?, Parking, Returns & warranties, Impulse waiting list, No-spend days, Savings jars, Tip & split, Better deal, Chore rotation, Tidy sprint, Pet care, Counters.", "Look back: Done list, Wins jar, Three good things, Chains, Reading, Practice log. Think ahead: Theme days, If-then plans, Don't-do list, Decide for me, Experiments, Idea vault, Bucket list, Letter to future you, Life in weeks.", "Your lists follow you to your other devices through iCloud. Morning pages, writing sprints and running timers stay on this device."],
+              keywords: "tools toolkit timer parking returns spoons frog top 3 morning pages chores savings reading worry feelings"),
         HowTo(id: "tabmenus", area: .health, question: "Find the extra tools on each tab",
               steps: ["Today: tap the four-squares button for Compass, or hold it for the day menu: Start the day, Stay on track, When it's hard, Close the day.", "Inbox: ⋯ has Get through it (catch up, quick replies, waiting on a reply, screen new senders), Find, Life admin and Set up.", "Calendar: the filter button has Go to today, Show, Plan, Look back and Share.", "Tasks: the wand has Schedule, Get unstuck, Bigger picture, Lists and Set up.", "Notes: hold the pencil for Create, Your second brain, Organize and Maintain.", "Body: + logs a dose, symptom, blood pressure, sore spot or fast."],
               keywords: "menu more tools options where is find button toolbar"),
@@ -605,27 +608,27 @@ struct HelpCenterView: View {
                     }
                     .listRowBackground(Color.clear)
                 }
-                ForEach(hits) { h in NavigationLink { HowToView(item: h) } label: { HowToRow(item: h) } }
+                ForEach(hits) { h in NavigationLink { LazyView(HowToView(item: h)) } label: { HowToRow(item: h) } }
             } else if let area {
-                Section { ForEach(HelpLibrary.all.filter { $0.area == area }) { h in NavigationLink { HowToView(item: h) } label: { HowToRow(item: h, showArea: false) } } }
-                Section { NavigationLink { HelpCenterView() } label: { Label("All help topics", systemImage: "books.vertical") } }
+                Section { ForEach(HelpLibrary.all.filter { $0.area == area }) { h in NavigationLink { LazyView(HowToView(item: h)) } label: { HowToRow(item: h, showArea: false) } } }
+                Section { NavigationLink { LazyView(HelpCenterView()) } label: { Label("All help topics", systemImage: "books.vertical") } }
             } else {
                 ForEach(HelpArea.allCases) { a in
                     Section {
                         ForEach(HelpLibrary.all.filter { $0.area == a }) { h in
-                            NavigationLink { HowToView(item: h) } label: { HowToRow(item: h, showArea: false) }
+                            NavigationLink { LazyView(HowToView(item: h)) } label: { HowToRow(item: h, showArea: false) }
                         }
                     } header: {
                         Label(a.title, systemImage: a.icon).font(DS.Font.headline).foregroundStyle(a.color).textCase(nil)
                     }
                 }
                 Section {
-                    NavigationLink { FeatureGuideView() } label: { Label("Every feature, explained", systemImage: "book.pages") }
-                    NavigationLink { AssistantView() } label: { Label("Ask Keel anything", systemImage: "bubble.left.and.text.bubble.right") }
-                    NavigationLink { KeelStatusView() } label: { Label("Keel status (is everything connected?)", systemImage: "checkmark.seal") }
+                    NavigationLink { LazyView(FeatureGuideView()) } label: { Label("Every feature, explained", systemImage: "book.pages") }
+                    NavigationLink { LazyView(AssistantView()) } label: { Label("Ask Keel anything", systemImage: "bubble.left.and.text.bubble.right") }
+                    NavigationLink { LazyView(KeelStatusView()) } label: { Label("Keel status (is everything connected?)", systemImage: "checkmark.seal") }
                     if let support = KeelServer.baseURL?.appendingPathComponent("support") {
                         Link(destination: support) { Label("Contact support", systemImage: "envelope") }
-                        NavigationLink { SupportMessagesView() } label: { Label("Messages from your support page", systemImage: "tray") }
+                        NavigationLink { LazyView(SupportMessagesView()) } label: { Label("Messages from your support page", systemImage: "tray") }
                     }
                 }
             }
@@ -675,7 +678,7 @@ struct HowToView: View {
             let related = HelpLibrary.all.filter { $0.area == item.area && $0.id != item.id }.prefix(3)
             if !related.isEmpty {
                 Section("Related") {
-                    ForEach(Array(related)) { h in NavigationLink { HowToView(item: h) } label: { HowToRow(item: h, showArea: false) } }
+                    ForEach(Array(related)) { h in NavigationLink { LazyView(HowToView(item: h)) } label: { HowToRow(item: h, showArea: false) } }
                 }
             }
         }

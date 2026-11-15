@@ -547,7 +547,7 @@ struct BrainHealthView: View {
                 }
             }
             if !orphans.isEmpty {
-                Section { ForEach(Array(orphans)) { n in NavigationLink { NoteEditor(note: n) } label: { Text(n.title.isEmpty ? "Untitled" : n.title) } } }
+                Section { ForEach(Array(orphans)) { n in NavigationLink { LazyView(NoteEditor(note: n)) } label: { Text(n.title.isEmpty ? "Untitled" : n.title) } } }
                 header: { Text("Forgotten pages") } footer: { Text("Not linked anywhere, not in a folder, untouched for a month. File them, link them, or let them go.") }
             }
             if dupes.isEmpty && broken.isEmpty && empty.isEmpty && orphans.isEmpty {

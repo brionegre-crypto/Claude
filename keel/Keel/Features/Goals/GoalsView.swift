@@ -40,7 +40,7 @@ struct GoalsView: View {
                             .buttonStyle(.plain)
                         }
                         ForEach(areaGoals) { g in
-                            NavigationLink { GoalDetailView(goal: g) } label: { GoalCard(goal: g, tasks: tasks.filter { $0.goalId == g.id }) }
+                            NavigationLink { LazyView(GoalDetailView(goal: g)) } label: { GoalCard(goal: g, tasks: tasks.filter { $0.goalId == g.id }) }
                                 .buttonStyle(.plain)
                         }
                     }
@@ -49,7 +49,7 @@ struct GoalsView: View {
             .padding()
         }
         .navigationTitle("Goals")
-        .toolbar { NavigationLink { VisionBoardView() } label: { Label("Vision board", systemImage: "photo.on.rectangle.angled") } }
+        .toolbar { NavigationLink { LazyView(VisionBoardView()) } label: { Label("Vision board", systemImage: "photo.on.rectangle.angled") } }
         .sheet(item: $newGoalArea) { NewGoalSheet(area: $0) }
     }
 }
@@ -133,7 +133,7 @@ struct GoalDetailView: View {
                     }
                 }
             Section("Tasks") {
-                ForEach(tasks) { t in NavigationLink { TaskDetailView(task: t) } label: { TaskRow(task: t, showList: false) } }
+                ForEach(tasks) { t in NavigationLink { LazyView(TaskDetailView(task: t)) } label: { TaskRow(task: t, showList: false) } }
                 HStack {
                     Image(systemName: "plus.circle.fill").foregroundStyle(DS.Palette.accent)
                     TextField("Add a task for this goal", text: $newTask).onSubmit {
@@ -205,7 +205,7 @@ struct VisionBoardView: View {
             }
             FlexGrid(columns: 2, spacing: 8) {
                 ForEach(withPictures) { g in
-                    NavigationLink { GoalDetailView(goal: g) } label: {
+                    NavigationLink { LazyView(GoalDetailView(goal: g)) } label: {
                         ZStack(alignment: .bottomLeading) {
                             if let img = UIImage(data: g.visionImage!) {
                                 Image(uiImage: img).resizable().scaledToFill().frame(height: 200).clipped()

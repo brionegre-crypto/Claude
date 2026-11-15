@@ -225,7 +225,7 @@ struct InboxView: View {
                     .accessibilityLabel("Mailboxes and accounts")
                 }
                 ToolbarItem(placement: .topBarTrailing) {
-                    NavigationLink { CatchUpView() } label: { Image(systemName: "sparkles") }
+                    NavigationLink { LazyView(CatchUpView()) } label: { Image(systemName: "sparkles") }
                         .accessibilityLabel("Catch me up")
                 }
                 ToolbarItem(placement: .topBarTrailing) {
@@ -236,28 +236,28 @@ struct InboxView: View {
                         Button("Mark All as Read", systemImage: "envelope.open") { confirmReadAll = true }
                             .disabled(!visible.contains { !$0.isRead })
                         Section("Get through it") {
-                            NavigationLink { CatchUpView() } label: { Label("Catch me up", systemImage: "sparkles") }
-                            NavigationLink { QuickRepliesView() } label: { Label("Clear 5 quick replies", systemImage: "bolt.horizontal.circle") }
-                            NavigationLink { FollowUpsView() } label: { Label("Waiting on a reply", systemImage: "arrowshape.turn.up.left") }
-                            NavigationLink { ScreenerView() } label: { Label("Screen new senders", systemImage: "person.crop.circle.badge.questionmark") }
+                            NavigationLink { LazyView(CatchUpView()) } label: { Label("Catch me up", systemImage: "sparkles") }
+                            NavigationLink { LazyView(QuickRepliesView()) } label: { Label("Clear 5 quick replies", systemImage: "bolt.horizontal.circle") }
+                            NavigationLink { LazyView(FollowUpsView()) } label: { Label("Waiting on a reply", systemImage: "arrowshape.turn.up.left") }
+                            NavigationLink { LazyView(ScreenerView()) } label: { Label("Screen new senders", systemImage: "person.crop.circle.badge.questionmark") }
                         }
                         Section("Find") {
-                            NavigationLink { AskInboxView() } label: { Label("Ask your inbox", systemImage: "questionmark.bubble") }
-                            NavigationLink { AttachmentsView() } label: { Label("Attachments", systemImage: "paperclip") }
-                            NavigationLink { ScheduledMailView() } label: { Label("Scheduled to send", systemImage: "clock.arrow.circlepath") }
-                            NavigationLink { DigestView() } label: { Label("Newsletter digest", systemImage: "newspaper") }
+                            NavigationLink { LazyView(AskInboxView()) } label: { Label("Ask your inbox", systemImage: "questionmark.bubble") }
+                            NavigationLink { LazyView(AttachmentsView()) } label: { Label("Attachments", systemImage: "paperclip") }
+                            NavigationLink { LazyView(ScheduledMailView()) } label: { Label("Scheduled to send", systemImage: "clock.arrow.circlepath") }
+                            NavigationLink { LazyView(DigestView()) } label: { Label("Newsletter digest", systemImage: "newspaper") }
                         }
                         Section("Life admin from your mail") {
-                            NavigationLink { SubscriptionsView() } label: { Label("Bills & money", systemImage: "creditcard") }
-                            NavigationLink { DeliveriesView() } label: { Label("Deliveries", systemImage: "shippingbox") }
-                            NavigationLink { TripsView() } label: { Label("Trips", systemImage: "airplane") }
+                            NavigationLink { LazyView(SubscriptionsView()) } label: { Label("Bills & money", systemImage: "creditcard") }
+                            NavigationLink { LazyView(DeliveriesView()) } label: { Label("Deliveries", systemImage: "shippingbox") }
+                            NavigationLink { LazyView(TripsView()) } label: { Label("Trips", systemImage: "airplane") }
                         }
                         Menu("Set up", systemImage: "gearshape") {
-                            NavigationLink { VIPListView() } label: { Label("VIPs", systemImage: "star") }
-                            NavigationLink { MailRulesView() } label: { Label("Rules", systemImage: "line.3.horizontal.decrease") }
-                            NavigationLink { SnippetsView() } label: { Label("Snippets", systemImage: "text.badge.plus") }
-                            NavigationLink { SwipeSettingsView() } label: { Label("Swipe actions", systemImage: "hand.draw") }
-                            NavigationLink { WritingStyleView() } label: { Label("My writing style", systemImage: "pencil.and.scribble") }
+                            NavigationLink { LazyView(VIPListView()) } label: { Label("VIPs", systemImage: "star") }
+                            NavigationLink { LazyView(MailRulesView()) } label: { Label("Rules", systemImage: "line.3.horizontal.decrease") }
+                            NavigationLink { LazyView(SnippetsView()) } label: { Label("Snippets", systemImage: "text.badge.plus") }
+                            NavigationLink { LazyView(SwipeSettingsView()) } label: { Label("Swipe actions", systemImage: "hand.draw") }
+                            NavigationLink { LazyView(WritingStyleView()) } label: { Label("My writing style", systemImage: "pencil.and.scribble") }
                         }
                     } label: { Image(systemName: "ellipsis.circle") }
                     .accessibilityLabel("More mail tools")
@@ -398,7 +398,7 @@ struct InboxView: View {
                         }
                     }
                     ForEach(serverResults) { e in
-                        NavigationLink { EmailDetailView(email: e) } label: { EmailRow(email: e) }
+                        NavigationLink { LazyView(EmailDetailView(email: e)) } label: { EmailRow(email: e) }
                     }
                 } header: { if !serverResults.isEmpty { Text("All mail") } }
             }
@@ -469,7 +469,7 @@ struct InboxView: View {
         case .updates, .newsletters:
             if tab == .newsletters {
                 HStack {
-                    NavigationLink { DigestView() } label: { Label("Read as a digest", systemImage: "newspaper") }
+                    NavigationLink { LazyView(DigestView()) } label: { Label("Read as a digest", systemImage: "newspaper") }
                     Spacer()
                     Button { archiveRead(in: visible) } label: { Label("Clear read", systemImage: "archivebox") }
                 }
@@ -480,7 +480,7 @@ struct InboxView: View {
                 if b.emails.count == 1 {
                     row(b.emails[0])
                 } else {
-                    NavigationLink { SenderBundleView(bundle: b) } label: { SenderBundleRow(bundle: b) }
+                    NavigationLink { LazyView(SenderBundleView(bundle: b)) } label: { SenderBundleRow(bundle: b) }
                         .swipeActions(edge: .trailing) {
                             Button { b.emails.forEach(archive) } label: { Label("Archive all", systemImage: "archivebox") }.tint(DS.Palette.calm)
                         }
@@ -488,7 +488,7 @@ struct InboxView: View {
             }
         case .quick:
             if !visible.isEmpty {
-                NavigationLink { QuickRepliesView() } label: {
+                NavigationLink { LazyView(QuickRepliesView()) } label: {
                     Label("Clear 5 quick replies, one at a time", systemImage: "bolt.horizontal.circle.fill")
                         .font(DS.Font.headline).foregroundStyle(DS.Palette.accent)
                 }
@@ -570,7 +570,7 @@ struct InboxView: View {
     private func row(_ e: EmailMessage) -> some View {
         let count = threaded && mailbox != .sent ? threadCount(e) : 1
         NavigationLink {
-            if count > 1 { ThreadView(messages: conversation(e)) } else { EmailDetailView(email: e) }
+            LazyView(count > 1 ? AnyView(ThreadView(messages: conversation(e))) : AnyView(EmailDetailView(email: e)))
         } label: { EmailRow(email: e, count: count, unreadInThread: count > 1 && conversation(e).contains { !$0.isRead }, score: scoreMap[e.from.lowercased()]) }
             .swipeActions(edge: .trailing) {
                 ForEach(MailSwipe.actions(trailingRaw).filter { mailbox != .sent || $0 == "task" }, id: \.self) { swipeButton($0, e) }

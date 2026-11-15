@@ -548,7 +548,7 @@ struct DreadTodayCard: View {
     var body: some View {
         let items = Dread.items(tasks: tasks, mail: mail, sessions: sessions, accounts: accounts)
         if let top = items.first {
-            NavigationLink { DreadRadarView() } label: {
+            NavigationLink { LazyView(DreadRadarView()) } label: {
                 GlassCard(tint: DS.Palette.warmth) {
                     VStack(alignment: .leading, spacing: DS.Space.s) {
                         Label(items.count == 1 ? "Something you might be avoiding" : "\(items.count) things you might be avoiding",

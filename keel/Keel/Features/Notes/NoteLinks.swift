@@ -33,7 +33,7 @@ struct NoteLinksSection: View {
                     Text("LINKS").font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
                     ForEach(outgoing, id: \.self) { title in
                         if let target = notes.first(where: { $0.title.caseInsensitiveCompare(title) == .orderedSame }) {
-                            NavigationLink { NoteEditor(note: target) } label: { Label(target.title, systemImage: "arrow.up.right.square") }
+                            NavigationLink { LazyView(NoteEditor(note: target)) } label: { Label(target.title, systemImage: "arrow.up.right.square") }
                         } else {
                             Button {
                                 ctx.insert(Note(title: title))
@@ -45,7 +45,7 @@ struct NoteLinksSection: View {
                 if !backlinks.isEmpty {
                     Text("LINKED FROM").font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft).padding(.top, DS.Space.s)
                     ForEach(backlinks) { b in
-                        NavigationLink { NoteEditor(note: b) } label: { Label(b.title, systemImage: "arrow.down.left.square") }
+                        NavigationLink { LazyView(NoteEditor(note: b)) } label: { Label(b.title, systemImage: "arrow.down.left.square") }
                     }
                 }
             }

@@ -520,7 +520,7 @@ struct UnlinkedMentions: View {
             Text("MENTIONED IN").font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft).padding(.top, DS.Space.s)
             ForEach(hits.prefix(10)) { other in
                 HStack {
-                    NavigationLink { NoteEditor(note: other) } label: { Label(other.title.isEmpty ? "Untitled" : other.title, systemImage: "text.magnifyingglass") }
+                    NavigationLink { LazyView(NoteEditor(note: other)) } label: { Label(other.title.isEmpty ? "Untitled" : other.title, systemImage: "text.magnifyingglass") }
                     Spacer()
                     Button("Link") { link(in: other, title: title) }.font(DS.Font.caption).buttonStyle(.bordered)
                 }

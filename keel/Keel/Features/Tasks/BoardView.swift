@@ -30,7 +30,7 @@ struct BoardView: View {
                         ScrollView {
                             VStack(spacing: DS.Space.s) {
                                 ForEach(list) { t in
-                                    NavigationLink { TaskDetailView(task: t) } label: { BoardCard(task: t) }
+                                    NavigationLink { LazyView(TaskDetailView(task: t)) } label: { BoardCard(task: t) }
                                         .buttonStyle(.plain)
                                         .draggable(t.id.uuidString)
                                 }

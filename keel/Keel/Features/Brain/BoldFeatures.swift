@@ -268,9 +268,9 @@ struct LifeTimelineView: View {
             Text(m.date.formatted(date: .omitted, time: .shortened)).font(.caption2).foregroundStyle(DS.Palette.inkSoft)
         }
         if let id = m.noteId, let n = try? ctx.fetch(FetchDescriptor<Note>(predicate: #Predicate { $0.id == id })).first {
-            NavigationLink { NoteOrCanvas(note: n) } label: { label }
+            NavigationLink { LazyView(NoteOrCanvas(note: n)) } label: { label }
         } else if let id = m.emailId, let e = try? ctx.fetch(FetchDescriptor<EmailMessage>(predicate: #Predicate { $0.id == id })).first {
-            NavigationLink { EmailDetailView(email: e) } label: { label }
+            NavigationLink { LazyView(EmailDetailView(email: e)) } label: { label }
         } else {
             label
         }
@@ -456,7 +456,7 @@ struct SpacesView: View {
     var body: some View {
         List {
             Section {
-                ForEach(spaces) { s in NavigationLink { SpaceView(space: s) } label: { Label(s.name, systemImage: "person.3.fill") } }
+                ForEach(spaces) { s in NavigationLink { LazyView(SpaceView(space: s)) } label: { Label(s.name, systemImage: "person.3.fill") } }
                     .onDelete { spaces.remove(atOffsets: $0); Spaces.all = spaces }
                 HStack {
                     TextField("New space, e.g. Family", text: $name)
@@ -489,7 +489,7 @@ struct SpaceView: View {
         List {
             if let d = data {
                 Section("Pages") {
-                    ForEach(d.pages) { p in NavigationLink { SharedPageView(pageId: p.id, title: p.title) } label: { Label(p.title, systemImage: "doc.text") } }
+                    ForEach(d.pages) { p in NavigationLink { LazyView(SharedPageView(pageId: p.id, title: p.title)) } label: { Label(p.title, systemImage: "doc.text") } }
                     HStack {
                         TextField("New shared page", text: $newPage)
                         Button("Add") { Task { _ = try? await Spaces.addPage(space: space.id, title: newPage, blocks: [NoteBlock(kind: .text, text: "")]); newPage = ""; await refresh() } }
@@ -498,7 +498,7 @@ struct SpaceView: View {
                     Button("Share one of my pages here", systemImage: "square.and.arrow.up.on.square") { pickPage = true }
                 }
                 Section("Lists") {
-                    ForEach(d.lists) { l in NavigationLink { SharedListView(ref: l) } label: { Label(l.title, systemImage: "checklist") } }
+                    ForEach(d.lists) { l in NavigationLink { LazyView(SharedListView(ref: l)) } label: { Label(l.title, systemImage: "checklist") } }
                 }
                 if !d.members.isEmpty { Section("People in this space") { ForEach(d.members, id: \.self) { Text($0) } } }
             } else if let error { Text(error).foregroundStyle(.red) } else { ProgressView() }

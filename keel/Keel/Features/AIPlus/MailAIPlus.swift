@@ -146,7 +146,7 @@ struct AskInboxView: View {
             if !sources.isEmpty {
                 Section("From these emails") {
                     ForEach(Array(sources.enumerated()), id: \.element.id) { i, e in
-                        NavigationLink { EmailDetailView(email: e) } label: {
+                        NavigationLink { LazyView(EmailDetailView(email: e)) } label: {
                             VStack(alignment: .leading, spacing: 2) {
                                 Text("[\(i + 1)] \(e.subject)").font(DS.Font.body).lineLimit(1)
                                 Text("\(e.fromName.isEmpty ? e.from : e.fromName) · \(e.receivedAt.formatted(date: .abbreviated, time: .omitted))")

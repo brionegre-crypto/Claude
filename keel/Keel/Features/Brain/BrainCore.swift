@@ -124,7 +124,7 @@ struct SupertagsView: View {
         List {
             Section {
                 ForEach(defs) { d in
-                    NavigationLink { SupertagCollectionView(def: d) } label: {
+                    NavigationLink { LazyView(SupertagCollectionView(def: d)) } label: {
                         HStack {
                             Label("#\(d.name)", systemImage: d.icon)
                             Spacer()
@@ -162,7 +162,7 @@ struct SupertagCollectionView: View {
             let entries = Supertags.entries(def, notes: notes)
             if entries.isEmpty { Text("Nothing tagged #\(def.name) yet.").foregroundStyle(DS.Palette.inkSoft) }
             ForEach(entries) { e in
-                NavigationLink { NoteEditor(note: e.note, focusBlock: e.block.id) } label: {
+                NavigationLink { LazyView(NoteEditor(note: e.note, focusBlock: e.block.id)) } label: {
                     VStack(alignment: .leading, spacing: 3) {
                         Text(Supertags.strip(e.block.text, def)).font(DS.Font.headline)
                         let vals = def.fields.compactMap { f in e.note.props[Supertags.fieldKey(e.block.id, f)].map { "\(f): \($0)" } }
@@ -416,7 +416,7 @@ struct BackupsSection: View {
                 }
             }
             Button("Restore from a file…", systemImage: "doc.badge.arrow.up") { picking = true }
-            NavigationLink { TrashView() } label: { Label("Recently deleted pages", systemImage: "trash") }
+            NavigationLink { LazyView(TrashView()) } label: { Label("Recently deleted pages", systemImage: "trash") }
             if let message { Text(message).font(.caption).foregroundStyle(DS.Palette.inkSoft) }
         } header: { Text("Backups") } footer: {
             Text("Keel keeps a backup of your pages, tasks and people every day (the last 7). Save one to Files to keep it anywhere. Restoring only adds what's missing; it never overwrites.")

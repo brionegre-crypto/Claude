@@ -172,13 +172,13 @@ struct TasksView: View {
             .searchable(text: $search, prompt: "Search tasks")
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
-                    NavigationLink { PromisesView() } label: { Label("Promises", systemImage: "hand.raised.fingers.spread") }
+                    NavigationLink { LazyView(PromisesView()) } label: { Label("Promises", systemImage: "hand.raised.fingers.spread") }
                 }
                 ToolbarItem(placement: .topBarLeading) {
-                    NavigationLink { ProjectsView() } label: { Label("Projects", systemImage: "folder") }
+                    NavigationLink { LazyView(ProjectsView()) } label: { Label("Projects", systemImage: "folder") }
                 }
                 ToolbarItem(placement: .topBarLeading) {
-                    NavigationLink { ProcessInboxView() } label: { Label("Sort", systemImage: "tray.and.arrow.down") }
+                    NavigationLink { LazyView(ProcessInboxView()) } label: { Label("Sort", systemImage: "tray.and.arrow.down") }
                         .accessibilityLabel("Sort loose tasks")
                 }
                 ToolbarItem(placement: .topBarTrailing) {
@@ -197,19 +197,19 @@ struct TasksView: View {
                                 Task { try? await Task.sleep(for: .seconds(2.5)); withAnimation { toast = nil } }
                             }
                             Button("Clear today's time blocks", systemImage: "calendar.badge.minus") { AutoScheduler.clearToday(tasks: tasks) }
-                            NavigationLink { PlanMyWeekView(embedded: true) } label: { Label("Plan the week", systemImage: "calendar.day.timeline.left") }
+                            NavigationLink { LazyView(PlanMyWeekView(embedded: true)) } label: { Label("Plan the week", systemImage: "calendar.day.timeline.left") }
                         }
                         Section("Get unstuck") {
-                            NavigationLink { DoneForYouView() } label: { Label("Break it down for me", systemImage: "sparkles") }
-                            NavigationLink { DreadRadarView() } label: { Label("What am I avoiding?", systemImage: "tortoise.fill") }
-                            NavigationLink { QuickWinsView() } label: { Label("Quick wins", systemImage: "bolt.fill") }
+                            NavigationLink { LazyView(DoneForYouView()) } label: { Label("Break it down for me", systemImage: "sparkles") }
+                            NavigationLink { LazyView(DreadRadarView()) } label: { Label("What am I avoiding?", systemImage: "tortoise.fill") }
+                            NavigationLink { LazyView(QuickWinsView()) } label: { Label("Quick wins", systemImage: "bolt.fill") }
                         }
                         Section("Bigger picture") {
-                            NavigationLink { GoalsView() } label: { Label("Goals", systemImage: "flag.checkered") }
-                            NavigationLink { HabitsView() } label: { Label("Habits", systemImage: "repeat") }
-                            NavigationLink { RoutinesView() } label: { Label("Routines", systemImage: "list.bullet.rectangle") }
-                            NavigationLink { StatsView() } label: { Label("Statistics", systemImage: "chart.xyaxis.line") }
-                            NavigationLink { RewardsView() } label: { Label("Rewards", systemImage: "gift") }
+                            NavigationLink { LazyView(GoalsView()) } label: { Label("Goals", systemImage: "flag.checkered") }
+                            NavigationLink { LazyView(HabitsView()) } label: { Label("Habits", systemImage: "repeat") }
+                            NavigationLink { LazyView(RoutinesView()) } label: { Label("Routines", systemImage: "list.bullet.rectangle") }
+                            NavigationLink { LazyView(StatsView()) } label: { Label("Statistics", systemImage: "chart.xyaxis.line") }
+                            NavigationLink { LazyView(RewardsView()) } label: { Label("Rewards", systemImage: "gift") }
                         }
                         Section("Lists") {
                             if case .list(let name) = filter {
@@ -220,15 +220,15 @@ struct TasksView: View {
                                     Task { try? await Task.sleep(for: .seconds(2)); withAnimation { toast = nil } }
                                 }
                             }
-                            NavigationLink { TemplatesView() } label: { Label("Templates", systemImage: "doc.on.doc") }
-                            NavigationLink { SharedListsView() } label: { Label("Shared lists", systemImage: "person.2") }
-                            NavigationLink { ErrandsView() } label: { Label("Errands by place", systemImage: "car") }
+                            NavigationLink { LazyView(TemplatesView()) } label: { Label("Templates", systemImage: "doc.on.doc") }
+                            NavigationLink { LazyView(SharedListsView()) } label: { Label("Shared lists", systemImage: "person.2") }
+                            NavigationLink { LazyView(ErrandsView()) } label: { Label("Errands by place", systemImage: "car") }
                         }
                         Menu("Set up", systemImage: "gearshape") {
-                            NavigationLink { TagsManagerView() } label: { Label("Manage tags", systemImage: "number") }
-                            NavigationLink { AutomationsView() } label: { Label("Automations", systemImage: "bolt.horizontal") }
-                            NavigationLink { ScreenshotTasksView() } label: { Label("Tasks from screenshots", systemImage: "camera.viewfinder") }
-                            NavigationLink { TaskCSVImportView() } label: { Label("Import a spreadsheet", systemImage: "tablecells") }
+                            NavigationLink { LazyView(TagsManagerView()) } label: { Label("Manage tags", systemImage: "number") }
+                            NavigationLink { LazyView(AutomationsView()) } label: { Label("Automations", systemImage: "bolt.horizontal") }
+                            NavigationLink { LazyView(ScreenshotTasksView()) } label: { Label("Tasks from screenshots", systemImage: "camera.viewfinder") }
+                            NavigationLink { LazyView(TaskCSVImportView()) } label: { Label("Import a spreadsheet", systemImage: "tablecells") }
                         }
                     } label: { Image(systemName: "wand.and.stars") }
                     .accessibilityLabel("Schedule")
@@ -388,7 +388,7 @@ struct TasksView: View {
 
     @ViewBuilder
     private func row(_ t: TaskItem) -> some View {
-        NavigationLink { TaskDetailView(task: t) } label: {
+        NavigationLink { LazyView(TaskDetailView(task: t)) } label: {
             TaskRow(task: t, showList: { if case .list = filter { return false }; return true }(), onRolled: showRolled)
         }
         .swipeActions(edge: .trailing) {
@@ -550,7 +550,7 @@ struct MatrixView: View {
                             Text(q.1).font(.caption2).foregroundStyle(DS.Palette.inkSoft)
                             if q.3.isEmpty { Text("—").foregroundStyle(DS.Palette.inkSoft) }
                             ForEach(q.3.prefix(8)) { t in
-                                NavigationLink { TaskDetailView(task: t) } label: {
+                                NavigationLink { LazyView(TaskDetailView(task: t)) } label: {
                                     HStack(spacing: 6) {
                                         CompletionCheck(isDone: Binding(get: { t.isDone }, set: { done in
                                             if let next = TaskActions.setDone(t, done) { onRolled(next) }

@@ -115,10 +115,10 @@ struct MeetingPrepView: View {
                     Section("You promised") { ForEach(pack.promises) { Label($0.promise, systemImage: "hand.raised.fill") } }
                 }
                 if !pack.emails.isEmpty {
-                    Section("Recent emails") { ForEach(pack.emails) { e in NavigationLink { EmailDetailView(email: e) } label: { EmailRow(email: e) } } }
+                    Section("Recent emails") { ForEach(pack.emails) { e in NavigationLink { LazyView(EmailDetailView(email: e)) } label: { EmailRow(email: e) } } }
                 }
                 if !pack.tasks.isEmpty {
-                    Section("Related tasks") { ForEach(pack.tasks) { t in NavigationLink { TaskDetailView(task: t) } label: { TaskRow(task: t) } } }
+                    Section("Related tasks") { ForEach(pack.tasks) { t in NavigationLink { LazyView(TaskDetailView(task: t)) } label: { TaskRow(task: t) } } }
                 }
                 if !pack.notes.isEmpty {
                     Section("Notes") { ForEach(pack.notes) { n in NavigationLink(n.title) { NoteEditor(note: n) } } }

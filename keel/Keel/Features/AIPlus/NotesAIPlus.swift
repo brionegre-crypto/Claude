@@ -92,7 +92,7 @@ struct AskNotesView: View {
             if !sources.isEmpty {
                 Section("From these pages") {
                     ForEach(Array(sources.enumerated()), id: \.element.id) { i, n in
-                        NavigationLink { NoteOrCanvas(note: n) } label: {
+                        NavigationLink { LazyView(NoteOrCanvas(note: n)) } label: {
                             HStack {
                                 Text(n.icon ?? "📄")
                                 VStack(alignment: .leading, spacing: 1) {

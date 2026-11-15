@@ -33,7 +33,7 @@ struct CatchUpView: View {
             if !needsYou.isEmpty {
                 Section("Needs you") {
                     ForEach(needsYou.prefix(15)) { e in
-                        NavigationLink { EmailDetailView(email: e) } label: {
+                        NavigationLink { LazyView(EmailDetailView(email: e)) } label: {
                             VStack(alignment: .leading, spacing: 2) {
                                 Text(e.fromName.isEmpty ? e.from : e.fromName).font(DS.Font.headline)
                                 Text(e.aiSummary ?? e.subject).font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft).lineLimit(2)
@@ -107,7 +107,7 @@ struct AttachmentsView: View {
             .pickerStyle(.segmented)
             .listRowBackground(Color.clear)
             ForEach(mail.prefix(200).filter(matches)) { e in
-                NavigationLink { EmailDetailView(email: e) } label: {
+                NavigationLink { LazyView(EmailDetailView(email: e)) } label: {
                     VStack(alignment: .leading, spacing: 3) {
                         HStack {
                             Text(e.fromName.isEmpty ? e.from : e.fromName).font(DS.Font.headline).lineLimit(1)

@@ -86,7 +86,7 @@ struct TripTodayCard: View {
     var body: some View {
         let soon = all.filter { !$0.isHidden && $0.start > Date().addingTimeInterval(-3600) && $0.start < Date().addingTimeInterval(3 * 86_400) }
         if let r = soon.first {
-            NavigationLink { TripsView() } label: {
+            NavigationLink { LazyView(TripsView()) } label: {
                 GlassCard {
                     HStack(spacing: DS.Space.m) {
                         Image(systemName: r.icon).font(.title2).foregroundStyle(DS.Palette.accent)

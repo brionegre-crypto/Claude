@@ -144,7 +144,7 @@ struct PinnedTasksCard: View {
                 VStack(alignment: .leading, spacing: DS.Space.s) {
                     Label("Pinned", systemImage: "pin.fill").font(DS.Font.headline).foregroundStyle(DS.Palette.accent)
                     ForEach(pinned.prefix(5)) { t in
-                        NavigationLink { TaskDetailView(task: t) } label: { TaskRow(task: t) }.buttonStyle(.plain)
+                        NavigationLink { LazyView(TaskDetailView(task: t)) } label: { TaskRow(task: t) }.buttonStyle(.plain)
                     }
                 }
             }

@@ -46,7 +46,7 @@ struct ScoreRing: View {
 struct BodyTodayCard: View {
     @State private var engine = BodyEngine.shared
     var body: some View {
-        NavigationLink { BodyView() } label: {
+        NavigationLink { LazyView(BodyView()) } label: {
             VStack(alignment: .leading, spacing: 10) {
                 HStack {
                     Label("Body", systemImage: "water.waves").font(DS.Font.headline)
@@ -237,7 +237,7 @@ struct BodyView: View {
         } else if BodyHealth.available {
             BodyNeedsHealthCard(what: "your sleep stages, schedule and sleep debt") { Task { await engine.connect() } }
         }
-        NavigationLink { SleepSoundsView() } label: {
+        NavigationLink { LazyView(SleepSoundsView()) } label: {
             Label("Sleep sounds", systemImage: "moon.zzz.fill").font(DS.Font.headline).frame(maxWidth: .infinity, alignment: .leading).bodyCard()
         }
         .buttonStyle(.plain)
@@ -257,8 +257,8 @@ struct BodyView: View {
             BodyNeedsHealthCard(what: "your effort, heart-rate zones and workouts") { Task { await engine.connect() } }
         }
         HStack(spacing: 10) {
-            NavigationLink { WorkoutHistoryView() } label: { linkTile("Workouts", "figure.run", BodyStyle.swell) }
-            NavigationLink { BodyTrendsView() } label: { linkTile("90-day trends", "chart.xyaxis.line", .purple) }
+            NavigationLink { LazyView(WorkoutHistoryView()) } label: { linkTile("Workouts", "figure.run", BodyStyle.swell) }
+            NavigationLink { LazyView(BodyTrendsView()) } label: { linkTile("90-day trends", "chart.xyaxis.line", .purple) }
         }
         .buttonStyle(.plain)
     }

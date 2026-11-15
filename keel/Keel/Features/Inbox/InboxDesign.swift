@@ -166,7 +166,7 @@ struct SenderBundleView: View {
         List {
             Section {
                 ForEach(bundle.emails.filter { !$0.isArchived }) { e in
-                    NavigationLink { EmailDetailView(email: e) } label: { EmailRow(email: e) }
+                    NavigationLink { LazyView(EmailDetailView(email: e)) } label: { EmailRow(email: e) }
                 }
             } header: {
                 HStack {

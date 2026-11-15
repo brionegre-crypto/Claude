@@ -102,7 +102,7 @@ struct OverwhelmedView: View {
                 } label: { Label(lightened.map { "Moved \($0) to tomorrow ✓" } ?? "Move everything non-urgent to tomorrow", systemImage: "arrow.uturn.forward") }
                 .disabled(lightened != nil)
                 Toggle(isOn: $calm) { Label("Calm mode for now", systemImage: "leaf") }
-                NavigationLink { DopamineMenuView() } label: { Label("Pick something from my dopamine menu", systemImage: "fork.knife") }
+                NavigationLink { LazyView(DopamineMenuView()) } label: { Label("Pick something from my dopamine menu", systemImage: "fork.knife") }
                 Button("I feel better") { Haptics.success(); dismiss() }.buttonStyle(.borderedProminent).tint(DS.Palette.calm).frame(maxWidth: .infinity)
             }
         }

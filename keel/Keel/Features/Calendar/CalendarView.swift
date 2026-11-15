@@ -101,22 +101,22 @@ struct CalendarView: View {
                         Section("Plan") {
                             Button("Plan my day (drag tasks onto hours)", systemImage: "calendar.day.timeline.left") { planning = true }
                             Button("Plan my week", systemImage: "calendar.badge.clock") { planningWeek = true }
-                            NavigationLink { IdealWeekView() } label: { Label("My ideal week", systemImage: "square.grid.3x3.topleft.filled") }
-                            NavigationLink { CountdownsView() } label: { Label("Countdowns", systemImage: "hourglass") }
-                            NavigationLink { AppointmentsView() } label: { Label("Appointments", systemImage: "stethoscope") }
+                            NavigationLink { LazyView(IdealWeekView()) } label: { Label("My ideal week", systemImage: "square.grid.3x3.topleft.filled") }
+                            NavigationLink { LazyView(CountdownsView()) } label: { Label("Countdowns", systemImage: "hourglass") }
+                            NavigationLink { LazyView(AppointmentsView()) } label: { Label("Appointments", systemImage: "stethoscope") }
                         }
                         Section("Look back") {
-                            NavigationLink { TimeReportView() } label: { Label("Where my time went", systemImage: "chart.bar.xaxis") }
-                            NavigationLink { TimeAuditView() } label: { Label("Time audit", systemImage: "clock.badge.questionmark") }
+                            NavigationLink { LazyView(TimeReportView()) } label: { Label("Where my time went", systemImage: "chart.bar.xaxis") }
+                            NavigationLink { LazyView(TimeAuditView()) } label: { Label("Time audit", systemImage: "clock.badge.questionmark") }
                         }
                         Section("Share") {
-                            NavigationLink { BookingLinkView() } label: { Label("Booking link", systemImage: "link.badge.plus") }
+                            NavigationLink { LazyView(BookingLinkView()) } label: { Label("Booking link", systemImage: "link.badge.plus") }
                             ShareLink(item: Availability.text()) { Label("Share my availability", systemImage: "calendar.badge.clock") }
-                            NavigationLink { SharedCalendarsView() } label: { Label("Shared calendars", systemImage: "person.3") }
+                            NavigationLink { LazyView(SharedCalendarsView()) } label: { Label("Shared calendars", systemImage: "person.3") }
                         }
                         Menu("More", systemImage: "ellipsis") {
-                            NavigationLink { WorldClockView() } label: { Label("World clock", systemImage: "globe") }
-                            NavigationLink { EventTemplatesView() } label: { Label("Event templates", systemImage: "square.on.square") }
+                            NavigationLink { LazyView(WorldClockView()) } label: { Label("World clock", systemImage: "globe") }
+                            NavigationLink { LazyView(EventTemplatesView()) } label: { Label("Event templates", systemImage: "square.on.square") }
                         }
                     } label: { Image(systemName: "line.3.horizontal.decrease.circle") }
                     .accessibilityLabel("Calendar options")
@@ -743,7 +743,7 @@ struct TaskGroupSheet: View {
         NavigationStack {
             List {
                 ForEach(tasks) { t in
-                    NavigationLink { TaskDetailView(task: t) } label: { TaskRow(task: t) }
+                    NavigationLink { LazyView(TaskDetailView(task: t)) } label: { TaskRow(task: t) }
                 }
             }
             .navigationTitle(tasks.first?.timelineStart?.formatted(date: .omitted, time: .shortened) ?? "Tasks")

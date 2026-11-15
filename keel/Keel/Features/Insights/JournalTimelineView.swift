@@ -46,7 +46,7 @@ struct JournalTimelineView: View {
                 }
             }
             Section {
-                NavigationLink { DayLogView() } label: {
+                NavigationLink { LazyView(DayLogView()) } label: {
                     VStack(alignment: .leading, spacing: 2) {
                         Label("Today's log", systemImage: "list.bullet.rectangle").font(DS.Font.headline)
                         let s = DailyLog.summary(for: Date(), ctx: ctx)
@@ -73,7 +73,7 @@ struct JournalTimelineView: View {
                                 Text(c.journal).font(.callout)
                             }
                             if let log = summaries[c.day], !log.isEmpty {
-                                NavigationLink { DayLogView(day: c.day) } label: {
+                                NavigationLink { LazyView(DayLogView(day: c.day)) } label: {
                                     Label(log, systemImage: "list.bullet.rectangle").font(DS.Font.caption).foregroundStyle(DS.Palette.accent)
                                 }
                             }

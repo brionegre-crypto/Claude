@@ -349,7 +349,7 @@ struct FocusForecastCard: View {
         // Only once it's personal: a focus med is set up, or there's enough focus history to learn from.
         let personal = meds.contains { FocusForecast.timing(for: $0).profile != .none } || sessions.count >= 8
         if FocusForecast.isOn, personal, let best = f.peaks.first(where: { $0.end > Date() }) {
-            NavigationLink { FocusForecastView() } label: {
+            NavigationLink { LazyView(FocusForecastView()) } label: {
                 GlassCard(tint: DS.Palette.focus) {
                     HStack(spacing: DS.Space.m) {
                         Image(systemName: best.start <= Date() ? "bolt.fill" : "sparkles").font(.title2).foregroundStyle(DS.Palette.focus)

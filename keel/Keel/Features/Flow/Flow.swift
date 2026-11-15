@@ -376,8 +376,8 @@ struct ProjectPilotSection: View {
             if r.quiet { Label("No movement in a week. Pick one small next step?", systemImage: "tortoise.fill").font(DS.Font.caption).foregroundStyle(DS.Palette.warmth) }
             ForEach(r.stuck) { t in Label(t.title, systemImage: "exclamationmark.circle").font(DS.Font.caption).foregroundStyle(.orange) }
             ForEach(r.events, id: \.calendarItemIdentifier) { e in Label("\(e.title ?? "") · \(e.startDate.formatted(date: .abbreviated, time: .shortened))", systemImage: "calendar").font(DS.Font.caption) }
-            ForEach(r.notes) { n in NavigationLink { NoteOrCanvas(note: n) } label: { Label(n.title, systemImage: "doc.text").font(DS.Font.caption) } }
-            ForEach(r.emails) { e in NavigationLink { EmailDetailView(email: e) } label: { Label(e.subject, systemImage: "envelope").font(DS.Font.caption).lineLimit(1) } }
+            ForEach(r.notes) { n in NavigationLink { LazyView(NoteOrCanvas(note: n)) } label: { Label(n.title, systemImage: "doc.text").font(DS.Font.caption) } }
+            ForEach(r.emails) { e in NavigationLink { LazyView(EmailDetailView(email: e)) } label: { Label(e.subject, systemImage: "envelope").font(DS.Font.caption).lineLimit(1) } }
             Button(working ? "Writing…" : "Write this week's status", systemImage: "doc.text.magnifyingglass") {
                 Task { working = true; status = await ProjectPilot.weeklyStatus(project, r: r, tasks: tasks); working = false }
             }
@@ -517,7 +517,7 @@ struct DecisionJournalView: View {
 
     private func decisionRow(_ n: Note, review: Bool) -> some View {
         VStack(alignment: .leading, spacing: 4) {
-            NavigationLink { NoteEditor(note: n) } label: {
+            NavigationLink { LazyView(NoteEditor(note: n)) } label: {
                 VStack(alignment: .leading, spacing: 1) {
                     Text(n.title).font(DS.Font.headline)
                     Text(n.createdAt.formatted(date: .abbreviated, time: .omitted) + (Decisions.grade(n).map { " · graded \($0)/5" } ?? "")).font(.caption).foregroundStyle(DS.Palette.inkSoft)

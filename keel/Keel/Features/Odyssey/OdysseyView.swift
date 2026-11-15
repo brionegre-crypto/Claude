@@ -23,7 +23,7 @@ struct OdysseyView: View {
         }
         .navigationTitle("Odyssey Plan")
         .toolbar {
-            NavigationLink { OdysseyCompare(paths: paths) } label: { Text("Compare") }
+            NavigationLink { LazyView(OdysseyCompare(paths: paths)) } label: { Text("Compare") }
                 .disabled(paths.allSatisfy { $0.title.isEmpty })
         }
         .onAppear {

@@ -32,7 +32,7 @@ struct LocationPicker: View {
                     }
                 }
                 Section {
-                    NavigationLink { PlacesView() } label: { Label("Manage places", systemImage: "mappin.and.ellipse") }
+                    NavigationLink { LazyView(PlacesView()) } label: { Label("Manage places", systemImage: "mappin.and.ellipse") }
                 }
                 if searching { ProgressView() }
                 ForEach(results, id: \.self) { item in

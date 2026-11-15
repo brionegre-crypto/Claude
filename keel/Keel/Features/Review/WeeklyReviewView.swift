@@ -213,7 +213,7 @@ struct WeeklyReviewView: View {
         VStack(alignment: .leading, spacing: DS.Space.s) {
             SectionHeader(title: "Goals")
             if goals.isEmpty {
-                NavigationLink { GoalsView() } label: { Label("Set a few goals for the year", systemImage: "target") }
+                NavigationLink { LazyView(GoalsView()) } label: { Label("Set a few goals for the year", systemImage: "target") }
             }
             ForEach(goals) { g in
                 let moved = completed.filter { $0.goalId == g.id }.count

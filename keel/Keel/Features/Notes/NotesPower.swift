@@ -551,7 +551,7 @@ struct TagBrowserView: View {
             if !savedSearches.isEmpty {
                 Section("Saved searches") {
                     ForEach(savedSearches, id: \.self) { q in
-                        NavigationLink { SearchResultsList(query: q) } label: { Label(q, systemImage: "magnifyingglass") }
+                        NavigationLink { LazyView(SearchResultsList(query: q)) } label: { Label(q, systemImage: "magnifyingglass") }
                     }
                     .onDelete { idx in savedSearches.remove(atOffsets: idx); KeelTags.saved = savedSearches }
                 }
@@ -561,7 +561,7 @@ struct TagBrowserView: View {
                     Text("Write #anything in a note, like #recipes or #ideas, and it shows up here.").foregroundStyle(DS.Palette.inkSoft)
                 }
                 ForEach(allTags, id: \.self) { tag in
-                    NavigationLink { TagDetail(tag: tag, notes: index[tag] ?? [], tasks: tasks.filter { $0.tags.map { $0.lowercased() }.contains(tag) }) } label: {
+                    NavigationLink { LazyView(TagDetail(tag: tag, notes: index[tag] ?? [], tasks: tasks.filter { $0.tags.map { $0.lowercased() }.contains(tag) })) } label: {
                         HStack {
                             Label("#\(tag)", systemImage: "number")
                             Spacer()

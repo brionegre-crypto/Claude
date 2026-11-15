@@ -109,7 +109,7 @@ struct ImportView: View {
                 }
 
                 VStack(spacing: 0) {
-                    NavigationLink { TaskCSVImportView() } label: { listRow("Tasks from a CSV file", "checklist") }
+                    NavigationLink { LazyView(TaskCSVImportView()) } label: { listRow("Tasks from a CSV file", "checklist") }
                     Divider().padding(.leading, 44)
                     Button { forced = .markdown; picking = true } label: { listRow("Markdown, text or HTML files", "doc.text") }
                 }

@@ -71,7 +71,7 @@ struct BodyMedsCard: View {
                 }
             }
             RecentDosesList(meds: meds, doses: doses)
-            NavigationLink { MedsView() } label: { Label("All medications & history", systemImage: "list.bullet").font(DS.Font.caption) }
+            NavigationLink { LazyView(MedsView()) } label: { Label("All medications & history", systemImage: "list.bullet").font(DS.Font.caption) }
         }
         .bodyCard()
         .sheet(isPresented: $adding) { MedEditor(med: nil) }
@@ -83,29 +83,29 @@ struct BodyMedsCard: View {
 
 struct HealthTilesSection: View {
     let extras: HealthExtras
-    private struct Tile: Identifiable { let id: String; let title: String; let icon: String; let color: Color; let dest: AnyView }
+    private struct Tile: Identifiable { let id: String; let title: String; let icon: String; let color: Color; let dest: () -> AnyView }
 
     private var tiles: [Tile] {
         [
-            Tile(id: "map", title: "Body map", icon: "figure.stand", color: BodyStyle.swell, dest: AnyView(BodyMapView())),
-            Tile(id: "meds", title: "Medications", icon: "pills.fill", color: .mint, dest: AnyView(MedsView())),
-            Tile(id: "prn", title: "As-needed medicines", icon: "cross.case.fill", color: .mint, dest: AnyView(PRNView())),
-            Tile(id: "symptoms", title: "Symptoms", icon: "thermometer.medium", color: .pink, dest: AnyView(SymptomsView())),
-            Tile(id: "bp", title: "Blood pressure", icon: "heart.text.square.fill", color: .red, dest: AnyView(BloodPressureView())),
-            Tile(id: "weight", title: "Weight", icon: "scalemass.fill", color: .blue, dest: AnyView(WeightView(x: extras))),
-            Tile(id: "food", title: "Food today", icon: "fork.knife.circle.fill", color: .green, dest: AnyView(NutritionView())),
-            Tile(id: "meal", title: "Log a meal", icon: "text.bubble.fill", color: .green, dest: AnyView(DescribeMealView())),
-            Tile(id: "scan", title: "Scan food", icon: "barcode.viewfinder", color: .green, dest: AnyView(FoodScanView())),
-            Tile(id: "library", title: "Food library", icon: "books.vertical.fill", color: .green, dest: AnyView(FoodLibraryView())),
-            Tile(id: "diet", title: "Diet guide", icon: "book.closed.fill", color: .green, dest: AnyView(DietGuideView())),
-            Tile(id: "drinks", title: "Caffeine & water", icon: "cup.and.saucer.fill", color: .brown, dest: AnyView(ScrollView { VStack(spacing: 16) { DrinksCard(); CaffeineCurveCard() }.padding() }.navigationTitle("Caffeine & water"))),
-            Tile(id: "fast", title: "Fasting", icon: "timer", color: .green, dest: AnyView(FastingView())),
-            Tile(id: "workouts", title: "Workouts", icon: "figure.run", color: BodyStyle.swell, dest: AnyView(WorkoutHistoryView())),
-            Tile(id: "trends", title: "90-day trends", icon: "chart.xyaxis.line", color: .purple, dest: AnyView(BodyTrendsView())),
-            Tile(id: "sleepSounds", title: "Sleep sounds", icon: "moon.zzz.fill", color: BodyStyle.anchor, dest: AnyView(SleepSoundsView())),
-            Tile(id: "breathe", title: "Breathe", icon: "wind", color: .teal, dest: AnyView(BreatheView())),
-            Tile(id: "card", title: "Medical card", icon: "staroflife.fill", color: .red, dest: AnyView(MedicalCardView())),
-            Tile(id: "doctor", title: "For my doctor", icon: "stethoscope", color: .indigo, dest: AnyView(DoctorSummaryView())),
+            Tile(id: "map", title: "Body map", icon: "figure.stand", color: BodyStyle.swell, dest: { AnyView(BodyMapView()) }),
+            Tile(id: "meds", title: "Medications", icon: "pills.fill", color: .mint, dest: { AnyView(MedsView()) }),
+            Tile(id: "prn", title: "As-needed medicines", icon: "cross.case.fill", color: .mint, dest: { AnyView(PRNView()) }),
+            Tile(id: "symptoms", title: "Symptoms", icon: "thermometer.medium", color: .pink, dest: { AnyView(SymptomsView()) }),
+            Tile(id: "bp", title: "Blood pressure", icon: "heart.text.square.fill", color: .red, dest: { AnyView(BloodPressureView()) }),
+            Tile(id: "weight", title: "Weight", icon: "scalemass.fill", color: .blue, dest: { AnyView(WeightView(x: extras)) }),
+            Tile(id: "food", title: "Food today", icon: "fork.knife.circle.fill", color: .green, dest: { AnyView(NutritionView()) }),
+            Tile(id: "meal", title: "Log a meal", icon: "text.bubble.fill", color: .green, dest: { AnyView(DescribeMealView()) }),
+            Tile(id: "scan", title: "Scan food", icon: "barcode.viewfinder", color: .green, dest: { AnyView(FoodScanView()) }),
+            Tile(id: "library", title: "Food library", icon: "books.vertical.fill", color: .green, dest: { AnyView(FoodLibraryView()) }),
+            Tile(id: "diet", title: "Diet guide", icon: "book.closed.fill", color: .green, dest: { AnyView(DietGuideView()) }),
+            Tile(id: "drinks", title: "Caffeine & water", icon: "cup.and.saucer.fill", color: .brown, dest: { AnyView(ScrollView { VStack(spacing: 16) { DrinksCard(); CaffeineCurveCard() }.padding() }.navigationTitle("Caffeine & water")) }),
+            Tile(id: "fast", title: "Fasting", icon: "timer", color: .green, dest: { AnyView(FastingView()) }),
+            Tile(id: "workouts", title: "Workouts", icon: "figure.run", color: BodyStyle.swell, dest: { AnyView(WorkoutHistoryView()) }),
+            Tile(id: "trends", title: "90-day trends", icon: "chart.xyaxis.line", color: .purple, dest: { AnyView(BodyTrendsView()) }),
+            Tile(id: "sleepSounds", title: "Sleep sounds", icon: "moon.zzz.fill", color: BodyStyle.anchor, dest: { AnyView(SleepSoundsView()) }),
+            Tile(id: "breathe", title: "Breathe", icon: "wind", color: .teal, dest: { AnyView(BreatheView()) }),
+            Tile(id: "card", title: "Medical card", icon: "staroflife.fill", color: .red, dest: { AnyView(MedicalCardView()) }),
+            Tile(id: "doctor", title: "For my doctor", icon: "stethoscope", color: .indigo, dest: { AnyView(DoctorSummaryView()) }),
         ]
     }
 
@@ -114,7 +114,7 @@ struct HealthTilesSection: View {
             Text("Health").font(DS.Font.headline)
             LazyVGrid(columns: [GridItem(.adaptive(minimum: 104), spacing: 10)], spacing: 10) {
                 ForEach(tiles) { t in
-                    NavigationLink { t.dest } label: {
+                    NavigationLink { LazyView(t.dest()) } label: {
                         VStack(spacing: 6) {
                             Image(systemName: t.icon).font(.title3).foregroundStyle(t.color)
                             Text(t.title).font(.caption.weight(.medium)).multilineTextAlignment(.center).lineLimit(2).foregroundStyle(DS.Palette.ink)

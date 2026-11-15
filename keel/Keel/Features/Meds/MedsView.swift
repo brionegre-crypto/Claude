@@ -193,7 +193,7 @@ struct MedsTodayCard: View {
         if !due.isEmpty {
             GlassCard {
                 VStack(alignment: .leading, spacing: DS.Space.s) {
-                    NavigationLink { MedsView() } label: {
+                    NavigationLink { LazyView(MedsView()) } label: {
                         Label("Medication", systemImage: "pills.fill").font(DS.Font.headline)
                     }.buttonStyle(.plain)
                     ForEach(Array(due.enumerated()), id: \.offset) { item in

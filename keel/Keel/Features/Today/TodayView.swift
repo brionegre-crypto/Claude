@@ -58,7 +58,7 @@ struct TodayView: View {
                         Label("Calm mode is on. Everything else is still here when you want it.", systemImage: "leaf")
                             .font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
                     }
-                    NavigationLink { CustomizeTodayView() } label: {
+                    NavigationLink { LazyView(CustomizeTodayView()) } label: {
                         Label("Customize Today", systemImage: "slider.horizontal.3").font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
                     }
                     .frame(maxWidth: .infinity)
@@ -99,7 +99,7 @@ struct TodayView: View {
                     }
                 }
                 ToolbarItem(placement: .topBarTrailing) {
-                    NavigationLink { SearchView() } label: { Image(systemName: "magnifyingglass") }
+                    NavigationLink { LazyView(SearchView()) } label: { Image(systemName: "magnifyingglass") }
                         .accessibilityLabel("Search everything")
                 }
                 ToolbarItem(placement: .topBarTrailing) { dayMenu }
@@ -186,14 +186,14 @@ struct TodayView: View {
         case .pinned: PinnedTasksCard()
         case .mail: FoundInMailTodayCard()
         case .trip: TripTodayCard()
-        case .dayReview: if DayPhase.now == .evening { NavigationLink { DayReviewView() } label: { dayReviewTeaser }.buttonStyle(.plain) }
+        case .dayReview: if DayPhase.now == .evening { NavigationLink { LazyView(DayReviewView()) } label: { dayReviewTeaser }.buttonStyle(.plain) }
         case .countdown: countdownCard
         case .promises: promisesCard
         case .followUps: followUpsCard
         case .keepInTouch: keepInTouchCard
         case .weeklyReview:
             if WeeklyReview.isDue {
-                NavigationLink { WeeklyReviewView() } label: {
+                NavigationLink { LazyView(WeeklyReviewView()) } label: {
                     GlassCard(tint: .purple) {
                         Label("Your weekly review is ready · 10 min", systemImage: "chart.bar.doc.horizontal")
                             .font(DS.Font.headline).foregroundStyle(DS.Palette.ink)
@@ -269,7 +269,7 @@ struct TodayView: View {
                         Chip(text: "~\(ADHDCoach.calibratedMinutes(t)) min", color: DS.Palette.focus, icon: "clock")
                         if let due = t.dueDate { Chip(text: due.formatted(.relative(presentation: .named)), color: DS.Palette.warmth) }
                         Spacer()
-                        NavigationLink { FocusView(preselected: t) } label: {
+                        NavigationLink { LazyView(FocusView(preselected: t)) } label: {
                             Label("Start", systemImage: "play.fill").font(DS.Font.headline)
                                 .padding(.horizontal, DS.Space.m).padding(.vertical, DS.Space.s)
                                 .background(DS.Palette.focus, in: Capsule()).foregroundStyle(.white)
@@ -293,7 +293,7 @@ struct TodayView: View {
                         Text("\(e.startDate.formatted(date: .omitted, time: .shortened)) · \(e.calendar.source.title)")
                             .font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
                         if e.attendees?.isEmpty == false {
-                            NavigationLink { MeetingPrepView(event: e) } label: {
+                            NavigationLink { LazyView(MeetingPrepView(event: e)) } label: {
                                 Label("Prep", systemImage: "doc.text.magnifyingglass").font(DS.Font.caption)
                             }
                         }
@@ -385,7 +385,7 @@ struct TodayView: View {
         let pressing = open.filter { $0.effectiveDue < Calendar.current.date(byAdding: .day, value: 1, to: Calendar.current.startOfDay(for: Date()))! }
         return Group {
             if let first = pressing.first {
-                NavigationLink { PromisesView() } label: {
+                NavigationLink { LazyView(PromisesView()) } label: {
                     GlassCard(tint: DS.Palette.warmth) {
                         HStack(spacing: DS.Space.m) {
                             Image(systemName: "hand.raised.fingers.spread").font(.title2).foregroundStyle(DS.Palette.warmth)
@@ -408,7 +408,7 @@ struct TodayView: View {
         let soon = countdowns.filter { $0.daysLeft >= 0 && $0.daysLeft <= 30 }.first
         return Group {
             if let c = soon {
-                NavigationLink { CountdownsView() } label: {
+                NavigationLink { LazyView(CountdownsView()) } label: {
                     GlassCard {
                         HStack {
                             Text(c.emoji).font(.title)

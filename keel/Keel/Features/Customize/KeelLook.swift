@@ -88,9 +88,9 @@ struct LookSettingsSection: View {
             .pickerStyle(.inline).labelsHidden()
         } header: { Text("Font") } footer: { Text("Changes the typeface everywhere: notes, mail, tasks and Today.") }
         Section {
-            NavigationLink { MailLayoutSettings() } label: { Label("Mail layout", systemImage: "list.bullet.rectangle") }
-            NavigationLink { InboxTabsSettings() } label: { Label("Inbox tabs", systemImage: "rectangle.split.3x1") }
-            NavigationLink { TabBarSettings() } label: { Label("Tab bar", systemImage: "dock.rectangle") }
+            NavigationLink { LazyView(MailLayoutSettings()) } label: { Label("Mail layout", systemImage: "list.bullet.rectangle") }
+            NavigationLink { LazyView(InboxTabsSettings()) } label: { Label("Inbox tabs", systemImage: "rectangle.split.3x1") }
+            NavigationLink { LazyView(TabBarSettings()) } label: { Label("Tab bar", systemImage: "dock.rectangle") }
             Toggle(isOn: Binding(get: { UserDefaults.standard.object(forKey: "capture.fab") as? Bool ?? true }, set: { UserDefaults.standard.set($0, forKey: "capture.fab") })) {
                 Label("Capture button on every screen", systemImage: "plus.circle")
             }

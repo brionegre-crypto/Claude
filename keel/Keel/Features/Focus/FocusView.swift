@@ -46,7 +46,7 @@ struct FocusView: View {
                 }
                 ToolbarItem(placement: .topBarLeading) {
                     if shutdown.active == nil {
-                        NavigationLink { FocusRoomView(task: preselected) } label: { Label("Focus Room", systemImage: "person.2.wave.2") }
+                        NavigationLink { LazyView(FocusRoomView(task: preselected)) } label: { Label("Focus Room", systemImage: "person.2.wave.2") }
                     }
                 }
             }

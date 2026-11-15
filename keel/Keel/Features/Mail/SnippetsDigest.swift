@@ -215,7 +215,7 @@ struct SnippetMenu: View {
             }
             Divider()
             Button("Insert my availability", systemImage: "calendar.badge.clock") { insert(Availability.text()) }
-            NavigationLink { SnippetsView() } label: { Label("Edit templates", systemImage: "pencil") }
+            NavigationLink { LazyView(SnippetsView()) } label: { Label("Edit templates", systemImage: "pencil") }
         } label: { Image(systemName: "text.badge.plus") }
         .accessibilityLabel("Insert template")
         .onAppear { Snippets.seedIfNeeded(ctx) }
@@ -294,7 +294,7 @@ struct DigestView: View {
                 }
             } header: { Text("Briefing") }
             ForEach(items) { e in
-                NavigationLink { EmailDetailView(email: e) } label: {
+                NavigationLink { LazyView(EmailDetailView(email: e)) } label: {
                     VStack(alignment: .leading, spacing: 2) {
                         Text(e.fromName.isEmpty ? e.from : e.fromName).font(DS.Font.headline)
                         Text(e.aiSummary ?? e.subject).font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft).lineLimit(3)
