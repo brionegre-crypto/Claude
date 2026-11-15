@@ -208,6 +208,7 @@ struct BodyView: View {
                     .font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
             }
             if !engine.loading, engine.days.suffix(3).allSatisfy({ !$0.hasSleep && $0.hrv == nil && $0.swell == 0 }) { noDataCard }
+            if isToday { IllnessWarningCard(days: engine.days) }
             if isToday { adviceCard }
             EnergyBankCard(day: t, days: engine.days)
             BodyMetricsGrid(day: t, days: engine.days)
@@ -224,6 +225,8 @@ struct BodyView: View {
                 stressCard
             }
             BodyWeekCard(days: engine.days)
+            RecoveryDriversCard(days: engine.days)
+            BodyGoalsCard(days: engine.days)
         } else if BodyHealth.available {
             connectCard
         }
@@ -251,6 +254,7 @@ struct BodyView: View {
     @ViewBuilder private var effortPage: some View {
         if live {
             BodyDayStrip(days: engine.days, selected: $selectedDay)
+            if isToday { BuildWorkoutCard(tide: t?.tide, extras: extras) }
             swellCard
             if isToday {
                 ActivityTodayCard(x: extras)

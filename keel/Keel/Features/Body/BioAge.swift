@@ -97,6 +97,8 @@ enum BioAge {
         return BioAgeResult(age: x.age, bioAge: max(18, x.age + total), factors: f.sorted { $0.years > $1.years }, confidence: Int(min(100, weight)))
     }
 
+    @MainActor static var lastInputs: BioAgeInputs?
+
     // Weekly history (one number per week, recorded on the first look each Monday or later).
     struct Snapshot: Codable, Hashable { var week: String; var bioAge: Double; var age: Double }
     static let historyKey = "body.bioage.history"
@@ -130,6 +132,7 @@ enum BioAge {
         x.ldl = labs["ldl"]?.value
         x.crp = labs["crp"]?.value
         let r = estimate(x)
+        lastInputs = x
         var h = history
         if !h.contains(where: { $0.week == weekKey() }), r.confidence >= 30 {
             h.append(Snapshot(week: weekKey(), bioAge: r.bioAge, age: r.age)); history = h
@@ -207,6 +210,15 @@ struct BioAgeView: View {
                 }
                 if let best = r.factors.first(where: { $0.years > 0.2 }) {
                     Section("Biggest win") { Text("\(best.name): \(best.tip)").font(.callout) }
+                }
+                if let inputs = BioAge.lastInputs { BioAgeWhatIf(base: inputs) }
+                if let pace = BioAge.pace() {
+                    Section("Pace of aging") {
+                        Text(String(format: "You're aging about %.2f years per year", pace)).font(.headline)
+                            .foregroundStyle(pace <= 1 ? DS.Palette.calm : .orange)
+                        Text(pace < 1 ? "Slower than the calendar: your habits are working." : "Faster than the calendar lately. The biggest win above is the place to start.")
+                            .font(.caption).foregroundStyle(DS.Palette.inkSoft)
+                    }
                 }
                 let h = BioAge.history
                 if h.count >= 2 {

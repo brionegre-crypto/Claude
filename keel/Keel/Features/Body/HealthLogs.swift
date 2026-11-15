@@ -479,6 +479,20 @@ enum DoctorSummary {
             let s = bp.reduce(0) { $0 + $1.systolic } / bp.count, d = bp.reduce(0) { $0 + $1.diastolic } / bp.count
             out += "BLOOD PRESSURE\n• \(bp.count) readings, average \(s)/\(d)\n\n"
         }
+        let labs = Biomarkers.latest()
+        if !labs.isEmpty {
+            out += "LAB RESULTS (latest)\n"
+            for d in Biomarkers.defs { if let r = labs[d.id] { out += "• \(d.name): \(r.value.formatted()) \(d.unit) (\(r.date.formatted(date: .abbreviated, time: .omitted)), \(Biomarkers.status(d, r.value).0.lowercased()))\n" } }
+            out += "\n"
+        }
+        let lifts = StrengthStore.sessions.filter { $0.start > since }
+        if !lifts.isEmpty || !days.isEmpty {
+            out += "ACTIVITY\n"
+            if !days.isEmpty { out += "• Workouts recorded: \(days.reduce(0) { $0 + $1.workouts.count }) in 30 days\n" }
+            if !lifts.isEmpty { out += "• Strength sessions: \(lifts.count)\n" }
+            if let vo2 = days.compactMap(\.vo2).last { out += String(format: "• Cardio fitness (VO2 max): %.1f\n", vo2) }
+            out += "\n"
+        }
         let card = MedicalCardData.current
         if !card.allergies.isEmpty || !card.conditions.isEmpty {
             out += "ALSO\n" + (card.allergies.isEmpty ? "" : "• Allergies: \(card.allergies)\n") + (card.conditions.isEmpty ? "" : "• Conditions: \(card.conditions)\n")

@@ -438,6 +438,7 @@ final class BodyEngine {
         days = all
         if let data = try? JSONEncoder().encode(all) { try? data.write(to: cacheURL, options: .atomic) }
         share()
+        BodyAlerts.checkAndNotify(all)
         scheduleWindDown()
         await SmartWake.schedule(at: BodyMath.tonight(all, base: base).wake)
         Drinks.scheduleWaterNudge()

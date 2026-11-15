@@ -173,6 +173,104 @@ enum ExerciseLibrary {
     Muscle-up|Bodyweight|lats,chest|triceps,biceps
     Pistol Squat|Bodyweight|quads,glutes|abs
     Calf Raise|Bodyweight|calves|
+    Floor Press|Barbell|chest,triceps|shoulders
+    Svend Press|Plate|chest|shoulders
+    Decline Push-up|Bodyweight|chest,shoulders|triceps
+    Incline Push-up|Bodyweight|chest|triceps
+    Diamond Push-up|Bodyweight|triceps,chest|shoulders
+    Pike Push-up|Bodyweight|shoulders|triceps
+    Handstand Push-up|Bodyweight|shoulders|triceps,upperBack
+    Low-to-High Cable Fly|Cable|chest|shoulders
+    Incline Cable Fly|Cable|chest|shoulders
+    Dumbbell Pullover|Dumbbell|chest,lats|triceps
+    Push Press|Barbell|shoulders|triceps,quads
+    Seated Dumbbell Press|Dumbbell|shoulders|triceps
+    Single-Arm Landmine Press|Barbell|shoulders|chest,abs
+    Lu Raise|Dumbbell|shoulders|upperBack
+    Reverse Cable Fly|Cable|rearDelts|upperBack
+    Band Face Pull|Band|rearDelts|upperBack
+    Y-Raise|Dumbbell|upperBack,rearDelts|
+    Barbell Shrug|Barbell|upperBack|forearms
+    Rack Pull|Barbell|upperBack,glutes|hamstrings,forearms
+    Deficit Deadlift|Barbell|hamstrings,glutes,lowerBack|quads
+    Stiff-Leg Deadlift|Barbell|hamstrings|glutes,lowerBack
+    Kettlebell Deadlift|Kettlebell|glutes,hamstrings|lowerBack
+    Meadows Row|Barbell|lats|upperBack,biceps
+    Kroc Row|Dumbbell|lats,upperBack|biceps,forearms
+    Seal Row|Barbell|upperBack|lats,rearDelts
+    Single-Arm Cable Row|Cable|lats|biceps
+    Close-Grip Lat Pulldown|Cable|lats|biceps
+    Wide-Grip Pull-up|Bodyweight|lats|upperBack
+    Neutral-Grip Pull-up|Bodyweight|lats,biceps|
+    Weighted Pull-up|Other|lats|biceps,upperBack
+    Machine Row|Machine|upperBack,lats|biceps
+    Renegade Row|Dumbbell|lats,abs|shoulders
+    Reverse Hyperextension|Machine|glutes,lowerBack|hamstrings
+    EZ-Bar Curl|Barbell|biceps|forearms
+    Spider Curl|Dumbbell|biceps|
+    Bayesian Cable Curl|Cable|biceps|
+    Reverse Curl|Barbell|forearms,biceps|
+    Zottman Curl|Dumbbell|biceps,forearms|
+    Drag Curl|Barbell|biceps|
+    Rope Pushdown|Cable|triceps|
+    Single-Arm Pushdown|Cable|triceps|
+    JM Press|Barbell|triceps|chest
+    Dumbbell Overhead Extension|Dumbbell|triceps|
+    Tate Press|Dumbbell|triceps|
+    Reverse Wrist Curl|Dumbbell|forearms|
+    Dead Hang|Bodyweight|forearms,lats|
+    Suitcase Carry|Dumbbell|abs,forearms|glutes
+    Box Squat|Barbell|quads,glutes|hamstrings
+    Pause Squat|Barbell|quads|glutes,abs
+    Safety Bar Squat|Barbell|quads,glutes|upperBack
+    Belt Squat|Machine|quads,glutes|
+    Pendulum Squat|Machine|quads|glutes
+    Sissy Squat|Bodyweight|quads|
+    Split Squat|Dumbbell|quads,glutes|
+    Reverse Lunge|Dumbbell|glutes,quads|hamstrings
+    Lateral Lunge|Dumbbell|quads,hips|glutes
+    Curtsy Lunge|Dumbbell|glutes,hips|quads
+    Single-Leg Leg Press|Machine|quads,glutes|
+    Single-Leg Hip Thrust|Bodyweight|glutes|hamstrings
+    Frog Pump|Bodyweight|glutes|
+    Glute Ham Raise|Machine|hamstrings|glutes
+    Kettlebell Romanian Deadlift|Kettlebell|hamstrings,glutes|
+    Cossack Squat|Bodyweight|quads,hips|glutes
+    Wall Sit|Bodyweight|quads|
+    Donkey Calf Raise|Machine|calves|
+    Single-Leg Calf Raise|Bodyweight|calves|
+    Tibialis Raise|Bodyweight|calves|
+    Kettlebell Clean|Kettlebell|glutes,hamstrings|shoulders
+    Kettlebell Snatch|Kettlebell|glutes,shoulders|hamstrings,upperBack
+    Kettlebell Press|Kettlebell|shoulders|triceps
+    Kettlebell Row|Kettlebell|lats,upperBack|biceps
+    Hang Clean|Barbell|upperBack,glutes|quads,hamstrings
+    Clean and Jerk|Barbell|quads,shoulders,glutes|upperBack,triceps
+    Wall Ball|Other|quads,shoulders|glutes
+    Medicine Ball Slam|Other|abs,shoulders|lats
+    Bicycle Crunch|Bodyweight|abs|
+    Hollow Hold|Bodyweight|abs|
+    Leg Raise|Bodyweight|abs|hips
+    Toes to Bar|Bodyweight|abs|lats,forearms
+    V-Up|Bodyweight|abs|
+    Bird Dog|Bodyweight|abs,lowerBack|glutes
+    Cable Woodchop|Cable|abs|shoulders
+    Decline Sit-up|Bodyweight|abs|hips
+    L-Sit|Bodyweight|abs|triceps
+    Farmer's Walk|Kettlebell|forearms,upperBack|abs
+    Sled Pull|Other|hamstrings,glutes|upperBack
+    Rowing Machine|Machine|upperBack,quads|lats,biceps
+    Assault Bike|Machine|quads|shoulders
+    Jump Rope|Other|calves|shoulders
+    Bear Crawl|Bodyweight|shoulders,abs|quads
+    Band Pull-apart|Band|rearDelts,upperBack|
+    Band Squat|Band|quads,glutes|
+    Band Glute Kickback|Band|glutes|
+    Band Lateral Walk|Band|hips,glutes|
+    Band Chest Press|Band|chest|triceps
+    Band Overhead Press|Band|shoulders|triceps
+    Band Curl|Band|biceps|
+    Band Tricep Extension|Band|triceps|
     """
 
     static let all: [Exercise] = raw.split(separator: "\n").compactMap { line in
@@ -398,6 +496,7 @@ struct StrengthHomeView: View {
     @State private var active: StrengthSession?
     @State private var routines: [StrengthRoutine] = []
     @AppStorage(StrengthStore.unitKey) private var unit = Locale.current.measurementSystem == .metric ? "kg" : "lb"
+    @AppStorage("strength.saveToHealth") private var saveHealth = true
 
     var body: some View {
         List {
@@ -405,6 +504,14 @@ struct StrengthHomeView: View {
                 KitIntro(icon: "dumbbell.fill", color: BodyStyle.swell, text: "Strength. Log your sets, and Keel tracks personal records, suggests what to lift next time (progressive overload), shows how many hard sets each muscle got this week, and how recovered each muscle is.")
             }
             .listRowInsets(EdgeInsets()).listRowBackground(Color.clear)
+            Section {
+                BuildWorkoutCard(tide: BodyEngine.shared.today?.tide)
+            }
+            .listRowInsets(EdgeInsets()).listRowBackground(Color.clear)
+            let notes = StrengthCoach.plateaus(in: sessions) + [StrengthCoach.deload(days: BodyEngine.shared.days, sessions: sessions)].compactMap { $0 }
+            if !notes.isEmpty {
+                Section("Coach notes") { ForEach(notes, id: \.self) { Label($0, systemImage: "lightbulb.fill").font(.callout) } }
+            }
             Section {
                 Button { start(StrengthSession(name: "Workout")) } label: { Label("Start an empty workout", systemImage: "plus.circle.fill") }
                 ForEach(routines) { r in
@@ -467,7 +574,8 @@ struct StrengthHomeView: View {
             }
             Section {
                 Picker("Units", selection: $unit) { Text("kg").tag("kg"); Text("lb").tag("lb") }.pickerStyle(.segmented)
-            }
+                Toggle("Save workouts to Apple Health", isOn: $saveHealth)
+            } footer: { Text("Turn this off if you also record strength workouts on your Apple Watch, so they aren't counted twice.") }
         }
         .navigationTitle("Strength")
         .onAppear { sessions = StrengthStore.sessions; routines = StrengthStore.routines }
@@ -476,6 +584,7 @@ struct StrengthHomeView: View {
                 ActiveWorkoutView(session: s) { finished in
                     if let finished, finished.setCount > 0 {
                         sessions.append(finished); StrengthStore.sessions = sessions
+                        StrengthHealth.save(finished)
                     }
                     active = nil
                 }
@@ -567,11 +676,20 @@ struct ActiveWorkoutView: View {
                             }
                         }
                         .onDelete { e.sets.remove(atOffsets: $0) }
-                        Button("Add set", systemImage: "plus") {
-                            let last = e.sets.last
-                            e.sets.append(LiftSet(reps: last?.reps ?? 8, weight: last?.weight ?? 0))
+                        HStack {
+                            Button("Add set", systemImage: "plus") {
+                                let last = e.sets.last
+                                e.sets.append(LiftSet(reps: last?.reps ?? 8, weight: last?.weight ?? 0))
+                            }
+                            Spacer()
+                            if !ex.bodyweight, let top = e.sets.map(\.weight).max(), top > PlateMath.bar(StrengthStore.unit), !e.sets.contains(where: \.warmup) {
+                                Button("Warm-ups") { e.sets.insert(contentsOf: PlateMath.warmups(to: top, unit: StrengthStore.unit, step: StrengthStore.increment), at: 0) }
+                            }
+                            if !ex.bodyweight, ["Barbell", "Trap bar"].contains(ex.equipment) {
+                                NavigationLink { LazyView(PlateCalculatorView(weight: e.sets.map(\.weight).max() ?? PlateMath.bar(StrengthStore.unit), unit: StrengthStore.unit)) } label: { Text("Plates") }
+                            }
                         }
-                        .font(.caption)
+                        .font(.caption).buttonStyle(.borderless)
                     } header: {
                         HStack {
                             Text(ex.name)

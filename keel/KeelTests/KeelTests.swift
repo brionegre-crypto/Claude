@@ -826,4 +826,51 @@ final class KeelTests: XCTestCase {
         XCTAssertGreaterThan(NutritionScore.score([good])!.score, NutritionScore.score([bad])!.score)
         XCTAssertNil(NutritionScore.score([]))
     }
+
+    func testBodyProMath() {
+        // Plates: 100 kg = 20 kg bar + 40 a side = 25 + 15.
+        XCTAssertEqual(PlateMath.perSide(total: 100, unit: "kg"), [25, 15])
+        XCTAssertEqual(PlateMath.perSide(total: 20, unit: "kg"), [])
+        XCTAssertNil(PlateMath.perSide(total: 15, unit: "kg"))
+        XCTAssertEqual(PlateMath.perSide(total: 225, unit: "lb"), [45, 45])
+        let w = PlateMath.warmups(to: 100, unit: "kg", step: 2.5)
+        XCTAssertEqual(w.map(\.weight), [40, 60, 80]); XCTAssertTrue(w.allSatisfy(\.warmup))
+
+        // Workout builder: low tide gives mobility; otherwise fresh muscles only.
+        XCTAssertEqual(WorkoutBuilder.build(tide: 20, goal: .general, kit: .gym, fatigue: [:], weekSets: [:]).name, "Recovery mobility")
+        let plan = WorkoutBuilder.build(tide: 80, goal: .muscle, kit: .bodyweight, fatigue: [.quads: 0.9, .glutes: 0.8], weekSets: [:])
+        XCTAssertFalse(plan.session.exercises.isEmpty)
+        for e in plan.session.exercises {
+            let ex = ExerciseLibrary.exercise(e.exerciseId)!
+            XCTAssertTrue(TrainingKit.bodyweight.allows.contains(ex.equipment), ex.name)
+            XCTAssertFalse(ex.primary.contains(.quads) || ex.primary.contains(.glutes), "\(ex.name) works a tired muscle")
+            XCTAssertEqual(e.sets.count, 4)
+        }
+
+        // Illness signals need two or more changes from normal.
+        let cal = Calendar.current
+        var days: [BodyDay] = (1...20).reversed().map { i in
+            var d = BodyDay(day: cal.date(byAdding: .day, value: -i, to: cal.startOfDay(for: Date()))!)
+            d.rhr = 55; d.hrv = 60; d.resp = 14
+            return d
+        }
+        var today = BodyDay(day: cal.startOfDay(for: Date())); today.rhr = 62; today.hrv = 44; today.resp = 14
+        days.append(today)
+        XCTAssertEqual(BodyAlerts.illnessSignals(days).count, 2)
+        days[days.count - 1].hrv = 58
+        XCTAssertTrue(BodyAlerts.illnessSignals(days).isEmpty, "one signal alone isn't enough")
+
+        // Goal projection: resting heart rate falling 0.2 a day reaches 55 in about 25 days.
+        let trend: [BodyDay] = (0..<20).map { i in
+            var d = BodyDay(day: cal.date(byAdding: .day, value: -19 + i, to: cal.startOfDay(for: Date()))!)
+            d.rhr = 64 - 0.2 * Double(i)
+            return d
+        }
+        let p = BodyGoals.projection(BodyGoal(metric: "rhr", target: 55), days: trend)
+        XCTAssertEqual(p.perWeek ?? 0, -1.4, accuracy: 0.05)
+        XCTAssertNotNil(p.eta)
+        XCTAssertNil(BodyGoals.projection(BodyGoal(metric: "rhr", target: 70), days: trend).eta, "heading the wrong way")
+
+        XCTAssertEqual(ExerciseLibrary.all.count, 210)
+    }
 }
