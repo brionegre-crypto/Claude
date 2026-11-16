@@ -52,3 +52,35 @@ struct TimelineTip: Tip {
     var message: Text? { Text("Databases with a date can show as a timeline: each row is a bar across the days it covers.") }
     var image: Image? { Image(systemName: "chart.bar.xaxis") }
 }
+
+// MARK: - Tips inside a stack that take no room until they're showing
+
+/// `TipView` in a VStack takes a slot (and its spacing) even while the tip is hidden, then grows once TipKit decides,
+/// which made Today jump after the tab appeared. This adds the tip under a view only while it's actually available.
+private struct InlineTip<T: Tip>: ViewModifier {
+    let tip: T
+    @State private var show: Bool
+
+    init(tip: T) {
+        self.tip = tip
+        _show = State(initialValue: tip.shouldDisplay)
+    }
+
+    func body(content: Content) -> some View {
+        VStack(alignment: .leading, spacing: 0) {
+            content
+            if show { TipView(tip).padding(.top, DS.Space.l).transition(.opacity) }
+        }
+        .task {
+            for await status in tip.statusUpdates {
+                var available = false
+                if case .available = status { available = true }
+                if available != show { withAnimation(DS.spring) { show = available } }
+            }
+        }
+    }
+}
+
+extension View {
+    func inlineTip<T: Tip>(_ tip: T) -> some View { modifier(InlineTip(tip: tip)) }
+}

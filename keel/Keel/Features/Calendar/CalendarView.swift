@@ -394,6 +394,7 @@ struct TimelineGrid: View {
     var onMoveTask: (TaskItem, Date) -> Void
 
     @State private var allDayExpanded = false
+    @State private var scrolledFor: Date?
     private let cal = Calendar.current
     private var isDay: Bool { days.count == 1 }
     private var hourHeight: CGFloat { isDay ? 64 : 52 }
@@ -427,7 +428,17 @@ struct TimelineGrid: View {
                         .padding(.bottom, 80)        // room above the Focus bar
                     }
                     .contentMargins(.top, 10, for: .scrollContent)   // hour labels sit slightly above their line; don't clip the top one
-                    .onAppear { proxy.scrollTo(max(0, cal.component(.hour, from: Date()) - 1), anchor: .top) }
+                    // Jump to "now" once, and when you move to other days: never again on coming back to the tab,
+                    // which made the grid visibly snap from where you left it.
+                    .onAppear {
+                        guard scrolledFor != days.first else { return }
+                        scrolledFor = days.first
+                        proxy.scrollTo(max(0, cal.component(.hour, from: Date()) - 1), anchor: .top)
+                    }
+                    .onChange(of: days.first) { _, first in
+                        scrolledFor = first
+                        proxy.scrollTo(max(0, cal.component(.hour, from: Date()) - 1), anchor: .top)
+                    }
                 }
             }
         }

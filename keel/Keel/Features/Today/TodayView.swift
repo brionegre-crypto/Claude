@@ -49,8 +49,8 @@ struct TodayView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: DS.Space.l) {
                     greeting
-                    TipView(OpenWaterTip())                         // each tip shows once, at most one new tip a day
-                    TipView(CaptureTip())
+                        .inlineTip(OpenWaterTip())                  // each tip shows once, at most one new tip a day; takes no room until it shows
+                        .inlineTip(CaptureTip())
                     VoyageView()                                    // your day as a route: now, ports, open water, anchor
                     NextMeetingPeopleCard()                         // who you're meeting next, with Running late and Prep
                     Waterline(label: "Below the waterline · the rest of your day")
@@ -529,7 +529,8 @@ struct WeatherRow: View {
     @Environment(\.openURL) private var openURL
 
     var body: some View {
-        Group {
+        ZStack(alignment: .leading) {
+            Text(" ").font(DS.Font.caption).hidden()             // the line's room is kept, so the forecast arriving never pushes the page down
             if let w = weather.today {
                 HStack(spacing: 6) {
                     Image(systemName: w.symbol).symbolRenderingMode(.multicolor)

@@ -46,9 +46,8 @@ struct NotesView: View {
                             .listRowInsets(EdgeInsets(top: 4, leading: 20, bottom: 0, trailing: 20))
                             .listRowBackground(Color.clear)
                         quickActions
+                            .inlineTip(AskAITip())                      // shown once: how to write with AI; no empty row while hidden
                             .listRowInsets(EdgeInsets(top: 8, leading: 0, bottom: 8, trailing: 0))
-                            .listRowBackground(Color.clear)
-                        TipView(AskAITip())                             // shown once: how to write with AI
                             .listRowBackground(Color.clear)
                     }
                     if recent.count >= 2 {
