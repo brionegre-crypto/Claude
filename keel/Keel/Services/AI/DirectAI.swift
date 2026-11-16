@@ -61,26 +61,28 @@ enum DirectAI {
         case "meeting_notes": (8_192, "medium")
         case "reorganize_notes": (16_000, "medium")
         case "draft_reply", "break_down": (4_096, "medium")
+        case "meal_photo": (3_000, "medium")
         default: (1_024, "low")
         }
     }
 
     /// Returns the model's JSON output (matching `schema`) as Data.
-    static func json(task: String, system: String, user: String, schema: [String: Any],
+    /// `images` are JPEG photos sent along with the text (meal photos); every provider here can see them.
+    static func json(task: String, system: String, user: String, schema: [String: Any], images: [Data] = [],
                      provider p: AIProvider = DirectAI.provider, key: String? = nil, model: String? = nil) async throws -> Data {
         guard let apiKey = key ?? self.key(for: p) else { throw Failure.empty }
         let m = model ?? self.model(for: p)
         switch p {
         case .apple: throw Failure.empty
-        case .claude: return try await claude(task: task, system: system, user: user, schema: schema, key: apiKey, model: m)
-        case .openai: return try await openAI(system: system, user: user, schema: schema, key: apiKey, model: m)
-        case .gemini: return try await gemini(system: system, user: user, schema: schema, key: apiKey, model: m)
+        case .claude: return try await claude(task: task, system: system, user: user, schema: schema, images: images, key: apiKey, model: m)
+        case .openai: return try await openAI(system: system, user: user, schema: schema, images: images, key: apiKey, model: m)
+        case .gemini: return try await gemini(system: system, user: user, schema: schema, images: images, key: apiKey, model: m)
         }
     }
 
     // MARK: Claude (Messages API, structured outputs)
 
-    private static func claude(task: String, system: String, user: String, schema: [String: Any], key: String, model: String) async throws -> Data {
+    private static func claude(task: String, system: String, user: String, schema: [String: Any], images: [Data] = [], key: String, model: String) async throws -> Data {
         var req = URLRequest(url: URL(string: "https://api.anthropic.com/v1/messages")!)
         req.httpMethod = "POST"
         req.timeoutInterval = 120
@@ -95,7 +97,9 @@ enum DirectAI {
             "system": system,
             "fallbacks": "default",            // if a safety check declines, a suitable model answers instead
             "output_config": ["effort": b.effort, "format": ["type": "json_schema", "schema": schema]] as [String: Any],
-            "messages": [["role": "user", "content": user]],
+            "messages": [["role": "user", "content": images.isEmpty ? user as Any : (images.map { img -> [String: Any] in
+                ["type": "image", "source": ["type": "base64", "media_type": "image/jpeg", "data": img.base64EncodedString()]]
+            } + [["type": "text", "text": user]]) as Any]],
         ] as [String: Any])
         let obj = try await send(req)
         if obj["stop_reason"] as? String == "refusal" { throw Failure.refused }
@@ -106,7 +110,7 @@ enum DirectAI {
 
     // MARK: OpenAI (Chat Completions, JSON schema output)
 
-    private static func openAI(system: String, user: String, schema: [String: Any], key: String, model: String) async throws -> Data {
+    private static func openAI(system: String, user: String, schema: [String: Any], images: [Data] = [], key: String, model: String) async throws -> Data {
         var req = URLRequest(url: URL(string: "https://api.openai.com/v1/chat/completions")!)
         req.httpMethod = "POST"
         req.timeoutInterval = 120
@@ -114,7 +118,9 @@ enum DirectAI {
         req.setValue("Bearer \(key)", forHTTPHeaderField: "Authorization")
         req.httpBody = try JSONSerialization.data(withJSONObject: [
             "model": model,
-            "messages": [["role": "system", "content": system], ["role": "user", "content": user]],
+            "messages": [["role": "system", "content": system], ["role": "user", "content": images.isEmpty ? user as Any : (images.map { img -> [String: Any] in
+                ["type": "image_url", "image_url": ["url": "data:image/jpeg;base64," + img.base64EncodedString()]]
+            } + [["type": "text", "text": user]]) as Any]],
             "response_format": ["type": "json_schema", "json_schema": ["name": "keel_output", "strict": true, "schema": schema] as [String: Any]] as [String: Any],
         ] as [String: Any])
         let obj = try await send(req)
@@ -126,7 +132,7 @@ enum DirectAI {
 
     // MARK: Gemini (generateContent, JSON mode)
 
-    private static func gemini(system: String, user: String, schema: [String: Any], key: String, model: String) async throws -> Data {
+    private static func gemini(system: String, user: String, schema: [String: Any], images: [Data] = [], key: String, model: String) async throws -> Data {
         let path = model.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? model
         var req = URLRequest(url: URL(string: "https://generativelanguage.googleapis.com/v1beta/models/\(path):generateContent")!)
         req.httpMethod = "POST"
@@ -136,7 +142,8 @@ enum DirectAI {
         let schemaText = String(data: (try? JSONSerialization.data(withJSONObject: schema)) ?? Data(), encoding: .utf8) ?? "{}"
         req.httpBody = try JSONSerialization.data(withJSONObject: [
             "systemInstruction": ["parts": [["text": system]]],
-            "contents": [["role": "user", "parts": [["text": "\(user)\n\nReply with only a JSON object matching this JSON Schema:\n\(schemaText)"]]]],
+            "contents": [["role": "user", "parts": images.map { ["inline_data": ["mime_type": "image/jpeg", "data": $0.base64EncodedString()]] as [String: Any] }
+                + [["text": "\(user)\n\nReply with only a JSON object matching this JSON Schema:\n\(schemaText)"]]]],
             "generationConfig": ["responseMimeType": "application/json"],
         ] as [String: Any])
         let obj = try await send(req)

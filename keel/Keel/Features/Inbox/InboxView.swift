@@ -414,6 +414,7 @@ struct InboxView: View {
             }
         }
         .listStyle(.plain)
+        .premiumBackground(DS.Palette.meeting)
         .environment(\.accountTags, accountTags)
         .modifier(MailLayoutReader())
         .environment(\.editMode, .constant(selecting ? .active : .inactive))

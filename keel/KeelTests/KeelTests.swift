@@ -918,4 +918,44 @@ final class KeelTests: XCTestCase {
         XCTAssertTrue(sb.canEdit); XCTAssertTrue(sb.canManage)
         XCTAssertTrue(b.canEdit, "link boards: everyone edits")
     }
+
+    // MARK: Food logging: catalog, predictions, phrases, products
+
+    func testFoodCatalogSearchAndPhrases() {
+        XCTAssertGreaterThan(FoodCatalog.all.count, 180, "every catalog line parses")
+        XCTAssertEqual(Set(FoodCatalog.all.map(\.id)).count, FoodCatalog.all.count, "no duplicate foods")
+        XCTAssertTrue(FoodCatalog.all.allSatisfy { ($0.facts.calories ?? -1) >= 0 && !$0.emoji.isEmpty })
+
+        XCTAssertEqual(FoodCatalog.search("egg", in: FoodCatalog.all).first?.name, "Egg, large")
+        XCTAssertEqual(FoodCatalog.search("lat", in: FoodCatalog.all).first?.name, "Latte")
+        XCTAssertEqual(FoodCatalog.search("chipotle", in: FoodCatalog.all).first?.name, "Burrito bowl")
+        XCTAssertTrue(FoodCatalog.search("zzzz", in: FoodCatalog.all).isEmpty)
+        // Foods you eat often come first.
+        var mine = FoodCatalog.all.first { $0.name == "Avocado toast" }!
+        mine.source = .mine; mine.timesEaten = 6
+        XCTAssertEqual(FoodCatalog.search("to", in: [mine] + FoodCatalog.all).first?.name, "Avocado toast")
+
+        let parts = MealPhrase.parts("2 eggs, toast and a latte")
+        XCTAssertEqual(parts.map(\.servings), [2, 1, 1])
+        XCTAssertEqual(parts.map(\.text), ["eggs", "toast", "latte"])
+        let plate = MealPhrase.resolve("2 eggs, toast and a latte", pool: FoodCatalog.all)
+        XCTAssertEqual(plate.map(\.food.name), ["Egg, large", "Toast, whole wheat", "Latte"])
+        XCTAssertEqual(plate.first?.facts.calories ?? 0, 144, accuracy: 0.1)
+        XCTAssertEqual(MealPhrase.parts("half a bagel").first?.servings, 0.5)
+        XCTAssertTrue(MealPhrase.resolve("banana", pool: FoodCatalog.all).isEmpty, "one plain food is just a search")
+
+        XCTAssertEqual(FoodCatalog.match(label: "hamburger")?.name, "Hamburger")
+        XCTAssertEqual(FoodCatalog.match(label: "sushi")?.name, "Sushi roll")
+        XCTAssertEqual(FoodCatalog.emoji(for: "Banana"), "🍌")
+
+        let product: [String: Any] = ["code": "123", "product_name": "Skyr", "brands": "Siggi's, Other", "image_front_small_url": "https://img/x.jpg",
+                                      "nutriments": ["energy-kcal_100g": 59, "proteins_100g": "10.5", "sodium_100g": 0.04]]
+        let f = FoodWebSearch.food(from: product)
+        XCTAssertEqual(f?.facts.calories, 59)
+        XCTAssertEqual(f?.facts.protein, 10.5)
+        XCTAssertEqual(f?.facts.sodiumMg ?? 0, 40, accuracy: 0.01)
+        XCTAssertEqual(f?.serving, "100 g")
+        XCTAssertEqual(f?.brand, "Siggi's")
+        XCTAssertNil(FoodWebSearch.food(from: ["product_name": "No numbers"]))
+    }
 }

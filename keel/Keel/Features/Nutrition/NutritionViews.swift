@@ -208,9 +208,13 @@ struct NutritionView: View {
     var body: some View {
         List {
             Section {
-                HStack(spacing: 12) {
-                    NavigationLink { LazyView(FoodScanView()) } label: { BigAction(title: "Scan", icon: "barcode.viewfinder", color: DS.Palette.accent) }
-                    NavigationLink { LazyView(DescribeMealView()) } label: { BigAction(title: "Describe", icon: "text.bubble.fill", color: .orange) }
+                CalorieRingCard(eaten: healthTotals ?? totals, proteinGoal: NutritionGoals.protein(weightKg: weight))
+                    .listRowInsets(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
+                    .listRowBackground(Color.clear)
+                HStack(spacing: 10) {
+                    NavigationLink { LazyView(LogFoodView()) } label: { BigAction(title: "Log food", icon: "magnifyingglass", color: .green) }
+                    NavigationLink { LazyView(LogFoodView(startWithCamera: true)) } label: { BigAction(title: "Snap meal", icon: "camera.fill", color: .orange) }
+                    NavigationLink { LazyView(FoodScanView()) } label: { BigAction(title: "Barcode", icon: "barcode.viewfinder", color: DS.Palette.accent) }
                 }
                 .buttonStyle(.plain)
                 .listRowInsets(EdgeInsets(top: 8, leading: 0, bottom: 8, trailing: 0))
@@ -219,17 +223,9 @@ struct NutritionView: View {
 
             Section {
                 let shown = healthTotals ?? totals
-                let proteinGoal = NutritionGoals.protein(weightKg: weight)
-                GoalBar(title: "Protein", value: shown.protein ?? 0, goal: proteinGoal, unit: "g", color: DS.Palette.focus)
                 GoalBar(title: "Fiber", value: shown.fiber ?? 0, goal: NutritionGoals.fiber, unit: "g", color: DS.Palette.calm)
                 GoalBar(title: "Added sugar", value: totals.addedSugar ?? 0, goal: NutritionGoals.addedSugarCap, unit: "g", color: .orange, isCeiling: true)
-                HStack {
-                    Text("Calories").foregroundStyle(.secondary)
-                    Spacer()
-                    Text((shown.calories ?? 0).formatted(.number.precision(.fractionLength(0)))).monospacedDigit()
-                }
-                .font(DS.Font.caption)
-            } header: { Text("Today") } footer: {
+            } header: { Text("Fiber & sugar") } footer: {
                 Text(healthTotals != nil ? "Totals include food other apps saved to Apple Health." : "From what you've logged in Keel.")
             }
 
@@ -260,10 +256,23 @@ struct NutritionView: View {
                             Label("\(tally[v] ?? 0)", systemImage: "circle.fill").foregroundStyle(v.color).font(DS.Font.caption)
                         }
                     }
-                    ForEach(today) { e in EntryRow(e: e) }
-                        .onDelete { idx in idx.map { today[$0] }.forEach { NutritionLog.delete($0, ctx: ctx) } }
                 }
             } header: { Text("Eaten today") }
+            ForEach(["breakfast", "lunch", "dinner", "snack"], id: \.self) { m in
+                let items = today.filter { $0.meal == m }
+                if !items.isEmpty {
+                    Section {
+                        ForEach(items) { e in EntryRow(e: e) }
+                            .onDelete { idx in idx.map { items[$0] }.forEach { NutritionLog.delete($0, ctx: ctx) } }
+                    } header: {
+                        HStack {
+                            Text(m.capitalized)
+                            Spacer()
+                            Text("\(Int(items.reduce(0) { $0 + ($1.facts.calories ?? 0) })) kcal").monospacedDigit()
+                        }
+                    }
+                }
+            }
 
             Section {
                 NavigationLink { LazyView(FoodLibraryView()) } label: { Label("Your food library", systemImage: "books.vertical.fill") }
@@ -272,6 +281,7 @@ struct NutritionView: View {
             }
         }
         .navigationTitle("Food")
+        .premiumBackground(.green)
         .task {
             weight = await NutritionHealth.weightKg()
             healthTotals = await NutritionHealth.todayTotals()
@@ -285,12 +295,17 @@ private struct BigAction: View {
     let color: Color
     var body: some View {
         VStack(spacing: 10) {
-            Image(systemName: icon).font(.system(size: 28, weight: .semibold))
-            Text(title).font(DS.Font.headline)
+            Image(systemName: icon).font(.system(size: 24, weight: .semibold))
+            Text(title).font(.subheadline.weight(.semibold)).lineLimit(1).minimumScaleFactor(0.8)
         }
         .foregroundStyle(.white)
-        .frame(maxWidth: .infinity, minHeight: 96).padding(.vertical, 4)
-        .background(color.gradient, in: RoundedRectangle(cornerRadius: DS.Radius.card, style: .continuous))
+        .frame(maxWidth: .infinity, minHeight: 84).padding(.vertical, 2)
+        .background {
+            let shape = RoundedRectangle(cornerRadius: DS.Radius.card, style: .continuous)
+            shape.fill(LinearGradient(colors: [color.mix(with: .white, by: 0.12), color, color.mix(with: .black, by: 0.18)], startPoint: .topLeading, endPoint: .bottomTrailing))
+                .overlay { shape.strokeBorder(Color.white.opacity(0.22), lineWidth: 0.75) }
+                .shadow(color: color.opacity(0.35), radius: 10, y: 5)
+        }
     }
 }
 
@@ -319,8 +334,11 @@ private struct GoalBar: View {
 private struct EntryRow: View {
     let e: FoodEntry
     var body: some View {
-        HStack {
-            Circle().fill(e.verdict.color).frame(width: 9, height: 9)
+        HStack(spacing: 10) {
+            let pic = MyFoods.picture(for: e.name)
+            FoodThumb(food: CatalogFood(id: e.name, emoji: pic.flatMap { $0.hasPrefix("http") ? nil : $0 } ?? FoodCatalog.emoji(for: e.name), name: e.name,
+                                        serving: "", facts: e.facts, imageURL: pic.flatMap { $0.hasPrefix("http") ? $0 : nil }), size: 36)
+                .overlay(alignment: .bottomTrailing) { Circle().fill(e.verdict.color).frame(width: 9, height: 9).overlay(Circle().stroke(.background, lineWidth: 1.5)) }
             VStack(alignment: .leading, spacing: 1) {
                 Text(e.name).lineLimit(1)
                 Text([e.meal.capitalized, e.date.formatted(date: .omitted, time: .shortened),
@@ -417,6 +435,7 @@ struct NutritionSettingsView: View {
     @AppStorage(NutritionGoals.proteinKey) private var protein = 0.0
     @AppStorage(NutritionGoals.fiberKey) private var fiber = 0.0
     @AppStorage(NutritionGoals.sugarKey) private var sugar = 0.0
+    @AppStorage(NutritionGoals.caloriesKey) private var calories = 0.0
 
     var body: some View {
         Form {
@@ -428,11 +447,12 @@ struct NutritionSettingsView: View {
                 Text("Meals you log are saved to Health with calories, protein, carbs, fat, fiber, sugar, sodium and caffeine. Keel also reads food other apps saved, and your weight for a protein goal. Deleting a meal in Keel removes it from Health.")
             }
             Section {
+                Stepper("Calories: \(Int(NutritionGoals.calories))", value: Binding(get: { NutritionGoals.calories }, set: { calories = $0 }), in: 1200...5000, step: 50)
                 Stepper("Protein: \(protein > 0 ? "\(Int(protein)) g" : "automatic")", value: $protein, in: 0...300, step: 5)
                 Stepper("Fiber: \(Int(NutritionGoals.fiber)) g", value: Binding(get: { NutritionGoals.fiber }, set: { fiber = $0 }), in: 10...60, step: 5)
                 Stepper("Added sugar max: \(Int(NutritionGoals.addedSugarCap)) g", value: Binding(get: { NutritionGoals.addedSugarCap }, set: { sugar = $0 }), in: 0...50, step: 5)
             } header: { Text("Daily goals") } footer: {
-                Text("Automatic protein is about 1.6 g per kg of your weight from Health, or 120 g without it.")
+                Text("Carbs and fat targets follow your calories (about 45% and 30%). Automatic protein is about 1.6 g per kg of your weight from Health, or 120 g without it.")
             }
             Section {
                 Text("🟢 Fits your plan. 🟡 Fine sometimes, or check the label (natural flavors, honey, erythritol, gelatin, seed oils, high caffeine). 🔴 Skip: soy in any form, artificial dyes, artificial sweeteners, sorbitol or maltitol, pork or shellfish [Lev 11], refined sugar in the first five ingredients, or more than 10 g added sugar.")
@@ -440,5 +460,62 @@ struct NutritionSettingsView: View {
             } header: { Text("How Keel decides") }
         }
         .navigationTitle("Health & Nutrition")
+    }
+}
+
+// MARK: - Calories today, with protein, carbs and fat
+
+struct CalorieRingCard: View {
+    let eaten: NutritionFacts
+    let proteinGoal: Double
+    @AppStorage(NutritionGoals.caloriesKey) private var goalSaved = 0.0
+
+    var body: some View {
+        let goal = NutritionGoals.calories
+        let kcal = eaten.calories ?? 0
+        let left = goal - kcal
+        HStack(spacing: 18) {
+            ZStack {
+                Circle().stroke(Color.green.opacity(0.15), lineWidth: 12)
+                Circle().trim(from: 0, to: min(1, kcal / max(goal, 1)))
+                    .stroke(AngularGradient(colors: kcal > goal ? [.orange, .red] : [.mint, .green, .mint], center: .center),
+                            style: StrokeStyle(lineWidth: 12, lineCap: .round))
+                    .rotationEffect(.degrees(-90))
+                    .shadow(color: (kcal > goal ? Color.orange : .green).opacity(0.45), radius: 8)
+                VStack(spacing: 0) {
+                    Text("\(Int(abs(left).rounded()))").font(.title2.weight(.bold)).monospacedDigit().contentTransition(.numericText())
+                    Text(left >= 0 ? "left" : "over").font(.caption2).foregroundStyle(DS.Palette.inkSoft)
+                }
+            }
+            .frame(width: 104, height: 104)
+            .animation(DS.spring, value: kcal)
+            VStack(alignment: .leading, spacing: 10) {
+                bar("Protein", eaten.protein ?? 0, proteinGoal, DS.Palette.focus)
+                bar("Carbs", eaten.carbs ?? 0, NutritionGoals.carbs, .orange)
+                bar("Fat", eaten.fat ?? 0, NutritionGoals.fat, .pink)
+            }
+        }
+        .padding(16)
+        .frame(maxWidth: .infinity)
+        .background { PremiumSurface(tint: .green) }
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("\(Int(kcal)) of \(Int(goal)) calories today")
+    }
+
+    private func bar(_ title: String, _ v: Double, _ goal: Double, _ c: Color) -> some View {
+        VStack(alignment: .leading, spacing: 4) {
+            HStack {
+                Text(title).font(.caption.weight(.semibold))
+                Spacer()
+                Text("\(Int(v.rounded())) / \(Int(goal)) g").font(.caption2).monospacedDigit().foregroundStyle(DS.Palette.inkSoft)
+            }
+            GeometryReader { g in
+                ZStack(alignment: .leading) {
+                    Capsule().fill(c.opacity(0.15))
+                    Capsule().fill(c.gradient).frame(width: g.size.width * min(1, v / max(goal, 1)))
+                }
+            }
+            .frame(height: 6)
+        }
     }
 }

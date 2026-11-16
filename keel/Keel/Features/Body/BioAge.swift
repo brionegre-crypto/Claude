@@ -4,7 +4,7 @@ import HealthKit
 
 // MARK: - Biological age: how old your body acts, from fitness, heart, sleep, activity, weight, blood pressure and lab results
 
-struct BioFactor: Identifiable, Hashable {
+struct BioFactor: Identifiable, Hashable, Codable {
     let id: String
     let name: String
     let value: String
@@ -12,14 +12,14 @@ struct BioFactor: Identifiable, Hashable {
     let tip: String
 }
 
-struct BioAgeResult: Hashable {
+struct BioAgeResult: Hashable, Codable {
     let age: Double             // your real age
     let bioAge: Double
     let factors: [BioFactor]
     let confidence: Int         // 0–100: how much data went in
 }
 
-struct BioAgeInputs {
+struct BioAgeInputs: Codable {
     var age: Double
     var female = false
     var vo2: Double?
@@ -108,8 +108,39 @@ enum BioAge {
         return "\(c.yearForWeekOfYear ?? 0)-W\(c.weekOfYear ?? 0)"
     }
 
+    // The last answer, kept on this device so the card and page show it instantly; a fresh one is worked out
+    // quietly behind it, at most every 20 minutes.
+    private struct Cache: Codable { var at: Date; var result: BioAgeResult; var inputs: BioAgeInputs }
+    private static let cacheKey = "body.bioage.cache"
+    @MainActor private static var memo: Cache? = {
+        UserDefaults.standard.data(forKey: cacheKey).flatMap { try? JSONDecoder().decode(Cache.self, from: $0) }
+    }()
+    @MainActor private static var inFlight: Task<BioAgeResult?, Never>?
+
+    /// The last result, straight away (no Apple Health reads).
+    @MainActor static var cached: BioAgeResult? {
+        if lastInputs == nil { lastInputs = memo?.inputs }
+        return memo?.result
+    }
+
+    /// The cached answer when it's recent, otherwise a fresh one. Callers at the same moment share one read.
+    @MainActor static func current(force: Bool = false) async -> BioAgeResult? {
+        if !force, let m = memo, Date().timeIntervalSince(m.at) < 20 * 60 { lastInputs = lastInputs ?? m.inputs; return m.result }
+        if let t = inFlight { return await t.value }
+        let t = Task { @MainActor in await compute() }
+        inFlight = t
+        let r = await t.value
+        inFlight = nil
+        if let r, let x = lastInputs {
+            memo = Cache(at: Date(), result: r, inputs: x)
+            if let d = try? JSONEncoder().encode(memo) { UserDefaults.standard.set(d, forKey: cacheKey) }
+        }
+        return r ?? memo?.result
+    }
+
     /// Gathers everything from Apple Health, Keel's 30-day body history and your lab results.
-    @MainActor static func current() async -> BioAgeResult? {
+    /// The Apple Health reads run side by side, and only the few samples the estimate needs are fetched.
+    @MainActor private static func compute() async -> BioAgeResult? {
         guard BodyHealth.available else { return nil }
         try? await BodyHealth.store.requestAuthorization(toShare: [], read: [HKCharacteristicType(.biologicalSex), HKCharacteristicType(.dateOfBirth)])
         guard let dob = try? BodyHealth.store.dateOfBirthComponents(), let birth = Calendar.current.date(from: dob) else { return nil }
@@ -122,10 +153,12 @@ enum BioAge {
         x.rhr = avg(days.compactMap(\.rhr))
         x.hrv = avg(days.compactMap(\.hrv))
         x.sleepHours = avg(days.filter(\.hasSleep).map { $0.asleep / 60 })
-        let extra = await HealthExtras.ageInputs()
+        async let extraQ = HealthExtras.ageInputs()
+        async let weightQ = HealthExtras.latestWeightKg()
+        let extra = await extraQ
+        let weight = await weightQ
         x.steps = extra.steps
         x.systolic = extra.systolic
-        let weight = await HealthExtras.load().weight.last?.1
         if let w = weight, let h = extra.heightM, h > 1 { x.bmi = w / (h * h) }
         let labs = Biomarkers.latest()
         x.a1c = labs["a1c"]?.value
@@ -142,8 +175,8 @@ enum BioAge {
 }
 
 struct BioAgeCard: View {
-    @State private var result: BioAgeResult?
-    @State private var loaded = false
+    @State private var result: BioAgeResult? = BioAge.cached
+    @State private var loaded = BioAge.cached != nil
 
     var body: some View {
         NavigationLink { LazyView(BioAgeView()) } label: {
@@ -174,8 +207,8 @@ struct BioAgeCard: View {
 }
 
 struct BioAgeView: View {
-    @State private var result: BioAgeResult?
-    @State private var loaded = false
+    @State private var result: BioAgeResult? = BioAge.cached
+    @State private var loaded = BioAge.cached != nil
 
     var body: some View {
         List {
@@ -239,6 +272,7 @@ struct BioAgeView: View {
             Section { Text("An estimate for everyday wellbeing, not a medical test.").font(.caption).foregroundStyle(DS.Palette.inkSoft) }
         }
         .navigationTitle("Biological age")
+        .refreshable { result = await BioAge.current(force: true) }
         .task { result = await BioAge.current(); loaded = true }
     }
 }

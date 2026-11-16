@@ -410,6 +410,6 @@ extension View {
     func bodyCard() -> some View {
         padding(DS.Space.m)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .background(DS.Palette.elevated, in: .rect(cornerRadius: DS.Radius.card, style: .continuous))
+            .background { PremiumSurface() }
     }
 }

@@ -129,6 +129,7 @@ struct NotesView: View {
                 }
             }
             .listStyle(.insetGrouped)
+            .premiumBackground(DS.Palette.focus)
             .searchable(text: $search, prompt: "Search titles and text")
             .navigationDestination(item: $opened) { n in NoteOrCanvas(note: n).navigationTransition(.zoom(sourceID: "n" + n.id.uuidString, in: zoom)) }   // the card grows into the page
             .alert("New folder", isPresented: Binding(get: { newFolderFor != nil }, set: { if !$0 { newFolderFor = nil } })) {

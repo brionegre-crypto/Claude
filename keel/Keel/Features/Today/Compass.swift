@@ -432,7 +432,7 @@ enum HubCatalog {
             t("drinks", "Caffeine & water", "cup.and.saucer.fill", "coffee tea water hydration caffeine cutoff drink") { ScrollView { DrinksCard().padding() }.navigationTitle("Caffeine & water") },
             t("scanFood", "Scan food", "barcode.viewfinder", "barcode scan grocery diet allowed can i eat label ingredients") { FoodScanView() },
             t("food", "Food today", "fork.knife.circle.fill", "nutrition protein fiber sugar meals log calories health brain food fish") { NutritionView() },
-            t("describeMeal", "Log a meal", "text.bubble.fill", "ate lunch dinner breakfast describe meal") { DescribeMealView() },
+            t("describeMeal", "Log a meal", "fork.knife", "ate lunch dinner breakfast describe meal food search calories photo snap") { LogFoodView() },
             t("foodLibrary", "Food library", "books.vertical.fill", "scanned products saved history") { FoodLibraryView() },
             t("dietGuide", "Diet guide", "book.closed.fill", "approved avoid swap alternative brands adhd diet") { DietGuideView() },
         ]),

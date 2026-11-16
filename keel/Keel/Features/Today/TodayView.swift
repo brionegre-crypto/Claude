@@ -66,7 +66,7 @@ struct TodayView: View {
                 }
                 .padding(DS.Space.m)
             }
-            .background(DS.Palette.canvas)
+            .premiumBackground(DS.Palette.accent)
             .scrollEdgeEffectStyle(.hard, for: .top)          // content no longer smears under the top buttons
             .refreshable { await SyncEngine.shared.syncAll() }
             .task {

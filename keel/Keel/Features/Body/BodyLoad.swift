@@ -208,7 +208,7 @@ struct CardioChartsView: View {
             }
             .padding(DS.Space.m)
         }
-        .background(DS.Palette.canvas)
+        .premiumBackground(BodyStyle.swell)
         .navigationTitle("Cardio")
         .task {
             hrr = await HealthExtras.heartRateRecovery(days: 120)
@@ -239,15 +239,25 @@ extension HealthExtras {
         let start = Calendar.current.startOfDay(for: Date().addingTimeInterval(-Double(days) * 86_400))
         let p = HKQuery.predicateForSamples(withStart: start, end: Date())
         let stepsQ = HKStatisticsQueryDescriptor(predicate: .quantitySample(type: HKQuantityType(.stepCount), predicate: p), options: .cumulativeSum)
-        let total = (try? await stepsQ.result(for: BodyHealth.store))?.sumQuantity()?.doubleValue(for: .count())
-        func latest(_ id: HKQuantityTypeIdentifier, _ unit: HKUnit) async -> Double? {
-            let q = HKSampleQueryDescriptor(predicates: [.quantitySample(type: HKQuantityType(id))], sortDescriptors: [SortDescriptor(\.startDate, order: .reverse)], limit: 1)
-            return (try? await q.result(for: BodyHealth.store))?.first?.quantity.doubleValue(for: unit)
-        }
-        let height = await latest(.height, .meter())
-        var sys = await latest(.bloodPressureSystolic, .millimeterOfMercury())
+        async let totalQ = (try? await stepsQ.result(for: BodyHealth.store))?.sumQuantity()?.doubleValue(for: .count())
+        async let heightQ = latestValue(.height, .meter())
+        async let sysQ = latestValue(.bloodPressureSystolic, .millimeterOfMercury())
+        let total = await totalQ
+        let height = await heightQ
+        var sys = await sysQ
         if sys == nil, let manual = BloodPressure.all.last { sys = Double(manual.systolic) }
         return (total.map { $0 / Double(days) }, height, sys)
+    }
+
+    /// The most recent sample of one measurement (a single-row read).
+    static func latestValue(_ id: HKQuantityTypeIdentifier, _ unit: HKUnit) async -> Double? {
+        let q = HKSampleQueryDescriptor(predicates: [.quantitySample(type: HKQuantityType(id))], sortDescriptors: [SortDescriptor(\.startDate, order: .reverse)], limit: 1)
+        return (try? await q.result(for: BodyHealth.store))?.first?.quantity.doubleValue(for: unit)
+    }
+
+    static func latestWeightKg() async -> Double? {
+        guard BodyHealth.available else { return nil }
+        return await latestValue(.bodyMass, .gramUnit(with: .kilo))
     }
 }
 

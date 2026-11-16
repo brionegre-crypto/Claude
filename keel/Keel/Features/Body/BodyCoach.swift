@@ -55,7 +55,7 @@ struct NutritionScoreCard: View {
                     .font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
             }
             HStack {
-                NavigationLink { LazyView(DescribeMealView()) } label: { Label("Log a meal", systemImage: "camera.fill") }
+                NavigationLink { LazyView(LogFoodView()) } label: { Label("Log a meal", systemImage: "fork.knife") }
                 NavigationLink { LazyView(NutritionView()) } label: { Label("Food today", systemImage: "fork.knife") }
             }
             .font(.caption).buttonStyle(.bordered)

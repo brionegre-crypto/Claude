@@ -101,6 +101,11 @@ enum NutritionGoals {
     }
     static var fiber: Double { let v = UserDefaults.standard.double(forKey: fiberKey); return v > 0 ? v : 30 }
     static var addedSugarCap: Double { let v = UserDefaults.standard.double(forKey: sugarKey); return v > 0 ? v : 15 }
+    static let caloriesKey = "nutrition.goal.calories"
+    static var calories: Double { let v = UserDefaults.standard.double(forKey: caloriesKey); return v > 0 ? v : 2200 }
+    /// Carbs and fat follow the calorie goal: about 45% and 30% of it.
+    static var carbs: Double { (calories * 0.45 / 4 / 5).rounded() * 5 }
+    static var fat: Double { (calories * 0.30 / 9 / 5).rounded() * 5 }
 }
 
 extension NutritionFacts {

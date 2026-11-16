@@ -558,7 +558,7 @@ struct BodyMetricDetailView: View {
             }
             .padding(DS.Space.m)
         }
-        .background(DS.Palette.canvas)
+        .premiumBackground(BodyStyle.tide)
         .navigationTitle(metric.name)
         .navigationBarTitleDisplayMode(.inline)
         .sensoryFeedback(.selection, trigger: picked)

@@ -101,7 +101,7 @@ struct HealthTilesSection: View {
             Tile(id: "bp", title: "Blood pressure", icon: "heart.text.square.fill", color: .red, dest: { AnyView(BloodPressureView()) }),
             Tile(id: "weight", title: "Weight", icon: "scalemass.fill", color: .blue, dest: { AnyView(WeightView(x: extras)) }),
             Tile(id: "food", title: "Food today", icon: "fork.knife.circle.fill", color: .green, dest: { AnyView(NutritionView()) }),
-            Tile(id: "meal", title: "Log a meal", icon: "text.bubble.fill", color: .green, dest: { AnyView(DescribeMealView()) }),
+            Tile(id: "meal", title: "Log a meal", icon: "fork.knife", color: .green, dest: { AnyView(LogFoodView()) }),
             Tile(id: "scan", title: "Scan food", icon: "barcode.viewfinder", color: .green, dest: { AnyView(FoodScanView()) }),
             Tile(id: "library", title: "Food library", icon: "books.vertical.fill", color: .green, dest: { AnyView(FoodLibraryView()) }),
             Tile(id: "diet", title: "Diet guide", icon: "book.closed.fill", color: .green, dest: { AnyView(DietGuideView()) }),

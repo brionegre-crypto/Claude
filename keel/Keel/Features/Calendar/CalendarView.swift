@@ -94,7 +94,7 @@ struct CalendarView: View {
                     }
                 }
             }
-            .background(DS.Palette.canvas)
+            .premiumBackground(DS.Palette.meeting)
             .navigationTitle(title)
             .keelSettingsButton()
             .navigationBarTitleDisplayMode(.inline)

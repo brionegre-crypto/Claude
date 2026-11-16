@@ -346,6 +346,7 @@ struct TasksView: View {
             }
         }
         .listStyle(.insetGrouped)
+        .premiumBackground(DS.Palette.warmth)
         .environment(\.editMode, .constant(selecting ? .active : .inactive))
         .safeAreaInset(edge: .bottom) { if selecting { taskBulkBar } }
     }

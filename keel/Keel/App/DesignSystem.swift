@@ -82,13 +82,57 @@ struct GlassCard<Content: View>: View {
         content
             .padding(DS.Space.m)
             .frame(maxWidth: .infinity, alignment: .leading)
+            .background { PremiumSurface(tint: tint) }
+    }
+}
+
+/// Keel's card surface: lit softly from above, a hairline highlight on the top edge, a tint wash when the card
+/// has a color, and a gentle lift off the page. All solid shapes, so it stays fast while scrolling.
+struct PremiumSurface: View {
+    var tint: Color? = nil
+    var radius: CGFloat = DS.Radius.card
+    @Environment(\.colorScheme) private var scheme
+
+    var body: some View {
+        let shape = RoundedRectangle(cornerRadius: radius, style: .continuous)
+        let dark = scheme == .dark
+        shape.fill(LinearGradient(colors: [DS.Palette.elevated.mix(with: .white, by: dark ? 0.05 : 0.6), DS.Palette.elevated],
+                                  startPoint: .top, endPoint: .bottom))
+            .overlay {
+                if let tint {
+                    shape.fill(LinearGradient(colors: [tint.opacity(dark ? 0.24 : 0.16), tint.opacity(0.03)], startPoint: .topLeading, endPoint: .bottomTrailing))
+                }
+            }
+            .overlay {
+                shape.strokeBorder(LinearGradient(colors: [Color.white.opacity(dark ? 0.16 : 0.9), Color.primary.opacity(dark ? 0.03 : 0.06)],
+                                                  startPoint: .top, endPoint: .bottom), lineWidth: 0.75)
+            }
+            .shadow(color: .black.opacity(dark ? 0.35 : 0.08), radius: dark ? 12 : 10, y: dark ? 6 : 4)
+    }
+}
+
+/// A page background with depth: the theme's canvas with a soft glow of the screen's color from the top.
+/// Lists drop their flat gray so the glow shows through.
+struct PremiumBackdrop: ViewModifier {
+    let tint: Color
+    func body(content: Content) -> some View {
+        content
+            .scrollContentBackground(.hidden)
             .background {
-                let shape = RoundedRectangle(cornerRadius: DS.Radius.card, style: .continuous)
-                shape.fill(DS.Palette.elevated)
-                    .overlay { if let tint { shape.fill(tint.opacity(0.10)) } }
-                    .overlay { shape.strokeBorder(Color.primary.opacity(0.06), lineWidth: 0.5) }
+                ZStack {
+                    DS.Palette.canvas
+                    EllipticalGradient(colors: [tint.opacity(0.30), tint.opacity(0.10), .clear], center: .top,
+                                       startRadiusFraction: 0, endRadiusFraction: 0.85)
+                        .frame(maxHeight: 560)
+                        .frame(maxHeight: .infinity, alignment: .top)
+                }
+                .ignoresSafeArea()
             }
     }
+}
+
+extension View {
+    func premiumBackground(_ tint: Color = DS.Palette.accent) -> some View { modifier(PremiumBackdrop(tint: tint)) }
 }
 
 struct Chip: View {

@@ -135,7 +135,7 @@ struct BodyView: View {
             .padding(.bottom, DS.Space.l)
             .animation(.smooth(duration: 0.28), value: pageRaw)
         }
-        .background(DS.Palette.canvas)
+        .premiumBackground(BodyStyle.tide)
         .navigationTitle("Body")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar { ToolbarItem(placement: .topBarTrailing) { logMenu } }

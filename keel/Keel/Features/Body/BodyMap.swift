@@ -163,7 +163,7 @@ struct BodyMapView: View {
             }
             .padding(DS.Space.m)
         }
-        .background(DS.Palette.canvas)
+        .premiumBackground(BodyStyle.swell)
         .navigationTitle("Body map")
         .sheet(item: $picked) { r in RegionSheet(region: r, load: load[r.id] ?? 0, days: engine.days) { spots = BodyMapData.spots } }
     }
