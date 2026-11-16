@@ -37,7 +37,9 @@ struct BodyPageBar: View {
                             .foregroundStyle(page == p ? Color.white : DS.Palette.ink)
                             .background {
                                 if page == p {
-                                    Capsule().fill(BodyStyle.tide.gradient).matchedGeometryEffect(id: "pill", in: pill)
+                                    Capsule().fill(LinearGradient(colors: [BodyStyle.tide.mix(with: .white, by: 0.15), BodyStyle.anchor], startPoint: .leading, endPoint: .trailing))
+                                        .shadow(color: BodyStyle.tide.opacity(0.4), radius: 6, y: 2)
+                                        .matchedGeometryEffect(id: "pill", in: pill)
                                 }
                             }
                             .contentShape(Capsule())
@@ -294,13 +296,17 @@ struct BodyMetricTile: View {
                 Text(metric.short).font(.caption2.weight(.semibold)).foregroundStyle(DS.Palette.inkSoft).lineLimit(1)
                 Spacer(minLength: 0)
             }
-            Text(v.map(metric.format) ?? "–").font(.system(.title3, design: .rounded, weight: .bold)).monospacedDigit()
-                .lineLimit(1).minimumScaleFactor(0.7)
+            Text(v.map(metric.format) ?? "–").font(.system(.title2, design: .rounded, weight: .bold)).monospacedDigit()
+                .lineLimit(1).minimumScaleFactor(0.6)
             BodyDeltaBadge(metric: metric, value: v, base: base)
             if spark.count >= 3 {
                 Chart(spark) { p in
+                    AreaMark(x: .value("Day", p.day), y: .value("Value", p.v))
+                        .foregroundStyle(LinearGradient(colors: [metric.color.opacity(0.35), metric.color.opacity(0)], startPoint: .top, endPoint: .bottom))
+                        .interpolationMethod(.catmullRom)
                     LineMark(x: .value("Day", p.day), y: .value("Value", p.v))
                         .foregroundStyle(metric.color.gradient).interpolationMethod(.catmullRom)
+                        .lineStyle(StrokeStyle(lineWidth: 2, lineCap: .round))
                 }
                 .chartXAxis(.hidden).chartYAxis(.hidden)
                 .chartYScale(domain: .automatic(includesZero: false))
@@ -312,7 +318,7 @@ struct BodyMetricTile: View {
         }
         .padding(12)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(DS.Palette.elevated, in: .rect(cornerRadius: 18, style: .continuous))
+        .background { PremiumSurface(tint: metric.color, radius: 18) }
         .accessibilityElement(children: .combine)
     }
 }
@@ -368,8 +374,12 @@ struct BodyHeroCard: View {
             LinearGradient(colors: [BodyStyle.anchor.opacity(0.95), BodyStyle.tide.opacity(0.9), BodyDash.tideColor(day?.tide).opacity(0.75)],
                            startPoint: .topLeading, endPoint: .bottomTrailing)
         }
+        .overlay {                                              // a soft sheen from the top, like light on water
+            LinearGradient(colors: [.white.opacity(0.18), .clear], startPoint: .top, endPoint: .center).allowsHitTesting(false)
+        }
         .clipShape(.rect(cornerRadius: DS.Radius.card, style: .continuous))
-        .shadow(color: BodyStyle.tide.opacity(0.25), radius: 16, y: 8)
+        .overlay { RoundedRectangle(cornerRadius: DS.Radius.card, style: .continuous).strokeBorder(.white.opacity(0.22), lineWidth: 0.75) }
+        .shadow(color: BodyStyle.tide.opacity(0.35), radius: 20, y: 10)
     }
 
     private func ring(_ m: BodyMetric, _ v: Int?, suffix: String) -> some View {
@@ -378,8 +388,10 @@ struct BodyHeroCard: View {
                 ZStack {
                     Circle().stroke(.white.opacity(0.22), lineWidth: 9)
                     Circle().trim(from: 0, to: CGFloat(min(1, Double(v ?? 0) / 100)))
-                        .stroke(.white, style: StrokeStyle(lineWidth: 9, lineCap: .round))
+                        .stroke(AngularGradient(colors: [.white.opacity(0.75), .white], center: .center),
+                                style: StrokeStyle(lineWidth: 9, lineCap: .round))
                         .rotationEffect(.degrees(-90))
+                        .shadow(color: .white.opacity(0.55), radius: 6)
                         .animation(.smooth(duration: 0.6), value: v)
                     Text(v.map { "\($0)\(suffix)" } ?? "–").font(.system(size: 22, weight: .bold, design: .rounded)).monospacedDigit()
                         .foregroundStyle(.white).contentTransition(.numericText())
@@ -571,7 +583,7 @@ struct BodyMetricDetailView: View {
         }
         .padding(12)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(DS.Palette.elevated, in: .rect(cornerRadius: 16, style: .continuous))
+        .background { PremiumSurface(radius: 16) }
     }
 }
 

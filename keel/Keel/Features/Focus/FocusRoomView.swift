@@ -187,7 +187,7 @@ struct FocusRoomView: View {
             if drifted {
                 Text("Just do this next: \(restartStep)")
                     .font(DS.Font.body).multilineTextAlignment(.center)
-                    .padding().background(DS.Palette.elevated, in: .rect(cornerRadius: DS.Radius.card))
+                    .padding().background { PremiumSurface() }
                 Button("OK, I'm back") { backOnTrack() }.buttonStyle(.borderedProminent).tint(companion.color)
             } else {
                 HStack {

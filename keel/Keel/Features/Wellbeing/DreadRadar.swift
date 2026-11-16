@@ -364,7 +364,7 @@ struct DreadFixView: View {
             primaryFix
             if let output {
                 Text(output).font(DS.Font.body).padding(DS.Space.m).frame(maxWidth: .infinity, alignment: .leading)
-                    .background(DS.Palette.elevated, in: .rect(cornerRadius: DS.Radius.card))
+                    .background { PremiumSurface() }
                     .textSelection(.enabled)
             }
             if working { ProgressView().frame(maxWidth: .infinity) }

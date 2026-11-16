@@ -46,7 +46,7 @@ struct JournalEntryView: View {
                             .focused($writing)
                             .frame(minHeight: 140)
                             .scrollContentBackground(.hidden).padding(8)
-                            .background(DS.Palette.elevated, in: .rect(cornerRadius: DS.Radius.card))
+                            .background { PremiumSurface() }
                             .overlay(alignment: .topLeading) {
                                 if text.isEmpty {
                                     Text("A sentence or two is plenty. Tap the mic on the keyboard to talk instead.")
@@ -74,7 +74,7 @@ struct JournalEntryView: View {
                             Label(log, systemImage: "list.bullet.rectangle").font(DS.Font.caption)
                         }
                         .padding(DS.Space.m).frame(maxWidth: .infinity, alignment: .leading)
-                        .background(DS.Palette.elevated, in: .rect(cornerRadius: DS.Radius.card))
+                        .background { PremiumSurface() }
                     }
                 }
                 .padding()

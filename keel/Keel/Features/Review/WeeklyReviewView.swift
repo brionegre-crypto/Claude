@@ -131,7 +131,7 @@ struct WeeklyReviewView: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(DS.Space.m)
-        .background(DS.Palette.elevated, in: .rect(cornerRadius: DS.Radius.card))
+        .background { PremiumSurface() }
     }
 
     private func hours(_ minutes: Int) -> String { minutes >= 60 ? "\(minutes / 60)h \(minutes % 60)m" : "\(minutes)m" }
@@ -341,7 +341,7 @@ struct FocusStatsStrip: View {
         }
         .frame(maxWidth: .infinity)
         .padding(DS.Space.m)
-        .background(DS.Palette.elevated, in: .rect(cornerRadius: DS.Radius.card))
+        .background { PremiumSurface() }
     }
 
     private func streakDays(_ cal: Calendar) -> Int {

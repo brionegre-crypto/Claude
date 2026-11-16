@@ -99,7 +99,7 @@ struct KitStat: View {
         }
         .padding(12)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(DS.Palette.elevated, in: .rect(cornerRadius: 16, style: .continuous))
+        .background { PremiumSurface(radius: 16) }
         .accessibilityElement(children: .combine)
     }
 }

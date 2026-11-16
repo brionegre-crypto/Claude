@@ -350,7 +350,7 @@ struct VoiceNoteView: View {
                         .font(DS.Font.body).foregroundStyle(rec.transcript.isEmpty ? DS.Palette.inkSoft : DS.Palette.ink)
                         .frame(maxWidth: .infinity, alignment: .leading).padding()
                 }
-                .background(DS.Palette.elevated, in: .rect(cornerRadius: DS.Radius.card))
+                .background { PremiumSurface() }
                 if let e = rec.error { Text(e).font(.caption).foregroundStyle(.red) }
                 Button {
                     if rec.recording { rec.stop() } else { Task { await rec.start() } }

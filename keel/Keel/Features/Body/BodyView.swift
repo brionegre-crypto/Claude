@@ -79,7 +79,7 @@ struct BodyTodayCard: View {
                 }
             }
             .padding(DS.Space.m)
-            .background(DS.Palette.elevated, in: .rect(cornerRadius: DS.Radius.card, style: .continuous))
+            .background { PremiumSurface() }
         }
         .buttonStyle(.plain)
         .task { await engine.refresh() }
@@ -316,7 +316,7 @@ struct BodyView: View {
             Image(systemName: "chevron.right").font(.caption2).foregroundStyle(DS.Palette.inkSoft)
         }
         .padding(14)
-        .background(DS.Palette.elevated, in: .rect(cornerRadius: 16, style: .continuous))
+        .background { PremiumSurface(radius: 16) }
     }
 
     /// The day you're looking at: today unless you picked an earlier day in the strip.
@@ -333,7 +333,7 @@ struct BodyView: View {
         }
         .padding(DS.Space.m)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(DS.Palette.elevated, in: .rect(cornerRadius: DS.Radius.card, style: .continuous))
+        .background { PremiumSurface() }
     }
 
     /// Connected, but Health is giving Keel nothing: usually permissions were left off.
@@ -596,7 +596,7 @@ struct BodyView: View {
             .font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft).padding(.top, 6)
         }
         .padding(DS.Space.m)
-        .background(DS.Palette.elevated, in: .rect(cornerRadius: DS.Radius.card, style: .continuous))
+        .background { PremiumSurface() }
     }
 
     // MARK: Charts

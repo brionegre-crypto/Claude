@@ -86,7 +86,7 @@ struct QuickRepliesView: View {
                 Text(e.aiSummary ?? String(GmailProvider.stripQuotedReply(e.bodyPlain).prefix(600)))
                     .font(DS.Font.body)
                     .padding(DS.Space.m).frame(maxWidth: .infinity, alignment: .leading)
-                    .background(DS.Palette.elevated, in: .rect(cornerRadius: DS.Radius.card))
+                    .background { PremiumSurface() }
 
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack {

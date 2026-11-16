@@ -79,7 +79,7 @@ struct FoodScanView: View {
                     TextEditor(text: $labelText)
                         .scrollContentBackground(.hidden)
                         .padding(10)
-                        .background(DS.Palette.elevated, in: .rect(cornerRadius: DS.Radius.card))
+                        .background { PremiumSurface() }
                         .overlay(alignment: .topLeading) {
                             if labelText.isEmpty {
                                 Text("Paste or type the ingredients and nutrition facts from the label.")

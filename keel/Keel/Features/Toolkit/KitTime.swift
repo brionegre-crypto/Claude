@@ -496,7 +496,7 @@ struct KitSprintView: View {
             TextEditor(text: $text)
                 .scrollContentBackground(.hidden)
                 .padding(8)
-                .background(DS.Palette.elevated, in: .rect(cornerRadius: 16, style: .continuous))
+                .background { PremiumSurface(radius: 16) }
         }
         .padding(DS.Space.m)
         .navigationTitle("Writing sprint")
@@ -557,7 +557,7 @@ struct KitMorningPagesView: View {
             TextEditor(text: $text)
                 .scrollContentBackground(.hidden)
                 .padding(8)
-                .background(DS.Palette.elevated, in: .rect(cornerRadius: 16, style: .continuous))
+                .background { PremiumSurface(radius: 16) }
         }
         .padding(DS.Space.m)
         .navigationTitle("Morning pages")

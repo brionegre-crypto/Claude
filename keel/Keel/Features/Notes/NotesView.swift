@@ -860,7 +860,7 @@ private struct QuickTile: View {
             }
             .frame(minWidth: 92, alignment: .leading)
             .padding(12)
-            .background(DS.Palette.elevated, in: .rect(cornerRadius: 16))
+            .background { PremiumSurface(radius: 16) }
         }
         .buttonStyle(.plain)
         .hoverEffect(.lift)
@@ -896,7 +896,7 @@ private struct NoteCard: View {
                 .padding(.horizontal, 12).padding(.top, 18).padding(.bottom, 12)
                 .frame(width: 200, alignment: .leading)
             }
-            .background(DS.Palette.elevated, in: .rect(cornerRadius: 18))
+            .background { PremiumSurface(radius: 18) }
             .clipShape(.rect(cornerRadius: 18))
             .overlay(RoundedRectangle(cornerRadius: 18).strokeBorder(DS.Palette.inkSoft.opacity(0.12)))
         }
@@ -964,7 +964,7 @@ private struct FolderCard: View {
             }
             .frame(maxWidth: .infinity, minHeight: 104, alignment: .topLeading)
             .padding(14)
-            .background(DS.Palette.elevated, in: .rect(cornerRadius: 18))
+            .background { PremiumSurface(radius: 18) }
             .overlay(RoundedRectangle(cornerRadius: 18).strokeBorder(style.color.opacity(0.18)))
             .contentShape(.rect(cornerRadius: 18))
         }

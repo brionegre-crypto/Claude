@@ -156,7 +156,7 @@ struct TimeAuditView: View {
                 NavigationLink { LazyView(IdealWeekView()) } label: {
                     Label(ideal.isEmpty ? "Design your ideal week" : "Edit your ideal week", systemImage: "calendar.badge.clock")
                         .frame(maxWidth: .infinity).padding(.vertical, DS.Space.m)
-                        .background(DS.Palette.elevated, in: .rect(cornerRadius: DS.Radius.card))
+                        .background { PremiumSurface() }
                 }
 
                 let week = entries.filter { $0.start >= weekStart && $0.start < weekEnd }

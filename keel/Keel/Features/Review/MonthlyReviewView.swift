@@ -77,7 +77,7 @@ struct MonthlyReviewView: View {
     private func tile(_ v: String, _ l: String) -> some View {
         VStack(alignment: .leading) { Text(v).font(DS.Font.title); Text(l).font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft) }
             .frame(maxWidth: .infinity, alignment: .leading).padding(DS.Space.m)
-            .background(DS.Palette.elevated, in: .rect(cornerRadius: DS.Radius.card))
+            .background { PremiumSurface() }
     }
 
     private func field(_ title: String, _ text: Binding<String>) -> some View {

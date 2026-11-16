@@ -204,7 +204,7 @@ struct VaultView: View {
         }
         .foregroundStyle(DS.Palette.accent)
         .frame(maxWidth: .infinity, minHeight: 70)
-        .background(DS.Palette.elevated, in: .rect(cornerRadius: 16))
+        .background { PremiumSurface(radius: 16) }
     }
 }
 

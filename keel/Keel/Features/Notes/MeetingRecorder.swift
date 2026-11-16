@@ -677,13 +677,13 @@ struct MeetingRecorderView: View {
                                 .foregroundStyle(recorder.transcript.isEmpty ? DS.Palette.inkSoft : DS.Palette.ink)
                                 .frame(maxWidth: .infinity, alignment: .leading).padding().id("end")
                         }
-                        .background(DS.Palette.elevated, in: .rect(cornerRadius: DS.Radius.card))
+                        .background { PremiumSurface() }
                         .onChange(of: recorder.transcript) { proxy.scrollTo("end", anchor: .bottom) }
                     }
                 } else {
                     TextEditor(text: $myNotes)
                         .scrollContentBackground(.hidden).padding(8)
-                        .background(DS.Palette.elevated, in: .rect(cornerRadius: DS.Radius.card))
+                        .background { PremiumSurface() }
                         .overlay(alignment: .topLeading) {
                             if myNotes.isEmpty {
                                 Text("Jot quick notes, one per line. Keel fills in the details from the conversation.")

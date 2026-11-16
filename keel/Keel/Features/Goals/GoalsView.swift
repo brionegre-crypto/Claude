@@ -81,7 +81,7 @@ struct GoalCard: View {
             Image(systemName: "chevron.right").foregroundStyle(DS.Palette.inkSoft)
         }
         .padding(DS.Space.m)
-        .background(DS.Palette.elevated, in: .rect(cornerRadius: DS.Radius.card))
+        .background { PremiumSurface() }
     }
 }
 
