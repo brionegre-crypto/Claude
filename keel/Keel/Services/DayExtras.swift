@@ -15,18 +15,21 @@ enum MeetingBuffers {
 
     static func refresh(force: Bool = false) {
         let svc = CalendarService.shared
+        let hadBuffers = UserDefaults.standard.bool(forKey: "buffers.any")
+        guard minutes > 0 || hadBuffers else { return }                 // off and nothing to clean up: don't touch the calendar
         guard svc.hasCalendarAccess, force || Throttle.due("buffers.refresh", every: 20 * 60) else { return }
         guard let keelCal = try? svc.keelCalendar() else { return }
         let start = Date(), end = Date().addingTimeInterval(7 * 86_400)
         let all = svc.store.events(matching: svc.store.predicateForEvents(withStart: start.addingTimeInterval(-3600), end: end, calendars: nil))
-        let existing = all.filter { $0.calendar.calendarIdentifier == keelCal.calendarIdentifier && ($0.notes ?? "").hasPrefix(marker) }
+        let existing = all.filter { $0.calendar?.calendarIdentifier == keelCal.calendarIdentifier && ($0.notes ?? "").hasPrefix(marker) }
         let others = all.filter { !($0.notes ?? "").hasPrefix(marker) && !$0.isAllDay }
         let n = minutes
 
         var wanted: [String: (Date, Date, String)] = [:]
         if n > 0 {
-            for e in others where e.calendar.calendarIdentifier != keelCal.calendarIdentifier && MeetingAutopilot.isMeeting(e) && e.endDate > start {
-                let s = e.endDate!, f = e.endDate.addingTimeInterval(Double(n * 60))
+            for e in others where e.calendar?.calendarIdentifier != keelCal.calendarIdentifier && MeetingAutopilot.isMeeting(e) && (e.endDate ?? .distantPast) > start {
+                guard let s = e.endDate else { continue }
+                let f = s.addingTimeInterval(Double(n * 60))
                 let busy = others.contains { o in o !== e && o.startDate < f && o.endDate > s }
                 if !busy { wanted[e.calendarItemIdentifier + "@" + String(Int(e.startDate.timeIntervalSince1970))] = (s, f, e.title ?? "meeting") }
             }
@@ -47,6 +50,7 @@ enum MeetingBuffers {
             try? svc.store.save(b, span: .thisEvent, commit: false); changed = true
         }
         if changed { try? svc.store.commit(); svc.invalidateEvents() }
+        UserDefaults.standard.set(n > 0, forKey: "buffers.any")
     }
 }
 
