@@ -75,6 +75,7 @@ final class ShutdownManager {
         scheduleTransitionNudges(minutes: minutes)
         startLiveActivity(endsAt: s.startedAt.addingTimeInterval(Double(minutes * 60)), task: task?.title)
         FocusSound.shared.play(FocusSound.Kind(rawValue: UserDefaults.standard.string(forKey: "focus.sound") ?? "off") ?? .off)
+        FocusMusic.shared.focusStarted()                // your music (Apple Music, Spotify…), mixed with the focus sound
         Haptics.milestone()
         return s
     }
@@ -107,6 +108,7 @@ final class ShutdownManager {
         UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: (0..<12).map { "room.checkin.\($0)" })
         endLiveActivities()
         FocusSound.shared.stop()
+        FocusMusic.shared.focusEnded()
         #if !targetEnvironment(macCatalyst)
         store.clearAllSettings()
         #endif

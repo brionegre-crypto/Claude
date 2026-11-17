@@ -195,7 +195,7 @@ struct InboxView: View {
                 }
             }
             .navigationTitle(mailbox.rawValue)
-            .keelSettingsButton()
+            .keelSettingsButton(help: .inbox)
             .searchable(text: $search, prompt: "Search mail, or try from: has:attachment")
             .searchSuggestions {
                 if search.isEmpty {
@@ -235,6 +235,11 @@ struct InboxView: View {
                         }
                         Button("Mark All as Read", systemImage: "envelope.open") { confirmReadAll = true }
                             .disabled(!visible.contains { !$0.isRead })
+                        Menu("Get me to zero", systemImage: "sparkles.rectangle.stack") {
+                            Button("Archive everything older than a day") { getToZero(days: 1) }
+                            Button("Older than a week") { getToZero(days: 7) }
+                            Button("Older than a month") { getToZero(days: 30) }
+                        }
                         Section("Get through it") {
                             NavigationLink { LazyView(CatchUpView()) } label: { Label("Catch me up", systemImage: "sparkles") }
                             NavigationLink { LazyView(QuickRepliesView()) } label: { Label("Clear 5 quick replies", systemImage: "bolt.horizontal.circle") }
@@ -477,7 +482,16 @@ struct InboxView: View {
                     Section(name) { ForEach(group) { e in row(e) } }
                 }
             }
-        case .updates, .newsletters:
+        case .updates, .newsletters, .promos:
+            if tab == .promos {
+                HStack {
+                    Label("Sales, offers and cold pitches. Keel never drafts replies to these.", systemImage: "tag").foregroundStyle(DS.Palette.inkSoft)
+                    Spacer()
+                    Button { archiveRead(in: visible) } label: { Label("Clear read", systemImage: "archivebox") }
+                }
+                .font(DS.Font.caption).buttonStyle(.borderless)
+                .selectionDisabled()
+            }
             if tab == .newsletters {
                 HStack {
                     NavigationLink { LazyView(DigestView()) } label: { Label("Read as a digest", systemImage: "newspaper") }
@@ -626,6 +640,21 @@ struct InboxView: View {
 
     private func provider(for e: EmailMessage) -> MailProvider? {
         accounts.first { $0.id == e.accountId }.map(MailProviderFactory.make)
+    }
+
+    /// Get me to zero: archive older inbox mail in one go (flagged, pinned and VIP mail stay), with undo.
+    private func getToZero(days: Int) {
+        let cutoff = Date().addingTimeInterval(-Double(days) * 86_400)
+        let scores = scoreMap
+        let old = mailboxEmails.filter { !$0.isArchived && $0.receivedAt < cutoff && !$0.isStarred && !$0.isPinned && scores[$0.from.lowercased()]?.isVIP != true }
+        guard !old.isEmpty else { UndoCenter.shared.notify("Nothing older to clear"); return }
+        withAnimation(DS.spring) { for m in old { m.isArchived = true; m.snoozedUntil = nil } }
+        Haptics.success()
+        let jobs = old.compactMap { m in provider(for: m).map { ($0, m.providerMessageId) } }
+        UndoCenter.shared.offer("Archived \(old.count) older email\(old.count == 1 ? "" : "s")",
+                                undo: { withAnimation { for m in old { m.isArchived = false } } },
+                                commit: { Task { for (p, id) in jobs { try? await p.archive(id) } } })
+        checkInboxZero()
     }
 
     private func archive(_ e: EmailMessage) {
@@ -891,6 +920,7 @@ struct EmailRow: View {
 
 struct EmailDetailView: View {
     @Bindable var email: EmailMessage
+    @State private var showSender = false
     @Environment(\.modelContext) private var ctx
     @Environment(\.dismiss) private var dismiss
     @Query private var accounts: [MailAccount]
@@ -917,6 +947,14 @@ struct EmailDetailView: View {
 
     private var provider: MailProvider? {
         accounts.first { $0.id == email.accountId }.map(MailProviderFactory.make)
+    }
+
+    /// The whole conversation this email belongs to (for sharing it).
+    private var threadEmails: [EmailMessage] {
+        let tid = email.threadId
+        guard !tid.isEmpty else { return [email] }
+        let found = (try? ctx.fetch(FetchDescriptor<EmailMessage>(predicate: #Predicate { $0.threadId == tid }))) ?? []
+        return found.isEmpty ? [email] : found
     }
 
     var body: some View {
@@ -952,6 +990,14 @@ struct EmailDetailView: View {
                     Button("Open draft in Apple Mail", systemImage: "envelope.arrow.triangle.branch") {
                         AppRouter.shared.mailHandoff = MailHandoffDraft(to: [email.from], subject: "Re: \(email.subject)", body: "")
                     }
+                    Button("About the sender", systemImage: "person.text.rectangle") { showSender = true }
+                    Button(MutedThreads.isMuted(email.threadId) ? "Unmute conversation" : "Mute conversation", systemImage: MutedThreads.isMuted(email.threadId) ? "bell" : "bell.slash") {
+                        let mute = !MutedThreads.isMuted(email.threadId)
+                        MutedThreads.set(email.threadId, muted: mute)
+                        UndoCenter.shared.notify(mute ? "Muted. New replies skip your inbox." : "Unmuted")
+                        if mute { archive() }
+                    }
+                    ShareLink(item: ConversationText.text(threadEmails)) { Label("Share conversation", systemImage: "square.and.arrow.up") }
                     Button("Mark sender as VIP", systemImage: "star.circle") {
                         InboxBrain.setVIP(true, sender: email.from, name: email.fromName, ctx: ctx); Haptics.success()
                         UndoCenter.shared.notify("\(email.fromName.isEmpty ? email.from : email.fromName) is a VIP")
@@ -981,6 +1027,7 @@ struct EmailDetailView: View {
             }
         }
         .sheet(item: $compose) { ComposeView(draft: $0) }
+        .sheet(isPresented: $showSender) { NavigationStack { SenderProfileView(address: email.from, name: email.fromName) }.presentationDetents([.medium, .large]) }
         // Keyboard (iPad and Mac), the same keys as Apple Mail.
         .background {
             Group {
@@ -1021,8 +1068,15 @@ struct EmailDetailView: View {
     private var header: some View {
         VStack(alignment: .leading, spacing: DS.Space.xs) {
             Text(email.subject).font(DS.Font.title).textSelection(.enabled)
-            Text("\(email.fromName.isEmpty ? email.from : email.fromName) · \(email.from)")
+            Button { showSender = true } label: {
+                HStack(spacing: 4) {
+                    Text("\(email.fromName.isEmpty ? email.from : email.fromName) · \(email.from)")
+                    Image(systemName: "info.circle")
+                }
                 .font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
+            }
+            .buttonStyle(.plain)
+            .accessibilityHint("About the sender")
             if !email.toLine.isEmpty {
                 Text("To: \(email.toLine)\(email.ccLine.isEmpty ? "" : "  Cc: \(email.ccLine)")")
                     .font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft).lineLimit(2)

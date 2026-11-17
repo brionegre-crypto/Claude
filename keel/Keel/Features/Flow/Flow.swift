@@ -103,23 +103,44 @@ struct UniversalCaptureSheet: View {
 }
 
 /// The floating + that's on every main screen.
+/// It steps aside while you type (so it never covers the line you're writing), sits in the corner you pick,
+/// and a long press offers to move or hide it.
 struct CaptureButton: View {
     @State private var open = false
+    @State private var keyboardUp = false
     @AppStorage("capture.fab") private var on = true
+    @AppStorage("capture.fab.left") private var onLeft = false
     private var router = AppRouter.shared
     var body: some View {
-        if on && !router.chromeHidden {
-            Button { open = true; Haptics.tap() } label: {
-                Image(systemName: "plus").font(.title2.weight(.semibold)).foregroundStyle(.white)
-                    .frame(width: 56, height: 56)
-                    .background(DS.Palette.accent.gradient, in: Circle())
-                    .shadow(color: DS.Palette.accent.opacity(0.35), radius: 12, y: 5)
+        ZStack {
+            Color.clear.frame(width: 1, height: 1).allowsHitTesting(false)      // always here, so it hears the keyboard come and go
+            if on && !router.chromeHidden && !keyboardUp {
+                Button { open = true; Haptics.tap() } label: {
+                    Image(systemName: "plus").font(.title3.weight(.semibold)).foregroundStyle(.white)
+                        .frame(width: 50, height: 50)
+                        .background(DS.Palette.accent.gradient, in: Circle())
+                        .overlay(Circle().strokeBorder(.white.opacity(0.25), lineWidth: 0.75))
+                        .shadow(color: DS.Palette.accent.opacity(0.35), radius: 10, y: 4)
+                }
+                .buttonStyle(.plain)
+                .contextMenu {
+                    Button(onLeft ? "Move to the right" : "Move to the left", systemImage: onLeft ? "arrow.right" : "arrow.left") {
+                        withAnimation(DS.spring) { onLeft.toggle() }
+                    }
+                    Button("Hide the + button", systemImage: "eye.slash") { on = false }
+                }
+                .accessibilityLabel("Capture anything")
+                .accessibilityHint("Hold to move or hide it")
+                .keyboardShortcut("k", modifiers: [.command, .shift])
+                .transition(.scale.combined(with: .opacity))
+                .frame(maxWidth: .infinity, alignment: onLeft ? .leading : .trailing)
+                .padding(.horizontal, 18)
             }
-            .buttonStyle(.plain)
-            .accessibilityLabel("Capture anything")
-            .keyboardShortcut("k", modifiers: [.command, .shift])
-            .sheet(isPresented: $open) { UniversalCaptureSheet() }
         }
+        .animation(.easeOut(duration: 0.18), value: keyboardUp)
+        .sheet(isPresented: $open) { UniversalCaptureSheet() }
+        .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillShowNotification)) { _ in keyboardUp = true }
+        .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillHideNotification)) { _ in keyboardUp = false }
     }
 }
 

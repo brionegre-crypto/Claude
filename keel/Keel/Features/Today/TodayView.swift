@@ -35,8 +35,9 @@ struct TodayView: View {
     @State private var showRitual = false
     @State private var dest: TodayDest?
 
-    enum TodayDest: Hashable { case compass, quickWins, timer, customize, focusRoom, forecast, savePoints, dopamine, breathe, dread, dayReview }
+    enum TodayDest: Hashable { case compass, quickWins, timer, customize, focusRoom, forecast, savePoints, dopamine, breathe, dread, dayReview, ask, coach, help }
     @AppStorage(Prefs.calm) private var calm = false
+    @AppStorage(DailyAffirmation.toggleKey) private var showAffirmation = true
 
     private var energy: EnergyLevel { EnergyLevel(rawValue: energyRaw) ?? .medium }
     private var nextThing: TaskItem? { ADHDCoach.nextThing(tasks: tasks, energy: energy) }
@@ -52,6 +53,8 @@ struct TodayView: View {
                     greeting
                         .inlineTip(OpenWaterTip())                  // each tip shows once, at most one new tip a day; takes no room until it shows
                         .inlineTip(CaptureTip())
+                    DailyAffirmationCard()                          // on/off: Today menu, or the card's own menu
+                    UpcomingRoutineCard()                           // a routine on your calendar, ready to start
                     VoyageView()                                    // your day as a route: now, ports, open water, anchor
                     NextMeetingPeopleCard()                         // who you're meeting next, with Running late and Prep
                     Waterline(label: "Below the waterline · the rest of your day")
@@ -125,6 +128,9 @@ struct TodayView: View {
                 case .breathe: BreatheView()
                 case .dread: DreadRadarView()
                 case .dayReview: DayReviewView()
+                case .ask: AssistantView()
+                case .coach: CoachView()
+                case .help: HelpCenterView()
                 }
             }
         }
@@ -134,6 +140,10 @@ struct TodayView: View {
     private var dayMenu: some View {
         Menu {
             Button("Open Compass: every tool", systemImage: "square.grid.2x2") { dest = .compass }
+            Section("Ask & coach") {
+                Button("Ask Keel", systemImage: "bubble.left.and.text.bubble.right.fill") { dest = .ask }
+                Button("Coach check-in", systemImage: "figure.mind.and.body") { dest = .coach }
+            }
             Section("Start the day") {
                 Button("Plan my day", systemImage: "list.bullet.clipboard") { AppRouter.shared.showPlan = true }
                 Button("Quick wins (5 minutes or less)", systemImage: "bolt.fill") { dest = .quickWins }
@@ -158,7 +168,9 @@ struct TodayView: View {
                 Button("Weekly review", systemImage: "calendar.badge.checkmark") { AppRouter.shared.showReview = true }
                 Button("Journal", systemImage: "book") { AppRouter.shared.showJournal = true }
             }
+            Toggle(isOn: $showAffirmation) { Label("Daily affirmation", systemImage: "quote.bubble") }
             Button("Customize Today", systemImage: "slider.horizontal.3") { dest = .customize }
+            Button("How do I… (help)", systemImage: "questionmark.circle") { dest = .help }
         } label: {
             Image(systemName: "square.grid.2x2")
         } primaryAction: {

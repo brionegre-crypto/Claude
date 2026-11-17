@@ -958,4 +958,57 @@ final class KeelTests: XCTestCase {
         XCTAssertEqual(f?.brand, "Siggi's")
         XCTAssertNil(FoodWebSearch.food(from: ["product_name": "No numbers"]))
     }
+
+    // MARK: Sales & promos, spoken lists, intros, tone
+
+    func testSalesPromoSpokenListsIntroAndTone() {
+        let promo = email(from: "deals@shop.com", name: "Shop", subject: "40% off ends tonight", body: "Shop now, free shipping on everything.")
+        XCTAssertTrue(MailNoise.isSalesOrPromo(promo))
+        let pitch = email(from: "alex@growthco.io", name: "Alex Smith", subject: "Quick question",
+                          body: "Hi! We help companies get more leads. Would you be open to a quick call? 15 minutes is all I need. Here's my calendly.com link.")
+        XCTAssertTrue(MailNoise.isSalesOrPromo(pitch), "a cold pitch dressed as a personal note")
+        XCTAssertFalse(MailNoise.isSalesOrPromo(pitch, knownSender: true), "people you've replied to are never pitches")
+        let friend = email(from: "sam@gmail.com", name: "Sam", subject: "Dinner", body: "Can you do a quick call later? Want to plan Saturday.")
+        XCTAssertFalse(MailNoise.isSalesOrPromo(friend))
+        XCTAssertFalse(AutoDrafts.isRealPerson(pitch), "no drafted replies to sales mail")
+        XCTAssertEqual(InboxBrain.tab(promo, score: nil), .promos)
+
+        XCTAssertEqual(SpokenList.detect("Grocery list: milk, eggs and bread"), SpokenList.List(title: "Grocery list", items: ["Milk", "Eggs", "Bread"], checklist: true))
+        XCTAssertEqual(SpokenList.detect("I need to call mom, pay rent and book the dentist")?.items, ["Call mom", "Pay rent", "Book the dentist"])
+        XCTAssertEqual(SpokenList.detect("First wash the car then buy groceries and finally call Sam")?.items, ["Wash the car", "Buy groceries", "Call Sam"])
+        XCTAssertEqual(SpokenList.detect("Ideas for the party: balloons, a cake, music")?.title, "Ideas for the party")
+        XCTAssertNil(SpokenList.detect("I went to the store today and it was really busy. Then I came home and made dinner for everyone."))
+        XCTAssertNil(SpokenList.detect("Meeting went well, we agreed on the budget"))
+
+        let intro = email(from: "jo@example.com", name: "Jo Park", subject: "Intro: Brian <> Dana", body: "Brian, meet Dana!")
+        intro.toLine = "me@keel.app"; intro.ccLine = "dana@example.com"
+        var d = ComposeDraft(original: intro)
+        XCTAssertTrue(InstantIntro.canApply(d))
+        InstantIntro.apply(&d, myAddresses: ["me@keel.app"])
+        XCTAssertEqual(d.to, "dana@example.com")
+        XCTAssertEqual(d.bcc, "jo@example.com")
+        XCTAssertTrue(d.body.hasPrefix("Thanks Jo (moving you to bcc)!"))
+
+        XCTAssertFalse(ToneCheck.flags("PER MY LAST EMAIL, I NEED THIS ASAP!!!!").isEmpty)
+        XCTAssertTrue(ToneCheck.flags("Hi Sam, could you send the file when you get a chance? Thanks!").isEmpty)
+        var c = DateComponents(); c.year = 2026; c.month = 11; c.day = 17; c.hour = 23
+        let late = Calendar.current.date(from: c)!
+        XCTAssertEqual(KindTime.suggestion(now: late).map { Calendar.current.component(.hour, from: $0) }, 8)
+        c.hour = 14
+        XCTAssertNil(KindTime.suggestion(now: Calendar.current.date(from: c)!))
+    }
+
+    func testRoutineFinderAndCalendarFallback() throws {
+        let ctx = try makeContext()
+        let titles = ["Brush teeth", "Take meds", "Do the dishes", "Take out trash", "Water the plants", "Vacuum", "Email Dana about Q3"]
+        let tasks = titles.map { TaskItem(title: $0) }
+        tasks.forEach(ctx.insert)
+        let s = RoutineFinder.suggest(from: tasks)
+        XCTAssertEqual(Set(s.map(\.name)), ["Morning routine", "Evening reset", "Weekly reset"])
+        XCTAssertFalse(s.flatMap(\.steps).contains { $0.title == "Email Dana about Q3" }, "real work stays a task")
+        XCTAssertEqual(CalendarAI.fallback("delete lunch with Sam tomorrow")?.action, .delete)
+        XCTAssertEqual(CalendarAI.fallback("delete lunch with Sam tomorrow")?.match, "lunch with sam")
+        XCTAssertEqual(CalendarAI.fallback("move dentist to friday 3pm")?.action, .move)
+        XCTAssertEqual(CalendarAI.fallback("move dentist to friday 3pm")?.match, "dentist")
+    }
 }

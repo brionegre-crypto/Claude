@@ -59,7 +59,11 @@ struct NotesView: View {
                         Section {
                             ScrollView(.horizontal, showsIndicators: false) {
                                 LazyHStack(spacing: DS.Space.m) {
-                                    ForEach(recent) { n in NoteCard(note: n) { opened = n }.matchedTransitionSource(id: "n" + n.id.uuidString, in: zoom) }
+                                    ForEach(recent) { n in
+                                        NoteCard(note: n) { opened = n }
+                                            .contextMenu { pageMenu(n) }
+                                            .matchedTransitionSource(id: "n" + n.id.uuidString, in: zoom)
+                                    }
                                 }
                                 .scrollTargetLayout()
                                 .padding(.horizontal, 20).padding(.vertical, 4)
@@ -176,7 +180,7 @@ struct NotesView: View {
                 Button("Cancel", role: .cancel) { newFolderFor = nil }
             }
             .navigationTitle("Notes")
-            .keelSettingsButton()
+            .keelSettingsButton(help: .notes)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     Button { showBrain = true } label: { Image(systemName: "brain.head.profile") }
@@ -427,21 +431,7 @@ struct NotesView: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        .contextMenu {
-            if multiWindow {
-                Button("Open in New Window", systemImage: "macwindow.badge.plus") { openWindow(id: "note", value: n.id) }
-            }
-            Button(n.isPinned ? "Remove from Favorites" : "Add to Favorites", systemImage: n.isPinned ? "star.slash" : "star") { n.isPinned.toggle() }
-            Button("Add page inside", systemImage: "doc.badge.plus") {
-                let c = Note(title: ""); c.parentId = n.id; ctx.insert(c); opened = c
-            }
-            Menu("Move to Folder", systemImage: "folder") {
-                Button("No folder") { n.folder = nil }
-                ForEach(folders, id: \.self) { f in Button(f.replacingOccurrences(of: "/", with: " › ")) { n.folder = f } }
-                Button("New folder…", systemImage: "folder.badge.plus") { newFolderName = ""; newFolderFor = n }
-            }
-            Button("Delete", systemImage: "trash", role: .destructive) { deletePage(n) }
-        }
+        .contextMenu { pageMenu(n) }
         .swipeActions { Button("Delete", role: .destructive) { deletePage(n) } }
         .swipeActions(edge: .leading) {
             Button { n.isPinned.toggle(); Haptics.tap() } label: {
@@ -697,6 +687,27 @@ struct NotesView: View {
                 ForEach(kids) { k in pageTree(k, depth: depth + 1) }
             }
         })
+    }
+
+    /// Long-press options for a page, the same in the list, the tree and the Jump back in cards.
+    @ViewBuilder
+    private func pageMenu(_ n: Note) -> some View {
+        Button("Open", systemImage: "doc.text") { opened = n }
+        if multiWindow {
+            Button("Open in New Window", systemImage: "macwindow.badge.plus") { openWindow(id: "note", value: n.id) }
+        }
+        Button(n.isPinned ? "Remove from Favorites" : "Add to Favorites", systemImage: n.isPinned ? "star.slash" : "star") { n.isPinned.toggle() }
+        Button("Add page inside", systemImage: "doc.badge.plus") {
+            let c = Note(title: ""); c.parentId = n.id; ctx.insert(c); opened = c
+        }
+        Menu("Move to Folder", systemImage: "folder") {
+            Button("No folder") { n.folder = nil }
+            ForEach(folders, id: \.self) { f in Button(f.replacingOccurrences(of: "/", with: " › ")) { n.folder = f } }
+            Button("New folder…", systemImage: "folder.badge.plus") { newFolderName = ""; newFolderFor = n }
+        }
+        ShareLink(item: NoteExport.markdown(n)) { Label("Share", systemImage: "square.and.arrow.up") }
+        Button("Copy text", systemImage: "doc.on.doc") { UIPasteboard.general.string = PageAllTextView.plain(n) }
+        Button("Delete", systemImage: "trash", role: .destructive) { deletePage(n) }
     }
 
     private func folderCard(_ f: FolderSummary) -> some View {

@@ -14,6 +14,13 @@ struct GuideSection: Identifiable {
 
 enum Guide {
     static let sections: [GuideSection] = [
+        GuideSection(icon: "map.fill", color: DS.Palette.accent, title: "How Keel fits together",
+                     summary: "Five tabs for your day, one + for anything, and Compass for every other tool.",
+                     tips: ["Today: what's happening now, your next step, and anything you just shared to Keel.",
+                            "Inbox, Calendar, Tasks and Notes: your mail, time, to-dos (the same as Apple Reminders) and pages. Body has your health.",
+                            "The + button captures anything (task, event, note, reminder). It steps aside while you type; hold it to move or hide it.",
+                            "Compass (the grid button on Today) holds every other tool, grouped by what you need: Ask & coach, Get going, Calm down, Stay on top, Body & health, Second brain, Look back, Think ahead and Your people.",
+                            "The ? on each screen explains that screen. Hold it to take this tour again."]),
         GuideSection(icon: "sun.max.fill", color: .orange, title: "Today",
                      summary: "Your day on one screen, with one clear next step.",
                      tips: ["“Just One Thing” picks your best next task from your energy, deadlines and free time.",
@@ -21,6 +28,21 @@ enum Guide {
                             "“Plan my day” builds a time-blocked plan with Apple Intelligence.",
                             "“Reset my day” moves overdue tasks to tomorrow with no guilt.",
                             "🧠 Brain dump: ramble or dictate everything in your head. Apple Intelligence sorts it into tasks with dates, calendar events, notes and a worry list, and you review before saving."]),
+        GuideSection(icon: "square.grid.2x2.fill", color: .indigo, title: "Compass & your AI coach",
+                     summary: "Tell Compass how your brain feels and it suggests the right tools. Your AI is at the top.",
+                     tips: ["Ask & coach: Ask Keel anything, a weekly Coach check-in, Ask about your body, notes or inbox, and Done for you (prepared overnight).",
+                            "Each group shows its top tools; Show all reveals the rest. Search finds any tool by what you need (\"sleep\", \"money\", \"stuck\").",
+                            "Shared something to Keel from Safari, Notes or Photos? It shows at the top of Today until you open it, make it a task or mark it done.",
+                            "A daily affirmation sits on Today. Tap it for another; turn it off from Today's menu or the card's own menu."]),
+        GuideSection(icon: "fork.knife", color: .green, title: "Food, like a premium health app",
+                     summary: "Search with pictures as you type, snap your plate, and see calories, protein, carbs and fat at a glance.",
+                     tips: ["Body → Food → Log food: your usual foods come first; type several at once (\"2 eggs, toast and a latte\").",
+                            "Snap meal names each food on your iPhone; with your own AI key, Sharper read estimates every portion.",
+                            "Barcodes and labels are checked against your diet guide. Biological age shows instantly and refreshes in the background."]),
+        GuideSection(icon: "tag.fill", color: .orange, title: "Sales & promos stay out of your way",
+                     summary: "Store offers, discounts and cold sales pitches sort themselves into their own Sales & promos tab.",
+                     tips: ["They never count as Needs you, and Keel never drafts replies to them or to no-reply addresses.",
+                            "People you've written back to are never treated as a pitch."]),
         GuideSection(icon: "slider.horizontal.3", color: .gray, title: "Make Today yours",
                      summary: "Your cards, your order.",
                      tips: ["Scroll to the bottom of Today → Customize Today. Turn off cards you don't need, or switch off Automatic order and drag cards into your own order.",
@@ -480,8 +502,8 @@ struct WelcomeTour: View {
 
     private let pages: [GuideSection] = [
         GuideSection(icon: "sailboat.fill", color: DS.Palette.accent, title: "Welcome to Keel",
-                     summary: "Your email, calendar, tasks, notes and habits in one calm place, built for brains with a lot going on.", tips: []),
-    ] + Guide.sections.prefix(6)
+                     summary: "Your email, calendar, tasks, notes, health and habits in one calm place, built for brains with a lot going on.", tips: []),
+    ] + Guide.sections.prefix(5)
 
     var body: some View {
         VStack(spacing: DS.Space.l) {

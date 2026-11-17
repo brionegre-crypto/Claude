@@ -284,7 +284,7 @@ struct RootView: View {
         // appearing: the "snap into place" on every switch.
         .overlay(alignment: .top) { OfflineBanner() }                // says so when there's no internet
         .overlay(alignment: .bottom) { HandoffBanner().animation(DS.spring, value: Handoff.shared.current?.id) }      // the natural next step
-        .overlay(alignment: .bottomTrailing) { CaptureButton().padding(.trailing, 18).padding(.bottom, 104) }       // capture anything, from anywhere
+        .overlay(alignment: .bottom) { CaptureButton().padding(.bottom, 104) }       // capture anything, from anywhere
         .overlay(alignment: .top) {
             if let err = KeelStore.loadError {
                 Text(err).font(DS.Font.caption).foregroundStyle(.white).padding(10).frame(maxWidth: .infinity)
@@ -544,9 +544,23 @@ enum KeelQuickActions {
 
 /// The gear at the top of every tab: Settings is always one tap away, in the same place.
 struct SettingsButton: ViewModifier {
+    var help: HelpArea? = nil
     @State private var account = KeelAccount.shared
+    @State private var showHelp = false
+    @State private var showTour = false
     func body(content: Content) -> some View {
         content.toolbar {
+            if let help {
+                // Every main screen: what it does and how, plus the tour of Keel.
+                ToolbarItem(placement: .topBarTrailing) {
+                    Menu {
+                        Button("How do I… (\(help.title))", systemImage: "questionmark.circle") { showHelp = true }
+                        Button("Take the tour", systemImage: "sparkles.rectangle.stack") { showTour = true }
+                    } label: { Image(systemName: "questionmark.circle") }
+                    primaryAction: { showHelp = true }
+                    .accessibilityLabel("Help with \(help.title)")
+                }
+            }
             ToolbarItem(placement: .topBarTrailing) {
                 Button { AppRouter.shared.showSettings = true } label: {
                     Image(systemName: "gearshape")
@@ -557,11 +571,18 @@ struct SettingsButton: ViewModifier {
                 .accessibilityLabel(account.isSignedIn ? "Settings" : "Settings. Sign in to sync your devices")
             }
         }
+        .fullScreenCover(isPresented: $showTour) { WelcomeTour() }
+        .sheet(isPresented: $showHelp) {
+            NavigationStack {
+                HelpCenterView(area: help)
+                    .toolbar { ToolbarItem(placement: .confirmationAction) { Button("Done") { showHelp = false } } }
+            }
+        }
     }
 }
 
 extension View {
-    func keelSettingsButton() -> some View { modifier(SettingsButton()) }
+    func keelSettingsButton(help: HelpArea? = nil) -> some View { modifier(SettingsButton(help: help)) }
 }
 
 

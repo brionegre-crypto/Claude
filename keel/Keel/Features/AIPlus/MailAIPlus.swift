@@ -35,7 +35,7 @@ enum AutoDrafts {
 
     /// Only real people: never companies, shops, newsletters, notifications or no-reply addresses.
     static func isRealPerson(_ e: EmailMessage) -> Bool {
-        if MailNoise.isAutomated(e) || e.unsubscribeHeader != nil { return false }
+        if MailNoise.isAutomated(e) || e.unsubscribeHeader != nil || MailNoise.isSalesOrPromo(e) { return false }
         if [.newsletters, .promotions, .updates, .lowPriority].contains(e.category) { return false }
         let addr = e.from.lowercased()
         let local = String(addr.split(separator: "@").first ?? "")

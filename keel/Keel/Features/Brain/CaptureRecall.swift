@@ -375,12 +375,35 @@ struct VoiceNoteView: View {
     private func save() async {
         saving = true; defer { saving = false }
         let raw = rec.transcript
-        let clean = await AIRouter.shared.write("Tidy this voice note: fix punctuation, remove filler words and repeats, keep my words and meaning. If it's clearly a to-do, start the first line with TASK:. Reply with only the text.\n\n\(raw)") ?? raw
+        // A spoken list ("grocery list: milk, eggs and bread", "first… then… finally…") becomes a list, not a paragraph.
+        if let list = SpokenList.detect(raw) {
+            var blocks = list.items.map { NoteBlock(kind: list.checklist ? .todo : .bullet, text: $0) }
+            if let url = rec.fileURL, let data = try? Data(contentsOf: url) {
+                let n = CaptureInbox.add(title: list.title, blocks: [], ctx: ctx)
+                let a = NoteAttachment(noteId: n.id, data: data, kind: "audio")
+                ctx.insert(a)
+                var audio = NoteBlock(kind: .code, text: "Voice note"); audio.lang = "keel-audio"; audio.refId = a.id.uuidString
+                blocks.insert(audio, at: 0)
+                n.blocks = blocks
+                try? FileManager.default.removeItem(at: url)
+            } else {
+                _ = CaptureInbox.add(title: list.title, blocks: blocks, ctx: ctx)
+            }
+            UndoCenter.shared.notify("Saved as a list of \(list.items.count)")
+            Haptics.success()
+            dismiss()
+            return
+        }
+        let clean = await AIRouter.shared.write("Tidy this voice note: fix punctuation, remove filler words and repeats, keep my words and meaning. If it's clearly a single to-do, start the first line with TASK:. If I listed several things, put each on its own line starting with '- '. Otherwise keep it as sentences. Reply with only the text.\n\n\(raw)") ?? raw
         if clean.hasPrefix("TASK:") {
             _ = QuickAdd.create(String(clean.dropFirst(5)).trimmingCharacters(in: .whitespacesAndNewlines), in: ctx)
             UndoCenter.shared.notify("Added to Tasks")
         } else {
-            var blocks = clean.components(separatedBy: "\n").filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty }.map { NoteBlock(kind: .text, text: $0) }
+            var blocks = clean.components(separatedBy: "\n").filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty }.map { line -> NoteBlock in
+                let t = line.trimmingCharacters(in: .whitespaces)
+                if t.hasPrefix("- ") || t.hasPrefix("• ") { return NoteBlock(kind: .bullet, text: String(t.dropFirst(2))) }
+                return NoteBlock(kind: .text, text: t)
+            }
             if let url = rec.fileURL, let data = try? Data(contentsOf: url) {
                 let n = CaptureInbox.add(title: String(clean.prefix(50)), blocks: [], ctx: ctx)
                 let a = NoteAttachment(noteId: n.id, data: data, kind: "audio")
@@ -954,5 +977,93 @@ enum SafariHighlights {
             if !h.contains(where: { $0.text == it.text }) { h.append(ReaderHighlight(text: it.text, at: it.date)); ReaderStore.setHighlights(link.id, h) }
         }
         try? ctx.save()
+    }
+}
+
+
+// MARK: - Spoken lists
+
+/// Tells a spoken list from running sentences: "shopping list: milk, eggs and bread", "I need to call mom,
+/// pay rent and book the dentist", or "first… second… finally…". Returns the items, or nil for ordinary speech.
+enum SpokenList {
+    struct List: Equatable { var title: String; var items: [String]; var checklist: Bool }
+
+    private static let intros: [(phrase: String, title: String, checklist: Bool)] = [
+        ("shopping list", "Shopping list", true), ("grocery list", "Grocery list", true), ("groceries", "Groceries", true),
+        ("packing list", "Packing list", true), ("to do list", "To-do", true), ("to-do list", "To-do", true), ("todo list", "To-do", true),
+        ("to do", "To-do", true), ("to-do", "To-do", true), ("things to do", "To-do", true), ("things i need to", "To-do", true),
+        ("i need to", "To-do", true), ("remember to", "To remember", true), ("i have to", "To-do", true), ("pick up", "To pick up", true),
+        ("i need", "To get", true), ("buy", "To buy", true), ("list of", "List", false), ("ideas", "Ideas", false), ("my list", "List", false),
+    ]
+    private static let enumerators = #"\b(first(ly)?|second(ly)?|third(ly)?|fourth(ly)?|fifth|number (one|two|three|four|five|six|\d+)|next|after that|and then|then|finally|lastly)\b[,:]?"#
+
+    static func detect(_ raw: String) -> List? {
+        let text = raw.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard text.count > 3 else { return nil }
+        let low = text.lowercased()
+        var body = text
+        var title = "List"
+        var checklist = false
+        var hasIntro = false
+        // An intro near the start: "Grocery list: …", "I need to …".
+        for i in intros {
+            if let r = low.range(of: i.phrase), low.distance(from: low.startIndex, to: r.lowerBound) <= 20 {
+                let after = low.distance(from: low.startIndex, to: r.upperBound)
+                body = String(text.dropFirst(after))
+                title = i.title; checklist = i.checklist; hasIntro = true
+                break
+            }
+        }
+        body = body.trimmingCharacters(in: CharacterSet(charactersIn: " :,.-").union(.whitespaces))
+        for lead in ["is ", "are ", "includes ", "include "] where body.lowercased().hasPrefix(lead) { body = String(body.dropFirst(lead.count)) }
+        // "Ideas for the party: balloons, cake…": the words before the colon name the list.
+        if let colon = body.firstIndex(of: ":"), body.distance(from: body.startIndex, to: colon) <= 40 {
+            let head = body[..<colon].trimmingCharacters(in: .whitespaces)
+            if !head.isEmpty { title = hasIntro ? title + " " + head : head.prefix(1).uppercased() + head.dropFirst() }
+            body = String(body[body.index(after: colon)...]).trimmingCharacters(in: .whitespaces)
+            hasIntro = true
+        }
+
+        // 1. Counted out loud: first… second… then… finally…
+        let enumRegex = try? NSRegularExpression(pattern: enumerators, options: [.caseInsensitive])
+        let ns = body as NSString
+        let marks = enumRegex?.matches(in: body, range: NSRange(location: 0, length: ns.length)) ?? []
+        if marks.count >= 2 {
+            var pieces: [String] = []
+            var cursor = 0
+            for m in marks {
+                if m.range.location > cursor { pieces.append(ns.substring(with: NSRange(location: cursor, length: m.range.location - cursor))) }
+                cursor = m.range.location + m.range.length
+            }
+            pieces.append(ns.substring(from: cursor))
+            let items = clean(pieces)
+            if items.count >= 2 { return List(title: hasIntro ? title : "List", items: items, checklist: hasIntro ? checklist : true) }
+        }
+
+        // 2. Separated by commas, semicolons or "and": short pieces read as a list.
+        var parts = body.components(separatedBy: CharacterSet(charactersIn: ",;\n"))
+        parts = parts.flatMap { p -> [String] in
+            p.components(separatedBy: " and ").flatMap { $0.components(separatedBy: " plus ") }
+        }
+        let items = clean(parts)
+        guard items.count >= (hasIntro ? 2 : 3) else { return nil }
+        let words = items.map { $0.split(separator: " ").count }
+        let short = words.allSatisfy { $0 <= 7 } && Double(words.reduce(0, +)) / Double(words.count) <= 5
+        // Running sentences have full stops between longer thoughts; lists don't.
+        let sentences = body.split(separator: ".").filter { $0.split(separator: " ").count > 6 }.count
+        guard short, sentences <= 1 || hasIntro else { return nil }
+        return List(title: title, items: items, checklist: checklist)
+    }
+
+    private static func clean(_ pieces: [String]) -> [String] {
+        pieces.map { p -> String in
+            var t = p.trimmingCharacters(in: CharacterSet(charactersIn: " ,.;:-").union(.whitespacesAndNewlines))
+            for tail in [" and", " then", " also"] where t.lowercased().hasSuffix(tail) { t = String(t.dropLast(tail.count)) }
+            for lead in ["and ", "also ", "then ", "some ", "a ", "an ", "to "] where t.lowercased().hasPrefix(lead) && t.count > lead.count + 2 {
+                t = String(t.dropFirst(lead.count))
+            }
+            return t.prefix(1).uppercased() + t.dropFirst()
+        }
+        .filter { !$0.isEmpty && $0.count < 120 }
     }
 }

@@ -106,7 +106,8 @@ final class SyncEngine {
         let fresh: [EmailMessage] = newIds.isEmpty ? [] :
             ((try? ctx.fetch(FetchDescriptor<EmailMessage>(predicate: #Predicate { newIds.contains($0.id) }))) ?? [])
 
-        // 1a. Your smart rules run first; a rule's category skips AI sorting.
+        // 1a. Muted conversations stay out of the inbox; then your smart rules run (a rule's category skips AI sorting).
+        await MutedThreads.apply(to: fresh, accounts: accounts)
         await MailRules.apply(to: fresh, accounts: accounts, ctx: ctx)
         EmailToKeel.process(fresh, accounts: accounts, ctx: ctx)        // forwarded to name+keel@… or “Task:” to yourself
         Automations.emailsArrived(fresh, ctx: ctx)
@@ -120,6 +121,18 @@ final class SyncEngine {
 
         // 1b. Machines aren't people: automated mail the AI called important/actionable becomes an update (in the background).
         await worker.reclassifyAutomated()
+
+        // One time: sales and promotional mail already in the inbox moves to its own category.
+        if !UserDefaults.standard.bool(forKey: "mail.promos.v1") {
+            let since = Date().addingTimeInterval(-60 * 86_400)
+            let recent = (try? ctx.fetch(FetchDescriptor<EmailMessage>(predicate: #Predicate { !$0.isArchived && $0.receivedAt > since }))) ?? []
+            for e in recent where e.category != .promotions && e.category != .calendar && MailNoise.isSalesOrPromo(e) {
+                e.category = .promotions
+                e.priorityScore = min(e.priorityScore, 0.2)
+            }
+            try? ctx.save()
+            UserDefaults.standard.set(true, forKey: "mail.promos.v1")
+        }
 
         // One time: mail the old, stricter "automated" rules pushed into Updates gets sorted again.
         if !UserDefaults.standard.bool(forKey: "mail.retriage.v2") {
@@ -140,6 +153,9 @@ final class SyncEngine {
             var priority = r.priority
             if (category == .important || category == .actionable) && MailNoise.isAutomated(email) {
                 category = .updates; priority = min(r.priority, 0.3)
+            }
+            if category != .calendar && MailNoise.isSalesOrPromo(email) {      // sales and promotions always get their own category
+                category = .promotions; priority = min(priority, 0.2)
             }
             let wantsTask = r.taskTitle != nil && (r.category == .actionable || r.category == .important)
             updates.append(MailStore.TriageUpdate(id: email.id, category: category, priority: priority, summary: r.summary,

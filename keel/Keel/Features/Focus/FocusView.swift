@@ -73,6 +73,7 @@ struct FocusView: View {
             .onChange(of: sound) { _, new in
                 if shutdown.active != nil { FocusSound.shared.play(FocusSound.Kind(rawValue: new) ?? .off) }
             }
+            FocusMusicPicker()
             if let t = preselected {
                 Text(t.title).font(DS.Font.title).multilineTextAlignment(.center)
                 if bodyDouble { Label("Body-double mode: Keel checks in with you every 10 min", systemImage: "person.2.wave.2").font(DS.Font.caption) }
@@ -133,6 +134,7 @@ struct FocusView: View {
                 TimeRing(progress: left / total).frame(width: 260, height: 260)
                 Text(Duration.seconds(left).formatted(.time(pattern: .minuteSecond))).font(DS.Font.timer)
             }
+            FocusMusicControls()
             ParkingLotField()
             if left == 0 {
                 Button("I'm done — log it") { finish(early: false) }.buttonStyle(.borderedProminent).tint(DS.Palette.calm)

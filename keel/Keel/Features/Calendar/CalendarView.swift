@@ -96,7 +96,7 @@ struct CalendarView: View {
             }
             .premiumBackground(DS.Palette.meeting)
             .navigationTitle(title)
-            .keelSettingsButton()
+            .keelSettingsButton(help: .calendar)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
@@ -105,6 +105,10 @@ struct CalendarView: View {
                         Section("Show") {
                             Button("Choose calendars…", systemImage: "calendar.badge.checkmark") { showCalendars = true }
                             Toggle(isOn: $showTasks) { Label("Show tasks on calendar", systemImage: "checklist") }
+                        }
+                        Section("Ask AI") {
+                            NavigationLink { LazyView(CalendarAIView()) } label: { Label("Change my calendar (just say it)", systemImage: "sparkles") }
+                            NavigationLink { LazyView(RoutineBuilderView()) } label: { Label("Turn repeat tasks into routines", systemImage: "arrow.triangle.2.circlepath") }
                         }
                         Section("Plan") {
                             Button("Plan my day (drag tasks onto hours)", systemImage: "calendar.day.timeline.left") { planning = true }

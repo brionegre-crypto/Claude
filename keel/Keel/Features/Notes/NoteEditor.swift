@@ -17,6 +17,7 @@ struct NoteEditor: View {
     @Query(sort: \Person.name) private var people: [Person]
 
     @FocusState private var focused: UUID?
+    @State private var showAllText = false
     @State private var editing: UUID?
     @State private var showHistory = false
     @State private var publishedURL: URL?
@@ -241,6 +242,10 @@ struct NoteEditor: View {
         }
         .navigationBarTitleDisplayMode(.inline)
         .toolbar { toolbar }
+        .sheet(isPresented: $showAllText) {
+            NavigationStack { PageAllTextView(title: note.title, text: PageAllTextView.plain(note)) }
+                .presentationDetents([.medium, .large])
+        }
         .onChange(of: note.blocks) { note.updatedAt = Date() }
         .onChange(of: note.title) { note.updatedAt = Date() }
         .onChange(of: photoItem) { _, item in Task { await insertPhoto(item) } }
@@ -1094,6 +1099,7 @@ struct NoteEditor: View {
                     Button("Open side by side", systemImage: "rectangle.split.2x1") { openWindow(id: "note", value: note.id) }
                 }
                 if note.isTemplate { TemplateScheduleMenu(template: note) }
+                Button("Select all text", systemImage: "selection.pin.in.out") { buffer.flush?(); showAllText = true }
                 Button("Find & replace", systemImage: "magnifyingglass") { showFindReplace = true }
                 Button("Comments", systemImage: "text.bubble") { commentTarget = CommentTarget(blockId: nil) }
                 Button(reordering ? "Done reordering" : "Reorder blocks", systemImage: "arrow.up.arrow.down") { withAnimation { reordering.toggle() } }
@@ -1164,10 +1170,10 @@ struct NoteEditor: View {
 
     /// The selected words (or the whole line) go to AI to rewrite.
     private func editWithAI(_ i: Int, preset: AIAction?) {
-        buffer.flush?()
+        let sel = buffer.flushed()
         let text = note.blocks[i].text
         var range: Range<String.Index>?
-        if case .selection(let r)? = buffer.selection?.indices, !r.isEmpty, r.lowerBound >= text.startIndex, r.upperBound <= text.endIndex { range = r }
+        if case .selection(let r)? = sel?.indices, !r.isEmpty, r.lowerBound >= text.startIndex, r.upperBound <= text.endIndex { range = r }
         let source = range.map { String(text[$0]) } ?? text
         guard !source.trimmingCharacters(in: .whitespaces).isEmpty else {
             aiWrite = AIWriteRequest(mode: .ask, blockId: note.blocks[i].id); return

@@ -125,3 +125,62 @@ struct SharedToKeelCard: View {
 extension Notification.Name {
     static let keelSharedArrived = Notification.Name("keel.sharedArrived")
 }
+
+// MARK: - Daily affirmation on Today (turn it on or off from Today's menu, or the card's own menu)
+
+enum DailyAffirmation {
+    static let toggleKey = "today.affirmation"
+    static let builtIn = [
+        "My brain works differently, not wrongly.", "Starting is the hardest part, and I can start small.",
+        "Rest is productive.", "I've handled hard days before.", "Done is better than perfect.",
+        "I don't have to do it all today. Just the next thing.", "My worth isn't my to-do list.",
+        "I can ask for help, and that's a strength.", "Progress counts, even when it's small.",
+        "I'm allowed to change my plan.", "Forgetting something doesn't make me careless; I'm learning my systems.",
+        "Today I'll be as kind to myself as I'd be to a friend.", "Five minutes is enough to begin.",
+        "I can do hard things, one step at a time.", "My curiosity and energy are gifts.",
+        "It's okay to take a break and come back.", "I finish more than I give myself credit for.",
+    ]
+
+    /// Your own affirmations (from the Affirmations tool) if you've kept any, otherwise Keel's.
+    static var pool: [String] {
+        let mine: [KitItem] = Kit.load("kit.affirmations")
+        let texts = mine.map(\.text).filter { !$0.isEmpty }
+        return texts.isEmpty ? builtIn : texts
+    }
+
+    /// The same one all day, a new one each day.
+    static func today(offset: Int = 0) -> String {
+        let p = pool
+        let day = Calendar.current.ordinality(of: .day, in: .era, for: Date()) ?? 0
+        return p[(day + offset) % max(p.count, 1)]
+    }
+}
+
+struct DailyAffirmationCard: View {
+    @AppStorage(DailyAffirmation.toggleKey) private var on = true
+    @State private var offset = 0
+
+    var body: some View {
+        if on {
+            HStack(alignment: .top, spacing: 12) {
+                Image(systemName: "quote.opening").font(.title3.weight(.bold)).foregroundStyle(.pink.gradient)
+                Text(DailyAffirmation.today(offset: offset)).font(.system(.body, design: .serif)).italic()
+                    .foregroundStyle(DS.Palette.ink).frame(maxWidth: .infinity, alignment: .leading)
+                    .contentTransition(.opacity).id(offset)
+                Menu {
+                    Button("Show another", systemImage: "arrow.triangle.2.circlepath") { withAnimation(DS.spring) { offset += 1 } }
+                    NavigationLink { LazyView(KitAffirmationsView()) } label: { Label("Edit my affirmations", systemImage: "pencil") }
+                    Button("Hide daily affirmation", systemImage: "eye.slash") { withAnimation(DS.spring) { on = false } }
+                } label: {
+                    Image(systemName: "ellipsis").foregroundStyle(DS.Palette.inkSoft).frame(width: 28, height: 28)
+                }
+                .accessibilityLabel("Affirmation options")
+            }
+            .padding(DS.Space.m)
+            .background { PremiumSurface(tint: .pink) }
+            .onTapGesture { withAnimation(DS.spring) { offset += 1 } }
+            .accessibilityElement(children: .combine)
+            .accessibilityLabel("Today's affirmation: \(DailyAffirmation.today(offset: offset))")
+        }
+    }
+}

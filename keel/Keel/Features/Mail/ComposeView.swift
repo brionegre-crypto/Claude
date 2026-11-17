@@ -108,6 +108,10 @@ struct ComposeView: View {
     @State private var loadingForwarded = false
     @FocusState private var bodyFocused: Bool
     @State private var followUpDays: Int? = nil
+    @State private var introDone = false
+    @State private var toneNote: String?
+    @State private var toneSofter: String?
+    @State private var checkingTone = false
     @State private var pickSendTime = false
     @State private var sendTime = Date().addingTimeInterval(3600)
     @Environment(\.modelContext) private var ctx
@@ -142,11 +146,41 @@ struct ComposeView: View {
                         ForEach(FollowUps.options, id: \.label) { Text($0.label).tag($0.days) }
                     } label: { Label("Remind me if no reply", systemImage: "bell.badge") }
                 }
+                if !introDone && InstantIntro.canApply(draft) {
+                    Section {
+                        Button {
+                            InstantIntro.apply(&draft, myAddresses: Set(accounts.map { $0.address.lowercased() }))
+                            showCcBcc = true; introDone = true; Haptics.tap()
+                        } label: { Label("Instant intro: thank \(draft.original?.fromName.split(separator: " ").first.map(String.init) ?? "them") and move them to Bcc", systemImage: "person.2.badge.gearshape") }
+                    } footer: { Text("For introductions: reply to the person you were introduced to, and spare the introducer the back-and-forth.") }
+                }
                 Section {
                     // Apple Intelligence Writing Tools (proofread, rewrite, tone) work here automatically.
                     TextEditor(text: $draft.body)
                         .frame(minHeight: 220)
                         .focused($bodyFocused)
+                    let flags = ToneCheck.flags(draft.body)
+                    if !flags.isEmpty || toneNote != nil {
+                        VStack(alignment: .leading, spacing: 6) {
+                            ForEach(flags, id: \.self) { Label($0, systemImage: "exclamationmark.bubble").font(.caption).foregroundStyle(.orange) }
+                            if let toneNote { Label(toneNote, systemImage: "ear").font(.caption).foregroundStyle(DS.Palette.inkSoft) }
+                            if let softer = toneSofter {
+                                Button("Use the calmer version", systemImage: "leaf") { draft.body = softer + (draft.body.range(of: "\n>").map { String(draft.body[$0.lowerBound...]) } ?? ""); toneSofter = nil; toneNote = nil }
+                                    .font(.caption)
+                            }
+                        }
+                    }
+                    Button { Task { await checkTone() } } label: {
+                        HStack { Label("How does this sound?", systemImage: "waveform.and.magnifyingglass"); if checkingTone { Spacer(); ProgressView() } }
+                    }
+                    .font(.caption)
+                    .disabled(draft.body.trimmingCharacters(in: .whitespacesAndNewlines).count < 10 || checkingTone)
+                }
+                if let kind = KindTime.suggestion() {
+                    Section {
+                        Button("Send at \(kind.formatted(date: .omitted, time: .shortened)) \(Calendar.current.isDateInToday(kind) ? "this morning" : "tomorrow") instead", systemImage: "sunrise") { scheduleSend(at: kind) }
+                            .disabled(recipients(draft.to).isEmpty)
+                    } footer: { Text("It's late. Sending in the morning keeps evenings quiet, for both of you.") }
                 }
                 if !attachments.isEmpty || loadingForwarded {
                     Section("Attachments") {
@@ -347,6 +381,16 @@ struct ComposeView: View {
         } catch {
             self.error = "Couldn't send: \(error.localizedDescription). Your message is still here."
             sendCountdown = nil
+        }
+    }
+
+    /// How the email might land, read by Apple Intelligence (or your AI), with a calmer version to swap in.
+    private func checkTone() async {
+        checkingTone = true; defer { checkingTone = false }
+        if let r = await ToneCheck.review(draft.body) {
+            withAnimation { toneNote = r.note; toneSofter = r.softer }
+        } else {
+            toneNote = "Couldn't check the tone right now. Turn on Apple Intelligence, or add an AI key in Settings."
         }
     }
 

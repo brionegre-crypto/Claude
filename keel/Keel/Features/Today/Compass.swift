@@ -12,6 +12,7 @@ struct HubView: View {
     @State private var search = ""
     @Namespace private var zoom          // tiles grow into the screen they open
     @State private var stats: [String: String] = [:]
+    @State private var openGroups: Set<String> = []
     @State private var recent: [String] = UserDefaults.standard.stringArray(forKey: "hub.recent") ?? []
 
     private var state: BrainState? { BrainState(rawValue: stateRaw) }
@@ -156,7 +157,7 @@ struct HubView: View {
                     .padding(.horizontal)
             }
             FlexGrid(columns: 2, spacing: 10) {
-                ForEach(g.tools.dropFirst()) { t in
+                ForEach(Array(g.tools.dropFirst().prefix(openGroups.contains(g.id) ? 99 : 6))) { t in
                     NavigationLink { LazyView(t.dest().navigationTransition(.zoom(sourceID: "g" + t.id, in: zoom))) } label: { ToolTile(tool: t, stat: stats[t.id], color: g.color) }
                         .buttonStyle(PressStyle()).hoverEffect(.lift)
                         .matchedTransitionSource(id: "g" + t.id, in: zoom)
@@ -164,6 +165,16 @@ struct HubView: View {
                 }
             }
             .padding(.horizontal)
+            if g.tools.count > 7 {
+                Button {
+                    withAnimation(DS.spring) { if openGroups.contains(g.id) { openGroups.remove(g.id) } else { openGroups.insert(g.id) } }
+                } label: {
+                    Label(openGroups.contains(g.id) ? "Show fewer" : "Show all \(g.tools.count)", systemImage: openGroups.contains(g.id) ? "chevron.up" : "chevron.down")
+                        .font(DS.Font.caption.weight(.semibold)).foregroundStyle(g.color)
+                }
+                .buttonStyle(.borderless)
+                .padding(.horizontal)
+            }
         }
     }
 
@@ -177,7 +188,8 @@ struct HubView: View {
             }
             HStack(spacing: 10) {
                 NavigationLink { LazyView(ImportView()) } label: { Label("Move to Keel", systemImage: "square.and.arrow.down") }.buttonStyle(.bordered)
-                NavigationLink { LazyView(FeatureGuideView()) } label: { Label("How Keel works", systemImage: "questionmark.circle") }.buttonStyle(.bordered)
+                NavigationLink { LazyView(FeatureGuideView()) } label: { Label("How Keel works", systemImage: "map") }.buttonStyle(.bordered)
+                NavigationLink { LazyView(HelpCenterView()) } label: { Label("How do I…", systemImage: "questionmark.circle") }.buttonStyle(.bordered)
             }
         }
         .font(DS.Font.caption)
@@ -385,6 +397,18 @@ enum HubCatalog {
     }
 
     private static let baseGroups: [HubGroup] = [
+        HubGroup(id: "ask", title: "Ask & coach", subtitle: "Your AI: answers, coaching and things done for you", icon: "sparkles", color: .indigo, tools: [
+            t("ask", "Ask Keel", "bubble.left.and.text.bubble.right.fill", "question ai chat assistant") { AssistantView() },
+            t("coach", "Coach", "figure.mind.and.body", "coach goals values weekly check-in reflection") { CoachView() },
+            t("askAll", "Ask everything", "sparkle.magnifyingglass", "ask everything question ai search brain") { AskEverythingView() },
+            t("talk", "Talk to Keel", "waveform", "voice speak") { TalkView() },
+            t("autopilot", "Autopilot", "sparkles", "ai suggestions automatic") { AutopilotView() },
+            t("doneForYou", "Done for you", "moon.stars.fill", "overnight agent done for you prep drafts filed morning") { DoneForYouView() },
+            t("askNotes", "Ask my notes", "text.bubble", "ask question notes search ai answer workspace") { AskNotesView() },
+            t("askInbox", "Ask your inbox", "questionmark.bubble", "ask question email mail search ai answer") { AskInboxView() },
+            t("memory", "What Keel knows", "brain", "memory facts about me") { MemoryView() },
+            t("digest", "This week's digest", "calendar.badge.checkmark", "weekly digest summary week review") { WeeklyDigestView() },
+        ]),
         HubGroup(id: "go", title: "Get going", subtitle: "Start, and keep going", icon: "bolt.fill", color: DS.Palette.accent, tools: [
             t("focusRoom", "Focus room", "person.2.wave.2.fill", "body double start focus work timer companion") { FocusRoomView() },
             t("forecast", "Focus forecast", "waveform.path.ecg", "meds medication best time energy peak") { FocusForecastView() },
@@ -394,6 +418,7 @@ enum HubCatalog {
             t("sort", "Sort loose tasks", "tray.and.arrow.down.fill", "inbox process capture brain dump") { ProcessInboxView() },
             t("visualTimer", "Visual timer", "timer.circle.fill", "timer countdown time blindness clock") { VisualTimerView() },
             t("quickWins", "Quick wins", "bolt.circle.fill", "quick small easy short tasks 5 minutes") { QuickWinsView() },
+            t("rewards", "Rewards & buddy", "gift.fill", "rewards xp level coins treat accountability buddy friend") { RewardsView() },
         ]),
         HubGroup(id: "calm", title: "Calm down", subtitle: "When it's all a bit much", icon: "wind", color: .teal, tools: [
             t("sos", "I'm overwhelmed", "lifepreserver.fill", "sos panic anxious stressed too much help") { OverwhelmedView() },
@@ -402,39 +427,52 @@ enum HubCatalog {
             t("dopamine", "Dopamine menu", "dice.fill", "boost bored reward motivation") { DopamineMenuView() },
         ]),
         HubGroup(id: "top", title: "Stay on top", subtitle: "Money, promises and things in motion", icon: "checkmark.shield.fill", color: .orange, tools: [
-            t("vault", "Paperwork vault", "archivebox.fill", "receipt warranty id passport insurance documents paperwork expire return") { VaultView() },
-            t("errands", "Errands", "car.fill", "errands store pharmacy post office bank run") { ErrandsView() },
-            t("sharedLists", "Shared lists", "person.2.fill", "share list family partner groceries together") { SharedListsView() },
-            t("appointments", "Appointments from email", "calendar.badge.plus", "appointment doctor dentist booking confirmation calendar email find schedule") { AppointmentsView() },
             t("bills", "Bills & money", "creditcard.fill", "subscriptions trial renewal payment cost") { SubscriptionsView() },
             t("promises", "Promises", "hand.raised.fill", "commitments owe said i would") { PromisesView() },
             t("savePoints", "Save points", "bookmark.fill", "resume interrupted where was i") { SavePointsView() },
+            t("appointments", "Appointments from email", "calendar.badge.plus", "appointment doctor dentist booking confirmation calendar email find schedule") { AppointmentsView() },
+            t("vault", "Paperwork vault", "archivebox.fill", "receipt warranty id passport insurance documents paperwork expire return") { VaultView() },
+            t("documents", "Documents", "doc.badge.clock", "passport license insurance warranty expiry expire renew id") { DocumentsView() },
+            t("errands", "Errands", "car.fill", "errands store pharmacy post office bank run") { ErrandsView() },
+            t("sharedLists", "Shared lists", "person.2.fill", "share list family partner groceries together") { SharedListsView() },
             t("deliveries", "Deliveries", "shippingbox.fill", "packages tracking orders") { DeliveriesView() },
             t("trips", "Trips", "airplane", "travel flight hotel") { TripsView() },
             t("readLater", "Read later", "books.vertical.fill", "articles links saved") { ReadLaterView() },
             t("upkeep", "Home & car upkeep", "house.fill", "maintenance filter smoke alarm oil change car registration chores") { UpkeepView() },
             t("packing", "Packing lists", "suitcase.fill", "trip travel pack packing suitcase flight hotel") { PackingView() },
-            t("documents", "Documents", "doc.badge.clock", "passport license insurance warranty expiry expire renew id") { DocumentsView() },
         ]),
-        HubGroup(id: "food", title: "Body & health", subtitle: "Recovery, sleep, medications, food and more", icon: "water.waves", color: .teal, tools: [
-            t("body", "Body: Tide, Swell, Anchor", "water.waves", "health recovery strain sleep score hrv heart rate stress readiness workout body battery fitness") { BodyView() },
-            t("bodyMap", "Body map", "figure.stand", "body map sore muscles pain injury worked") { BodyMapView() },
+        HubGroup(id: "food", title: "Body & health", subtitle: "Medications, food, symptoms and more (scores and training live in the Body tab)", icon: "water.waves", color: .teal, tools: [
             t("meds", "Medications", "pills.fill", "meds medication pills dose refill add") { MedsView() },
+            t("food", "Food today", "fork.knife.circle.fill", "nutrition protein fiber sugar meals log calories health brain food fish") { NutritionView() },
+            t("describeMeal", "Log a meal", "fork.knife", "ate lunch dinner breakfast describe meal food search calories photo snap") { LogFoodView() },
+            t("mealplan", "Meal plan & groceries", "cart.fill", "meal plan grocery list shopping diet week dinner") { MealPlanView() },
+            t("drinks", "Caffeine & water", "cup.and.saucer.fill", "coffee tea water hydration caffeine cutoff drink") { ScrollView { DrinksCard().padding() }.navigationTitle("Caffeine & water") },
             t("prn", "As-needed medicines", "cross.case.fill", "ibuprofen painkiller as needed prn inhaler") { PRNView() },
             t("symptoms", "Symptoms", "thermometer.medium", "symptom headache migraine pain sick nausea") { SymptomsView() },
             t("bp", "Blood pressure", "heart.text.square.fill", "blood pressure bp hypertension cuff") { BloodPressureView() },
             t("fasting", "Fasting", "timer", "fast intermittent fasting timer") { FastingView() },
-            t("bodyTrends", "90-day trends", "chart.xyaxis.line", "hrv resting heart rate sleep trend") { BodyTrendsView() },
-            t("workouts", "Workouts", "figure.run", "exercise workout history active days") { WorkoutHistoryView() },
             t("sleepSounds", "Sleep sounds", "moon.zzz.fill", "sleep sounds rain noise timer") { SleepSoundsView() },
             t("medicalCard", "Medical card", "staroflife.fill", "allergies blood type emergency contact medical id") { MedicalCardView() },
             t("doctor", "For my doctor", "stethoscope", "doctor appointment summary report visit") { DoctorSummaryView() },
-            t("drinks", "Caffeine & water", "cup.and.saucer.fill", "coffee tea water hydration caffeine cutoff drink") { ScrollView { DrinksCard().padding() }.navigationTitle("Caffeine & water") },
-            t("scanFood", "Scan food", "barcode.viewfinder", "barcode scan grocery diet allowed can i eat label ingredients") { FoodScanView() },
-            t("food", "Food today", "fork.knife.circle.fill", "nutrition protein fiber sugar meals log calories health brain food fish") { NutritionView() },
-            t("describeMeal", "Log a meal", "fork.knife", "ate lunch dinner breakfast describe meal food search calories photo snap") { LogFoodView() },
-            t("foodLibrary", "Food library", "books.vertical.fill", "scanned products saved history") { FoodLibraryView() },
-            t("dietGuide", "Diet guide", "book.closed.fill", "approved avoid swap alternative brands adhd diet") { DietGuideView() },
+        ]),
+        HubGroup(id: "brain", title: "Second brain", subtitle: "Capture, connect and find what you know", icon: "brain.head.profile.fill", color: .purple, tools: [
+            t("capture", "Capture inbox", "tray.and.arrow.down.fill", "capture inbox quick jot sort file") { CaptureInboxView() },
+            t("voiceNote", "Voice note", "mic.fill", "voice note record talk dictate") { VoiceNoteView() },
+            t("brainHome", "Second brain", "brain.head.profile.fill", "second brain home dashboard brain map") { BrainHomeView() },
+            t("brainMap", "Brain map", "brain.head.profile.fill", "notes graph links connections map neurons") { BrainMapView() },
+            t("record", "Record a meeting", "waveform.badge.mic", "meeting notes transcript") { MeetingRecorderView() },
+            t("screenshots", "Tasks from screenshots", "camera.viewfinder", "photo scan") { ScreenshotTasksView() },
+            t("flashcards", "Flashcards", "rectangle.on.rectangle.angled", "flashcards study review spaced repetition learn") { FlashcardReviewView() },
+            t("timeline", "Life timeline", "clock.arrow.circlepath", "timeline life history photos workouts what was i doing") { LifeTimelineView() },
+            t("tags", "Tags & searches", "number", "tags hashtags saved searches") { TagBrowserView() },
+            t("supertags", "Supertags", "tag.fill", "supertags types objects person book project collection tana") { SupertagsView() },
+            t("spaces", "Shared spaces", "person.3.fill", "shared space family team collaborate together pages lists") { SpacesView() },
+            t("kindle", "Kindle highlights", "books.vertical.fill", "kindle highlights clippings import books") { KindleImportView() },
+            t("readingImport", "Import Pocket or Instapaper", "tray.and.arrow.down", "pocket instapaper import reading list csv") { ReadingImportView() },
+            t("extensions", "Extensions", "puzzlepiece.extension.fill", "extensions plugins gallery ai commands supertag packs templates") { ExtensionsView() },
+            t("setup", "Second-brain setup", "square.grid.2x2.fill", "para projects areas resources archive setup templates reorganize links") { StarterSetupView() },
+            t("brainHealth", "Brain health", "stethoscope", "duplicates broken links orphan empty pages health") { BrainHealthView() },
+            t("trash", "Recently deleted", "trash", "trash deleted restore undo pages") { TrashView() },
         ]),
         HubGroup(id: "back", title: "Look back", subtitle: "See how you're really doing", icon: "clock.arrow.circlepath", color: .pink, tools: [
             t("dayLog", "Daily log", "list.bullet.rectangle.fill", "today what did i do breathe log diary") { DayLogView() },
@@ -443,65 +481,33 @@ enum HubCatalog {
             t("monthly", "Monthly review", "calendar.badge.checkmark", "month reflect") { MonthlyReviewView() },
             t("stats", "Statistics", "chart.xyaxis.line", "numbers trends") { StatsView() },
             t("focusHistory", "Focus history", "chart.bar.xaxis", "sessions time") { FocusHistoryView() },
-            t("timeAudit", "Time audit", "chart.pie.fill", "where time goes hours") { TimeAuditView() },
             t("timereport", "Where my time went", "chart.bar.xaxis", "time report meetings focus week hours analytics") { TimeReportView() },
             t("voicejournal", "Voice journal", "mic.circle.fill", "journal talk diary voice speak evening") { VoiceJournalView(embedded: true) },
             t("achievements", "Achievements", "trophy.fill", "wins momentum streak") { AchievementsView() },
+            t("decisions", "Decision journal", "scale.3d", "decision journal choices review outcome learn") { DecisionJournalView() },
+            t("balance", "Life balance", "chart.pie.fill", "life balance areas work health family time") { LifeBalanceView() },
         ]),
         HubGroup(id: "ahead", title: "Think ahead", subtitle: "Shape the weeks to come", icon: "binoculars.fill", color: .purple, tools: [
+            t("calendarAI", "Change my calendar", "sparkles", "ai move delete reschedule cancel rename add event calendar say it") { CalendarAIView() },
+            t("routineBuilder", "Tasks into routines", "arrow.triangle.2.circlepath", "routine chores repeat tasks clean up calendar morning evening weekly reset") { RoutineBuilderView() },
             t("weekPlan", "Plan the week", "calendar.day.timeline.left", "week schedule") { PlanMyWeekView(embedded: true) },
             t("goals", "Goals", "target", "goal ambitions areas") { GoalsView() },
             t("projects", "Projects", "folder.fill", "project") { ProjectsView() },
             t("habits", "Habit stacks", "link", "habits routine stack") { HabitsView() },
             t("habitLibrary", "Habit library", "books.vertical", "ideas habits") { HabitLibraryView() },
             t("idealWeek", "Ideal week", "calendar.badge.clock", "design week blocks") { IdealWeekView() },
+            t("protectMornings", "Protect focus mornings", "sunrise.fill", "focus block calendar morning protect deep work") { ProtectMorningsView() },
+            t("automations", "Automations", "bolt.horizontal.fill", "automation rules when then") { AutomationsView() },
             t("vision", "Vision board", "photo.on.rectangle.angled", "dreams pictures") { VisionBoardView() },
             t("odyssey", "Odyssey plan", "point.3.filled.connected.trianglepath.dotted", "future life paths") { OdysseyView() },
             t("places", "Places", "mappin.and.ellipse", "location home leaving checklist") { PlacesView() },
-            t("protectMornings", "Protect focus mornings", "sunrise.fill", "focus block calendar morning protect deep work") { ProtectMorningsView() },
         ]),
         HubGroup(id: "people", title: "Your people", subtitle: "Stay close without the mental load", icon: "person.2.fill", color: .green, tools: [
             t("people", "Keep in touch", "person.2.fill", "friends family contact call") { PeopleView() },
+            t("gifts", "Birthdays & gifts", "gift.fill", "birthday gift ideas present contacts") { GiftsView() },
             t("countdowns", "Countdowns", "hourglass", "birthday dates days until") { CountdownsView() },
             t("shared", "Shared calendars", "person.3.fill", "family team calendar") { SharedCalendarsView() },
             t("clock", "World clock", "globe", "time zones") { WorldClockView() },
-            t("gifts", "Birthdays & gifts", "gift.fill", "birthday gift ideas present contacts") { GiftsView() },
-        ]),
-        HubGroup(id: "ask", title: "Ask & capture", subtitle: "Let Keel do the remembering", icon: "sparkles", color: .indigo, tools: [
-            t("autopilot", "Autopilot", "sparkles", "ai suggestions automatic") { AutopilotView() },
-            t("ask", "Ask Keel", "bubble.left.and.text.bubble.right.fill", "question ai chat assistant") { AssistantView() },
-            t("talk", "Talk to Keel", "waveform", "voice speak") { TalkView() },
-            t("record", "Record a meeting", "waveform.badge.mic", "meeting notes transcript") { MeetingRecorderView() },
-            t("screenshots", "Tasks from screenshots", "camera.viewfinder", "photo scan") { ScreenshotTasksView() },
-            t("brainMap", "Brain map", "brain.head.profile.fill", "notes graph links connections map neurons") { BrainMapView() },
-            t("memory", "What Keel knows", "brain", "memory facts about me") { MemoryView() },
-            t("mealplan", "Meal plan & groceries", "cart.fill", "meal plan grocery list shopping diet week dinner") { MealPlanView() },
-            t("rewards", "Rewards & buddy", "gift.fill", "rewards xp level coins treat accountability buddy friend") { RewardsView() },
-            t("automations", "Automations", "bolt.horizontal.fill", "automation rules when then") { AutomationsView() },
-            t("tags", "Tags & searches", "number", "tags hashtags saved searches") { TagBrowserView() },
-            t("quickCapture", "Capture anything", "plus.circle.fill", "capture quick add anything task event note reminder") { UniversalCaptureSheet() },
-            t("decisions", "Decision journal", "scale.3d", "decision journal choices review outcome learn") { DecisionJournalView() },
-            t("balance", "Life balance", "chart.pie.fill", "life balance areas work health family time") { LifeBalanceView() },
-            t("doneForYou", "Done for you", "moon.stars.fill", "overnight agent done for you prep drafts filed morning") { DoneForYouView() },
-            t("timeline", "Life timeline", "clock.arrow.circlepath", "timeline life history photos workouts what was i doing") { LifeTimelineView() },
-            t("coach", "Coach", "figure.mind.and.body", "coach goals values weekly check-in reflection") { CoachView() },
-            t("spaces", "Shared spaces", "person.3.fill", "shared space family team collaborate together pages lists") { SpacesView() },
-            t("extensions", "Extensions", "puzzlepiece.extension.fill", "extensions plugins gallery ai commands supertag packs templates") { ExtensionsView() },
-            t("setup", "Second-brain setup", "square.grid.2x2.fill", "para projects areas resources archive setup templates reorganize links") { StarterSetupView() },
-            t("brainHealth", "Brain health", "stethoscope", "duplicates broken links orphan empty pages health") { BrainHealthView() },
-            t("readingImport", "Import Pocket or Instapaper", "tray.and.arrow.down", "pocket instapaper import reading list csv") { ReadingImportView() },
-            t("brainHome", "Second brain", "brain.head.profile.fill", "second brain home dashboard brain map") { BrainHomeView() },
-            t("capture", "Capture inbox", "tray.and.arrow.down.fill", "capture inbox quick jot sort file") { CaptureInboxView() },
-            t("voiceNote", "Voice note", "mic.fill", "voice note record talk dictate") { VoiceNoteView() },
-            t("askAll", "Ask everything", "sparkle.magnifyingglass", "ask everything question ai search brain") { AskEverythingView() },
-            t("flashcards", "Flashcards", "rectangle.on.rectangle.angled", "flashcards study review spaced repetition learn") { FlashcardReviewView() },
-            t("kindle", "Kindle highlights", "books.vertical.fill", "kindle highlights clippings import books") { KindleImportView() },
-            t("supertags", "Supertags", "tag.fill", "supertags types objects person book project collection tana") { SupertagsView() },
-            t("trash", "Recently deleted", "trash", "trash deleted restore undo pages") { TrashView() },
-            t("askNotes", "Ask my notes", "text.bubble", "ask question notes search ai answer workspace") { AskNotesView() },
-            t("askInbox", "Ask your inbox", "questionmark.bubble", "ask question email mail search ai answer") { AskInboxView() },
-            t("digest", "This week's digest", "calendar.badge.checkmark", "weekly digest summary week review") { WeeklyDigestView() },
-            t("help", "How do I…", "questionmark.bubble.fill", "help how do i guide tutorial instructions learn support stuck confused") { HelpCenterView() },
         ]),
     ]
 }

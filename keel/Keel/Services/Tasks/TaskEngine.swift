@@ -43,7 +43,10 @@ enum TaskActions {
         TaskAlerts.schedule(t)
         if done, t.isDone, let ctx = t.modelContext { notifyUnblocked(by: t, ctx: ctx) }
         if done, t.isDone { Handoff.shared.taskDone(t, ctx: t.modelContext) }      // suggest the next thing
-        if let ctx = t.modelContext { WidgetSync.update(ctx) }
+        if let ctx = t.modelContext {
+            try? ctx.save()                 // saved now, so every screen (Today, Tasks, widgets, Reminders) shows it at once
+            WidgetSync.update(ctx)
+        }
         return rolledTo
     }
 

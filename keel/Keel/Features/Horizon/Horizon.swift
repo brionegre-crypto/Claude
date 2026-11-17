@@ -312,8 +312,12 @@ struct VoyageView: View {
                         Button("Later") {
                             t.dueDate = Calendar.current.date(byAdding: .day, value: 1, to: Calendar.current.startOfDay(for: Date()))
                             t.updatedAt = Date(); Haptics.tap()
+                            try? ctx.save()
                         }
                         .buttonStyle(.bordered)
+                        Button { withAnimation(DS.spring) { TaskActions.setDone(t, true) } } label: { Label("Done", systemImage: "checkmark") }
+                            .buttonStyle(.bordered).tint(DS.Palette.calm)
+                            .accessibilityLabel("Mark \(t.title) done")
                     }
                     .font(DS.Font.caption.weight(.semibold))
                 } else {

@@ -5,10 +5,10 @@ import UserNotifications
 /// The smart parts of Inbox: tabs, learning from how you treat senders, VIPs, quick-win estimates,
 /// batched delivery and which mail deserves a notification.
 enum InboxTab: String, CaseIterable, Identifiable {
-    case all, priority, updates, newsletters, quick       // All: every account, newest first, nothing hidden
+    case all, priority, updates, newsletters, promos, quick       // All: every account, newest first, nothing hidden
     var id: String { rawValue }
-    var title: String { switch self { case .all: "All"; case .priority: "Priority"; case .updates: "Updates"; case .newsletters: "Newsletters"; case .quick: "Quick wins" } }
-    var icon: String { switch self { case .all: "tray.full"; case .priority: "person.fill"; case .updates: "bell"; case .newsletters: "newspaper"; case .quick: "bolt.fill" } }
+    var title: String { switch self { case .all: "All"; case .priority: "Priority"; case .updates: "Updates"; case .newsletters: "Newsletters"; case .promos: "Sales & promos"; case .quick: "Quick wins" } }
+    var icon: String { switch self { case .all: "tray.full"; case .priority: "person.fill"; case .updates: "bell"; case .newsletters: "newspaper"; case .promos: "tag.fill"; case .quick: "bolt.fill" } }
 }
 
 @MainActor
@@ -56,12 +56,15 @@ enum InboxBrain {
     /// Which tab an email belongs in, using AI sorting corrected by what Keel has learned.
     static func tab(_ e: EmailMessage, score: SenderScore?) -> InboxTab {
         if score?.isVIP == true { return .priority }
-        if let s = score, s.replies >= 1 { return .priority }                       // you've written back: they matter
         if MailNoise.needsAttention(e) { return .priority }                           // payment failed, security alert, action required
+        // Sales and promotional mail: always its own tab (people you've written back to are never cold pitches).
+        if e.category == .promotions || MailNoise.isSalesOrPromo(e, knownSender: (score?.replies ?? 0) >= 1) { return .promos }
+        if let s = score, s.replies >= 1 { return .priority }                       // you've written back: they matter
         let subj = e.subject.lowercased()
         if (subj.hasPrefix("re:") || subj.hasPrefix("re :")) && !MailNoise.isAutomated(e) { return .priority }   // a real reply in a conversation
         switch e.category ?? .important {
-        case .newsletters, .promotions: return .newsletters
+        case .newsletters: return .newsletters
+        case .promotions: return .promos
         case .updates, .lowPriority: return .updates
         default:
             if MailNoise.isAutomated(e) { return e.unsubscribeHeader != nil ? .newsletters : .updates }

@@ -423,6 +423,32 @@ struct LogFoodView: View {
                 } footer: {
                     if focusHint { Text("Type it the way you'd say it: “2 eggs, toast and a latte”. Keel splits it into foods and portions.") }
                 }
+                let yesterday = history.filter { Calendar.current.isDateInYesterday($0.date) && $0.meal == meal }
+                if !yesterday.isEmpty {
+                    Section {
+                        Button {
+                            let items = yesterday.map { e -> PlateItem in
+                                let f = mine.first { $0.name.lowercased() == e.name.lowercased() }
+                                    ?? CatalogFood(id: "y:" + e.id.uuidString, emoji: FoodCatalog.emoji(for: e.name), name: e.name, serving: "1 serving",
+                                                   facts: e.facts.scaled(1 / max(e.servings, 0.25)), source: .mine)
+                                return PlateItem(food: f, servings: e.servings)
+                            }
+                            withAnimation(DS.spring) { plate.append(contentsOf: items) }
+                            Haptics.success()
+                        } label: {
+                            HStack(spacing: 12) {
+                                Image(systemName: "arrow.uturn.backward.circle.fill").font(.title2).foregroundStyle(.green)
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text("Same as yesterday's \(meal)").font(DS.Font.headline).foregroundStyle(DS.Palette.ink)
+                                    Text(yesterday.map(\.name).joined(separator: ", ")).font(.caption).foregroundStyle(DS.Palette.inkSoft).lineLimit(1)
+                                }
+                                Spacer()
+                                Text("\(Int(yesterday.reduce(0) { $0 + ($1.facts.calories ?? 0) })) kcal").font(.caption.weight(.semibold)).monospacedDigit()
+                            }
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
                 let usual = MyFoods.usual(entries: history, meal: meal, mine: mine)
                 if !usual.isEmpty {
                     Section(history.isEmpty ? "Popular for \(meal)" : "Your usual \(meal)") { rows(usual) }
