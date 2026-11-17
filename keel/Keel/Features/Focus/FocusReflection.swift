@@ -20,7 +20,8 @@ enum FocusReflections {
     static func add(_ r: FocusReflection) { LocalLog.save(Array((all + [r]).suffix(400)), key) }
 
     /// When your sessions go best, from your own ratings (needs 6+).
-    static func bestTime(_ list: [FocusReflection] = all) -> String? {
+    static func bestTime(_ given: [FocusReflection]? = nil) -> String? {
+        let list = given ?? all
         guard list.count >= 6 else { return nil }
         func bucket(_ d: Date) -> String {
             let h = Calendar.current.component(.hour, from: d)
