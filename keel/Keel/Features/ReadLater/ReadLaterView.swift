@@ -18,7 +18,18 @@ enum LinkSaver {
         guard let url = queueURL, let data = try? Data(contentsOf: url),
               let items = try? JSONDecoder().decode([Shared].self, from: data), !items.isEmpty else { return }
         try? FileManager.default.removeItem(at: url)
-        for item in items { add(item.url, title: item.title, ctx: ctx) }
+        for item in items {
+            if let link = add(item.url, title: item.title, ctx: ctx) {
+                SharedArrivals.add(.init(id: link.id, kind: .link, title: item.title ?? link.title, detail: "Read later · " + link.siteName, at: item.date))
+            }
+        }
+        arrived()
+    }
+
+    /// Something new came in through the share sheet: show it on Today, and take you there.
+    private static func arrived() {
+        NotificationCenter.default.post(name: .keelSharedArrived, object: nil)
+        AppRouter.shared.tab = .today
     }
 
     private struct SharedNote: Codable { var text: String; var images: [String]; var date: Date }
@@ -35,6 +46,8 @@ enum LinkSaver {
             let title = firstLine.isEmpty ? "Shared \(item.date.formatted(date: .abbreviated, time: .shortened))" : String(firstLine.prefix(60))
             let note = Note(title: title, blocks: item.text.isEmpty ? [] : [NoteBlock(kind: .text, text: item.text)])
             ctx.insert(note)
+            SharedArrivals.add(.init(id: note.id, kind: .note, title: title,
+                                     detail: item.images.isEmpty ? "New page" : "New page · \(item.images.count) photo\(item.images.count == 1 ? "" : "s")", at: item.date))
             for name in item.images {
                 let url = dir.appendingPathComponent("shared-images").appendingPathComponent(name)
                 if let img = try? Data(contentsOf: url) {
@@ -43,6 +56,8 @@ enum LinkSaver {
                 }
             }
         }
+        try? ctx.save()
+        arrived()
     }
 
     @discardableResult

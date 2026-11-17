@@ -29,6 +29,11 @@ struct NotesView: View {
 
     enum SortMode: String, CaseIterable { case manual = "Manual", recent = "Recently edited", alpha = "A to Z" }
     @AppStorage("notes.sort") private var sortRaw = SortMode.manual.rawValue
+
+    /// How the library looks: folder cards (default) or a Notion-style page tree. Notes menu → Layout.
+    enum Layout: String, CaseIterable { case cards = "Cards", tree = "Page tree" }
+    @AppStorage("notes.layout") private var layoutRaw = Layout.cards.rawValue
+    private var layout: Layout { Layout(rawValue: layoutRaw) ?? .cards }
     private var sortMode: SortMode { SortMode(rawValue: sortRaw) ?? .manual }
     private var recent: [Note] { Array(notes.lazy.filter { !$0.title.isEmpty || $0.blocks.contains { !$0.text.isEmpty } }.prefix(8)) }
     private var editedToday: Int { notes.filter { Calendar.current.isDateInToday($0.updatedAt) }.count }
@@ -81,6 +86,34 @@ struct NotesView: View {
                     Section { Waterline(label: "Below the waterline · your library") }
                         .listRowBackground(Color.clear)
                         .listRowInsets(EdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16))
+                    if layout == .cards {
+                        // Cards: each workspace's folders as a grid of cards, with their page counts and latest pages.
+                        ForEach(Array(groups.enumerated()), id: \.element.id) { i, g in
+                            Section {
+                                FlexGrid(columns: 2, spacing: 12) {
+                                    ForEach(g.folders) { f in folderCard(f) }
+                                    if !selectingFolders {
+                                        NewFolderCard { newFolderName = ""; newFolderWorkspace = g.name; creatingFolder = true }
+                                    }
+                                }
+                                .padding(.vertical, 4)
+                                .padding(6)
+                                .background(RoundedRectangle(cornerRadius: 22, style: .continuous).fill(DS.Palette.accent.opacity(dropTarget == g.id ? 0.12 : 0)))
+                                .overlay(RoundedRectangle(cornerRadius: 22, style: .continuous)
+                                    .strokeBorder(DS.Palette.accent.opacity(dropTarget == g.id ? 0.6 : 0), style: StrokeStyle(lineWidth: 2, dash: [7, 5]))
+                                    .allowsHitTesting(false))
+                                // Drop folders anywhere in a section to move them into it (the whole selection, if you were selecting).
+                                .dropDestination(for: String.self) { items, _ in
+                                    moveFolders(items, to: g.name)
+                                    return true
+                                } isTargeted: { on in
+                                    withAnimation(DS.spring) { dropTarget = on ? g.id : (dropTarget == g.id ? nil : dropTarget) }
+                                }
+                                .listRowInsets(EdgeInsets(top: 4, leading: 0, bottom: 8, trailing: 0))
+                                .listRowBackground(Color.clear)
+                            } header: { workspaceHeader(g, first: i == 0) }
+                        }
+                    } else {
                     // Notion-style page tree: workspaces → folders → pages (and pages inside pages). Tap a folder's name to open it.
                     ForEach(Array(groups.enumerated()), id: \.element.id) { i, g in
                         Section {
@@ -116,6 +149,7 @@ struct NotesView: View {
                                     withAnimation(DS.spring) { dropTarget = on ? g.id : (dropTarget == g.id ? nil : dropTarget) }
                                 }
                         }
+                    }
                     }
                     if !templates.isEmpty {
                         Section {
@@ -162,6 +196,12 @@ struct NotesView: View {
                 }
                 ToolbarItem(placement: .topBarTrailing) {
                     Menu {
+                        Section("Layout") {
+                            Picker("Layout", selection: $layoutRaw) {
+                                Label("Cards", systemImage: "square.grid.2x2").tag(Layout.cards.rawValue)
+                                Label("Page tree", systemImage: "list.bullet.indent").tag(Layout.tree.rawValue)
+                            }
+                        }
                         Section("Create") {
                             Button("New page", systemImage: "doc") { newPage() }
                             Button("Today's note", systemImage: "calendar") { opened = DailyNote.today(ctx) }

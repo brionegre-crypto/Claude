@@ -48,6 +48,7 @@ struct TodayView: View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: DS.Space.l) {
+                    SharedToKeelCard()                              // anything you just shared to Keel, right at the top
                     greeting
                         .inlineTip(OpenWaterTip())                  // each tip shows once, at most one new tip a day; takes no room until it shows
                         .inlineTip(CaptureTip())
