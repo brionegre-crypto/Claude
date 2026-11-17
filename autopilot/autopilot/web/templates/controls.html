@@ -1,0 +1,12 @@
+{% extends "base.html" %}{% block title %}Controls{% endblock %}{% block body %}
+{% macro act(name, label, cls='', confirm='') %}<form class="inline" method="post" action="/controls/{{ name }}" {% if confirm %}onsubmit="return confirm('{{ confirm }}')"{% endif %}><input type="hidden" name="csrf" value="{{ csrf }}"><button class="{{ cls }}">{{ label }}</button></form>{% endmacro %}
+<div class="grid"><div class="card"><h2>Automation</h2><div class="row">
+{% if paused %}{{ act('resume','Resume automation','primary') }}{% else %}{{ act('pause','Pause automation') }}{% endif %}
+{% if estop %}{{ act('clear-stop','Clear emergency stop','primary','Clear the emergency stop and allow publishing again?') }}{% else %}{{ act('emergency-stop','EMERGENCY STOP','danger','Stop ALL generation and publishing immediately?') }}{% endif %}</div>
+<p class="small muted">Pause: stops generation and publishing; due posts past the publish window are skipped, not dumped later. Emergency stop: also halts in-flight publishing at the next safe point.</p></div>
+<div class="card"><h2>Run now</h2><div class="row">{{ act('research','Trigger research') }}{{ act('generate','Trigger content generation') }}
+{{ act('rebuild','Rebuild publishing queue','', 'Remove all not-yet-generated future slots and re-plan?') }}{{ act('diagnostics','Run diagnostics') }}{{ act('backup','Back up now') }}{{ act('test-notification','Send test notification') }}</div>
+<p class="small muted">Results appear under Alerts. Generation uses your Claude Code subscription (counts toward its usage limits).</p></div></div>
+{% if diag %}<div class="card" style="margin-top:16px"><h2>Diagnostics · {{ diag.at|local }}</h2><table>{% for i in diag['items'] %}<tr><td>{{ i.name }}</td><td><span class="pill {{ 'ok' if i.ok else ('warn' if i.warn else 'err') }}">{{ 'ok' if i.ok else ('warning' if i.warn else 'fail') }}</span></td><td class="small">{{ i.detail }}</td></tr>{% endfor %}</table></div>{% endif %}
+<div class="card" style="margin-top:16px"><h2>Recent job runs</h2><table>{% for r in runs %}<tr><td class="small">{{ r.started_at|local }}</td><td>{{ r.job }}</td><td>{{ '✓' if r.ok else ('✗' if r.ok == 0 else '…') }}</td><td class="small muted">{{ (r.detail or '')[:200] }}</td></tr>{% endfor %}</table></div>
+{% endblock %}

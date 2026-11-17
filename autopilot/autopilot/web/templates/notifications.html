@@ -1,0 +1,2 @@
+{% extends "base.html" %}{% block title %}Alerts{% endblock %}{% block body %}
+<div class="card"><h2>Notifications</h2><table>{% for n in rows %}<tr><td class="small">{{ n.created_at|local }}</td><td><span class="pill {{ {'error':'err','warning':'warn','success':'ok'}.get(n.level,'') }}">{{ n.level }}</span></td><td><b>{{ n.title }}</b><div class="small muted" style="white-space:pre-wrap">{{ (n.body or '')[:1500] }}</div></td><td class="small muted">{{ n.category }}</td></tr>{% else %}<tr><td class="muted">Nothing yet.</td></tr>{% endfor %}</table></div>{% endblock %}

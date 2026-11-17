@@ -1,0 +1,6 @@
+{% extends "base.html" %}{% block title %}Library{% endblock %}{% block body %}
+<form class="row" method="get" style="margin-bottom:12px"><input name="q" value="{{ q }}" placeholder="search hook, caption, topic" style="width:280px">
+<select name="status" style="width:auto"><option value="">any status</option>{% for x in ['ready','draft','blocked','published','manual_due','failed','failed_permanent','skipped','cancelled'] %}<option {{ 'selected' if x==status }}>{{ x }}</option>{% endfor %}</select>
+<select name="platform" style="width:auto"><option value="">any platform</option>{% for p in ['instagram','youtube'] %}<option {{ 'selected' if p==platform }}>{{ p }}</option>{% endfor %}</select><button>Search</button></form>
+<div class="card"><table><tr><th>Scheduled</th><th>Platform</th><th>Format</th><th>Hook</th><th>Status</th></tr>{% for r in rows %}{% include "_row.html" %}{% else %}<tr><td class="muted">No content yet.</td></tr>{% endfor %}</table></div>
+{% endblock %}

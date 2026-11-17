@@ -1,0 +1,12 @@
+{% extends "base.html" %}{% block title %}Analytics{% endblock %}{% block body %}
+<p class="muted small">Only real numbers returned by the platform APIs are shown. Simulated posts and YouTube Community posts have no post-level API metrics.</p>
+<div class="grid">{% for key, rows in growth.items() %}<div class="card"><h2>{{ key.replace('_',' ') }}</h2>{% if rows %}
+{% set mx = rows|map(attribute='value')|max %}{% set mn = rows|map(attribute='value')|min %}
+<svg viewBox="0 0 300 80" width="100%" height="80" role="img" aria-label="{{ key }} trend"><polyline fill="none" stroke="#E18B1F" stroke-width="2" points="{% for r in rows %}{{ (loop.index0 / ((rows|length - 1) or 1) * 296 + 2)|round(1) }},{{ (76 - ((r.value - mn) / ((mx - mn) or 1)) * 72)|round(1) }} {% endfor %}"/></svg>
+<p>{{ rows[0].value|int }} → <b>{{ rows[-1].value|int }}</b> <span class="muted small">({{ rows|length }} samples)</span></p>{% else %}<p class="muted">No data yet.</p>{% endif %}</div>{% endfor %}</div>
+<div class="grid" style="margin-top:16px">{% for g in ['format','pillar','hour','weekday'] %}<div class="card"><h2>By {{ g }}</h2>{% if agg[g] %}<table><tr><th></th><th>Posts</th><th>Eng. rate</th><th>Avg reach</th></tr>
+{% set mx = agg[g].values()|map(attribute='avg_engagement_rate')|max %}{% for k, v in agg[g]|dictsort(by='value', reverse=true) %}<tr><td>{{ k }}</td><td>{{ v.posts }}</td><td><div class="bar" style="width:{{ ((v.avg_engagement_rate / (mx or 1)) * 80)|int }}px"></div>{{ '%.1f'|format(v.avg_engagement_rate*100) }}%</td><td>{{ v.avg_reach|int }}</td></tr>{% endfor %}</table>{% else %}<p class="muted">No data yet.</p>{% endif %}</div>{% endfor %}</div>
+<div class="grid" style="margin-top:16px"><div class="card"><h2>Top posts</h2><table>{% for p in agg.top_posts %}<tr><td>{{ '%.1f'|format(p.engagement_rate*100) }}%</td><td>{{ p.format }}</td><td>{% if p.permalink %}<a href="{{ p.permalink }}" target="_blank" rel="noopener">{{ (p.hook or '')[:70] }}</a>{% else %}{{ (p.hook or '')[:70] }}{% endif %}</td></tr>{% else %}<tr><td class="muted">No data yet.</td></tr>{% endfor %}</table></div>
+<div class="card"><h2>Optimizer</h2>{% if opt %}<pre>{{ opt|tojson(indent=1) }}</pre>{% else %}<p class="muted">Not run yet.</p>{% endif %}</div></div>
+<div class="card" style="margin-top:16px"><h2>Reports</h2>{% for r in reports %}<details><summary>{{ r.kind }} · {{ r.created_at|local }}</summary><pre>{{ r.body }}</pre></details>{% else %}<p class="muted">Weekly reports arrive Mondays, monthly on the 1st.</p>{% endfor %}</div>
+{% endblock %}

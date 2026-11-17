@@ -1,0 +1,26 @@
+{% extends "base.html" %}{% block title %}Post{% endblock %}{% block body %}
+{% set b = c.body|fromjson or {} %}{% set qr = c.quality_report|fromjson or {} %}
+<div class="row"><h2 style="margin:0">{{ c.platform }} · {{ c.format.replace('_',' ') }}</h2><span class="pill st-{{ c.status }}">{{ c.status }}</span><span class="muted">{{ c.scheduled_at|local }}</span>
+{% if c.permalink %}<a href="{{ c.permalink }}" target="_blank" rel="noopener">view post</a>{% endif %}<span class="small muted">id {{ c.id }} · by {{ c.generated_by or '—' }}</span></div>
+{% if c.block_reason %}<div class="banner stop" style="margin-top:10px">{{ c.block_reason }}</div>{% endif %}
+<div class="grid" style="margin-top:12px">
+<div class="card"><h2>Media</h2><div class="thumbs">{% for a in assets %}{% if a.kind == 'video' %}<video src="/asset/{{ a.id }}" controls></video>{% else %}<img src="/asset/{{ a.id }}" alt="{{ a.kind }} {{ a.ordinal }}">{% endif %}{% else %}<span class="muted">No media (text format or not generated yet).</span>{% endfor %}</div>
+{% if b.poll %}<p><b>Poll:</b> {{ b.poll.question }}</p><ul>{% for o in b.poll.options %}<li>{{ o }}</li>{% endfor %}</ul>{% endif %}
+{% if b.quiz %}<p><b>Quiz:</b> {{ b.quiz.question }}</p><ol>{% for o in b.quiz.options %}<li>{{ o }}{% if loop.index0 == b.quiz.answer_index %} ✓{% endif %}</li>{% endfor %}</ol><p class="small muted">{{ b.quiz.explanation }}</p>{% endif %}
+{% if b.script %}<p><b>Reel script</b></p><ol>{% for x in b.script %}<li>{{ x.text }} <span class="muted">({{ x.seconds }}s)</span></li>{% endfor %}</ol>{% endif %}</div>
+<div class="card"><h2>Edit</h2>{% if c.status not in ['published','publishing'] %}
+<form method="post" action="/content/{{ c.id }}/edit"><input type="hidden" name="csrf" value="{{ csrf }}">
+<label>Hook</label><input name="hook" value="{{ c.hook or '' }}"><label>Caption</label><textarea name="caption">{{ c.caption or '' }}</textarea>
+<label>Hashtags</label><input name="hashtags" value="{{ ' '.join(c.hashtags|fromjson or []) }}"><br><br><button class="primary">Save &amp; re-check</button></form>
+<form method="post" action="/content/{{ c.id }}/reschedule" class="row" style="margin-top:12px"><input type="hidden" name="csrf" value="{{ csrf }}"><input type="datetime-local" name="when" value="{{ local_input }}" style="width:auto"><button>Reschedule</button></form>
+<div class="row" style="margin-top:12px">
+<form class="inline" method="post" action="/content/{{ c.id }}/replace"><input type="hidden" name="csrf" value="{{ csrf }}"><button>Replace (regenerate)</button></form>
+{% if c.status == 'blocked' %}<form class="inline" method="post" action="/content/{{ c.id }}/approve-block" onsubmit="return confirm('Release this blocked post? Only do this after reviewing the block reason.')"><input type="hidden" name="csrf" value="{{ csrf }}"><button>Release block (reviewed)</button></form>{% endif %}
+<form class="inline" method="post" action="/content/{{ c.id }}/delete" onsubmit="return confirm('Delete this post?')"><input type="hidden" name="csrf" value="{{ csrf }}"><button class="danger">Delete</button></form></div>
+{% else %}<p class="muted">Published posts can't be edited here.</p>{% endif %}</div>
+<div class="card"><h2>Final caption</h2><pre>{{ caption_full }}</pre><p class="small muted">Topic: {{ c.topic }} · Pillar: {{ c.pillar }}</p>
+<p class="small"><b>Sources</b>{% for x in c.sources|fromjson or [] %}<br><a href="{{ x.url }}" target="_blank" rel="noopener noreferrer">{{ x.title }}</a>{% else %} none (no factual claims){% endfor %}</p>
+<p class="small"><b>Quality</b> {% for w in qr.get('warnings',[]) %}<span class="pill warn">{{ w }}</span> {% endfor %}{% for f in qr.get('fixes',[]) %}<span class="pill">{{ f }}</span> {% endfor %}{% if qr.get('ok') %}<span class="pill ok">passed</span>{% endif %}</p></div>
+<div class="card"><h2>Publishing log</h2><table>{% for a in attempts %}<tr><td class="small">#{{ a.attempt }} {{ a.started_at|local }}</td><td>{{ a.state }}</td><td class="small muted">{{ a.platform_post_id or '' }} {{ (a.error or '')[:200] }}</td></tr>{% else %}<tr><td class="muted">No attempts.</td></tr>{% endfor %}</table>
+{% if metrics %}<h2 style="margin-top:12px">Metrics</h2><table>{% for m in metrics %}<tr><td>{{ m.metric }}</td><td>{{ m.value|int }}</td><td class="small muted">{{ m.collected_at|local }}</td></tr>{% endfor %}</table>{% endif %}</div>
+</div>{% endblock %}

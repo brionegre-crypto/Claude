@@ -1,0 +1,16 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{% block title %}Autopilot{% endblock %} · Social Autopilot</title><link rel="stylesheet" href="/static/style.css"></head><body>
+<header><span class="brand">⚙ Social Autopilot</span>
+<nav>{% set p = request.url.path %}
+<a href="/" class="{{ 'active' if p == '/' }}">Overview</a><a href="/calendar" class="{{ 'active' if p.startswith('/calendar') }}">Calendar</a>
+<a href="/library" class="{{ 'active' if p.startswith('/library') or p.startswith('/content') }}">Library</a><a href="/research" class="{{ 'active' if p.startswith('/research') }}">Research</a>
+<a href="/analytics" class="{{ 'active' if p.startswith('/analytics') }}">Analytics</a><a href="/controls" class="{{ 'active' if p.startswith('/controls') }}">Controls</a>
+<a href="/notifications" class="{{ 'active' if p.startswith('/notif') }}">Alerts{% if unread %} <span class="pill err">{{ unread }}</span>{% endif %}</a><a href="/settings" class="{{ 'active' if p.startswith('/settings') }}">Settings</a></nav>
+<span style="margin-left:auto" class="row">
+<span class="pill {{ 'ok' if mode == 'live' and activated else 'warn' }}">{{ 'LIVE' if mode == 'live' and activated else 'SIMULATION' }}</span>
+{% if paused %}<span class="pill warn">PAUSED</span>{% endif %}
+<form class="inline" method="post" action="/logout"><input type="hidden" name="csrf" value="{{ csrf }}"><button>Log out</button></form></span></header>
+<main>
+{% if estop %}<div class="banner stop">EMERGENCY STOP is engaged: nothing will be generated or published. Clear it under Controls.</div>{% endif %}
+{% if not (mode == 'live' and activated) %}<div class="banner sim">Simulation mode: posts are written to data/simulated-outbox instead of your accounts. Real publishing starts only after <code>autopilot activate</code>.</div>{% endif %}
+{% block body %}{% endblock %}</main></body></html>

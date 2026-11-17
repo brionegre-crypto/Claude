@@ -1,0 +1,138 @@
+# Social Autopilot settings. Copy to config/settings.toml (the wizard does this for you).
+# Secrets (tokens, SMTP password) are NEVER stored here: they live encrypted in data/secrets.enc.
+
+[general]
+timezone = "America/Chicago"         # IANA name; DST handled automatically
+data_dir = "data"                    # relative to the project root
+mode = "simulation"                  # "simulation" (mock publishing) | "live" (set only by `autopilot activate`)
+
+[brand]
+name = "Be The Man System"
+handle_instagram = "bethemansystem"
+brand_file = "config/brand.md"       # voice, offers, audience, banned claims
+cta_default = "Comment \"STEP1\" and I'll send you the free worksheet."
+link = "https://www.bethemansystem.com/step-1/#get"
+colors = { bg = "#0B0B0C", accent = "#E18B1F", text = "#F2EEE6", panel = "#141416" }
+hashtags_core = ["#bethemansystem", "#christianmen"]
+hashtag_pool = ["#mensdiscipline", "#godlyhusband", "#christianfather", "#selfimprovementformen",
+  "#mensmindset", "#personaldevelopmentformen", "#christianmarriage", "#fatherhood", "#husbandgoals",
+  "#disciplineequalsfreedom", "#biblicalmanhood", "#dadlife"]
+
+[ai]
+provider = "claude_cli"              # "claude_cli" (your subscription, on this computer) | "inbox" (files from a Claude Code cloud routine) | "mock"
+claude_binary = "claude"
+timeout_seconds = 300
+max_calls_per_day = 25               # protects the usage limits you share with claude.ai
+allow_web_tools = true               # lets Claude use WebSearch/WebFetch for fact checks during research
+inbox_dir = "inbox"                  # used when provider = "inbox"
+
+[research]
+interval_hours = 12
+max_items_per_feed = 15
+min_relevance = 0.55
+feeds = [
+  "https://news.google.com/rss/search?q=fatherhood+research&hl=en-US&gl=US&ceid=US:en",
+  "https://news.google.com/rss/search?q=marriage+study+couples&hl=en-US&gl=US&ceid=US:en",
+  "https://news.google.com/rss/search?q=men+mental+health+habits&hl=en-US&gl=US&ceid=US:en",
+  "https://news.google.com/rss/search?q=discipline+habits+psychology&hl=en-US&gl=US&ceid=US:en",
+  "https://www.reddit.com/r/daddit/top/.rss?t=week",
+  "https://www.reddit.com/r/Marriage/top/.rss?t=week",
+]
+evergreen_topics = [
+  "Vision: what type of man do you want to be", "Keeping promises to yourself", "Weekly scorecard habit",
+  "Phones and presence at dinner", "Leading family devotions without preaching", "Apologizing well to your wife",
+  "Fathering sons and daughters", "Discipline when motivation fades", "Morning prayer routine",
+  "Defining the miss before the week starts", "Date night consistency", "Anger and the pause",
+]
+
+[calendar]
+horizon_days = 30                    # rolling queue length
+generate_ahead_days = 10             # fully generate+render posts this many days out
+# Local times (general.timezone). Defaults based on documented engagement windows; optimizer adjusts with real data.
+# NOTE: your Sprout packs already use 8am/9am/12pm/2pm/4pm/7pm/9pm through Dec 2026 — set start_date after them.
+start_date = ""                      # YYYY-MM-DD; empty = tomorrow
+min_gap_minutes = 90                 # between any two automated posts
+
+[[calendar.slots]]
+platform = "instagram"
+format = "reel"
+days = ["mon", "wed", "fri"]
+time = "18:30"
+
+[[calendar.slots]]
+platform = "instagram"
+format = "carousel"
+days = ["tue", "sat"]
+time = "11:30"
+
+[[calendar.slots]]
+platform = "instagram"
+format = "image"
+days = ["thu", "sun"]
+time = "18:30"
+
+[[calendar.slots]]
+platform = "instagram"
+format = "story"
+days = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"]
+time = "12:15"
+
+[[calendar.slots]]
+platform = "youtube"
+format = "community_text"
+days = ["mon"]
+time = "10:00"
+
+[[calendar.slots]]
+platform = "youtube"
+format = "community_poll"
+days = ["wed"]
+time = "10:00"
+
+[[calendar.slots]]
+platform = "youtube"
+format = "community_image"
+days = ["fri"]
+time = "10:00"
+
+[[calendar.slots]]
+platform = "youtube"
+format = "community_quiz"
+days = ["sat"]
+time = "10:00"
+
+[publishing]
+max_attempts = 5
+backoff_base_seconds = 60            # 1m, 2m, 4m, 8m … (with jitter)
+publish_window_minutes = 180         # a post more than this late is skipped and reported, not published
+instagram_api_host = "https://graph.instagram.com"
+instagram_api_version = "v23.0"
+media_host = "tunnel"                # "tunnel" (free cloudflared quick tunnel, on demand) | "public_url"
+public_media_base_url = ""           # used when media_host = "public_url"
+local_media_port = 8766
+
+[quality]
+similarity_threshold = 0.55          # Jaccard similarity above which a post is a duplicate
+banned_phrases = ["guaranteed", "cure", "100% proven", "doctors hate", "get rich"]
+sensitive_terms = ["suicide", "self-harm", "abuse", "divorce lawyer", "overdose", "election", "vaccine"]
+
+[analytics]
+interval_hours = 6
+collect_after_hours = 24
+
+[notifications]
+daily_summary_time = "08:00"
+ntfy_topic = ""                      # free push via ntfy.sh — pick a long random topic name
+webhook_url = ""                     # Discord/Slack-compatible incoming webhook (free)
+email_to = ""                        # requires SMTP settings below + `autopilot secrets set smtp_password`
+smtp_host = ""
+smtp_port = 587
+smtp_user = ""
+
+[dashboard]
+host = "127.0.0.1"                   # local only. Do not change to 0.0.0.0 unless you add a firewall.
+port = 8765
+
+[backup]
+interval_hours = 24
+keep = 14

@@ -1,0 +1,34 @@
+{% extends "base.html" %}{% block title %}Overview{% endblock %}{% block body %}
+<div class="grid">
+<div class="card"><h2>System status</h2><table>
+<tr><td>Worker heartbeat</td><td>{% if heartbeat %}{{ heartbeat|local }}{% else %}<span class="pill err">not running</span>{% endif %}</td></tr>
+<tr><td>Automation</td><td>{% if estop %}<span class="pill err">emergency stop</span>{% elif paused %}<span class="pill warn">paused</span>{% else %}<span class="pill ok">running</span>{% endif %}</td></tr>
+<tr><td>Queue health</td><td><span class="pill {{ 'ok' if health.state=='healthy' else 'warn' }}">{{ health.state }}</span> {{ health.days_fully_ready }} days ready · {{ health.ready_next_7d }}/{{ health.slots_next_7d }} slots ready (7d)</td></tr>
+<tr><td>AI (Claude Code)</td><td>{{ ai.provider }} · {{ ai.calls_today }}/{{ ai.budget }} calls today</td></tr>
+</table></div>
+<div class="card"><h2>Connected accounts</h2><table>
+<tr><td>Instagram</td><td>{% if accounts.instagram.connected %}<span class="pill {{ 'err' if accounts.instagram.problem else 'ok' }}">{{ 'problem' if accounts.instagram.problem else 'connected' }}</span>
+<span class="small muted">{{ (accounts.instagram.auth or {}).get('detail','') }}</span>{% else %}<span class="pill warn">not connected</span> <span class="small muted">run the setup wizard</span>{% endif %}</td></tr>
+<tr><td>YouTube</td><td><span class="pill warn">assisted</span> <span class="small muted">{{ accounts.youtube.note }}</span></td></tr></table></div>
+</div>
+{% if manual %}<div class="card" style="margin-top:16px"><h2>Ready for you to post on YouTube ({{ manual|length }})</h2>
+{% for m in manual %}<div style="border-top:1px solid var(--line);padding:8px 0"><div class="row"><b>{{ m.format.replace('_',' ') }}</b><span class="muted small">due {{ m.scheduled_at|local }}</span><a href="/content/{{ m.id }}">open</a></div>
+<pre id="c{{ loop.index }}">{{ m.caption }}{% set b = m.body|fromjson %}{% if b and b.poll %}
+
+POLL: {{ b.poll.question }}{% for o in b.poll.options %}
+ • {{ o }}{% endfor %}{% endif %}{% if b and b.quiz %}
+
+QUIZ: {{ b.quiz.question }}{% for o in b.quiz.options %}
+ {{ loop.index }}. {{ o }}{% endfor %}
+Correct: {{ b.quiz.options[b.quiz.answer_index] }} — {{ b.quiz.explanation }}{% endif %}</pre>
+<div class="row"><button onclick="navigator.clipboard.writeText(document.getElementById('c{{ loop.index }}').innerText)">Copy text</button>
+<a class="btn" href="https://studio.youtube.com" target="_blank" rel="noopener">Open YouTube Studio</a>
+<form class="inline row" method="post" action="/content/{{ m.id }}/mark-posted"><input type="hidden" name="csrf" value="{{ csrf }}"><input name="url" placeholder="post URL (optional)" style="width:260px"><button class="primary">Mark posted</button></form></div></div>{% endfor %}</div>{% endif %}
+<div class="grid" style="margin-top:16px">
+<div class="card wide"><h2>Upcoming</h2><table>{% for r in upcoming %}{% include "_row.html" %}{% else %}<tr><td class="muted">Nothing scheduled.</td></tr>{% endfor %}</table></div>
+<div class="card"><h2>Recently published</h2><table>{% for r in recent %}<tr><td class="small">{{ r.published_at|local }}</td><td>{{ r.platform }} {{ r.format }}</td><td><a href="/content/{{ r.id }}">{{ (r.hook or '')[:60] }}</a></td><td>{% if r.permalink %}<a href="{{ r.permalink }}" target="_blank" rel="noopener">view</a>{% elif r.platform_post_id and r.platform_post_id.startswith('sim_') %}<span class="pill warn">sim</span>{% endif %}</td></tr>{% else %}<tr><td class="muted">Nothing yet.</td></tr>{% endfor %}</table></div>
+<div class="card"><h2>Failed / blocked</h2><table>{% for r in failed %}<tr><td class="small">{{ r.scheduled_at|local }}</td><td><a href="/content/{{ r.id }}">{{ r.platform }} {{ r.format }}</a> <span class="pill st-{{ r.status }}">{{ r.status }}</span><div class="small muted">{{ (r.block_reason or '')[:160] }}</div></td></tr>{% else %}<tr><td class="muted">None 🎉</td></tr>{% endfor %}</table></div>
+</div>
+<div class="card" style="margin-top:16px"><h2>Background jobs</h2><table><tr><th>Job</th><th>Last run</th><th>OK</th><th>Detail</th></tr>
+{% for name, j in jobs|dictsort %}<tr><td>{{ name }}</td><td class="small">{{ j.started_at|local }}</td><td>{{ '✓' if j.ok else '✗' }}</td><td class="small muted">{{ (j.detail or '')[:160] }}</td></tr>{% endfor %}</table></div>
+{% endblock %}

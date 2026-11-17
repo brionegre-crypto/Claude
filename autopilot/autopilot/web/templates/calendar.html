@@ -1,0 +1,10 @@
+{% extends "base.html" %}{% block title %}Calendar{% endblock %}{% block body %}
+<div class="row" style="margin-bottom:12px"><a class="btn" href="?month={{ prev_m }}&platform={{ platform }}&fmt={{ fmt }}">‹</a><h2 style="margin:0">{{ first.strftime('%B %Y') }}</h2><a class="btn" href="?month={{ next_m }}&platform={{ platform }}&fmt={{ fmt }}">›</a>
+<form class="row" method="get" style="margin-left:auto"><input type="hidden" name="month" value="{{ first.strftime('%Y-%m') }}">
+<select name="platform" style="width:auto"><option value="">All platforms</option>{% for p in ['instagram','youtube'] %}<option {{ 'selected' if p==platform }}>{{ p }}</option>{% endfor %}</select>
+<select name="fmt" style="width:auto"><option value="">All formats</option>{% for f in ['image','carousel','reel','story','community_text','community_image','community_poll','community_quiz'] %}<option {{ 'selected' if f==fmt }}>{{ f }}</option>{% endfor %}</select><button>Filter</button></form></div>
+<div class="cal">{% for d in ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'] %}<div class="muted small">{{ d }}</div>{% endfor %}
+{% for week in weeks %}{% for d in week %}<div class="day {{ 'other' if d.month != first.month }} {{ 'today' if d == today }}"><b>{{ d.day }}</b>
+{% for e in by_day.get(d, []) %}<a class="ev {{ e.platform }}" href="/content/{{ e.id }}" title="{{ e.hook or '' }}"><span class="pill st-{{ e.status }}" style="padding:0 4px" title="{{ e.status }}">{{ {'ready':'✓','published':'●','planned':'○','blocked':'✗','failed':'!','failed_permanent':'✗','manual_due':'✋','skipped':'–','generating':'…','draft':'✎'}.get(e.status, '?') }}</span> {{ e.scheduled_at|local('%I:%M%p') }} {{ e.format.replace('community_','yt ') }}</a>{% endfor %}</div>{% endfor %}{% endfor %}</div>
+<p class="small muted">✓ ready · ○ planned (written ~10 days ahead) · ● published · ✋ waiting for you (YouTube) · ✗ blocked/failed · – skipped. Times shown in {{ s.get('general.timezone') }}. Click a post to edit, reschedule, replace or delete it.</p>
+{% endblock %}

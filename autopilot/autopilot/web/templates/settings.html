@@ -1,0 +1,17 @@
+{% extends "base.html" %}{% block title %}Settings{% endblock %}{% block body %}
+{% if request.query_params.get('saved') %}<div class="banner sim">Saved. Restart the service for worker interval changes to apply everywhere.</div>{% endif %}
+<div class="grid"><div class="card"><h2>General</h2><form method="post" action="/settings"><input type="hidden" name="csrf" value="{{ csrf }}">
+<label>Time zone (IANA)</label><input name="timezone" value="{{ s.get('general.timezone') }}">
+<label>Research every (hours)</label><input name="research_hours" value="{{ s.get('research.interval_hours') }}">
+<label>Max Claude calls per day (protects your subscription limits)</label><input name="max_calls" value="{{ s.get('ai.max_calls_per_day') }}">
+<label>Daily summary time</label><input name="daily_summary_time" value="{{ s.get('notifications.daily_summary_time') }}">
+<label>ntfy.sh topic (free push to your phone)</label><input name="ntfy_topic" value="{{ s.get('notifications.ntfy_topic') }}">
+<label>Discord/Slack webhook URL</label><input name="webhook_url" value="{{ s.get('notifications.webhook_url') }}">
+<label>Email to (needs SMTP settings in the config file)</label><input name="email_to" value="{{ s.get('notifications.email_to') }}">
+<label>Backups to keep</label><input name="backup_keep" value="{{ s.get('backup.keep') }}"><br><br><button class="primary">Save</button></form>
+<p class="small muted">Other settings live in <code>{{ config_path }}</code>.</p></div>
+<div class="card"><h2>Account connections &amp; secrets</h2><table>{% for n, set_ in secrets.items() %}<tr><td>{{ n }}</td><td><span class="pill {{ 'ok' if set_ else '' }}">{{ 'set' if set_ else 'not set' }}</span></td></tr>{% endfor %}</table>
+<p class="small muted">Values are encrypted on disk and never shown here. Connect accounts with <code>./scripts/autopilot wizard --step accounts</code>.</p></div>
+<div class="card"><h2>Publishing schedule ({{ s.get('general.timezone') }})</h2><table><tr><th>Platform</th><th>Format</th><th>Days</th><th>Time</th></tr>
+{% for sl in slots %}{% set k = sl.platform ~ '|' ~ sl.format ~ '|' ~ sl.time %}<tr><td>{{ sl.platform }}</td><td>{{ sl.format }}</td><td class="small">{{ ', '.join(sl.days) }}</td><td>{{ sl.time }}{% if overrides.get(k) %} → <b>{{ overrides[k] }}</b> <span class="small muted">(optimizer)</span>{% endif %}</td></tr>{% endfor %}</table>
+<p class="small muted">Edit slots in the config file, then Controls → Rebuild publishing queue.</p></div></div>{% endblock %}

@@ -1,0 +1,7 @@
+{% extends "base.html" %}{% block title %}Research{% endblock %}{% block body %}
+<div class="card"><h2>Research database</h2><table><tr><th>Found</th><th>Topic / source</th><th>Kind</th><th>Relevance</th><th>Verification</th><th>Angles</th><th>Used</th></tr>
+{% for r in rows %}<tr><td class="small">{{ r.researched_at|local('%b %d') }}{% if r.published_at %}<div class="muted">pub {{ r.published_at|local('%b %d') }}</div>{% endif %}</td>
+<td>{% if r.url %}<a href="{{ r.url }}" target="_blank" rel="noopener noreferrer">{{ r.title[:110] }}</a>{% else %}{{ r.title }}{% endif %}<div class="small muted">{{ r.source }}</div></td>
+<td>{{ r.kind }}</td><td>{% if r.relevance %}<div class="bar" style="width:{{ (r.relevance*80)|int }}px"></div>{{ '%.2f'|format(r.relevance) }}{% else %}<span class="muted">pending</span>{% endif %}</td>
+<td><span class="pill {{ 'ok' if r.verification in ['verified','not_applicable'] else ('err' if r.verification=='disputed' else 'warn') }}">{{ r.verification }}</span><div class="small muted">{{ (r.verification_notes or '')[:120] }}</div></td>
+<td class="small">{% for o in r.opportunities|fromjson or [] %}• {{ o }}<br>{% endfor %}</td><td>{{ r.used_count }}</td></tr>{% else %}<tr><td class="muted">No research yet: Controls → Trigger research.</td></tr>{% endfor %}</table></div>{% endblock %}

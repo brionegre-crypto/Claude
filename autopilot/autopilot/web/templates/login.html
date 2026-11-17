@@ -1,0 +1,5 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Login · Social Autopilot</title><link rel="stylesheet" href="/static/style.css"></head>
+<body><main style="max-width:420px;margin-top:12vh"><div class="card"><h2>Social Autopilot</h2>
+<p class="muted small">Enter your dashboard token. Show it in a terminal with <code>./scripts/autopilot dashboard-token</code>.</p>
+{% if error %}<p class="pill err">{{ error }}</p>{% endif %}
+<form method="post" action="/login"><input type="password" name="token" autofocus autocomplete="current-password"><br><br><button class="primary">Log in</button></form></div></main></body></html>

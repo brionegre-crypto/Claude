@@ -1,0 +1,2 @@
+<tr><td class="small">{{ r.scheduled_at|local }}</td><td>{{ r.platform }}</td><td>{{ r.format.replace('_',' ') }}</td>
+<td><a href="/content/{{ r.id }}">{{ (r.hook or r.topic or '(not generated yet)')[:80] }}</a></td><td><span class="pill st-{{ r.status }}">{{ r.status }}</span></td></tr>
