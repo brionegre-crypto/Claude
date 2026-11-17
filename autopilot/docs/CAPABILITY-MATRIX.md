@@ -87,7 +87,7 @@ switch to an API key.
 2. Paste the Instagram token into the wizard. Refresh is automatic every 60 days. You're alerted only if refresh fails.
 3. Run `claude setup-token` once (valid for a year), or stay logged in.
 4. Install `cloudflared` (free; `brew install cloudflared`).
-5. Confirm the real test publishes in wizard step 6, then type `ACTIVATE`.
+5. Confirm the real test publishes in wizard step 6. Then run `autopilot activate`, choose the **first posting date** (asked only at activation, after everything is set up) and type `ACTIVATE`.
 6. **Ongoing:** tap-to-post for YouTube Community posts (4/week by default).
 
 ### Confirmed ongoing costs

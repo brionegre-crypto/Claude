@@ -126,13 +126,13 @@ def check(s, db: DB, c: dict, link_checker=None, assets: list[dict] | None = Non
 
     # duplicates
     fp = fingerprint(full)
-    dup = db.one("SELECT id FROM content WHERE fingerprint=? AND id!=? AND status NOT IN ('cancelled','blocked')", (fp, c["id"]))
+    dup = db.one("SELECT id FROM content WHERE fingerprint=? AND id!=? AND status NOT IN ('cancelled','blocked','simulated')", (fp, c["id"]))
     if dup:
         blocks.append(f"exact duplicate of {dup[0]}")
     else:
         mine = shingles(full)
         thr = float(s.get("quality.similarity_threshold", 0.55))
-        for r in db.q("""SELECT id,hook,caption,body,format,platform FROM content WHERE id!=? AND status NOT IN ('cancelled','blocked','planned','generating')
+        for r in db.q("""SELECT id,hook,caption,body,format,platform FROM content WHERE id!=? AND status NOT IN ('cancelled','blocked','planned','generating','simulated')
                          ORDER BY created_at DESC LIMIT 300""", (c["id"],)):
             sim = jaccard(mine, shingles(text_of(dict(r))))
             if sim >= thr:

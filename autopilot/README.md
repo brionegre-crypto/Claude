@@ -28,7 +28,7 @@ cd autopilot
 The install script creates `.venv`, installs the free dependencies, initializes the database, runs the test suite, and
 then starts the **setup wizard**. The wizard:
 1. Inspects your system and offers to install `ffmpeg` and `cloudflared` (both free).
-2. Creates `config/settings.toml`, the database and the 30-day plan. It asks for your time zone and the **first posting date**: pick a date after your existing Sprout schedule ends (it runs through Dec 2026).
+2. Creates `config/settings.toml`, the database and a simulation plan. It asks for your time zone.
 3. Checks network access.
 4. Verifies Claude Code headless generation on your subscription (one tiny test call). Optionally it stores a `claude setup-token` token.
 5. Walks you through the free Meta developer app and connecting Instagram (token entered hidden, stored encrypted). It validates permissions, and optionally adds a free YouTube API key for subscriber stats.
@@ -42,6 +42,11 @@ Then go live:
 ```bash
 ./scripts/autopilot activate
 ```
+
+Activation re-checks the setup, then asks for the **first posting date**, because that's only decided once everything is
+ready. Pick a date after your Sprout schedule ends (it runs through Dec 2026). It shows the first few posts, and goes live
+after you type `ACTIVATE`. Simulation posts scheduled before that date are dropped. Posts already written for
+that date or later are kept.
 
 ## Start, stop, status
 ```bash
@@ -83,10 +88,10 @@ Dashboard: **http://127.0.0.1:8765** (log in with `./scripts/autopilot dashboard
 .venv/bin/python -m pytest -q tests
 ```
 
-The 46 tests cover the following, all offline and with nothing published:
+The 48 tests cover the following, all offline and with nothing published:
 - config validation, DST scheduling and idempotent planning
 - quality gate (claims, duplicates, sensitive topics)
 - secret encryption and log redaction
 - Instagram publishing of every format against a fake Graph API: timeouts after publish, crash recovery, rate limits, auth errors, retry exhaustion, emergency stop, late-slot skipping, media tampering
 - assisted YouTube flow, analytics and reports, backup and restore, the worker across restarts
-- dashboard login, CSRF and Host-header protection, inbox import, and the activation gate
+- dashboard login, CSRF and Host-header protection, inbox import, the activation gate, and setting the first posting date at activation

@@ -96,9 +96,7 @@ def step_project(s, db):
     s = config.load()
     tz = ask("Your posting time zone (IANA name)", s.get("general.timezone"))
     config.set_value(target, "general.timezone", tz)
-    sd = ask("First date the autopilot should post (YYYY-MM-DD; after your existing Sprout schedule ends)", s.get("calendar.start_date") or "")
-    if sd:
-        config.set_value(target, "calendar.start_date", sd)
+    say("(The first posting date is chosen later, at activation, once everything is set up.)")
     s = config.load()
     probe = s.data_dir / ".write-test"
     probe.write_text("ok"); probe.unlink()
@@ -450,6 +448,25 @@ def main(step: str | None = None):
     say("When everything you need is ok, run: ./scripts/autopilot activate")
 
 
+def choose_start_date(s):
+    """Asked at activation (not during setup): the first day real posts go out."""
+    from datetime import date
+    today = datetime.now(s.tz).date()
+    default = today + timedelta(days=1)
+    say("\nChoose the FIRST POSTING DATE. Tip: if other tools (e.g. Sprout) still have posts scheduled, pick a date")
+    say("after they end so the two schedules don't overlap.")
+    for _ in range(3):
+        v = ask("First posting date (YYYY-MM-DD)", default.isoformat())
+        try:
+            d = date.fromisoformat(v)
+        except ValueError:
+            say("  please use YYYY-MM-DD"); continue
+        if d < today:
+            say("  that date is in the past"); continue
+        return d
+    return None
+
+
 def activate():
     s, db = ctx()
     from autopilot import backup, diagnostics
@@ -477,11 +494,23 @@ def activate():
     hard_fail = [n for n, ok in checks[:3] if not ok]
     if hard_fail:
         say(f"\nCannot activate: {', '.join(hard_fail)}. Run ./scripts/autopilot wizard"); return
+    from autopilot import scheduler
+    start = choose_start_date(s)
+    if not start:
+        say("Not activated."); return
+    first = scheduler.planned_slots(s, db, start, 7)
+    first = [t for t in first if t["platform"] == "instagram"][:3]
+    say(f"\nFirst posting date: {start:%A %B %d, %Y}. First Instagram posts:")
+    for t in first:
+        say(f"  • {t['utc'].astimezone(s.tz):%a %b %d %I:%M %p} {t['format']}")
     say("\nAfter activation the autopilot publishes to your real Instagram account on schedule WITHOUT per-post approval.")
     say("You can pause or emergency-stop at any time from the dashboard or with ./scripts/autopilot stop")
     if input("Type ACTIVATE to go live: ").strip() != "ACTIVATE":
         say("Not activated."); return
     print("backup:", backup.create(s, db))
+    config.set_value(s.path, "calendar.start_date", start.isoformat())
+    s = config.load(s.path)
+    say(f"queue: {scheduler.go_live_reset(s, db, start)}")
     config.set_value(s.path, "general.mode", "live")
     db.kv_set("activated", True)
     db.kv_set("activated_at", datetime.now(timezone.utc).isoformat())

@@ -177,3 +177,41 @@ def test_inbox_import_fills_slot_and_validates(env):
     st = {r[0]: r[1] for r in db.q("SELECT format, status FROM content WHERE generated_by='inbox'")}
     assert st == {"carousel": "ready", "image": "blocked"}          # unsourced statistic is blocked
     assert (inbox / "imported" / "week.json").exists()
+
+
+def test_activation_sets_first_posting_date_and_resets_queue(env, monkeypatch, tmp_path):
+    from datetime import date
+    s, db = env
+    from autopilot import config, research, wizard
+    from autopilot.secrets import SecretStore
+    research.seed_evergreen(s, db)
+    scheduler.plan(s, db)
+    sim = make_ready(s, db, "image")
+    from autopilot import publisher
+    publisher.run_due(s, db)                                  # simulated publish before activation
+    assert db.one("SELECT status FROM content WHERE id=?", (sim,))[0] == "published"
+    SecretStore(s.data_dir).set("instagram_access_token", "IGx")
+    db.kv_set("wizard_steps", {"ai": {"ok": True}})
+    db.kv_set("real_tests", {"story": {"ok": True}})
+    monkeypatch.setattr(wizard, "ctx", lambda: (s, db))
+    start = (utcnow() + timedelta(days=10)).astimezone(s.tz).date()
+    answers = iter([start.isoformat(), "ACTIVATE"])
+    monkeypatch.setattr("builtins.input", lambda *a: next(answers))
+    wizard.activate()
+    s2 = config.load(s.path)
+    assert db.kv_get("activated") and s2.mode == "live" and s2.get("calendar.start_date") == start.isoformat()
+    assert config.load(s.path).get("calendar.start_date") == start.isoformat()
+    cutoff = iso(scheduler.local_to_utc(start, "00:00", s.tz))
+    live_before = db.one("SELECT COUNT(*) FROM content WHERE scheduled_at < ? AND status IN ('planned','ready','blocked','draft')", (cutoff,))[0]
+    assert live_before == 0                                   # nothing goes out before the chosen date
+    assert db.one("SELECT COUNT(*) FROM content WHERE scheduled_at >= ? AND status='planned'", (cutoff,))[0] > 0
+    assert db.one("SELECT status FROM content WHERE id=?", (sim,))[0] == "simulated"
+
+
+def test_project_step_does_not_ask_for_start_date(env, monkeypatch):
+    s, db = env
+    from autopilot import wizard
+    asked = []
+    monkeypatch.setattr(wizard, "ask", lambda q, d="": asked.append(q) or d)
+    wizard.step_project(s, db)
+    assert not any("posting date" in q.lower() for q in asked)

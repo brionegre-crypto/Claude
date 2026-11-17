@@ -83,6 +83,20 @@ def plan(s, db: DB) -> dict:
     return {"start": st.isoformat(), "horizon_days": horizon, "created": created}
 
 
+def go_live_reset(s, db: DB, start: date) -> dict:
+    """At activation: simulated posts stop counting as published, nothing before the first posting date goes out,
+    and the queue is planned from that date. Already-written posts on/after the date are kept."""
+    cutoff = local_to_utc(start, "00:00", s.tz)
+    with db.tx() as c:
+        sim = c.execute("UPDATE content SET status='simulated', updated_at=? WHERE status='published' AND platform_post_id LIKE 'sim_%'",
+                        (iso(),)).rowcount
+        dropped = c.execute("""UPDATE content SET status='cancelled', block_reason='before first posting date', updated_at=?
+                               WHERE status IN ('planned','generating','draft','ready','blocked','failed','manual_due') AND scheduled_at < ?""",
+                            (iso(), iso(cutoff))).rowcount
+    res = plan(s, db)
+    return {"simulated_archived": sim, "cancelled_before_start": dropped, "planned": res["created"], "start": start.isoformat()}
+
+
 def rebuild(s, db: DB) -> dict:
     """Drop future slots that have no content yet and re-plan (e.g. after changing slot settings)."""
     with db.tx() as c:

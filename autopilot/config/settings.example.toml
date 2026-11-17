@@ -49,8 +49,9 @@ evergreen_topics = [
 horizon_days = 30                    # rolling queue length
 generate_ahead_days = 10             # fully generate+render posts this many days out
 # Local times (general.timezone). Defaults based on documented engagement windows; optimizer adjusts with real data.
-# NOTE: your Sprout packs already use 8am/9am/12pm/2pm/4pm/7pm/9pm through Dec 2026 — set start_date after them.
-start_date = ""                      # YYYY-MM-DD; empty = tomorrow
+# start_date is set by `autopilot activate`, which asks for the first posting date once setup is complete.
+# (Your Sprout packs use 8am/9am/12pm/2pm/4pm/7pm/9pm through Dec 2026; pick a date after they end.)
+start_date = ""                      # YYYY-MM-DD; empty (before activation) = tomorrow, for simulation only
 min_gap_minutes = 90                 # between any two automated posts
 
 [[calendar.slots]]
