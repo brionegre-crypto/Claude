@@ -110,6 +110,7 @@ struct ComposeView: View {
     @State private var followUpDays: Int? = nil
     @State private var introDone = false
     @State private var trackOpens = ReadStatus.isOn
+    @State private var archiveAfterSend = UserDefaults.standard.bool(forKey: "mail.sendArchive")
     @State private var toneNote: String?
     @State private var toneSofter: String?
     @State private var checkingTone = false
@@ -211,6 +212,9 @@ struct ComposeView: View {
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Menu {
+                        if draft.original != nil {
+                            Button("Send & archive", systemImage: "archivebox") { archiveAfterSend = true; startSend() }
+                        }
                         Section("Send later") {
                             if let first = recipients(draft.to).first, let best = BestSendTime.suggest(for: first) {
                                 Button("Best time · \(best.formatted(.dateTime.weekday(.abbreviated).hour().minute()))", systemImage: "sparkles") { scheduleSend(at: best) }
@@ -323,7 +327,7 @@ struct ComposeView: View {
             Text("Sending in \(seconds)…").font(DS.Font.headline).foregroundStyle(.white)
             Spacer()
             Button("Undo") {
-                sendTask?.cancel(); sendTask = nil
+                sendTask?.cancel(); sendTask = nil; archiveAfterSend = UserDefaults.standard.bool(forKey: "mail.sendArchive")
                 withAnimation(DS.spring) { sendCountdown = nil }
                 Haptics.tap()
             }
@@ -381,6 +385,7 @@ struct ComposeView: View {
         do {
             try await MailProviderFactory.make(for: account).send(mail)
             SavePoints.remove(refId: draft.id.uuidString)
+            if archiveAfterSend, let o = draft.original { archiveConversation(of: o) }
             if mail.replyTo != nil, let o = draft.original { InboxBrain.record(.reply, sender: o.from, name: o.fromName, ctx: ctx) }
             if let days = followUpDays, let to = mail.to.first {
                 FollowUps.create(account: account.id, to: to, name: draft.original?.fromName ?? "", subject: draft.subject, days: days, ctx: ctx)
@@ -391,6 +396,19 @@ struct ComposeView: View {
             self.error = "Couldn't send: \(error.localizedDescription). Your message is still here."
             sendCountdown = nil
         }
+    }
+
+    /// Send & archive: the conversation you just answered leaves the inbox (here and on the server).
+    private func archiveConversation(of o: EmailMessage) {
+        let tid = o.threadId
+        let thread = tid.isEmpty ? [o] : ((try? ctx.fetch(FetchDescriptor<EmailMessage>(predicate: #Predicate { $0.threadId == tid }))) ?? [o])
+        let provider = accounts.first { $0.id == o.accountId }.map(MailProviderFactory.make)
+        for m in thread where !m.isArchived {
+            m.isArchived = true
+            let id = m.providerMessageId
+            Task { try? await provider?.archive(id) }
+        }
+        try? ctx.save()
     }
 
     /// How the email might land, read by Apple Intelligence (or your AI), with a calmer version to swap in.

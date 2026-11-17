@@ -192,6 +192,7 @@ struct TasksView: View {
                             withAnimation { selecting.toggle(); selectedTasks = [] }
                         }
                         NavigationLink { LazyView(TasksCustomizeView()) } label: { Label("Customize Tasks…", systemImage: "slider.horizontal.3") }
+                        NavigationLink { LazyView(DeletedTasksView()) } label: { Label("Recently deleted", systemImage: "trash") }
                         Button(boardMode ? "Show as list" : "Show as board", systemImage: boardMode ? "list.bullet" : "rectangle.split.3x1") {
                             withAnimation { boardMode.toggle() }
                         }

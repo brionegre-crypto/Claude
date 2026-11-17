@@ -518,6 +518,7 @@ struct MailSettings: View {
                 Picker("Mark as read", selection: Binding(get: { MailAccountPrefs.markReadMode }, set: { UserDefaults.standard.set($0, forKey: MailAccountPrefs.markReadKey) })) {
                     Text("When I open it").tag("open"); Text("After 3 seconds").tag("delay"); Text("Only when I say").tag("manual")
                 }
+                Toggle("Archive the conversation when I reply", isOn: Binding(get: { UserDefaults.standard.bool(forKey: "mail.sendArchive") }, set: { UserDefaults.standard.set($0, forKey: "mail.sendArchive") }))
                 Toggle("Quote the original in replies", isOn: Binding(get: { MailAccountPrefs.quotesOriginal }, set: { UserDefaults.standard.set($0, forKey: MailAccountPrefs.quoteKey) }))
                 Toggle("Weekly unsubscribe report", isOn: Binding(get: { UserDefaults.standard.object(forKey: "unsubscribe.weekly") as? Bool ?? true }, set: { UserDefaults.standard.set($0, forKey: "unsubscribe.weekly") }))
                 Toggle("Track opens by default", isOn: Binding(get: { ReadStatus.isOn }, set: { UserDefaults.standard.set($0, forKey: ReadStatus.onKey) }))

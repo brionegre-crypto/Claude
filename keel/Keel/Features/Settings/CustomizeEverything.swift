@@ -108,6 +108,7 @@ struct TodayCustomizeView: View {
     @AppStorage(Custom.todaySharedKey) private var shared = true
     @AppStorage(Custom.todayRoutineKey) private var routine = true
     @AppStorage(Custom.todayWeatherKey) private var weather = true
+    @AppStorage("custom.today.favoritePages") private var favoritePages = true
     @AppStorage(DailyAffirmation.toggleKey) private var affirmation = true
     @AppStorage("today.tomorrowPreview") private var tomorrow = true
     @AppStorage(Custom.tomorrowHourKey) private var tomorrowHour = 18
@@ -124,6 +125,7 @@ struct TodayCustomizeView: View {
                 Toggle("Daily affirmation", isOn: $affirmation)
                 Toggle("Things shared to Keel", isOn: $shared)
                 Toggle("Routine coming up", isOn: $routine)
+                Toggle("Favorite pages", isOn: $favoritePages)
             }
             Section {
                 Toggle("Tomorrow at a glance", isOn: $tomorrow)
@@ -150,6 +152,7 @@ struct TasksCustomizeView: View {
     @AppStorage(Custom.taskShowTagsKey) private var tags = true
     @AppStorage(Custom.taskShowListKey) private var list = true
     @AppStorage(Custom.taskEveningKey) private var evening = true
+    @AppStorage(MorningRollover.onKey) private var rollover = false
 
     var body: some View {
         Form {
@@ -159,7 +162,8 @@ struct TasksCustomizeView: View {
                     Text("A to Z").tag("title"); Text("Newest first").tag("newest")
                 }
                 Toggle("“This Evening” section", isOn: $evening)
-            } header: { Text("Order") }
+                Toggle("Move overdue tasks to today each morning", isOn: $rollover)
+            } header: { Text("Order") } footer: { Text("Roll-over keeps each task's time of day; repeating tasks keep their own schedule; Undo puts them back.") }
             Section {
                 Toggle("Time estimate (~5 min)", isOn: $duration)
                 Toggle("Energy icon", isOn: $energy)
@@ -170,6 +174,7 @@ struct TasksCustomizeView: View {
                 NavigationLink { LazyView(TaskSettings()) } label: { Label("Default list, alerts and alarms", systemImage: "bell") }
                 NavigationLink { LazyView(TaskDurationSettings()) } label: { Label("Default task length", systemImage: "clock") }
                 NavigationLink { LazyView(SwipeSettingsView()) } label: { Label("Swipe actions", systemImage: "hand.draw") }
+                NavigationLink { LazyView(DeletedTasksView()) } label: { Label("Recently deleted", systemImage: "trash") }
             }
         }
         .navigationTitle("Tasks")

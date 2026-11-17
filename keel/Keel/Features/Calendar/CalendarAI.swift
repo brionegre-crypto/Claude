@@ -90,7 +90,7 @@ enum RoutineFinder {
             let ids = Set(steps.compactMap(\.taskId))
             let gone = tasks.filter { ids.contains($0.id) }
             let saved = gone.map { (title: $0.title, notes: $0.notes, due: $0.dueDate, priority: $0.priority, list: $0.listName) }
-            for t in gone { TaskAlerts.cancel(t); CalendarService.shared.removeReminder(for: t); ctx.delete(t) }
+            for t in gone { _ = TaskTrash.keep(t); TaskAlerts.cancel(t); CalendarService.shared.removeReminder(for: t); ctx.delete(t) }
             try? ctx.save()
             notes.append("\(gone.count) loose task\(gone.count == 1 ? "" : "s") cleared")
             UndoCenter.shared.offer("Moved \(gone.count) task\(gone.count == 1 ? "" : "s") into “\(s.name)”", seconds: 6) {

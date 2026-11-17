@@ -1011,4 +1011,26 @@ final class KeelTests: XCTestCase {
         XCTAssertEqual(CalendarAI.fallback("move dentist to friday 3pm")?.action, .move)
         XCTAssertEqual(CalendarAI.fallback("move dentist to friday 3pm")?.match, "dentist")
     }
+
+    func testTaskTrashAndRollover() throws {
+        let ctx = try makeContext()
+        TaskTrash.empty()
+        let t = TaskItem(title: "Call the dentist", dueDate: Date())
+        t.notes = "Ask about Friday"; t.tags = ["health"]
+        ctx.insert(t)
+        TaskActions.delete(t, ctx: ctx)
+        XCTAssertEqual(TaskTrash.all.first?.title, "Call the dentist")
+        let back = TaskTrash.restore(TaskTrash.all[0], ctx: ctx)
+        XCTAssertEqual(back.notes, "Ask about Friday")
+        XCTAssertEqual(back.tags, ["health"])
+        XCTAssertTrue(TaskTrash.all.isEmpty)
+
+        UserDefaults.standard.set(true, forKey: MorningRollover.onKey)
+        UserDefaults.standard.removeObject(forKey: "tasks.rollover.day")
+        let old = TaskItem(title: "Overdue", dueDate: Calendar.current.date(byAdding: .day, value: -2, to: Date()))
+        ctx.insert(old)
+        MorningRollover.runIfDue(ctx: ctx)
+        XCTAssertTrue(Calendar.current.isDateInToday(old.dueDate ?? .distantPast))
+        UserDefaults.standard.set(false, forKey: MorningRollover.onKey)
+    }
 }
