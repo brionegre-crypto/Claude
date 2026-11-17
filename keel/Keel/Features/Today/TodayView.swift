@@ -58,6 +58,7 @@ struct TodayView: View {
                     TomorrowPreviewCard()                           // evenings: tomorrow at a glance
                     FavoritePagesCard()                             // starred pages, one tap away
                     ClashesCard()                                   // overlapping events this week, with a fix
+                    PinnedEmailsCard()                              // emails you pinned in Inbox
                     VoyageView()                                    // your day as a route: now, ports, open water, anchor
                     NextMeetingPeopleCard()                         // who you're meeting next, with Running late and Prep
                     Waterline(label: "Below the waterline · the rest of your day")
@@ -170,6 +171,7 @@ struct TodayView: View {
                 Button("Shutdown ritual", systemImage: "moon.stars") { showRitual = true }
                 Button("Weekly review", systemImage: "calendar.badge.checkmark") { AppRouter.shared.showReview = true }
                 Button("Journal", systemImage: "book") { AppRouter.shared.showJournal = true }
+                NavigationLink { LazyView(WeeklyWinsView()) } label: { Label("This week's wins", systemImage: "trophy") }
             }
             Toggle(isOn: $showAffirmation) { Label("Daily affirmation", systemImage: "quote.bubble") }
             Button("Customize Today", systemImage: "slider.horizontal.3") { dest = .customize }
@@ -229,7 +231,11 @@ struct TodayView: View {
     private var greeting: some View {
         VStack(alignment: .leading, spacing: 8) {
             HorizonHeader(title: Date.now.formatted(.dateTime.weekday(.wide).month().day()), detail: "\(greetingText) · \(HorizonSky.daylightLeft())")
-            if Custom.todayWeather { WeatherRow() }
+            HStack(alignment: .center) {
+                if Custom.todayWeather { WeatherRow() }
+                Spacer(minLength: 8)
+                TodayProgressRing()                                 // "3 of 7 done" today
+            }
             if !yearTheme.isEmpty {
                 Label(yearTheme, systemImage: "sparkle").font(DS.Font.caption).foregroundStyle(DS.Palette.accent)
             }

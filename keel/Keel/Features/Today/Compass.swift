@@ -485,6 +485,7 @@ enum HubCatalog {
             t("focusHistory", "Focus history", "chart.bar.xaxis", "sessions time") { FocusHistoryView() },
             t("timereport", "Where my time went", "chart.bar.xaxis", "time report meetings focus week hours analytics") { TimeReportView() },
             t("voicejournal", "Voice journal", "mic.circle.fill", "journal talk diary voice speak evening") { VoiceJournalView(embedded: true) },
+            t("weeklyWins", "This week's wins", "trophy.circle.fill", "wins week share recap celebrate done proud") { WeeklyWinsView() },
             t("achievements", "Achievements", "trophy.fill", "wins momentum streak") { AchievementsView() },
             t("decisions", "Decision journal", "scale.3d", "decision journal choices review outcome learn") { DecisionJournalView() },
             t("balance", "Life balance", "chart.pie.fill", "life balance areas work health family time") { LifeBalanceView() },

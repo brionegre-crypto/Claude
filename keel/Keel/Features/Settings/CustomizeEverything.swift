@@ -111,6 +111,8 @@ struct TodayCustomizeView: View {
     @AppStorage(Custom.todayWeatherKey) private var weather = true
     @AppStorage("custom.today.favoritePages") private var favoritePages = true
     @AppStorage(CalendarClashes.onKey) private var clashes = true
+    @AppStorage("custom.today.progress") private var progress = true
+    @AppStorage("custom.today.pinnedMail") private var pinnedMail = true
     @AppStorage(DailyAffirmation.toggleKey) private var affirmation = true
     @AppStorage("today.tomorrowPreview") private var tomorrow = true
     @AppStorage(Custom.tomorrowHourKey) private var tomorrowHour = 18
@@ -132,6 +134,8 @@ struct TodayCustomizeView: View {
                 Toggle("Routine coming up", isOn: $routine)
                 Toggle("Favorite pages", isOn: $favoritePages)
                 Toggle("Calendar clashes this week", isOn: $clashes)
+                Toggle("Pinned emails", isOn: $pinnedMail)
+                Toggle("Today's progress ring", isOn: $progress)
             }
             Section {
                 Toggle("Tomorrow at a glance", isOn: $tomorrow)
