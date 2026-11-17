@@ -93,7 +93,7 @@ enum FollowUps {
         c.body = "“\(f.subject)” · tap to send a friendly nudge"
         KeelAlerts.urgent(c, relevance: 0.6)
         let comps = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute], from: f.remindAt)
-        UNUserNotificationCenter.current().add(UNNotificationRequest(
+        UNUserNotificationCenter.current().addKeel(UNNotificationRequest(
             identifier: "followup.\(f.id.uuidString)", content: c,
             trigger: UNCalendarNotificationTrigger(dateMatching: comps, repeats: false)))
     }

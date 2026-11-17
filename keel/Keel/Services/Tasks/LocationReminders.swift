@@ -74,7 +74,7 @@ enum LocationReminders {
             c.userInfo = ["taskId": t.id.uuidString]
             c.interruptionLevel = .timeSensitive
             #if !targetEnvironment(macCatalyst)            // Macs don't do location-triggered alerts
-            try? await center.add(UNNotificationRequest(identifier: "loc.task.\(t.id)", content: c,
+            try? await center.addKeel(UNNotificationRequest(identifier: "loc.task.\(t.id)", content: c,
                                                         trigger: UNLocationNotificationTrigger(region: region, repeats: true)))
             #endif
         }
@@ -91,7 +91,7 @@ enum LocationReminders {
             c.interruptionLevel = .timeSensitive
             c.userInfo = ["deeplink": "com.keel.app://leaving"]
             #if !targetEnvironment(macCatalyst)
-            try? await center.add(UNNotificationRequest(identifier: "loc.leaving", content: c,
+            try? await center.addKeel(UNNotificationRequest(identifier: "loc.leaving", content: c,
                                                         trigger: UNLocationNotificationTrigger(region: region, repeats: true)))
             #endif
         }

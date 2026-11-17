@@ -33,7 +33,7 @@ enum HabitEngine {
             c.categoryIdentifier = "HABIT_STACK"
             KeelAlerts.urgent(c, relevance: 0.7)
             let comps = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute], from: fireDate)
-            center.add(UNNotificationRequest(identifier: "stack.\(stack.id)", content: c,
+            center.addKeel(UNNotificationRequest(identifier: "stack.\(stack.id)", content: c,
                                              trigger: UNCalendarNotificationTrigger(dateMatching: comps, repeats: false)))
         }
     }

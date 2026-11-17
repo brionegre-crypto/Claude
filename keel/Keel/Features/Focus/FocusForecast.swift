@@ -207,7 +207,7 @@ enum FocusForecast {
         c.interruptionLevel = .timeSensitive
         c.userInfo = ["deeplink": "com.keel.app://focus"]
         let comps = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute], from: best.start)
-        try? await center.add(UNNotificationRequest(identifier: "forecast.window", content: c,
+        try? await center.addKeel(UNNotificationRequest(identifier: "forecast.window", content: c,
                                                     trigger: UNCalendarNotificationTrigger(dateMatching: comps, repeats: false)))
         UserDefaults.standard.set(best.label, forKey: "forecast.bestLabel")
     }

@@ -306,7 +306,7 @@ enum Gifts {
             let i = allIdeas[b.name] ?? []
             c.body = i.isEmpty ? "Time to think about a card or gift." : "Your gift ideas: " + i.prefix(3).joined(separator: ", ")
             c.userInfo = ["deeplink": "com.keel.app://tool/gifts"]
-            center.add(UNNotificationRequest(identifier: "bday.\(b.name).\(Calendar.current.component(.year, from: b.next))", content: c,
+            center.addKeel(UNNotificationRequest(identifier: "bday.\(b.name).\(Calendar.current.component(.year, from: b.next))", content: c,
                                              trigger: UNCalendarNotificationTrigger(dateMatching: Calendar.current.dateComponents([.year, .month, .day, .hour, .minute], from: at), repeats: false)))
         }
     }
@@ -466,7 +466,7 @@ enum Packing {
             c.title = "Packing list ready"
             c.body = "For \(r.title) on \(r.start.formatted(date: .abbreviated, time: .omitted))."
             c.userInfo = ["deeplink": "com.keel.app://note/\(n.id.uuidString)"]
-            try? await UNUserNotificationCenter.current().add(UNNotificationRequest(identifier: "packing.\(r.id.uuidString)", content: c, trigger: nil))
+            try? await UNUserNotificationCenter.current().addKeel(UNNotificationRequest(identifier: "packing.\(r.id.uuidString)", content: c, trigger: nil))
         }
     }
 }

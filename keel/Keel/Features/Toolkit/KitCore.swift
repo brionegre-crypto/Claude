@@ -37,7 +37,7 @@ enum Kit {
         let center = UNUserNotificationCenter.current()
         Task {
             _ = try? await center.requestAuthorization(options: [.alert, .sound, .badge])
-            try? await center.add(req)
+            try? await center.addKeel(req)
         }
     }
 

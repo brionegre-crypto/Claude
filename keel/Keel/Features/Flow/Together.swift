@@ -147,7 +147,7 @@ enum SpaceChanges {
                 n.title = "\(c.lastBy) updated “\(c.title)”"
                 n.body = "In \(space.name). Tap to see what changed."
                 n.threadIdentifier = "space.\(space.id)"
-                try? await UNUserNotificationCenter.current().add(UNNotificationRequest(identifier: "space.\(c.id).\(c.version)", content: n, trigger: nil))
+                try? await UNUserNotificationCenter.current().addKeel(UNNotificationRequest(identifier: "space.\(c.id).\(c.version)", content: n, trigger: nil))
             }
         }
         seen = s

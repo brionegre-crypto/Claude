@@ -401,7 +401,7 @@ enum WeeklyBodyReport {
             + (best.map { " Best day: \($0.day.formatted(.dateTime.weekday(.wide)))." } ?? "")
         c.userInfo = ["deeplink": "com.keel.app://tool/body"]
         var comps = DateComponents(); comps.weekday = 1; comps.hour = 18; comps.minute = 30
-        center.add(UNNotificationRequest(identifier: "body.weekly", content: c, trigger: UNCalendarNotificationTrigger(dateMatching: comps, repeats: false)))
+        center.addKeel(UNNotificationRequest(identifier: "body.weekly", content: c, trigger: UNCalendarNotificationTrigger(dateMatching: comps, repeats: false)))
     }
 }
 

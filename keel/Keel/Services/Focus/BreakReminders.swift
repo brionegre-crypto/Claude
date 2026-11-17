@@ -41,7 +41,7 @@ enum BreakReminders {
                 let c = UNMutableNotificationContent()
                 c.title = p.0; c.body = p.1
                 c.interruptionLevel = .passive          // shows quietly, no sound, never breaks through Focus
-                try? await center.add(UNNotificationRequest(identifier: "break.\(minute)", content: c,
+                try? await center.addKeel(UNNotificationRequest(identifier: "break.\(minute)", content: c,
                     trigger: UNCalendarNotificationTrigger(dateMatching: cal.dateComponents([.year, .month, .day, .hour, .minute], from: fire), repeats: false)))
             }
         }

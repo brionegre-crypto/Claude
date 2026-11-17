@@ -193,7 +193,7 @@ struct FocusView: View {
         c.title = "Break's over"
         c.body = "Ready for round \(round + 1)? Open Keel to start."
         c.sound = .default
-        UNUserNotificationCenter.current().add(UNNotificationRequest(
+        UNUserNotificationCenter.current().addKeel(UNNotificationRequest(
             identifier: "focus.break", content: c,
             trigger: UNTimeIntervalNotificationTrigger(timeInterval: Double(minutes * 60), repeats: false)))
     }

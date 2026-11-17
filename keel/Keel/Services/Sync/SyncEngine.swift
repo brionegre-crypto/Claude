@@ -81,6 +81,8 @@ final class SyncEngine {
         await SendLater.sendDue(ctx: ctx)
         await CalendarService.shared.requestAccess()
         await LeaveBy.refresh()
+        MeetingBuffers.refresh()                 // breathing room after meetings (if you turned it on)
+        DayWrap.reschedule(ctx: ctx)
         await MeetingAutopilot.refresh()
         await LocationReminders.refresh(ctx: ctx)
         await FocusForecast.refresh(ctx: ctx)

@@ -217,7 +217,7 @@ enum WeeklyDigest {
         c.body = "What you finished, what moved, and what's coming up. Tap to read it."
         c.sound = .default
         c.userInfo = ["deeplink": "com.keel.app://note/\(note.id.uuidString)"]
-        UNUserNotificationCenter.current().add(UNNotificationRequest(identifier: "digest.\(weekKey)", content: c, trigger: nil))
+        UNUserNotificationCenter.current().addKeel(UNNotificationRequest(identifier: "digest.\(weekKey)", content: c, trigger: nil))
     }
 
     static func make(ctx: ModelContext) -> Note {

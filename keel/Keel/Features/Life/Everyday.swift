@@ -49,7 +49,7 @@ struct VisualTimerView: View {
             let left = pausedLeft ?? minutes * 60
             endsAt = Date().addingTimeInterval(left); pausedLeft = nil
             let c = UNMutableNotificationContent(); c.title = "Time's up"; c.body = "Your \(Int(minutes))-minute timer finished."; c.sound = .default
-            center.add(UNNotificationRequest(identifier: "visual.timer", content: c, trigger: UNTimeIntervalNotificationTrigger(timeInterval: max(1, left), repeats: false)))
+            center.addKeel(UNNotificationRequest(identifier: "visual.timer", content: c, trigger: UNTimeIntervalNotificationTrigger(timeInterval: max(1, left), repeats: false)))
             Haptics.start()
         }
     }

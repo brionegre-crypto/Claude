@@ -37,7 +37,7 @@ enum UnsubscribeSuggestions {
         c.body = "\(count) senders you almost never open. Inbox → Sales & promos → Unsubscribe report."
         c.sound = nil
         var when = DateComponents(); when.weekday = 1; when.hour = 10; when.minute = 7
-        center.add(UNNotificationRequest(identifier: "unsubscribe.weekly", content: c, trigger: UNCalendarNotificationTrigger(dateMatching: when, repeats: true)))
+        center.addKeel(UNNotificationRequest(identifier: "unsubscribe.weekly", content: c, trigger: UNCalendarNotificationTrigger(dateMatching: when, repeats: true)))
     }
 
     /// Bulk senders with 3+ emails in 60 days that you open less than a quarter of the time.

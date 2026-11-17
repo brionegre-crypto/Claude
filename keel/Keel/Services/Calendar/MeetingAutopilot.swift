@@ -94,7 +94,7 @@ enum MeetingAutopilot {
             if let link { info["joinURL"] = link.absoluteString }
             c.userInfo = info
             let comps = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute], from: e.startDate.addingTimeInterval(-lead))
-            try? await center.add(UNNotificationRequest(identifier: "meeting.\(e.calendarItemIdentifier).\(Int(e.startDate.timeIntervalSince1970))",
+            try? await center.addKeel(UNNotificationRequest(identifier: "meeting.\(e.calendarItemIdentifier).\(Int(e.startDate.timeIntervalSince1970))",
                                                         content: c, trigger: UNCalendarNotificationTrigger(dateMatching: comps, repeats: false)))
         }
     }

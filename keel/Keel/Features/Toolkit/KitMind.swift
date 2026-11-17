@@ -153,7 +153,7 @@ struct KitWorryTimeView: View {
         c.title = "Worry time"
         c.body = "15 minutes with your parked worries, then let the rest of the evening be yours."
         var comps = DateComponents(); comps.hour = hour; comps.minute = 0
-        UNUserNotificationCenter.current().add(UNNotificationRequest(identifier: "kit.worrytime", content: c,
+        UNUserNotificationCenter.current().addKeel(UNNotificationRequest(identifier: "kit.worrytime", content: c,
                                                                      trigger: UNCalendarNotificationTrigger(dateMatching: comps, repeats: true)))
     }
 }

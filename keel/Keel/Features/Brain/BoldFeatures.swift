@@ -595,7 +595,7 @@ extension Coach {
             c.title = "Your weekly check-in"
             c.body = "What moved you forward, what's draining you, and one thing to try."
             c.userInfo = ["deeplink": "com.keel.app://tool/coach"]
-            try? await UNUserNotificationCenter.current().add(UNNotificationRequest(identifier: "coach.weekly", content: c, trigger: nil))
+            try? await UNUserNotificationCenter.current().addKeel(UNNotificationRequest(identifier: "coach.weekly", content: c, trigger: nil))
         }
     }
 }

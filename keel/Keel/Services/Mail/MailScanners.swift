@@ -94,7 +94,7 @@ enum MailScanners {
         c.title = "\(name) went up"
         c.body = "Now \(currency)\(String(format: "%.2f", new)), was \(currency)\(String(format: "%.2f", old)). Still worth it?"
         c.userInfo = ["deeplink": "com.keel.app://money"]
-        UNUserNotificationCenter.current().add(UNNotificationRequest(identifier: "price.\(name.lowercased())", content: c, trigger: nil))
+        UNUserNotificationCenter.current().addKeel(UNNotificationRequest(identifier: "price.\(name.lowercased())", content: c, trigger: nil))
     }
 
     // MARK: Bills become tasks
@@ -200,7 +200,7 @@ enum MailScanners {
                 if s.kind == "trial" { c.interruptionLevel = .timeSensitive }
                 var at = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute], from: fire)
                 if !lastMinute { at.hour = 10; at.minute = 0 }
-                try? await center.add(UNNotificationRequest(identifier: "renew.\(s.id)", content: c,
+                try? await center.addKeel(UNNotificationRequest(identifier: "renew.\(s.id)", content: c,
                                                             trigger: UNCalendarNotificationTrigger(dateMatching: at, repeats: false)))
             }
         }

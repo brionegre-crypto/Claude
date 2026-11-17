@@ -287,7 +287,7 @@ enum BookingLink {
             c.title = "New booking: \(name)"
             c.body = "\(title), \(s.formatted(date: .abbreviated, time: .shortened)). It's on your calendar."
             c.sound = .default
-            try? await UNUserNotificationCenter.current().add(UNNotificationRequest(identifier: "booking.\(s.timeIntervalSince1970)", content: c, trigger: nil))
+            try? await UNUserNotificationCenter.current().addKeel(UNNotificationRequest(identifier: "booking.\(s.timeIntervalSince1970)", content: c, trigger: nil))
         }
         CalendarService.shared.invalidateEvents()
         return made

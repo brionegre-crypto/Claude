@@ -101,7 +101,7 @@ struct DayReviewView: View {
         c.title = "Day in review"
         c.body = "Two minutes to see what you did and set up tomorrow."
         c.sound = .default
-        UNUserNotificationCenter.current().add(UNNotificationRequest(
+        UNUserNotificationCenter.current().addKeel(UNNotificationRequest(
             identifier: "day.review", content: c,
             trigger: UNCalendarNotificationTrigger(dateMatching: DateComponents(hour: 20, minute: 30), repeats: true)))
     }

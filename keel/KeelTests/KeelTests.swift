@@ -1033,4 +1033,28 @@ final class KeelTests: XCTestCase {
         XCTAssertTrue(Calendar.current.isDateInToday(old.dueDate ?? .distantPast))
         UserDefaults.standard.set(false, forKey: MorningRollover.onKey)
     }
+
+    func testQuietHours() {
+        let d = UserDefaults.standard
+        d.set(true, forKey: QuietHours.onKey); d.set(22 * 60, forKey: QuietHours.startKey); d.set(7 * 60, forKey: QuietHours.endKey)
+        d.set(false, forKey: QuietHours.holdKey)
+        let cal = Calendar.current
+        let late = cal.date(bySettingHour: 23, minute: 30, second: 0, of: Date())!
+        let early = cal.date(bySettingHour: 6, minute: 0, second: 0, of: Date())!
+        let noon = cal.date(bySettingHour: 12, minute: 0, second: 0, of: Date())!
+        XCTAssertTrue(QuietHours.isQuiet(late)); XCTAssertTrue(QuietHours.isQuiet(early)); XCTAssertFalse(QuietHours.isQuiet(noon))
+        XCTAssertEqual(cal.component(.hour, from: QuietHours.endOfQuiet(after: late)), 7)
+
+        let c = UNMutableNotificationContent(); c.title = "Hi"; c.sound = .default
+        let comps = cal.dateComponents([.year, .month, .day, .hour, .minute], from: cal.date(byAdding: .day, value: 1, to: late)!)
+        let r = UNNotificationRequest(identifier: "journal.nightly", content: c, trigger: UNCalendarNotificationTrigger(dateMatching: comps, repeats: false))
+        XCTAssertEqual(QuietHours.adjust(r).content.interruptionLevel, .passive)
+        XCTAssertNil(QuietHours.adjust(r).content.sound)
+        let med = UNNotificationRequest(identifier: "med.morning", content: c, trigger: r.trigger)
+        XCTAssertEqual(QuietHours.adjust(med).content.sound, .default, "medication reminders always come through")
+        d.set(true, forKey: QuietHours.holdKey)
+        let held = QuietHours.adjust(r).trigger as? UNCalendarNotificationTrigger
+        XCTAssertEqual(held?.dateComponents.hour, 7)
+        d.set(false, forKey: QuietHours.onKey); d.set(false, forKey: QuietHours.holdKey)
+    }
 }

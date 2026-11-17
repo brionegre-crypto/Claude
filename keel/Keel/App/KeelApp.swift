@@ -74,6 +74,7 @@ struct KeelApp: App {
                 LinkSaver.importSharedNotes(into: container.mainContext) // text/images shared from Notes, Messages, Photos…
                 Task { await ReadStatus.refresh() }                      // who opened your tracked emails (every 5 min at most)
                 MorningRollover.runIfDue(ctx: container.mainContext)     // opt-in: yesterday's leftovers move to today
+                DayWrap.reschedule(ctx: container.mainContext)           // tonight's wrap-up, up to date
                 MeetingAutopilot.syncActivity()                         // Lock Screen timer for a meeting in progress
                 // Housekeeping waits until Keel has settled, so opening it is instant, and each job runs only occasionally.
                 Task { @MainActor in

@@ -79,7 +79,7 @@ enum ReadStatus {
         c.title = "\(m.to) opened your email"
         c.body = m.subject.isEmpty ? "(no subject)" : m.subject
         c.sound = nil
-        UNUserNotificationCenter.current().add(UNNotificationRequest(identifier: "read.\(m.id)", content: c, trigger: nil))
+        UNUserNotificationCenter.current().addKeel(UNNotificationRequest(identifier: "read.\(m.id)", content: c, trigger: nil))
     }
 
     /// The tracked email for a sent subject and recipient, if any (for showing "Opened" on it).

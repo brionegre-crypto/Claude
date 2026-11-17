@@ -52,7 +52,7 @@ enum SendLater {
                 let c = UNMutableNotificationContent()
                 c.title = "Scheduled email didn't send"
                 c.body = "“\(s.subject)” will retry on the next sync. Open Inbox → Scheduled to send it now."
-                try? await UNUserNotificationCenter.current().add(UNNotificationRequest(identifier: "sendlater.\(s.id)", content: c, trigger: nil))
+                try? await UNUserNotificationCenter.current().addKeel(UNNotificationRequest(identifier: "sendlater.\(s.id)", content: c, trigger: nil))
             }
         }
         try? ctx.save()

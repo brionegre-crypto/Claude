@@ -486,7 +486,7 @@ final class BodyEngine {
             c.body += " First up: \(first.title ?? "a meeting") at \(first.startDate.formatted(date: .omitted, time: .shortened))."
         }
         c.userInfo = ["deeplink": "com.keel.app://tool/body"]
-        try? await UNUserNotificationCenter.current().add(UNNotificationRequest(identifier: "body.morning.\(key)", content: c, trigger: nil))
+        try? await UNUserNotificationCenter.current().addKeel(UNNotificationRequest(identifier: "body.morning.\(key)", content: c, trigger: nil))
     }
 
     /// Tonight's wind-down reminder, 45 minutes before your recommended bedtime.
@@ -504,7 +504,7 @@ final class BodyEngine {
         c.sound = .default
         c.userInfo = ["deeplink": "com.keel.app://tool/body"]
         let comps = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute], from: at)
-        center.add(UNNotificationRequest(identifier: "body.winddown", content: c, trigger: UNCalendarNotificationTrigger(dateMatching: comps, repeats: false)))
+        center.addKeel(UNNotificationRequest(identifier: "body.winddown", content: c, trigger: UNCalendarNotificationTrigger(dateMatching: comps, repeats: false)))
     }
 
     // MARK: Habit journal

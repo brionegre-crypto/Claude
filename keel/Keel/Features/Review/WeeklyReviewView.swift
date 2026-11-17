@@ -300,7 +300,7 @@ enum WeeklyReview {
         c.body = "See what you finished, what slipped, who's waiting on you, and approve next week's plan in one tap."
         c.sound = .default
         c.userInfo = ["deeplink": "com.keel.app://review"]
-        UNUserNotificationCenter.current().add(UNNotificationRequest(
+        UNUserNotificationCenter.current().addKeel(UNNotificationRequest(
             identifier: "weekly.review", content: c,
             trigger: UNCalendarNotificationTrigger(dateMatching: DateComponents(hour: 17, weekday: 1), repeats: true)))
     }

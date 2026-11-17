@@ -105,7 +105,7 @@ enum SavePoints {
         c.sound = .default
         c.userInfo = ["deeplink": "com.keel.app://resume"]
         c.interruptionLevel = .timeSensitive
-        center.add(UNNotificationRequest(identifier: returnNotification, content: c,
+        center.addKeel(UNNotificationRequest(identifier: returnNotification, content: c,
                                          trigger: UNTimeIntervalNotificationTrigger(timeInterval: max(60, meeting.endDate.timeIntervalSince(now) + 60), repeats: false)))
     }
 

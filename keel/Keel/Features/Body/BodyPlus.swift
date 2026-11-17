@@ -106,7 +106,7 @@ enum Drinks {
         c.title = "Time for some water"
         c.body = "\(waterToday) of \(goal) ml so far today. Tap + in Keel → Body when you've had a glass."
         c.userInfo = ["deeplink": "com.keel.app://tool/body"]
-        center.add(UNNotificationRequest(identifier: "drinks.water", content: c,
+        center.addKeel(UNNotificationRequest(identifier: "drinks.water", content: c,
                                          trigger: UNCalendarNotificationTrigger(dateMatching: cal.dateComponents([.year, .month, .day, .hour, .minute], from: at), repeats: false)))
     }
 }

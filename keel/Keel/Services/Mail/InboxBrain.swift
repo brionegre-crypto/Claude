@@ -160,7 +160,7 @@ enum InboxBrain {
             c.threadIdentifier = "mail"
             c.userInfo = ["deeplink": "com.keel.app://inbox", "emailId": e.id]
             c.categoryIdentifier = MailNotify.category                 // Reply, Archive, Mark as Read right on the alert
-            try? await center.add(UNNotificationRequest(identifier: "mail.\(e.id)", content: c, trigger: nil))
+            try? await center.addKeel(UNNotificationRequest(identifier: "mail.\(e.id)", content: c, trigger: nil))
             sent.insert(e.id)
             order.append(e.id)
         }

@@ -24,7 +24,7 @@ enum TransitionAlerts {
             c.body = "Start wrapping up. Jot down where you left off so it's easy to come back."
             c.interruptionLevel = .timeSensitive
             let comps = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute], from: fire)
-            try? await center.add(UNNotificationRequest(identifier: "transition.\(e.calendarItemIdentifier)", content: c,
+            try? await center.addKeel(UNNotificationRequest(identifier: "transition.\(e.calendarItemIdentifier)", content: c,
                                                         trigger: UNCalendarNotificationTrigger(dateMatching: comps, repeats: false)))
         }
     }

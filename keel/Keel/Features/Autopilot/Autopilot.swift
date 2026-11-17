@@ -153,7 +153,7 @@ enum Autopilot {
         c.title = "Keel prepared \(count) things for you"
         c.body = "Replies drafted, your day balanced and more. Each one is a single tap."
         c.userInfo = ["deeplink": "com.keel.app://autopilot"]
-        try? await UNUserNotificationCenter.current().add(UNNotificationRequest(identifier: "autopilot", content: c, trigger: nil))
+        try? await UNUserNotificationCenter.current().addKeel(UNNotificationRequest(identifier: "autopilot", content: c, trigger: nil))
     }
 
     // MARK: Approve

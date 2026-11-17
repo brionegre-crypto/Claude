@@ -283,7 +283,7 @@ enum KitChimes {
                 c.body = "Still on what you meant to be doing?"
                 c.sound = .default
                 c.interruptionLevel = .passive
-                try? await center.add(UNNotificationRequest(identifier: "kit.chime.\(m)", content: c,
+                try? await center.addKeel(UNNotificationRequest(identifier: "kit.chime.\(m)", content: c,
                                                             trigger: UNCalendarNotificationTrigger(dateMatching: comps, repeats: true)))
             }
         }

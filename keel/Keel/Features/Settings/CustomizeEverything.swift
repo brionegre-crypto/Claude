@@ -84,6 +84,7 @@ struct CustomizeHubView: View {
                 link("Focus", "moon.fill", .indigo) { FocusCustomizeView() }
                 link("Body", "water.waves", .teal) { BodyCustomizeView() }
                 link("Compass", "square.grid.2x2.fill", .purple) { CompassCustomizeView() }
+                link("Quiet hours", "moon.zzz.fill", .indigo) { QuietHoursView() }
             } footer: { Text("How each part of Keel looks and behaves. Nothing here deletes anything; switch things back any time.") }
             Section {
                 link("Look & feel (theme, colors, fonts, text size)", "paintbrush.fill", .pink) { AppearanceSettings() }
@@ -113,6 +114,9 @@ struct TodayCustomizeView: View {
     @AppStorage("today.tomorrowPreview") private var tomorrow = true
     @AppStorage(Custom.tomorrowHourKey) private var tomorrowHour = 18
     @AppStorage(Prefs.calm) private var calm = false
+    @AppStorage(DayWrap.onKey) private var wrap = true
+    @AppStorage(DayWrap.minuteKey) private var wrapMinute = 18 * 60
+    @Environment(\.modelContext) private var ctx
 
     var body: some View {
         Form {
@@ -136,7 +140,17 @@ struct TodayCustomizeView: View {
                         }
                     }
                 }
-            } header: { Text("Evenings") }
+                Toggle("End-of-day wrap-up", isOn: $wrap)
+                if wrap {
+                    DatePicker("Wrap-up at", selection: Binding(get: {
+                        Calendar.current.date(bySettingHour: wrapMinute / 60, minute: wrapMinute % 60, second: 0, of: Date()) ?? Date()
+                    }, set: { d in
+                        let c = Calendar.current.dateComponents([.hour, .minute], from: d); wrapMinute = (c.hour ?? 18) * 60 + (c.minute ?? 0)
+                    }), displayedComponents: .hourAndMinute)
+                }
+            } header: { Text("Evenings") } footer: { Text("The wrap-up is a quiet note: what you finished today and the first thing tomorrow.") }
+            .onChange(of: wrap) { DayWrap.reschedule(ctx: ctx) }
+            .onChange(of: wrapMinute) { DayWrap.reschedule(ctx: ctx) }
             Section { NavigationLink { LazyView(DailyAffirmationsEditor()) } label: { Label("My affirmations", systemImage: "quote.bubble") } }
         }
         .navigationTitle("Today")
@@ -185,6 +199,7 @@ struct CalendarCustomizeView: View {
     @AppStorage(Custom.calendarDensityKey) private var density = 1.0
     @AppStorage(Custom.eventMinutesKey) private var eventMinutes = 60
     @AppStorage(Custom.dimPastKey) private var dimPast = true
+    @AppStorage(MeetingBuffers.key) private var buffer = 0
 
     var body: some View {
         Form {
@@ -199,6 +214,12 @@ struct CalendarCustomizeView: View {
                     Text("15 min").tag(15); Text("30 min").tag(30); Text("45 min").tag(45); Text("1 hour").tag(60); Text("90 min").tag(90); Text("2 hours").tag(120)
                 }
             } header: { Text("New events") } footer: { Text("Used when you add an event without saying how long (“lunch with Sam Friday 1pm”).") }
+            Section {
+                Picker("Buffer after meetings", selection: $buffer) {
+                    Text("Off").tag(0); Text("5 min").tag(5); Text("10 min").tag(10); Text("15 min").tag(15); Text("30 min").tag(30)
+                }
+                .onChange(of: buffer) { MeetingBuffers.refresh(force: true) }
+            } footer: { Text("Keel adds a “Buffer” block after each meeting (on your Keel calendar, next 7 days) when that time is free, so nothing gets booked right on top. Your booking link respects it.") }
             Section { NavigationLink { LazyView(CalendarSettings()) } label: { Label("Calendars, alerts and meeting autopilot", systemImage: "calendar.badge.clock") } }
         }
         .navigationTitle("Calendar")
@@ -311,5 +332,33 @@ extension BodyPage {
         let hidden = Custom.bodyHidden
         let v = allCases.filter { !hidden.contains($0.rawValue) }
         return v.isEmpty ? Array(allCases) : v
+    }
+}
+
+struct QuietHoursView: View {
+    @AppStorage(QuietHours.onKey) private var on = false
+    @AppStorage(QuietHours.startKey) private var start = 22 * 60
+    @AppStorage(QuietHours.endKey) private var end = 7 * 60
+    @AppStorage(QuietHours.holdKey) private var hold = false
+
+    var body: some View {
+        Form {
+            Section {
+                Toggle("Quiet hours", isOn: $on)
+                if on {
+                    DatePicker("From", selection: minutes($start), displayedComponents: .hourAndMinute)
+                    DatePicker("Until", selection: minutes($end), displayedComponents: .hourAndMinute)
+                    Picker("Keel's alerts", selection: $hold) {
+                        Text("Arrive silently").tag(false); Text("Wait until morning").tag(true)
+                    }
+                }
+            } footer: { Text("Overnight, Keel's alerts either land silently in Notification Center or wait until quiet hours end. Medication reminders, alarms and time-sensitive alerts always come through. Applies to alerts scheduled from now on.") }
+        }
+        .navigationTitle("Quiet hours")
+    }
+
+    private func minutes(_ b: Binding<Int>) -> Binding<Date> {
+        Binding(get: { Calendar.current.date(bySettingHour: b.wrappedValue / 60, minute: b.wrappedValue % 60, second: 0, of: Date()) ?? Date() },
+                set: { d in let c = Calendar.current.dateComponents([.hour, .minute], from: d); b.wrappedValue = (c.hour ?? 0) * 60 + (c.minute ?? 0) })
     }
 }

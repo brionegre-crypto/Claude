@@ -150,7 +150,7 @@ enum Journal {
         c.sound = .default
         c.userInfo = ["deeplink": "com.keel.app://journal"]
         let m = reminderMinutes
-        center.add(UNNotificationRequest(identifier: "journal.nightly", content: c,
+        center.addKeel(UNNotificationRequest(identifier: "journal.nightly", content: c,
                                          trigger: UNCalendarNotificationTrigger(dateMatching: DateComponents(hour: m / 60, minute: m % 60), repeats: true)))
     }
 }

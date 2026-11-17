@@ -46,7 +46,7 @@ enum MailNotify {
                 let c = UNMutableNotificationContent()
                 c.title = "Reply not sent"
                 c.body = "Keel couldn't send your reply to \(e.fromName.isEmpty ? e.from : e.fromName). Open Keel to try again."
-                try? await UNUserNotificationCenter.current().add(UNNotificationRequest(identifier: "mail.fail.\(e.id)", content: c, trigger: nil))
+                try? await UNUserNotificationCenter.current().addKeel(UNNotificationRequest(identifier: "mail.fail.\(e.id)", content: c, trigger: nil))
             }
         }
         try? ctx.save()

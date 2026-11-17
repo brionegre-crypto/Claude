@@ -46,6 +46,7 @@ enum TaskActions {
         if let ctx = t.modelContext {
             try? ctx.save()                 // saved now, so every screen (Today, Tasks, widgets, Reminders) shows it at once
             WidgetSync.update(ctx)
+            DayWrap.reschedule(ctx: ctx)    // the evening wrap-up counts this one
         }
         return rolledTo
     }
@@ -164,7 +165,7 @@ enum TaskAlerts {
         c.userInfo = ["taskId": t.id.uuidString]
         KeelAlerts.urgent(c, relevance: t.priority == .high ? 1 : 0.8)
         let comps = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute], from: fire)
-        UNUserNotificationCenter.current().add(UNNotificationRequest(
+        UNUserNotificationCenter.current().addKeel(UNNotificationRequest(
             identifier: id, content: c, trigger: UNCalendarNotificationTrigger(dateMatching: comps, repeats: false)))
     }
 

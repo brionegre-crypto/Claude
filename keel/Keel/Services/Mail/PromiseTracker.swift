@@ -67,7 +67,7 @@ enum PromiseTracker {
             n.userInfo = ["commitmentId": c.id]
             KeelAlerts.urgent(n, relevance: 0.8)
             let comps = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute], from: fire)
-            try? await center.add(UNNotificationRequest(identifier: "promise.\(c.id)", content: n,
+            try? await center.addKeel(UNNotificationRequest(identifier: "promise.\(c.id)", content: n,
                                                         trigger: UNCalendarNotificationTrigger(dateMatching: comps, repeats: false)))
         }
     }

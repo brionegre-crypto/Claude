@@ -42,7 +42,7 @@ enum TaskMeta {
         c.body = "Due \(d.formatted(date: .complete, time: .omitted))."
         c.userInfo = ["taskId": t.id.uuidString]
         KeelAlerts.urgent(c)
-        UNUserNotificationCenter.current().add(UNNotificationRequest(identifier: id, content: c,
+        UNUserNotificationCenter.current().addKeel(UNNotificationRequest(identifier: id, content: c,
             trigger: UNCalendarNotificationTrigger(dateMatching: cal.dateComponents([.year, .month, .day, .hour, .minute], from: fire), repeats: false)))
     }
 }
@@ -85,7 +85,7 @@ enum NowTimer {
             c.body = "\(minutes / 2) minutes left. Still on it?"
             c.sound = .default
             c.interruptionLevel = .active
-            UNUserNotificationCenter.current().add(UNNotificationRequest(identifier: "now.half", content: c,
+            UNUserNotificationCenter.current().addKeel(UNNotificationRequest(identifier: "now.half", content: c,
                 trigger: UNTimeIntervalNotificationTrigger(timeInterval: Double(minutes * 30), repeats: false)))
         }
         Haptics.success()
@@ -461,7 +461,7 @@ enum Automations {
             c.title = text.isEmpty ? "Keel automation" : text
             c.body = email?.subject ?? task?.title ?? ""
             c.sound = .default
-            UNUserNotificationCenter.current().add(UNNotificationRequest(identifier: "auto.\(UUID().uuidString)", content: c, trigger: nil))
+            UNUserNotificationCenter.current().addKeel(UNNotificationRequest(identifier: "auto.\(UUID().uuidString)", content: c, trigger: nil))
         case .archiveEmail:
             email?.isArchived = true
         }

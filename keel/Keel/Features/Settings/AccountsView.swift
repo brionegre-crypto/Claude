@@ -393,6 +393,7 @@ struct NotificationSettings: View {
 
     var body: some View {
         List {
+            Section { NavigationLink { QuietHoursView() } label: { Label("Quiet hours", systemImage: "moon.zzz") } }
             Section { NotificationStatusRow() } footer: {
                 Text("Keel's alerts come from this iPhone: task reminders, focus timers, habit nudges, promises and follow-ups.")
             }

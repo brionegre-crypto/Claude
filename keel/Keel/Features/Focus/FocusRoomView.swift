@@ -260,7 +260,7 @@ struct FocusRoomView: View {
             c.sound = .default
             c.threadIdentifier = "focusroom"
             c.userInfo = ["deeplink": "com.keel.app://focus"]
-            center.add(UNNotificationRequest(identifier: "room.checkin.\(i)", content: c,
+            center.addKeel(UNNotificationRequest(identifier: "room.checkin.\(i)", content: c,
                                              trigger: UNTimeIntervalNotificationTrigger(timeInterval: Double(at * 60), repeats: false)))
             at += checkEvery; i += 1
         }

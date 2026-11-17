@@ -472,7 +472,7 @@ enum Decisions {
         let c = UNMutableNotificationContent()
         c.title = "How did it turn out?"; c.body = "You decided: \(title). Look back and grade the call."
         c.userInfo = ["deeplink": "com.keel.app://note/\(n.id.uuidString)"]
-        UNUserNotificationCenter.current().add(UNNotificationRequest(identifier: "decision.\(n.id)", content: c,
+        UNUserNotificationCenter.current().addKeel(UNNotificationRequest(identifier: "decision.\(n.id)", content: c,
             trigger: UNCalendarNotificationTrigger(dateMatching: Calendar.current.dateComponents([.year, .month, .day], from: review).merging(hour: 9), repeats: false)))
         try? ctx.save()
         return n

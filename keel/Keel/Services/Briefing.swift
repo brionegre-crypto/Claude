@@ -42,7 +42,7 @@ enum Briefing {
         c.sound = .default
         c.userInfo = ["deeplink": "com.keel.app://today"]
         let comps = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute], from: fire)
-        try? await center.add(UNNotificationRequest(identifier: "briefing", content: c,
+        try? await center.addKeel(UNNotificationRequest(identifier: "briefing", content: c,
                                                     trigger: UNCalendarNotificationTrigger(dateMatching: comps, repeats: false)))
     }
 

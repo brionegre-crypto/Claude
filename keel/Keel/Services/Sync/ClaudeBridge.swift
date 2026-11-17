@@ -199,7 +199,7 @@ enum ClaudeBridge {
         let c = UNMutableNotificationContent()
         c.title = title; c.body = body; c.sound = .default
         c.userInfo = ["deeplink": "com.keel.app://claude-drafts"]
-        UNUserNotificationCenter.current().add(UNNotificationRequest(identifier: "claude.draft.\(UUID().uuidString)", content: c, trigger: nil))
+        UNUserNotificationCenter.current().addKeel(UNNotificationRequest(identifier: "claude.draft.\(UUID().uuidString)", content: c, trigger: nil))
     }
 
     /// Opens the next draft Claude left (email first, then texts). Called when Keel comes to the front.

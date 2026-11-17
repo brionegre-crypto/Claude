@@ -125,7 +125,7 @@ final class ShutdownManager {
             guard seconds > 0 else { return }
             let c = UNMutableNotificationContent()
             c.title = title; c.body = body; c.interruptionLevel = .timeSensitive
-            center.add(UNNotificationRequest(identifier: id, content: c,
+            center.addKeel(UNNotificationRequest(identifier: id, content: c,
                                              trigger: UNTimeIntervalNotificationTrigger(timeInterval: seconds, repeats: false)))
         }
         note("focus.5min", "5 minutes left", "Start wrapping up — jot where you stopped so future-you can restart fast.", after: Double((minutes - 5) * 60))

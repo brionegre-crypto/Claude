@@ -219,7 +219,7 @@ struct PRNView: View {
         let c = UNMutableNotificationContent()
         c.title = "\(m.name): OK to take again if you need it"
         c.body = "It's been \(m.minHours.formatted()) hours since your last dose."
-        UNUserNotificationCenter.current().add(UNNotificationRequest(identifier: "prn.\(m.id)", content: c,
+        UNUserNotificationCenter.current().addKeel(UNNotificationRequest(identifier: "prn.\(m.id)", content: c,
                                                                      trigger: UNTimeIntervalNotificationTrigger(timeInterval: m.minHours * 3600, repeats: false)))
     }
 }
@@ -439,7 +439,7 @@ struct FastingView: View {
             let now = Date(); start = now; Fasting.start = now
             let c = UNMutableNotificationContent()
             c.title = "Fasting goal reached"; c.body = "\(goal) hours. Nice work: eat when you're ready."
-            center.add(UNNotificationRequest(identifier: "fast.goal", content: c, trigger: UNTimeIntervalNotificationTrigger(timeInterval: Double(goal) * 3600, repeats: false)))
+            center.addKeel(UNNotificationRequest(identifier: "fast.goal", content: c, trigger: UNTimeIntervalNotificationTrigger(timeInterval: Double(goal) * 3600, repeats: false)))
             Haptics.start()
         }
     }

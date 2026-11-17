@@ -53,7 +53,7 @@ enum LeaveBy {
             c.sound = .default
             c.interruptionLevel = .timeSensitive
             let comps = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute], from: leave)
-            try? await center.add(UNNotificationRequest(identifier: "leaveby.\(id)", content: c,
+            try? await center.addKeel(UNNotificationRequest(identifier: "leaveby.\(id)", content: c,
                                                         trigger: UNCalendarNotificationTrigger(dateMatching: comps, repeats: false)))
         }
     }
