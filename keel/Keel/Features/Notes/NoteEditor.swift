@@ -558,6 +558,7 @@ struct NoteEditor: View {
                 b.wrappedValue.text = new
                 handleTyping(b, old: old, new: new)
             }
+            .lineSpacing(Custom.notesSpacing)
         } else {
             Group {
                 if blk.text.isEmpty {
@@ -567,6 +568,7 @@ struct NoteEditor: View {
                 }
             }
             .font(font)
+            .lineSpacing(Custom.notesSpacing)                       // Customize → Notes → Line spacing
             .frame(maxWidth: .infinity, alignment: .leading)
             .contentShape(Rectangle())
             .simultaneousGesture(TapGesture().onEnded { beginEdit(blk.id) })

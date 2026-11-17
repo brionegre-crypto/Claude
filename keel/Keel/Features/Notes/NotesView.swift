@@ -35,7 +35,7 @@ struct NotesView: View {
     @AppStorage("notes.layout") private var layoutRaw = Layout.cards.rawValue
     private var layout: Layout { Layout(rawValue: layoutRaw) ?? .cards }
     private var sortMode: SortMode { SortMode(rawValue: sortRaw) ?? .manual }
-    private var recent: [Note] { Array(notes.lazy.filter { !$0.title.isEmpty || $0.blocks.contains { !$0.text.isEmpty } }.prefix(8)) }
+    private var recent: [Note] { Array(notes.lazy.filter { !$0.title.isEmpty || $0.blocks.contains { !$0.text.isEmpty } }.prefix(Custom.notesRecentCount)) }
     private var editedToday: Int { notes.filter { Calendar.current.isDateInToday($0.updatedAt) }.count }
 
     var body: some View {
@@ -55,7 +55,7 @@ struct NotesView: View {
                             .listRowInsets(EdgeInsets(top: 8, leading: 0, bottom: 8, trailing: 0))
                             .listRowBackground(Color.clear)
                     }
-                    if recent.count >= 2 {
+                    if recent.count >= 2 && Custom.notesJumpBackIn {
                         Section {
                             ScrollView(.horizontal, showsIndicators: false) {
                                 LazyHStack(spacing: DS.Space.m) {
@@ -73,7 +73,7 @@ struct NotesView: View {
                             .listRowBackground(Color.clear)
                         } header: { sectionHeader("Jump back in", editedToday > 0 ? "\(editedToday) edited today" : nil) }
                     }
-                    let favorites = notes.filter(\.isPinned)
+                    let favorites = Custom.notesFavorites ? notes.filter(\.isPinned) : []
                     if !favorites.isEmpty {
                         Section { ForEach(favorites) { row($0, showSnippet: false) } } header: { sectionHeader("Favorites", nil) }
                     }
@@ -201,6 +201,7 @@ struct NotesView: View {
                 ToolbarItem(placement: .topBarTrailing) {
                     Menu {
                         Section("Layout") {
+                            NavigationLink { LazyView(NotesCustomizeView()) } label: { Label("Customize Notes…", systemImage: "slider.horizontal.3") }
                             Picker("Layout", selection: $layoutRaw) {
                                 Label("Cards", systemImage: "square.grid.2x2").tag(Layout.cards.rawValue)
                                 Label("Page tree", systemImage: "list.bullet.indent").tag(Layout.tree.rawValue)

@@ -68,6 +68,9 @@ struct CustomizeTodayView: View {
                     else { orderRaw = order.map(\.rawValue).joined(separator: ",") }
                 }))
             } footer: { Text(orderRaw.isEmpty ? "Keel reorders Today through the day: planning in the morning, doing in the day, winding down at night. Turn this off to set your own order." : "Drag to reorder. Switch cards off to hide them; they're still reachable from ⊞.") }
+            Section {
+                NavigationLink { LazyView(TodayCustomizeView()) } label: { Label("Weather, affirmation, shared items, Tomorrow…", systemImage: "slider.horizontal.3") }
+            }
             Section("Cards") {
                 ForEach(order) { c in
                     Toggle(isOn: Binding(get: { !hidden.contains(c.rawValue) }, set: { on in

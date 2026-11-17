@@ -7,7 +7,7 @@ enum QuickEvent {
 
     static func parse(_ input: String) -> Parsed? {
         var text = input
-        var minutes = 60
+        var minutes = UserDefaults.standard.object(forKey: "custom.calendar.eventMinutes") as? Int ?? 60   // Customize → Calendar
         // Duration: "for 90 min", "for 2 hours", "for 1.5h"
         if let r = text.range(of: #"\bfor\s+(\d+(?:\.\d+)?)\s*(m|min|mins|minutes|h|hr|hrs|hour|hours)\b"#, options: [.regularExpression, .caseInsensitive]) {
             let parts = text[r].lowercased().replacingOccurrences(of: "for", with: "").trimmingCharacters(in: .whitespaces)

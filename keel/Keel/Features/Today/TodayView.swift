@@ -49,12 +49,12 @@ struct TodayView: View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: DS.Space.l) {
-                    SharedToKeelCard()                              // anything you just shared to Keel, right at the top
+                    if Custom.todayShared { SharedToKeelCard() }    // anything you just shared to Keel, right at the top
                     greeting
                         .inlineTip(OpenWaterTip())                  // each tip shows once, at most one new tip a day; takes no room until it shows
                         .inlineTip(CaptureTip())
                     DailyAffirmationCard()                          // on/off: Today menu, or the card's own menu
-                    UpcomingRoutineCard()                           // a routine on your calendar, ready to start
+                    if Custom.todayRoutine { UpcomingRoutineCard() } // a routine on your calendar, ready to start
                     TomorrowPreviewCard()                           // evenings: tomorrow at a glance
                     VoyageView()                                    // your day as a route: now, ports, open water, anchor
                     NextMeetingPeopleCard()                         // who you're meeting next, with Running late and Prep
@@ -171,6 +171,7 @@ struct TodayView: View {
             }
             Toggle(isOn: $showAffirmation) { Label("Daily affirmation", systemImage: "quote.bubble") }
             Button("Customize Today", systemImage: "slider.horizontal.3") { dest = .customize }
+            NavigationLink { LazyView(CustomizeHubView()) } label: { Label("Customize all of Keel", systemImage: "paintbrush.pointed") }
             Button("How do I… (help)", systemImage: "questionmark.circle") { dest = .help }
         } label: {
             Image(systemName: "square.grid.2x2")
@@ -226,7 +227,7 @@ struct TodayView: View {
     private var greeting: some View {
         VStack(alignment: .leading, spacing: 8) {
             HorizonHeader(title: Date.now.formatted(.dateTime.weekday(.wide).month().day()), detail: "\(greetingText) · \(HorizonSky.daylightLeft())")
-            WeatherRow()
+            if Custom.todayWeather { WeatherRow() }
             if !yearTheme.isEmpty {
                 Label(yearTheme, systemImage: "sparkle").font(DS.Font.caption).foregroundStyle(DS.Palette.accent)
             }

@@ -26,7 +26,7 @@ struct BodyPageBar: View {
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 6) {
-                ForEach(BodyPage.allCases) { p in
+                ForEach(BodyPage.visible) { p in
                     Button {
                         withAnimation(.smooth(duration: 0.28)) { page = p }
                         Haptics.tap()

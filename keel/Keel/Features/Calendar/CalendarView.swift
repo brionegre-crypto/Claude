@@ -105,6 +105,7 @@ struct CalendarView: View {
                         Section("Show") {
                             Button("Choose calendars…", systemImage: "calendar.badge.checkmark") { showCalendars = true }
                             Toggle(isOn: $showTasks) { Label("Show tasks on calendar", systemImage: "checklist") }
+                            NavigationLink { LazyView(CalendarCustomizeView()) } label: { Label("Customize Calendar…", systemImage: "slider.horizontal.3") }
                         }
                         Section("Ask AI") {
                             NavigationLink { LazyView(CalendarAIView()) } label: { Label("Change my calendar (just say it)", systemImage: "sparkles") }
@@ -401,7 +402,7 @@ struct TimelineGrid: View {
     @State private var scrolledFor: Date?
     private let cal = Calendar.current
     private var isDay: Bool { days.count == 1 }
-    private var hourHeight: CGFloat { isDay ? 64 : 52 }
+    private var hourHeight: CGFloat { (isDay ? 64 : 52) * CGFloat(Custom.calendarDensity) }      // Customize → Calendar → Hour height
     private let gutter: CGFloat = 46
 
     var body: some View {
@@ -682,6 +683,7 @@ struct EventCard: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .background(color.opacity(scheme == .dark ? 0.30 : 0.16))
         .clipShape(.rect(cornerRadius: 8))
+        .opacity(Custom.dimPastEvents && end < Date() ? 0.55 : 1)          // Customize → Calendar → Fade events that are over
         .accessibilityElement(children: .combine)
     }
 }

@@ -106,8 +106,12 @@ struct BodyView: View {
 
     enum BodyLogDest: Hashable { case symptoms, bp, sore, prn, fasting }
 
+    /// The page shown: a hidden page falls back to the first visible one (Customize → Body).
     private var page: Binding<BodyPage> {
-        Binding(get: { BodyPage(rawValue: pageRaw) ?? .today }, set: { pageRaw = $0.rawValue })
+        Binding(get: {
+            let p = BodyPage(rawValue: pageRaw) ?? .today
+            return Custom.bodyHidden.contains(p.rawValue) ? (BodyPage.visible.first ?? .today) : p
+        }, set: { pageRaw = $0.rawValue })
     }
     private var live: Bool { BodyHealth.available && engine.connected }
     private var isToday: Bool { selectedDay == nil }
@@ -151,6 +155,9 @@ struct BodyView: View {
         }
         .refreshable { await engine.refresh(force: true); if engine.connected { extras = await HealthExtras.load() } }
         .task {
+            if !Custom.bodyStartApplied, let start = UserDefaults.standard.string(forKey: Custom.bodyStartKey), !start.isEmpty, BodyPage(rawValue: start) != nil {
+                Custom.bodyStartApplied = true; pageRaw = start             // once per launch, so switching tabs keeps your place
+            }
             await engine.refresh()
             if engine.connected { extras = await HealthExtras.load() }
         }
@@ -168,9 +175,10 @@ struct BodyView: View {
                 Button("Fast", systemImage: "timer") { logDest = .fasting }
             }
             Section("Go to") {
-                ForEach(BodyPage.allCases) { p in
+                ForEach(BodyPage.visible) { p in
                     Button(p.rawValue, systemImage: p.icon) { withAnimation(.smooth) { pageRaw = p.rawValue } }
                 }
+                NavigationLink { LazyView(BodyCustomizeView()) } label: { Label("Customize Body…", systemImage: "slider.horizontal.3") }
             }
             if live {
                 Button("Refresh from Apple Health", systemImage: "arrow.clockwise") {

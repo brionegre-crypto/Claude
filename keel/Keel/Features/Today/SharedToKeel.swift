@@ -195,7 +195,7 @@ struct TomorrowPreviewCard: View {
     private var due: [TaskItem] { open.filter { $0.dueDate.map { Calendar.current.isDateInTomorrow($0) } ?? false } }
 
     var body: some View {
-        if on && Calendar.current.component(.hour, from: Date()) >= 18 {
+        if on && Calendar.current.component(.hour, from: Date()) >= Custom.tomorrowHour {
             let cal = Calendar.current
             let start = cal.date(byAdding: .day, value: 1, to: cal.startOfDay(for: Date())) ?? Date()
             let events = CalendarService.shared.events(from: start, to: start.addingTimeInterval(86_400)).filter { !$0.isAllDay }
@@ -206,6 +206,7 @@ struct TomorrowPreviewCard: View {
                     Spacer()
                     Menu {
                         Button("Open calendar", systemImage: "calendar") { AppRouter.shared.tab = .calendar }
+                        NavigationLink { LazyView(TodayCustomizeView()) } label: { Label("Customize Today", systemImage: "slider.horizontal.3") }
                         Button("Hide in the evenings", systemImage: "eye.slash") { on = false }
                     } label: { Image(systemName: "ellipsis").foregroundStyle(DS.Palette.inkSoft).frame(width: 28, height: 28) }
                 }

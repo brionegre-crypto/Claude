@@ -191,6 +191,7 @@ struct TasksView: View {
                         Button(selecting ? "Done Selecting" : "Select Tasks", systemImage: "checkmark.circle") {
                             withAnimation { selecting.toggle(); selectedTasks = [] }
                         }
+                        NavigationLink { LazyView(TasksCustomizeView()) } label: { Label("Customize Tasks…", systemImage: "slider.horizontal.3") }
                         Button(boardMode ? "Show as list" : "Show as board", systemImage: boardMode ? "list.bullet" : "rectangle.split.3x1") {
                             withAnimation { boardMode.toggle() }
                         }
@@ -374,8 +375,14 @@ struct TasksView: View {
         let tomorrow = cal.date(byAdding: .day, value: 1, to: start)!
         let dayAfter = cal.date(byAdding: .day, value: 2, to: start)!
         let week = cal.date(byAdding: .day, value: 8, to: start)!
+        let sortMode = Custom.taskSort                      // Settings → Customize Keel → Tasks
         func sorted(_ a: [TaskItem]) -> [TaskItem] {
-            a.sorted { ($0.dueDate ?? .distantFuture, -$0.priority.rawValue) < ($1.dueDate ?? .distantFuture, -$1.priority.rawValue) }
+            switch sortMode {
+            case "priority": return a.sorted { ($0.priority.rawValue, $1.dueDate ?? .distantFuture) > ($1.priority.rawValue, $0.dueDate ?? .distantFuture) }
+            case "title": return a.sorted { $0.title.localizedCaseInsensitiveCompare($1.title) == .orderedAscending }
+            case "newest": return a.sorted { $0.createdAt > $1.createdAt }
+            default: return a.sorted { ($0.dueDate ?? .distantFuture, -$0.priority.rawValue) < ($1.dueDate ?? .distantFuture, -$1.priority.rawValue) }
+            }
         }
         let buckets: [(String, (TaskItem) -> Bool)] = [
             ("Overdue", { ($0.dueDate ?? .distantFuture) < start }),
@@ -387,7 +394,7 @@ struct TasksView: View {
         ]
         let pinned: [(title: String, items: [TaskItem])] = [("Pinned", sorted(active.filter(\.isPinned)))]
         // Things-style: tonight's tasks get their own section after Today.
-        let evening = active.filter { !$0.isPinned && TaskMeta.isEvening($0) && ($0.dueDate ?? .distantFuture) < tomorrow }
+        let evening = Custom.taskEveningSection ? active.filter { !$0.isPinned && TaskMeta.isEvening($0) && ($0.dueDate ?? .distantFuture) < tomorrow } : []
         let rest = active.filter { !evening.contains($0) }
         var out = pinned + buckets.map { (title, test) in (title, sorted(rest.filter { !$0.isPinned && test($0) })) }
         if let i = out.firstIndex(where: { $0.title == "Today" }) ?? out.firstIndex(where: { $0.title == "Overdue" }) {
@@ -521,17 +528,18 @@ struct TaskRow: View {
                     if task.locationName != nil { Image(systemName: "location") }
                     if !task.microSteps.isEmpty { Text("\(task.microSteps.filter(\.done).count)/\(task.microSteps.count)") }
                     if task.sourceEmailId != nil { Image(systemName: "envelope") }
-                    if showList && task.listName != "Inbox" { Text(task.listName) }
+                    if showList && Custom.taskShowList && task.listName != "Inbox" { Text(task.listName) }
+                    if Custom.taskShowDuration && !task.isDone { Text("~\(ADHDCoach.minutes(task))m") }
                     if let dl = TaskMeta.deadline(task) {
                         Text("⚑ \(dl.formatted(.dateTime.month(.abbreviated).day()))").foregroundStyle(dl < Date().addingTimeInterval(2 * 86_400) ? DS.Palette.warmth : DS.Palette.inkSoft)
                     }
                     if TaskMeta.isEvening(task) { Image(systemName: "moon.stars").foregroundStyle(.indigo) }
-                    ForEach(TaskMeta.visibleTags(task).prefix(2), id: \.self) { Text("#\($0)").foregroundStyle(DS.Palette.accent) }
+                    if Custom.taskShowTags { ForEach(TaskMeta.visibleTags(task).prefix(2), id: \.self) { Text("#\($0)").foregroundStyle(DS.Palette.accent) } }
                 }
                 .font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
             }
             Spacer()
-            Image(systemName: task.energy.icon).font(.caption).foregroundStyle(DS.Palette.inkSoft)
+            if Custom.taskShowEnergy { Image(systemName: task.energy.icon).font(.caption).foregroundStyle(DS.Palette.inkSoft) }
         }
     }
 

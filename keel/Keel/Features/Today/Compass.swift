@@ -28,7 +28,7 @@ struct HubView: View {
                     header
                     forRightNow
                     if !recent.isEmpty { recentRow }
-                    ForEach(groups) { g in groupView(g) }
+                    ForEach(groups.filter { !Custom.compassHidden.contains($0.id) }) { g in groupView(g) }
                     footer
                 } else {
                     searchResults
@@ -184,6 +184,8 @@ struct HubView: View {
                 Toggle(isOn: $calm) { Label("Calm mode", systemImage: "leaf") }
                     .toggleStyle(.button).buttonStyle(.bordered).tint(DS.Palette.calm)
                 NavigationLink { LazyView(CustomizeTodayView()) } label: { Label("Customize Today", systemImage: "slider.horizontal.3") }
+                    .buttonStyle(.bordered)
+                NavigationLink { LazyView(CompassCustomizeView()) } label: { Label("Groups", systemImage: "square.grid.2x2") }
                     .buttonStyle(.bordered)
             }
             HStack(spacing: 10) {

@@ -1368,6 +1368,7 @@ private struct SettingsSearchResults: View {
             e("Reminders", "checklist", .orange, "apple reminders sync lists") { RemindersSettings() },
             e("Connected Apps", "app.connected.to.app.below.fill", .indigo, "connect notion health apps integrations") { ConnectedAppsView() },
             e("Notifications", "bell.badge.fill", .red, "notifications alerts time sensitive pop up briefing reminders sound") { NotificationSettings() },
+            e("Customize Keel", "slider.horizontal.3", .pink, "customize customise personalize options layout look order hide show sort density breaks pages groups") { CustomizeHubView() },
             e("Mail", "paperplane.fill", .blue, "mail swipe signature batched delivery vip notify") { MailSettings() },
             e("Tasks & Full-Screen Alarms", "checkmark.circle.fill", .green, "tasks alarms full screen default list alert") { TaskSettings() },
             e("Focus", "moon.fill", .indigo, "focus block apps screen time sounds hyperfocus") { FocusSettings() },

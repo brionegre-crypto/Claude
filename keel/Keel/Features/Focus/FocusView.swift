@@ -15,7 +15,7 @@ struct FocusView: View {
     @Environment(ShutdownManager.self) private var shutdown
     @Query(filter: #Predicate<TaskItem> { !$0.isDone }) private var tasks: [TaskItem]
     @State private var minutes: Int = { let m = UserDefaults.standard.integer(forKey: "focus.defaultMinutes"); return m > 0 ? m : 25 }()
-    @State private var level: ShutdownManager.Level = .soft
+    @State private var level: ShutdownManager.Level = ShutdownManager.Level(rawValue: Custom.focusLevel) ?? .soft
     @State private var showPicker = false
     @State private var showRitual = false
     @State private var confirmQuit = false
@@ -156,7 +156,7 @@ struct FocusView: View {
         confirmQuit = false
         early ? Haptics.tap() : Haptics.milestone()
         if roundsOn && !early {
-            let breakMinutes = round % 4 == 0 ? 15 : 5
+            let breakMinutes = round % Custom.longEvery == 0 ? Custom.longBreak : Custom.shortBreak     // Customize → Focus
             breakEndsAt = Date().addingTimeInterval(Double(breakMinutes * 60))
             scheduleBreakEnd(minutes: breakMinutes)
         } else if early {
