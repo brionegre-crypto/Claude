@@ -13,6 +13,14 @@ echo "Using $PY"
 .venv/bin/pip install --quiet --upgrade pip
 .venv/bin/pip install --quiet -r requirements.txt
 chmod +x scripts/*.sh scripts/autopilot
+# Free tools the tests and Reels need: ffmpeg (video) and cloudflared (Instagram image hand-off)
+MISSING=""
+command -v ffmpeg >/dev/null || MISSING="$MISSING ffmpeg"
+command -v cloudflared >/dev/null || MISSING="$MISSING cloudflared"
+if [ -n "$MISSING" ]; then
+  if command -v brew >/dev/null; then echo "Installing$MISSING with Homebrew (free)…"; brew install $MISSING
+  else echo "Please install:$MISSING (macOS: https://brew.sh then: brew install$MISSING)"; exit 1; fi
+fi
 .venv/bin/python -m autopilot init
 echo
 echo "Running the test suite (simulation only, nothing is published)…"
