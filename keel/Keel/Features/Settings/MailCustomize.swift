@@ -83,7 +83,7 @@ struct MailAccountCustomizeView: View {
             replySignature = MailAccountPrefs.replySignature(account.id)
             signReplies = MailAccountPrefs.signsReplies(account.id)
             notify = MailAccountPrefs.notifies(account.id)
-            color = Color(hex: account.colorHex) ?? .blue
+            color = Color(hex: account.colorHex)
         }
         .onChange(of: replySignature) { _, v in UserDefaults.standard.set(v, forKey: MailAccountPrefs.replySignatureKey(account.id)) }
         .onChange(of: signReplies) { _, v in UserDefaults.standard.set(v, forKey: MailAccountPrefs.signOnRepliesKey(account.id)) }
@@ -103,7 +103,7 @@ struct MailAccountsSection: View {
                 ForEach(accounts) { a in
                     NavigationLink { MailAccountCustomizeView(account: a) } label: {
                         HStack(spacing: 10) {
-                            Circle().fill(Color(hex: a.colorHex) ?? .blue).frame(width: 10, height: 10)
+                            Circle().fill(Color(hex: a.colorHex)).frame(width: 10, height: 10)
                             VStack(alignment: .leading, spacing: 1) {
                                 Text(a.displayName.isEmpty ? a.address : a.displayName)
                                 Text(a.address + (MailAccountPrefs.defaultAccountId == a.id ? " · default" : "")).font(.caption).foregroundStyle(DS.Palette.inkSoft)
@@ -117,13 +117,6 @@ struct MailAccountsSection: View {
 }
 
 extension Color {
-    /// "#5B8DEF" → a color.
-    init?(hex: String) {
-        var s = hex.trimmingCharacters(in: .whitespaces)
-        if s.hasPrefix("#") { s.removeFirst() }
-        guard s.count == 6, let v = UInt32(s, radix: 16) else { return nil }
-        self.init(red: Double((v >> 16) & 0xFF) / 255, green: Double((v >> 8) & 0xFF) / 255, blue: Double(v & 0xFF) / 255)
-    }
     /// A color → "#RRGGBB".
     var hexString: String? {
         guard let c = UIColor(self).cgColor.converted(to: CGColorSpace(name: CGColorSpace.sRGB)!, intent: .defaultIntent, options: nil),
