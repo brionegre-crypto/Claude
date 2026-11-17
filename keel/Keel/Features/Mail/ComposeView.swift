@@ -111,6 +111,7 @@ struct ComposeView: View {
     @State private var introDone = false
     @State private var trackOpens = ReadStatus.isOn
     @State private var archiveAfterSend = UserDefaults.standard.bool(forKey: "mail.sendArchive")
+    @State private var sendWarnings: [String] = []
     @State private var toneNote: String?
     @State private var toneSofter: String?
     @State private var checkingTone = false
@@ -213,7 +214,7 @@ struct ComposeView: View {
                 ToolbarItem(placement: .confirmationAction) {
                     Menu {
                         if draft.original != nil {
-                            Button("Send & archive", systemImage: "archivebox") { archiveAfterSend = true; startSend() }
+                            Button("Send & archive", systemImage: "archivebox") { archiveAfterSend = true; checkThenSend() }
                         }
                         Section("Send later") {
                             if let first = recipients(draft.to).first, let best = BestSendTime.suggest(for: first) {
@@ -229,7 +230,7 @@ struct ComposeView: View {
                             dismiss()
                             Task { @MainActor in try? await Task.sleep(for: .milliseconds(400)); AppRouter.shared.mailHandoff = d }
                         }
-                    } label: { Image(systemName: "paperplane.fill") } primaryAction: { startSend() }
+                    } label: { Image(systemName: "paperplane.fill") } primaryAction: { checkThenSend() }
                         .disabled(recipients(draft.to).isEmpty || sendCountdown != nil)
                         .accessibilityLabel("Send. Hold for send later")
                 }
@@ -244,6 +245,11 @@ struct ComposeView: View {
                 }
             }
             .overlay(alignment: .bottom) { if let n = sendCountdown { undoBar(n) } }
+            .confirmationDialog("Send anyway?", isPresented: Binding(get: { !sendWarnings.isEmpty }, set: { if !$0 { sendWarnings = [] } }), titleVisibility: .visible) {
+                Button("Send anyway") { sendWarnings = []; startSend() }
+                if sendWarnings.contains(where: { $0.contains("attachment") }) { Button("Attach a file") { sendWarnings = []; showFiles = true } }
+                Button("Keep editing", role: .cancel) { sendWarnings = []; archiveAfterSend = UserDefaults.standard.bool(forKey: "mail.sendArchive") }
+            } message: { Text(sendWarnings.joined(separator: "\n")) }
             .sheet(isPresented: $pickSendTime) {
                 NavigationStack {
                     Form {
@@ -340,6 +346,14 @@ struct ComposeView: View {
     }
 
     private func recipients(_ line: String) -> [String] { ComposeDraft.addressList(line) }
+
+    /// A quick look before sending: a forgotten attachment, no subject, or a very long recipient list.
+    private func checkThenSend() {
+        let w = SendChecks.warnings(body: draft.body, subject: draft.subject, attachments: attachments.count,
+                                    recipients: recipients(draft.to).count + recipients(draft.cc).count + recipients(draft.bcc).count,
+                                    isForward: draft.forwardSource != nil)
+        if w.isEmpty { startSend() } else { sendWarnings = w }
+    }
 
     /// Spark-style undo send: a 5-second window before anything leaves the phone.
     private func startSend() {

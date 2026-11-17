@@ -57,6 +57,7 @@ struct TodayView: View {
                     if Custom.todayRoutine { UpcomingRoutineCard() } // a routine on your calendar, ready to start
                     TomorrowPreviewCard()                           // evenings: tomorrow at a glance
                     FavoritePagesCard()                             // starred pages, one tap away
+                    ClashesCard()                                   // overlapping events this week, with a fix
                     VoyageView()                                    // your day as a route: now, ports, open water, anchor
                     NextMeetingPeopleCard()                         // who you're meeting next, with Running late and Prep
                     Waterline(label: "Below the waterline · the rest of your day")

@@ -1067,4 +1067,11 @@ final class KeelTests: XCTestCase {
         XCTAssertEqual(FocusReflections.bestTime(list), "mornings")
         XCTAssertNil(FocusReflections.bestTime(Array(list.prefix(3))), "needs a few sessions first")
     }
+
+    func testSendChecks() {
+        XCTAssertEqual(SendChecks.warnings(body: "Hi, I've attached the deck.", subject: "Deck", attachments: 0, recipients: 1, isForward: false).count, 1)
+        XCTAssertTrue(SendChecks.warnings(body: "Hi, I've attached the deck.", subject: "Deck", attachments: 1, recipients: 1, isForward: false).isEmpty)
+        XCTAssertTrue(SendChecks.warnings(body: "Thanks!\n> see attached", subject: "Re: x", attachments: 0, recipients: 1, isForward: false).isEmpty, "quoted text doesn't count")
+        XCTAssertEqual(SendChecks.warnings(body: "Hi", subject: " ", attachments: 0, recipients: 12, isForward: false).count, 2)
+    }
 }
