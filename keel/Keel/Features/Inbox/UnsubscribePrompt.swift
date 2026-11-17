@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import UserNotifications
 
 /// Finds senders you never read and offers to unsubscribe: one gentle card at the top of Inbox,
 /// plus a review sheet for all of them. "Keep" means Keel never asks about that sender again.
@@ -22,6 +23,21 @@ enum UnsubscribeSuggestions {
     }
     static func markDone(_ sender: String) {
         UserDefaults.standard.set(Array(Set(UserDefaults.standard.stringArray(forKey: doneKey) ?? []).union([sender])), forKey: doneKey)
+    }
+
+    /// A quiet Sunday-morning nudge: how many senders you never open are waiting in Sales & promos.
+    static func scheduleWeeklyReport(count: Int) {
+        let center = UNUserNotificationCenter.current()
+        guard count >= 3, UserDefaults.standard.object(forKey: "unsubscribe.weekly") as? Bool ?? true else {
+            center.removePendingNotificationRequests(withIdentifiers: ["unsubscribe.weekly"]); return
+        }
+        guard Throttle.due("unsubscribe.weekly.schedule", every: 6 * 3600) else { return }
+        let c = UNMutableNotificationContent()
+        c.title = "Your weekly unsubscribe report"
+        c.body = "\(count) senders you almost never open. Inbox → Sales & promos → Unsubscribe report."
+        c.sound = nil
+        var when = DateComponents(); when.weekday = 1; when.hour = 10; when.minute = 7
+        center.add(UNNotificationRequest(identifier: "unsubscribe.weekly", content: c, trigger: UNCalendarNotificationTrigger(dateMatching: when, repeats: true)))
     }
 
     /// Bulk senders with 3+ emails in 60 days that you open less than a quarter of the time.

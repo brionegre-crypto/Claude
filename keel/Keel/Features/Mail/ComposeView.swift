@@ -29,7 +29,7 @@ struct ComposeDraft: Identifiable {
         ctx.replyAll = all
         d.replyTo = ctx
         // Outlook's reply endpoint appends the original itself; Gmail needs the quote in the body.
-        if accounts.first(where: { $0.id == e.accountId })?.provider == .gmail {
+        if accounts.first(where: { $0.id == e.accountId })?.provider == .gmail && MailAccountPrefs.quotesOriginal {
             d.body = "\n\n" + quote(e)
         }
         return d
@@ -109,6 +109,7 @@ struct ComposeView: View {
     @FocusState private var bodyFocused: Bool
     @State private var followUpDays: Int? = nil
     @State private var introDone = false
+    @State private var trackOpens = ReadStatus.isOn
     @State private var toneNote: String?
     @State private var toneSofter: String?
     @State private var checkingTone = false
@@ -142,6 +143,9 @@ struct ComposeView: View {
                         Button("Add Cc / Bcc") { showCcBcc = true }.font(DS.Font.caption)
                     }
                     TextField("Subject", text: $draft.subject)
+                    if ReadStatus.available {
+                        Toggle(isOn: $trackOpens) { Label("Tell me when it's opened", systemImage: "envelope.open") }
+                    }
                     Picker(selection: $followUpDays) {
                         ForEach(FollowUps.options, id: \.label) { Text($0.label).tag($0.days) }
                     } label: { Label("Remind me if no reply", systemImage: "bell.badge") }
@@ -269,7 +273,7 @@ struct ComposeView: View {
                 else if !b.isEmpty { draft.body = "\n\n" + b + draft.body }
             }
             .task {
-                accountId = draft.accountId ?? accounts.first?.id ?? ""
+                accountId = draft.accountId ?? MailAccountPrefs.defaultAccountId.flatMap { d in accounts.first { $0.id == d }?.id } ?? accounts.first?.id ?? ""
                 if let o = draft.original, alias.isEmpty, let a = MailAliases.match(o, accountId: accountId) { alias = a }
                 let signature = signature(for: accountId)
                 if !signature.isEmpty && !draft.body.contains(signature) { draft.body = "\n\n" + signature + draft.body }
@@ -301,7 +305,7 @@ struct ComposeView: View {
 
     /// The sending account's own signature, or the shared one.
     private func signature(for id: String) -> String {
-        accounts.first { $0.id == id }?.signature ?? UserDefaults.standard.string(forKey: Prefs.signature) ?? ""
+        MailAccountPrefs.signature(for: accounts.first { $0.id == id }, isReply: draft.replyTo != nil)
     }
 
     private func field(_ label: String, text: Binding<String>) -> some View {
@@ -368,7 +372,12 @@ struct ComposeView: View {
         guard let account = accounts.first(where: { $0.id == accountId }) ?? accounts.first else {
             error = "Add an email account first (Today → profile icon)."; sendCountdown = nil; return
         }
-        let mail = outgoing(for: account)
+        var mail = outgoing(for: account)
+        if trackOpens && ReadStatus.available {
+            // Read status: registered with your Keel server first; if that fails, the email simply goes untracked.
+            mail.trackingPixel = await ReadStatus.prepare(to: draft.original?.fromName.isEmpty == false && mail.to.count == 1 ? draft.original!.fromName : mail.to.joined(separator: ", "),
+                                                           subject: draft.subject)
+        }
         do {
             try await MailProviderFactory.make(for: account).send(mail)
             SavePoints.remove(refId: draft.id.uuidString)

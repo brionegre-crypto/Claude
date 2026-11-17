@@ -72,6 +72,7 @@ struct KeelApp: App {
                 LinkSaver.importShared(into: container.mainContext)     // links saved from Safari's share sheet
                 SafariHighlights.importQueued(ctx: container.mainContext) // highlights saved with the Safari extension
                 LinkSaver.importSharedNotes(into: container.mainContext) // text/images shared from Notes, Messages, Photos…
+                Task { await ReadStatus.refresh() }                      // who opened your tracked emails (every 5 min at most)
                 MeetingAutopilot.syncActivity()                         // Lock Screen timer for a meeting in progress
                 // Housekeeping waits until Keel has settled, so opening it is instant, and each job runs only occasionally.
                 Task { @MainActor in

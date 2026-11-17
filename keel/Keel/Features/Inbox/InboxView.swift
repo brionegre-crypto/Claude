@@ -250,6 +250,7 @@ struct InboxView: View {
                             NavigationLink { LazyView(AskInboxView()) } label: { Label("Ask your inbox", systemImage: "questionmark.bubble") }
                             NavigationLink { LazyView(AttachmentsView()) } label: { Label("Attachments", systemImage: "paperclip") }
                             NavigationLink { LazyView(ScheduledMailView()) } label: { Label("Scheduled to send", systemImage: "clock.arrow.circlepath") }
+                            NavigationLink { LazyView(ReadStatusView()) } label: { Label("Read statuses (who opened)", systemImage: "envelope.open") }
                             NavigationLink { LazyView(DigestView()) } label: { Label("Newsletter digest", systemImage: "newspaper") }
                         }
                         Section("Life admin from your mail") {
@@ -491,6 +492,20 @@ struct InboxView: View {
                 }
                 .font(DS.Font.caption).buttonStyle(.borderless)
                 .selectionDisabled()
+                if !unsubCandidates.isEmpty {
+                    // The weekly report: senders you never open, with how often they write.
+                    NavigationLink { LazyView(UnsubscribeReviewView(candidates: unsubCandidates, provider: provider(for:)).onDisappear { refreshUnsubscribe() }) } label: {
+                        HStack(spacing: 12) {
+                            Image(systemName: "chart.bar.doc.horizontal").font(.title3).foregroundStyle(DS.Palette.warmth)
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text("Unsubscribe report").font(DS.Font.headline)
+                                Text("\(unsubCandidates.count) sender\(unsubCandidates.count == 1 ? "" : "s") you almost never open · \(unsubCandidates.reduce(0) { $0 + $1.count }) emails in 60 days")
+                                    .font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
+                            }
+                        }
+                    }
+                    .selectionDisabled()
+                }
             }
             if tab == .newsletters {
                 HStack {
@@ -634,6 +649,7 @@ struct InboxView: View {
 
     private func refreshUnsubscribe() {
         let fresh = UnsubscribeSuggestions.candidates(allEmails)
+        UnsubscribeSuggestions.scheduleWeeklyReport(count: fresh.count)
         guard fresh.map(\.id) != unsubCandidates.map(\.id) else { return }      // unchanged: no redraw
         withAnimation(DS.spring) { unsubCandidates = fresh }
     }
@@ -1053,8 +1069,15 @@ struct EmailDetailView: View {
             Dread.recordOpen(email.id)          // Dread Radar notices emails opened again and again
             if !email.isRead {
                 InboxBrain.record(.open, sender: email.from, name: email.fromName, ctx: ctx)
-                email.isRead = true
-                try? await provider?.markRead(email.providerMessageId, read: true)
+                switch MailAccountPrefs.markReadMode {             // Settings → Mail → Mark as read
+                case "manual": break
+                case "delay":
+                    try? await Task.sleep(for: .seconds(3))
+                    if !Task.isCancelled { email.isRead = true; try? await provider?.markRead(email.providerMessageId, read: true) }
+                default:
+                    email.isRead = true
+                    try? await provider?.markRead(email.providerMessageId, read: true)
+                }
             }
             if email.hasAttachments, let list = try? await provider?.attachments(for: email.providerMessageId) {
                 attachments = list

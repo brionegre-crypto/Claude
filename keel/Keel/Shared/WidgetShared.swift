@@ -101,6 +101,8 @@ struct FocusActivityAttributes: ActivityAttributes {
     struct ContentState: Codable, Hashable {
         var endsAt: Date
         var taskTitle: String?
+        var music: String? = nil            // the song playing (Apple Music), for the Lock Screen controls
+        var musicPlaying: Bool? = nil
     }
     var startedAt: Date
 }

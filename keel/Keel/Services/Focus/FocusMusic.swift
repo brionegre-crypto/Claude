@@ -115,6 +115,7 @@ final class FocusMusic {
         isPlaying = player.playbackState == .playing
         let item = player.nowPlayingItem
         nowPlaying = item.map { [$0.title, $0.artist].compactMap { $0 }.joined(separator: " · ") }
+        if source == .appleMusic { Task { await FocusActivityMusic.refreshActivity() } }   // Lock Screen controls stay in step
         #endif
     }
 
@@ -125,7 +126,9 @@ final class FocusMusic {
         guard UserDefaults.standard.object(forKey: Self.autoKey) as? Bool ?? true else { return }
         switch source {
         case .none: return
-        case .appleMusic: playChosenPlaylist()
+        case .appleMusic:
+            playChosenPlaylist()
+            Task { try? await Task.sleep(for: .seconds(1.5)); refresh() }                   // the song shows on the Lock Screen
         default: open()
         }
     }

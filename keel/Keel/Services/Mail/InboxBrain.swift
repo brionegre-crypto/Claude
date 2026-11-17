@@ -147,7 +147,8 @@ enum InboxBrain {
         var order = UserDefaults.standard.stringArray(forKey: "mail.notified") ?? []      // oldest first
         var sent = Set(order)
         let center = UNUserNotificationCenter.current()
-        for e in fresh where !e.isRead && !e.isArchived && e.receivedAt > Date().addingTimeInterval(-3 * 3600) && !sent.contains(e.id) {
+        for e in fresh where !e.isRead && !e.isArchived && e.receivedAt > Date().addingTimeInterval(-3 * 3600) && !sent.contains(e.id)
+            && MailAccountPrefs.notifies(e.accountId) {
             let score = known[e.from.lowercased()]
             let vip = score?.isVIP == true
             guard vip || (notifyMode == "urgent" && isUrgent(e, score: score)) else { continue }

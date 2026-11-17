@@ -473,6 +473,7 @@ struct MailSettings: View {
     var body: some View {
         List {
             Section {
+                NavigationLink { ReadStatusView() } label: { Label("Read statuses", systemImage: "envelope.open") }
                 Picker("Undo Send Delay", selection: $undoSeconds) {
                     Text("Off").tag(0); Text("5 seconds").tag(5); Text("10 seconds").tag(10); Text("20 seconds").tag(20)
                 }
@@ -509,9 +510,19 @@ struct MailSettings: View {
             } header: { Text("Templates") } footer: {
                 Text("Saved replies you insert while writing. Fill-ins like {name}, {company} and {date} are filled for you; {me} uses your name.")
             }
-            Section("Signature") {
+            MailAccountsSection()
+            Section {
                 TextField("Sent from Keel", text: $signature, axis: .vertical).lineLimit(2...5)
-            }
+            } header: { Text("Shared signature") } footer: { Text("Used by any account without its own signature.") }
+            Section {
+                Picker("Mark as read", selection: Binding(get: { MailAccountPrefs.markReadMode }, set: { UserDefaults.standard.set($0, forKey: MailAccountPrefs.markReadKey) })) {
+                    Text("When I open it").tag("open"); Text("After 3 seconds").tag("delay"); Text("Only when I say").tag("manual")
+                }
+                Toggle("Quote the original in replies", isOn: Binding(get: { MailAccountPrefs.quotesOriginal }, set: { UserDefaults.standard.set($0, forKey: MailAccountPrefs.quoteKey) }))
+                Toggle("Weekly unsubscribe report", isOn: Binding(get: { UserDefaults.standard.object(forKey: "unsubscribe.weekly") as? Bool ?? true }, set: { UserDefaults.standard.set($0, forKey: "unsubscribe.weekly") }))
+                Toggle("Track opens by default", isOn: Binding(get: { ReadStatus.isOn }, set: { UserDefaults.standard.set($0, forKey: ReadStatus.onKey) }))
+                    .disabled(!ReadStatus.available)
+            } header: { Text("Reading & replying") }
             Section {
                 Toggle("Write Replies in My Style", isOn: $styleOn)
                 NavigationLink("What Keel Learned") { WritingStyleView() }

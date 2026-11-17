@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import EventKit
 
 // MARK: - Things you shared to Keel (from Safari, Notes, Messages, Photos…) show up on Today
 
@@ -181,6 +182,52 @@ struct DailyAffirmationCard: View {
             .onTapGesture { withAnimation(DS.spring) { offset += 1 } }
             .accessibilityElement(children: .combine)
             .accessibilityLabel("Today's affirmation: \(DailyAffirmation.today(offset: offset))")
+        }
+    }
+}
+
+// MARK: - Tomorrow, at a glance (evenings)
+
+/// From 6 PM: tomorrow's first event, how busy it is, what's due and any routine, so you go to bed knowing.
+struct TomorrowPreviewCard: View {
+    @AppStorage("today.tomorrowPreview") private var on = true
+    @Query(filter: #Predicate<TaskItem> { !$0.isDone }, sort: \TaskItem.dueDate) private var open: [TaskItem]
+    private var due: [TaskItem] { open.filter { $0.dueDate.map { Calendar.current.isDateInTomorrow($0) } ?? false } }
+
+    var body: some View {
+        if on && Calendar.current.component(.hour, from: Date()) >= 18 {
+            let cal = Calendar.current
+            let start = cal.date(byAdding: .day, value: 1, to: cal.startOfDay(for: Date())) ?? Date()
+            let events = CalendarService.shared.events(from: start, to: start.addingTimeInterval(86_400)).filter { !$0.isAllDay }
+            let first = events.min { $0.startDate < $1.startDate }
+            VStack(alignment: .leading, spacing: 8) {
+                HStack {
+                    Label("Tomorrow", systemImage: "moon.haze.fill").font(DS.Font.headline).foregroundStyle(.indigo)
+                    Spacer()
+                    Menu {
+                        Button("Open calendar", systemImage: "calendar") { AppRouter.shared.tab = .calendar }
+                        Button("Hide in the evenings", systemImage: "eye.slash") { on = false }
+                    } label: { Image(systemName: "ellipsis").foregroundStyle(DS.Palette.inkSoft).frame(width: 28, height: 28) }
+                }
+                if let first {
+                    Text("First up: \(first.title ?? "Event") at \(first.startDate.formatted(date: .omitted, time: .shortened))").font(DS.Font.body)
+                } else {
+                    Text("No meetings. A clear day to shape.").font(DS.Font.body)
+                }
+                Text([events.isEmpty ? nil : "\(events.count) event\(events.count == 1 ? "" : "s")",
+                      due.isEmpty ? nil : "\(due.count) task\(due.count == 1 ? "" : "s") due"].compactMap { $0 }.joined(separator: " · "))
+                    .font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
+                ForEach(due.prefix(3)) { t in
+                    Label(t.title, systemImage: "circle").font(.caption).lineLimit(1)
+                }
+                if let routine = events.first(where: { ($0.notes ?? "").contains("keel-routine") }) {
+                    Label("\(routine.title ?? "Routine") at \(routine.startDate.formatted(date: .omitted, time: .shortened))", systemImage: "arrow.triangle.2.circlepath")
+                        .font(.caption).foregroundStyle(.teal)
+                }
+            }
+            .padding(DS.Space.m)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background { PremiumSurface(tint: .indigo) }
         }
     }
 }

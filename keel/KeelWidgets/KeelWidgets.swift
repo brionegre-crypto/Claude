@@ -218,6 +218,8 @@ struct FocusLiveActivity: Widget {
                     .frame(maxWidth: 110)
             }
             .padding()
+            .overlay(alignment: .bottom) { FocusMusicStrip(state: context.state).padding(.horizontal).padding(.bottom, 6) }
+            .padding(.bottom, context.state.music == nil ? 0 : 30)
             .activityBackgroundTint(Color.black.opacity(0.6))
             .widgetURL(URL(string: "com.keel.app://focus"))
         } dynamicIsland: { context in
@@ -230,7 +232,10 @@ struct FocusLiveActivity: Widget {
                         .monospacedDigit().frame(maxWidth: 70)
                 }
                 DynamicIslandExpandedRegion(.bottom) {
-                    Text(context.state.taskTitle ?? "Deep work. Everything else can wait.").font(.caption).lineLimit(1)
+                    VStack(spacing: 6) {
+                        Text(context.state.taskTitle ?? "Deep work. Everything else can wait.").font(.caption).lineLimit(1)
+                        FocusMusicStrip(state: context.state)
+                    }
                 }
             } compactLeading: {
                 Image(systemName: "moon.zzz.fill").foregroundStyle(focusColor)
@@ -241,6 +246,25 @@ struct FocusLiveActivity: Widget {
                 Image(systemName: "moon.zzz.fill").foregroundStyle(focusColor)
             }
             .widgetURL(URL(string: "com.keel.app://focus"))
+        }
+    }
+}
+
+/// The song and play/pause/skip, when Apple Music is playing during focus.
+private struct FocusMusicStrip: View {
+    let state: FocusActivityAttributes.ContentState
+    var body: some View {
+        if let song = state.music {
+            HStack(spacing: 10) {
+                Image(systemName: "music.note").font(.caption).foregroundStyle(focusColor)
+                Text(song).font(.caption).lineLimit(1).foregroundStyle(.secondary)
+                Spacer(minLength: 4)
+                Button(intent: FocusMusicPlayPauseIntent()) { Image(systemName: state.musicPlaying == true ? "pause.fill" : "play.fill") }
+                    .buttonStyle(.plain).accessibilityLabel(state.musicPlaying == true ? "Pause music" : "Play music")
+                Button(intent: FocusMusicNextIntent()) { Image(systemName: "forward.fill") }
+                    .buttonStyle(.plain).accessibilityLabel("Next song")
+            }
+            .font(.callout)
         }
     }
 }

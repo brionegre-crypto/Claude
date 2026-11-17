@@ -55,6 +55,7 @@ struct TodayView: View {
                         .inlineTip(CaptureTip())
                     DailyAffirmationCard()                          // on/off: Today menu, or the card's own menu
                     UpcomingRoutineCard()                           // a routine on your calendar, ready to start
+                    TomorrowPreviewCard()                           // evenings: tomorrow at a glance
                     VoyageView()                                    // your day as a route: now, ports, open water, anchor
                     NextMeetingPeopleCard()                         // who you're meeting next, with Running late and Prep
                     Waterline(label: "Below the waterline · the rest of your day")

@@ -7,6 +7,7 @@ import { handleTeam } from "./team";
 import { handleBooking } from "./booking";
 import { handlePush } from "./push";
 import { handleSupport } from "./support";
+import { handleRead } from "./read";
 import { handleOAuth, isMcpAccess, mcpUnauthorized } from "./oauth";
 
 export interface Env {
@@ -32,6 +33,7 @@ export interface Env {
  *   POST /v1/messages   AI proxy: holds the Claude key, routes model/effort, enforces a daily cap.   [device token]
  *   POST /snapshot      iPhone uploads a small JSON snapshot for the Claude connector.            [device token]
  *   GET  /actions       iPhone pulls actions Claude queued (add_task, start_focus), then clears. [device token]
+ *   /r/new, /r/<id>.gif, /r/status   Read statuses for emails you choose to track (see read.ts).
  *   /team, /t/:id       Team boards: shared tasks with assignees, comments, @mentions, activity.   [link]
  *   POST /mcp           Remote MCP server for Claude / Claude Duet custom connectors.             [MCP token]
  *   POST /push/*        Instant mail alerts: Gmail/Outlook notices → silent push to wake the app (see push.ts).
@@ -66,6 +68,7 @@ export default {
       const r = await handleBooking(req, env, url, device);
       if (r) return r;
     }
+    if (/^\/r(\/|$)/.test(url.pathname)) return handleRead(req, env, url, device);     // read statuses (opt-in)
     if (/^\/(team|t|join)(\/|$)/.test(url.pathname)) {
       const r = await handleTeam(req, env, url, device);
       if (r) return r;

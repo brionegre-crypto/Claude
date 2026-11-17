@@ -47,6 +47,17 @@ struct OutgoingMail {
     var attachments: [OutgoingAttachment] = []
     /// Send as one of the account's aliases (e.g. hello@yourdomain.com) instead of its main address.
     var fromAlias: String? = nil
+    /// Read status: when set, the email also goes out as HTML with a 1×1 image from your Keel server.
+    var trackingPixel: URL? = nil
+
+    /// The same words as simple HTML (line breaks kept), with the read-status image at the end.
+    var htmlBody: String? {
+        guard let trackingPixel else { return nil }
+        let escaped = body.replacingOccurrences(of: "&", with: "&amp;").replacingOccurrences(of: "<", with: "&lt;")
+            .replacingOccurrences(of: ">", with: "&gt;").replacingOccurrences(of: "\n", with: "<br>\n")
+        return "<div style=\"font-family:-apple-system,Helvetica,Arial,sans-serif;font-size:15px;line-height:1.45\">\(escaped)</div>"
+            + "<img src=\"\(trackingPixel.absoluteString)\" width=\"1\" height=\"1\" alt=\"\" style=\"border:0;width:1px;height:1px\">"
+    }
 }
 
 /// Extra addresses you can send from, per account. The provider must already allow sending as them
@@ -379,11 +390,17 @@ struct OutlookProvider: MailProvider {
         if let r = mail.replyTo {
             // /reply keeps the conversation threaded on the server.
             let action = r.replyAll ? "replyAll" : "reply"
-            _ = try await api.json(URL(string: "\(base)/messages/\(r.providerMessageId)/\(action)")!, method: "POST",
-                                   body: ["message": message, "comment": mail.body] as [String: Any])
+            if let html = mail.htmlBody {
+                message["body"] = ["contentType": "HTML", "content": html]     // a body instead of a comment, so the image goes too
+                _ = try await api.json(URL(string: "\(base)/messages/\(r.providerMessageId)/\(action)")!, method: "POST",
+                                       body: ["message": message] as [String: Any])
+            } else {
+                _ = try await api.json(URL(string: "\(base)/messages/\(r.providerMessageId)/\(action)")!, method: "POST",
+                                       body: ["message": message, "comment": mail.body] as [String: Any])
+            }
         } else {
             message["subject"] = mail.subject
-            message["body"] = ["contentType": "Text", "content": mail.body]
+            message["body"] = mail.htmlBody.map { ["contentType": "HTML", "content": $0] } ?? ["contentType": "Text", "content": mail.body]
             _ = try await api.json(URL(string: "\(base)/sendMail")!, method: "POST", body: ["message": message] as [String: Any])
         }
     }
@@ -451,7 +468,13 @@ enum MIME {
         h += "Subject: \(encodeHeader(mail.subject))\r\nMIME-Version: 1.0\r\n"
         if let ref = mail.replyTo?.messageIdHeader { h += "In-Reply-To: \(ref)\r\nReferences: \(ref)\r\n" }
 
-        let textPart = "Content-Type: text/plain; charset=utf-8\r\nContent-Transfer-Encoding: base64\r\n\r\n" + wrap(Data(mail.body.utf8).base64EncodedString())
+        var textPart = "Content-Type: text/plain; charset=utf-8\r\nContent-Transfer-Encoding: base64\r\n\r\n" + wrap(Data(mail.body.utf8).base64EncodedString())
+        if let html = mail.htmlBody {
+            // Plain text and HTML side by side; mail apps show the HTML (which carries the read-status image).
+            let alt = "keel-alt-\(UUID().uuidString)"
+            let htmlPart = "Content-Type: text/html; charset=utf-8\r\nContent-Transfer-Encoding: base64\r\n\r\n" + wrap(Data(html.utf8).base64EncodedString())
+            textPart = "Content-Type: multipart/alternative; boundary=\"\(alt)\"\r\n\r\n--\(alt)\r\n" + textPart + "\r\n--\(alt)\r\n" + htmlPart + "\r\n--\(alt)--\r\n"
+        }
         guard !mail.attachments.isEmpty else {
             return Data((h + textPart).utf8)
         }

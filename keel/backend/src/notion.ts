@@ -152,6 +152,7 @@ export function privacyPage(): Response {
       <li><b>Sign in with Apple</b>: an anonymous Apple ID number (and the name and email Apple shares, if any) so your devices stay signed in.</li>
       <li><b>Things you choose to share</b>: shared lists, published pages and shared spaces, until you remove them.</li>
       <li><b>Booking link</b>: the open times your device works out (never your events), and, for each booking, the person's name, email and note until your device picks it up.</li>
+      <li><b>Read statuses</b> (off unless you turn them on): for emails you choose to track, a random ID and the times its image was loaded and by which kind of mail app, kept 90 days. Nothing about the reader is stored.</li>
       <li><b>Instant mail alerts</b>: your device's push address. Gmail and Outlook only tell the server "new mail arrived"; no email content reaches it.</li>
       <li><b>Claude connector</b> (only if you connect it): a short summary of your day, tasks, notes and promises, so Claude can read it after you approve the connection. Tasks Claude adds wait there until your device picks them up.</li>
       <li><b>Notion import</b>: the one-time sign-in code is exchanged for an access token and handed to your device within five minutes; nothing else is kept. Your pages go straight to your device.</li>
