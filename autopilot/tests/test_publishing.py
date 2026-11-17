@@ -187,3 +187,57 @@ def test_insights_and_report(env, fake_ig):
     assert out["posts"] == 1 and out["account"]["instagram"]["followers_count"] == 1000
     rep = analytics.report(s, db, "weekly")
     assert "Performance (real API metrics, 1 posts" in rep
+
+
+def _detect_client(kind):
+    def handler(req):
+        host, path = req.url.host, req.url.path
+        if host == "graph.instagram.com":
+            if kind == "instagram":
+                return httpx.Response(200, json={"user_id": "17841", "username": "bethemansystem", "account_type": "BUSINESS"})
+            return httpx.Response(400, json={"error": {"message": "Invalid OAuth access token", "code": 190}})
+        if path.endswith("/me/accounts"):
+            if kind == "facebook":
+                return httpx.Response(200, json={"data": [
+                    {"name": "Other page", "instagram_business_account": {"id": "999", "username": "someoneelse"}},
+                    {"name": "Be The Man", "instagram_business_account": {"id": "17841", "username": "bethemansystem"}}]})
+            return httpx.Response(400, json={"error": {"message": "bad", "code": 190}})
+        return httpx.Response(400, json={"error": {"message": "bad", "code": 190}})
+    return httpx.Client(transport=httpx.MockTransport(handler))
+
+
+def test_detects_instagram_login_token(env):
+    s, db = env
+    from autopilot.publishing.instagram import detect_account
+    a = detect_account(s, "IGAAtoken", client=_detect_client("instagram"))
+    assert a["host"] == "https://graph.instagram.com" and a["user_id"] == "17841"
+
+
+def test_detects_unified_facebook_login_token_and_picks_brand_account(env):
+    s, db = env
+    from autopilot.publishing.instagram import detect_account
+    a = detect_account(s, "EAAtoken", client=_detect_client("facebook"))
+    assert a["host"] == "https://graph.facebook.com" and a["user_id"] == "17841" and a["username"] == "bethemansystem"
+
+
+def test_unusable_token_is_rejected_clearly(env):
+    s, db = env
+    import pytest
+    from autopilot.publishing.base import PermanentError
+    from autopilot.publishing.instagram import detect_account
+    with pytest.raises(PermanentError, match="No Instagram account"):
+        detect_account(s, "junk", client=_detect_client("none"))
+
+
+def test_publishing_via_facebook_host(env, fake_ig):
+    s, db = env
+    fake, pubs = fake_ig
+    ig = pubs["instagram"]
+    ig.secrets.set("instagram_api_host", "https://graph.facebook.com")
+    assert ig.flavor == "facebook" and ig.base.startswith("https://graph.facebook.com/")
+    ok, detail = ig.check_auth()
+    assert ok and "@bethemansystem" in detail
+    ids = [make_ready(s, db, f) for f in ("image", "reel")]
+    res = publisher.run_due(s, db, pubs)
+    assert all(res[i] == "published" for i in ids) and len(fake.media) == 2
+    assert ig.account_insights()["followers_count"] == 1000

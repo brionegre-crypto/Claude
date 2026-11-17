@@ -113,6 +113,9 @@ class FakeIG:
             return httpx.Response(200, json={"user_id": "17841", "username": "bethemansystem", "account_type": "BUSINESS",
                                              "followers_count": 1000, "follows_count": 10, "media_count": len(self.media)})
         seg = path.rsplit("/", 1)[-1]
+        if seg == "17841":
+            return httpx.Response(200, json={"id": "17841", "username": "bethemansystem", "followers_count": 1000,
+                                             "follows_count": 10, "media_count": len(self.media)})
         if seg in self.containers:
             return httpx.Response(200, json={"status_code": self.containers[seg]["status"]})
         for m in self.media:

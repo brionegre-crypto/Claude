@@ -183,16 +183,16 @@ def step_ai(s, db):
 
 
 IG_GUIDE = """
-Instagram setup (free, about 15 minutes, done in YOUR browser; I never see your password):
- 1. Instagram app → Settings → Account type and tools → switch to a Professional account (Business recommended:
-    Stories publishing via the API is documented for Business accounts).
- 2. https://developers.facebook.com/apps → Create app → use case "Manage messaging & content on Instagram"
-    (the "Instagram API with Instagram login" product). App stays in Development mode: free, works for your own account.
- 3. App dashboard → Instagram → API setup with Instagram login → "Add account"/"Generate token" for @{handle}.
-    Grant: instagram_business_basic, instagram_business_content_publish, instagram_business_manage_insights.
-    (If asked, accept the Instagram tester invite: Instagram → Settings → Website permissions/Apps → Tester invites.)
- 4. Copy the generated access token. Tokens from the dashboard are long-lived (60 days); the autopilot refreshes them
-    automatically before they expire and alerts you if that ever fails.
+Instagram setup (free, done in YOUR browser; I never see your password):
+ 1. Instagram app → Settings → Account type and tools → Professional account → Business (needed for Stories).
+ 2. developers.facebook.com → My Apps → your app → Use cases → Instagram API → "API setup with Unified login"
+    (Meta's name for it in newer apps; older apps say "API setup with Instagram login").
+ 3. App roles → Roles → add @{handle} as an Instagram Tester, and accept the invite in Instagram
+    (Settings → Website permissions → Apps and websites → Tester invites).
+ 4. Back on the API setup page: "2. Generate access tokens" → Add account → log in as @{handle} → approve →
+    Generate token → copy it.
+ Either token type works: Instagram-login tokens (IGAA…) are renewed automatically every 60 days;
+ Facebook/Unified-login system-user tokens (EAA…) never expire. Paste it below (hidden), never in a chat.
 """
 
 
@@ -205,30 +205,39 @@ def step_accounts(s, db):
     if yes("Connect Instagram now?", True):
         tok = hidden("Paste the Instagram access token")
         if tok:
-            sec.set("instagram_access_token", tok)
-            ig = InstagramPublisher(s, sec)
+            from autopilot.publishing.instagram import detect_account
             try:
-                me = ig._call("GET", "me", fields="user_id,username,account_type")
+                acct = detect_account(s, tok, choose=lambda found: found[int(ask(
+                    "Several Instagram accounts found: " + ", ".join(f"{i}=@{f.get('username')}" for i, f in enumerate(found)) + ". Which one?", "0"))])
             except Exception as e:
-                say(f"  ✗ token check failed: {e}"); sec.delete("instagram_access_token"); mark(db, "accounts", False, str(e)); return False
-            sec.set("instagram_user_id", str(me.get("user_id") or me.get("id")))
-            say(f"  ✓ connected @{me.get('username')} ({me.get('account_type')})")
-            if me.get("account_type") not in ("BUSINESS", "MEDIA_CREATOR", "CREATOR"):
+                say(f"  ✗ token check failed: {e}"); mark(db, "accounts", False, str(e)); return False
+            sec.set("instagram_access_token", tok)
+            sec.set("instagram_api_host", acct["host"])
+            sec.set("instagram_user_id", acct["user_id"])
+            ig = InstagramPublisher(s, sec)
+            kind = "Instagram login" if ig.flavor == "instagram" else "Facebook/Unified login"
+            say(f"  ✓ connected @{acct['username']} ({acct['account_type']}) via {kind}")
+            if acct["account_type"] not in ("BUSINESS", "MEDIA_CREATOR", "CREATOR") and ig.flavor == "instagram":
                 say("  ! Not a professional account: publishing will fail until you switch.")
-            if not tok.startswith("IG") or yes("Is this a SHORT-lived token (1 hour) that needs exchanging?", False):
-                app_secret = hidden("Instagram app secret (App dashboard → Instagram → API setup → app secret)")
+            if ig.flavor == "instagram":
+                sec.delete("instagram_token_expires_at")
                 try:
-                    d = ig.exchange_long_lived(tok, app_secret)
-                    sec.set("instagram_access_token", d["access_token"])
-                    sec.set("instagram_token_expires_at", (datetime.now(timezone.utc) + timedelta(seconds=int(d.get("expires_in", 5184000)))).isoformat())
-                    say("  ✓ exchanged for a 60-day token")
-                except Exception as e:
-                    say(f"  (exchange skipped: {e})")
-            if not sec.get("instagram_token_expires_at"):
-                try:
-                    exp = ig.refresh_token(); say(f"  ✓ token refreshed, valid until {exp[:10]}")
+                    exp = ig.refresh_token(); say(f"  ✓ 60-day token, auto-renewed; currently valid until {exp[:10]}")
                 except Exception:
-                    sec.set("instagram_token_expires_at", (datetime.now(timezone.utc) + timedelta(days=59)).isoformat())
+                    if yes("Is this a SHORT-lived token (1 hour) that needs exchanging?", False):
+                        app_secret = hidden("Instagram app secret (App dashboard → App settings → Basic → app secret)")
+                        try:
+                            d = ig.exchange_long_lived(tok, app_secret)
+                            sec.set("instagram_access_token", d["access_token"])
+                            sec.set("instagram_token_expires_at", (datetime.now(timezone.utc) + timedelta(seconds=int(d.get("expires_in", 5184000)))).isoformat())
+                            say("  ✓ exchanged for a 60-day token")
+                        except Exception as e:
+                            say(f"  (exchange failed: {e})")
+                    if not sec.get("instagram_token_expires_at"):
+                        sec.set("instagram_token_expires_at", (datetime.now(timezone.utc) + timedelta(days=59)).isoformat())
+            else:
+                sec.delete("instagram_token_expires_at")
+                say("  ✓ Facebook-login token: system-user tokens never expire; the autopilot still checks it every 6 hours.")
             # permission validation
             try:
                 lim = ig._call("GET", f"{sec.get('instagram_user_id')}/content_publishing_limit", fields="quota_usage,config")

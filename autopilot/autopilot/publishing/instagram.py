@@ -34,12 +34,32 @@ class InstagramPublisher(Publisher):
 
     def __init__(self, s, secrets, client: httpx.Client | None = None, media_host_factory=None, sleep=time.sleep):
         self.s, self.secrets = s, secrets
-        self.base = f"{s.get('publishing.instagram_api_host')}/{s.get('publishing.instagram_api_version')}"
         self.client = client or httpx.Client(timeout=60)
         self.media_host_factory = media_host_factory
         self.sleep = sleep
 
     # ---- plumbing -------------------------------------------------------------------------------------------
+    # Meta has two flavours: "Instagram login" tokens (IGAA…, graph.instagram.com) and, for newer apps,
+    # "Unified login" / Facebook Login for Business tokens (EAA…, incl. never-expiring system-user tokens,
+    # graph.facebook.com). The wizard detects which one you pasted and stores the host.
+    @property
+    def host(self) -> str:
+        return self.secrets.get("instagram_api_host") or self.s.get("publishing.instagram_api_host")
+
+    @property
+    def flavor(self) -> str:
+        return "facebook" if "graph.facebook.com" in self.host else "instagram"
+
+    @property
+    def base(self) -> str:
+        return f"{self.host}/{self.s.get('publishing.instagram_api_version')}"
+
+    def identity(self) -> dict:
+        if self.flavor == "instagram":
+            return self._call("GET", "me", fields="user_id,username,account_type")
+        d = self._call("GET", self.uid, fields="id,username")
+        return {"user_id": d.get("id"), "username": d.get("username"), "account_type": "BUSINESS/CREATOR (via Facebook login)"}
+
     @property
     def token(self) -> str:
         t = self.secrets.get("instagram_access_token")
@@ -194,7 +214,7 @@ class InstagramPublisher(Publisher):
 
     def check_auth(self) -> tuple[bool, str]:
         try:
-            me = self._call("GET", "me", fields="user_id,username,account_type")
+            me = self.identity()
         except Exception as e:
             return False, str(e)
         exp = self.secrets.get("instagram_token_expires_at")
@@ -204,7 +224,10 @@ class InstagramPublisher(Publisher):
         return True, f"@{me.get('username')} ({me.get('account_type')})" + (f", token expires in {days} days" if days is not None else "")
 
     def refresh_token(self) -> str:
-        """Long-lived Instagram Login tokens last 60 days and can be refreshed when >24h old. Free."""
+        """Long-lived Instagram Login tokens last 60 days and can be refreshed when >24h old. Free.
+        Facebook-login system-user tokens never expire, so there is nothing to refresh."""
+        if self.flavor == "facebook":
+            raise PermanentError("Facebook-login tokens are not refreshed here (system-user tokens never expire)")
         r = self.client.get(f"{self.s.get('publishing.instagram_api_host')}/refresh_access_token",
                             params={"grant_type": "ig_refresh_token", "access_token": self.token})
         d = self._handle(r)
@@ -246,5 +269,44 @@ class InstagramPublisher(Publisher):
         return out
 
     def account_insights(self) -> dict:
-        d = self._call("GET", "me", fields="followers_count,follows_count,media_count")
+        d = self._call("GET", self.uid, fields="followers_count,follows_count,media_count")
         return {k: d[k] for k in ("followers_count", "follows_count", "media_count") if k in d}
+
+
+def detect_account(s, token: str, client: httpx.Client | None = None, choose=None) -> dict:
+    """Work out which Meta API a pasted token belongs to and which Instagram account it controls.
+    Returns {"host", "user_id", "username", "account_type"} or raises PermanentError with a readable reason."""
+    client = client or httpx.Client(timeout=30)
+    ver = s.get("publishing.instagram_api_version")
+    errors = []
+    # 1) Instagram-login token
+    r = client.get(f"https://graph.instagram.com/{ver}/me", params={"fields": "user_id,username,account_type", "access_token": token})
+    if r.status_code < 400 and "error" not in r.json():
+        d = r.json()
+        return {"host": "https://graph.instagram.com", "user_id": str(d.get("user_id") or d.get("id")),
+                "username": d.get("username"), "account_type": d.get("account_type")}
+    errors.append(f"Instagram login: {r.text[:160]}")
+    # 2) Facebook-login / Unified-login token: Instagram accounts are reached through Pages or business assets
+    fb = f"https://graph.facebook.com/{ver}"
+    found = []
+    r = client.get(f"{fb}/me/accounts", params={"fields": "name,instagram_business_account{id,username}", "access_token": token})
+    if r.status_code < 400:
+        for page in r.json().get("data", []):
+            ig = page.get("instagram_business_account")
+            if ig:
+                found.append({"user_id": ig["id"], "username": ig.get("username"), "page": page.get("name")})
+    else:
+        errors.append(f"Facebook login: {r.text[:160]}")
+    if not found:
+        r = client.get(f"{fb}/me", params={"fields": "instagram_business_account{id,username}", "access_token": token})
+        if r.status_code < 400 and r.json().get("instagram_business_account"):
+            ig = r.json()["instagram_business_account"]
+            found.append({"user_id": ig["id"], "username": ig.get("username")})
+    if not found:
+        raise PermanentError("No Instagram account reachable with this token. " + " | ".join(errors))
+    want = (s.get("brand.handle_instagram") or "").lower()
+    pick = next((f for f in found if (f.get("username") or "").lower() == want), None)
+    if not pick:
+        pick = choose(found) if (choose and len(found) > 1) else found[0]
+    return {"host": "https://graph.facebook.com", "user_id": str(pick["user_id"]), "username": pick.get("username"),
+            "account_type": "BUSINESS/CREATOR (via Facebook login)"}
