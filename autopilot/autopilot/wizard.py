@@ -87,6 +87,35 @@ def step_system(s, db):
     return ok
 
 
+TZ_ALIASES = {
+    "central": "America/Chicago", "ct": "America/Chicago", "cst": "America/Chicago", "cdt": "America/Chicago",
+    "eastern": "America/New_York", "et": "America/New_York", "est": "America/New_York", "edt": "America/New_York",
+    "mountain": "America/Denver", "mt": "America/Denver", "mst": "America/Denver", "mdt": "America/Denver",
+    "arizona": "America/Phoenix", "pacific": "America/Los_Angeles", "pt": "America/Los_Angeles",
+    "pst": "America/Los_Angeles", "pdt": "America/Los_Angeles", "alaska": "America/Anchorage", "hawaii": "Pacific/Honolulu",
+}
+
+
+def resolve_timezone(answer: str) -> str | None:
+    from zoneinfo import ZoneInfo
+    a = answer.strip()
+    a = TZ_ALIASES.get(a.lower().replace(" time", "").replace(" ", ""), a)
+    try:
+        ZoneInfo(a)
+        return a
+    except Exception:
+        return None
+
+
+def ask_timezone(default: str) -> str:
+    while True:
+        tz = resolve_timezone(ask("Your posting time zone (press Enter to keep it, or type e.g. Central, Eastern, America/Chicago)", default))
+        if tz:
+            say(f"  using {tz}")
+            return tz
+        say("  I don't recognise that time zone. Try Central, Eastern, Mountain, Pacific, or a name like America/Chicago.")
+
+
 def step_project(s, db):
     say("== 2. Project, database and storage ==")
     target = Path(os.environ.get("AUTOPILOT_CONFIG") or PROJECT_ROOT / "config" / "settings.toml")
@@ -94,7 +123,7 @@ def step_project(s, db):
         shutil.copy(PROJECT_ROOT / "config" / "settings.example.toml", target)
         say(f"Created {target}")
     s = config.load()
-    tz = ask("Your posting time zone (IANA name)", s.get("general.timezone"))
+    tz = ask_timezone(s.get("general.timezone", "America/Chicago"))
     config.set_value(target, "general.timezone", tz)
     say("(The first posting date is chosen later, at activation, once everything is set up.)")
     s = config.load()

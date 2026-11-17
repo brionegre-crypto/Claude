@@ -215,3 +215,16 @@ def test_project_step_does_not_ask_for_start_date(env, monkeypatch):
     monkeypatch.setattr(wizard, "ask", lambda q, d="": asked.append(q) or d)
     wizard.step_project(s, db)
     assert not any("posting date" in q.lower() for q in asked)
+
+
+def test_timezone_answers_are_resolved_and_validated(env, monkeypatch):
+    s, db = env
+    from autopilot import config, wizard
+    assert wizard.resolve_timezone("Central") == "America/Chicago"
+    assert wizard.resolve_timezone("central time") == "America/Chicago"
+    assert wizard.resolve_timezone("America/Denver") == "America/Denver"
+    assert wizard.resolve_timezone("Mars") is None
+    answers = iter(["Mars", "Central"])
+    monkeypatch.setattr("builtins.input", lambda *a: next(answers))
+    wizard.step_project(s, db)
+    assert config.load(s.path).get("general.timezone") == "America/Chicago"
