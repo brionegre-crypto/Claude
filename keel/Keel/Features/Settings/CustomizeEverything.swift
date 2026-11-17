@@ -232,6 +232,7 @@ struct FocusCustomizeView: View {
     @AppStorage(Custom.longEveryKey) private var longEvery = 4
     @AppStorage(Custom.focusLevelKey) private var level = 1
     @AppStorage("focus.sound") private var sound = "off"
+    @AppStorage(FocusReflections.askKey) private var reflect = true
 
     var body: some View {
         Form {
@@ -240,7 +241,8 @@ struct FocusCustomizeView: View {
                     ForEach(ShutdownManager.Level.allCases) { Text($0.title).tag($0.rawValue) }
                 }
                 Picker("Focus sound", selection: $sound) { ForEach(FocusSound.Kind.allCases) { Text($0.label).tag($0.rawValue) } }
-            } header: { Text("Every session") }
+                Toggle("Ask “how did it go?” afterwards", isOn: $reflect)
+            } header: { Text("Every session") } footer: { Text("Your answers show in Focus history, with when your sessions tend to go best.") }
             Section {
                 Stepper("Short break: \(shortBreak) min", value: $shortBreak, in: 1...30)
                 Stepper("Long break: \(longBreak) min", value: $longBreak, in: 5...60, step: 5)

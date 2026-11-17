@@ -26,6 +26,7 @@ struct FocusHistoryView: View {
 
     var body: some View {
         List {
+            FocusReflectionsSection()
             Section {
                 let total = recent.reduce(0) { $0 + minutes($1) }
                 let best = perDay.max { $0.minutes < $1.minutes }

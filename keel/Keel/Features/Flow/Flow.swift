@@ -35,7 +35,26 @@ struct UniversalCaptureSheet: View {
     @State private var touchedKind = false
     @State private var voice = false
     @State private var error: String?
+    @State private var splitIntoTasks = false
     @FocusState private var focused: Bool
+    @Query(filter: #Predicate<TaskItem> { !$0.isDone }) private var openTasks: [TaskItem]
+
+    /// The separate things in what you typed: one per line, or a spoken-style list.
+    private var listItems: [String] {
+        let t = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        let lines = t.split(whereSeparator: \.isNewline).map { $0.trimmingCharacters(in: CharacterSet(charactersIn: "-•*☐ ").union(.whitespaces)) }.filter { !$0.isEmpty }
+        if lines.count >= 2 { return lines }
+        return SpokenList.detect(t)?.items ?? []
+    }
+
+    /// An open task with the same (or nearly the same) title, so you don't add it twice.
+    private var duplicate: TaskItem? {
+        let t = text.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        guard t.count >= 4, kind == .task || kind == .reminder, !splitIntoTasks else { return nil }
+        let core = QuickAdd.parse(t).title.lowercased()
+        guard core.count >= 4 else { return nil }
+        return openTasks.first { $0.title.lowercased() == core || ($0.title.count >= 6 && core.contains($0.title.lowercased())) }
+    }
 
     var body: some View {
         NavigationStack {
@@ -48,6 +67,18 @@ struct UniversalCaptureSheet: View {
                 }
                 .pickerStyle(.segmented)
                 Text(hint).font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
+                // Several things at once (one per line, or "milk, eggs and bread"): one task each.
+                if listItems.count >= 2 {
+                    Toggle(isOn: $splitIntoTasks) {
+                        Label("Make \(listItems.count) separate tasks", systemImage: "list.bullet.indent")
+                    }
+                    .font(DS.Font.caption)
+                    .onChange(of: splitIntoTasks) { _, on in if on { kind = .task; touchedKind = true } }
+                }
+                if let dup = duplicate {
+                    Label("You already have “\(dup.title)”\(dup.dueDate.map { " · " + $0.formatted(.relative(presentation: .named)) } ?? "")", systemImage: "exclamationmark.circle")
+                        .font(DS.Font.caption).foregroundStyle(DS.Palette.warmth)
+                }
                 HStack {
                     Button { voice = true } label: { Label("Talk", systemImage: "mic.fill") }.buttonStyle(.bordered)
                     Button {
@@ -81,6 +112,14 @@ struct UniversalCaptureSheet: View {
 
     private func save() {
         let t = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        if splitIntoTasks && listItems.count >= 2 {
+            let made = listItems.map { QuickAdd.create($0, in: ctx) }
+            try? ctx.save()
+            Haptics.capture()
+            UndoCenter.shared.offer("Added \(made.count) tasks") { [ctx] in made.forEach { ctx.delete($0) }; try? ctx.save() }
+            dismiss()
+            return
+        }
         switch kind {
         case .task, .reminder:
             let task = QuickAdd.create(t, in: ctx)

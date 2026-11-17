@@ -25,6 +25,8 @@ struct FocusView: View {
     @AppStorage("focus.sound") private var sound = "off"
     @State private var round = 1
     @State private var breakEndsAt: Date?
+    @State private var reflection: ReflectionAsk?
+    struct ReflectionAsk: Identifiable { let id = UUID(); let sessionId: UUID; let minutes: Int; let early: Bool }
     private let tick = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
 
     var body: some View {
@@ -51,6 +53,7 @@ struct FocusView: View {
                 }
             }
             .sheet(isPresented: $showRitual) { ShutdownRitualView() }
+            .sheet(item: $reflection) { r in FocusReflectionSheet(sessionId: r.sessionId, minutes: r.minutes, early: r.early) }
             #if !targetEnvironment(macCatalyst)
             .familyActivityPicker(isPresented: $showPicker, selection: Binding(get: { shutdown.selection }, set: { shutdown.selection = $0 }))
             #endif
@@ -149,6 +152,10 @@ struct FocusView: View {
     }
 
     private func finish(early: Bool) {
+        if let s = shutdown.active, FocusReflections.asks {
+            let m = Int(Date().timeIntervalSince(s.startedAt) / 60)
+            if m >= 3 { reflection = ReflectionAsk(sessionId: s.id, minutes: m, early: early) }
+        }
         if let s = shutdown.active, let t = tasks.first(where: { $0.id == s.taskId }) {
             ADHDCoach.recordActual(t, minutes: Int(Date().timeIntervalSince(s.startedAt) / 60))
         }

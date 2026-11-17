@@ -1057,4 +1057,14 @@ final class KeelTests: XCTestCase {
         XCTAssertEqual(held?.dateComponents.hour, 7)
         d.set(false, forKey: QuietHours.onKey); d.set(false, forKey: QuietHours.holdKey)
     }
+
+    func testFocusBestTime() {
+        let cal = Calendar.current
+        func r(_ h: Int, _ rating: Int) -> FocusReflection {
+            FocusReflection(at: cal.date(bySettingHour: h, minute: 0, second: 0, of: Date())!, minutes: 25, rating: rating, note: "")
+        }
+        let list = [r(9, 3), r(10, 3), r(9, 3), r(15, 1), r(14, 2), r(16, 1)]
+        XCTAssertEqual(FocusReflections.bestTime(list), "mornings")
+        XCTAssertNil(FocusReflections.bestTime(Array(list.prefix(3))), "needs a few sessions first")
+    }
 }
