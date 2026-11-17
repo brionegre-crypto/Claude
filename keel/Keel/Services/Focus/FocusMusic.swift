@@ -1,5 +1,8 @@
 import SwiftUI
 import MediaPlayer
+#if !targetEnvironment(macCatalyst)
+import ActivityKit
+#endif
 
 // MARK: - Music while you focus
 //
@@ -220,3 +223,43 @@ struct FocusMusicControls: View {
         }
     }
 }
+
+#if !targetEnvironment(macCatalyst)
+/// Lock Screen music: the song and play state on the running focus Live Activity, and what its buttons do.
+@MainActor
+enum FocusActivityMusic {
+    static var current: (title: String?, playing: Bool) {
+        let p = MPMusicPlayerController.systemMusicPlayer
+        let title = p.nowPlayingItem.map { [$0.title, $0.artist].compactMap { $0 }.joined(separator: " · ") }
+        return (title, p.playbackState == .playing)
+    }
+
+    static func refreshActivity() async {
+        let (title, playing) = current
+        for a in Activity<FocusActivityAttributes>.activities {
+            var s = a.content.state
+            guard s.music != title || s.musicPlaying != playing else { continue }
+            s.music = title
+            s.musicPlaying = playing
+            await a.update(ActivityContent(state: s, staleDate: s.endsAt.addingTimeInterval(60)))
+        }
+    }
+
+    /// Called once at launch: the Live Activity's buttons control the Music app through here.
+    static func installLockScreenControls() {
+        FocusMusicBridge.playPause = {
+            await MainActor.run {
+                let p = MPMusicPlayerController.systemMusicPlayer
+                if p.playbackState == .playing { p.pause() } else { p.play() }
+            }
+            try? await Task.sleep(for: .milliseconds(300))
+            await FocusActivityMusic.refreshActivity()
+        }
+        FocusMusicBridge.next = {
+            await MainActor.run { MPMusicPlayerController.systemMusicPlayer.skipToNextItem() }
+            try? await Task.sleep(for: .milliseconds(400))
+            await FocusActivityMusic.refreshActivity()
+        }
+    }
+}
+#endif

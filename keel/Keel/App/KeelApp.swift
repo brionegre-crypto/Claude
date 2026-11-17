@@ -69,6 +69,9 @@ struct KeelApp: App {
                 WidgetActions.applyPending(ctx: container.mainContext)   // taps on interactive widgets
                 Task { await HealthHabits.check(ctx: container.mainContext) }
                 Task { await KeelFocusFilter.syncCurrent() }
+                #if !targetEnvironment(macCatalyst)
+                FocusActivityMusic.installLockScreenControls()           // Lock Screen music buttons during focus
+                #endif
                 LinkSaver.importShared(into: container.mainContext)     // links saved from Safari's share sheet
                 SafariHighlights.importQueued(ctx: container.mainContext) // highlights saved with the Safari extension
                 LinkSaver.importSharedNotes(into: container.mainContext) // text/images shared from Notes, Messages, Photos…
