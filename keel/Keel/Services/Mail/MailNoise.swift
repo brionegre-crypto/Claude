@@ -54,6 +54,22 @@ enum MailNoise {
     /// "Sales & promos" tab, never count as needing you, and Keel never drafts replies to them.
     /// `knownSender`: someone you've written back to before. Their mail is never treated as a cold pitch.
     static func isSalesOrPromo(_ e: EmailMessage, knownSender: Bool = false) -> Bool {
+        // Worked out once per email (the inbox asks for every row on every redraw).
+        let key = e.id + (knownSender ? "|k" : "")
+        promoLock.lock()
+        if let hit = promoCache[key] { promoLock.unlock(); return hit }
+        promoLock.unlock()
+        let v = computeSalesOrPromo(e, knownSender: knownSender)
+        promoLock.lock()
+        if promoCache.count > 5_000 { promoCache.removeAll() }
+        promoCache[key] = v
+        promoLock.unlock()
+        return v
+    }
+    nonisolated(unsafe) private static var promoCache: [String: Bool] = [:]
+    private static let promoLock = NSLock()
+
+    private static func computeSalesOrPromo(_ e: EmailMessage, knownSender: Bool) -> Bool {
         if needsAttention(e) { return false }
         let subject = e.subject.lowercased()
         let text = subject + " " + e.bodyPlain.prefix(2_000).lowercased()

@@ -94,8 +94,16 @@ struct PremiumSurface: View {
     @Environment(\.colorScheme) private var scheme
 
     var body: some View {
+        ZStack {
+            surface
+        }
+    }
+
+    @ViewBuilder private var surface: some View {
         let shape = RoundedRectangle(cornerRadius: radius, style: .continuous)
         let dark = scheme == .dark
+        // A soft edge underneath instead of a blurred shadow: looks lifted, costs nothing to draw while scrolling.
+        shape.fill(Color.black.opacity(dark ? 0.35 : 0.06)).offset(y: dark ? 2 : 1.5)
         shape.fill(LinearGradient(colors: [DS.Palette.elevated.mix(with: .white, by: dark ? 0.05 : 0.6), DS.Palette.elevated],
                                   startPoint: .top, endPoint: .bottom))
             .overlay {
@@ -107,7 +115,6 @@ struct PremiumSurface: View {
                 shape.strokeBorder(LinearGradient(colors: [Color.white.opacity(dark ? 0.16 : 0.9), Color.primary.opacity(dark ? 0.03 : 0.06)],
                                                   startPoint: .top, endPoint: .bottom), lineWidth: 0.75)
             }
-            .shadow(color: .black.opacity(dark ? 0.35 : 0.08), radius: dark ? 12 : 10, y: dark ? 6 : 4)
     }
 }
 

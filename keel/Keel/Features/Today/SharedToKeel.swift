@@ -160,12 +160,13 @@ enum DailyAffirmation {
 struct DailyAffirmationCard: View {
     @AppStorage(DailyAffirmation.toggleKey) private var on = true
     @State private var offset = 0
+    @State private var text = ""
 
     var body: some View {
         if on {
             HStack(alignment: .top, spacing: 12) {
                 Image(systemName: "quote.opening").font(.title3.weight(.bold)).foregroundStyle(.pink.gradient)
-                Text(DailyAffirmation.today(offset: offset)).font(.system(.body, design: .serif)).italic()
+                Text(text).font(.system(.body, design: .serif)).italic()
                     .foregroundStyle(DS.Palette.ink).frame(maxWidth: .infinity, alignment: .leading)
                     .contentTransition(.opacity).id(offset)
                 Menu {
@@ -181,7 +182,9 @@ struct DailyAffirmationCard: View {
             .background { PremiumSurface(tint: .pink) }
             .onTapGesture { withAnimation(DS.spring) { offset += 1 } }
             .accessibilityElement(children: .combine)
-            .accessibilityLabel("Today's affirmation: \(DailyAffirmation.today(offset: offset))")
+            .accessibilityLabel("Today's affirmation: \(text)")
+            .onAppear { if text.isEmpty { text = DailyAffirmation.today(offset: offset) } }
+            .onChange(of: offset) { _, o in text = DailyAffirmation.today(offset: o) }
         }
     }
 }

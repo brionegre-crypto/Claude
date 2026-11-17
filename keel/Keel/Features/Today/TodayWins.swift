@@ -6,13 +6,19 @@ import SwiftData
 /// "3 of 7" for today: tasks finished today against what's due today (overdue included).
 struct TodayProgressRing: View {
     @Query(filter: #Predicate<TaskItem> { !$0.isDone }) private var open: [TaskItem]
-    @Query(filter: #Predicate<TaskItem> { $0.isDone }, sort: \TaskItem.completedAt, order: .reverse) private var done: [TaskItem]
+    @Query private var done: [TaskItem]
     @AppStorage("custom.today.progress") private var on = true
+
+    init() {
+        var d = FetchDescriptor<TaskItem>(predicate: #Predicate { $0.isDone }, sortBy: [SortDescriptor(\.completedAt, order: .reverse)])
+        d.fetchLimit = 80                          // today's finished tasks are always among the most recent
+        _done = Query(d)
+    }
 
     var body: some View {
         let cal = Calendar.current
         let end = cal.date(byAdding: .day, value: 1, to: cal.startOfDay(for: Date())) ?? Date()
-        let finished = done.prefix(200).filter { $0.completedAt.map { cal.isDateInToday($0) } ?? false }.count
+        let finished = done.filter { $0.completedAt.map { cal.isDateInToday($0) } ?? false }.count
         let left = open.filter { ($0.dueDate ?? .distantFuture) < end }.count
         let total = finished + left
         if on && total > 0 {
