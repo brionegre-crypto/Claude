@@ -9,6 +9,7 @@ import UIKit
 
 /// Shared between a page and the line being typed in, without redrawing the page on each keystroke:
 /// the current selection, and a way to save what's been typed so far right now.
+@MainActor
 final class TypingBuffer {
     var selection: TextSelection?
     var flush: (() -> Void)?

@@ -7,6 +7,7 @@ import MediaPlayer
 // Lock Screen and Dynamic Island music controls for a focus session (Apple Music).
 // These run in the app's process, so the Music app's player is the one being controlled.
 
+@MainActor
 enum FocusActivityMusic {
     /// What's playing in the Music app right now, as a short line.
     static var current: (title: String?, playing: Bool) {
