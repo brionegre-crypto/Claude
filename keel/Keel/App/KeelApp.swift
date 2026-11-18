@@ -496,6 +496,7 @@ struct KeelCommands: Commands {
 // MARK: - Haptic Touch on the app icon
 
 /// Press and hold the Keel icon: New Task, New Note, Start Focus, Record a Meeting, Search.
+@MainActor
 final class KeelAppDelegate: NSObject, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
         if !KeelRuntime.isTesting { application.registerForRemoteNotifications() }   // silent pushes for instant mail (no prompt needed)
@@ -507,10 +508,16 @@ final class KeelAppDelegate: NSObject, UIApplicationDelegate {
     }
 
     /// Your Keel server says new mail arrived: fetch it now (alerts come from Keel's usual rules).
-    func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any]) async -> UIBackgroundFetchResult {
-        guard userInfo["keel"] as? String == "mail" else { return .noData }
-        await SyncEngine.shared.syncAll()
-        return .newData
+    /// Uses the completion-handler form on purpose: iPhone requires that handler be called on the main
+    /// thread (it updates the app snapshot). The async form can finish on a background thread and crash.
+    func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any],
+                     fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+        guard userInfo["keel"] as? String == "mail" else { completionHandler(.noData); return }
+        nonisolated(unsafe) let done = completionHandler
+        Task { @MainActor in
+            await SyncEngine.shared.syncAll()
+            done(.newData)
+        }
     }
 
     func application(_ application: UIApplication, configurationForConnecting session: UISceneSession,
@@ -522,6 +529,7 @@ final class KeelAppDelegate: NSObject, UIApplicationDelegate {
     }
 }
 
+@MainActor
 final class KeelSceneDelegate: NSObject, UIWindowSceneDelegate {
     func windowScene(_ windowScene: UIWindowScene, performActionFor shortcutItem: UIApplicationShortcutItem,
                      completionHandler: @escaping (Bool) -> Void) {
