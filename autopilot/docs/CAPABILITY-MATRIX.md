@@ -99,7 +99,8 @@ switch to an API key.
 - Your existing Claude subscription.
 
 ### Dependencies on your computer
-- The service runs on **your computer**. It publishes only while the computer is **on, awake and online**.
+- **With cloud publishing** ([CLOUD-PUBLISHING.md](CLOUD-PUBLISHING.md)), Instagram posts are published by GitHub Actions from a private repo, so the Mac can sleep at post times. The Mac only needs to be on now and then to write, render and sync. Posts are prepared about 10 days ahead.
+- **Without it**, the service publishes only while the computer is **on, awake and online**.
 - Slots missed by more than 3 hours (configurable) are **skipped and reported**, never dumped in a burst afterwards.
 - On a Mac, set Energy settings to prevent sleep while the display is off. A spare always-on Mac or Linux box is ideal.
 - Writing happens about 10 days ahead, so short Claude outages or usage-limit windows don't interrupt publishing.

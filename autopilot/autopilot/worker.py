@@ -127,6 +127,10 @@ class Worker:
     def tick(self):
         s, db = self.s, self.db
         db.kv_set("heartbeat", iso())
+        from autopilot import cloud
+        if cloud.enabled(s) and self.due("cloud_sync", 10):
+            # runs even when paused / emergency-stopped, so the stop reaches the cloud publisher too
+            self.run_job("cloud_sync", lambda: cloud.sync(s, db))
         if db.kv_get("emergency_stop"):
             return
         pubs = publisher.build_publishers(s, db)

@@ -103,6 +103,8 @@ def create_app(s, db: DB) -> FastAPI:
                           "problem": db.kv_get("auth_problem:instagram")},
             "youtube": {"connected": bool(secrets.get("youtube_api_key")), "note": "Community posts: assisted (no API)"},
         }
+        from autopilot import cloud
+        accounts["cloud"] = cloud.status(s, db) if cloud.enabled(s) else None
         return render(request, "overview.html", upcoming=upcoming, recent=recent, failed=failed, manual=manual,
                       health=scheduler.queue_health(s, db), heartbeat=db.kv_get("heartbeat"), jobs=jobs, accounts=accounts,
                       ai=get_provider(s, db).status())

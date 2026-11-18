@@ -215,8 +215,12 @@ def run_due(s, db: DB, pubs: dict | None = None) -> dict:
     retry = db.q("""SELECT c.* FROM content c JOIN publish_attempts a ON a.content_id=c.id
                     WHERE c.status='failed' AND a.id=(SELECT MAX(id) FROM publish_attempts WHERE content_id=c.id)
                     AND a.next_retry_at <= ?""", (iso(now),))
+    from autopilot import cloud
+    cloud_on = cloud.active(s, db)
     for r in list(due) + list(retry):
         c = dict(r)
+        if cloud_on and c["platform"] == "instagram":
+            continue   # the private GitHub repo publishes these; results come back through cloud.sync()
         if c["status"] == "ready" and now - parse(c["scheduled_at"]) > window:
             db.x("UPDATE content SET status='skipped', block_reason=?, updated_at=? WHERE id=?",
                  (f"missed publish window ({window}); computer off or automation paused?", iso(), c["id"]))

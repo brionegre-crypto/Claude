@@ -9,6 +9,7 @@
 <div class="card"><h2>Connected accounts</h2><table>
 <tr><td>Instagram</td><td>{% if accounts.instagram.connected %}<span class="pill {{ 'err' if accounts.instagram.problem else 'ok' }}">{{ 'problem' if accounts.instagram.problem else 'connected' }}</span>
 <span class="small muted">{{ (accounts.instagram.auth or {}).get('detail','') }}</span>{% else %}<span class="pill warn">not connected</span> <span class="small muted">run the setup wizard</span>{% endif %}</td></tr>
+<tr><td>Cloud publishing</td><td>{% if accounts.cloud %}<span class="pill ok">on</span> <span class="small muted">{{ accounts.cloud.repo }} · {{ accounts.cloud.queued }} queued{% if accounts.cloud.last_sync %} · synced {{ accounts.cloud.last_sync.at|local }}{% endif %}</span>{% else %}<span class="pill">off</span> <span class="small muted">this Mac publishes (must be awake at post times)</span>{% endif %}</td></tr>
 <tr><td>YouTube</td><td><span class="pill warn">assisted</span> <span class="small muted">{{ accounts.youtube.note }}</span></td></tr></table></div>
 </div>
 {% if manual %}<div class="card" style="margin-top:16px"><h2>Ready for you to post on YouTube ({{ manual|length }})</h2>

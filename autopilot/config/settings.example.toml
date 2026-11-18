@@ -137,3 +137,9 @@ port = 8765
 [backup]
 interval_hours = 24
 keep = 14
+
+[cloud]
+enabled = false                      # set by `autopilot cloud setup`: GitHub Actions publishes while the Mac sleeps
+repo = ""                            # owner/name of the PRIVATE publishing repo
+branch = "main"
+export_days = 10                     # how far ahead ready posts are copied to the cloud queue

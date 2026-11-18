@@ -177,6 +177,25 @@ def cmd_tunnel_test(a):
         print(line)
 
 
+def cmd_cloud(a):
+    s, db = ctx()
+    from autopilot import cloud
+    if a.action == "setup":
+        name = a.repo or input("Name for the new PRIVATE publishing repo [btm-publisher]: ").strip() or "btm-publisher"
+        cloud.setup(s, db, name)
+    elif a.action == "sync":
+        print(json.dumps(cloud.sync(s, db), indent=2))
+    elif a.action == "status":
+        print(json.dumps(cloud.status(s, db), indent=2, default=str))
+    elif a.action == "trigger-info":
+        print(cloud.trigger_instructions(s))
+    elif a.action == "disable":
+        from autopilot import config
+        config.set_value(s.path, "cloud.enabled", "false")
+        print("Cloud publishing disabled: this Mac publishes Instagram posts again. Queued cloud posts are withdrawn on the next sync")
+        print("only if you re-enable; to be safe also disable the workflow on GitHub (Actions → Publish → Disable workflow).")
+
+
 def cmd_wizard(a):
     from autopilot import wizard
     wizard.main(step=a.step)
@@ -211,6 +230,9 @@ def main(argv=None):
     t = sub.add_parser("dashboard-token"); t.add_argument("--reset", action="store_true"); t.set_defaults(fn=cmd_token)
     w = sub.add_parser("wizard"); w.add_argument("--step", default=None); w.set_defaults(fn=cmd_wizard)
     sub.add_parser("activate").set_defaults(fn=cmd_activate)
+    cl = sub.add_parser("cloud", help="publish from a private GitHub repo so the Mac can sleep")
+    cl.add_argument("action", choices=["setup", "sync", "status", "trigger-info", "disable"]); cl.add_argument("--repo")
+    cl.set_defaults(fn=cmd_cloud)
     sub.add_parser("tunnel-test", help="diagnose the Instagram image hand-off (Cloudflare quick tunnel)").set_defaults(fn=cmd_tunnel_test)
     a = p.parse_args(argv)
     a.fn(a)
