@@ -104,8 +104,8 @@ def validate(raw: dict) -> list[str]:
         errs.append("publishing.public_media_base_url must be an https:// URL when media_host = public_url")
     for k in ("ntfy_topic",):
         v = raw.get("notifications", {}).get(k, "")
-        if v and len(v) < 12:
-            errs.append("notifications.ntfy_topic should be at least 12 random characters (topics are public)")
+        if v and (len(v) < 12 or not re.fullmatch(r"[A-Za-z0-9_-]+", v)):
+            errs.append("notifications.ntfy_topic must be 12+ characters: letters, numbers, - and _ only (topics are public)")
     return errs
 
 

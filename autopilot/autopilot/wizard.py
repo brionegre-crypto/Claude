@@ -396,7 +396,12 @@ def step_notifications(s, db):
     say("your own mailbox's SMTP (e.g. a Gmail *app password*, stored encrypted). The dashboard + log always work.")
     target = s.path
     if yes("Set up ntfy push notifications?", True):
-        topic = ask("ntfy topic (long and random = private)", "autopilot-" + pysecrets.token_urlsafe(12).replace("_", "").replace("-", "").lower())
+        import re as _re
+        default = "autopilot-" + pysecrets.token_urlsafe(12).replace("_", "").replace("-", "").lower()
+        topic = ask("ntfy topic (press Enter to use this private random one)", default).strip()
+        if not _re.fullmatch(r"[A-Za-z0-9_-]{12,64}", topic):
+            say("  That doesn't look like a topic name (letters, numbers, - and _ only); using the random one instead.")
+            topic = default
         config.set_value(target, "notifications.ntfy_topic", topic)
         say(f"  In the ntfy app, subscribe to topic: {topic}")
     if yes("Add a Discord/Slack webhook?"):
