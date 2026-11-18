@@ -265,3 +265,40 @@ def test_tunnel_reports_cloudflared_log_when_it_cannot_connect(tmp_path, monkeyp
     with pytest.raises(RuntimeError, match="(?s)could not connect.*quic"):
         with mediahost.TunnelHost(0, binary=_fake_cloudflared(tmp_path, False)):
             pass
+
+
+def test_youtube_weekly_pack_flow(env):
+    import io
+    import zipfile
+    s, db = env
+    from autopilot import publisher
+    from autopilot.worker import Worker
+    poll = make_ready(s, db, "community_poll", platform="youtube")
+    img = make_ready(s, db, "community_image", platform="youtube")
+    soon = utcnow() + timedelta(hours=2)
+    db.x("UPDATE content SET scheduled_at=? WHERE id IN (?,?)", (iso(soon), poll, img))
+    c, tok = _client(s, db)
+    csrf = _login(c, tok)
+    wk = 0 if soon.astimezone(s.tz).isocalendar()[1] == utcnow().astimezone(s.tz).isocalendar()[1] else 1
+    page = c.get(f"/youtube?week={wk}").text
+    assert "POLL OPTIONS" in page and "Scheduled in Studio" in page
+    z = zipfile.ZipFile(io.BytesIO(c.get(f"/youtube/pack.zip?week={wk}").content))
+    names = z.namelist()
+    assert "POSTS.txt" in names and any(n.endswith(".jpg") for n in names)
+    c.post(f"/content/{poll}/scheduled-in-studio", data={"csrf": csrf, "week": str(wk)})
+    assert db.one("SELECT status FROM content WHERE id=?", (poll,))[0] == "scheduled_external"
+    db.x("UPDATE content SET scheduled_at=? WHERE id IN (?,?)", (iso(utcnow() - timedelta(minutes=1)), poll, img))
+    res = publisher.run_due(s, db)
+    assert poll not in res and res[img] == "manual_due"                # only the one you didn't schedule reminds you
+    assert db.one("SELECT status FROM content WHERE id=?", (poll,))[0] == "published"
+    assert db.one("SELECT COUNT(*) FROM notifications WHERE category='manual_due'")[0] == 1
+
+
+def test_sunday_youtube_reminder(env):
+    s, db = env
+    from autopilot.worker import Worker
+    cid = make_ready(s, db, "community_text", platform="youtube")
+    db.x("UPDATE content SET scheduled_at=? WHERE id=?", (iso(utcnow() + timedelta(days=3)), cid))
+    out = Worker(s, db).job_youtube_pack()
+    assert out["posts"] == 1
+    assert db.one("SELECT COUNT(*) FROM notifications WHERE category='youtube_pack'")[0] == 1

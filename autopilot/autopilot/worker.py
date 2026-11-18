@@ -124,6 +124,17 @@ class Worker:
         notify(self.s, self.db, "info", "report", "Daily summary", "\n".join(lines), external=True)
         return {"published": len(pub)}
 
+    def job_youtube_pack(self):
+        start = utcnow()
+        rows = self.db.q("""SELECT format, scheduled_at FROM content WHERE platform='youtube' AND status IN ('ready','blocked','planned')
+                            AND scheduled_at BETWEEN ? AND ? ORDER BY scheduled_at""", (iso(start), iso(start + timedelta(days=8))))
+        if rows:
+            lines = [f"• {parse(r['scheduled_at']).astimezone(self.s.tz):%a %I:%M %p} — {r['format'].replace('community_', '')}" for r in rows]
+            notify(self.s, self.db, "info", "youtube_pack", f"Your YouTube posts for next week are ready ({len(rows)})",
+                   "Load them into YouTube Studio's scheduler in one sitting:\n" + "\n".join(lines) +
+                   "\nDashboard → YouTube → Copy / Download, then click 'Scheduled in Studio ✓'.", external=True)
+        return {"posts": len(rows)}
+
     def tick(self):
         s, db = self.s, self.db
         db.kv_set("heartbeat", iso())
@@ -163,6 +174,8 @@ class Worker:
             self.run_job("integrity", lambda: self._integrity())
         if self.at_local_time("daily_summary", s.get("notifications.daily_summary_time", "08:00")):
             self.run_job("daily_summary", self.job_daily_summary)
+        if self.at_local_time("youtube_pack", s.get("notifications.youtube_pack_time", "17:00"), weekday=6):
+            self.run_job("youtube_pack", self.job_youtube_pack)
         if self.at_local_time("weekly_report", "08:30", weekday=0):
             self.run_job("weekly_report", lambda: {"chars": len(analytics.report(s, db, "weekly"))})
         if self.at_local_time("monthly_report", "08:45", monthday=1):

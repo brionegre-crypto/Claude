@@ -24,6 +24,21 @@ SECRET_NAMES = ["instagram_access_token", "instagram_user_id", "instagram_app_se
                 "youtube_api_key", "smtp_password"]
 
 
+def youtube_pack_text(c: dict) -> str:
+    """Exactly what to paste into YouTube Studio for one Community post."""
+    body = json.loads(c.get("body") or "{}")
+    out = [(c.get("caption") or "").strip()]
+    if body.get("poll"):
+        out += ["", "POLL OPTIONS:"] + [f"  • {o}" for o in body["poll"].get("options", [])]
+    if body.get("quiz"):
+        q = body["quiz"]
+        opts = q.get("options", [])
+        out += ["", f"QUIZ: {q.get('question', '')}"] + [f"  {i + 1}. {o}" for i, o in enumerate(opts)]
+        if isinstance(q.get("answer_index"), int) and 0 <= q["answer_index"] < len(opts):
+            out += [f"  Correct answer: {opts[q['answer_index']]}", f"  Explanation: {q.get('explanation', '')}"]
+    return "\n".join(out).strip()
+
+
 def create_app(s, db: DB) -> FastAPI:
     async def csrf_guard(request: Request):
         if request.method == "POST" and request.url.path != "/login":
@@ -222,6 +237,60 @@ def create_app(s, db: DB) -> FastAPI:
                        (cid, f"{cid}:{c['platform']}", 1, "started", '{"manual": true}', iso()))
             publisher.mark_published(s, db, c, url or f"manual_{cid[:8]}", url or None, aid, simulated=False)
         return RedirectResponse("/", status_code=303)
+
+    # ---- YouTube weekly pack ----------------------------------------------------------------------------
+    def yt_week(offset: int):
+        today = utcnow().astimezone(tz).date()
+        monday = today - timedelta(days=today.weekday()) + timedelta(weeks=offset)
+        start = datetime.combine(monday, datetime.min.time(), tz)
+        end = start + timedelta(days=7)
+        rows = db.q("""SELECT * FROM content WHERE platform='youtube' AND scheduled_at >= ? AND scheduled_at < ?
+                       AND status NOT IN ('cancelled','skipped') ORDER BY scheduled_at""", (iso(start), iso(end)))
+        posts = []
+        for r in rows:
+            c = dict(r)
+            c["assets"] = [dict(a) for a in db.q("SELECT id, kind, path FROM assets WHERE content_id=? ORDER BY ordinal", (c["id"],))]
+            c["pack_text"] = youtube_pack_text(c)
+            posts.append(c)
+        return monday, posts
+
+    @app.get("/youtube", response_class=HTMLResponse)
+    def youtube_pack(request: Request, week: int | None = None):
+        if week is None:   # on Sundays show the coming week; otherwise this week
+            week = 1 if utcnow().astimezone(tz).weekday() == 6 else 0
+        monday, posts = yt_week(week)
+        return render(request, "youtube.html", posts=posts, monday=monday, week=week)
+
+    @app.get("/youtube/pack.zip")
+    def youtube_pack_zip(week: int = 0):
+        import io
+        import zipfile
+        from fastapi.responses import Response
+        monday, posts = yt_week(week)
+        buf = io.BytesIO()
+        with zipfile.ZipFile(buf, "w", zipfile.ZIP_DEFLATED) as z:
+            lines = [f"YouTube Community posts — week of {monday:%b %d, %Y}", ""]
+            for i, c in enumerate(posts, 1):
+                when = parse(c["scheduled_at"]).astimezone(tz).strftime("%a %b %d, %I:%M %p")
+                lines += [f"=== {i}. {when} · {c['format'].replace('community_', '')} ===", c["pack_text"], ""]
+                for a in c["assets"]:
+                    pth = Path(a["path"])
+                    if pth.exists() and a["kind"] == "image":
+                        z.write(pth, f"{i:02d}-{parse(c['scheduled_at']).astimezone(tz):%a-%H%M}{pth.suffix}")
+            z.writestr("POSTS.txt", "\n".join(lines))
+        return Response(buf.getvalue(), media_type="application/zip",
+                        headers={"Content-Disposition": f'attachment; filename="youtube-week-{monday:%Y-%m-%d}.zip"'})
+
+    @app.post("/content/{cid}/scheduled-in-studio")
+    def scheduled_in_studio(cid: str, week: str = Form("1")):
+        db.x("UPDATE content SET status='scheduled_external', updated_at=? WHERE id=? AND platform='youtube' AND status IN ('ready','manual_due','blocked')",
+             (iso(), cid))
+        return RedirectResponse(f"/youtube?week={int(week)}", status_code=303)
+
+    @app.post("/content/{cid}/unschedule-studio")
+    def unschedule_studio(cid: str, week: str = Form("1")):
+        db.x("UPDATE content SET status='ready', updated_at=? WHERE id=? AND status='scheduled_external'", (iso(), cid))
+        return RedirectResponse(f"/youtube?week={int(week)}", status_code=303)
 
     # ---- research ---------------------------------------------------------------------------------------
     @app.get("/research", response_class=HTMLResponse)

@@ -229,6 +229,9 @@ def run_due(s, db: DB, pubs: dict | None = None) -> dict:
             results[c["id"]] = "skipped"
             continue
         results[c["id"]] = publish_one(s, db, c, pubs)
+    # YouTube posts you scheduled yourself in YouTube Studio count as published once their time passes
+    db.x("""UPDATE content SET status='published', published_at=scheduled_at, platform_post_id=COALESCE(platform_post_id,'studio_scheduled'),
+            updated_at=? WHERE status='scheduled_external' AND scheduled_at <= ?""", (iso(), iso(now)))
     # unfinished blocked/planned posts whose time has passed
     stale = db.q("SELECT id FROM content WHERE status IN ('planned','generating','draft','blocked') AND scheduled_at < ?", (iso(now - window),))
     for r in stale:
