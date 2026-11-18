@@ -61,7 +61,8 @@ class BaseProvider:
 
     def complete_json(self, purpose: str, prompt: str, web: bool = False):
         budget = int(self.s.get("ai.max_calls_per_day", 25))
-        if self.calls_today() >= budget:
+        # the budget protects your Claude subscription; the offline mock (wizard samples, tests) uses none of it
+        if self.name != "mock" and self.calls_today() >= budget:
             raise ProviderUnavailable(f"daily AI budget reached ({budget} calls); resumes tomorrow")
         t = time.monotonic()
         try:

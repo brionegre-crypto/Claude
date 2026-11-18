@@ -127,12 +127,16 @@ def test_claude_provider_refuses_api_key(env, monkeypatch):
 
 def test_ai_budget_enforced(env):
     s, db = env
-    from autopilot.ai.provider import MockProvider, ProviderUnavailable
+    from autopilot.ai.provider import ClaudeCLIProvider, MockProvider, ProviderUnavailable
     s.raw["ai"]["max_calls_per_day"] = 2
-    p = MockProvider(s, db)
-    p.complete_json("healthcheck", "x"); p.complete_json("healthcheck", "x")
+    c = ClaudeCLIProvider(s, db)
+    c._complete = lambda purpose, prompt, web: '{"ok": true}'
+    c.complete_json("healthcheck", "x"); c.complete_json("healthcheck", "x")
     with pytest.raises(ProviderUnavailable):
-        p.complete_json("healthcheck", "x")
+        c.complete_json("healthcheck", "x")
+    m = MockProvider(s, db)          # offline mock never counts against the subscription budget
+    for _ in range(5):
+        m.complete_json("healthcheck", "x")
 
 
 def test_extract_json_variants():
