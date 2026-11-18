@@ -4,6 +4,7 @@ from __future__ import annotations
 import calendar as pycal
 import hmac
 import json
+import re
 from datetime import date, datetime, timedelta
 from pathlib import Path
 
@@ -237,6 +238,43 @@ def create_app(s, db: DB) -> FastAPI:
                        (cid, f"{cid}:{c['platform']}", 1, "started", '{"manual": true}', iso()))
             publisher.mark_published(s, db, c, url or f"manual_{cid[:8]}", url or None, aid, simulated=False)
         return RedirectResponse("/", status_code=303)
+
+    # ---- competitive research ---------------------------------------------------------------------------
+    @app.get("/competitors", response_class=HTMLResponse)
+    def competitors_page(request: Request):
+        from autopilot import competitive
+        comp = competitive.comparison(s, db)
+        rows = [r for r in [comp["you"]] + comp["competitors"] if r]
+        return render(request, "competitors.html", comp=comp, rows=rows, handles=competitive.handles(db),
+                      last_run=db.one("SELECT started_at, ok, detail FROM job_runs WHERE job='competitive' ORDER BY id DESC LIMIT 1"))
+
+    @app.post("/competitors/add")
+    def competitors_add(handle: str = Form(...)):
+        from autopilot import competitive
+        for h in re.split(r"[\s,]+", handle):
+            if h:
+                competitive.add(db, h)
+        return RedirectResponse("/competitors", status_code=303)
+
+    @app.post("/competitors/remove")
+    def competitors_remove(handle: str = Form(...)):
+        from autopilot import competitive
+        competitive.remove(db, handle)
+        return RedirectResponse("/competitors", status_code=303)
+
+    @app.post("/competitors/run")
+    def competitors_run():
+        from autopilot import competitive
+        from autopilot.publishing.instagram import InstagramPublisher
+        res = competitive.collect(s, db, InstagramPublisher(s, SecretStore(s.data_dir)))
+        msg = f"Collected: {', '.join(res['collected']) or 'none'}" + (f" · errors: {json.dumps(res['errors'])[:800]}" if res["errors"] else "")
+        try:
+            if competitive.handles(db):
+                competitive.ai_insights(s, db, get_provider(s, db))
+        except Exception as e:
+            msg += f" · insights skipped: {e}"
+        notify(s, db, "info", "competitive", "Competitive research updated", msg, external=False)
+        return RedirectResponse("/competitors", status_code=303)
 
     # ---- YouTube weekly pack ----------------------------------------------------------------------------
     def yt_week(offset: int):

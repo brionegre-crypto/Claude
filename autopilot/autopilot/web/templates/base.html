@@ -4,7 +4,7 @@
 <nav>{% set p = request.url.path %}
 <a href="/" class="{{ 'active' if p == '/' }}">Overview</a><a href="/calendar" class="{{ 'active' if p.startswith('/calendar') }}">Calendar</a>
 <a href="/library" class="{{ 'active' if p.startswith('/library') or p.startswith('/content') }}">Library</a><a href="/youtube" class="{{ 'active' if p.startswith('/youtube') }}">YouTube</a><a href="/research" class="{{ 'active' if p.startswith('/research') }}">Research</a>
-<a href="/analytics" class="{{ 'active' if p.startswith('/analytics') }}">Analytics</a><a href="/controls" class="{{ 'active' if p.startswith('/controls') }}">Controls</a>
+<a href="/analytics" class="{{ 'active' if p.startswith('/analytics') }}">Analytics</a><a href="/competitors" class="{{ 'active' if p.startswith('/competitors') }}">Competitors</a><a href="/controls" class="{{ 'active' if p.startswith('/controls') }}">Controls</a>
 <a href="/notifications" class="{{ 'active' if p.startswith('/notif') }}">Alerts{% if unread %} <span class="pill err">{{ unread }}</span>{% endif %}</a><a href="/settings" class="{{ 'active' if p.startswith('/settings') }}">Settings</a></nav>
 <span style="margin-left:auto" class="row">
 <span class="pill {{ 'ok' if mode == 'live' and activated else 'warn' }}">{{ 'LIVE' if mode == 'live' and activated else 'SIMULATION' }}</span>

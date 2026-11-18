@@ -206,6 +206,25 @@ def cmd_refresh(a):
     print(json.dumps({k: v for k, v in res.items() if k != "cloud"}, indent=2))
 
 
+def cmd_competitors(a):
+    s, db = ctx()
+    from autopilot import competitive
+    if a.action == "add":
+        for h in a.handles:
+            print("added" if competitive.add(db, h) else "invalid handle", h)
+    elif a.action == "remove":
+        for h in a.handles:
+            competitive.remove(db, h); print("removed", h)
+    elif a.action == "list":
+        print("\n".join(competitive.handles(db)) or "(none yet: autopilot competitors add HANDLE …)")
+    elif a.action == "collect":
+        from autopilot.publishing.instagram import InstagramPublisher
+        from autopilot.secrets import SecretStore
+        print(json.dumps(competitive.collect(s, db, InstagramPublisher(s, SecretStore(s.data_dir))), indent=2))
+    elif a.action == "insights":
+        print(json.dumps(competitive.ai_insights(s, db, _provider(s, db)), indent=2))
+
+
 def cmd_wizard(a):
     from autopilot import wizard
     wizard.main(step=a.step)
@@ -240,6 +259,9 @@ def main(argv=None):
     t = sub.add_parser("dashboard-token"); t.add_argument("--reset", action="store_true"); t.set_defaults(fn=cmd_token)
     w = sub.add_parser("wizard"); w.add_argument("--step", default=None); w.set_defaults(fn=cmd_wizard)
     sub.add_parser("activate").set_defaults(fn=cmd_activate)
+    co = sub.add_parser("competitors", help="competitive research (Instagram Business Discovery)")
+    co.add_argument("action", choices=["add", "remove", "list", "collect", "insights"]); co.add_argument("handles", nargs="*")
+    co.set_defaults(fn=cmd_competitors)
     rq = sub.add_parser("refresh-queue", help="redo already-scheduled posts with the current design/prompts")
     rq.add_argument("--rewrite", action="store_true", help="rewrite text with Claude too (not just re-render)")
     rq.add_argument("--max", type=int, default=None); rq.set_defaults(fn=cmd_refresh)

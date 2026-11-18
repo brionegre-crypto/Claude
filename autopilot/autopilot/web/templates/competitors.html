@@ -1,0 +1,38 @@
+{% extends "base.html" %}{% block title %}Competitors{% endblock %}{% block body %}
+{% macro pct(v) %}{% if v is none %}<span class="muted">n/a</span>{% else %}{{ '%.2f'|format(v*100) }}%{% endif %}{% endmacro %}
+<div class="grid"><div class="card"><h2>Accounts you're tracking</h2>
+<form class="row" method="post" action="/competitors/add"><input type="hidden" name="csrf" value="{{ csrf }}">
+<input name="handle" placeholder="@handle or instagram.com/handle (several: separate with spaces)" style="flex:1"><button class="primary">Add</button></form>
+<div style="margin-top:10px">{% for h in handles %}<form class="inline" method="post" action="/competitors/remove"><input type="hidden" name="csrf" value="{{ csrf }}"><input type="hidden" name="handle" value="{{ h }}">
+<span class="pill">@{{ h }} <button style="padding:0 6px;border:none;background:none;color:inherit" title="remove">×</button></span></form> {% else %}<span class="muted small">None yet. Add 3–8 Business/Creator accounts in your niche (Christian men, husbands, fathers, discipline).</span>{% endfor %}</div>
+<form method="post" action="/competitors/run" style="margin-top:12px"><input type="hidden" name="csrf" value="{{ csrf }}"><button>Refresh now</button>
+<span class="small muted">{% if last_run %}last run {{ last_run.started_at|local }}{% endif %} · refreshes daily on its own</span></form>
+{% for h, e in comp.errors.items() %}<p class="small"><span class="pill err">@{{ h }}</span> {{ e }}</p>{% endfor %}</div>
+<div class="card"><h2>How to read this</h2><p class="small muted">Numbers come from Instagram's official Business Discovery API: followers, posts, likes and comments on the last 30 days of posts.
+Reach, views and saves are private to each account, so they're not compared. <b>Engagement rate</b> = (likes + comments) ÷ followers, per post (median), which is fair across account sizes.
+Accounts that hide likes are marked. Personal accounts can't be looked up.</p></div></div>
+
+{% if rows %}<div class="card" style="margin-top:16px"><h2>Side by side (last 30 days)</h2><table>
+<tr><th>Account</th><th>Followers</th><th>Posts/week</th><th>Engagement rate</th><th></th><th>Avg likes</th><th>Avg comments</th><th>Format mix</th><th>Best days</th><th>Caption length</th><th>Hashtags/post</th></tr>
+{% set mx = rows|map(attribute='median_engagement_rate')|reject('none')|list|max if rows|map(attribute='median_engagement_rate')|reject('none')|list else 0 %}
+{% for r in rows %}<tr{% if r.handle == '@self' %} style="background:rgba(225,139,31,.08)"{% endif %}>
+<td><b>{{ 'You (@' ~ s.get('brand.handle_instagram') ~ ')' if r.handle == '@self' else '@' ~ r.handle }}</b>{% if r.likes_hidden %} <span class="pill warn" title="hides likes">likes hidden</span>{% endif %}</td>
+<td>{{ '{:,}'.format(r.followers|int) }}</td><td>{{ r.posts_per_week }}</td><td>{{ pct(r.median_engagement_rate) }}</td>
+<td style="width:120px">{% if r.median_engagement_rate %}<div class="bar" style="width:{{ ((r.median_engagement_rate / (mx or 1)) * 110)|int }}px;{% if r.handle != '@self' %}opacity:.55{% endif %}"></div>{% endif %}</td>
+<td>{{ r.avg_likes }}</td><td>{{ r.avg_comments }}</td>
+<td class="small">{% for k, v in r.format_mix.items() %}{{ k|lower }} {{ v }}%{% if not loop.last %} · {% endif %}{% endfor %}</td>
+<td class="small">{{ r.top_days|join(', ') }}</td><td>{{ r.median_caption_len }}</td><td>{{ r.avg_hashtags }}</td></tr>{% endfor %}
+{% if comp.benchmark.median_engagement_rate is not none %}<tr><td class="muted">Competitor median</td><td></td><td>{{ comp.benchmark.posts_per_week }}</td><td>{{ pct(comp.benchmark.median_engagement_rate) }}</td><td colspan="7"></td></tr>{% endif %}
+</table></div>{% endif %}
+
+{% if comp.insights %}<div class="grid" style="margin-top:16px"><div class="card"><h2>Claude's read · {{ comp.insights.at|local }}</h2><p>{{ comp.insights.summary }}</p>
+<p class="small"><b>You lead</b><br>{% for x in comp.insights.we_lead %}• {{ x }}<br>{% endfor %}</p><p class="small"><b>You trail</b><br>{% for x in comp.insights.we_trail %}• {{ x }}<br>{% endfor %}</p></div>
+<div class="card"><h2>Experiments to try</h2>{% for x in comp.insights.experiments %}<p>• {{ x }}</p>{% endfor %}
+<p class="small muted"><b>Patterns in their top posts:</b> {{ comp.insights.patterns_in_their_top_posts|join(' · ') }}</p>
+<p class="small muted">These notes also go to the writer as patterns to adapt in your own voice; it never copies wording or designs.</p></div></div>{% endif %}
+
+<div class="grid" style="margin-top:16px">{% for r in comp.competitors %}<div class="card"><h2>@{{ r.handle }} · top posts</h2>
+{% for t in r.top_posts %}<p class="small"><a href="{{ t.permalink }}" target="_blank" rel="noopener noreferrer">{{ (t.product_type or t.media_type or '')|lower }} · {{ t.likes|int if t.likes is not none else '?' }} likes · {{ t.comments|int }} comments{% if t.engagement_rate %} · {{ '%.2f'|format(t.engagement_rate*100) }}%{% endif %}</a><br>
+<span class="muted">{{ (t.caption or '')[:160] }}</span></p>{% else %}<p class="muted small">No recent posts.</p>{% endfor %}
+<p class="small muted">Top hashtags: {{ r.top_hashtags|join(' ') }}</p></div>{% endfor %}</div>
+{% endblock %}

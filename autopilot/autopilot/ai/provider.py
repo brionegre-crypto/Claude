@@ -190,6 +190,10 @@ class MockProvider(BaseProvider):
         if purpose == "research_verify":
             return json.dumps({"verification": "verified", "claim": "mock claim", "source_url": "https://example.org/a",
                                "corroborating_url": "https://example.org/b", "notes": "mock"})
+        if purpose == "competitive":
+            return json.dumps({"summary": "Mock competitive read.", "we_lead": ["consistency"], "we_trail": ["reels"],
+                               "patterns_in_their_top_posts": ["short hooks"], "experiments": ["Try 2 more reels/week"],
+                               "writer_notes": "Open with a concrete time of day."})
         if purpose == "insights":
             return json.dumps({"summary": "Mock insight: not enough real data yet.", "recommendations": []})
         return "{}"

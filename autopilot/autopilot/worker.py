@@ -124,6 +124,21 @@ class Worker:
         notify(self.s, self.db, "info", "report", "Daily summary", "\n".join(lines), external=True)
         return {"published": len(pub)}
 
+    def job_competitive(self):
+        from autopilot import competitive
+        from autopilot.publishing.instagram import InstagramPublisher
+        secrets = SecretStore(self.s.data_dir)
+        if not secrets.get("instagram_access_token"):
+            return {"skipped": "Instagram not connected"}
+        out = competitive.collect(self.s, self.db, InstagramPublisher(self.s, secrets))
+        last = self.db.kv_get("competitive_insights") or {}
+        if competitive.handles(self.db) and (not last.get("at") or utcnow() - parse(last["at"]) > timedelta(days=7)):
+            try:
+                out["insights"] = competitive.ai_insights(self.s, self.db, self.provider).get("summary", "")[:200]
+            except Exception as e:
+                out["insights_error"] = str(e)[:200]
+        return out
+
     def job_youtube_pack(self):
         start = utcnow()
         rows = self.db.q("""SELECT format, scheduled_at FROM content WHERE platform='youtube' AND status IN ('ready','blocked','planned')
@@ -176,6 +191,8 @@ class Worker:
             self.run_job("daily_summary", self.job_daily_summary)
         if self.at_local_time("youtube_pack", s.get("notifications.youtube_pack_time", "17:00"), weekday=6):
             self.run_job("youtube_pack", self.job_youtube_pack)
+        if self.due("competitive", 24 * 60):
+            self.run_job("competitive", self.job_competitive)
         if self.at_local_time("weekly_report", "08:30", weekday=0):
             self.run_job("weekly_report", lambda: {"chars": len(analytics.report(s, db, "weekly"))})
         if self.at_local_time("monthly_report", "08:45", monthday=1):

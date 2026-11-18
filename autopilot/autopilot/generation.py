@@ -57,6 +57,12 @@ def neighbour_posts(db: DB, content: dict, days: int = 4) -> list[dict]:
     return out[:20]
 
 
+def _learnings(db: DB) -> str:
+    own = db.kv_get("learnings", "") or ""
+    comp = db.kv_get("competitive_learnings", "") or ""
+    return own + (f"\nPatterns in competitors' best posts (adapt to our voice; never copy wording or designs): {comp}" if comp else "")
+
+
 def recent_hooks(db: DB, n=60) -> list[str]:
     return [r[0] for r in db.q("SELECT hook FROM content WHERE hook IS NOT NULL ORDER BY created_at DESC LIMIT ?", (n,))]
 
@@ -91,7 +97,7 @@ def generate_one(s, db: DB, provider, content: dict, link_checker=None) -> dict:
     prev_body = json.loads(content.get("body") or "{}") if isinstance(content.get("body"), str) else (content.get("body") or {})
     style = design.norm_style(prev_body.get("style")) or design.pick_style(cid, render.recent_styles(db, content["platform"], cid))
     prompt = prompts.generate(s.brand_text(), content["platform"], content["format"], item["topic"], angle, sources,
-                              recent_hooks(db), db.kv_get("learnings", ""), s.get("brand.cta_default", ""), s.get("brand.link", ""),
+                              recent_hooks(db), _learnings(db), s.get("brand.cta_default", ""), s.get("brand.link", ""),
                               archetype=archetype, keyword=keyword, style=style, neighbours=neighbours)
     try:
         data = provider.complete_json("generate", prompt)

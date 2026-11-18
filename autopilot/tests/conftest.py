@@ -113,6 +113,17 @@ class FakeIG:
             return httpx.Response(200, json={"user_id": "17841", "username": "bethemansystem", "account_type": "BUSINESS",
                                              "followers_count": 1000, "follows_count": 10, "media_count": len(self.media)})
         seg = path.rsplit("/", 1)[-1]
+        if seg == "17841" and "business_discovery" in req.url.params.get("fields", ""):
+            import re as _re
+            h = _re.search(r"username\(([^)]+)\)", req.url.params["fields"]).group(1)
+            if h == "personaluser":
+                return httpx.Response(400, json={"error": {"message": "Invalid user id", "code": 110}})
+            media = [{"id": f"{h}{i}", "caption": f"Post {i} about discipline #christianmen #dads", "like_count": 100 * (i + 1),
+                      "comments_count": 10 + i, "timestamp": "2099-01-0%dT18:00:00+0000" % (i + 1),
+                      "media_type": "VIDEO" if i % 2 else "CAROUSEL_ALBUM", "media_product_type": "REELS" if i % 2 else "FEED",
+                      "permalink": f"https://instagram.com/p/{h}{i}"} for i in range(4)]
+            return httpx.Response(200, json={"business_discovery": {"username": h, "name": h.title(), "followers_count": 20000,
+                                                                    "media_count": 400, "media": {"data": media}}, "id": "17841"})
         if seg == "17841":
             return httpx.Response(200, json={"id": "17841", "username": "bethemansystem", "followers_count": 1000,
                                              "follows_count": 10, "media_count": len(self.media)})
