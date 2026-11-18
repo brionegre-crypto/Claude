@@ -46,14 +46,30 @@ enum HabitEngine {
 
     /// ADHD-friendly streaks: a missed day spends a grace token instead of wiping the streak.
     /// Tokens refill one per 7-day run. Total completions never decrease.
+    /// The streak as it stands today: one that lapsed (more missed days than grace days) shows 0, instead of the
+    /// old number staying up until you next complete the habit.
+    static func liveStreak(_ h: Habit, lastDay: Date?) -> Int {
+        guard let lastDay else { return 0 }
+        let cal = Calendar.current
+        let gap = cal.dateComponents([.day], from: cal.startOfDay(for: lastDay), to: cal.startOfDay(for: Date())).day ?? 0
+        return gap - 1 <= h.graceTokens ? h.currentStreak : 0
+    }
+
     static func complete(_ habit: Habit, lastCompletedDay: Date?, ctx: ModelContext) {
-        let today = Calendar.current.startOfDay(for: Date())
+        let cal = Calendar.current
+        let today = cal.startOfDay(for: Date())
+        // Read this habit's own history rather than trusting the caller: ticking it from the watch, a widget and
+        // Apple Health on the same day used to add a second log and count it twice.
+        let id = habit.id
+        let days = ((try? ctx.fetch(FetchDescriptor<HabitLog>(predicate: #Predicate { $0.habitId == id }))) ?? []).map { cal.startOfDay(for: $0.day) }
+        if days.contains(today) { return }                       // already done today
+        let lastDay = days.max() ?? lastCompletedDay.map { cal.startOfDay(for: $0) }
         ctx.insert(HabitLog(habitId: habit.id, day: today))
         habit.totalCompletions += 1
 
-        if let last = lastCompletedDay {
-            let gap = Calendar.current.dateComponents([.day], from: last, to: today).day ?? 0
-            if gap == 0 { return }                               // already counted today
+        if let last = lastDay {
+            let gap = cal.dateComponents([.day], from: last, to: today).day ?? 0
+            if gap <= 0 { return }                               // already counted today
             let missed = gap - 1
             if missed <= habit.graceTokens {
                 habit.graceTokens -= missed

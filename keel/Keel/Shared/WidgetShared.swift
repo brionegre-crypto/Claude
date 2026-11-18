@@ -58,6 +58,19 @@ struct WidgetSnapshot: Codable {
     }
     var updatedAt = Date()
 
+    /// The snapshot as it should look on `date`'s day. Written yesterday and not yet refreshed by Keel: habits
+    /// aren't done yet, nothing's been finished today, and yesterday's medication count and briefing don't apply.
+    func forDay(of date: Date) -> WidgetSnapshot {
+        guard !Calendar.current.isDate(updatedAt, inSameDayAs: date) else { return self }
+        var s = self
+        s.habits = habits?.map { var h = $0; h.done = false; return h }
+        s.tasksDoneToday = 0
+        s.medsLeftToday = nil
+        s.briefing = nil
+        s.events = events.filter { Calendar.current.isDate($0.start, inSameDayAs: date) || $0.end > date }
+        return s
+    }
+
     static let groupId = "group.com.briangreenejr.keel"
     static var fileURL: URL? {
         FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: groupId)?.appendingPathComponent("widget-snapshot.json")

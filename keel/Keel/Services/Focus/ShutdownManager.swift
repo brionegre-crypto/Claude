@@ -1,5 +1,6 @@
 import Foundation
 import Observation
+import SwiftData
 #if !targetEnvironment(macCatalyst)
 import ActivityKit
 import FamilyControls
@@ -59,9 +60,43 @@ final class ShutdownManager {
         #endif
     }
 
+    static let endsAtKey = "focus.live.endsAt", sessionKey = "focus.live.session", levelKey = "focus.live.level"
+
+    /// Keel was closed while a focus session ran. Still running: carry on (timer, hidden inbox). Over: finish it
+    /// at its planned end, lift app blocking, end the Lock Screen timer and stop the focus sound.
+    func restoreAfterRelaunch(ctx: ModelContext) {
+        guard active == nil else { return }
+        let d = UserDefaults.standard
+        let endsAtRaw = d.double(forKey: Self.endsAtKey)
+        guard endsAtRaw > 0 else { return }
+        let endsAt = Date(timeIntervalSince1970: endsAtRaw)
+        let id = d.string(forKey: Self.sessionKey).flatMap(UUID.init(uuidString:))
+        let session = id.flatMap { sid in try? ctx.fetch(FetchDescriptor<FocusSession>(predicate: #Predicate { $0.id == sid })).first }
+        if endsAt > Date(), let session, session.endedAt == nil {
+            active = session
+            level = Level(rawValue: d.integer(forKey: Self.levelKey)) ?? .soft
+            return
+        }
+        // Over while Keel was closed.
+        if let session, session.endedAt == nil { session.endedAt = endsAt; session.brokeEarly = false }
+        #if !targetEnvironment(macCatalyst)
+        store.clearAllSettings()
+        #endif
+        endLiveActivities()
+        FocusSound.shared.stop()
+        for k in [Self.endsAtKey, Self.sessionKey, Self.levelKey] { d.removeObject(forKey: k) }
+        try? ctx.save()
+    }
+
     func start(minutes: Int, level: Level, task: TaskItem?) -> FocusSession {
         let s = FocusSession(plannedMinutes: minutes, mode: "deep", taskId: task?.id)
         active = s
+        // Remembered on disk: if iPhone closes Keel mid-session, the session is picked back up (or finished,
+        // with app blocking lifted) when Keel opens again. Before, blocked apps could stay blocked.
+        let d = UserDefaults.standard
+        d.set(s.startedAt.addingTimeInterval(Double(minutes * 60)).timeIntervalSince1970, forKey: Self.endsAtKey)
+        d.set(s.id.uuidString, forKey: Self.sessionKey)
+        d.set(level.rawValue, forKey: Self.levelKey)
         Haptics.start()
         BreakReminders.schedule(skipUntil: Date().addingTimeInterval(Double(minutes * 60)))   // no breaks mid-focus
         self.level = level
@@ -115,6 +150,7 @@ final class ShutdownManager {
         active?.endedAt = Date()
         active?.brokeEarly = early
         active = nil
+        for k in [Self.endsAtKey, Self.sessionKey, Self.levelKey] { UserDefaults.standard.removeObject(forKey: k) }
         UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: ["focus.5min", "focus.end", "focus.hyper"])
     }
 

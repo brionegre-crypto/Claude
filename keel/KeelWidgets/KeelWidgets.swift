@@ -61,8 +61,12 @@ struct KeelProvider: TimelineProvider {
 
     func getTimeline(in context: Context, completion: @escaping (Timeline<KeelEntry>) -> Void) {
         let snap = WidgetSnapshot.load() ?? WidgetSnapshot()
-        // A fresh entry every 15 minutes so "next event" rolls forward even if Keel isn't opened.
-        let entries = (0..<8).map { KeelEntry(date: Date().addingTimeInterval(Double($0) * 900), snapshot: snap) }
+        // A fresh entry every 15 minutes so "next event" rolls forward even if Keel isn't opened,
+        // plus one right at midnight so a new day never shows yesterday's ticks and counts.
+        var times = (0..<8).map { Date().addingTimeInterval(Double($0) * 900) }
+        if let midnight = Calendar.current.date(byAdding: .day, value: 1, to: Calendar.current.startOfDay(for: Date())),
+           midnight < times.last! { times.append(midnight); times.sort() }
+        let entries = times.map { KeelEntry(date: $0, snapshot: snap.forDay(of: $0)) }
         completion(Timeline(entries: entries, policy: .after(Date().addingTimeInterval(7_200))))
     }
 }

@@ -160,6 +160,18 @@ final class MeetingRecorder {
         if segmentStamp.isEmpty { segmentStamp = stamp() }
         segment = t
         transcript = finalized + segmentStamp + segment
+        persistLive()
+    }
+
+    // The transcript so far is also kept on disk (every ~10 s), so a meeting survives Keel being closed
+    // mid-recording; MeetingRecovery turns it into a note next time.
+    static var liveFile: URL { recordingsFolder.appendingPathComponent("meeting-live.txt") }
+    private var lastPersist = Date.distantPast
+    private func persistLive(force: Bool = false) {
+        guard force || Date().timeIntervalSince(lastPersist) > 10, !transcript.isEmpty else { return }
+        lastPersist = Date()
+        let head = (startedAt ?? Date()).timeIntervalSince1970
+        try? "\(head)\n\(liveTitle ?? "")\n\(transcript)".write(to: Self.liveFile, atomically: true, encoding: .utf8)
     }
 
     private func commitSegment() {
@@ -168,6 +180,7 @@ final class MeetingRecorder {
         segmentStamp = ""
         transcript = finalized.trimmingCharacters(in: .whitespacesAndNewlines)
         if !transcript.isEmpty { finalized = transcript + "\n" }
+        persistLive(force: true)
     }
 
     /// "[mm:ss] " from the start of the meeting, like a transcript in a meeting app.
@@ -210,6 +223,7 @@ final class MeetingRecorder {
         MeetingAutopilot.recordingFinished()
         liveTitle = nil
         for url in audioParts { try? FileManager.default.removeItem(at: url) }
+        try? FileManager.default.removeItem(at: Self.liveFile)
         reset()
     }
 
@@ -982,5 +996,62 @@ struct MeetingRecorderView: View {
         if !r.actions.isEmpty { body += "\nNext steps\n" + r.actions.map { "• \(Self.actionLine($0))" }.joined(separator: "\n") + "\n" }
         d.body = body
         return d
+    }
+}
+
+
+// MARK: - Recovering a meeting that wasn't saved
+
+/// If Keel was closed mid-meeting (iPhone ended it in the background, a crash, a flat battery), or a meeting was
+/// stopped but never saved, its words were lost. Now they come back as a note: from the transcript Keel kept on
+/// disk, or by reading the saved audio again. Only when nothing is recording and no meeting is open.
+@MainActor
+enum MeetingRecovery {
+    static func runIfNeeded(ctx: ModelContext) async {
+        let rec = MeetingRecorder.shared
+        guard !rec.isRecording, rec.startedAt == nil else { return }
+        let fm = FileManager.default
+        let folder = MeetingRecorder.recordingsFolder
+        let files = (try? fm.contentsOfDirectory(at: folder, includingPropertiesForKeys: nil)) ?? []
+        let audio = files.filter { $0.pathExtension == "m4a" }.sorted { $0.lastPathComponent < $1.lastPathComponent }
+        let live = MeetingRecorder.liveFile
+        let hasLive = fm.fileExists(atPath: live.path)
+        guard hasLive || !audio.isEmpty else { return }
+
+        var started = Date()
+        var title = ""
+        var text = ""
+        if hasLive, let raw = try? String(contentsOf: live, encoding: .utf8) {
+            let lines = raw.split(separator: "\n", maxSplits: 2, omittingEmptySubsequences: false).map(String.init)
+            if let t = lines.first.flatMap(Double.init) { started = Date(timeIntervalSince1970: t) }
+            if lines.count > 1 { title = lines[1] }
+            if lines.count > 2 { text = lines[2] }
+        }
+        // The audio holds the whole meeting; use it when it gives more than the saved transcript.
+        if let recognizer = SFSpeechRecognizer(locale: Locale.current), !audio.isEmpty {
+            var pieces: [String] = []
+            for url in audio { pieces.append(await MeetingRecorder.transcribeFile(url, recognizer: recognizer)) }
+            let heard = pieces.filter { !$0.isEmpty }.joined(separator: " ")
+            if heard.split(separator: " ").count > text.split(separator: " ").count { text = heard }
+        }
+        guard rec.startedAt == nil, !rec.isRecording else { return }      // a new meeting began meanwhile
+        let body = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        if body.isEmpty {
+            // Nothing readable. Keep the audio a week in case it can be read later, then let it go.
+            let old = audio.filter { ((try? $0.resourceValues(forKeys: [.creationDateKey]).creationDate) ?? Date()) < Date().addingTimeInterval(-7 * 86_400) }
+            for u in old { try? fm.removeItem(at: u) }
+            if audio.count == old.count { try? fm.removeItem(at: live) }
+            return
+        }
+        let name = (title.isEmpty ? "Recovered meeting" : title) + " · " + started.formatted(date: .abbreviated, time: .shortened)
+        var blocks = [NoteBlock(kind: .callout, text: "Keel recovered this meeting: it was still recording, or wasn't saved, when Keel closed.")]
+        blocks += body.split(separator: "\n").map { NoteBlock(kind: .text, text: String($0)) }
+        let note = Note(title: name, blocks: blocks)
+        note.folder = "Meetings"
+        ctx.insert(note)
+        try? ctx.save()
+        for u in audio { try? fm.removeItem(at: u) }
+        try? fm.removeItem(at: live)
+        UndoCenter.shared.notify("Recovered an unsaved meeting: “\(name)” in Notes › Meetings")
     }
 }

@@ -70,7 +70,8 @@ struct HabitsView: View {
                         if let g = HealthHabits.label(h.healthGoal) {
                             Image(systemName: "heart.fill").font(.caption).foregroundStyle(.pink).accessibilityLabel("Completes from Health: \(g)")
                         }
-                        if h.currentStreak > 0 { Chip(text: "\(h.currentStreak)🔥", color: DS.Palette.warmth) }
+                        let streak = HabitEngine.liveStreak(h, lastDay: logs.filter { $0.habitId == h.id }.map(\.day).max())
+                        if streak > 0 { Chip(text: "\(streak)🔥", color: DS.Palette.warmth) }
                         if h.graceTokens > 0 { Text(String(repeating: "◇", count: h.graceTokens)).font(.caption).foregroundStyle(DS.Palette.calm).accessibilityLabel("\(h.graceTokens) grace days") }
                     }
                     .contextMenu {

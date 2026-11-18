@@ -280,10 +280,11 @@ final class NotificationHandler: NSObject, UNUserNotificationCenterDelegate {
         }
         if let medString = info["medId"] as? String, let medId = UUID(uuidString: medString), let slot = info["slot"] as? Int {
             guard action == MedEngine.takenAction else { return }
+            let delivered = response.notification.date
             await MainActor.run {
                 let ctx = KeelStore.container.mainContext
                 if let m = try? ctx.fetch(FetchDescriptor<Medication>(predicate: #Predicate { $0.id == medId })).first {
-                    MedEngine.take(m, slot: slot, ctx: ctx)
+                    MedEngine.take(m, slot: slot, when: delivered, ctx: ctx)
                 }
             }
             return
@@ -445,7 +446,8 @@ enum QuickAdd {
 enum TaskDedupe {
     static func key(_ t: TaskItem) -> String {
         let title = t.title.lowercased().split(whereSeparator: \.isWhitespace).joined(separator: " ")
-        if let d = t.dueDate { return title + "|" + String(Int(d.timeIntervalSince1970 / 60)) }
+        // Same title, same time and the same list: two "Pay rent" tasks in different lists are both kept.
+        if let d = t.dueDate { return title + "|" + String(Int(d.timeIntervalSince1970 / 60)) + "|" + t.listName.lowercased() }
         return title + "|nodate|" + (t.ekReminderId ?? t.id.uuidString)
     }
 
@@ -467,6 +469,7 @@ enum TaskDedupe {
             if kept.estimatedMinutes == nil { kept.estimatedMinutes = t.estimatedMinutes }
             if let id = t.ekReminderId, id != kept.ekReminderId { CalendarService.shared.removeReminder(id: id) }
             TaskAlerts.cancel(t)
+            _ = TaskTrash.keep(t)           // in Recently deleted for 30 days, in case it wasn't really a copy
             ctx.delete(t)
             removed += 1
         }

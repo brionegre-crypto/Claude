@@ -70,6 +70,7 @@ struct KeelApp: App {
                 WidgetActions.applyPending(ctx: container.mainContext)   // taps on interactive widgets
                 SyncEngine.shared.scheduleReminderSync()                 // ticks made in Reminders while Keel was away
                 TaskTimeZone.adjustIfMoved(ctx: container.mainContext)   // travelled: date-only tasks stay on their day
+                ShutdownManager.shared.restoreAfterRelaunch(ctx: container.mainContext)   // focus that ran while Keel was closed
                 Task { await HealthHabits.check(ctx: container.mainContext) }
                 Task { await KeelFocusFilter.syncCurrent() }
                 #if !targetEnvironment(macCatalyst)
@@ -90,6 +91,7 @@ struct KeelApp: App {
                     // One small job at a time with a pause between, so a tap or a swipe never waits behind them.
                     func breathe() async { try? await Task.sleep(for: .milliseconds(250)) }
                     if Throttle.due("dedupe", every: 600) { TaskDedupe.run(ctx: ctx) }
+                    if Throttle.due("meeting.recover", every: 1800) { await MeetingRecovery.runIfNeeded(ctx: ctx) }   // a meeting cut off mid-recording
                     await breathe(); WeeklyDigest.makeIfDue(ctx: ctx)
                     await breathe(); SmartTemplates.runScheduled(ctx: ctx)
                     await breathe(); OvernightAgent.runIfDue(ctx: ctx)

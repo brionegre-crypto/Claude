@@ -20,10 +20,13 @@ enum MedEngine {
         return doses.first { $0.medicationId == m.id && $0.slot == slot && $0.day == d }
     }
 
-    static func take(_ m: Medication, slot: Int, ctx: ModelContext) {
-        let day = Calendar.current.startOfDay(for: Date())
+    /// `when` is the day the dose belongs to. From a reminder it's when the reminder went off, so tapping
+    /// "Taken" on a 11:30 PM reminder after midnight logs last night's dose, not tonight's (which would have
+    /// marked tonight's as taken and silenced its reminder).
+    static func take(_ m: Medication, slot: Int, when: Date = Date(), ctx: ModelContext) {
+        let day = Calendar.current.startOfDay(for: when)
         let all = (try? ctx.fetch(FetchDescriptor<MedDose>())) ?? []
-        guard taken(m, slot: slot, doses: all) == nil else { return }
+        guard taken(m, slot: slot, on: day, doses: all) == nil else { return }
         ctx.insert(MedDose(medicationId: m.id, slot: slot, day: day))
         if let left = m.pillsLeft { m.pillsLeft = max(0, left - 1) }
         let center = UNUserNotificationCenter.current()
