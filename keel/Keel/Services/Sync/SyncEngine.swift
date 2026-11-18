@@ -40,10 +40,15 @@ final class SyncEngine {
     func scheduleReminderSync() {
         // Keel's own writes to Reminders also post this notification. Ignoring the echo of a sync that just ran
         // stops the sync → write → notification → sync loop that made Keel crawl.
-        guard !reminderSyncRunning, Date().timeIntervalSince(lastReminderSync) > 10 else { return }
+        guard !reminderSyncRunning else { return }
+        // Just synced: don't drop this change (a task checked off in Reminders right after a sync stayed open in
+        // Keel until the next one). Pick it up once the quiet window ends instead. A sync with nothing new writes
+        // nothing, so this can't loop.
+        let since = Date().timeIntervalSince(lastReminderSync)
+        let wait = since > 10 ? 3.0 : max(3.0, 11 - since)
         pendingReminderSync?.cancel()
         pendingReminderSync = Task {
-            try? await Task.sleep(for: .seconds(3))
+            try? await Task.sleep(for: .seconds(wait))
             guard !Task.isCancelled else { return }
             await syncRemindersOnly()
         }

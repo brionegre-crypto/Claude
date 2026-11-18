@@ -10,6 +10,23 @@ struct TodayView: View {
     @Environment(\.supportsMultipleWindows) private var multiWindow
     @Query(filter: #Predicate<TaskItem> { !$0.isDone }) private var tasks: [TaskItem]
     @Query(TodayView.topEmails) private var emails: [EmailMessage]     // top 60 by priority, not the whole mailbox
+    /// Recently finished tasks, so cards on Today show what's already done (wherever you checked it off).
+    @Query(TodayView.recentlyDoneQuery) private var recentlyDone: [TaskItem]
+    static var recentlyDoneQuery: FetchDescriptor<TaskItem> {
+        var d = FetchDescriptor<TaskItem>(predicate: #Predicate { $0.isDone }, sortBy: [SortDescriptor(\.completedAt, order: .reverse)])
+        d.fetchLimit = 80
+        return d
+    }
+    /// The open task a plan block is about (same title), or nil.
+    private func openTask(for title: String) -> TaskItem? {
+        let key = NoteText.fold(title)
+        guard !key.isEmpty else { return nil }
+        return tasks.first { NoteText.fold($0.title) == key }
+    }
+    private func doneToday(_ title: String) -> Bool {
+        let key = NoteText.fold(title)
+        return recentlyDone.contains { ($0.completedAt.map(Calendar.current.isDateInToday) ?? false) && NoteText.fold($0.title) == key }
+    }
     static var topEmails: FetchDescriptor<EmailMessage> {
         var d = FetchDescriptor<EmailMessage>(predicate: #Predicate { !$0.isArchived }, sortBy: [SortDescriptor(\.priorityScore, order: .reverse)])
         d.fetchLimit = 60
@@ -296,6 +313,12 @@ struct TodayView: View {
                         Chip(text: "~\(ADHDCoach.calibratedMinutes(t)) min", color: DS.Palette.focus, icon: "clock")
                         if let due = t.dueDate { Chip(text: due.formatted(.relative(presentation: .named)), color: DS.Palette.warmth) }
                         Spacer()
+                        Button { withAnimation(DS.spring) { _ = TaskActions.setDone(t, true) } } label: {
+                            Label("Done", systemImage: "checkmark").font(DS.Font.headline)
+                                .padding(.horizontal, DS.Space.m).padding(.vertical, DS.Space.s)
+                                .background(DS.Palette.calm.opacity(0.18), in: Capsule()).foregroundStyle(DS.Palette.calm)
+                        }
+                        .buttonStyle(.plain)
                         NavigationLink { LazyView(FocusView(preselected: t)) } label: {
                             Label("Start", systemImage: "play.fill").font(DS.Font.headline)
                                 .padding(.horizontal, DS.Space.m).padding(.vertical, DS.Space.s)
@@ -388,11 +411,27 @@ struct TodayView: View {
                 else if let plan {
                     Text(plan.headline).font(DS.Font.body).foregroundStyle(DS.Palette.inkSoft)
                     ForEach(plan.blocks) { b in
+                        // A block that's one of your tasks can be checked off here; it's the same task as in
+                        // Tasks, so ticking it in either place shows in both.
+                        let task = openTask(for: b.title)
+                        let finished = task == nil && doneToday(b.title)
                         HStack {
                             Text(b.start).font(DS.Font.caption.monospacedDigit()).frame(minWidth: 48, alignment: .leading)
-                            Text(b.title).font(DS.Font.body)
+                            Text(b.title).font(DS.Font.body).strikethrough(finished)
+                                .foregroundStyle(finished ? DS.Palette.inkSoft : DS.Palette.ink)
                             Spacer()
-                            Image(systemName: icon(for: b.kind)).foregroundStyle(DS.Palette.inkSoft)
+                            if let task {
+                                Button { withAnimation(DS.spring) { _ = TaskActions.setDone(task, true) } } label: {
+                                    Image(systemName: "circle").font(.title3).foregroundStyle(DS.Palette.inkSoft)
+                                }
+                                .buttonStyle(.plain)
+                                .accessibilityLabel("Mark \(task.title) done")
+                            } else if finished {
+                                Image(systemName: "checkmark.circle.fill").font(.title3).foregroundStyle(DS.Palette.calm)
+                                    .accessibilityLabel("Done")
+                            } else {
+                                Image(systemName: icon(for: b.kind)).foregroundStyle(DS.Palette.inkSoft)
+                            }
                         }
                     }
                 } else {

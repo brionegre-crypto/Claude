@@ -11,21 +11,44 @@ enum WidgetQueue {
             .appendingPathComponent("widget-actions.json")
     }
 
-    static func append(_ action: WatchAction) {
-        var all = pending()
-        all.append(action)
-        if let url, let data = try? JSONEncoder().encode(all) { try? data.write(to: url, options: .atomic) }
+    /// Darwin notification the widget posts so a Keel that's open (iPad, Mac) applies the tap right away.
+    static let changedName = "com.keel.widget-actions.changed"
+
+    /// The widget and the app both touch this file. Each read-and-write is coordinated, so a tap that lands
+    /// while Keel is applying earlier taps is never lost (before, it could be wiped and the task stayed open).
+    private static func withFile<T>(_ body: (URL) -> T) -> T? {
+        guard let url else { return nil }
+        var result: T?
+        var error: NSError?
+        NSFileCoordinator().coordinate(writingItemAt: url, options: .forMerging, error: &error) { u in result = body(u) }
+        return result
     }
 
-    static func pending() -> [WatchAction] {
-        guard let url, let data = try? Data(contentsOf: url) else { return [] }
+    private static func read(_ u: URL) -> [WatchAction] {
+        guard let data = try? Data(contentsOf: u) else { return [] }
         return (try? JSONDecoder().decode([WatchAction].self, from: data)) ?? []
     }
 
+    static func append(_ action: WatchAction) {
+        _ = withFile { u in
+            var all = read(u)
+            all.append(action)
+            if let data = try? JSONEncoder().encode(all) { try? data.write(to: u, options: .atomic) }
+        }
+        CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(),
+                                             CFNotificationName(changedName as CFString), nil, nil, true)
+    }
+
+    static func pending() -> [WatchAction] {
+        withFile { read($0) } ?? []
+    }
+
     static func drain() -> [WatchAction] {
-        let all = pending()
-        if let url { try? FileManager.default.removeItem(at: url) }
-        return all
+        withFile { u -> [WatchAction] in
+            let all = read(u)
+            if !all.isEmpty { try? FileManager.default.removeItem(at: u) }
+            return all
+        } ?? []
     }
 }
 

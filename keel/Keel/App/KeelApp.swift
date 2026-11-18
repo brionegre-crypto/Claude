@@ -12,6 +12,7 @@ struct KeelApp: App {
 
     init() {
         SyncEngine.registerBackgroundTasks()
+        WidgetActions.startListening()          // widget check-offs land at once while Keel is open
         UNUserNotificationCenter.current().delegate = NotificationHandler.shared
         TaskAlerts.registerCategories()
         WatchBridge.shared.activate()
@@ -67,6 +68,7 @@ struct KeelApp: App {
         .onChange(of: scenePhase) { _, phase in
             if phase == .active {
                 WidgetActions.applyPending(ctx: container.mainContext)   // taps on interactive widgets
+                SyncEngine.shared.scheduleReminderSync()                 // ticks made in Reminders while Keel was away
                 Task { await HealthHabits.check(ctx: container.mainContext) }
                 Task { await KeelFocusFilter.syncCurrent() }
                 #if !targetEnvironment(macCatalyst)

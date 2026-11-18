@@ -230,6 +230,14 @@ final class AppRouter {
 /// Applies taps queued by interactive widgets.
 @MainActor
 enum WidgetActions {
+    /// While Keel is open (side by side on iPad, or on Mac with widgets on the desktop), a widget tap is applied
+    /// straight away, so Today and Tasks show the check-off at once instead of the next time Keel comes forward.
+    nonisolated static func startListening() {
+        CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), nil, { _, _, _, _, _ in
+            Task { @MainActor in WidgetActions.applyPending(ctx: KeelStore.container.mainContext) }
+        }, WidgetQueue.changedName as CFString, nil, .deliverImmediately)
+    }
+
     static func applyPending(ctx: ModelContext) {
         let actions = WidgetQueue.drain()
         guard !actions.isEmpty else { return }
