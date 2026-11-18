@@ -233,7 +233,7 @@ struct CalendarView: View {
               let end = cal.date(byAdding: .day, value: 1, to: last) else { return }
         let hiddenIds = hidden
         let fresh = CalendarService.shared.events(from: first, to: end)
-            .filter { !hiddenIds.contains($0.calendar.calendarIdentifier) }
+            .filter { $0.calendar != nil && !hiddenIds.contains($0.calendar.calendarIdentifier) }
         loadedAt = Date()
         events = fresh
     }
@@ -243,7 +243,7 @@ struct CalendarView: View {
             try CalendarService.shared.move(e, to: start)
             Haptics.success()
         } catch {
-            flash("“\(e.calendar.title)” is read-only")
+            flash("“\(e.calendar?.title ?? "This calendar")” is read-only")
         }
         load()
     }
@@ -872,7 +872,7 @@ struct DayAgenda: View {
                                 .font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
                         }
                         Spacer()
-                        Text(e.calendar.title).font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
+                        Text(e.calendar?.title ?? "").font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
                     }
                 }
                 .buttonStyle(.plain)

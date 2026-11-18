@@ -65,8 +65,8 @@ final class CalendarService {
             let title = (e.title ?? "").lowercased().split(whereSeparator: \.isWhitespace).joined(separator: " ")
             let key = "\(title)|\(Int(e.startDate.timeIntervalSince1970))|\(Int(e.endDate.timeIntervalSince1970))|\(e.isAllDay)"
             if let current = best[key] {
-                let better = (e.calendar.allowsContentModifications && !current.calendar.allowsContentModifications)
-                    || (e.calendar.type != .subscription && current.calendar.type == .subscription)
+                let better = ((e.calendar?.allowsContentModifications ?? false) && !(current.calendar?.allowsContentModifications ?? false))
+                    || (e.calendar?.type != .subscription && current.calendar?.type == .subscription)
                 if better { best[key] = e }
             } else {
                 best[key] = e
@@ -123,7 +123,7 @@ final class CalendarService {
 
     /// Drag-to-reschedule: keeps the event's length, moves only this occurrence of a repeating event.
     func move(_ event: EKEvent, to start: Date) throws {
-        guard event.calendar.allowsContentModifications else { throw CalendarError.readOnly }
+        guard event.calendar?.allowsContentModifications == true else { throw CalendarError.readOnly }
         let length = event.endDate.timeIntervalSince(event.startDate)
         event.startDate = start
         event.endDate = start.addingTimeInterval(length)
@@ -131,7 +131,7 @@ final class CalendarService {
     }
 
     func delete(_ event: EKEvent) throws {
-        guard event.calendar.allowsContentModifications else { throw CalendarError.readOnly }
+        guard event.calendar?.allowsContentModifications == true else { throw CalendarError.readOnly }
         try store.remove(event, span: .thisEvent); invalidateEvents()
     }
 
@@ -173,7 +173,7 @@ final class CalendarService {
                     t.isDone = r.isCompleted
                     t.completedAt = r.completionDate
                     t.dueDate = Self.date(from: r.dueDateComponents)
-                    t.listName = r.calendar.title
+                    t.listName = r.calendar?.title ?? t.listName
                     t.notes = r.notes ?? t.notes
                     t.priority = Self.priority(fromEK: r.priority)
                     t.recurrence = r.recurrenceRules?.first.flatMap(Recurrence.init(ek:))
@@ -189,7 +189,7 @@ final class CalendarService {
                                  priority: Self.priority(fromEK: r.priority))
                 t.recurrence = r.recurrenceRules?.first.flatMap(Recurrence.init(ek:))
                 t.ekReminderId = r.calendarItemIdentifier
-                t.listName = r.calendar.title
+                t.listName = r.calendar?.title ?? t.listName
                 t.notes = r.notes ?? ""
                 t.updatedAt = r.lastModifiedDate ?? Date()
                 insert(t)

@@ -43,7 +43,7 @@ enum WidgetSync {
         let events = CalendarService.shared.events(from: now, to: now.addingTimeInterval(36 * 3600))
             .filter { !$0.isAllDay }
             .prefix(6)
-            .map { WidgetSnapshot.Event(title: $0.title ?? "Event", start: $0.startDate, end: $0.endDate, colorHex: hex($0.calendar.cgColor),
+            .map { WidgetSnapshot.Event(title: $0.title ?? "Event", start: $0.startDate, end: $0.endDate, colorHex: $0.calendar.map { hex($0.cgColor) } ?? "#5B8DEF",
                                         joinURL: MeetingLink.find($0)?.absoluteString) }
 
         WidgetSnapshot(

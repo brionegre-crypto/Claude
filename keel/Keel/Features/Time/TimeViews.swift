@@ -25,7 +25,7 @@ enum TimeTracker {
 
     /// Guesses a life area for a calendar event from its title and calendar.
     static func area(for event: EKEvent) -> LifeArea {
-        let t = ((event.title ?? "") + " " + event.calendar.title).lowercased()
+        let t = ((event.title ?? "") + " " + (event.calendar?.title ?? "")).lowercased()
         let rules: [(LifeArea, [String])] = [
             (.health, ["gym", "run", "workout", "yoga", "doctor", "dentist", "therapy", "walk", "sleep", "meds"]),
             (.relationships, ["family", "dinner", "date", "mom", "dad", "kids", "friend", "birthday", "wedding", "prayer", "church"]),

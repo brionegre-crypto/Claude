@@ -27,7 +27,7 @@ extension Autopilot {
         for (i, a) in events.enumerated() where proposed < 2 {
             for b in events[(i + 1)...] where b.startDate < a.endDate && a.startDate < b.endDate {
                 // The one to move: yours alone, editable, and not the meeting with other people.
-                let movable = [a, b].first { ($0.attendees?.isEmpty ?? true) && $0.calendar.allowsContentModifications }
+                let movable = [a, b].first { ($0.attendees?.isEmpty ?? true) && $0.calendar?.allowsContentModifications == true }
                 guard let mv = movable else { continue }
                 let other: EKEvent = mv === a ? b : a
                 let minutes = Int(mv.endDate.timeIntervalSince(mv.startDate) / 60)

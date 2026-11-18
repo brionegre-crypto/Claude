@@ -314,10 +314,10 @@ struct TodayView: View {
             SectionHeader(title: "Up next", trailing: "all calendars")
             ForEach(upNextEvents.prefix(3), id: \.eventIdentifier) { e in
                 HStack(spacing: DS.Space.m) {
-                    RoundedRectangle(cornerRadius: 2).fill(Color(cgColor: e.calendar.cgColor)).frame(width: 4, height: 34)
+                    RoundedRectangle(cornerRadius: 2).fill(e.calendar.map { Color(cgColor: $0.cgColor) } ?? DS.Palette.meeting).frame(width: 4, height: 34)
                     VStack(alignment: .leading) {
                         Text(e.title ?? "Event").font(DS.Font.headline)
-                        Text("\(e.startDate.formatted(date: .omitted, time: .shortened)) · \(e.calendar.source.title)")
+                        Text("\(e.startDate.formatted(date: .omitted, time: .shortened)) · \(e.calendar?.source?.title ?? "")")
                             .font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
                         if e.attendees?.isEmpty == false {
                             NavigationLink { LazyView(MeetingPrepView(event: e)) } label: {
