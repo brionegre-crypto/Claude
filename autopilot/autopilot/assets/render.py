@@ -58,9 +58,15 @@ def produce(s, db: DB, content: dict) -> list[dict]:
     body = json.loads(content["body"] or "{}") if isinstance(content["body"], str) else dict(content["body"] or {})
     fmt = content["format"]
     cid = content["id"]
-    style = body.get("style") if body.get("style") in design.STYLES else design.pick_style(cid, recent_styles(db, content["platform"], cid))
+    style = design.norm_style(body.get("style")) or design.pick_style(cid, recent_styles(db, content["platform"], cid))
     body["style"] = style
     label = label_for(content, body)
+    stamp = ""
+    if content.get("scheduled_at"):
+        from datetime import datetime
+        from zoneinfo import ZoneInfo
+        dt = datetime.fromisoformat(content["scheduled_at"]).astimezone(ZoneInfo(s.get("general.timezone", "UTC")))
+        stamp = f"{dt.day} {dt:%B %Y} at {dt:%H:%M}"
     out = s.assets_dir / cid
     if out.exists():
         shutil.rmtree(out)
@@ -74,11 +80,11 @@ def produce(s, db: DB, content: dict) -> list[dict]:
         if sl.get("layout") in (None, "point"):
             sl = {**sl, "layout": "hook"}
         size = SIZES["post"] if fmt == "image" else SIZES["square"]
-        made.append({"kind": "image", **_save(design.slide(style, size, sl, label=label, seed=len(cid)), out / "post.jpg")})
+        made.append({"kind": "image", **_save(design.slide(style, size, sl, label=label, seed=len(cid), stamp=stamp, handle=handle), out / "post.jpg")})
     elif fmt == "carousel":
         n = min(len(slides), 10)
         for i, sl in enumerate(slides[:10], 1):
-            img = design.slide(style, SIZES["post"], sl, page=i, total=n, label=label, seed=i)
+            img = design.slide(style, SIZES["post"], sl, page=i, total=n, label=label, seed=i, stamp=stamp, handle=handle)
             made.append({"kind": "image", "ordinal": i, **_save(img, out / f"slide-{i:02d}.jpg")})
     elif fmt == "reel":
         mood = music.pick_mood(body.get("music_mood"), "reel", cid)
@@ -93,7 +99,7 @@ def produce(s, db: DB, content: dict) -> list[dict]:
         frames = body.get("frames") or [{"text": content.get("hook") or ""}]
         first = frames[0].get("text", "")
         still = design.slide(style, SIZES["story"], {"layout": "hook", "title": first, "text": body.get("reply_prompt") or ""},
-                             label=label, story=True, seed=len(cid))
+                             label=label, story=True, seed=len(cid), stamp=stamp, handle=handle)
         made.append({"kind": "image", **_save(still, out / "story.jpg")})
         if ffmpeg():
             mood = music.pick_mood(body.get("music_mood"), "story", cid)

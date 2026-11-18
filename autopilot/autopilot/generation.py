@@ -70,16 +70,19 @@ def generate_one(s, db: DB, provider, content: dict, link_checker=None) -> dict:
             sources.append({"title": "corroborating source", "url": u})
     archetype = pick_archetype(db, content["format"])
     keyword = pick_keyword(s, db)
+    from autopilot.assets import design
+    prev_body = json.loads(content.get("body") or "{}") if isinstance(content.get("body"), str) else (content.get("body") or {})
+    style = design.norm_style(prev_body.get("style")) or design.pick_style(cid, render.recent_styles(db, content["platform"], cid))
     prompt = prompts.generate(s.brand_text(), content["platform"], content["format"], item["topic"], angle, sources,
                               recent_hooks(db), db.kv_get("learnings", ""), s.get("brand.cta_default", ""), s.get("brand.link", ""),
-                              archetype=archetype, keyword=keyword)
+                              archetype=archetype, keyword=keyword, style=style)
     try:
         data = provider.complete_json("generate", prompt)
     except (ProviderUnavailable, ProviderError):
         db.x("UPDATE content SET status='planned', updated_at=? WHERE id=?", (iso(), cid))
         raise
     body = {k: data[k] for k in BODY_KEYS if k in data}
-    body.update({"archetype": archetype, "keyword": data.get("keyword") or keyword})
+    body.update({"archetype": archetype, "keyword": data.get("keyword") or keyword, "style": style})
     if content["format"] in ("image", "community_image") and not body.get("slides"):
         title = data.get("headline") or data.get("hook")
         if title:

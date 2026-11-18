@@ -11,9 +11,14 @@ FORMAT_SPECS = {
              'text <=18 words), "quote" (title = the line, attribution), "myth_truth" (myth, truth), "list" (title + items: 3-4 short lines).',
     "carousel": 'Instagram carousel, 7-10 slides. "slides": [{"layout", ...}] where layout is one of: "hook" {title <=9 words, text <=16}, '
                 '"point" {title <=8 words, text <=28 words, number "01".."09"}, "list" {title, items: 3-5 lines <=8 words}, '
+                '"timeline" {title, items: 3-5 steps <=7 words, in order}, "compare" {title, a: label, b: label, left: 3-4 short lines, '
+                'right: 3-4 matching lines}, "matrix" {title, quadrants: exactly 4 {title <=3 words, text <=8 words}, x: axis label; the '
+                '2nd quadrant is highlighted as the one that matters}, "tracker" {title, items: 3-5 habits <=4 words} (renders a 7-day '
+                'habit grid), "scale" {title: a self-rating question, levels: {"1–3": text, "4–7": text, "8–10": text}, text: comment prompt}, '
                 '"quote" {title, attribution}, "myth_truth" {myth <=12 words, truth <=10 words}, "cta" {title <=6 words, items: exactly '
                 '3 lines: a comment line using STEP1, a save line, a send-to-a-brother line}. Slide 1 = hook containing the KEYWORD idea; '
-                'slide 2 re-hooks (raise the stakes); mix at least 3 different layouts; last slide = cta.',
+                'slide 2 re-hooks (raise the stakes); use at least one infographic layout (timeline/compare/matrix/tracker/scale) when it '
+                'fits; mix at least 3 different layouts; last slide = cta.',
     "reel": 'Instagram Reel, kinetic on-screen text, no voiceover. "script": 5-8 beats {"text": <=9 words, "seconds": 1.6-3.0}, '
             'total 10-20 s. Beat 1 = the hook (contains the KEYWORD idea, pattern-interrupt, no greeting). Each beat must earn the '
             'next (open loop / tension). Final beat should loop smoothly back into beat 1 when the video replays. Also: '
@@ -90,8 +95,16 @@ Respond with ONLY JSON: {{"items": [{{"id": int, "relevance": float, "kind": str
 
 
 def generate(brand: str, platform: str, fmt: str, topic: str, angle: str, sources: list[dict],
-             recent_hooks: list[str], learnings: str, cta: str, link: str, archetype: str = "", keyword: str = "") -> str:
+             recent_hooks: list[str], learnings: str, cta: str, link: str, archetype: str = "", keyword: str = "",
+             style: str = "") -> str:
     arche_desc = ARCHETYPES.get(fmt, {}).get(archetype, "")
+    family = style.split("-")[0]
+    style_note = {
+        "notes": "renders as a phone-notes screenshot. Write it like a personal note to yourself or a friend: first person, plain "
+                 "sentences, 1-2 fitting emoji, NO *asterisk* markup, no poster slogans. Lists become checklists.",
+        "post": "renders as a social-post card (avatar + handle). Write like a candid post: conversational, punchy first line, "
+                "short lines, at most 1 emoji, no *asterisk* markup.",
+    }.get(family, "bold designed graphics; use the *accent* markup on the 1-3 words that carry the punch.")
     return f"""You write social content for this brand. Brand brief:
 <brand>
 {brand}
@@ -102,6 +115,7 @@ FORMAT: {fmt}
 TOPIC: {topic}
 ANGLE: {angle}
 ARCHETYPE: {archetype} ({arche_desc}). Build the whole post around this archetype so the feed never feels like the same post twice.
+VISUAL STYLE: {style_note}
 KEYWORD (search phrase to rank for): suggested "{keyword}". Use it only if it fits the TOPIC naturally; otherwise
 choose the best-fitting phrase from this bank: {json.dumps(KEYWORDS)}, or write the natural phrase a man would type into
 Instagram search for this topic. Never force a keyword that doesn't match the post. Return the one you used as "keyword".
