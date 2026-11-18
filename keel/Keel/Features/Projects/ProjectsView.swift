@@ -22,6 +22,14 @@ struct ProjectsView: View {
             }
             ForEach(projects) { p in
                 NavigationLink { LazyView(ProjectDetailView(project: p)) } label: { ProjectRow(project: p, tasks: tasks.filter { $0.projectId == p.id }) }
+                    // Swipe left to archive a finished project (Undo brings it back).
+                    .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                        Button {
+                            withAnimation(DS.spring) { p.isArchived = true }
+                            Haptics.success()
+                            UndoCenter.shared.offer("Archived “\(p.name)”", undo: { withAnimation(DS.spring) { p.isArchived = false } })
+                        } label: { Label("Archive", systemImage: "archivebox") }.tint(.indigo)
+                    }
             }
         }
         .navigationTitle("Projects")

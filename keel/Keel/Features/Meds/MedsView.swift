@@ -107,6 +107,17 @@ struct MedDoseRow: View {
                     .buttonStyle(.borderedProminent).tint(DS.Palette.accent)
             }
         }
+        // Swipe right to mark it taken, left to undo, like checking off a reminder.
+        .swipeActions(edge: .leading, allowsFullSwipe: true) {
+            if dose == nil {
+                Button { MedEngine.take(med, slot: slot, ctx: ctx) } label: { Label("Taken", systemImage: "checkmark") }.tint(DS.Palette.calm)
+            }
+        }
+        .swipeActions(edge: .trailing) {
+            if let dose {
+                Button { MedEngine.undo(dose, med: med, ctx: ctx) } label: { Label("Undo", systemImage: "arrow.uturn.backward") }.tint(.orange)
+            }
+        }
     }
 }
 

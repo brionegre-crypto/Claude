@@ -28,6 +28,8 @@ struct CalendarView: View {
     @AppStorage("calendar.mode") private var modeRaw = CalendarMode.week.rawValue
     @AppStorage("calendar.hidden") private var hiddenRaw = ""
     @State private var anchor = Calendar.current.startOfDay(for: Date())
+    @AppStorage(Custom.calendarDensityKey) private var density = 1.0      // hour height; pinch to change
+    @State private var pinchStart: Double?
     @State private var events: [EKEvent] = []
     @State private var loadedAt: Date?
     @State private var draft: EventDraft?
@@ -94,6 +96,27 @@ struct CalendarView: View {
                     }
                 }
             }
+            // Like Apple's Calendar: swipe left or right to go to the next or previous day, week or month,
+            // and pinch the timeline to make hours taller or shorter. Moving an event never also turns the page.
+            .simultaneousGesture(
+                DragGesture(minimumDistance: 40)
+                    .onEnded { v in
+                        guard Date().timeIntervalSince(CalendarSwipe.movingEvent) > 0.6 else { return }
+                        let dx = v.translation.width, dy = v.translation.height
+                        guard abs(dx) > 90, abs(dx) > abs(dy) * 2.2, abs(v.predictedEndTranslation.width) > 160 else { return }
+                        step(dx < 0 ? 1 : -1)
+                    }
+            )
+            .simultaneousGesture(
+                MagnifyGesture()
+                    .onChanged { v in
+                        guard mode != .month else { return }
+                        if pinchStart == nil { pinchStart = density }
+                        let next = min(1.8, max(0.6, (pinchStart ?? 1) * v.magnification))
+                        if abs(next - density) > 0.03 { density = next }      // fewer redraws while pinching
+                    }
+                    .onEnded { _ in pinchStart = nil; Haptics.tap() }
+            )
             .premiumBackground(DS.Palette.meeting)
             .navigationTitle(title)
             .keelSettingsButton(help: .calendar)
@@ -402,7 +425,8 @@ struct TimelineGrid: View {
     @State private var scrolledFor: Date?
     private let cal = Calendar.current
     private var isDay: Bool { days.count == 1 }
-    private var hourHeight: CGFloat { (isDay ? 64 : 52) * CGFloat(Custom.calendarDensity) }      // Customize → Calendar → Hour height
+    @AppStorage(Custom.calendarDensityKey) private var density = 1.0      // live, so a pinch resizes hours as you pinch
+    private var hourHeight: CGFloat { (isDay ? 64 : 52) * CGFloat(density > 0 ? density : 1) }      // Customize → Calendar → Hour height
     private let gutter: CGFloat = 46
 
     var body: some View {
@@ -633,13 +657,14 @@ struct DraggableBlock<Content: View>: View {
             .onTapGesture(perform: onTap)
             .gesture(
                 LongPressGesture(minimumDuration: 0.3)
-                    .onEnded { _ in withAnimation(DS.spring) { lifted = true }; Haptics.tap() }
+                    .onEnded { _ in withAnimation(DS.spring) { lifted = true }; CalendarSwipe.movingEvent = Date(); Haptics.tap() }
                     .sequenced(before: DragGesture())
                     .updating($drag) { value, state, _ in
                         if case .second(true, let d?) = value { state = d.translation }
                     }
                     .onEnded { value in
                         withAnimation(DS.spring) { lifted = false }
+                        CalendarSwipe.movingEvent = Date()
                         guard case .second(true, let d?) = value else { return }
                         let minutes = Int((d.translation.height / hourHeight * 60 / 15).rounded()) * 15
                         let days = colWidth > 0 ? Int((d.translation.width / colWidth).rounded()) : 0
@@ -1021,4 +1046,11 @@ struct QuickTaskSheet: View {
         }
         .presentationDetents([.medium])
     }
+}
+
+
+/// When an event was last picked up or dropped, so a swipe to change days isn't mistaken for moving it.
+@MainActor
+enum CalendarSwipe {
+    static var movingEvent = Date.distantPast
 }

@@ -1057,8 +1057,18 @@ enum TaskSearch {
         let q = NoteQuery.parse(raw, match: .all)
         return (q.phrases + q.terms + q.tags.map { String($0.dropFirst()) } + q.titleTerms).filter { !$0.isEmpty }
     }
+    /// A task's searchable text, prepared once per edit (not for every task on every letter you type).
+    nonisolated(unsafe) private static var cache: [UUID: (stamp: Int, text: String)] = [:]
     static func text(_ t: TaskItem) -> String {
-        NoteText.fold(([t.title, t.notes, t.listName] + t.tags + t.microSteps.map(\.text)).joined(separator: " \u{1F} "))
+        let parts = [t.title, t.notes, t.listName] + t.tags + t.microSteps.map(\.text)
+        var h = Hasher()
+        h.combine(parts)                       // keyed on the text itself, so any edit is picked up
+        let stamp = h.finalize()
+        if let c = cache[t.id], c.stamp == stamp { return c.text }
+        let s = NoteText.fold(parts.joined(separator: " \u{1F} "))
+        if cache.count > 8_000 { cache.removeAll(keepingCapacity: true) }
+        cache[t.id] = (stamp, s)
+        return s
     }
     static func matches(_ t: TaskItem, _ terms: [String]) -> Bool {
         guard !terms.isEmpty else { return true }

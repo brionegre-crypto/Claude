@@ -30,9 +30,11 @@ enum MetricGuides {
     static let categories = ["Keel scores", "Sleep", "Training & recovery", "Energy & daily life", "Heart", "Activity", "Body",
                              "Vitals", "Walking & mobility", "Running", "Hearing", "Nutrition"]
 
-    static func guide(_ id: String) -> MetricGuide? { all.first { $0.id == id } }
+    static func guide(_ id: String) -> MetricGuide? { byId[id] }
 
-    static var all: [MetricGuide] { keel + HealthMetricCatalog.all.map(fromHealth) }
+    /// Built once: the ⓘ on each Body card looks its guide up on every redraw.
+    static let all: [MetricGuide] = keel + HealthMetricCatalog.all.map(fromHealth)
+    private static let byId: [String: MetricGuide] = Dictionary(all.map { ($0.id, $0) }, uniquingKeysWith: { a, _ in a })
 
     // MARK: Keel's own scores and cards
 

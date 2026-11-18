@@ -42,6 +42,13 @@ struct GoalsView: View {
                         ForEach(areaGoals) { g in
                             NavigationLink { LazyView(GoalDetailView(goal: g)) } label: { GoalCard(goal: g, tasks: tasks.filter { $0.goalId == g.id }) }
                                 .buttonStyle(.plain)
+                                .contextMenu {
+                                    Button("Archive goal", systemImage: "archivebox") {
+                                        withAnimation(DS.spring) { g.isArchived = true }
+                                        Haptics.success()
+                                        UndoCenter.shared.offer("Archived “\(g.title)”", undo: { withAnimation(DS.spring) { g.isArchived = false } })
+                                    }
+                                }
                         }
                     }
                 }

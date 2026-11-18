@@ -57,7 +57,7 @@ enum ToolHubs {
                        dest: { AnyView(ToolHubView(spec: spec, tools: tools)) })
     }
 
-    static var memberIds: Set<String> { Set(specs.flatMap { $0.members.map(\.id) }) }
+    static let memberIds: Set<String> = Set(specs.flatMap { $0.members.map(\.id) })
 }
 
 /// One combined tool: tabs across the top, each showing one of the original tools.

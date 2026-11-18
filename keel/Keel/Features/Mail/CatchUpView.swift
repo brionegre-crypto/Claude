@@ -39,6 +39,13 @@ struct CatchUpView: View {
                                 Text(e.aiSummary ?? e.subject).font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft).lineLimit(2)
                             }
                         }
+                        // Same swipes as Inbox: right to mark read, left to archive.
+                        .swipeActions(edge: .leading, allowsFullSwipe: true) {
+                            Button { markRead([e]) } label: { Label("Read", systemImage: "envelope.open") }.tint(.blue)
+                        }
+                        .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                            Button { archive(e) } label: { Label("Archive", systemImage: "archivebox") }.tint(.indigo)
+                        }
                     }
                 }
             }
@@ -66,7 +73,19 @@ struct CatchUpView: View {
             ?? "Top: " + needsYou.prefix(3).map { "\($0.fromName.isEmpty ? $0.from : $0.fromName) (\($0.subject))" }.joined(separator: "; ") + "."
     }
 
-    private func markRead(_ list: [EmailMessage]) {
+    private func archive(_ e: EmailMessage) {
+        e.isArchived = true
+        e.isRead = true
+        let id = e.providerMessageId
+        if let a = accounts.first(where: { $0.id == e.accountId }) {
+            let p = MailProviderFactory.make(for: a)
+            Task { try? await p.archive(id) }
+        }
+        Haptics.success()
+        UndoCenter.shared.notify("Archived")
+    }
+
+        private func markRead(_ list: [EmailMessage]) {
         for e in list {
             e.isRead = true
             let id = e.providerMessageId

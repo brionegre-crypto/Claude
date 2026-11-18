@@ -313,6 +313,7 @@ struct RootView: View {
         // Focus lives above the tab bar (like Music's mini-player): always one tap away, shows the live timer.
         .tabViewBottomAccessory { FocusAccessory { router.showFocus = true } }
         .overlay(alignment: .bottom) { UndoToast() }
+        .modifier(ShakeToUndo())                                     // shake to undo, like Apple's apps
         .overlay { EveningCalm() }                                   // warmer after sunset
         // Top banners float over the screen. As safe-area insets wrapping the whole TabView they changed every tab's
         // layout (one even added its default gap while empty), so each tab's bar and title re-settled after

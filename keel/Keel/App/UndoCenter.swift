@@ -44,6 +44,11 @@ final class UndoCenter {
         Haptics.tap()
     }
 
+    /// Keeps the Undo open while you decide (shake to undo shows a question).
+    func hold() { timer?.cancel() }
+    /// Done deciding without undoing: finish as normal.
+    func release() { finish() }
+
     private func finish() {
         timer?.cancel()
         commit?()
@@ -72,5 +77,40 @@ struct UndoToast: View {
             .padding(.bottom, 110)
             .transition(.move(edge: .bottom).combined(with: .opacity))
         }
+    }
+}
+
+// MARK: - Shake to undo
+
+/// Shaking your iPhone right after deleting, archiving or moving something offers to undo it, as in Apple's
+/// own apps (only while the Undo button is showing; you can turn Shake to Undo off in iPhone Settings →
+/// Accessibility → Touch, which iPhone then respects).
+extension Notification.Name {
+    static let keelShake = Notification.Name("keel.shake")
+}
+
+extension UIWindow {
+    open override func motionEnded(_ motion: UIEvent.EventSubtype, with event: UIEvent?) {
+        if motion == .motionShake { NotificationCenter.default.post(name: .keelShake, object: nil) }
+        super.motionEnded(motion, with: event)
+    }
+}
+
+/// Asks "Undo …?" when you shake while something can still be undone.
+struct ShakeToUndo: ViewModifier {
+    @State private var asking: String?
+    func body(content: Content) -> some View {
+        content
+            .onReceive(NotificationCenter.default.publisher(for: .keelShake)) { _ in
+                let u = UndoCenter.shared
+                guard u.hasUndo, let m = u.message else { return }
+                Haptics.tap()
+                u.hold()
+                asking = m
+            }
+            .alert("Undo “\(asking ?? "")”?", isPresented: Binding(get: { asking != nil }, set: { if !$0 { asking = nil } })) {
+                Button("Undo") { UndoCenter.shared.performUndo(); asking = nil }
+                Button("Cancel", role: .cancel) { UndoCenter.shared.release(); asking = nil }
+            }
     }
 }
