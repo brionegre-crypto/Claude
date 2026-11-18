@@ -130,7 +130,7 @@ class Worker:
         secrets = SecretStore(self.s.data_dir)
         if not secrets.get("instagram_access_token"):
             return {"skipped": "Instagram not connected"}
-        out = competitive.collect(self.s, self.db, InstagramPublisher(self.s, secrets))
+        out = competitive.collect(self.s, self.db, competitive.research_client(self.s, secrets))
         last = self.db.kv_get("competitive_insights") or {}
         if competitive.handles(self.db) and (not last.get("at") or utcnow() - parse(last["at"]) > timedelta(days=7)):
             try:

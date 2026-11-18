@@ -20,6 +20,7 @@ from autopilot import config
 from autopilot.config import PROJECT_ROOT
 
 STEPS = ["system", "project", "network", "ai", "accounts", "formats", "notifications", "dashboard", "service", "e2e"]
+OPTIONAL_STEPS = ["research"]
 
 
 def say(msg=""):
@@ -390,6 +391,63 @@ def real_test(s, db, fmt) -> dict:
     return {"ok": ok, "detail": (row["permalink"] or "published") if ok else f"{r}: {row['block_reason']}", "at": iso()}
 
 
+RESEARCH_GUIDE = """
+Competitor research uses Instagram's Business Discovery API, which Meta only allows through Facebook Login.
+This adds a READ-ONLY connection used just for looking up other accounts' public stats. Publishing is unchanged. Free.
+
+ 1. Your Instagram must be linked to your Facebook Page: Instagram app → Settings → Accounts Center → or
+    Facebook Page → Settings → Linked accounts → Instagram. (You already post to a Be The Man Facebook Page.)
+ 2. Open https://developers.facebook.com/tools/explorer
+    • Meta App: choose "BTM Autopilot"
+    • User or Page: "Get User Access Token"
+    • Add permissions: instagram_basic, pages_show_list, pages_read_engagement, business_management
+    • Click "Generate Access Token" and approve (pick your Page AND your Instagram account when asked).
+ 3. Make it last 60 days: click the blue (i) next to the token → "Open in Access Token Tool" →
+    "Extend Access Token" → copy the new long token.
+ 4. Paste it below (hidden). Never paste it in a chat.
+"""
+
+
+def step_research(s, db):
+    say("== Optional: competitor research connection ==")
+    say(RESEARCH_GUIDE)
+    from autopilot.publishing.instagram import clean_token, detect_account, scrub
+    from autopilot.secrets import SecretStore
+    sec = SecretStore(s.data_dir)
+    tok = clean_token(hidden("Paste the research (Facebook Login) access token"))
+    if not tok:
+        say("Skipped."); return False
+    say(f"  (received {len(tok)} characters, starting {tok[:3]}…)")
+    try:
+        acct = detect_account(s, tok)
+    except Exception as e:
+        say(f"  ✗ {scrub(str(e), tok)}"); mark(db, "research", False, "token check failed"); return False
+    if "graph.facebook.com" not in acct["host"]:
+        say("  ✗ That's an Instagram-login token. This step needs a Facebook-login token from the Graph API Explorer.")
+        return False
+    sec.set("research_access_token", tok)
+    sec.set("research_user_id", acct["user_id"])
+    sec.set("research_api_host", "https://graph.facebook.com")
+    from autopilot import competitive
+    ig = competitive.research_client(s, sec)
+    try:   # prove Business Discovery works by looking ourselves up
+        me = ig._call("GET", ig.uid, fields=f"business_discovery.username({acct['username'] or s.get('brand.handle_instagram')}){{followers_count,media_count}}")
+        bd = me.get("business_discovery", {})
+        say(f"  ✓ Business Discovery works (@{acct['username']}: {bd.get('followers_count')} followers)")
+        if acct.get("expires_at"):
+            from datetime import datetime as _dt
+            say(f"  Token valid until {_dt.fromtimestamp(acct['expires_at'], timezone.utc):%b %d, %Y}. You'll need to redo this step then.")
+        mark(db, "research", True)
+        say("Now open the dashboard → Competitors → Refresh now.")
+        return True
+    except Exception as e:
+        say(f"  ✗ Business Discovery still refused: {scrub(str(e), tok)}")
+        say("    Check that the token includes instagram_basic + pages_read_engagement + pages_show_list and that your")
+        say("    Instagram account is linked to your Facebook Page, then run this step again.")
+        mark(db, "research", False, "business discovery refused")
+        return False
+
+
 def step_notifications(s, db):
     say("== 7. Notifications ==")
     say("Free options: ntfy.sh push to your phone (install the free ntfy app), a Discord/Slack webhook, or email through")
@@ -521,7 +579,7 @@ def main(step: str | None = None):
     say("Social Autopilot setup wizard. Nothing is published to real accounts without your typed confirmation.\n")
     steps = [step] if step else STEPS
     for st in steps:
-        if st not in STEPS:
+        if st not in STEPS + OPTIONAL_STEPS:
             say(f"unknown step {st}; choose from {STEPS}"); return
         s, db = ctx() if st != "project" else (s, db)
         try:

@@ -220,7 +220,7 @@ def cmd_competitors(a):
     elif a.action == "collect":
         from autopilot.publishing.instagram import InstagramPublisher
         from autopilot.secrets import SecretStore
-        print(json.dumps(competitive.collect(s, db, InstagramPublisher(s, SecretStore(s.data_dir))), indent=2))
+        print(json.dumps(competitive.collect(s, db, competitive.research_client(s, SecretStore(s.data_dir))), indent=2))
     elif a.action == "insights":
         print(json.dumps(competitive.ai_insights(s, db, _provider(s, db)), indent=2))
 

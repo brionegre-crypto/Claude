@@ -266,7 +266,7 @@ def create_app(s, db: DB) -> FastAPI:
     def competitors_run():
         from autopilot import competitive
         from autopilot.publishing.instagram import InstagramPublisher
-        res = competitive.collect(s, db, InstagramPublisher(s, SecretStore(s.data_dir)))
+        res = competitive.collect(s, db, competitive.research_client(s, SecretStore(s.data_dir)))
         msg = f"Collected: {', '.join(res['collected']) or 'none'}" + (f" · errors: {json.dumps(res['errors'])[:800]}" if res["errors"] else "")
         try:
             if competitive.handles(db):

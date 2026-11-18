@@ -22,6 +22,38 @@ MEDIA_FIELDS = "id,caption,like_count,comments_count,timestamp,media_type,media_
 HANDLE_RE = re.compile(r"^[A-Za-z0-9._]{1,30}$")
 
 
+class _ResearchSecrets:
+    """Presents the optional research token (Facebook Login) to InstagramPublisher as if it were the main one."""
+    MAP = {"instagram_access_token": "research_access_token", "instagram_user_id": "research_user_id",
+           "instagram_api_host": "research_api_host"}
+
+    def __init__(self, store):
+        self.store = store
+
+    def get(self, k, default=None):
+        return self.store.get(self.MAP.get(k, k), default)
+
+    def set(self, k, v):
+        self.store.set(self.MAP.get(k, k), v)
+
+    def delete(self, k):
+        self.store.delete(self.MAP.get(k, k))
+
+
+def research_client(s, secrets, client=None):
+    """Business Discovery only works with a Facebook-Login user token. Use the dedicated research token when one is
+    connected (wizard step 'research'); otherwise fall back to the publishing token."""
+    from autopilot.publishing.instagram import InstagramPublisher
+    if secrets.get("research_access_token"):
+        return InstagramPublisher(s, _ResearchSecrets(secrets), client=client)
+    return InstagramPublisher(s, secrets, client=client)
+
+
+PERMISSION_HELP = ("Instagram refused the competitor lookup (error #10). Business Discovery needs a Facebook-Login "
+                   "connection linked to your Facebook Page. Add the free read-only research connection: "
+                   "./scripts/autopilot wizard --step research")
+
+
 def clean_handle(h: str) -> str | None:
     h = (h or "").strip().lstrip("@")
     h = re.sub(r"^https?://(www\.)?instagram\.com/", "", h).split("?")[0].strip("/")
@@ -78,7 +110,9 @@ def collect(s, db: DB, ig, limit: int = 30) -> dict:
             out["collected"].append(h)
         except Exception as e:
             msg = str(e)
-            if "graph.instagram.com" in getattr(ig, "host", "") or "business_discovery" in msg.lower() and "nonexisting field" in msg.lower():
+            if "code=10 " in msg or "code=10," in msg or "(#10)" in msg or "code=200 " in msg:
+                msg = PERMISSION_HELP
+            elif "graph.instagram.com" in getattr(ig, "host", "") or "business_discovery" in msg.lower() and "nonexisting field" in msg.lower():
                 msg = ("Business Discovery needs a Facebook/Unified-login connection (yours: "
                        f"{getattr(ig, 'host', '?')}). Reconnect via the wizard with a Unified-login token. ") + msg
             elif "cannot be found" in msg.lower() or "does not exist" in msg.lower() or "code=110" in msg or "code=100" in msg:

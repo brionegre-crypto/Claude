@@ -47,3 +47,31 @@ def test_competitors_page(env, fake_ig):
     assert set(competitive.handles(db)) == {"strongdads", "another_one", "third.acct"}
     c.post("/competitors/remove", data={"csrf": csrf, "handle": "another_one"})
     assert "another_one" not in competitive.handles(db)
+
+
+def test_permission_error_explains_fix(env, fake_ig):
+    s, db = env
+    fake, pubs = fake_ig
+    ig = pubs["instagram"]
+    competitive.add(db, "strongdads")
+    orig = ig._call
+    def deny(method, path, **params):
+        if "business_discovery" in params.get("fields", ""):
+            from autopilot.publishing.base import PermanentError
+            raise PermanentError("HTTP 400 code=10 subcode=None: (#10) Application does not have permission for this action")
+        return orig(method, path, **params)
+    ig._call = deny
+    out = competitive.collect(s, db, ig)
+    assert "wizard --step research" in out["errors"]["strongdads"]
+
+
+def test_research_token_is_used_when_present(env):
+    s, db = env
+    from autopilot.secrets import SecretStore
+    sec = SecretStore(s.data_dir)
+    sec.set("instagram_access_token", "IGpublish"); sec.set("instagram_user_id", "1"); sec.set("instagram_api_host", "https://graph.instagram.com")
+    assert competitive.research_client(s, sec).token == "IGpublish"
+    sec.set("research_access_token", "EAAresearch"); sec.set("research_user_id", "2"); sec.set("research_api_host", "https://graph.facebook.com")
+    rc = competitive.research_client(s, sec)
+    assert rc.token == "EAAresearch" and rc.uid == "2" and rc.flavor == "facebook"
+    assert sec.get("instagram_access_token") == "IGpublish"          # publishing connection untouched
