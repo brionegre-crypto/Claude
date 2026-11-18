@@ -222,6 +222,29 @@ struct KeelApp: App {
     }
 }
 
+/// Sends a section that isn't in your tab bar to a sheet. Only this empty view re-runs when the tab changes.
+private struct HiddenTabGuard: View {
+    let items: [String]
+    @Binding var hiddenSection: HiddenSection?
+    private var router = AppRouter.shared
+
+    init(items: [String], hiddenSection: Binding<HiddenSection?>) {
+        self.items = items
+        _hiddenSection = hiddenSection
+    }
+
+    var body: some View {
+        Color.clear
+            .allowsHitTesting(false)
+            .accessibilityHidden(true)
+            .onChange(of: router.tab) { old, new in
+                guard let id = TabBarConfig.id(for: new), !items.contains(id) else { return }
+                router.tab = items.contains(TabBarConfig.id(for: old) ?? "") ? old : .today
+                hiddenSection = HiddenSection(id: id)
+            }
+    }
+}
+
 struct RootView: View {
     @State private var router = AppRouter.shared
     @State private var showCommandBar = false
@@ -267,11 +290,9 @@ struct RootView: View {
         }
         .onChange(of: showsSidebarSettings) { _, shown in if !shown && router.tab == .settings { router.tab = .today } }
         // A section you took out of the tab bar still opens (from a link, widget or ⌘-shortcut), as a sheet.
-        .onChange(of: router.tab) { old, new in
-            guard let id = TabBarConfig.id(for: new), !tabBarItems.contains(id) else { return }
-            router.tab = tabBarItems.contains(TabBarConfig.id(for: old) ?? "") ? old : .today
-            hiddenSection = HiddenSection(id: id)
-        }
+        // Watched from a tiny background view, so switching tabs doesn't redraw this whole shell
+        // (every overlay, sheet and banner below) on each tap.
+        .background { HiddenTabGuard(items: tabBarItems, hiddenSection: $hiddenSection) }
         .sheet(item: $hiddenSection) { HiddenSectionSheet(sectionId: $0.id) }
         // Handoff: pick up the page or task you had open on another device.
         .onContinueUserActivity(KeelHandoff.noteType) { a in

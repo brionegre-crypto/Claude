@@ -886,6 +886,7 @@ struct EmailRow: View {
     }
 
     var body: some View {
+        let chips = self.chips          // worked out once per row, not twice
         HStack(alignment: .top, spacing: DS.Space.m) {
             if layout.avatars {
                 SenderAvatar(name: email.fromName, email: email.from, size: layout.avatarSize)

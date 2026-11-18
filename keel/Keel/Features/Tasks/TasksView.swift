@@ -58,6 +58,8 @@ struct TasksView: View {
     @AppStorage("tasks.board") private var boardMode = false
     @State private var sharingList: String?
     @FocusState private var addFocused: Bool
+    /// Per-update cache: filtering, grouping and sorting run once per screen update instead of once per use.
+    @State private var memo = TasksMemo()
 
     private let cal = Calendar.current
 
@@ -86,9 +88,9 @@ struct TasksView: View {
     }
 
     private var lists: [String] {
-        Array(Set(tasks.map(\.listName) + CalendarService.shared.reminderLists.map(\.title))).sorted()
+        memo.get(\.lists) { Array(Set(tasks.map(\.listName) + CalendarService.shared.reminderLists.map(\.title))).sorted() }
     }
-    private var tags: [String] { Array(Set(tasks.flatMap(\.tags))).filter { !TaskMeta.isHidden($0) }.sorted() }
+    private var tags: [String] { memo.get(\.tags) { Array(Set(tasks.flatMap(\.tags))).filter { !TaskMeta.isHidden($0) }.sorted() } }
 
     private var chosen: [TaskItem] { tasks.filter { selectedTasks.contains($0.id) } }
 
@@ -133,7 +135,9 @@ struct TasksView: View {
 
     private var open: [TaskItem] { tasks.filter { !$0.isDone && !$0.isSomeday } }
 
-    private var filtered: [TaskItem] {
+    private var filtered: [TaskItem] { memo.get(\.filtered) { computeFiltered() } }
+
+    private func computeFiltered() -> [TaskItem] {
         let endToday = cal.date(byAdding: .day, value: 1, to: cal.startOfDay(for: Date()))!
         let end7 = cal.date(byAdding: .day, value: 7, to: endToday)!
         var base: [TaskItem]
@@ -156,6 +160,7 @@ struct TasksView: View {
     }
 
     var body: some View {
+        let _ = memo.reset()          // a fresh update: forget last update's results
         NavigationStack {
             VStack(spacing: 0) {
                 // The chips scroll with the content as its first row (as Inbox does). Sitting above the list or
@@ -370,7 +375,9 @@ struct TasksView: View {
         return due == 0 ? (done > 0 ? "\(done) done today · clear sailing" : "Clear sailing · \(HorizonSky.daylightLeft())") : "\(due) to do today\(done > 0 ? " · \(done) done" : "")"
     }
 
-    private var groups: [(title: String, items: [TaskItem])] {
+    private var groups: [(title: String, items: [TaskItem])] { memo.get(\.groups) { computeGroups() } }
+
+    private func computeGroups() -> [(title: String, items: [TaskItem])] {
         let active = filtered.filter { !$0.isWaitingOn }
         let start = cal.startOfDay(for: Date())
         let tomorrow = cal.date(byAdding: .day, value: 1, to: start)!
@@ -396,7 +403,8 @@ struct TasksView: View {
         let pinned: [(title: String, items: [TaskItem])] = [("Pinned", sorted(active.filter(\.isPinned)))]
         // Things-style: tonight's tasks get their own section after Today.
         let evening = Custom.taskEveningSection ? active.filter { !$0.isPinned && TaskMeta.isEvening($0) && ($0.dueDate ?? .distantFuture) < tomorrow } : []
-        let rest = active.filter { !evening.contains($0) }
+        let eveningIds = Set(evening.map(\.id))
+        let rest = active.filter { !eveningIds.contains($0.id) }
         var out = pinned + buckets.map { (title, test) in (title, sorted(rest.filter { !$0.isPinned && test($0) })) }
         if let i = out.firstIndex(where: { $0.title == "Today" }) ?? out.firstIndex(where: { $0.title == "Overdue" }) {
             out.insert(("This Evening", sorted(evening)), at: i + 1)
@@ -504,6 +512,10 @@ struct TaskRow: View {
     var onRolled: ((Date) -> Void)? = nil
 
     var body: some View {
+        let prefs = TaskRowPrefs.current     // one cached read instead of six settings lookups per row
+        let tags = task.tags                 // decoded once per row, not once per badge
+        let deadline = tags.first { $0.hasPrefix(TaskMeta.deadlinePrefix) }.flatMap { ISO8601DateFormatter.dateOnly.date(from: String($0.dropFirst(TaskMeta.deadlinePrefix.count))) }
+        let steps = task.microSteps
         HStack(spacing: DS.Space.m) {
             CompletionCheck(isDone: Binding(get: { task.isDone }, set: { done in
                 if let next = TaskActions.setDone(task, done) { onRolled?(next) }
@@ -519,7 +531,7 @@ struct TaskRow: View {
                 Text(task.title).strikethrough(task.isDone).foregroundStyle(task.isDone ? DS.Palette.inkSoft : DS.Palette.ink)
                 HStack(spacing: 6) {
                     if let d = task.dueDate {
-                        Text(dueText(d)).foregroundStyle(d < Date() && !task.isDone && !UserDefaults.standard.bool(forKey: Prefs.calm) ? DS.Palette.warmth : DS.Palette.inkSoft)
+                        Text(dueText(d)).foregroundStyle(d < Date() && !task.isDone && !prefs.calm ? DS.Palette.warmth : DS.Palette.inkSoft)
                     }
                     if task.isPinned { Image(systemName: "pin.fill").foregroundStyle(DS.Palette.accent) }
                     if task.blockedById != nil { Image(systemName: "lock.fill").accessibilityLabel("Blocked by another task") }
@@ -527,20 +539,20 @@ struct TaskRow: View {
                     if task.recurrence != nil { Image(systemName: "repeat") }
                     if task.alertOffsetMinutes != nil { Image(systemName: "bell") }
                     if task.locationName != nil { Image(systemName: "location") }
-                    if !task.microSteps.isEmpty { Text("\(task.microSteps.filter(\.done).count)/\(task.microSteps.count)") }
+                    if !steps.isEmpty { Text("\(steps.filter(\.done).count)/\(steps.count)") }
                     if task.sourceEmailId != nil { Image(systemName: "envelope") }
-                    if showList && Custom.taskShowList && task.listName != "Inbox" { Text(task.listName) }
-                    if Custom.taskShowDuration && !task.isDone { Text("~\(ADHDCoach.minutes(task))m") }
-                    if let dl = TaskMeta.deadline(task) {
+                    if showList && prefs.showList && task.listName != "Inbox" { Text(task.listName) }
+                    if prefs.showDuration && !task.isDone { Text("~\(ADHDCoach.minutes(task))m") }
+                    if let dl = deadline {
                         Text("⚑ \(dl.formatted(.dateTime.month(.abbreviated).day()))").foregroundStyle(dl < Date().addingTimeInterval(2 * 86_400) ? DS.Palette.warmth : DS.Palette.inkSoft)
                     }
-                    if TaskMeta.isEvening(task) { Image(systemName: "moon.stars").foregroundStyle(.indigo) }
-                    if Custom.taskShowTags { ForEach(TaskMeta.visibleTags(task).prefix(2), id: \.self) { Text("#\($0)").foregroundStyle(DS.Palette.accent) } }
+                    if tags.contains(TaskMeta.eveningTag) { Image(systemName: "moon.stars").foregroundStyle(.indigo) }
+                    if prefs.showTags { ForEach(tags.filter { !TaskMeta.isHidden($0) }.prefix(2), id: \.self) { Text("#\($0)").foregroundStyle(DS.Palette.accent) } }
                 }
                 .font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
             }
             Spacer()
-            if Custom.taskShowEnergy { Image(systemName: task.energy.icon).font(.caption).foregroundStyle(DS.Palette.inkSoft) }
+            if prefs.showEnergy { Image(systemName: task.energy.icon).font(.caption).foregroundStyle(DS.Palette.inkSoft) }
         }
     }
 
@@ -908,3 +920,40 @@ enum NaturalDate {
 }
 
 private struct ListName: Identifiable { var name: String; var id: String { name } }
+
+
+// MARK: - Speed helpers
+
+/// Remembers derived lists (filtered, grouped, sorted) for the length of one screen update.
+/// A plain class in @State: writing to it never triggers another update.
+final class TasksMemo {
+    var lists: [String]?
+    var tags: [String]?
+    var filtered: [TaskItem]?
+    var groups: [(title: String, items: [TaskItem])]?
+    func reset() { lists = nil; tags = nil; filtered = nil; groups = nil }
+    func get<T>(_ key: ReferenceWritableKeyPath<TasksMemo, T?>, _ make: () -> T) -> T {
+        if let v = self[keyPath: key] { return v }
+        let v = make(); self[keyPath: key] = v; return v
+    }
+}
+
+@MainActor
+/// Task row settings, read once and refreshed only when a setting changes (not six lookups per row per frame).
+struct TaskRowPrefs {
+    var calm: Bool, showList: Bool, showDuration: Bool, showTags: Bool, showEnergy: Bool
+    nonisolated(unsafe) private static var cached: TaskRowPrefs?
+    nonisolated(unsafe) private static var observer: NSObjectProtocol?
+    static var current: TaskRowPrefs {
+        if let c = cached { return c }
+        if observer == nil {
+            observer = NotificationCenter.default.addObserver(forName: UserDefaults.didChangeNotification, object: nil, queue: nil) { _ in
+                TaskRowPrefs.cached = nil
+            }
+        }
+        let c = TaskRowPrefs(calm: UserDefaults.standard.bool(forKey: Prefs.calm), showList: Custom.taskShowList,
+                             showDuration: Custom.taskShowDuration, showTags: Custom.taskShowTags, showEnergy: Custom.taskShowEnergy)
+        cached = c
+        return c
+    }
+}

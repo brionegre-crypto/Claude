@@ -11,8 +11,15 @@ struct SenderAvatar: View {
     var size: CGFloat = 38
     @State private var photo: UIImage?
 
-    private static var cache: [String: UIImage] = [:]
-    private static var misses: Set<String> = []
+    init(name: String, email: String, size: CGFloat = 38) {
+        self.name = name; self.email = email; self.size = size
+        // Rows are rebuilt as you scroll: show a known photo straight away instead of initials, then a swap.
+        _photo = State(initialValue: Self.cached(email.lowercased()))
+    }
+    private static func cached(_ key: String) -> UIImage? { cache[key] }
+
+    nonisolated(unsafe) private static var cache: [String: UIImage] = [:]
+    nonisolated(unsafe) private static var misses: Set<String> = []
 
     private var initials: String {
         let parts = (name.isEmpty ? email : name).split(whereSeparator: { $0 == " " || $0 == "." || $0 == "@" })
@@ -37,7 +44,11 @@ struct SenderAvatar: View {
         }
         .frame(width: size, height: size)
         .clipShape(Circle())
-        .task(id: email) { photo = await Self.lookup(email.lowercased()) }
+        .task(id: email) {
+            let key = email.lowercased()
+            guard photo == nil, !Self.misses.contains(key) else { return }     // nothing to fetch: no extra redraw
+            if let p = await Self.lookup(key) { photo = p }
+        }
         .accessibilityHidden(true)
     }
 

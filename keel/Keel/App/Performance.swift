@@ -1,0 +1,33 @@
+import SwiftUI
+
+// MARK: - Speed helpers shared by the busiest screens
+
+/// Remembers derived values (filtered lists, groups, summaries) for the length of one screen update.
+/// Screens call `reset()` at the top of `body`; every later use in the same update is a lookup, not a rescan.
+/// A plain class kept in @State: writing to it never triggers another update.
+final class RenderMemo {
+    private var values: [String: Any] = [:]
+    func reset() { values.removeAll(keepingCapacity: true) }
+    func get<T>(_ key: String, _ make: () -> T) -> T {
+        if let v = values[key] as? T { return v }
+        let v = make()
+        values[key] = v
+        return v
+    }
+}
+
+/// A page's preview text, built once per edit instead of on every redraw while you scroll.
+/// Building it means reading every block of the page, which is slow for long pages.
+@MainActor
+enum NoteSnippet {
+    private static var cache: [UUID: (stamp: Date, text: String)] = [:]
+
+    static func text(_ n: Note) -> String {
+        if let c = cache[n.id], c.stamp == n.updatedAt { return c.text }
+        let full = n.plainText
+        let text = full.count > 400 ? String(full.prefix(400)) : full
+        if cache.count > 3000 { cache.removeAll(keepingCapacity: true) }
+        cache[n.id] = (n.updatedAt, text)
+        return text
+    }
+}

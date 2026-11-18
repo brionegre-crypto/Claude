@@ -13,16 +13,18 @@ struct NotesView: View {
     @Environment(\.openWindow) private var openWindow
     @Environment(\.supportsMultipleWindows) private var multiWindow
     @Query(sort: \Note.updatedAt, order: .reverse) private var allNotes: [Note]
-    private var notes: [Note] { allNotes.filter { !$0.isTemplate } }
-    private var templates: [Note] { allNotes.filter { $0.isTemplate && !$0.title.hasPrefix("⚙︎") } }     // Keel's hidden settings pages (supertags, links, assignments) never show
+    private var notes: [Note] { memo.get("notes") { allNotes.filter { !$0.isTemplate } } }
+    private var templates: [Note] { memo.get("templates") { allNotes.filter { $0.isTemplate && !$0.title.hasPrefix("⚙︎") } } }     // Keel's hidden settings pages (supertags, links, assignments) never show
+    /// Per-update cache: the page list, folders and summaries are worked out once per screen update, not per use.
+    @State private var memo = RenderMemo()
     @State private var search = ""
     @State private var newFolderFor: Note?
     @State private var newFolderName = ""
     @State private var opened: Note?
     private var emptyFolders: [String] { emptyFoldersRaw.split(separator: "\n").map(String.init) }
-    private var folders: [String] { Array(Set(notes.compactMap(\.folder) + emptyFolders)).sorted { $0.localizedCaseInsensitiveCompare($1) == .orderedAscending } }
+    private var folders: [String] { memo.get("folders") { Array(Set(notes.compactMap(\.folder) + emptyFolders)).sorted { $0.localizedCaseInsensitiveCompare($1) == .orderedAscending } } }
 
-    private var ids: Set<UUID> { Set(notes.map(\.id)) }
+    private var ids: Set<UUID> { memo.get("ids") { Set(notes.map(\.id)) } }
     private var results: [Note] {
         notes.filter { $0.title.localizedCaseInsensitiveContains(search) || (!$0.isLocked && $0.plainText.localizedCaseInsensitiveContains(search)) }
     }
@@ -35,10 +37,11 @@ struct NotesView: View {
     @AppStorage("notes.layout") private var layoutRaw = Layout.cards.rawValue
     private var layout: Layout { Layout(rawValue: layoutRaw) ?? .cards }
     private var sortMode: SortMode { SortMode(rawValue: sortRaw) ?? .manual }
-    private var recent: [Note] { Array(notes.lazy.filter { !$0.title.isEmpty || $0.blocks.contains { !$0.text.isEmpty } }.prefix(Custom.notesRecentCount)) }
-    private var editedToday: Int { notes.filter { Calendar.current.isDateInToday($0.updatedAt) }.count }
+    private var recent: [Note] { memo.get("recent") { Array(notes.lazy.filter { !$0.title.isEmpty || !NoteSnippet.text($0).isEmpty }.prefix(Custom.notesRecentCount)) } }
+    private var editedToday: Int { memo.get("editedToday") { notes.filter { Calendar.current.isDateInToday($0.updatedAt) }.count } }
 
     var body: some View {
+        let _ = memo.reset()          // a fresh update: forget last update's results
         NavigationStack {
             List {
                 if !search.isEmpty {
@@ -423,7 +426,7 @@ struct NotesView: View {
                         if n.isPinned && !showSnippet { Image(systemName: "star.fill").font(.caption2).foregroundStyle(.yellow) }
                     }
                     if showSnippet && !n.isLocked {
-                        Text(n.aiSummary ?? n.plainText).font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft).lineLimit(2)
+                        Text(n.aiSummary ?? NoteSnippet.text(n)).font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft).lineLimit(2)
                     }
                     Text(subtitle(n, children: children)).font(.caption2).foregroundStyle(DS.Palette.inkSoft).lineLimit(1)
                 }
@@ -467,7 +470,9 @@ struct NotesView: View {
 
     // MARK: Folders
 
-    private var folderSummaries: [FolderSummary] {
+    private var folderSummaries: [FolderSummary] { memo.get("folderSummaries") { computeFolderSummaries() } }
+
+    private func computeFolderSummaries() -> [FolderSummary] {
         let all = ids
         let tops = notes.filter { $0.parentId == nil || !all.contains($0.parentId!) }
         let grouped = Dictionary(grouping: tops, by: { $0.folder ?? "" })
@@ -941,7 +946,7 @@ private struct NoteCard: View {
                 .frame(width: 200, height: 70)
                 VStack(alignment: .leading, spacing: 4) {
                     Text(note.title.isEmpty ? "Untitled" : note.title).font(DS.Font.headline).foregroundStyle(DS.Palette.ink).lineLimit(1)
-                    Text(note.isLocked ? "Locked" : (note.aiSummary ?? note.plainText).trimmingCharacters(in: .whitespacesAndNewlines))
+                    Text(note.isLocked ? "Locked" : (note.aiSummary ?? NoteSnippet.text(note)).trimmingCharacters(in: .whitespacesAndNewlines))
                         .font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft).lineLimit(3, reservesSpace: true)
                     Text(note.updatedAt.formatted(.relative(presentation: .named))).font(.caption2).foregroundStyle(DS.Palette.inkSoft)
                 }

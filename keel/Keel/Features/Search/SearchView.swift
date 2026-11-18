@@ -95,7 +95,7 @@ struct SearchView: View {
                             NavigationLink { LazyView(NoteEditor(note: note)) } label: {
                                 VStack(alignment: .leading) {
                                     Text(note.title).font(DS.Font.headline)
-                                    Text(note.plainText).font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft).lineLimit(2)
+                                    Text(NoteSnippet.text(note)).font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft).lineLimit(2)
                                 }
                             }
                         }

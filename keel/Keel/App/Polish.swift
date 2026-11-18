@@ -17,8 +17,11 @@ struct EveningCalm: View {
         TimelineView(.periodic(from: .now, by: 300)) { ctx in
             let sun = SunClock.today(ctx.date)
             let evening = on && (ctx.date > sun.set || ctx.date < sun.dawn)
-            Color(red: 1, green: 0.55, blue: 0.2).opacity(evening ? 0.06 : 0)
-                .animation(.easeInOut(duration: 2), value: evening)
+            // Daytime: no layer at all (an invisible full-screen layer still costs a little on every scroll frame).
+            ZStack {
+                if evening { Color(red: 1, green: 0.55, blue: 0.2).opacity(0.06).transition(.opacity) }
+            }
+            .animation(.easeInOut(duration: 2), value: evening)
         }
         .allowsHitTesting(false)
         .ignoresSafeArea()
