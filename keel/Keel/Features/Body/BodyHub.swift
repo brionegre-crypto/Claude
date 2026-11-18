@@ -88,13 +88,13 @@ struct HealthTilesSection: View {
     private var tiles: [Tile] {
         [
             Tile(id: "strength", title: "Strength", icon: "dumbbell.fill", color: BodyStyle.swell, dest: { AnyView(StrengthHomeView()) }),
-            Tile(id: "fresh", title: "Muscle freshness", icon: "figure.stand", color: .green, dest: { AnyView(MuscleFreshnessView()) }),
             Tile(id: "cardio", title: "Cardio & load", icon: "heart.circle.fill", color: .pink, dest: { AnyView(CardioChartsView()) }),
             Tile(id: "bioage", title: "Biological age", icon: "hourglass.circle.fill", color: .purple, dest: { AnyView(BioAgeView()) }),
             Tile(id: "records", title: "Health records", icon: "cross.vial.fill", color: .red, dest: { AnyView(HealthRecordsView()) }),
             Tile(id: "biology", title: "Biology", icon: "drop.fill", color: .red, dest: { AnyView(BiologyView()) }),
             Tile(id: "ask", title: "Ask about my body", icon: "sparkles", color: .indigo, dest: { AnyView(AskBodyView()) }),
-            Tile(id: "map", title: "Body map", icon: "figure.stand", color: BodyStyle.swell, dest: { AnyView(BodyMapView()) }),
+            Tile(id: "metrics", title: "All Health metrics", icon: "heart.text.clipboard", color: .red, dest: { AnyView(HealthMetricsView()) }),
+            Tile(id: "map", title: "Recovery map", icon: "figure.stand", color: BodyStyle.swell, dest: { AnyView(BodyMapView()) }),
             Tile(id: "meds", title: "Medications", icon: "pills.fill", color: .mint, dest: { AnyView(MedsView()) }),
             Tile(id: "prn", title: "As-needed medicines", icon: "cross.case.fill", color: .mint, dest: { AnyView(PRNView()) }),
             Tile(id: "symptoms", title: "Symptoms", icon: "thermometer.medium", color: .pink, dest: { AnyView(SymptomsView()) }),

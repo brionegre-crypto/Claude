@@ -276,11 +276,11 @@ struct BodyView: View {
         }
         LazyVGrid(columns: [GridItem(.flexible(), spacing: 10), GridItem(.flexible(), spacing: 10)], spacing: 10) {
             NavigationLink { LazyView(StrengthHomeView()) } label: { linkTile("Strength", "dumbbell.fill", BodyStyle.swell) }
-            NavigationLink { LazyView(MuscleFreshnessView()) } label: { linkTile("Muscle freshness", "figure.stand", .green) }
+            NavigationLink { LazyView(BodyMapView()) } label: { linkTile("Recovery map", "figure.stand", .green) }
             NavigationLink { LazyView(CardioChartsView()) } label: { linkTile("Cardio", "heart.circle.fill", .pink) }
             NavigationLink { LazyView(WorkoutHistoryView()) } label: { linkTile("Workouts", "figure.run", BodyStyle.swell) }
             NavigationLink { LazyView(BodyTrendsView()) } label: { linkTile("90-day trends", "chart.xyaxis.line", .purple) }
-            NavigationLink { LazyView(BodyMapView()) } label: { linkTile("Body map", "figure.stand.line.dotted.figure.stand", .orange) }
+            NavigationLink { LazyView(HealthMetricsView()) } label: { linkTile("All Health metrics", "heart.text.clipboard", .red) }
         }
         .buttonStyle(.plain)
     }

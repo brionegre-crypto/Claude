@@ -121,74 +121,203 @@ enum BodyMapData {
     }
 }
 
+/// The Recovery map: one picture of how ready each part of your body is to train.
+/// Muscles colour from fresh (green) through recovering (yellow) to worked hard (orange), using your strength sets
+/// and the workouts Apple Health recorded. Sore spots and pain you log show on top. Use it to pick today's workout
+/// (train what's fresh, rest what isn't) and to keep an eye on a niggle before it becomes an injury.
 struct BodyMapView: View {
     @State private var engine = BodyEngine.shared
-    @State private var back = false
     @State private var picked: BodyRegions.Region?
     @State private var spots = BodyMapData.spots
 
     var body: some View {
         let load = BodyMapData.load(days: engine.days)
         let sore = BodyMapData.current()
+        let ready = BodyRecovery.readiness(load: load, sore: sore)
         ScrollView {
-            VStack(spacing: 16) {
-                Picker("Side", selection: $back) { Text("Front").tag(false); Text("Back").tag(true) }.pickerStyle(.segmented)
-                GeometryReader { g in
-                    let scale = min(g.size.width / 100, g.size.height / 182)
-                    let xOff = (g.size.width - 100 * scale) / 2
-                    ZStack(alignment: .topLeading) {
-                        ForEach(BodyRegions.all.filter { $0.back == back }) { r in
-                            let rect = CGRect(x: xOff + r.rect.minX * scale, y: r.rect.minY * scale, width: r.rect.width * scale, height: r.rect.height * scale)
-                            let worked = load[r.id] ?? 0
-                            let s = sore[r.id]
-                            RoundedRectangle(cornerRadius: min(rect.width, rect.height) * r.round, style: .continuous)
-                                .fill(fill(worked: worked, sore: s))
-                                .overlay(RoundedRectangle(cornerRadius: min(rect.width, rect.height) * r.round, style: .continuous)
-                                    .strokeBorder(picked?.id == r.id ? DS.Palette.accent : Color.primary.opacity(0.12), lineWidth: picked?.id == r.id ? 2 : 0.6))
-                                .frame(width: rect.width - 1.5, height: rect.height - 1.5)
-                                .position(x: rect.midX, y: rect.midY)
-                                .onTapGesture { picked = r; Haptics.tap() }
-                                .accessibilityElement()
-                                .accessibilityLabel(r.name + (s.map { ", \(level($0.level))" } ?? "") + (worked > 0.1 ? ", worked recently" : ""))
-                                .accessibilityAddTraits(.isButton)
-                        }
-                    }
+            VStack(alignment: .leading, spacing: 16) {
+                KitIntro(icon: "figure.stand", color: BodyStyle.swell, text: "Your recovery map. Each muscle shows how ready it is to train, from your strength sets and the workouts in Apple Health: green is fresh, yellow is still recovering, orange was worked hard. Tap anywhere that's sore or hurts to log it, so Keel steers your workouts around it.")
+                todayCard(ready)
+                HStack(alignment: .top, spacing: 8) {
+                    figure(back: false, load: load, sore: sore, ready: ready)
+                    figure(back: true, load: load, sore: sore, ready: ready)
                 }
-                .frame(height: 420)
-                .animation(.snappy, value: back)
+                .frame(height: 340)
                 legend
-                Text("Tap a part of the body to log soreness or pain. Muscles you've worked in the last three days glow and fade as they recover.")
-                    .font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
-                if let c = BodyMapData.caution() { Label(c, systemImage: "exclamationmark.triangle").font(DS.Font.caption).foregroundStyle(.orange) }
+                if let c = BodyMapData.caution() {
+                    Label(c, systemImage: "exclamationmark.triangle.fill").font(DS.Font.caption).foregroundStyle(.orange)
+                }
+                muscleList(ready)
             }
             .padding(DS.Space.m)
         }
         .premiumBackground(BodyStyle.swell)
-        .navigationTitle("Body map")
-        .sheet(item: $picked) { r in RegionSheet(region: r, load: load[r.id] ?? 0, days: engine.days) { spots = BodyMapData.spots } }
+        .navigationTitle("Recovery map")
+        .sheet(item: $picked) { r in
+            RegionSheet(region: r, load: load[r.id] ?? 0, ready: ready.region[r.id] ?? 1, days: engine.days) { spots = BodyMapData.spots }
+        }
     }
 
-    private func fill(worked: Double, sore: SoreSpot?) -> Color {
-        if let s = sore { return (s.level >= 3 ? Color.red : Color.orange).opacity(s.level >= 3 ? 0.75 : 0.35 + 0.15 * Double(s.level)) }
-        if worked > 0.05 { return BodyStyle.swell.opacity(0.18 + 0.6 * worked) }
-        return Color.primary.opacity(0.08)
+    // MARK: Today
+
+    private func todayCard(_ r: BodyRecovery.Readiness) -> some View {
+        let fresh = r.groups.filter { $0.value >= 0.8 }.map(\.name)
+        let rest = r.groups.filter { $0.value < 0.5 }
+        return GlassCard(tint: BodyStyle.swell) {
+            VStack(alignment: .leading, spacing: 8) {
+                Text("TODAY").font(DS.Font.caption.weight(.semibold)).foregroundStyle(BodyStyle.swell)
+                if rest.isEmpty {
+                    Text("Everything's recovered. A good day for a hard session.").font(DS.Font.headline)
+                } else {
+                    Text(fresh.isEmpty ? "Take it easy today: most of you is still recovering." : "Train \(ListFormatter.localizedString(byJoining: Array(fresh.prefix(3))).lowercased()).")
+                        .font(DS.Font.headline)
+                    Text("Rest \(ListFormatter.localizedString(byJoining: rest.prefix(3).map { $0.name.lowercased() + " (" + $0.reason + ")" })).")
+                        .font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
+    }
+
+    // MARK: Figure
+
+    private func figure(back: Bool, load: [String: Double], sore: [String: SoreSpot], ready: BodyRecovery.Readiness) -> some View {
+        VStack(spacing: 4) {
+            GeometryReader { g in
+                let scale = min(g.size.width / 100, g.size.height / 182)
+                let xOff = (g.size.width - 100 * scale) / 2
+                let regions = BodyRegions.all.filter { $0.back == back }
+                ZStack(alignment: .topLeading) {
+                    // The silhouette: every region slightly enlarged, so the figure reads as one body.
+                    ForEach(regions) { r in
+                        let rect = place(r.rect.insetBy(dx: -1.6, dy: -1.6), scale, xOff)
+                        RoundedRectangle(cornerRadius: min(rect.width, rect.height) * max(r.round, 0.45), style: .continuous)
+                            .fill(Color.primary.opacity(0.07))
+                            .frame(width: rect.width, height: rect.height)
+                            .position(x: rect.midX, y: rect.midY)
+                    }
+                    ForEach(regions) { r in
+                        let rect = place(r.rect.insetBy(dx: 0.6, dy: 0.6), scale, xOff)
+                        let shape = RoundedRectangle(cornerRadius: min(rect.width, rect.height) * max(r.round, 0.45), style: .continuous)
+                        let s = sore[r.id]
+                        let worked = load[r.id] ?? 0
+                        shape
+                            .fill(LinearGradient(colors: [color(ready.region[r.id] ?? 1, worked: worked), color(ready.region[r.id] ?? 1, worked: worked).opacity(0.65)],
+                                                 startPoint: .top, endPoint: .bottom))
+                            .overlay {
+                                if let s {
+                                    shape.strokeBorder(s.level >= 3 ? Color.red : .orange, style: StrokeStyle(lineWidth: s.level >= 3 ? 2.2 : 1.6, dash: s.level >= 3 ? [] : [3, 2]))
+                                }
+                            }
+                            .overlay { if picked?.id == r.id { shape.strokeBorder(DS.Palette.accent, lineWidth: 2) } }
+                            .frame(width: rect.width, height: rect.height)
+                            .position(x: rect.midX, y: rect.midY)
+                            .onTapGesture { picked = r; Haptics.tap() }
+                            .accessibilityElement()
+                            .accessibilityLabel(r.name + ", \(Int(((ready.region[r.id] ?? 1) * 100).rounded()))% ready" + (s.map { ", \(level($0.level))" } ?? ""))
+                            .accessibilityAddTraits(.isButton)
+                    }
+                }
+            }
+            Text(back ? "Back" : "Front").font(.caption2.weight(.semibold)).foregroundStyle(DS.Palette.inkSoft)
+        }
+    }
+
+    private func place(_ r: CGRect, _ scale: CGFloat, _ xOff: CGFloat) -> CGRect {
+        CGRect(x: xOff + r.minX * scale, y: r.minY * scale, width: r.width * scale, height: r.height * scale)
+    }
+
+    /// Green when fresh, yellow while recovering, orange when worked hard. Untouched parts stay quiet.
+    private func color(_ ready: Double, worked: Double) -> Color {
+        if ready >= 0.95 && worked < 0.05 { return Color.primary.opacity(0.10) }
+        if ready >= 0.8 { return .green.opacity(0.55) }
+        if ready >= 0.5 { return .yellow.opacity(0.75) }
+        return .orange.opacity(0.85)
     }
     private func level(_ l: Int) -> String { l >= 3 ? "pain" : l == 2 ? "sore" : "a bit sore" }
 
     private var legend: some View {
-        HStack(spacing: 14) {
-            dot(BodyStyle.swell.opacity(0.7), "Worked")
-            dot(.orange.opacity(0.6), "Sore")
-            dot(.red.opacity(0.75), "Pain")
+        HStack(spacing: 12) {
+            dot(.green.opacity(0.55), "Fresh")
+            dot(.yellow.opacity(0.75), "Recovering")
+            dot(.orange.opacity(0.85), "Worked hard")
+            HStack(spacing: 4) { RoundedRectangle(cornerRadius: 3).strokeBorder(.red, lineWidth: 2).frame(width: 12, height: 12); Text("Pain") }
         }
         .font(.caption2)
+        .frame(maxWidth: .infinity)
     }
     private func dot(_ c: Color, _ t: String) -> some View { HStack(spacing: 4) { Circle().fill(c).frame(width: 10, height: 10); Text(t) } }
+
+    // MARK: Muscles
+
+    private func muscleList(_ r: BodyRecovery.Readiness) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Muscles").font(DS.Font.headline)
+            ForEach(r.muscles, id: \.muscle) { m in
+                Button {
+                    if let id = m.muscle.regions.first, let region = BodyRegions.region(id) { picked = region }
+                } label: {
+                    HStack {
+                        Text(m.muscle.name).foregroundStyle(DS.Palette.ink)
+                        Spacer()
+                        if let note = m.note { Text(note).font(.caption2).foregroundStyle(.orange) }
+                        ProgressView(value: m.ready).tint(m.ready >= 0.8 ? .green : m.ready >= 0.5 ? .yellow : .orange).frame(width: 90)
+                        Text("\(Int((m.ready * 100).rounded()))%").monospacedDigit().font(.caption.weight(.semibold)).frame(width: 38, alignment: .trailing)
+                            .foregroundStyle(DS.Palette.ink)
+                    }
+                }
+                .buttonStyle(.plain)
+            }
+            Text("Muscles are fresh again after about 2–3 days of rest. Logged soreness lowers readiness until it's gone.")
+                .font(.caption2).foregroundStyle(DS.Palette.inkSoft)
+        }
+        .padding(DS.Space.m)
+        .background(DS.Palette.elevated, in: .rect(cornerRadius: 18, style: .continuous))
+    }
+}
+
+/// How ready each muscle and body part is to train: worked load (strength + workouts) and logged soreness.
+@MainActor
+enum BodyRecovery {
+    struct MuscleState { let muscle: Muscle; let ready: Double; let note: String? }
+    struct Area { let name: String; let value: Double; let reason: String }
+    struct Readiness { var region: [String: Double]; var muscles: [MuscleState]; var groups: [Area] }
+
+    static func readiness(load: [String: Double], sore: [String: SoreSpot]) -> Readiness {
+        func soreCap(_ s: SoreSpot?) -> Double { guard let s else { return 1 }; return s.level >= 3 ? 0.2 : s.level == 2 ? 0.45 : 0.7 }
+        var region: [String: Double] = [:]
+        for r in BodyRegions.all { region[r.id] = min(1 - (load[r.id] ?? 0), soreCap(sore[r.id])) }
+        let muscles = Muscle.allCases.map { m -> MuscleState in
+            let values = m.regions.compactMap { region[$0] }
+            let ready = values.min() ?? 1
+            let worst = m.regions.compactMap { sore[$0] }.max { $0.level < $1.level }
+            return MuscleState(muscle: m, ready: max(0, ready), note: worst.map { $0.level >= 3 ? "pain" : "sore" })
+        }
+        let byName = Dictionary(uniqueKeysWithValues: muscles.map { ($0.muscle, $0) })
+        let groups: [(String, [Muscle])] = [
+            ("Legs", [.quads, .hamstrings, .calves, .glutes]), ("Chest", [.chest]), ("Back", [.upperBack, .lats, .lowerBack]),
+            ("Shoulders", [.shoulders, .rearDelts]), ("Arms", [.biceps, .triceps, .forearms]), ("Core", [.abs, .hips]),
+        ]
+        let g = groups.map { name, ms -> Area in
+            let states = ms.compactMap { byName[$0] }
+            let v = states.map(\.ready).min() ?? 1
+            let reason = states.contains { $0.note == "pain" } ? "pain" : states.contains { $0.note != nil } ? "sore" : "\(Int(((1 - v) * 100).rounded()))% tired"
+            return Area(name: name, value: v, reason: reason)
+        }
+        return Readiness(region: region, muscles: muscles, groups: g)
+    }
+
+    /// Roughly how long until a part that's this tired is fresh again.
+    static func hoursUntilFresh(load: Double) -> Int {
+        guard load > 0.2 else { return 0 }
+        return Int((36 * log(load / 0.2)).rounded(.up))
+    }
 }
 
 private struct RegionSheet: View {
     let region: BodyRegions.Region
     let load: Double
+    var ready: Double = 1
     let days: [BodyDay]
     var saved: () -> Void
     @Environment(\.dismiss) private var dismiss
@@ -200,6 +329,11 @@ private struct RegionSheet: View {
         let history = BodyMapData.spots.filter { $0.region == region.id }.sorted { $0.at > $1.at }.prefix(8)
         NavigationStack {
             Form {
+                Section {
+                    LabeledContent("Ready to train", value: "\(Int((ready * 100).rounded()))%")
+                    let hours = BodyRecovery.hoursUntilFresh(load: load)
+                    if hours > 0 { LabeledContent("Fresh again in", value: hours >= 24 ? "about \(Int((Double(hours) / 24).rounded())) day\(hours >= 36 ? "s" : "")" : "about \(hours) h") }
+                }
                 if !workouts.isEmpty {
                     Section("Worked recently") {
                         ForEach(workouts) { w in Text("\(w.name) · \(w.start.formatted(.relative(presentation: .named)))") }

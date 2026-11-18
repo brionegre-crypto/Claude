@@ -61,6 +61,8 @@
 	<string>Keel saves the strength workouts you log in Keel to Health, and, when you turn it on, the meals you log (calories, protein, carbs, fat, fiber, sugar, sodium and caffeine), removing them if you delete them in Keel.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Keel uses your location for today's weather, time-to-leave alerts for events, and finding places for location reminders.</string>
+	<key>NSAppleEventsUsageDescription</key>
+	<string>On Mac, Keel reads your Apple Notes once, when you choose Import all of Apple Notes, to bring them into Keel.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Keel records meetings you choose to record and turns them into notes.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>

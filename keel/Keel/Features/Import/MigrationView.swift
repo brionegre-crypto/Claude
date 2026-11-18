@@ -34,7 +34,7 @@ struct ImportView: View {
         Group {
             switch stage {
             case .choose: chooser
-            case .scanning: working("Reading your files…", detail: "Working out where they came from")
+            case .scanning: working(status.isEmpty ? "Reading your files…" : status, detail: status.isEmpty ? "Working out where they came from" : "Your notes stay on your devices")
             case .preview: if let bundle { preview(bundle) }
             case .importing: working(status, detail: "\(Int(progress * 100))%")
             case .done: if let record { done(record) }
@@ -103,7 +103,9 @@ struct ImportView: View {
                     sourceTile("Notion", "Connect or upload an export", "square.stack.3d.up.fill", .primary) { guide = .notion }
                     sourceTile("Obsidian", "Pick your vault folder", "diamond.fill", .purple) { guide = .obsidian }
                     sourceTile("Evernote", ".enex notebooks", "leaf.fill", .green) { guide = .evernote }
-                    sourceTile("Apple Notes", "Share notes to Keel", "note.text", .yellow) { guide = .markdown }
+                    sourceTile("Apple Notes", AppleNotesImport.available ? "Import all, one tap" : "All at once on Mac", "note.text", .yellow) {
+                        if AppleNotesImport.available { importAppleNotes() } else { guide = .markdown }
+                    }
                     sourceTile("Google Keep", "Takeout download", "lightbulb.fill", .orange) { guide = .keep }
                     sourceTile("Bear & more", "Markdown or TextBundle", "pawprint.fill", .red) { guide = .textbundle }
                 }
@@ -172,9 +174,34 @@ struct ImportView: View {
         .contentShape(Rectangle())
     }
 
+    // MARK: Apple Notes (Keel on Mac)
+
+    /// One tap: macOS asks once whether Keel may read Notes, then every note comes in to preview.
+    private func importAppleNotes() {
+        stage = .scanning
+        status = "Reading Apple Notes…"
+        Task {
+            do {
+                let b = try await AppleNotesImport.read { done, total in status = "Reading Apple Notes… \(done) of \(total)" }
+                if b.pages.isEmpty {
+                    error = "Keel didn't find any notes in Apple Notes."
+                    stage = .choose
+                    return
+                }
+                show(b, archive: nil)
+                folderName = "Apple Notes"
+                useFolder = false                    // keep your Notes folders as they are
+            } catch {
+                self.error = error.localizedDescription
+                stage = .choose
+            }
+        }
+    }
+
     // MARK: 2. Scan
 
     private func scan(_ urls: [URL]) {
+        status = ""
         stage = .scanning
         let force = forced
         Task {
@@ -411,6 +438,7 @@ struct SourceGuideSheet: View {
             "Choose the exported folder or .zip here. Images inside TextBundles come along.",
         ]
         case .markdown: [
+            "All of them in one tap: open Keel on your Mac, go to Move to Keel and tap Apple Notes, then Allow. Every note comes in with its folders, dates and pictures, and appears here on your iPhone through iCloud. (Apple only lets apps read Notes on a Mac.)",
             "One note: in the Notes app, open it, tap Share → Keel. It arrives as a note in Keel.",
             "All your notes, automatically: in the Shortcuts app make a shortcut with Find All Notes → Repeat with Each → Save to Keel Notes (Title: Name, Text: Body). Run it once; notes already in Keel are skipped, so you can run it again any time.",
             "Everything at once: at privacy.apple.com, request a copy of your iCloud Notes, unzip it, then choose its folder here.",

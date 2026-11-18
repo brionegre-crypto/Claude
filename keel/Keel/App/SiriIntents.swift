@@ -153,6 +153,8 @@ struct SaveNoteIntent: AppIntent {
     static let description: IntentDescription = "Saves text as a Keel note. Use it in Shortcuts to bring in notes or messages from other apps."
     @Parameter(title: "Title") var noteTitle: String?
     @Parameter(title: "Text") var text: String
+    /// Shortcuts' "Find Notes" gives each note's folder; passing it keeps your Notes folders in Keel.
+    @Parameter(title: "Folder") var folder: String?
 
     @MainActor func perform() async throws -> some IntentResult & ProvidesDialog {
         let ctx = KeelStore.container.mainContext
@@ -164,6 +166,7 @@ struct SaveNoteIntent: AppIntent {
             return .result(dialog: "Already in Keel.")
         }
         let note = Note(title: title, blocks: [NoteBlock(kind: .text, text: text)])
+        if let f = folder?.trimmingCharacters(in: .whitespaces), !f.isEmpty, f != "Notes" { note.folder = f }
         ctx.insert(note)
         try ctx.save()
         return .result(dialog: "Saved “\(title)” to Keel.")

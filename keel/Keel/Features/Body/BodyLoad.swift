@@ -263,31 +263,7 @@ extension HealthExtras {
 
 // MARK: - Muscle freshness
 
+/// Muscle freshness now lives in the Recovery map (one place for how ready each muscle is, and where it's sore).
 struct MuscleFreshnessView: View {
-    @State private var engine = BodyEngine.shared
-
-    var body: some View {
-        let strength = StrengthStore.fatigue()
-        let cardio = BodyMapData.cardioLoad(days: engine.days)
-        List {
-            Section {
-                KitIntro(icon: "figure.stand", color: BodyStyle.swell, text: "Muscle freshness. How recovered each muscle is, from your strength sessions and your workouts. Fresh muscles are ready for hard work; tired ones do better with an easy day or a different body part.")
-            }
-            .listRowInsets(EdgeInsets()).listRowBackground(Color.clear)
-            Section {
-                ForEach(Muscle.allCases) { m in
-                    let tired = max(strength[m] ?? 0, m.regions.map { cardio[$0] ?? 0 }.max() ?? 0)
-                    let fresh = Int(((1 - tired) * 100).rounded())
-                    HStack {
-                        Text(m.name)
-                        Spacer()
-                        ProgressView(value: Double(fresh), total: 100).tint(fresh >= 80 ? .green : fresh >= 50 ? .yellow : .orange).frame(width: 110)
-                        Text("\(fresh)%").monospacedDigit().font(.caption.weight(.semibold)).frame(width: 40, alignment: .trailing)
-                    }
-                }
-            } footer: { Text("Fresh again after about 2–3 days of rest. Sore spots you log on the body map count too.") }
-            Section { NavigationLink { LazyView(BodyMapView()) } label: { Label("See it on the body map", systemImage: "figure.stand") } }
-        }
-        .navigationTitle("Muscle freshness")
-    }
+    var body: some View { BodyMapView() }
 }
