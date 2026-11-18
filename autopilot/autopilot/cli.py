@@ -196,6 +196,16 @@ def cmd_cloud(a):
         print("only if you re-enable; to be safe also disable the workflow on GitHub (Actions → Publish → Disable workflow).")
 
 
+def cmd_refresh(a):
+    s, db = ctx()
+    from autopilot import generation
+    prov = _provider(s, db)
+    print(f"Refreshing scheduled posts ({'rewrite + re-render' if a.rewrite else 're-render only'}). "
+          "Each rewrite is one Claude call (~30 s). You can keep using your Mac; Ctrl+C is safe.")
+    res = generation.refresh_queue(s, db, prov, rewrite=a.rewrite, max_n=a.max)
+    print(json.dumps({k: v for k, v in res.items() if k != "cloud"}, indent=2))
+
+
 def cmd_wizard(a):
     from autopilot import wizard
     wizard.main(step=a.step)
@@ -230,6 +240,9 @@ def main(argv=None):
     t = sub.add_parser("dashboard-token"); t.add_argument("--reset", action="store_true"); t.set_defaults(fn=cmd_token)
     w = sub.add_parser("wizard"); w.add_argument("--step", default=None); w.set_defaults(fn=cmd_wizard)
     sub.add_parser("activate").set_defaults(fn=cmd_activate)
+    rq = sub.add_parser("refresh-queue", help="redo already-scheduled posts with the current design/prompts")
+    rq.add_argument("--rewrite", action="store_true", help="rewrite text with Claude too (not just re-render)")
+    rq.add_argument("--max", type=int, default=None); rq.set_defaults(fn=cmd_refresh)
     cl = sub.add_parser("cloud", help="publish from a private GitHub repo so the Mac can sleep")
     cl.add_argument("action", choices=["setup", "sync", "status", "trigger-info", "disable"]); cl.add_argument("--repo")
     cl.set_defaults(fn=cmd_cloud)

@@ -8,4 +8,5 @@ pillow==13.0.0
 cryptography==50.0.2
 python-multipart==0.0.34
 tzdata==2026.6
+numpy==2.5.5
 pytest==9.2.0

@@ -177,7 +177,8 @@ class InstagramPublisher(Publisher):
         story_video = next((a for a in assets if a["kind"] == "video"), None) if fmt == "story" else None
         if fmt == "reel":
             video = next(a for a in assets if a["kind"] == "video")
-            cid = self._resumable_video(Path(video["path"]), "REELS", on_container, caption=caption, share_to_feed="true", thumb_offset="0")
+            cid = self._resumable_video(Path(video["path"]), "REELS", on_container, caption=caption, share_to_feed="true",
+                                      thumb_offset=str(int(content.get("thumb_offset_ms") or 0)))
         elif story_video:
             cid = self._resumable_video(Path(story_video["path"]), "STORIES", on_container)
         else:

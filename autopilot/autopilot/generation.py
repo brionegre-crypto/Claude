@@ -12,7 +12,33 @@ from autopilot.db import DB, iso, utcnow
 from autopilot.notify import notify
 
 log = logs.get("generation")
-BODY_KEYS = ("slides", "script", "frames", "poll", "quiz", "claims")
+BODY_KEYS = ("slides", "script", "frames", "poll", "quiz", "claims", "cover_text", "music_mood", "end_button",
+             "reply_prompt", "reply_button", "keyword")
+
+
+def _recent_bodies(db: DB, where: str, args=(), n=40) -> list[dict]:
+    return [json.loads(r[0] or "{}") for r in db.q(f"SELECT body FROM content WHERE {where} AND body IS NOT NULL "
+                                                     f"ORDER BY updated_at DESC LIMIT {int(n)}", args)]
+
+
+def pick_archetype(db: DB, fmt: str, rng=None) -> str:
+    """Least-recently-used archetype for this format, so no two neighbouring posts share a shape."""
+    import random as _r
+    rng = rng or _r
+    options = list(prompts.ARCHETYPES.get(fmt, {"general": ""}))
+    recent = [b.get("archetype") for b in _recent_bodies(db, "format=?", (fmt,), 30)]
+    counts = {o: (recent.index(o) if o in recent else 10_000) for o in options}   # larger = used longer ago
+    best = max(counts.values())
+    return rng.choice([o for o, c in counts.items() if c == best])
+
+
+def pick_keyword(s, db: DB, rng=None) -> str:
+    import random as _r
+    rng = rng or _r
+    bank = s.get("brand.keywords") or prompts.KEYWORDS
+    recent = [b.get("keyword") for b in _recent_bodies(db, "1=1", (), 40)]
+    unused = [k for k in bank if k not in recent]
+    return rng.choice(unused or bank)
 
 
 def recent_hooks(db: DB, n=60) -> list[str]:
@@ -42,14 +68,18 @@ def generate_one(s, db: DB, provider, content: dict, link_checker=None) -> dict:
     for u in re.findall(r"(?:source|corroborated by): (https?://\S+)", item.get("verification_notes") or ""):
         if u not in [x["url"] for x in sources]:
             sources.append({"title": "corroborating source", "url": u})
+    archetype = pick_archetype(db, content["format"])
+    keyword = pick_keyword(s, db)
     prompt = prompts.generate(s.brand_text(), content["platform"], content["format"], item["topic"], angle, sources,
-                              recent_hooks(db), db.kv_get("learnings", ""), s.get("brand.cta_default", ""), s.get("brand.link", ""))
+                              recent_hooks(db), db.kv_get("learnings", ""), s.get("brand.cta_default", ""), s.get("brand.link", ""),
+                              archetype=archetype, keyword=keyword)
     try:
         data = provider.complete_json("generate", prompt)
     except (ProviderUnavailable, ProviderError):
         db.x("UPDATE content SET status='planned', updated_at=? WHERE id=?", (iso(), cid))
         raise
     body = {k: data[k] for k in BODY_KEYS if k in data}
+    body.update({"archetype": archetype, "keyword": data.get("keyword") or keyword})
     if content["format"] in ("image", "community_image") and not body.get("slides"):
         title = data.get("headline") or data.get("hook")
         if title:
@@ -65,6 +95,7 @@ def generate_one(s, db: DB, provider, content: dict, link_checker=None) -> dict:
     status = "draft"
     if report["ok"]:
         assets = render.produce(s, db, {**rec, "body": json.dumps(body)})
+        body = json.loads(db.one("SELECT body FROM content WHERE id=?", (cid,))[0] or "{}")   # keep style / music / thumb chosen by the renderer
         report2 = quality.check(s, db, rec, link_checker=None,
                                 assets=[{**a, "license": "original"} for a in assets])
         report["blocks"] += [b for b in report2["blocks"] if b not in report["blocks"]]
@@ -131,6 +162,7 @@ def import_inbox(s, db: DB) -> dict:
                 status = "blocked"
                 if rep["ok"]:
                     render.produce(s, db, {**rec, "body": json.dumps(body)})
+                    body = json.loads(db.one("SELECT body FROM content WHERE id=?", (row["id"],))[0] or "{}")
                     status = "ready"
                 db.x("""UPDATE content SET topic=?, pillar=?, hook=?, headline=?, caption=?, hashtags=?, cta=?, body=?, sources=?,
                         fingerprint=?, quality_report=?, block_reason=?, status=?, generated_by='inbox', updated_at=? WHERE id=?""",
@@ -142,3 +174,52 @@ def import_inbox(s, db: DB) -> dict:
         except Exception as e:
             rejected.append(f"{f.name}: {e}")
     return {"imported": imported, "rejected": rejected}
+
+
+def refresh_queue(s, db: DB, provider, rewrite: bool = True, max_n: int | None = None, say=print) -> dict:
+    """User-requested overhaul of everything already scheduled: rewrite with the current prompts (archetypes, keywords)
+    and re-render with the current design + music. Posts the cloud has already started publishing are left alone.
+    This explicit run ignores the daily AI budget (it's the user's call); the regular worker still respects it."""
+    from autopilot import cloud
+    started = set()
+    if cloud.enabled(s) and (cloud.repo_dir(s) / "state").exists():
+        started = {p.stem for p in (cloud.repo_dir(s) / "state").glob("*.json")}
+    cutoff = iso(utcnow() + timedelta(minutes=45))
+    rows = db.q("""SELECT * FROM content WHERE status IN ('ready','blocked','draft','failed') AND scheduled_at > ?
+                   ORDER BY scheduled_at""", (cutoff,))
+    rows = [dict(r) for r in rows if r["id"] not in started][: max_n or None]
+    provider.ignore_budget = True
+    out = {"rewritten": 0, "rerendered": 0, "blocked": 0, "errors": []}
+    for i, c in enumerate(rows, 1):
+        when = c["scheduled_at"][:16].replace("T", " ")
+        try:
+            if rewrite:
+                with db.tx() as t:   # claim it so the background worker can't pick it up mid-rewrite
+                    ok = t.execute("UPDATE content SET status='generating', updated_at=? WHERE id=? AND status IN ('ready','blocked','draft','failed')",
+                                   (iso(), c["id"])).rowcount
+                if not ok:
+                    continue
+                body = json.loads(c["body"] or "{}")
+                body.pop("style", None)
+                db.x("UPDATE content SET body=? WHERE id=?", (json.dumps(body), c["id"]))
+                res = generate_one(s, db, provider, {**c, "status": "generating", "body": json.dumps(body)})
+                out["rewritten"] += 1
+                out["blocked"] += res["status"] == "blocked"
+                say(f"[{i}/{len(rows)}] {when} {c['platform']} {c['format']}: {res['status']}")
+            elif c["status"] == "ready":
+                render.produce(s, db, c)
+                out["rerendered"] += 1
+                say(f"[{i}/{len(rows)}] {when} {c['platform']} {c['format']}: re-rendered")
+        except ProviderUnavailable as e:
+            db.x("UPDATE content SET status='ready' WHERE id=? AND status='generating'", (c["id"],))
+            out["errors"].append(str(e))
+            say(f"stopped: {e}")
+            break
+        except Exception as e:
+            db.x("UPDATE content SET status=? WHERE id=? AND status='generating'", (c["status"], c["id"]))
+            out["errors"].append(f"{c['id']}: {e}")
+            say(f"[{i}/{len(rows)}] {when}: error {e}")
+    provider.ignore_budget = False
+    if cloud.enabled(s):
+        out["cloud"] = cloud.sync(s, db)
+    return out

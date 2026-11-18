@@ -89,6 +89,12 @@ def check(s, db: DB, c: dict, link_checker=None, assets: list[dict] | None = Non
         hashtags = (hashtags[:4] + ["#bethemansystem"])
         fixes.append("added #bethemansystem")
 
+    kw = (body.get("keyword") or "").lower()
+    if platform == "instagram" and kw and fmt != "story":
+        first = caption.lower()[:160]
+        if not any(w in first for w in kw.split() if len(w) > 3):
+            warnings.append(f"search keyword '{kw}' not near the start of the caption")
+
     # safety
     words = set(re.findall(r"[a-z]+", low))
     if words & OFFENSIVE:

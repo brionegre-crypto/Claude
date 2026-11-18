@@ -136,7 +136,8 @@ def run(root: Path, now: datetime | None = None, client=None, host_factory=None,
         pid = post["id"]
         st_path = root / "state" / f"{pid}.json"
         st = load(st_path, {})
-        content = {"id": pid, "format": post["format"], "scheduled_at": post["scheduled_at"], "caption_full": post["caption_full"]}
+        content = {"id": pid, "format": post["format"], "scheduled_at": post["scheduled_at"], "caption_full": post["caption_full"],
+                   "thumb_offset_ms": post.get("thumb_offset_ms", 0)}
         if st.get("started_at"):
             try:
                 rec = ig.reconcile(content, st.get("container_id"))

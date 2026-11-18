@@ -121,7 +121,7 @@ def publish_one(s, db: DB, c: dict, pubs: dict) -> str:
     def on_container(container_id):
         db.x("UPDATE publish_attempts SET state='container_created', container_id=? WHERE id=?", (container_id, aid))
 
-    payload = {**c, "caption_full": caption_full(c)}
+    payload = {**c, "caption_full": caption_full(c), "thumb_offset_ms": (json.loads(c.get("body") or "{}") or {}).get("thumb_offset_ms", 0)}
     try:
         if db.kv_get("emergency_stop"):
             raise TemporaryError("emergency stop engaged")

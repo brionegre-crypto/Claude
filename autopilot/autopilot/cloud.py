@@ -176,7 +176,8 @@ def export_posts(s, db: DB) -> dict:
                 shutil.copy(src, d / name)
             assets.append({"kind": a["kind"], "ordinal": a["ordinal"], "file": name, "sha256": a["sha256"]})
         post = {"id": c["id"], "format": c["format"], "scheduled_at": c["scheduled_at"],
-                "caption_full": caption_full(c), "assets": assets}
+                "caption_full": caption_full(c), "assets": assets,
+                "thumb_offset_ms": (json.loads(c.get("body") or "{}") or {}).get("thumb_offset_ms", 0)}
         pj = d / "post.json"
         new = json.dumps(post, indent=1, sort_keys=True)
         if not pj.exists() or pj.read_text() != new:
