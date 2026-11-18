@@ -174,6 +174,7 @@ struct FollowUpSheet: View {
     @State private var draft = ""
     @State private var loading = false
     @State private var mode = 0
+    @State private var sendError: String?
 
     private let modes = ["Here it is", "Need a bit more time", "Quick update"]
 
@@ -191,6 +192,9 @@ struct FollowUpSheet: View {
                     .background(DS.Palette.elevated, in: .rect(cornerRadius: DS.Radius.chip))
                 Button { send() } label: { Label("Send", systemImage: "paperplane.fill").frame(maxWidth: .infinity) }
                     .buttonStyle(.borderedProminent).tint(DS.Palette.accent).disabled(draft.isEmpty)
+                if let sendError {
+                    Label(sendError, systemImage: "exclamationmark.triangle.fill").font(DS.Font.caption).foregroundStyle(DS.Palette.warmth)
+                }
             }
             .padding()
             .navigationTitle(commitment.subject)
@@ -216,10 +220,17 @@ struct FollowUpSheet: View {
     }
 
     private func send() {
-        guard let a = accounts.first(where: { $0.id == commitment.accountId }) else { return }
+        guard let a = accounts.first(where: { $0.id == commitment.accountId }) else { sendError = "That email account isn't in Keel anymore."; return }
         Task {
-            try? await MailProviderFactory.make(for: a).send(to: commitment.recipient, subject: "Re: \(commitment.subject)",
-                                                             body: draft, inReplyTo: nil)
+            do {
+                try await MailProviderFactory.make(for: a).send(to: commitment.recipient, subject: "Re: \(commitment.subject)",
+                                                               body: draft, inReplyTo: nil)
+            } catch {
+                // Not sent: keep the promise and your draft, and say so.
+                Haptics.tap()
+                sendError = "Didn't send: \(error.localizedDescription)"
+                return
+            }
             if mode == 0 { commitment.status = .done; commitment.completedAt = Date() }
             // "More time": your follow-up states a new date, so the next sent-mail scan creates the
             // updated promise from it. Retire this one so it doesn't show twice.

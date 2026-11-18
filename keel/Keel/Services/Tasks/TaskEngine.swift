@@ -22,7 +22,25 @@ enum TaskActions {
                 let time = cal.dateComponents([.hour, .minute], from: current)
                 base = cal.date(bySettingHour: time.hour ?? 0, minute: time.minute ?? 0, second: 0, of: Date()) ?? Date()
             }
-            if let next = rule.next(after: base) {
+            if var next = rule.next(after: base) {
+                // Finishing a task that's days overdue moves it to its next upcoming date, not to another
+                // date that's already past (a daily task 5 days late used to land 4 days late, still overdue).
+                // (Date-only: the earliest is tomorrow, since you've just done today's.)
+                let today = Calendar.current.startOfDay(for: Date())
+                let floor = t.hasDueTime ? Date() : (Calendar.current.date(byAdding: .day, value: 1, to: today) ?? today)
+                var hops = 0
+                while next < floor, hops < 400, let later = rule.next(after: next) { next = later; hops += 1 }
+                // Monthly and yearly repeats keep their day: the 31st stays the 31st (or the month's last day),
+                // instead of drifting to the 28th for good after February.
+                if (rule.frequency == .monthly || rule.frequency == .yearly) && rule.fromCompletion != true {
+                    let cal = Calendar.current
+                    let anchor = TaskMeta.repeatDay(t) ?? cal.component(.day, from: current)
+                    TaskMeta.setRepeatDay(t, anchor)
+                    let days = cal.range(of: .day, in: .month, for: next)?.count ?? 28
+                    var c = cal.dateComponents([.year, .month, .day, .hour, .minute, .second], from: next)
+                    c.day = min(anchor, days)
+                    if let fixed = cal.date(from: c) { next = fixed }
+                }
                 t.completionCount += 1
                 t.lastCompletedOccurrence = current
                 t.dueDate = next
@@ -42,6 +60,9 @@ enum TaskActions {
         Task { @MainActor in try? CalendarService.shared.push(t) }
         TaskAlerts.schedule(t)
         if done, t.isDone, let ctx = t.modelContext { notifyUnblocked(by: t, ctx: ctx) }
+        if done, t.isDone, t.scheduledBlockStart != nil {          // finished early: free the time (just after the tap)
+            Task { @MainActor in CalendarService.shared.removeTimeBlocks(for: t, upcomingOnly: true) }
+        }
         if done, t.isDone { Handoff.shared.taskDone(t, ctx: t.modelContext) }      // suggest the next thing
         if let ctx = t.modelContext {
             try? ctx.save()                 // saved now, so every screen (Today, Tasks, widgets, Reminders) shows it at once
@@ -88,6 +109,7 @@ enum TaskActions {
         let kept = TaskTrash.keep(t)
         TaskAlerts.cancel(t)
         CalendarService.shared.removeReminder(for: t)
+        CalendarService.shared.removeTimeBlocks(for: t, upcomingOnly: false)   // no "◆ task" left on your calendar
         ctx.delete(t)
         UndoCenter.shared.offer("Deleted “\(kept.title)”") { TaskTrash.restore(kept, ctx: ctx) }
     }
@@ -174,11 +196,42 @@ enum TaskAlerts {
         TaskAlarms.cancel(t)
     }
 
-    /// iOS keeps at most 64 pending alerts per app, so schedule the soonest ones.
+    /// When a task's alert goes off (nil: no alert, or it's done).
+    static func fireDate(_ t: TaskItem) -> Date? {
+        guard !t.isDone, let due = t.dueDate, let offset = t.alertOffsetMinutes else { return nil }
+        let base = t.hasDueTime ? due : (Calendar.current.date(bySettingHour: 9, minute: 0, second: 0, of: due) ?? due)
+        return base.addingTimeInterval(-Double(offset * 60))
+    }
+
+    /// iOS keeps at most 64 pending alerts per app, so schedule the 40 soonest that can still go off.
+    /// (Picking by due date counted overdue tasks, whose alerts can't fire, so with many overdue tasks
+    /// upcoming alerts never got scheduled.) Also clears alerts for tasks that were finished or deleted
+    /// elsewhere (in Reminders, on another device), so you're never reminded about something already done.
     static func rescheduleAll(_ tasks: [TaskItem]) {
-        let upcoming = tasks.filter { !$0.isDone && $0.alertOffsetMinutes != nil && $0.dueDate != nil }
-            .sorted { ($0.dueDate ?? .distantFuture) < ($1.dueDate ?? .distantFuture) }
-        for t in upcoming.prefix(40) { schedule(t) }
+        let now = Date()
+        let wanted = tasks.compactMap { t in fireDate(t).map { (t, $0) } }
+            .filter { $0.1 > now }
+            .sorted { $0.1 < $1.1 }
+            .prefix(40)
+        let keep = Set(wanted.map { id($0.0) })
+        var correct: [String: Date] = [:]
+        for t in tasks { if let f = fireDate(t) { correct[id(t)] = f } }
+        for (t, _) in wanted { schedule(t) }
+        Task { @MainActor in
+            let pending = await UNUserNotificationCenter.current().pendingNotificationRequests()
+            let stale = pending.filter { r in
+                guard r.identifier.hasPrefix("task."), !keep.contains(r.identifier) else { return false }
+                guard let right = correct[r.identifier] else { return true }   // finished, deleted, or alert turned off
+                // Still open, beyond the 40 refreshed here: keep it if it's set for the right time (or is a
+                // snooze about to go off); drop it if the task was moved, so it can't go off at the old time.
+                let next = (r.trigger as? UNCalendarNotificationTrigger)?.nextTriggerDate()
+                    ?? (r.trigger as? UNTimeIntervalNotificationTrigger)?.nextTriggerDate()
+                guard let next else { return false }
+                if next < now.addingTimeInterval(3_600) { return false }
+                return abs(next.timeIntervalSince(right)) > 90
+            }.map(\.identifier)
+            if !stale.isEmpty { UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: stale) }
+        }
     }
 }
 
@@ -419,5 +472,42 @@ enum TaskDedupe {
         }
         if removed > 0 { try? ctx.save() }
         return removed
+    }
+}
+
+// MARK: - Travelling across time zones
+
+/// Tasks with a date but no time are kept as midnight of that day. Flying west, midnight Tuesday at home is
+/// Monday evening where you land, so Tuesday's tasks showed as due Monday. When this device's time zone changes,
+/// date-only tasks are moved to midnight of the same calendar day in the new zone. Only open tasks set exactly
+/// at midnight in the previous zone are touched, so nothing else moves and running it twice changes nothing.
+@MainActor
+enum TaskTimeZone {
+    private static let key = "tasks.timeZone"
+
+    static func adjustIfMoved(ctx: ModelContext) {
+        NSTimeZone.resetSystemTimeZone()               // read the zone the phone is in now, not a cached one
+        let now = TimeZone.current
+        let stored = UserDefaults.standard.string(forKey: key)
+        UserDefaults.standard.set(now.identifier, forKey: key)
+        guard let stored, stored != now.identifier, let old = TimeZone(identifier: stored),
+              old.secondsFromGMT() != now.secondsFromGMT() else { return }
+        var oldCal = Calendar.current; oldCal.timeZone = old
+        let newCal = Calendar.current
+        // (Not filtered by "has a time": that's judged by midnight in the *current* zone, so after a flight every
+        // date-only task looked timed, like "Mon 9:00 PM". Midnight in the previous zone is what marks them.)
+        let tasks = (try? ctx.fetch(FetchDescriptor<TaskItem>(predicate: #Predicate { !$0.isDone }))) ?? []
+        var moved = 0
+        for t in tasks {
+            guard let due = t.dueDate, oldCal.startOfDay(for: due) == due else { continue }
+            let day = oldCal.dateComponents([.year, .month, .day], from: due)
+            guard let fixed = newCal.date(from: day), fixed != due else { continue }
+            t.dueDate = fixed
+            moved += 1
+        }
+        if moved > 0 {
+            try? ctx.save()
+            TaskAlerts.rescheduleAll(tasks)          // their 9 AM alerts follow them
+        }
     }
 }

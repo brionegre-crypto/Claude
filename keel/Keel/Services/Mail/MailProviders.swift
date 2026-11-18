@@ -108,7 +108,12 @@ extension MailProvider {
 }
 
 enum MailProviderFactory {
+    /// The account's connection. Changes that don't go through are kept and retried (see MailOutbox).
     @MainActor static func make(for account: MailAccount) -> MailProvider {
+        ReliableMailProvider(base: base(for: account), accountId: account.id)
+    }
+
+    @MainActor static func base(for account: MailAccount) -> MailProvider {
         switch account.provider {
         case .gmail: GmailProvider(account: account.id)
         case .outlook: OutlookProvider(account: account.id)

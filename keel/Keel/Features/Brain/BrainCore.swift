@@ -246,10 +246,24 @@ struct NoteSnapshot: Codable, Identifiable {
     var createdAt: Date
     var updatedAt: Date
     var deletedAt: Date?
+    // Kept so a restored page comes back exactly as it was. A locked page used to come back unlocked, and
+    // a template as an ordinary page. Optional, so trash and backups saved before this still open.
+    var isLocked: Bool?
+    var isTemplate: Bool?
+    var sortIndex: Double?
+    var linkedEventId: String?
+    var aiSummary: String?
+    var dbGroupBy: String?
+    var dbSortBy: String?
+    var dbSortAscending: Bool?
+    var dbFilterProp: String?
+    var dbFilterValue: String?
 
     init(_ n: Note) {
         id = n.id; title = n.title; blocks = n.blocks; folder = n.folder; icon = n.icon; parentId = n.parentId; props = n.props
         isDatabase = n.isDatabase; schema = n.schema; dbView = n.dbView; isPinned = n.isPinned; createdAt = n.createdAt; updatedAt = n.updatedAt
+        isLocked = n.isLocked; isTemplate = n.isTemplate; sortIndex = n.sortIndex; linkedEventId = n.linkedEventId; aiSummary = n.aiSummary
+        dbGroupBy = n.dbGroupBy; dbSortBy = n.dbSortBy; dbSortAscending = n.dbSortAscending; dbFilterProp = n.dbFilterProp; dbFilterValue = n.dbFilterValue
     }
 
     func make() -> Note {
@@ -257,6 +271,11 @@ struct NoteSnapshot: Codable, Identifiable {
         n.id = id; n.folder = folder; n.icon = icon; n.parentId = parentId; n.props = props
         n.isDatabase = isDatabase; n.schema = schema; n.dbView = dbView; n.isPinned = isPinned
         n.createdAt = createdAt; n.updatedAt = Date()
+        n.isLocked = isLocked ?? false; n.isTemplate = isTemplate ?? false
+        if let sortIndex { n.sortIndex = sortIndex }
+        n.linkedEventId = linkedEventId; n.aiSummary = aiSummary
+        n.dbGroupBy = dbGroupBy; n.dbSortBy = dbSortBy; n.dbSortAscending = dbSortAscending ?? true
+        n.dbFilterProp = dbFilterProp; n.dbFilterValue = dbFilterValue
         return n
     }
 }

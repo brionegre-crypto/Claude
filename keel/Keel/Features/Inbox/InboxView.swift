@@ -762,9 +762,17 @@ struct InboxView: View {
     private func trash(_ e: EmailMessage) {
         let id = e.providerMessageId
         let p = provider(for: e)
-        withAnimation(DS.spring) { ctx.delete(e) }
+        let wasArchived = e.isArchived
+        // Hidden at once; deleted (here and on the server) only once the Undo window closes, like Archive.
+        withAnimation(DS.spring) { e.isArchived = true }
         Haptics.tap()
-        Task { try? await p?.trash(id) }
+        UndoCenter.shared.offer("Deleted",
+                                undo: { withAnimation(DS.spring) { e.isArchived = wasArchived } },
+                                commit: {
+                                    ctx.delete(e)
+                                    try? ctx.save()
+                                    Task { try? await p?.trash(id) }
+                                })
     }
 
     private func star(_ e: EmailMessage) {
@@ -1031,6 +1039,7 @@ struct EmailDetailView: View {
     @State private var previewURL: URL?
     @State private var compose: ComposeDraft?
     @State private var sentFlash = false
+    @State private var quickSendError: String?
     @State private var unsubscribing = false
     @State private var unsubscribeMessage: String?
     @State private var replyIdeas: [String] = []
@@ -1295,6 +1304,7 @@ struct EmailDetailView: View {
                 }
             }
             if sentFlash { Label("Sent", systemImage: "checkmark.circle.fill").foregroundStyle(DS.Palette.calm) }
+            if let quickSendError { Label(quickSendError, systemImage: "exclamationmark.triangle.fill").font(DS.Font.caption).foregroundStyle(DS.Palette.warmth) }
         }
     }
 
@@ -1308,11 +1318,19 @@ struct EmailDetailView: View {
         let body = draft
         InboxBrain.record(.reply, sender: email.from, name: email.fromName, ctx: ctx)
         Task {
-            try? await provider?.send(to: email.from, subject: ComposeDraft.prefixed("Re:", email.subject),
-                                      body: body, inReplyTo: email.replyContext)
-            Haptics.success()
-            draft = ""; intent = ""
-            withAnimation { sentFlash = true }
+            // Only says Sent (and clears your reply) when the email really went; otherwise your words stay put.
+            guard let provider else { quickSendError = "This account isn't connected right now."; return }
+            do {
+                try await provider.send(to: email.from, subject: ComposeDraft.prefixed("Re:", email.subject),
+                                        body: body, inReplyTo: email.replyContext)
+                quickSendError = nil
+                Haptics.success()
+                draft = ""; intent = ""
+                withAnimation { sentFlash = true }
+            } catch {
+                Haptics.tap()
+                quickSendError = "Didn't send: \(error.localizedDescription). Your reply is still here; try again."
+            }
         }
     }
 

@@ -111,6 +111,7 @@ final class SyncEngine {
         // 1. Mail: download on each account (network, off the main thread while waiting), then save
         //    everything in one background batch so open screens update once instead of per message.
         let accounts = (try? ctx.fetch(FetchDescriptor<MailAccount>())) ?? []
+        await MailOutbox.flush(accounts: accounts)       // changes that didn't reach the server last time go first
         var batches: [MailStore.Batch] = []
         for account in accounts where account.isEnabled {
             do {

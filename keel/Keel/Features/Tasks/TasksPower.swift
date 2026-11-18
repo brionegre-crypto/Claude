@@ -9,6 +9,17 @@ import FoundationModels
 enum TaskMeta {
     static let eveningTag = "~evening"
     static let deadlinePrefix = "~deadline:"
+    static let repeatDayPrefix = "~day:"
+
+    /// The day of the month a monthly or yearly repeat belongs on (kept so short months don't move it for good).
+    static func repeatDay(_ t: TaskItem) -> Int? {
+        t.tags.first { $0.hasPrefix(repeatDayPrefix) }.flatMap { Int($0.dropFirst(repeatDayPrefix.count)) }
+    }
+    static func setRepeatDay(_ t: TaskItem, _ day: Int) {
+        guard repeatDay(t) != day else { return }
+        t.tags.removeAll { $0.hasPrefix(repeatDayPrefix) }
+        t.tags.append(repeatDayPrefix + String(day))
+    }
 
     static func isHidden(_ tag: String) -> Bool { tag.hasPrefix("~") }
     static func visibleTags(_ t: TaskItem) -> [String] { t.tags.filter { !isHidden($0) } }

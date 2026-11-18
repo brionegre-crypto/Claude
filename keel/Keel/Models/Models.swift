@@ -149,9 +149,16 @@ struct Recurrence: Codable, Hashable {
         let cal = Calendar.current
         var result: Date?
         if frequency == .weekly && !weekdays.isEmpty {
-            for offset in 1...(7 * max(interval, 1) + 7) {
+            // "Every 2 weeks on Mon, Thu": a later day this week, otherwise the first day `interval` weeks on.
+            // (Before, any next matching weekday was taken, so every-2-weeks repeated weekly.)
+            let step = max(interval, 1)
+            let thisWeek = cal.dateInterval(of: .weekOfYear, for: date)?.start ?? date
+            for offset in 1...(7 * step + 7) {
                 guard let d = cal.date(byAdding: .day, value: offset, to: date) else { continue }
-                if weekdays.contains(cal.component(.weekday, from: d)) { result = d; break }
+                guard weekdays.contains(cal.component(.weekday, from: d)) else { continue }
+                let week = cal.dateInterval(of: .weekOfYear, for: d)?.start ?? d
+                let weeksOn = Int((week.timeIntervalSince(thisWeek) / (7 * 86_400)).rounded())
+                if weeksOn == 0 || weeksOn >= step { result = d; break }
             }
         } else {
             let comp: Calendar.Component = switch frequency { case .daily: .day; case .weekly: .weekOfYear; case .monthly: .month; case .yearly: .year }

@@ -24,6 +24,24 @@ enum MailPush {
         }
     }
 
+    /// Removing an account: tell Gmail / Outlook to stop sending new-mail alerts for it (before its sign-in is
+    /// deleted), so your phone isn't woken for a mailbox that's no longer in Keel.
+    static func stop(accountId: String, provider: MailProviderKind) async {
+        switch provider {
+        case .gmail:
+            let api = AuthedClient(account: accountId, cfg: OAuthManager.google)
+            _ = try? await api.json(URL(string: "https://gmail.googleapis.com/gmail/v1/users/me/stop")!, method: "POST", body: [:])
+        case .outlook:
+            let key = "push.graph.sub.\(accountId)"
+            if let sub = UserDefaults.standard.string(forKey: key) {
+                let api = AuthedClient(account: accountId, cfg: OAuthManager.microsoft)
+                _ = try? await api.json(URL(string: "https://graph.microsoft.com/v1.0/subscriptions/\(sub)")!, method: "DELETE")
+            }
+            UserDefaults.standard.removeObject(forKey: key)
+        default: break
+        }
+    }
+
     /// Keeps each Gmail and Outlook account subscribed (Gmail lasts 7 days, Outlook about 3, so they're renewed).
     static func refresh(ctx: ModelContext) async {
         guard KeelServer.isConfigured, let base = KeelServer.baseURL,

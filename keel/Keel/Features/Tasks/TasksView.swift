@@ -613,7 +613,7 @@ struct TaskRow: View {
                 }
                 HStack(spacing: 6) {
                     if let d = task.dueDate {
-                        Text(dueText(d)).foregroundStyle(d < Date() && !task.isDone && !prefs.calm ? DS.Palette.warmth : DS.Palette.inkSoft)
+                        Text(dueText(d)).foregroundStyle(isLate(d) && !task.isDone && !prefs.calm ? DS.Palette.warmth : DS.Palette.inkSoft)
                     }
                     if task.isPinned { Image(systemName: "pin.fill").foregroundStyle(DS.Palette.accent) }
                     if task.blockedById != nil { Image(systemName: "lock.fill").accessibilityLabel("Blocked by another task") }
@@ -636,6 +636,11 @@ struct TaskRow: View {
             Spacer()
             if prefs.showEnergy { Image(systemName: task.energy.icon).font(.caption).foregroundStyle(DS.Palette.inkSoft) }
         }
+    }
+
+    /// Late only once the day is over for date-only tasks (a task due "today" isn't late at 9 AM).
+    private func isLate(_ d: Date) -> Bool {
+        task.hasDueTime ? d < Date() : d < Calendar.current.startOfDay(for: Date())
     }
 
     private func dueText(_ d: Date) -> String {

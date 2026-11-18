@@ -260,8 +260,12 @@ struct MailAccountDetail: View {
         let id = account.id
         let mail = (try? ctx.fetch(FetchDescriptor<EmailMessage>(predicate: #Predicate { $0.accountId == id }))) ?? []
         mail.forEach(ctx.delete)
-        KeychainStore.delete("tokens.\(id)")
-        KeychainStore.delete("imap.\(id)")
+        let provider = account.provider
+        Task { @MainActor in
+            await MailPush.stop(accountId: id, provider: provider)     // stop new-mail alerts first (needs the sign-in)
+            KeychainStore.delete("tokens.\(id)")
+            KeychainStore.delete("imap.\(id)")
+        }
         ctx.delete(account)
         MailAccountSync.didRemove(id, ctx: ctx)
         try? ctx.save()

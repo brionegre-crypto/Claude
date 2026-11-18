@@ -29,13 +29,17 @@ actor MailStore {
             let existing = (try? modelContext.fetch(FetchDescriptor<EmailMessage>(predicate: #Predicate { incoming.contains($0.id) }))) ?? []
             let byId = Dictionary(existing.map { ($0.id, $0) }, uniquingKeysWith: { a, _ in a })
             var seen = Set<String>()
+            // A read or flag change you made that hasn't reached the server yet wins over the server's old state.
+            let waiting = MailOutbox.waiting(accountId: b.accountId)
             for m in b.messages {
                 let id = "\(b.accountId)|\(m.providerId)"
                 guard seen.insert(id).inserted else { continue }
                 if let e = byId[id] {
                     // Already synced: update state only, keep Keel's AI sorting and summary.
-                    if e.isRead != m.isRead { e.isRead = m.isRead }
-                    if e.isStarred != m.isStarred { e.isStarred = m.isStarred }
+                    if e.isRead != m.isRead && !waiting.read.contains(m.providerId) { e.isRead = m.isRead }
+                    if e.isStarred != m.isStarred && !waiting.star.contains(m.providerId) { e.isStarred = m.isStarred }
+                } else if waiting.trash.contains(m.providerId) {
+                    continue                     // you deleted it; the delete just hasn't reached the server yet
                 } else {
                     let e = EmailMessage(accountId: b.accountId, fetched: m)
                     modelContext.insert(e)

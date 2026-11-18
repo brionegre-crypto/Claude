@@ -561,11 +561,12 @@ enum MarkdownMirror {
         UserDefaults.standard.set(data, forKey: bookmarkKey)
         UserDefaults.standard.set(url.lastPathComponent, forKey: nameKey)
         UserDefaults.standard.removeObject(forKey: lastKey)      // write everything the first time
+        UserDefaults.standard.removeObject(forKey: pathsKey)     // a new folder: start its file list fresh
         return true
     }
 
     static func turnOff() {
-        for k in [bookmarkKey, lastKey, nameKey] { UserDefaults.standard.removeObject(forKey: k) }
+        for k in [bookmarkKey, lastKey, nameKey, pathsKey] { UserDefaults.standard.removeObject(forKey: k) }
     }
 
     private static func folderURL() -> URL? {
@@ -578,13 +579,46 @@ enum MarkdownMirror {
         return url
     }
 
+    private static let pathsKey = "md.mirror.paths"
+
     /// Writes pages changed since the last run. Returns how many files were written.
     @discardableResult
     static func sync(ctx: ModelContext, everything: Bool = false) -> Int {
         guard let root = folderURL(), root.startAccessingSecurityScopedResource() else { return 0 }
         defer { root.stopAccessingSecurityScopedResource() }
         let since = everything ? .distantPast : (last ?? .distantPast)
-        let notes = ((try? ctx.fetch(FetchDescriptor<Note>())) ?? []).filter { !$0.isLocked && !$0.isTemplate && $0.updatedAt > since }
+        let all = (try? ctx.fetch(FetchDescriptor<Note>())) ?? []
+        let notes = all.filter { !$0.isLocked && !$0.isTemplate && $0.updatedAt > since }
+        // Where each page's file was written last time (relative to the folder), so a page that was locked,
+        // deleted, turned into a template, renamed or moved doesn't leave its old file (and text) behind.
+        let known = UserDefaults.standard.dictionary(forKey: pathsKey) as? [String: String]
+        var paths = known ?? [:]
+        let copyable = Set(all.filter { !$0.isLocked && !$0.isTemplate }.map(\.id.uuidString))
+        let rootPath = root.standardizedFileURL.path
+        func relative(_ u: URL) -> String { String(u.standardizedFileURL.path.dropFirst(rootPath.count)) }
+        if known == nil {
+            // First run with tracking: find the files written before, by the keel-id at their top.
+            let files = FileManager.default.enumerator(at: root, includingPropertiesForKeys: nil)?.compactMap { $0 as? URL } ?? []
+            for f in files where f.pathExtension == "md" {
+                guard let h = try? FileHandle(forReadingFrom: f) else { continue }
+                let head = String(decoding: (try? h.read(upToCount: 200)) ?? Data(), as: UTF8.self)
+                try? h.close()
+                guard let r = head.range(of: "keel-id: ") else { continue }
+                let id = String(head[r.upperBound...].prefix(36))
+                if !copyable.contains(id) { try? FileManager.default.removeItem(at: f) } else { paths[id] = relative(f) }
+            }
+        }
+        func remove(_ rel: String) {
+            let u = URL(fileURLWithPath: rootPath + rel)
+            var err: NSError?
+            NSFileCoordinator().coordinate(writingItemAt: u, options: .forDeleting, error: &err) { url in
+                try? FileManager.default.removeItem(at: url)
+            }
+        }
+        for (id, rel) in paths where !copyable.contains(id) {
+            remove(rel)
+            paths[id] = nil
+        }
         func safe(_ s: String) -> String {
             let t = s.components(separatedBy: CharacterSet(charactersIn: "/\\:?*\"<>|")).joined(separator: "-").trimmingCharacters(in: .whitespaces)
             return t.isEmpty ? "Untitled" : String(t.prefix(80))
@@ -607,7 +641,11 @@ enum MarkdownMirror {
             coordinator.coordinate(writingItemAt: file, options: .forReplacing, error: &err) { url in
                 if (try? text.write(to: url, atomically: true, encoding: .utf8)) != nil { written += 1 }
             }
+            let id = n.id.uuidString, rel = relative(file)
+            if let old = paths[id], old != rel { remove(old) }       // renamed or moved: no stale copy left behind
+            paths[id] = rel
         }
+        UserDefaults.standard.set(paths, forKey: pathsKey)
         UserDefaults.standard.set(Date(), forKey: lastKey)
         return written
     }

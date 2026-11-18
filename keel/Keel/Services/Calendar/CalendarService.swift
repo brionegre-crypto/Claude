@@ -119,6 +119,23 @@ final class CalendarService {
         task.scheduledBlockStart = start
     }
 
+    /// Removes a task's focus blocks from the Keel calendar: all of them (task deleted) or just the ones that
+    /// haven't started yet (task finished early), so your calendar doesn't keep showing time for it.
+    func removeTimeBlocks(for task: TaskItem, upcomingOnly: Bool) {
+        guard task.scheduledBlockStart != nil, hasCalendarAccess,
+              let keel = allCalendars.first(where: { $0.title == "Keel" }) else { return }
+        let now = Date()
+        let from = upcomingOnly ? now : now.addingTimeInterval(-86_400)
+        let tag = "keel-task:\(task.id.uuidString)"
+        let events = store.events(matching: store.predicateForEvents(withStart: from, end: now.addingTimeInterval(90 * 86_400), calendars: [keel]))
+        var removed = false
+        for e in events where (e.notes ?? "").contains(tag) && (!upcomingOnly || e.startDate > now) {
+            try? store.remove(e, span: .thisEvent, commit: false); removed = true
+        }
+        if removed { try? store.commit(); invalidateEvents() }
+        if !upcomingOnly || (task.scheduledBlockStart ?? .distantPast) > now { task.scheduledBlockStart = nil }
+    }
+
     // MARK: Editing events (calendar tab)
 
     /// Drag-to-reschedule: keeps the event's length, moves only this occurrence of a repeating event.

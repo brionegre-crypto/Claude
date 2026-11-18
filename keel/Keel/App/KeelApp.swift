@@ -69,6 +69,7 @@ struct KeelApp: App {
             if phase == .active {
                 WidgetActions.applyPending(ctx: container.mainContext)   // taps on interactive widgets
                 SyncEngine.shared.scheduleReminderSync()                 // ticks made in Reminders while Keel was away
+                TaskTimeZone.adjustIfMoved(ctx: container.mainContext)   // travelled: date-only tasks stay on their day
                 Task { await HealthHabits.check(ctx: container.mainContext) }
                 Task { await KeelFocusFilter.syncCurrent() }
                 #if !targetEnvironment(macCatalyst)

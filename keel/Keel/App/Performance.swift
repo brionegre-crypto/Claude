@@ -23,6 +23,7 @@ enum NoteSnippet {
     private static var cache: [UUID: (stamp: Date, text: String)] = [:]
 
     static func text(_ n: Note) -> String {
+        if n.isLocked { return "" }                 // a locked page's text never shows in a preview
         if let c = cache[n.id], c.stamp == n.updatedAt { return c.text }
         let full = n.plainText
         let text = full.count > 400 ? String(full.prefix(400)) : full
