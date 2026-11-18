@@ -174,9 +174,12 @@ class InstagramPublisher(Publisher):
         caption = content["caption_full"]
         self._check_quota()
         imgs = sorted([a for a in assets if a["kind"] == "image"], key=lambda a: a["ordinal"])
+        story_video = next((a for a in assets if a["kind"] == "video"), None) if fmt == "story" else None
         if fmt == "reel":
             video = next(a for a in assets if a["kind"] == "video")
             cid = self._resumable_video(Path(video["path"]), "REELS", on_container, caption=caption, share_to_feed="true", thumb_offset="0")
+        elif story_video:
+            cid = self._resumable_video(Path(story_video["path"]), "STORIES", on_container)
         else:
             if not self.media_host_factory:
                 raise PermanentError("no media host configured for image publishing")
@@ -195,7 +198,7 @@ class InstagramPublisher(Publisher):
                     raise PermanentError(f"unsupported Instagram format {fmt}")
                 on_container(cid)
                 self._wait_ready(cid)  # Meta fetches the image while the tunnel is still up
-        if fmt == "reel":
+        if fmt == "reel" or story_video:
             self._wait_ready(cid, 900)
         pub = self._call("POST", f"{self.uid}/media_publish", creation_id=cid)
         mid = pub["id"]

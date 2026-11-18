@@ -156,6 +156,9 @@ def produce(s, db: DB, content: dict) -> list[dict]:
         frames = body.get("frames", [])[:1] or [{"text": content["hook"]}]  # one story image per scheduled slot
         f0 = frames[0]
         made.append({"kind": "image", **_save(slide(colors, SIZES["story"], f0.get("text", ""), "", handle=handle), out / "story.jpg")})
+        if ffmpeg():  # 6 s video version: Instagram accepts video Stories by direct upload, so no public URL is needed
+            vid = render_reel(colors, [{"text": f0.get("text", ""), "seconds": 6}], handle, out, "story-video")
+            made.append(vid[0])
     elif fmt == "reel":
         made += render_reel(colors, body.get("script", []), handle, out, "reel")
     elif fmt == "community_image":

@@ -170,6 +170,13 @@ def cmd_token(a):
     print(ensure_token(s, reset=a.reset))
 
 
+def cmd_tunnel_test(a):
+    s = config.load()
+    from autopilot.publishing.mediahost import tunnel_test
+    for line in tunnel_test(int(s.get("publishing.local_media_port", 8766))):
+        print(line)
+
+
 def cmd_wizard(a):
     from autopilot import wizard
     wizard.main(step=a.step)
@@ -204,5 +211,6 @@ def main(argv=None):
     t = sub.add_parser("dashboard-token"); t.add_argument("--reset", action="store_true"); t.set_defaults(fn=cmd_token)
     w = sub.add_parser("wizard"); w.add_argument("--step", default=None); w.set_defaults(fn=cmd_wizard)
     sub.add_parser("activate").set_defaults(fn=cmd_activate)
+    sub.add_parser("tunnel-test", help="diagnose the Instagram image hand-off (Cloudflare quick tunnel)").set_defaults(fn=cmd_tunnel_test)
     a = p.parse_args(argv)
     a.fn(a)

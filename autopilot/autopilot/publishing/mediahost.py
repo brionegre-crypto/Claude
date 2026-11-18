@@ -77,14 +77,24 @@ class TunnelHost:
         key = f"/m/{secrets.token_urlsafe(16)}/{p.name}"
         self.files[key] = p
         url = self.base + key
-        for _ in range(20):  # DNS for a new quick tunnel can take a few seconds
-            try:
-                if httpx.head(url, timeout=10).status_code == 200:
-                    return url
-            except Exception:
-                pass
+        for _ in range(8):  # DNS for a new quick tunnel can take a few seconds
+            if self.local_ok(url):
+                return url
             time.sleep(3)
-        raise RuntimeError("tunnel URL not reachable")
+        if public_dns_resolves(self.base):
+            # This computer's DNS (a filter, VPN or cache) can't see the tunnel, but the public internet can,
+            # so Meta can fetch the file. Give the tunnel a few more seconds to settle and go ahead.
+            log.warning("tunnel not visible from this computer's DNS but resolves publicly; continuing")
+            time.sleep(5)
+            return url
+        raise RuntimeError("tunnel URL not reachable (not even via public DNS); run: ./scripts/autopilot tunnel-test")
+
+    @staticmethod
+    def local_ok(url: str) -> bool:
+        try:
+            return httpx.get(url, timeout=10).status_code == 200
+        except Exception:
+            return False
 
     def __exit__(self, *exc):
         if self.proc:
@@ -97,6 +107,46 @@ class TunnelHost:
             self.server.shutdown()
             self.server.server_close()
         self.files.clear()
+
+
+def public_dns_resolves(base_url: str) -> bool:
+    """Look the tunnel's hostname up through Cloudflare's public DNS-over-HTTPS (free), bypassing local DNS."""
+    host = re.sub(r"^https?://", "", base_url).split("/")[0]
+    for _ in range(6):
+        try:
+            r = httpx.get("https://cloudflare-dns.com/dns-query", params={"name": host, "type": "A"},
+                          headers={"accept": "application/dns-json"}, timeout=10)
+            if r.status_code == 200 and r.json().get("Answer"):
+                return True
+        except Exception:
+            pass
+        time.sleep(3)
+    return False
+
+
+def tunnel_test(port: int = 8766) -> list[str]:
+    """Diagnose the Instagram image hand-off. Returns human-readable lines."""
+    import socket
+    import tempfile
+    out = []
+    tmp = Path(tempfile.mkdtemp()) / "tunnel-test.jpg"
+    tmp.write_bytes(b"\xff\xd8\xff\xe0tunnel-test")
+    with TunnelHost(port) as t:
+        out.append(f"tunnel started: {t.base}")
+        key = f"/m/{secrets.token_urlsafe(16)}/{tmp.name}"
+        t.files[key] = tmp
+        url = t.base + key
+        host = t.base.split("//")[1]
+        time.sleep(5)
+        try:
+            socket.gethostbyname(host)
+            out.append("✓ this Mac's DNS can resolve the tunnel")
+        except Exception as e:
+            out.append(f"✗ this Mac's DNS cannot resolve it ({e}): a DNS filter, VPN, ad-blocker or router security feature may block trycloudflare.com")
+        out.append(("✓" if public_dns_resolves(t.base) else "✗") + " public DNS (what Instagram uses) can resolve it")
+        ok = any(TunnelHost.local_ok(url) or time.sleep(3) for _ in range(5))
+        out.append(("✓" if ok else "✗") + " fetched the test file through the tunnel from this Mac")
+    return out
 
 
 class PublicURLHost:

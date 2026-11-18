@@ -364,6 +364,7 @@ def real_test(s, db, fmt) -> dict:
     from autopilot.publishing.instagram import InstagramPublisher
     from autopilot.publishing.mediahost import get_host
     from autopilot.secrets import SecretStore
+    db.x("UPDATE content SET status='cancelled' WHERE id LIKE 'realtest-%' AND status NOT IN ('published','cancelled')")
     cid = "realtest-" + uuid.uuid4().hex[:8]
     body = {"slides": [{"title": "System check", "text": "Testing the publishing pipeline. Break the cycle. Build the system."},
                        {"title": "Slide two", "text": "If you see this, carousels work."}],
@@ -384,6 +385,8 @@ def real_test(s, db, fmt) -> dict:
         return {"ok": False, "detail": str(e), "at": iso()}
     row = db.one("SELECT status, permalink, block_reason FROM content WHERE id=?", (cid,))
     ok = row["status"] == "published"
+    if not ok:  # a failed test must not be retried later by the background worker
+        db.x("UPDATE content SET status='cancelled' WHERE id=?", (cid,))
     return {"ok": ok, "detail": (row["permalink"] or "published") if ok else f"{r}: {row['block_reason']}", "at": iso()}
 
 

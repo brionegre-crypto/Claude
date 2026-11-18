@@ -47,7 +47,7 @@ def test_carousel_reel_story_paths(env, fake_ig):
     ids = [make_ready(s, db, f) for f in ("carousel", "reel", "story")]
     res = publisher.run_due(s, db, pubs)
     assert all(res[i] == "published" for i in ids), res
-    assert fake.uploads == 1                                  # reel used resumable upload (no public URL needed)
+    assert fake.uploads == 2                                  # reel + story video used resumable upload (no public URL needed)
     types = sorted(c["params"].get("media_type", "IMAGE") for c in fake.containers.values())
     assert "CAROUSEL" in types and "REELS" in types and "STORIES" in types
 
@@ -299,3 +299,31 @@ def test_unified_token_found_via_granular_scopes(env):
     from autopilot.publishing.instagram import detect_account
     a = detect_account(s, "EAAunified", client=_unified_client("scopes"))
     assert a["user_id"] == "17841" and a["username"] == "bethemansystem"
+
+
+def test_story_has_direct_upload_video_and_skips_tunnel(env, fake_ig):
+    s, db = env
+    fake, pubs = fake_ig
+    def no_host():
+        raise AssertionError("stories must not need the image tunnel")
+    pubs["instagram"].media_host_factory = no_host
+    cid = make_ready(s, db, "story")
+    kinds = {r[0] for r in db.q("SELECT kind FROM assets WHERE content_id=?", (cid,))}
+    assert {"image", "video"} <= kinds
+    assert publisher.run_due(s, db, pubs)[cid] == "published"
+    assert fake.uploads == 1 and any(c["params"].get("media_type") == "STORIES" for c in fake.containers.values())
+
+
+def test_tunnel_falls_back_to_public_dns(monkeypatch, tmp_path):
+    from autopilot.publishing import mediahost
+    t = mediahost.TunnelHost(0)
+    t.base = "https://abc-def.trycloudflare.com"
+    monkeypatch.setattr(mediahost.TunnelHost, "local_ok", staticmethod(lambda url: False))
+    monkeypatch.setattr(mediahost.time, "sleep", lambda x: None)
+    monkeypatch.setattr(mediahost, "public_dns_resolves", lambda base: True)
+    f = tmp_path / "a.jpg"; f.write_bytes(b"x")
+    assert t.url_for(str(f)).startswith("https://abc-def.trycloudflare.com/m/")
+    monkeypatch.setattr(mediahost, "public_dns_resolves", lambda base: False)
+    import pytest
+    with pytest.raises(RuntimeError, match="tunnel-test"):
+        t.url_for(str(f))
