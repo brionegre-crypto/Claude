@@ -32,13 +32,29 @@ def pick_archetype(db: DB, fmt: str, rng=None) -> str:
     return rng.choice([o for o, c in counts.items() if c == best])
 
 
-def pick_keyword(s, db: DB, rng=None) -> str:
+def pick_keyword(s, db: DB, rng=None, avoid=()) -> str:
     import random as _r
     rng = rng or _r
-    bank = s.get("brand.keywords") or prompts.KEYWORDS
+    bank = [k for k in (s.get("brand.keywords") or prompts.KEYWORDS) if k not in avoid] or list(prompts.KEYWORDS)
     recent = [b.get("keyword") for b in _recent_bodies(db, "1=1", (), 40)]
     unused = [k for k in bank if k not in recent]
     return rng.choice(unused or bank)
+
+
+def neighbour_posts(db: DB, content: dict, days: int = 4) -> list[dict]:
+    """Posts scheduled within ±days (any platform): the writer must not repeat their topic, angle or keyword."""
+    if not content.get("scheduled_at"):
+        return []
+    from datetime import datetime
+    t = datetime.fromisoformat(content["scheduled_at"])
+    rows = db.q("""SELECT format, hook, topic, body FROM content WHERE id!=? AND hook IS NOT NULL
+                   AND status IN ('ready','published','manual_due','generating','draft') AND scheduled_at BETWEEN ? AND ?
+                   ORDER BY scheduled_at""", (content["id"], iso(t - timedelta(days=days)), iso(t + timedelta(days=days))))
+    out = []
+    for r in rows:
+        b = json.loads(r["body"] or "{}")
+        out.append({"format": r["format"], "hook": r["hook"], "keyword": b.get("keyword"), "archetype": b.get("archetype")})
+    return out[:20]
 
 
 def recent_hooks(db: DB, n=60) -> list[str]:
@@ -69,13 +85,14 @@ def generate_one(s, db: DB, provider, content: dict, link_checker=None) -> dict:
         if u not in [x["url"] for x in sources]:
             sources.append({"title": "corroborating source", "url": u})
     archetype = pick_archetype(db, content["format"])
-    keyword = pick_keyword(s, db)
+    neighbours = neighbour_posts(db, content)
+    keyword = pick_keyword(s, db, avoid=[n["keyword"] for n in neighbours if n.get("keyword")])
     from autopilot.assets import design
     prev_body = json.loads(content.get("body") or "{}") if isinstance(content.get("body"), str) else (content.get("body") or {})
     style = design.norm_style(prev_body.get("style")) or design.pick_style(cid, render.recent_styles(db, content["platform"], cid))
     prompt = prompts.generate(s.brand_text(), content["platform"], content["format"], item["topic"], angle, sources,
                               recent_hooks(db), db.kv_get("learnings", ""), s.get("brand.cta_default", ""), s.get("brand.link", ""),
-                              archetype=archetype, keyword=keyword, style=style)
+                              archetype=archetype, keyword=keyword, style=style, neighbours=neighbours)
     try:
         data = provider.complete_json("generate", prompt)
     except (ProviderUnavailable, ProviderError):

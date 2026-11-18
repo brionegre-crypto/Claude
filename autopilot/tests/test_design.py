@@ -61,3 +61,19 @@ def test_refresh_queue_rewrites_future_posts_and_skips_imminent(env):
     assert res["rewritten"] == 1 and not p.ignore_budget
     body = json.loads(db.one("SELECT body FROM content WHERE id=?", (later,))[0])
     assert body.get("archetype") and body.get("style") and db.one("SELECT status FROM content WHERE id=?", (later,))[0] == "ready"
+
+
+def test_neighbours_are_passed_and_their_keywords_avoided(env):
+    s, db = env
+    from autopilot import generation
+    from autopilot.ai import prompts
+    a = make_ready(s, db, "image")
+    db.x("UPDATE content SET scheduled_at=?, body=? WHERE id=?",
+         (iso(utcnow() + timedelta(days=2)), json.dumps({"keyword": "morning routine for men", "slides": [{"title": "x"}]}), a))
+    c = {"id": "new", "scheduled_at": iso(utcnow() + timedelta(days=3))}
+    nb = generation.neighbour_posts(db, c)
+    assert any(n["keyword"] == "morning routine for men" for n in nb)
+    for _ in range(30):
+        assert generation.pick_keyword(s, db, avoid=["morning routine for men"]) != "morning routine for men"
+    p = prompts.generate("b", "instagram", "image", "t", "a", [], [], "", "", "", neighbours=nb)
+    assert "morning routine for men" in p and "DIFFERENT topic" in p
