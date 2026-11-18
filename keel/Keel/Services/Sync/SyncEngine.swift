@@ -72,7 +72,22 @@ final class SyncEngine {
         try? ctx.save()
     }
 
+    /// Asked to sync while a sync is already running (say, new mail arrived mid-sync): run once more after,
+    /// instead of dropping the request, so that mail isn't left waiting for the next scheduled sync.
+    @ObservationIgnored private var syncAgain = false
+
     func syncAll() async {
+        guard container != nil else { return }
+        if isSyncing { syncAgain = true; return }
+        var rounds = 0
+        repeat {
+            syncAgain = false
+            rounds += 1
+            await syncOnce()
+        } while syncAgain && rounds < 3
+    }
+
+    private func syncOnce() async {
         guard let container, !isSyncing else { return }
         isSyncing = true; defer { isSyncing = false }
         let ctx = container.mainContext

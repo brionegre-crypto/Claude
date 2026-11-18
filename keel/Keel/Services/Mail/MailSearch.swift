@@ -40,12 +40,19 @@ struct MailQuery: Equatable {
     }
 
     func matches(_ e: EmailMessage, isVIP: Bool = false) -> Bool {
-        let sender = (e.fromName + " " + e.from).lowercased()
-        if !from.allSatisfy({ sender.contains($0) }) { return false }
-        let rcpt = (e.toLine + " " + e.ccLine).lowercased()
-        if !to.allSatisfy({ rcpt.contains($0) }) { return false }
-        let subj = e.subject.lowercased()
-        if !subject.allSatisfy({ subj.contains($0) }) { return false }
+        // Matching ignores case, accents and curly vs straight quotes ("cafe" finds "Café", "don't" finds "don’t").
+        if !from.isEmpty {
+            let sender = NoteText.fold(e.fromName + " " + e.from)
+            if !from.allSatisfy({ sender.contains($0) }) { return false }
+        }
+        if !to.isEmpty {
+            let rcpt = NoteText.fold(e.toLine + " " + e.ccLine)
+            if !to.allSatisfy({ rcpt.contains($0) }) { return false }
+        }
+        if !subject.isEmpty {
+            let subj = NoteText.fold(e.subject)
+            if !subject.allSatisfy({ subj.contains($0) }) { return false }
+        }
         if flags.contains("attachment") && !e.hasAttachments { return false }
         if flags.contains("unread") && e.isRead { return false }
         if flags.contains("read") && !e.isRead { return false }
@@ -57,7 +64,7 @@ struct MailQuery: Equatable {
         if let k = category, e.category != k { return false }
         if let arch = inArchive, e.isArchived != arch { return false }
         if words.isEmpty && phrases.isEmpty && excluded.isEmpty { return true }
-        let hay = [e.subject, e.fromName, e.from, e.snippet, e.bodyPlain, e.toLine].joined(separator: " ").lowercased()
+        let hay = MailSearchText.folded(e)
         return words.allSatisfy { hay.contains($0) }
             && phrases.allSatisfy { hay.contains($0) }
             && !excluded.contains { hay.contains($0) }
@@ -84,8 +91,8 @@ enum MailQueryParser {
 
     static func parse(_ raw: String, now: Date = Date()) -> MailQuery {
         var q = MailQuery()
-        for token in tokenize(raw) {
-            let t = token.lowercased()
+        for token in tokenize(NoteText.straighten(raw)) {
+            let t = NoteText.fold(token)
             if token.hasPrefix("\"") {
                 let p = t.trimmingCharacters(in: CharacterSet(charactersIn: "\""))
                 if !p.isEmpty { q.phrases.append(p) }
@@ -183,5 +190,23 @@ enum MailQueryParser {
         case "y": return cal.date(byAdding: .year, value: -n, to: now)
         default: return nil
         }
+    }
+}
+
+
+/// Each email's searchable text (subject, sender, recipients, CC, preview and body), prepared once and reused,
+/// so typing a search doesn't re-read thousands of email bodies on every letter.
+enum MailSearchText {
+    nonisolated(unsafe) private static var cache: [String: (stamp: Int, text: String)] = [:]
+    private static let lock = NSLock()
+
+    static func folded(_ e: EmailMessage) -> String {
+        let stamp = e.bodyPlain.utf8.count &+ e.subject.utf8.count &* 31 &+ e.ccLine.utf8.count &* 7
+        lock.lock(); defer { lock.unlock() }
+        if let c = cache[e.id], c.stamp == stamp { return c.text }
+        let text = NoteText.fold([e.subject, e.fromName, e.from, e.toLine, e.ccLine, e.snippet, e.bodyPlain].joined(separator: " "))
+        if cache.count > 6_000 { cache.removeAll(keepingCapacity: true) }
+        cache[e.id] = (stamp, text)
+        return text
     }
 }

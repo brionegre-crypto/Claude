@@ -56,6 +56,51 @@ struct TasksView: View {
     @State private var search = ""
     @State private var toast: String?
     @AppStorage("tasks.board") private var boardMode = false
+    @AppStorage("tasks.search.thisList") private var searchThisList = false
+    @AppStorage(ReminderFailures.key) private var failedRaw = ""
+    @State private var retryingReminders = false
+
+    /// Said out loud when tasks aren't reaching Apple Reminders, instead of failing silently.
+    @ViewBuilder private var remindersNotice: some View {
+        let cal = CalendarService.shared
+        let usesReminders = RemindersBridge.isThisDevice && tasks.contains { $0.ekReminderId != nil }
+        let failedIds = failedRaw.isEmpty ? Set<UUID>() : ReminderFailures.ids
+        let failed = failedIds.isEmpty ? 0 : tasks.filter { failedIds.contains($0.id) }.count
+        if usesReminders && !cal.hasReminderAccess {
+            Section {
+                Label("Keel can't reach Apple Reminders, so changes here aren't syncing there.", systemImage: "exclamationmark.triangle.fill")
+                    .font(DS.Font.caption).foregroundStyle(DS.Palette.warmth)
+                Button("Allow access in Settings") {
+                    if let u = URL(string: UIApplication.openSettingsURLString) { UIApplication.shared.open(u) }
+                }.font(DS.Font.caption)
+            }
+        } else if failed > 0 {
+            Section {
+                HStack {
+                    Label("\(failed) task\(failed == 1 ? "" : "s") didn't reach Reminders", systemImage: "exclamationmark.arrow.triangle.2.circlepath")
+                        .font(DS.Font.caption).foregroundStyle(DS.Palette.warmth)
+                    Spacer()
+                    Button(retryingReminders ? "Retrying…" : "Retry") {
+                        retryingReminders = true
+                        let ids = ReminderFailures.ids
+                        for t in tasks where ids.contains(t.id) { try? CalendarService.shared.push(t) }
+                        retryingReminders = false
+                        Haptics.tap()
+                    }
+                    .font(DS.Font.caption.weight(.semibold)).buttonStyle(.borderless).disabled(retryingReminders)
+                }
+            } footer: { Text("Keel also retries on its own each time it syncs.") }
+        }
+    }
+    /// Finished tasks matching the search (shown under the open ones).
+    private var searchDone: [TaskItem] {
+        guard !search.isEmpty, !searchThisList, filter != .completed else { return [] }
+        return memo.get(\.searchDone) {
+            let terms = TaskSearch.terms(search)
+            return tasks.filter { $0.isDone && TaskSearch.matches($0, terms) }
+                .sorted { ($0.completedAt ?? .distantPast) > ($1.completedAt ?? .distantPast) }
+        }
+    }
     @State private var sharingList: String?
     @FocusState private var addFocused: Bool
     /// Per-update cache: filtering, grouping and sorting run once per screen update instead of once per use.
@@ -153,8 +198,14 @@ struct TasksView: View {
         case .smart(let id): base = smartLists.first { $0.id == id }.map { s in tasks.filter { s.matches($0) } } ?? []
         }
         if !search.isEmpty {
-            let q = search.lowercased()
-            base = base.filter { $0.title.lowercased().contains(q) || $0.notes.lowercased().contains(q) || $0.tags.contains { $0.lowercased().contains(q) } }
+            // Search covers every task, whatever list you're on, unless you chose "This list".
+            // Finished tasks that match are listed separately, under Completed.
+            let terms = TaskSearch.terms(search)
+            if !searchThisList && filter != .completed {
+                base = tasks.filter { !$0.isDone && TaskSearch.matches($0, terms) }
+            } else {
+                base = base.filter { TaskSearch.matches($0, terms) }
+            }
         }
         return base
     }
@@ -299,6 +350,17 @@ struct TasksView: View {
                 .listRowBackground(Color.clear)
                 .listRowSeparator(.hidden)
                 .selectionDisabled()
+            remindersNotice
+            if !search.isEmpty && filter != .completed {
+                Picker("Search in", selection: $searchThisList) {
+                    Text("All tasks").tag(false)
+                    Text("This list only").tag(true)
+                }
+                .pickerStyle(.segmented)
+                .listRowBackground(Color.clear)
+                .listRowSeparator(.hidden)
+                .selectionDisabled()
+            }
             if filter != .completed && !selecting {
                 Section {
                     HStack {
@@ -339,13 +401,22 @@ struct TasksView: View {
                         ForEach(waiting) { row($0) }
                     } header: { Text("Waiting on others") } footer: {
                         // Who has what: "With Sam: 2 · With Alex: 1".
-                        let who = Dictionary(grouping: waiting.compactMap { TaskAssign.who($0, ctx: ctx)?.name }, by: { $0 })
-                        if !who.isEmpty { Text(who.map { "With \($0.key): \($0.value.count)" }.sorted().joined(separator: " · ")) }
+                        let who = memo.get(\.waitingWho) {
+                            let d = Dictionary(grouping: waiting.compactMap { TaskAssign.who($0, ctx: ctx)?.name }, by: { $0 })
+                            return d.map { "With \($0.key): \($0.value.count)" }.sorted().joined(separator: " · ")
+                        }
+                        if !who.isEmpty { Text(who) }
                     }
                 }
             }
 
-            if filtered.isEmpty {
+            if !searchDone.isEmpty {
+                Section("Completed") {
+                    ForEach(searchDone.prefix(100)) { t in row(t).opacity(0.7) }
+                }
+            }
+
+            if filtered.isEmpty && searchDone.isEmpty {
                 ContentUnavailableView(filter == .completed ? "Nothing completed yet" : "Nothing here",
                                        systemImage: filter == .today ? "sun.max" : "checkmark.circle",
                                        description: Text(filter == .today ? "A clear day. Add something, or enjoy it." : "Add a task above."))
@@ -353,6 +424,7 @@ struct TasksView: View {
             }
         }
         .listStyle(.insetGrouped)
+        .environment(\.taskSearchTerms, search.isEmpty ? [] : TaskSearch.terms(search))
         .premiumBackground(DS.Palette.warmth)
         .environment(\.editMode, .constant(selecting ? .active : .inactive))
         .safeAreaInset(edge: .bottom) { if selecting { taskBulkBar } }
@@ -507,6 +579,7 @@ extension TaskPriority {
 }
 
 struct TaskRow: View {
+    @Environment(\.taskSearchTerms) private var searchTerms
     @Bindable var task: TaskItem
     var showList = true
     var onRolled: ((Date) -> Void)? = nil
@@ -528,7 +601,16 @@ struct TaskRow: View {
                 }
             }
             VStack(alignment: .leading, spacing: 3) {
-                Text(task.title).strikethrough(task.isDone).foregroundStyle(task.isDone ? DS.Palette.inkSoft : DS.Palette.ink)
+                if searchTerms.isEmpty {
+                    Text(task.title).strikethrough(task.isDone).foregroundStyle(task.isDone ? DS.Palette.inkSoft : DS.Palette.ink)
+                } else {
+                    Text(EmailRow.lit(task.title, searchTerms, trim: false)).strikethrough(task.isDone)
+                        .foregroundStyle(task.isDone ? DS.Palette.inkSoft : DS.Palette.ink)
+                    if let hit = TaskSearch.hiddenMatch(task, searchTerms) {
+                        // The word was in the task's notes or steps: show where.
+                        Text(EmailRow.lit(hit, searchTerms, trim: true)).font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft).lineLimit(2)
+                    }
+                }
                 HStack(spacing: 6) {
                     if let d = task.dueDate {
                         Text(dueText(d)).foregroundStyle(d < Date() && !task.isDone && !prefs.calm ? DS.Palette.warmth : DS.Palette.inkSoft)
@@ -931,7 +1013,9 @@ final class TasksMemo {
     var tags: [String]?
     var filtered: [TaskItem]?
     var groups: [(title: String, items: [TaskItem])]?
-    func reset() { lists = nil; tags = nil; filtered = nil; groups = nil }
+    var searchDone: [TaskItem]?
+    var waitingWho: String?
+    func reset() { lists = nil; tags = nil; filtered = nil; groups = nil; searchDone = nil; waitingWho = nil }
     func get<T>(_ key: ReferenceWritableKeyPath<TasksMemo, T?>, _ make: () -> T) -> T {
         if let v = self[keyPath: key] { return v }
         let v = make(); self[keyPath: key] = v; return v
@@ -955,5 +1039,42 @@ struct TaskRowPrefs {
                              showDuration: Custom.taskShowDuration, showTags: Custom.taskShowTags, showEnergy: Custom.taskShowEnergy)
         cached = c
         return c
+    }
+}
+
+
+// MARK: - Task search
+
+/// Task matching that ignores case, accents and curly vs straight quotes, and looks in the title, notes,
+/// tags, list name and every step. Every word must be somewhere in the task; "quoted words" must be together.
+enum TaskSearch {
+    static func terms(_ raw: String) -> [String] {
+        let q = NoteQuery.parse(raw, match: .all)
+        return (q.phrases + q.terms + q.tags.map { String($0.dropFirst()) } + q.titleTerms).filter { !$0.isEmpty }
+    }
+    static func text(_ t: TaskItem) -> String {
+        NoteText.fold(([t.title, t.notes, t.listName] + t.tags + t.microSteps.map(\.text)).joined(separator: " \u{1F} "))
+    }
+    static func matches(_ t: TaskItem, _ terms: [String]) -> Bool {
+        guard !terms.isEmpty else { return true }
+        let hay = text(t)
+        return terms.allSatisfy { hay.contains($0) }
+    }
+    /// A match that isn't in the title (in the notes or a step), to show under the title.
+    static func hiddenMatch(_ t: TaskItem, _ terms: [String]) -> String? {
+        let inTitle = { (s: String) in terms.contains { s.range(of: $0, options: NoteText.compare) != nil } }
+        if terms.allSatisfy({ t.title.range(of: $0, options: NoteText.compare) != nil }) { return nil }
+        if inTitle(t.notes) { return t.notes }
+        if let step = t.microSteps.first(where: { inTitle($0.text) }) { return "Step: " + step.text }
+        return nil
+    }
+}
+
+private struct TaskSearchTermsKey: EnvironmentKey { static let defaultValue: [String] = [] }
+extension EnvironmentValues {
+    /// The words being searched for in Tasks, so rows can highlight them (empty when not searching).
+    var taskSearchTerms: [String] {
+        get { self[TaskSearchTermsKey.self] }
+        set { self[TaskSearchTermsKey.self] = newValue }
     }
 }

@@ -153,6 +153,12 @@ final class CalendarService {
     /// Reminders app is removed from Keel; tasks made in Keel are created in Reminders.
     func syncReminders(tasks: [TaskItem], insert: (TaskItem) -> Void, delete: (TaskItem) -> Void) async {
         guard hasReminderAccess, RemindersBridge.isThisDevice else { return }
+        // Retry anything that didn't make it last time.
+        let failed = ReminderFailures.ids
+        if !failed.isEmpty {
+            for t in tasks where failed.contains(t.id) { try? push(t) }
+            ReminderFailures.keepOnly(Set(tasks.map(\.id)))
+        }
         let reminders = await fetchReminders()
         let byId = Dictionary(tasks.compactMap { t in t.ekReminderId.map { ($0, t) } }, uniquingKeysWith: { a, _ in a })
         var seen = Set<String>()
@@ -204,7 +210,22 @@ final class CalendarService {
         for t in tasks where t.ekReminderId == nil && !t.isDone { try? push(t) }
     }
 
+    /// Sends a task to Apple Reminders. Only the device that runs the Reminders sync does this (normally your
+    /// iPhone): a reminder's id differs from device to device, so iPad or Mac writing too made duplicates.
+    /// Other devices' changes reach Reminders on that device's next sync. A failure is remembered and retried,
+    /// and Tasks says so, instead of the task silently never reaching Reminders.
     func push(_ t: TaskItem) throws {
+        guard hasReminderAccess, RemindersBridge.isThisDevice else { return }
+        do {
+            try pushNow(t)
+            ReminderFailures.clear(t.id)
+        } catch {
+            ReminderFailures.add(t.id)
+            throw error
+        }
+    }
+
+    private func pushNow(_ t: TaskItem) throws {
         let r: EKReminder
         if let id = t.ekReminderId, let existing = store.calendarItem(withIdentifier: id) as? EKReminder {
             r = existing
@@ -290,6 +311,20 @@ extension Recurrence {
 /// With iCloud sync, tasks already reach every device. Apple Reminders syncs through iCloud on its own too,
 /// so only one device links the two (your iPhone by default); otherwise each device would copy them again.
 @MainActor
+/// Tasks that couldn't be saved to Apple Reminders yet (retried on every sync; Tasks shows a note while any remain).
+enum ReminderFailures {
+    static let key = "reminders.failed"
+    static var ids: Set<UUID> {
+        Set((UserDefaults.standard.string(forKey: key) ?? "").split(separator: ",").compactMap { UUID(uuidString: String($0)) })
+    }
+    private static func store(_ s: Set<UUID>) {
+        UserDefaults.standard.set(s.map(\.uuidString).sorted().joined(separator: ","), forKey: key)
+    }
+    static func add(_ id: UUID) { var s = ids; if s.insert(id).inserted { store(s) } }
+    static func clear(_ id: UUID) { var s = ids; if s.remove(id) != nil { store(s) } }
+    static func keepOnly(_ alive: Set<UUID>) { let s = ids.intersection(alive); if s != ids { store(s) } }
+}
+
 enum RemindersBridge {
     static let key = "reminders.bridge"
     static var isThisDevice: Bool {

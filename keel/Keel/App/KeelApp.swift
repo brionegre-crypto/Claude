@@ -101,6 +101,9 @@ struct KeelApp: App {
                 }
             }
             if phase == .background {
+                // Save now, after open pages have stored what was just typed, so nothing waits on autosave
+                // (iPhone may close Keel while it's in the background).
+                Task { @MainActor in try? container.mainContext.save() }
                 WidgetSync.updateNow(container.mainContext)
                 if MarkdownMirror.isOn { MarkdownMirror.sync(ctx: container.mainContext) }   // Markdown copy of changed pages
                 AppLock.shared.lockIfEnabled()

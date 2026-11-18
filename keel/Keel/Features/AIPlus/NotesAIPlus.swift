@@ -33,27 +33,32 @@ enum LocationPhrase {
 
 @MainActor
 enum NotesAsk {
+    /// The words of a question worth looking for (not "what", "the", "my"…), prepared for matching.
+    static func keywords(_ q: String) -> [String] {
+        let stop: Set<String> = ["the", "and", "for", "what", "when", "where", "who", "did", "does", "about", "with", "from", "that", "this", "have", "has", "was", "were", "are", "my", "me", "how", "which", "notes", "note", "page", "pages", "you", "your", "can", "any", "there", "find", "show", "tell", "know", "write", "wrote"]
+        return NoteText.fold(q).split { !$0.isLetter && !$0.isNumber }.map(String.init).filter { $0.count > 2 && !stop.contains($0) }
+    }
+
+    /// Pages most likely to answer the question. Uses the Notes search engine, so it reads every line, table,
+    /// database field and scanned image (not only the top of each page).
     static func search(_ q: String, in notes: [Note], limit: Int = 8) -> [Note] {
-        let stop: Set<String> = ["the", "and", "for", "what", "when", "where", "who", "did", "does", "about", "with", "from", "that", "this", "have", "has", "was", "were", "are", "my", "me", "how", "which", "notes", "note", "page", "pages"]
-        let words = q.lowercased().split { !$0.isLetter && !$0.isNumber }.map(String.init).filter { $0.count > 2 && !stop.contains($0) }
+        let words = keywords(q)
         let pool = notes.filter { !$0.isLocked && !$0.isTemplate }
         guard !words.isEmpty else { return Array(pool.prefix(limit)) }
-        return pool.compactMap { n -> (Note, Double)? in
-            let title = n.title.lowercased(), body = n.plainText.prefix(8_000).lowercased(), folder = (n.folder ?? "").lowercased()
-            var s = 0.0
-            for w in words {
-                if title.contains(w) { s += 4 }
-                if folder.contains(w) { s += 1.5 }
-                s += min(Double(body.components(separatedBy: w).count - 1), 5)
-            }
-            return s > 0 ? (n, s + max(0, 1 - Date().timeIntervalSince(n.updatedAt) / (90 * 86_400))) : nil
-        }
-        .sorted { $0.1 > $1.1 }.prefix(limit).map(\.0)
+        NoteSearchIndex.refreshScans(KeelStore.container.mainContext)    // text in scanned images counts too
+        var query = NoteQuery()
+        query.terms = words
+        return NoteSearchIndex.search(query, in: pool, scope: .everything, match: .any, wholeWords: false, sort: .best)
+            .prefix(limit).map(\.note)
     }
 
     static func answer(_ q: String, sources: [Note]) async -> String {
         guard !sources.isEmpty else { return "None of your pages mention that yet." }
-        let ctx = sources.enumerated().map { i, n in "[\(i + 1)] \(n.title.isEmpty ? "Untitled" : n.title)\(n.folder.map { " (in \($0))" } ?? ""):\n\(n.plainText.prefix(1_200))" }
+        // Each page contributes the passages that mention the question's words (with a line either side),
+        // not just its first lines, so an answer deep in a long page still reaches the AI.
+        let words = keywords(q)
+        let budget = max(900, 10_000 / max(sources.count, 1))
+        let ctx = sources.enumerated().map { i, n in "[\(i + 1)] \(n.title.isEmpty ? "Untitled" : n.title)\(n.folder.map { " (in \($0))" } ?? ""):\n\(NoteSearchIndex.passages(n, terms: words, budget: budget))" }
             .joined(separator: "\n\n")
         let prompt = """
         Answer the question using only these pages from my notes. Be brief and specific, and cite pages like [1] or [2]. \

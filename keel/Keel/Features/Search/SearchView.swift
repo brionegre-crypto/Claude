@@ -28,7 +28,7 @@ struct SearchView: View {
     private var smart: SmartQuery { refined ?? SmartQueryParser.parse(live) }
     private func taskOK(_ t: TaskItem) -> Bool {
         let s = smart
-        guard s.allows("task"), s.matches(t.title, t.notes, t.tags.joined(separator: " ")) else { return false }
+        guard s.allows("task"), s.words.isEmpty || s.matches(folded: TaskSearch.text(t)) else { return false }
         if s.flags.contains("done") && !t.isDone { return false }
         if s.flags.contains("open") && t.isDone { return false }
         if s.flags.contains("overdue") && (t.isDone || (t.dueDate ?? .distantFuture) >= Calendar.current.startOfDay(for: Date())) { return false }
@@ -37,13 +37,21 @@ struct SearchView: View {
     }
     private func mailOK(_ e: EmailMessage) -> Bool {
         let s = smart
-        guard s.allows("email"), s.matches(e.subject, e.fromName, e.from, e.bodyPlain) else { return false }
+        guard s.allows("email"), s.matches(folded: MailSearchText.folded(e)) else { return false }
         if let f = s.from, !(e.fromName + " " + e.from).lowercased().contains(f) { return false }
         if s.flags.contains("unread") && e.isRead { return false }
         if s.flags.contains("starred") && !e.isStarred { return false }
         if s.flags.contains("attachments") && !e.hasAttachments { return false }
         if s.flags.contains("overdue") || s.flags.contains("done") { return false }
         return s.inRange(e.receivedAt)
+    }
+    /// Notes matching the words (every word somewhere on the page), best first, within any date range asked for.
+    private var noteResults: [NoteSearchIndex.Hit] {
+        var q = NoteQuery()
+        q.terms = smart.words.map(NoteText.fold).filter { !$0.isEmpty }
+        guard !q.terms.isEmpty else { return [] }
+        let pool = notes.filter { !$0.isTemplate && smart.inRange($0.updatedAt) }
+        return NoteSearchIndex.search(q, in: pool, scope: .everything, match: .all, wholeWords: false, sort: .best)
     }
     private var plainOnly: Bool { smart.kinds.isEmpty && smart.flags.isEmpty && smart.from == nil }
 
@@ -83,22 +91,35 @@ struct SearchView: View {
                     }
                     .listRowBackground(Color.clear)
                 }
-                let t = tasks.filter(taskOK).prefix(smart.isStructured ? 30 : 8)
+                // Open tasks first, and tasks with the words in their title before ones with them in notes or steps.
+                let t = tasks.filter(taskOK).sorted { a, b in
+                    if a.isDone != b.isDone { return !a.isDone }
+                    let ta = smart.matches(a.title), tb = smart.matches(b.title)
+                    return ta != tb ? ta : a.updatedAt > b.updatedAt
+                }.prefix(smart.isStructured ? 30 : 8)
                 if !t.isEmpty {
                     Section("Tasks") { ForEach(Array(t)) { task in NavigationLink { LazyView(TaskDetailView(task: task)) } label: { TaskRow(task: task) } } }
                 }
-                let n = smart.allows("note") && smart.flags.isEmpty && smart.from == nil
-                    ? Array(notes.filter { !$0.isTemplate && smart.matches($0.title, $0.isLocked ? "" : $0.plainText) && smart.inRange($0.updatedAt) }.prefix(smart.isStructured ? 20 : 6)) : []
+                // Notes use the same engine as Notes search: every line, table, database field and scanned image.
+                let noteHits = smart.allows("note") && smart.flags.isEmpty && smart.from == nil ? noteResults : []
+                let n = Array(noteHits.prefix(smart.isStructured ? 20 : 6))
                 if !n.isEmpty {
-                    Section("Notes") {
-                        ForEach(n) { note in
-                            NavigationLink { LazyView(NoteEditor(note: note)) } label: {
-                                VStack(alignment: .leading) {
-                                    Text(note.title).font(DS.Font.headline)
-                                    Text(NoteSnippet.text(note)).font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft).lineLimit(2)
+                    Section {
+                        ForEach(n) { hit in
+                            NavigationLink { LazyView(NoteOrCanvas(note: hit.note, focusBlock: hit.jumpTo)) } label: {
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(hit.note.title.isEmpty ? "Untitled" : hit.note.title).font(DS.Font.headline)
+                                    if let p = hit.preview {
+                                        Text(NoteSearchIndex.preview(p, highlights: smart.words.map(NoteText.fold), tint: DS.Palette.accent))
+                                            .font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft).lineLimit(2)
+                                    } else {
+                                        Text(NoteSnippet.text(hit.note)).font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft).lineLimit(2)
+                                    }
                                 }
                             }
                         }
+                    } header: {
+                        Text(noteHits.count > n.count ? "Notes · \(noteHits.count) pages" : "Notes")
                     }
                 }
                 let m = mail.filter(mailOK).prefix(smart.isStructured ? 30 : 8)
@@ -137,6 +158,7 @@ struct SearchView: View {
         .navigationTitle("Search")
         .searchable(text: $query, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search Keel")
         .onChange(of: query) { refined = nil }
+        .onAppear { NoteSearchIndex.refreshScans(ctx) }      // text in scanned images is searchable too
         .task(id: query) {
             // Short pause while you're still typing; clearing is immediate.
             if !query.isEmpty { try? await Task.sleep(for: .milliseconds(120)) }
@@ -167,28 +189,68 @@ struct SearchView: View {
 /// Puts Keel tasks and notes into iPhone search (swipe down on the Home Screen).
 @MainActor
 enum SpotlightIndex {
+    /// Keeps iPhone search (swipe down on the Home Screen) up to date with every open task and every unlocked
+    /// page, full text included. Only what changed since last time is sent to the index, so it stays light.
     static func refresh(_ ctx: ModelContext) {
-        let tasks = ((try? ctx.fetch(FetchDescriptor<TaskItem>())) ?? []).filter { !$0.isDone }.prefix(500)
-        let notes = ((try? ctx.fetch(FetchDescriptor<Note>())) ?? []).filter { !$0.isLocked && !$0.isTemplate }.prefix(500)
+        let tasks = ((try? ctx.fetch(FetchDescriptor<TaskItem>(predicate: #Predicate { !$0.isDone }))) ?? [])
+        let notes = ((try? ctx.fetch(FetchDescriptor<Note>())) ?? []).filter { !$0.isLocked && !$0.isTemplate }
+        let before = loadStamps()
+        var now: [String: Double] = [:]
         var items: [CSSearchableItem] = []
         for t in tasks {
+            let key = "task:\(t.id.uuidString)"
+            let stamp = t.updatedAt.timeIntervalSince1970 + Double(t.microSteps.count)
+            now[key] = stamp
+            guard before[key] != stamp else { continue }
             let a = CSSearchableItemAttributeSet(contentType: .content)
             a.title = t.title
             a.contentDescription = [t.dueDate.map { "Due \($0.formatted(date: .abbreviated, time: t.hasDueTime ? .shortened : .omitted))" }, t.notes.isEmpty ? nil : t.notes]
                 .compactMap { $0 }.joined(separator: " · ")
+            a.textContent = ([t.notes] + t.microSteps.map(\.text)).joined(separator: "\n")
             a.keywords = t.tags + ["task", "keel", t.listName]
-            items.append(CSSearchableItem(uniqueIdentifier: "task:\(t.id.uuidString)", domainIdentifier: "tasks", attributeSet: a))
+            items.append(CSSearchableItem(uniqueIdentifier: key, domainIdentifier: "tasks", attributeSet: a))
         }
         for n in notes {
+            let key = "note:\(n.id.uuidString)"
+            let stamp = n.updatedAt.timeIntervalSince1970
+            now[key] = stamp
+            guard before[key] != stamp else { continue }
+            let text = n.plainText
             let a = CSSearchableItemAttributeSet(contentType: .text)
-            a.title = n.title
-            a.contentDescription = String(n.plainText.prefix(300))
-            a.keywords = ["note", "keel"]
-            items.append(CSSearchableItem(uniqueIdentifier: "note:\(n.id.uuidString)", domainIdentifier: "notes", attributeSet: a))
+            a.title = n.title.isEmpty ? "Untitled" : n.title
+            a.contentDescription = String(text.prefix(300))
+            a.textContent = String(text.prefix(60_000))          // the whole page, so any word in it finds it
+            a.keywords = ["note", "keel"] + (n.folder.map { [$0] } ?? [])
+            items.append(CSSearchableItem(uniqueIdentifier: key, domainIdentifier: "notes", attributeSet: a))
         }
+        let removed = before.keys.filter { now[$0] == nil }        // deleted, locked, finished or turned into templates
+        guard !items.isEmpty || !removed.isEmpty else { return }
+        push(items, removed: Array(removed), save: now)
+    }
+
+    nonisolated private static func push(_ items: [CSSearchableItem], removed: [String], save: [String: Double]) {
         let index = CSSearchableIndex.default()
-        index.deleteSearchableItems(withDomainIdentifiers: ["tasks", "notes"]) { _ in
-            index.indexSearchableItems(items, completionHandler: nil)
+        func send() {
+            if items.isEmpty { saveStamps(save); return }
+            index.indexSearchableItems(items) { error in if error == nil { saveStamps(save) } }
         }
+        if removed.isEmpty { send() } else { index.deleteSearchableItems(withIdentifiers: removed) { _ in send() } }
+    }
+
+    // What was last sent to the index (item → last change), kept in a small file.
+    nonisolated private static var stampsURL: URL {
+        URL.applicationSupportDirectory.appending(path: "spotlight-index-v2.json")
+    }
+    private static func loadStamps() -> [String: Double] {
+        guard let d = try? Data(contentsOf: stampsURL) else {
+            // First run with full-text indexing: clear the old, partial index so nothing stale lingers.
+            CSSearchableIndex.default().deleteSearchableItems(withDomainIdentifiers: ["tasks", "notes"], completionHandler: nil)
+            return [:]
+        }
+        return (try? JSONDecoder().decode([String: Double].self, from: d)) ?? [:]
+    }
+    nonisolated private static func saveStamps(_ s: [String: Double]) {
+        try? FileManager.default.createDirectory(at: URL.applicationSupportDirectory, withIntermediateDirectories: true)
+        try? JSONEncoder().encode(s).write(to: stampsURL, options: .atomic)
     }
 }

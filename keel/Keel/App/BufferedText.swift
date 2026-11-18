@@ -65,6 +65,7 @@ struct BlockTextField: View {
     @State private var text = ""
     @State private var synced = ""
     @State private var pending: Task<Void, Never>?
+    @Environment(\.scenePhase) private var scenePhase
 
     var body: some View {
         TextField(placeholder, text: $text, axis: .vertical)
@@ -96,6 +97,8 @@ struct BlockTextField: View {
                 synced = v; text = v
             }
             .onDisappear { flushNow() }
+            // Leaving Keel mid-sentence (home, app switcher, a call): save what's typed right away.
+            .onChange(of: scenePhase) { _, p in if p != .active { flushNow() } }
     }
 
     /// Things the page must react to straight away: a new line, a paste, the / and @ menus, Markdown shortcuts
@@ -123,6 +126,7 @@ struct BufferedTextField: View {
     @State private var synced = ""
     @State private var pending: Task<Void, Never>?
     @State private var loaded = false
+    @Environment(\.scenePhase) private var scenePhase
 
     init(_ title: String, text: Binding<String>, axis: Axis = .horizontal) {
         self.title = title; self._text = text; self.axis = axis
@@ -146,6 +150,7 @@ struct BufferedTextField: View {
             }
             .onSubmit { save() }
             .onDisappear { save() }
+            .onChange(of: scenePhase) { _, p in if p != .active { save() } }    // leaving Keel: keep what's typed
     }
 
     private func save() {
@@ -164,6 +169,7 @@ struct BufferedTextEditor: View {
     @State private var synced = ""
     @State private var pending: Task<Void, Never>?
     @State private var loaded = false
+    @Environment(\.scenePhase) private var scenePhase
 
     var body: some View {
         TextEditor(text: $local)
@@ -182,6 +188,7 @@ struct BufferedTextEditor: View {
                 local = v; synced = v
             }
             .onDisappear { save() }
+            .onChange(of: scenePhase) { _, p in if p != .active { save() } }    // leaving Keel: keep what's typed
     }
 
     private func save() {

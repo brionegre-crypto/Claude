@@ -77,14 +77,25 @@ struct InboxView: View {
         }
     }
 
+    /// Worked out once per screen update (it's used in several places), not once per use.
     private var visible: [EmailMessage] {
+        if let v = memo.visible { return v }
+        let v = computeVisible()
+        memo.visible = v
+        return v
+    }
+
+    private func computeVisible() -> [EmailMessage] {
         let base = mailboxEmails
-        if !search.isEmpty {
+        if !activeSearch.isEmpty {
             // Operators like from:sam has:attachment before:friday; plain words work as before.
+            // Searches every mailbox (Inbox, Archive, Starred, Snoozed) unless you chose "This mailbox only".
             let q = mailQuery
             let scores = scoreMap
-            let pool = q.inArchive == nil ? base : allEmails.filter(inAccount)
+            let everywhere = q.inArchive != nil || (!searchThisMailbox && mailbox != .sent)
+            let pool = everywhere ? allEmails.filter(inAccount) : base
             return pool.filter { q.matches($0, isVIP: scores[$0.from.lowercased()]?.isVIP == true) }
+                .sorted { $0.receivedAt > $1.receivedAt }
         }
         guard mailbox == .inbox else { return base }
         if let c = customTab { return base.filter { !$0.isPinned && MailTabs.matches($0, c) }.sorted { $0.receivedAt > $1.receivedAt } }
@@ -102,7 +113,17 @@ struct InboxView: View {
             }
     }
 
-    private var mailQuery: MailQuery { MailQueryParser.parse(search) }
+    private var mailQuery: MailQuery { MailQueryParser.parse(activeSearch) }
+    /// What's searched: follows typing a beat behind, so every letter stays instant on a big mailbox.
+    @State private var liveSearch = ""
+    private var activeSearch: String { search.isEmpty ? "" : (liveSearch.isEmpty ? search : liveSearch) }
+    @AppStorage("mail.search.thisMailbox") private var searchThisMailbox = false
+    /// Words to light up in each row while searching.
+    private var searchHighlights: [String] {
+        guard !activeSearch.isEmpty else { return [] }
+        let q = mailQuery
+        return (q.phrases + q.words + q.subject + q.from).filter { !$0.isEmpty }.sorted { $0.count > $1.count }
+    }
 
     private var inboxHorizonDetail: String {
         let unread = mailboxEmails.filter { !$0.isRead }
@@ -148,7 +169,8 @@ struct InboxView: View {
         var scores: [String: SenderScore]?
         var threads: [String: [EmailMessage]]?
         var mailbox: [EmailMessage]?
-        func reset() { scores = nil; threads = nil; mailbox = nil }
+        var visible: [EmailMessage]?
+        func reset() { scores = nil; threads = nil; mailbox = nil; visible = nil }
     }
     private let memo = Memo()
 
@@ -210,6 +232,14 @@ struct InboxView: View {
             }
             .onSubmit(of: .search) { Task { await searchServer() } }
             .onChange(of: search) { if search.isEmpty { serverResults = [] } }
+            .task(id: search) {
+                if search.isEmpty { liveSearch = ""; return }
+                if liveSearch.isEmpty { liveSearch = search; return }          // first letter: right away
+                try? await Task.sleep(for: .milliseconds(180))
+                guard !Task.isCancelled else { return }
+                liveSearch = search
+            }
+            .environment(\.mailSearchTerms, searchHighlights)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     Menu {
@@ -376,6 +406,17 @@ struct InboxView: View {
                 .selectionDisabled()
                 .accessibilityElement(children: .combine)
                 .accessibilityLabel("Filters: " + mailQuery.chips.joined(separator: ", "))
+            }
+
+            if !search.isEmpty && mailbox != .sent {
+                Picker("Search in", selection: $searchThisMailbox) {
+                    Text("All mailboxes").tag(false)
+                    Text("This mailbox only").tag(true)
+                }
+                .pickerStyle(.segmented)
+                .listRowBackground(Color.clear)
+                .listRowSeparator(.hidden)
+                .selectionDisabled()
             }
 
             if accounts.isEmpty && search.isEmpty {
@@ -856,6 +897,7 @@ extension EnvironmentValues {
 }
 
 struct EmailRow: View {
+    @Environment(\.mailSearchTerms) private var searchTerms
     @Environment(\.accountTags) private var accountTags
     @Environment(\.mailLayout) private var layout
     let email: EmailMessage
@@ -912,8 +954,16 @@ struct EmailRow: View {
                     }
                     Text(Self.time(email.receivedAt)).font(DS.Font.caption).foregroundStyle(unread ? DS.Palette.accent : DS.Palette.inkSoft)
                 }
-                Text(email.subject).font(DS.Font.body).foregroundStyle(unread ? DS.Palette.ink : DS.Palette.inkSoft).lineLimit(1)
-                if layout.previewLines > 0 {
+                if searchTerms.isEmpty {
+                    Text(email.subject).font(DS.Font.body).foregroundStyle(unread ? DS.Palette.ink : DS.Palette.inkSoft).lineLimit(1)
+                } else {
+                    Text(Self.lit(email.subject, searchTerms, trim: false)).font(DS.Font.body).lineLimit(1)
+                }
+                if !searchTerms.isEmpty {
+                    // While searching: the part of the email that matched, with the words highlighted.
+                    Text(Self.lit(Self.matchSource(email, searchTerms), searchTerms, trim: true))
+                        .font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft).lineLimit(2)
+                } else if layout.previewLines > 0 {
                     Text((count > 1 ? "Thread · " : "") + ((layout.aiSummary ? email.aiSummary : nil) ?? email.snippet))
                         .font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft).lineLimit(count > 1 ? min(1, layout.previewLines) : layout.previewLines)
                 }
@@ -924,6 +974,33 @@ struct EmailRow: View {
             }
         }
         .padding(.vertical, layout.rowPadding)
+    }
+
+    /// The text to preview while searching: the preview line if it has a match, otherwise the body.
+    static func matchSource(_ e: EmailMessage, _ terms: [String]) -> String {
+        let has = { (s: String) in terms.contains { s.range(of: $0, options: NoteText.compare) != nil } }
+        if has(e.snippet) { return e.snippet }
+        let body = e.bodyPlain.count > 20_000 ? String(e.bodyPlain.prefix(20_000)) : e.bodyPlain
+        return has(body) ? body : e.snippet
+    }
+
+    @MainActor static func lit(_ text: String, _ terms: [String], trim: Bool) -> AttributedString {
+        let display = NoteText.straighten(text)
+        if !trim {
+            var a = AttributedString(display)
+            for t in terms {
+                var from = display.startIndex
+                while let r = display.range(of: t, options: NoteText.compare, range: from..<display.endIndex) {
+                    if let ar = Range<AttributedString.Index>(r, in: a) {
+                        a[ar].backgroundColor = DS.Palette.accent.opacity(0.22)
+                        a[ar].inlinePresentationIntent = .stronglyEmphasized
+                    }
+                    from = r.upperBound
+                }
+            }
+            return a
+        }
+        return NoteSearchIndex.preview(NotePart(kind: .text, blockId: nil, display: display, folded: ""), highlights: terms, tint: DS.Palette.accent)
     }
 
     /// "9:41 AM" today, "Tue" this week, "Nov 3" otherwise.

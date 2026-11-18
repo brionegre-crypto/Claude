@@ -640,7 +640,8 @@ struct AskEverythingView: View {
         let cal = CalendarService.shared.events(from: Date().addingTimeInterval(-14 * 86_400), to: Date().addingTimeInterval(30 * 86_400))
             .filter { e in q.lowercased().split(separator: " ").contains { w in w.count > 3 && (e.title ?? "").lowercased().contains(w) } }.prefix(6)
         let taskHits = tasks.filter { t in q.lowercased().split(separator: " ").contains { w in w.count > 3 && t.title.lowercased().contains(w) } }.prefix(6)
-        var ctxText = srcNotes.enumerated().map { "[P\($0.offset + 1)] \($0.element.title): \($0.element.plainText.prefix(900))" }.joined(separator: "\n\n")
+        let askWords = NotesAsk.keywords(q)       // each page sends the passages that mention the question, not only its top
+        var ctxText = srcNotes.enumerated().map { "[P\($0.offset + 1)] \($0.element.title): \(NoteSearchIndex.passages($0.element, terms: askWords, budget: 900))" }.joined(separator: "\n\n")
         ctxText += "\n\n" + srcMail.enumerated().map { "[E\($0.offset + 1)] \($0.element.fromName) – \($0.element.subject): \($0.element.bodyPlain.prefix(500))" }.joined(separator: "\n\n")
         if !cal.isEmpty { ctxText += "\n\nCALENDAR: " + cal.map { "\($0.title ?? "") on \($0.startDate.formatted(date: .abbreviated, time: .shortened))" }.joined(separator: "; ") }
         if !taskHits.isEmpty { ctxText += "\n\nOPEN TASKS: " + taskHits.map { $0.title + ($0.dueDate.map { " (due \($0.formatted(date: .abbreviated, time: .omitted)))" } ?? "") }.joined(separator: "; ") }

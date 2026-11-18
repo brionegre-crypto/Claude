@@ -14,10 +14,15 @@ struct SmartQuery: Equatable {
     var isStructured: Bool { !kinds.isEmpty || from != nil || range != nil || !flags.isEmpty }
     func allows(_ kind: String) -> Bool { kinds.isEmpty || kinds.contains(kind) }
     func inRange(_ d: Date?) -> Bool { range.map { r in d.map { r.contains($0) } ?? false } ?? true }
+    /// Ignores case, accents and curly vs straight quotes ("cafe" finds "Café", "don't" finds "don’t").
     func matches(_ fields: String...) -> Bool {
         guard !words.isEmpty else { return true }
-        let hay = fields.joined(separator: " ").lowercased()
-        return words.allSatisfy { hay.contains($0) }
+        return matches(folded: NoteText.fold(fields.joined(separator: " ")))
+    }
+    /// For text that's already been prepared (lowercased, accents removed), like each email's cached search text.
+    func matches(folded hay: String) -> Bool {
+        guard !words.isEmpty else { return true }
+        return words.allSatisfy { hay.contains(NoteText.fold($0)) }
     }
 
     /// Chips shown under the search bar, e.g. ["Email", "from sarah", "Last week"].

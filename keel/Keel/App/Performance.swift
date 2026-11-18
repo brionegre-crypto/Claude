@@ -31,3 +31,14 @@ enum NoteSnippet {
         return text
     }
 }
+
+// MARK: - Search highlighting in mail rows
+
+private struct MailSearchTermsKey: EnvironmentKey { static let defaultValue: [String] = [] }
+extension EnvironmentValues {
+    /// The words being searched for in Inbox, so each row can highlight them (empty when not searching).
+    var mailSearchTerms: [String] {
+        get { self[MailSearchTermsKey.self] }
+        set { self[MailSearchTermsKey.self] = newValue }
+    }
+}

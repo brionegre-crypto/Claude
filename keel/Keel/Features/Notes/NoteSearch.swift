@@ -225,6 +225,29 @@ enum NoteSearchIndex {
         scans = out
     }
 
+    /// The parts of a page that mention any of the words, each with the line before and after for context,
+    /// up to `budget` characters. Falls back to the top of the page when only the title matched.
+    static func passages(_ n: Note, terms: [String], budget: Int = 1_600) -> String {
+        let e = entry(n)
+        var parts: [NotePart] = e.parts
+        if !n.isLocked, let extra = scans[n.id] { parts += extra }
+        var picked = Set<Int>()
+        for (i, p) in parts.enumerated() where terms.contains(where: { p.folded.contains($0) }) {
+            picked.insert(i)
+            if i > 0 { picked.insert(i - 1) }
+            if i + 1 < parts.count { picked.insert(i + 1) }
+        }
+        var out = "", last = -2
+        let order = picked.isEmpty ? Array(parts.indices) : picked.sorted()
+        for i in order {
+            if out.count >= budget { break }
+            if last >= 0 && i != last + 1 { out += "\n…\n" } else if !out.isEmpty { out += "\n" }
+            out += parts[i].display
+            last = i
+        }
+        return String(out.prefix(budget))
+    }
+
     struct Hit: Identifiable {
         let note: Note
         var id: UUID { note.id }
