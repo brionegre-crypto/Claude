@@ -401,7 +401,7 @@ struct PropertyValueEditor: View {
     var compact = false
 
     private var value: Binding<String> {
-        Binding(get: { row.props[property.id] ?? "" }, set: { row.props[property.id] = $0.isEmpty ? nil : $0 })
+        Binding(get: { row.props[property.id] ?? "" }, set: { row.props[property.id] = $0.isEmpty ? nil : $0; row.updatedAt = Date() })
     }
 
     /// What a card shows for this property on a row (formulas are worked out, relations show their titles).

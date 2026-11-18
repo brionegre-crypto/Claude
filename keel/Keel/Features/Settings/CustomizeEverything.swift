@@ -298,6 +298,13 @@ struct NotesCustomizeView: View {
     @AppStorage(Custom.notesFavoritesKey) private var favorites = true
     @AppStorage(Custom.notesRecentKey) private var recent = 8
     @AppStorage(Custom.notesSpacingKey) private var spacing = 0.0
+    @AppStorage(NoteSearchPrefs.matchKey) private var searchMatch = NoteSearchPrefs.Match.all.rawValue
+    @AppStorage(NoteSearchPrefs.scopeKey) private var searchScope = NoteSearchPrefs.Scope.everything.rawValue
+    @AppStorage(NoteSearchPrefs.sortKey) private var searchSort = NoteSearchPrefs.Sort.best.rawValue
+    @AppStorage(NoteSearchPrefs.wholeWordsKey) private var wholeWords = false
+    @AppStorage(NoteSearchPrefs.templatesKey) private var searchTemplates = false
+    @AppStorage(NoteSearchPrefs.snippetsKey) private var searchPreviews = true
+    @AppStorage(NoteSearchPrefs.recentsOnKey) private var searchRecents = true
 
     var body: some View {
         Form {
@@ -310,6 +317,18 @@ struct NotesCustomizeView: View {
             Section {
                 Picker("Line spacing", selection: $spacing) { Text("Normal").tag(0.0); Text("Airy").tag(4.0); Text("Spacious").tag(8.0) }
             } header: { Text("Pages") } footer: { Text("Page width and the bars while reading are in each page's ⋯ menu.") }
+            Section {
+                Picker("Match", selection: $searchMatch) { ForEach(NoteSearchPrefs.Match.allCases) { Text($0.rawValue).tag($0.rawValue) } }
+                Picker("Look in", selection: $searchScope) { ForEach(NoteSearchPrefs.Scope.allCases) { Text($0.rawValue).tag($0.rawValue) } }
+                Picker("Sort results", selection: $searchSort) { ForEach(NoteSearchPrefs.Sort.allCases) { Text($0.rawValue).tag($0.rawValue) } }
+                Toggle("Whole words only", isOn: $wholeWords)
+                Toggle("Include templates", isOn: $searchTemplates)
+                Toggle("Show matching lines", isOn: $searchPreviews)
+                Toggle("Remember recent searches", isOn: $searchRecents)
+                    .onChange(of: searchRecents) { _, on in if !on { NoteSearchPrefs.recents = [] } }
+            } header: { Text("Search") } footer: {
+                Text((NoteSearchPrefs.Match(rawValue: searchMatch) ?? .all).help + " Shortcuts: \"exact phrase\", -word, title:, in:Folder, #tag, is:todo, is:pinned, edited:week.")
+            }
         }
         .navigationTitle("Notes")
     }

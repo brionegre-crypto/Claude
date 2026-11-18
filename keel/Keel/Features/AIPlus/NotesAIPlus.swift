@@ -141,7 +141,7 @@ enum DBAutofill {
             """
             if let v = await AIRouter.shared.write(prompt) {
                 let clean = v.trimmingCharacters(in: .whitespacesAndNewlines).trimmingCharacters(in: CharacterSet(charactersIn: "\"“”"))
-                r.props[p.id] = clean.isEmpty ? nil : String(clean.prefix(300))
+                r.props[p.id] = clean.isEmpty ? nil : String(clean.prefix(300)); r.updatedAt = Date()
             }
         }
         progress(todo.count, todo.count)

@@ -345,8 +345,10 @@ enum KeelCanvas {
 /// Opens a page in the right editor: canvases on the board, everything else in the page editor.
 struct NoteOrCanvas: View {
     let note: Note
+    /// Open scrolled to this line (a search result's matching line).
+    var focusBlock: UUID? = nil
     var body: some View {
-        if KeelCanvas.isCanvas(note) { CanvasBoardView(note: note) } else { NoteEditor(note: note) }
+        if KeelCanvas.isCanvas(note) { CanvasBoardView(note: note) } else { NoteEditor(note: note, focusBlock: focusBlock) }
     }
 }
 

@@ -25,9 +25,10 @@ struct NotesView: View {
     private var folders: [String] { memo.get("folders") { Array(Set(notes.compactMap(\.folder) + emptyFolders)).sorted { $0.localizedCaseInsensitiveCompare($1) == .orderedAscending } } }
 
     private var ids: Set<UUID> { memo.get("ids") { Set(notes.map(\.id)) } }
-    private var results: [Note] {
-        notes.filter { $0.title.localizedCaseInsensitiveContains(search) || (!$0.isLocked && $0.plainText.localizedCaseInsensitiveContains(search)) }
-    }
+    /// What's searched: follows typing a beat behind, so every keystroke stays instant on big libraries.
+    @State private var liveSearch = ""
+    /// The line a search result opens at.
+    @State private var openedAt: UUID?
 
     enum SortMode: String, CaseIterable { case manual = "Manual", recent = "Recently edited", alpha = "A to Z" }
     @AppStorage("notes.sort") private var sortRaw = SortMode.manual.rawValue
@@ -45,7 +46,9 @@ struct NotesView: View {
         NavigationStack {
             List {
                 if !search.isEmpty {
-                    searchResults
+                    NoteSearchResults(query: liveSearch.isEmpty ? search : liveSearch, notes: notes, templates: templates) { n, line in
+                        openedAt = line; opened = n
+                    }
                 } else if notes.isEmpty {
                     emptyState
                 } else {
@@ -171,8 +174,18 @@ struct NotesView: View {
             }
             .listStyle(.insetGrouped)
             .premiumBackground(DS.Palette.focus)
-            .searchable(text: $search, prompt: "Search titles and text")
-            .navigationDestination(item: $opened) { n in NoteOrCanvas(note: n).navigationTransition(.zoom(sourceID: "n" + n.id.uuidString, in: zoom)) }   // the card grows into the page
+            .searchable(text: $search, prompt: "Search every page")
+            .searchSuggestions { if search.isEmpty { NoteSearchSuggestions(text: $search) } }
+            .onSubmit(of: .search) { NoteSearchPrefs.remember(search) }
+            .task(id: search) {
+                if search.isEmpty { liveSearch = ""; return }
+                if liveSearch.isEmpty { NoteSearchIndex.refreshScans(ctx); liveSearch = search; return }   // first letter: right away
+                try? await Task.sleep(for: .milliseconds(160))
+                guard !Task.isCancelled else { return }
+                liveSearch = search
+            }
+            .onChange(of: opened) { _, n in if n == nil { openedAt = nil } }
+            .navigationDestination(item: $opened) { n in NoteOrCanvas(note: n, focusBlock: openedAt).navigationTransition(.zoom(sourceID: "n" + n.id.uuidString, in: zoom)) }   // the card grows into the page
             .alert("New folder", isPresented: Binding(get: { newFolderFor != nil }, set: { if !$0 { newFolderFor = nil } })) {
                 TextField("Name", text: $newFolderName)
                 Button("Create") {
@@ -303,6 +316,11 @@ struct NotesView: View {
             .navigationDestination(isPresented: $showVault) { VaultView() }
             .navigationDestination(isPresented: $showTags) { TagBrowserView() }
             .task { await NotesOrganizer.autoFile(ctx: ctx) }
+            .task {
+                // Get search ready in the background, a little at a time, so the first search is instant.
+                try? await Task.sleep(for: .seconds(1.5))
+                await NoteSearchIndex.warm(allNotes)
+            }
             .navigationDestination(isPresented: $showAskNotes) { AskNotesView() }
             .navigationDestination(isPresented: $showSetup) { StarterSetupView() }
             .navigationDestination(isPresented: $showHealth) { BrainHealthView() }
@@ -372,25 +390,6 @@ struct NotesView: View {
         .frame(maxWidth: .infinity).padding(.vertical, DS.Space.xl)
         .listRowBackground(Color.clear)
         .listRowInsets(EdgeInsets())
-    }
-
-    @ViewBuilder private var searchResults: some View {
-        if results.isEmpty {
-            ContentUnavailableView.search(text: search).listRowBackground(Color.clear)
-        } else {
-            Section {
-                ForEach(results) { row($0, showSnippet: true) }
-            } header: {
-                HStack {
-                    sectionHeader("\(results.count) result\(results.count == 1 ? "" : "s")", nil)
-                    Spacer()
-                    Button(KeelTags.saved.contains(search) ? "Saved" : "Save search") {
-                        if !KeelTags.saved.contains(search) { KeelTags.saved = [search] + KeelTags.saved; Haptics.tap() }
-                    }
-                    .font(DS.Font.caption).textCase(nil).buttonStyle(.borderless)
-                }
-            }
-        }
     }
 
     private func sectionHeader(_ title: String, _ trailing: String?) -> some View {
