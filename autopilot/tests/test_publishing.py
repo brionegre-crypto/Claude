@@ -241,3 +241,27 @@ def test_publishing_via_facebook_host(env, fake_ig):
     res = publisher.run_due(s, db, pubs)
     assert all(res[i] == "published" for i in ids) and len(fake.media) == 2
     assert ig.account_insights()["followers_count"] == 1000
+
+
+def test_token_cleaning_and_error_scrubbing():
+    from autopilot.publishing.instagram import clean_token, scrub
+    tok = "EAAFAKEtoken" + "x1y2z3" * 10
+    assert clean_token(f'  "{tok[:30]}\n{tok[30:]} "\n') == tok
+    assert clean_token(f"Bearer {tok}") == tok
+    leaked = f'{{"error":{{"message":"Malformed access token {tok[:50]}","code":190}}}}'
+    out = scrub(leaked, tok)
+    assert tok[:20] not in out and "Malformed access token" in out
+
+
+def test_detect_reports_expiry_and_scopes(env):
+    s, db = env
+    from autopilot.publishing.instagram import detect_account
+    def handler(req):
+        if req.url.path.endswith("/debug_token"):
+            return httpx.Response(200, json={"data": {"type": "USER", "expires_at": 1999999999,
+                                                      "scopes": ["instagram_basic", "instagram_content_publish"]}})
+        if req.url.host == "graph.instagram.com":
+            return httpx.Response(400, json={"error": {"message": "Cannot parse access token", "code": 190}})
+        return httpx.Response(200, json={"data": [{"name": "BTM", "instagram_business_account": {"id": "17841", "username": "bethemansystem"}}]})
+    a = detect_account(s, "EAAtok", client=httpx.Client(transport=httpx.MockTransport(handler)))
+    assert a["expires_at"] == 1999999999 and "instagram_content_publish" in a["scopes"]

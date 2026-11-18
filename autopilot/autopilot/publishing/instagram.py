@@ -24,6 +24,23 @@ TEMP_CODES = {1, 2, 9004, 9007, 2207001, 2207003, 2207008, 2207032}
 AUTH_CODES = {102, 190, 10, 200, 3, 463, 467}
 
 
+def scrub(text: str, token: str | None = None) -> str:
+    """Remove anything token-like from error text before it is shown or logged (Meta echoes bad tokens back)."""
+    from autopilot.logs import redact
+    text = redact(str(text))
+    if token:
+        text = text.replace(token, "[REDACTED]")
+    return re.sub(r"[A-Za-z0-9_\-]{40,}", "[REDACTED]", text)
+
+
+def clean_token(raw: str) -> str:
+    """Pasted tokens often pick up line breaks, spaces, quotes or a 'Bearer ' prefix."""
+    t = (raw or "").strip().strip('"').strip("'")
+    if t.lower().startswith("bearer "):
+        t = t[7:]
+    return re.sub(r"\s+", "", t)
+
+
 def caption_key(text: str) -> str:
     return re.sub(r"\W+", "", (text or "").lower())[:120]
 
@@ -95,7 +112,7 @@ class InstagramPublisher(Publisher):
             return data
         err = data.get("error", {}) if isinstance(data, dict) else {}
         code, sub = err.get("code"), err.get("error_subcode")
-        msg = f"HTTP {r.status_code} code={code} subcode={sub}: {err.get('message', r.text[:200])}"
+        msg = scrub(f"HTTP {r.status_code} code={code} subcode={sub}: {err.get('message', r.text[:200])}")
         if r.status_code == 429 or code in RATE_CODES:
             raise RateLimited(msg, retry_after=3600)
         if code in AUTH_CODES or r.status_code in (401,):
@@ -285,7 +302,7 @@ def detect_account(s, token: str, client: httpx.Client | None = None, choose=Non
         d = r.json()
         return {"host": "https://graph.instagram.com", "user_id": str(d.get("user_id") or d.get("id")),
                 "username": d.get("username"), "account_type": d.get("account_type")}
-    errors.append(f"Instagram login: {r.text[:160]}")
+    errors.append("Instagram login: " + scrub(_err(r), token))
     # 2) Facebook-login / Unified-login token: Instagram accounts are reached through Pages or business assets
     fb = f"https://graph.facebook.com/{ver}"
     found = []
@@ -296,7 +313,7 @@ def detect_account(s, token: str, client: httpx.Client | None = None, choose=Non
             if ig:
                 found.append({"user_id": ig["id"], "username": ig.get("username"), "page": page.get("name")})
     else:
-        errors.append(f"Facebook login: {r.text[:160]}")
+        errors.append("Facebook login: " + scrub(_err(r), token))
     if not found:
         r = client.get(f"{fb}/me", params={"fields": "instagram_business_account{id,username}", "access_token": token})
         if r.status_code < 400 and r.json().get("instagram_business_account"):
@@ -308,5 +325,37 @@ def detect_account(s, token: str, client: httpx.Client | None = None, choose=Non
     pick = next((f for f in found if (f.get("username") or "").lower() == want), None)
     if not pick:
         pick = choose(found) if (choose and len(found) > 1) else found[0]
+    info = debug_token(s, token, client)
     return {"host": "https://graph.facebook.com", "user_id": str(pick["user_id"]), "username": pick.get("username"),
-            "account_type": "BUSINESS/CREATOR (via Facebook login)"}
+            "account_type": "BUSINESS/CREATOR (via Facebook login)", **info}
+
+
+def _err(r: httpx.Response) -> str:
+    try:
+        return r.json().get("error", {}).get("message", "") or r.text[:160]
+    except Exception:
+        return r.text[:160]
+
+
+def debug_token(s, token: str, client: httpx.Client) -> dict:
+    """Ask Meta how long a Facebook-login token lasts and which permissions it carries (a token may inspect itself)."""
+    ver = s.get("publishing.instagram_api_version")
+    try:
+        r = client.get(f"https://graph.facebook.com/{ver}/debug_token", params={"input_token": token, "access_token": token})
+        d = r.json().get("data", {}) if r.status_code < 400 else {}
+    except Exception:
+        d = {}
+    exp = d.get("expires_at")
+    return {"token_type": d.get("type"), "expires_at": int(exp) if exp else 0 if "expires_at" in d else None,
+            "scopes": d.get("scopes") or []}
+
+
+def exchange_facebook_long_lived(s, token: str, app_id: str, app_secret: str, client: httpx.Client | None = None) -> dict:
+    """Short-lived (1-2 h) Facebook user token → 60-day token. Free; needs the app id + secret from App settings → Basic."""
+    client = client or httpx.Client(timeout=30)
+    ver = s.get("publishing.instagram_api_version")
+    r = client.get(f"https://graph.facebook.com/{ver}/oauth/access_token",
+                   params={"grant_type": "fb_exchange_token", "client_id": app_id, "client_secret": app_secret, "fb_exchange_token": token})
+    if r.status_code >= 400:
+        raise PermanentError("exchange failed: " + scrub(_err(r), token))
+    return r.json()

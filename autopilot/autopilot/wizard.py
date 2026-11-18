@@ -170,7 +170,8 @@ def step_ai(s, db):
     if not p.binary():
         say("claude CLI not found."); mark(db, "ai", False, "cli missing"); return False
     if yes("Store a `claude setup-token` token for the background service? (recommended; run `claude setup-token` in another terminal first)"):
-        tok = hidden("Paste the token")
+        from autopilot.publishing.instagram import clean_token
+        tok = clean_token(hidden("Paste the token"))
         if tok:
             SecretStore(s.data_dir).set("claude_code_oauth_token", tok); say("Saved (encrypted).")
     if yes("Make ONE tiny test call to Claude now to prove headless generation works? (uses a sliver of your usage)", True):
@@ -203,14 +204,22 @@ def step_accounts(s, db):
     sec = SecretStore(s.data_dir)
     say(IG_GUIDE.format(handle=s.get("brand.handle_instagram")))
     if yes("Connect Instagram now?", True):
-        tok = hidden("Paste the Instagram access token")
+        from autopilot.publishing.instagram import clean_token, scrub
+        tok = clean_token(hidden("Paste the Instagram access token"))
+        if tok:
+            say(f"  (received {len(tok)} characters, starting {tok[:3]}…)")
         if tok:
             from autopilot.publishing.instagram import detect_account
             try:
                 acct = detect_account(s, tok, choose=lambda found: found[int(ask(
                     "Several Instagram accounts found: " + ", ".join(f"{i}=@{f.get('username')}" for i, f in enumerate(found)) + ". Which one?", "0"))])
             except Exception as e:
-                say(f"  ✗ token check failed: {e}"); mark(db, "accounts", False, str(e)); return False
+                msg = scrub(str(e), tok)
+                say(f"  ✗ token check failed: {msg}"); mark(db, "accounts", False, msg)
+                if "Malformed" in msg or "Cannot parse" in msg:
+                    say("    Meta could not read the token. Generate a new one and copy it with the page's Copy button,")
+                    say("    or select the whole token carefully. It must be one unbroken line.")
+                return False
             sec.set("instagram_access_token", tok)
             sec.set("instagram_api_host", acct["host"])
             sec.set("instagram_user_id", acct["user_id"])
@@ -237,7 +246,29 @@ def step_accounts(s, db):
                         sec.set("instagram_token_expires_at", (datetime.now(timezone.utc) + timedelta(days=59)).isoformat())
             else:
                 sec.delete("instagram_token_expires_at")
-                say("  ✓ Facebook-login token: system-user tokens never expire; the autopilot still checks it every 6 hours.")
+                exp = acct.get("expires_at")
+                if exp:
+                    left = datetime.fromtimestamp(exp, timezone.utc) - datetime.now(timezone.utc)
+                    say(f"  ! This token expires in {left.days} days {left.seconds // 3600} hours.")
+                    if left < timedelta(days=3) and yes("Exchange it for a 60-day token? (needs App ID + App secret from App settings → Basic)", True):
+                        from autopilot.publishing.instagram import exchange_facebook_long_lived
+                        try:
+                            d = exchange_facebook_long_lived(s, tok, ask("App ID"), clean_token(hidden("App secret")))
+                            tok = d["access_token"]
+                            sec.set("instagram_access_token", tok)
+                            exp = int(datetime.now(timezone.utc).timestamp()) + int(d.get("expires_in", 5184000))
+                            say("  ✓ exchanged for a ~60-day token. You'll be alerted a week before it expires.")
+                        except Exception as e:
+                            say(f"  ✗ {scrub(str(e), tok)}")
+                    sec.set("instagram_token_expires_at", datetime.fromtimestamp(exp, timezone.utc).isoformat())
+                else:
+                    say("  ✓ This token does not expire; the autopilot still checks it every 6 hours.")
+                need = {"instagram_basic", "instagram_content_publish"}
+                missing = sorted(need - set(acct.get("scopes") or need))
+                if missing:
+                    say(f"  ✗ Token is missing permission(s): {', '.join(missing)}. Add them in the app's Permissions list, then regenerate.")
+                if acct.get("scopes") and "instagram_manage_insights" not in acct["scopes"]:
+                    say("  ! No instagram_manage_insights permission: publishing works, but analytics will be empty.")
             # permission validation
             try:
                 lim = ig._call("GET", f"{sec.get('instagram_user_id')}/content_publishing_limit", fields="quota_usage,config")
