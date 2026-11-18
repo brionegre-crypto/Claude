@@ -97,7 +97,7 @@ struct TabBarSettings: View {
 
     private var available: [(id: String, title: String, icon: String)] {
         let core = TabBarConfig.core.map { ($0, TabBarConfig.title($0), TabBarConfig.icon($0)) }
-        let tools = HubCatalog.groups.flatMap(\.tools).map { ("tool:" + $0.id, $0.title, $0.icon) }
+        let tools = HubCatalog.everyTool.map { ("tool:" + $0.id, $0.title, $0.icon) }
         return (core + tools).filter { !items.contains($0.0) }.map { (id: $0.0, title: $0.1, icon: $0.2) }
     }
 

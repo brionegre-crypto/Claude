@@ -216,7 +216,7 @@ struct BodyView: View {
                     .font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
             }
             if !engine.loading, engine.days.suffix(3).allSatisfy({ !$0.hasSleep && $0.hrv == nil && $0.swell == 0 }) { noDataCard }
-            if isToday { IllnessWarningCard(days: engine.days) }
+            if isToday { IllnessWarningCard(days: engine.days).overlay(alignment: .topTrailing) { MetricInfoButton(id: "illness").padding(6) } }
             if isToday { adviceCard }
             EnergyBankCard(day: t, days: engine.days)
             BodyMetricsGrid(day: t, days: engine.days)
@@ -227,13 +227,13 @@ struct BodyView: View {
             .buttonStyle(.plain)
             if isToday {
                 stressCard
-                NapAdvisorCard(tide: t?.tide)
+                NapAdvisorCard(tide: t?.tide).overlay(alignment: .topTrailing) { MetricInfoButton(id: "sleepDebt").padding(6) }
                 WorkoutPickCard(tide: t?.tide, swell: t?.swell ?? 0)
             } else {
                 stressCard
             }
             BodyWeekCard(days: engine.days)
-            RecoveryDriversCard(days: engine.days)
+            RecoveryDriversCard(days: engine.days).overlay(alignment: .topTrailing) { MetricInfoButton(id: "tide").padding(6) }
             BodyGoalsCard(days: engine.days)
         } else if BodyHealth.available {
             connectCard
@@ -248,7 +248,7 @@ struct BodyView: View {
             anchorCard
             BodyMetricsGrid(day: t, days: engine.days, metrics: [.sleep, .efficiency, .deep, .rem], title: "Sleep metrics")
             SleepScheduleCard(days: engine.days)
-            SleepDebtCard(days: engine.days, base: need)
+            SleepDebtCard(days: engine.days, base: need).overlay(alignment: .topTrailing) { MetricInfoButton(id: "sleepDebt").padding(6) }
             tideCard
         } else if BodyHealth.available {
             BodyNeedsHealthCard(what: "your sleep stages, schedule and sleep debt") { Task { await engine.connect() } }
@@ -265,11 +265,11 @@ struct BodyView: View {
             if isToday { BuildWorkoutCard(tide: t?.tide, extras: extras) }
             swellCard
             if isToday {
-                ActivityTodayCard(x: extras)
-                if extras.zoneMinutes.reduce(0, +) > 0 { ZonesCard(minutes: extras.zoneMinutes) }
+                ActivityTodayCard(x: extras).overlay(alignment: .topTrailing) { MetricInfoButton(id: "activity").padding(6) }
+                if extras.zoneMinutes.reduce(0, +) > 0 { ZonesCard(minutes: extras.zoneMinutes).overlay(alignment: .topTrailing) { MetricInfoButton(id: "zones").padding(6) } }
                 WorkoutPickCard(tide: t?.tide, swell: t?.swell ?? 0)
             }
-            CardioLoadCard(days: engine.days)
+            CardioLoadCard(days: engine.days).overlay(alignment: .topTrailing) { MetricInfoButton(id: "cardioLoad").padding(6) }
             BodyMetricsGrid(day: t, days: engine.days, metrics: [.vo2, .rhr], title: "Fitness")
         } else if BodyHealth.available {
             BodyNeedsHealthCard(what: "your effort, heart-rate zones and workouts") { Task { await engine.connect() } }
@@ -287,8 +287,8 @@ struct BodyView: View {
 
     @ViewBuilder private var healthPage: some View {
         BodyMedsCard()
-        if BodyHealth.available { BioAgeCard() }
-        NutritionScoreCard()
+        if BodyHealth.available { BioAgeCard().overlay(alignment: .topTrailing) { MetricInfoButton(id: "bioAge").padding(6) } }
+        NutritionScoreCard().overlay(alignment: .topTrailing) { MetricInfoButton(id: "nutritionScore").padding(6) }
         HStack(spacing: 10) {
             NavigationLink { LazyView(HealthRecordsView()) } label: { linkTile("Health records", "cross.vial.fill", .red) }
             NavigationLink { LazyView(BiologyView()) } label: { linkTile("Biology", "drop.fill", .red) }
@@ -296,7 +296,7 @@ struct BodyView: View {
         .buttonStyle(.plain)
         if live {
             vitalsCard
-            CycleCard(x: extras)
+            CycleCard(x: extras).overlay(alignment: .topTrailing) { MetricInfoButton(id: "cycle").padding(6) }
         }
         HealthTilesSection(extras: extras)
         DrinksCard()
@@ -334,9 +334,13 @@ struct BodyView: View {
     }
     private var recent: [BodyDay] { Array(engine.days.suffix(30)) }
 
-    private func card<C: View>(_ title: String, _ icon: String, _ color: Color, @ViewBuilder _ content: () -> C) -> some View {
+    private func card<C: View>(_ title: String, _ icon: String, _ color: Color, guide: String? = nil, @ViewBuilder _ content: () -> C) -> some View {
         VStack(alignment: .leading, spacing: 10) {
-            Label(title, systemImage: icon).font(DS.Font.headline).foregroundStyle(color)
+            HStack {
+                Label(title, systemImage: icon).font(DS.Font.headline).foregroundStyle(color)
+                Spacer(minLength: 0)
+                if let guide { MetricInfoButton(id: guide) }      // what it means, how it's tracked, how to improve it
+            }
             content()
         }
         .padding(DS.Space.m)
@@ -410,7 +414,7 @@ struct BodyView: View {
     }
 
     private var tideCard: some View {
-        card("Tide · recovery", "water.waves", BodyStyle.tide) {
+        card("Tide · recovery", "water.waves", BodyStyle.tide, guide: "tide") {
             if let notes = t?.tideNotes, !notes.isEmpty {
                 ForEach(notes, id: \.self) { Text("• \($0)").font(DS.Font.caption) }
             } else {
@@ -422,7 +426,7 @@ struct BodyView: View {
 
     private var anchorCard: some View {
         let tn = BodyMath.tonight(engine.days, base: need)
-        return card("Anchor · sleep", "moon.zzz.fill", BodyStyle.anchor) {
+        return card("Anchor · sleep", "moon.zzz.fill", BodyStyle.anchor, guide: "anchor") {
             if let d = t, d.hasSleep {
                 HStack(alignment: .firstTextBaseline) {
                     Text(hm(d.asleep)).font(.title2.weight(.bold)).monospacedDigit()
@@ -463,7 +467,7 @@ struct BodyView: View {
     }
 
     private var swellCard: some View {
-        card("Swell · effort", "wind", BodyStyle.swell) {
+        card("Swell · effort", "wind", BodyStyle.swell, guide: "swell") {
             if let w = t?.workouts, !w.isEmpty {
                 ForEach(w) { x in
                     HStack {
@@ -481,7 +485,7 @@ struct BodyView: View {
     }
 
     private var stressCard: some View {
-        card("Stress through the day", "waveform.path.ecg", .orange) {
+        card("Stress through the day", "waveform.path.ecg", .orange, guide: "stress") {
             if let s = t?.stress, s.contains(where: { $0 != nil }) {
                 HStack(alignment: .bottom, spacing: 3) {
                     ForEach(Array(s.enumerated()), id: \.offset) { i, v in
@@ -503,7 +507,7 @@ struct BodyView: View {
     }
 
     private var vitalsCard: some View {
-        card("Vital signs", "heart.text.square.fill", .pink) {
+        card("Vital signs", "heart.text.square.fill", .pink, guide: "illness") {
             LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], alignment: .leading, spacing: 12) {
                 vital("Heart rate variability", t?.hrv.map { "\(Int($0)) ms" }, normal(\.hrv), higherIsBetter: true, value: t?.hrv)
                 vital("Resting heart rate", t?.rhr.map { "\(Int($0)) bpm" }, normal(\.rhr), higherIsBetter: false, value: t?.rhr)
@@ -600,6 +604,10 @@ struct BodyView: View {
                 Text("**Anchor (0–100)** is your sleep: how much you got compared with what you needed (55 points), how much of your time in bed you were asleep (15), deep and REM sleep (15), and how close your bedtime was to your usual one (15).")
                 Text("**Sleep need** is your base (\(need.formatted(.number.precision(.fractionLength(0...2)))) h) plus a little after a hard day, plus a third of any sleep debt from the last few nights.")
                 Text("Everything is worked out on this iPhone from Apple Health. Keel doesn't send any of it anywhere. These scores are for everyday wellbeing, not medical advice.")
+                NavigationLink { MetricGuideIndex() } label: {
+                    Label("Every metric explained: how it's tracked, what's typical, how to improve it", systemImage: "book.pages")
+                        .font(DS.Font.caption.weight(.semibold))
+                }
             }
             .font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft).padding(.top, 6)
         }

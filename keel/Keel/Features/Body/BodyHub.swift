@@ -87,32 +87,21 @@ struct HealthTilesSection: View {
 
     private var tiles: [Tile] {
         [
-            Tile(id: "strength", title: "Strength", icon: "dumbbell.fill", color: BodyStyle.swell, dest: { AnyView(StrengthHomeView()) }),
-            Tile(id: "cardio", title: "Cardio & load", icon: "heart.circle.fill", color: .pink, dest: { AnyView(CardioChartsView()) }),
+            Tile(id: "strength", title: "Training", icon: "dumbbell.fill", color: BodyStyle.swell, dest: { BodyHubs.training }),
             Tile(id: "bioage", title: "Biological age", icon: "hourglass.circle.fill", color: .purple, dest: { AnyView(BioAgeView()) }),
-            Tile(id: "records", title: "Health records", icon: "cross.vial.fill", color: .red, dest: { AnyView(HealthRecordsView()) }),
+            Tile(id: "records", title: "Medical", icon: "cross.vial.fill", color: .red, dest: { BodyHubs.medical }),
             Tile(id: "biology", title: "Biology", icon: "drop.fill", color: .red, dest: { AnyView(BiologyView()) }),
             Tile(id: "ask", title: "Ask about my body", icon: "sparkles", color: .indigo, dest: { AnyView(AskBodyView()) }),
-            Tile(id: "metrics", title: "All Health metrics", icon: "heart.text.clipboard", color: .red, dest: { AnyView(HealthMetricsView()) }),
+            Tile(id: "metrics", title: "Health metrics", icon: "heart.text.clipboard", color: .red, dest: { BodyHubs.metrics }),
+            Tile(id: "guides", title: "Metric guides", icon: "book.pages", color: .indigo, dest: { AnyView(MetricGuideIndex()) }),
             Tile(id: "map", title: "Recovery map", icon: "figure.stand", color: BodyStyle.swell, dest: { AnyView(BodyMapView()) }),
-            Tile(id: "meds", title: "Medications", icon: "pills.fill", color: .mint, dest: { AnyView(MedsView()) }),
-            Tile(id: "prn", title: "As-needed medicines", icon: "cross.case.fill", color: .mint, dest: { AnyView(PRNView()) }),
+            Tile(id: "meds", title: "Medications", icon: "pills.fill", color: .mint, dest: { BodyHubs.meds }),
             Tile(id: "symptoms", title: "Symptoms", icon: "thermometer.medium", color: .pink, dest: { AnyView(SymptomsView()) }),
             Tile(id: "bp", title: "Blood pressure", icon: "heart.text.square.fill", color: .red, dest: { AnyView(BloodPressureView()) }),
             Tile(id: "weight", title: "Weight", icon: "scalemass.fill", color: .blue, dest: { AnyView(WeightView(x: extras)) }),
-            Tile(id: "food", title: "Food today", icon: "fork.knife.circle.fill", color: .green, dest: { AnyView(NutritionView()) }),
-            Tile(id: "meal", title: "Log a meal", icon: "fork.knife", color: .green, dest: { AnyView(LogFoodView()) }),
-            Tile(id: "scan", title: "Scan food", icon: "barcode.viewfinder", color: .green, dest: { AnyView(FoodScanView()) }),
-            Tile(id: "library", title: "Food library", icon: "books.vertical.fill", color: .green, dest: { AnyView(FoodLibraryView()) }),
-            Tile(id: "diet", title: "Diet guide", icon: "book.closed.fill", color: .green, dest: { AnyView(DietGuideView()) }),
-            Tile(id: "drinks", title: "Caffeine & water", icon: "cup.and.saucer.fill", color: .brown, dest: { AnyView(ScrollView { VStack(spacing: 16) { DrinksCard(); CaffeineCurveCard() }.padding() }.navigationTitle("Caffeine & water")) }),
-            Tile(id: "fast", title: "Fasting", icon: "timer", color: .green, dest: { AnyView(FastingView()) }),
-            Tile(id: "workouts", title: "Workouts", icon: "figure.run", color: BodyStyle.swell, dest: { AnyView(WorkoutHistoryView()) }),
-            Tile(id: "trends", title: "90-day trends", icon: "chart.xyaxis.line", color: .purple, dest: { AnyView(BodyTrendsView()) }),
+            Tile(id: "food", title: "Food", icon: "fork.knife.circle.fill", color: .green, dest: { BodyHubs.food }),
             Tile(id: "sleepSounds", title: "Sleep sounds", icon: "moon.zzz.fill", color: BodyStyle.anchor, dest: { AnyView(SleepSoundsView()) }),
             Tile(id: "breathe", title: "Breathe", icon: "wind", color: .teal, dest: { AnyView(BreatheView()) }),
-            Tile(id: "card", title: "Medical card", icon: "staroflife.fill", color: .red, dest: { AnyView(MedicalCardView()) }),
-            Tile(id: "doctor", title: "For my doctor", icon: "stethoscope", color: .indigo, dest: { AnyView(DoctorSummaryView()) }),
         ]
     }
 
@@ -133,5 +122,66 @@ struct HealthTilesSection: View {
                 }
             }
         }
+    }
+}
+
+
+/// Body's combined screens: one Food place (today, log, scan, library, diet guide, drinks, fasting) and one
+/// Medications place (daily and as-needed), instead of a tile for each.
+@MainActor
+enum BodyHubs {
+    private static func tool<V: View>(_ id: String, _ title: String, _ icon: String, @ViewBuilder _ v: @escaping () -> V) -> HubTool {
+        HubTool(id: id, title: title, icon: icon, keywords: "", dest: { AnyView(v()) })
+    }
+
+    static var food: AnyView {
+        let spec = ToolHubSpec(id: "bodyFood", title: "Food", icon: "fork.knife.circle.fill", keywords: "", group: "food", intro: "", members: [])
+        return AnyView(ToolHubView(spec: spec, tools: [
+            (tool("b.food", "Today", "fork.knife.circle.fill") { NutritionView() }, "Today"),
+            (tool("b.log", "Log", "fork.knife") { LogFoodView() }, "Log a meal"),
+            (tool("b.scan", "Scan", "barcode.viewfinder") { FoodScanView() }, "Scan"),
+            (tool("b.library", "Library", "books.vertical.fill") { FoodLibraryView() }, "Library"),
+            (tool("b.diet", "Diet guide", "book.closed.fill") { DietGuideView() }, "Diet guide"),
+            (tool("b.drinks", "Drinks", "cup.and.saucer.fill") { ScrollView { VStack(spacing: 16) { DrinksCard(); CaffeineCurveCard() }.padding() }.navigationTitle("Caffeine & water") }, "Drinks"),
+            (tool("b.fast", "Fasting", "timer") { FastingView() }, "Fasting"),
+        ]))
+    }
+
+    /// Strength, cardio and every workout: one Training place.
+    static var training: AnyView {
+        let spec = ToolHubSpec(id: "bodyTraining", title: "Training", icon: "dumbbell.fill", keywords: "", group: "food", intro: "", members: [])
+        return AnyView(ToolHubView(spec: spec, tools: [
+            (tool("b.strength", "Strength", "dumbbell.fill") { StrengthHomeView() }, "Strength"),
+            (tool("b.cardio", "Cardio & load", "heart.circle.fill") { CardioChartsView() }, "Cardio & load"),
+            (tool("b.workouts", "Workouts", "figure.run") { WorkoutHistoryView() }, "Workouts"),
+            (tool("b.recovery", "Recovery", "figure.stand") { BodyMapView() }, "Recovery"),
+        ]))
+    }
+
+    /// Records, your emergency medical card and the summary for your doctor: one Medical place.
+    static var medical: AnyView {
+        let spec = ToolHubSpec(id: "bodyMedical", title: "Medical", icon: "cross.vial.fill", keywords: "", group: "food", intro: "", members: [])
+        return AnyView(ToolHubView(spec: spec, tools: [
+            (tool("b.records", "Records", "cross.vial.fill") { HealthRecordsView() }, "Records"),
+            (tool("b.card", "Medical card", "staroflife.fill") { MedicalCardView() }, "Medical card"),
+            (tool("b.doctor", "For my doctor", "stethoscope") { DoctorSummaryView() }, "For my doctor"),
+        ]))
+    }
+
+    /// Every Apple Health measurement and the long-view trends of your Body scores, together.
+    static var metrics: AnyView {
+        let spec = ToolHubSpec(id: "bodyMetrics", title: "Health metrics", icon: "heart.text.clipboard", keywords: "", group: "food", intro: "", members: [])
+        return AnyView(ToolHubView(spec: spec, tools: [
+            (tool("b.metrics", "All metrics", "heart.text.clipboard") { HealthMetricsView() }, "All metrics"),
+            (tool("b.trends", "90-day trends", "chart.xyaxis.line") { BodyTrendsView() }, "Score trends"),
+        ]))
+    }
+
+    static var meds: AnyView {
+        let spec = ToolHubSpec(id: "bodyMeds", title: "Medications", icon: "pills.fill", keywords: "", group: "food", intro: "", members: [])
+        return AnyView(ToolHubView(spec: spec, tools: [
+            (tool("b.meds", "Daily", "pills.fill") { MedsView() }, "Daily"),
+            (tool("b.prn", "As needed", "cross.case.fill") { PRNView() }, "As needed"),
+        ]))
     }
 }

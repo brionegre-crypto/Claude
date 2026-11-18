@@ -33,7 +33,7 @@ enum KitCatalog {
         ],
         "food": [
             t("strength", "Strength", "dumbbell.fill", "strength gym lifting weights sets reps personal record workout log") { StrengthHomeView() },
-            t("muscleFresh", "Muscle freshness", "figure.stand", "muscle recovery fresh tired sore load") { MuscleFreshnessView() },
+            t("muscleFresh", "Recovery map", "figure.stand", "muscle recovery fresh tired sore load body map pain readiness") { MuscleFreshnessView() },
             t("cardio", "Cardio & training load", "heart.circle.fill", "cardio load fitness fatigue heart rate recovery vo2") { CardioChartsView() },
             t("bioAge", "Biological age", "hourglass.circle.fill", "biological age body age healthspan longevity") { BioAgeView() },
             t("healthRecords", "Health records", "cross.vial.fill", "lab results blood test records pdf scan doctor letters") { HealthRecordsView() },

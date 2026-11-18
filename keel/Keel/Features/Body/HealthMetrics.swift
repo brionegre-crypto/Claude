@@ -384,7 +384,14 @@ struct HealthMetricDetail: View {
                     if metric.agg == .sum { LabeledContent("Total", value: "\(metric.format(values.reduce(0, +) / metric.scale)) \(metric.unitLabel())") }
                 }
             }
-            Section("What it means") { Text(metric.about) }
+            Section("What it means") {
+                Text(metric.about)
+                if let g = MetricGuides.guide(MetricGuides.healthGuideId(metric.id)) {
+                    NavigationLink { MetricGuideView(guide: g) } label: {
+                        Label("How it's tracked, what's typical, how to improve it", systemImage: "book.pages")
+                    }
+                }
+            }
         }
         .navigationTitle(metric.name)
         .task { await data.load() }

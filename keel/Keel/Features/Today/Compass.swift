@@ -17,7 +17,7 @@ struct HubView: View {
 
     private var state: BrainState? { BrainState(rawValue: stateRaw) }
     private var groups: [HubGroup] { HubCatalog.groups }
-    private var allTools: [HubTool] { groups.flatMap(\.tools) }
+    private var allTools: [HubTool] { HubCatalog.everyTool }
     private func tool(_ id: String) -> HubTool? { allTools.first { $0.id == id } }
     private func color(of id: String) -> Color { groups.first { g in g.tools.contains { $0.id == id } }?.color ?? DS.Palette.accent }
 
@@ -391,12 +391,31 @@ enum HubCatalog {
         HubTool(id: id, title: title, icon: icon, keywords: keywords, dest: { AnyView(dest()) })
     }
 
-    static func tool(_ id: String) -> HubTool? { groups.lazy.flatMap(\.tools).first { $0.id == id } }
+    /// Any tool by id, including ones that now live inside a combined tool (old links and tab bar picks still work).
+    static func tool(_ id: String) -> HubTool? { everyTool.first { $0.id == id } }
 
-    /// Every group, with the everyday toolkit (KitCatalog) added to the matching group.
-    static let groups: [HubGroup] = baseGroups.map { g in
-        HubGroup(id: g.id, title: g.title, subtitle: g.subtitle, icon: g.icon, color: g.color, tools: g.tools + KitCatalog.tools(for: g.id))
-    }
+    /// Every tool there is: each original tool plus the combined ones. Used for search, links and the tab bar.
+    static let everyTool: [HubTool] = {
+        let originals = baseGroups.flatMap(\.tools) + KitCatalog.all.values.flatMap { $0 }
+        return ToolHubs.specs.compactMap { ToolHubs.hubTool($0, from: originals) } + originals
+    }()
+
+    /// Every group as Compass shows it: the everyday toolkit (KitCatalog) added to the matching group, and tools
+    /// that do the same job combined into one (Ask Keel, Journal, Reviews, Timers, Calm toolkit, Food, Medications).
+    static let groups: [HubGroup] = {
+        let originals = baseGroups.flatMap(\.tools) + KitCatalog.all.values.flatMap { $0 }
+        let merged = ToolHubs.memberIds
+        return baseGroups.map { g in
+            var tools = g.tools + KitCatalog.tools(for: g.id)
+            for spec in ToolHubs.specs where spec.group == g.id {
+                guard let hub = ToolHubs.hubTool(spec, from: originals) else { continue }
+                let at = tools.firstIndex { t in spec.members.contains { $0.id == t.id } } ?? tools.count
+                tools.insert(hub, at: at)
+            }
+            tools.removeAll { merged.contains($0.id) }
+            return HubGroup(id: g.id, title: g.title, subtitle: g.subtitle, icon: g.icon, color: g.color, tools: tools)
+        }
+    }()
 
     private static let baseGroups: [HubGroup] = [
         HubGroup(id: "ask", title: "Ask & coach", subtitle: "Your AI: answers, coaching and things done for you", icon: "sparkles", color: .indigo, tools: [
