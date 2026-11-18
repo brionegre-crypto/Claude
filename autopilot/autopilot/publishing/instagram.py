@@ -290,19 +290,20 @@ class InstagramPublisher(Publisher):
         return {k: d[k] for k in ("followers_count", "follows_count", "media_count") if k in d}
 
 
-def detect_account(s, token: str, client: httpx.Client | None = None, choose=None) -> dict:
+def detect_account(s, token: str, client: httpx.Client | None = None, choose=None, manual_id: str | None = None) -> dict:
     """Work out which Meta API a pasted token belongs to and which Instagram account it controls.
     Returns {"host", "user_id", "username", "account_type"} or raises PermanentError with a readable reason."""
     client = client or httpx.Client(timeout=30)
     ver = s.get("publishing.instagram_api_version")
     errors = []
-    # 1) Instagram-login token
-    r = client.get(f"https://graph.instagram.com/{ver}/me", params={"fields": "user_id,username,account_type", "access_token": token})
-    if r.status_code < 400 and "error" not in r.json():
+    # 1) Instagram-login token (IGAA…); Facebook-style tokens (EAA…) skip straight to step 2
+    r = None if token.startswith("EAA") else client.get(f"https://graph.instagram.com/{ver}/me", params={"fields": "user_id,username,account_type", "access_token": token})
+    if r is not None and r.status_code < 400 and "error" not in r.json():
         d = r.json()
         return {"host": "https://graph.instagram.com", "user_id": str(d.get("user_id") or d.get("id")),
                 "username": d.get("username"), "account_type": d.get("account_type")}
-    errors.append("Instagram login: " + scrub(_err(r), token))
+    if r is not None:
+        errors.append("Instagram login: " + scrub(_err(r), token))
     # 2) Facebook-login / Unified-login token: Instagram accounts are reached through Pages or business assets
     fb = f"https://graph.facebook.com/{ver}"
     found = []
@@ -319,6 +320,33 @@ def detect_account(s, token: str, client: httpx.Client | None = None, choose=Non
         if r.status_code < 400 and r.json().get("instagram_business_account"):
             ig = r.json()["instagram_business_account"]
             found.append({"user_id": ig["id"], "username": ig.get("username")})
+    if not found:
+        # Unified-login tokens can represent the Instagram account itself
+        r = client.get(f"{fb}/me", params={"fields": "id,username", "access_token": token})
+        if r.status_code < 400 and r.json().get("username"):
+            found.append({"user_id": r.json()["id"], "username": r.json()["username"]})
+        elif r.status_code >= 400:
+            errors.append("me: " + scrub(_err(r), token))
+    if not found:
+        # Last resort: the token's own permission grants list the Instagram account ids it may act on
+        ids = []
+        try:
+            r = client.get(f"{fb}/debug_token", params={"input_token": token, "access_token": token})
+            for g in r.json().get("data", {}).get("granular_scopes", []):
+                if g.get("scope", "").startswith("instagram"):
+                    ids += [i for i in g.get("target_ids", []) if i not in ids]
+        except Exception:
+            pass
+        for i in ids:
+            r = client.get(f"{fb}/{i}", params={"fields": "id,username", "access_token": token})
+            if r.status_code < 400 and r.json().get("username"):
+                found.append({"user_id": r.json()["id"], "username": r.json()["username"]})
+    if not found and manual_id:
+        r = client.get(f"{fb}/{manual_id}", params={"fields": "id,username", "access_token": token})
+        if r.status_code < 400 and r.json().get("id"):
+            found.append({"user_id": r.json()["id"], "username": r.json().get("username")})
+        else:
+            errors.append(f"account {manual_id}: " + scrub(_err(r), token))
     if not found:
         raise PermanentError("No Instagram account reachable with this token. " + " | ".join(errors))
     want = (s.get("brand.handle_instagram") or "").lower()

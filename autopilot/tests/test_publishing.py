@@ -265,3 +265,37 @@ def test_detect_reports_expiry_and_scopes(env):
         return httpx.Response(200, json={"data": [{"name": "BTM", "instagram_business_account": {"id": "17841", "username": "bethemansystem"}}]})
     a = detect_account(s, "EAAtok", client=httpx.Client(transport=httpx.MockTransport(handler)))
     assert a["expires_at"] == 1999999999 and "instagram_content_publish" in a["scopes"]
+
+
+def _unified_client(mode):
+    def handler(req):
+        p, q = req.url.path, dict(req.url.params)
+        if req.url.host == "graph.instagram.com":
+            raise AssertionError("EAA tokens must not be sent to graph.instagram.com")
+        if p.endswith("/me/accounts"):
+            return httpx.Response(200, json={"data": []})
+        if p.endswith("/debug_token"):
+            return httpx.Response(200, json={"data": {"type": "USER", "expires_at": 0, "scopes": ["instagram_basic", "instagram_content_publish"],
+                                                      "granular_scopes": [{"scope": "instagram_basic", "target_ids": ["17841"]}]}})
+        if p.endswith("/me"):
+            if q.get("fields") == "id,username" and mode == "me_is_ig":
+                return httpx.Response(200, json={"id": "17841", "username": "bethemansystem"})
+            return httpx.Response(200, json={"id": "555"})
+        if p.endswith("/17841"):
+            return httpx.Response(200, json={"id": "17841", "username": "bethemansystem"})
+        return httpx.Response(400, json={"error": {"message": "nope", "code": 100}})
+    return httpx.Client(transport=httpx.MockTransport(handler))
+
+
+def test_unified_token_where_me_is_the_instagram_account(env):
+    s, db = env
+    from autopilot.publishing.instagram import detect_account
+    a = detect_account(s, "EAAunified", client=_unified_client("me_is_ig"))
+    assert a["user_id"] == "17841" and a["host"] == "https://graph.facebook.com"
+
+
+def test_unified_token_found_via_granular_scopes(env):
+    s, db = env
+    from autopilot.publishing.instagram import detect_account
+    a = detect_account(s, "EAAunified", client=_unified_client("scopes"))
+    assert a["user_id"] == "17841" and a["username"] == "bethemansystem"

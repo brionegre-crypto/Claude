@@ -210,16 +210,25 @@ def step_accounts(s, db):
             say(f"  (received {len(tok)} characters, starting {tok[:3]}…)")
         if tok:
             from autopilot.publishing.instagram import detect_account
+            choose = lambda found: found[int(ask(
+                "Several Instagram accounts found: " + ", ".join(f"{i}=@{f.get('username')}" for i, f in enumerate(found)) + ". Which one?", "0"))]
             try:
-                acct = detect_account(s, tok, choose=lambda found: found[int(ask(
-                    "Several Instagram accounts found: " + ", ".join(f"{i}=@{f.get('username')}" for i, f in enumerate(found)) + ". Which one?", "0"))])
+                acct = detect_account(s, tok, choose=choose)
             except Exception as e:
                 msg = scrub(str(e), tok)
-                say(f"  ✗ token check failed: {msg}"); mark(db, "accounts", False, msg)
-                if "Malformed" in msg or "Cannot parse" in msg:
-                    say("    Meta could not read the token. Generate a new one and copy it with the page's Copy button,")
-                    say("    or select the whole token carefully. It must be one unbroken line.")
-                return False
+                say(f"  ✗ couldn't find the Instagram account automatically: {msg}")
+                say("    On Meta's API setup page, under '2. Generate access tokens', the connected account usually shows")
+                say("    its Instagram account ID (a long number, often starting 178…).")
+                manual = ask("Instagram account ID (leave empty to stop)").strip()
+                acct = None
+                if manual:
+                    try:
+                        acct = detect_account(s, tok, choose=choose, manual_id=manual)
+                    except Exception as e2:
+                        say(f"  ✗ {scrub(str(e2), tok)}")
+                if not acct:
+                    mark(db, "accounts", False, msg)
+                    return False
             sec.set("instagram_access_token", tok)
             sec.set("instagram_api_host", acct["host"])
             sec.set("instagram_user_id", acct["user_id"])
