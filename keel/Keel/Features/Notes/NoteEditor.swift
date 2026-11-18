@@ -67,6 +67,8 @@ struct NoteEditor: View {
     @AppStorage(PageLook.widthKey) private var pageWidth = "comfortable"
     @AppStorage("notes.autoHideBars") private var autoHideBars = true
     @State private var barsHidden = false              // bars slide away while you read or type; tap to bring them back
+    @State private var barsMovedAt = Date.distantPast
+    @State private var userScrolling = false
     @Environment(\.openWindow) private var openWindow
     @Environment(\.supportsMultipleWindows) private var multiWindow
 
@@ -103,8 +105,13 @@ struct NoteEditor: View {
     private var page: some View {
         ScrollViewReader { proxy in pageList
             // Reading: scroll down and the bars slide away; scroll up, reach the top, or tap the page to bring them back.
-            .onScrollGeometryChange(for: CGFloat.self) { $0.contentOffset.y + $0.contentInsets.top } action: { old, new in
-                if new < 30 || new < old - 12 { setBars(hidden: false) } else if new > old + 12 { setBars(hidden: true) }
+            // Only while your finger is scrolling, and never in the moment after the bars move: hiding a bar shifts
+            // the page by its height, which used to read as a scroll the other way, bring the bar back, and repeat
+            // forever (a loop that kept redrawing even after leaving the app, until iOS closed it).
+            .onScrollPhaseChange { _, phase in userScrolling = phase.isScrolling }
+            .onScrollGeometryChange(for: CGFloat.self) { $0.contentOffset.y } action: { old, new in
+                guard userScrolling, Date().timeIntervalSince(barsMovedAt) > 0.6 else { return }
+                if new < 30 || new < old - 16 { setBars(hidden: false) } else if new > old + 16 { setBars(hidden: true) }
             }
             .simultaneousGesture(TapGesture().onEnded { setBars(hidden: false) })
             .onChange(of: editing) { _, id in if id != nil { setBars(hidden: true) } }      // typing: just you and the page
@@ -1166,6 +1173,7 @@ struct NoteEditor: View {
     private func setBars(hidden: Bool) {
         let want = hidden && autoHideBars && UIDevice.current.userInterfaceIdiom == .phone
         guard want != barsHidden else { return }
+        barsMovedAt = Date()
         withAnimation(.easeInOut(duration: 0.25)) { barsHidden = want }
         AppRouter.shared.chromeHidden = want
     }
