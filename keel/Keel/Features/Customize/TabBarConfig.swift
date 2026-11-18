@@ -54,8 +54,14 @@ enum TabBarConfig {
         }
     }
 
-    @ViewBuilder
+    /// A tab's screen is built the first time you open it, not at launch, and tabs you haven't opened
+    /// don't redraw in the background while mail syncs or tasks change.
     static func content(_ id: String) -> some View {
+        BuiltOnFirstVisit(tab: value(id)) { screen(id) }
+    }
+
+    @ViewBuilder
+    static func screen(_ id: String) -> some View {
         switch id {
         case "today": TodayView()
         case "inbox": InboxView()
@@ -77,7 +83,7 @@ struct HiddenSectionSheet: View {
     let sectionId: String
     @Environment(\.dismiss) private var dismiss
     var body: some View {
-        TabBarConfig.content(sectionId)
+        TabBarConfig.screen(sectionId)
             .overlay(alignment: .topTrailing) {
                 Button { dismiss() } label: { Image(systemName: "xmark.circle.fill").font(.title2).symbolRenderingMode(.hierarchical) }
                     .padding(.top, 6).padding(.trailing, 16)
@@ -127,4 +133,25 @@ struct TabBarSettings: View {
     }
 
     private func save() { TabBarConfig.items = items }
+}
+
+/// Holds a tab's screen back until the tab is first selected; after that it stays, so switching is instant.
+struct BuiltOnFirstVisit<Content: View>: View {
+    let tab: RootView.Tab
+    @ViewBuilder var content: () -> Content
+    @State private var built = false
+    private var router = AppRouter.shared
+
+    init(tab: RootView.Tab, @ViewBuilder content: @escaping () -> Content) {
+        self.tab = tab
+        self.content = content
+    }
+
+    var body: some View {
+        if built || router.tab == tab {
+            content().onAppear { built = true }
+        } else {
+            Color.clear
+        }
+    }
 }

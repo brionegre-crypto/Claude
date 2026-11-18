@@ -396,8 +396,13 @@ struct LogFoodView: View {
         _snapping = State(initialValue: startWithCamera)
     }
 
-    private var local: [CatalogFood] { FoodCatalog.search(query, in: pool) }
-    private var phrase: [PlateItem] { query.count > 3 ? MealPhrase.resolve(query, pool: pool) : [] }
+    // Worked out once per keystroke (the screen reads them several times per redraw).
+    @State private var local: [CatalogFood] = []
+    @State private var phrase: [PlateItem] = []
+    private func recompute() {
+        local = FoodCatalog.search(query, in: pool)
+        phrase = query.count > 3 ? MealPhrase.resolve(query, pool: pool) : []
+    }
     private var recent: [CatalogFood] {
         var seen = Set<String>()
         return history.compactMap { e -> CatalogFood? in
@@ -521,6 +526,8 @@ struct LogFoodView: View {
             }
             pool = mine + lib + FoodCatalog.all
         }
+        .onChange(of: query) { recompute() }
+        .onChange(of: pool.count) { recompute() }
         .task(id: query) {
             web = []
             let q = query

@@ -54,7 +54,19 @@ enum InboxBrain {
     // MARK: Tabs
 
     /// Which tab an email belongs in, using AI sorting corrected by what Keel has learned.
+    /// Which tab an email belongs in, remembered per email until something that decides it changes
+    /// (the inbox asks for every row on every redraw).
     static func tab(_ e: EmailMessage, score: SenderScore?) -> InboxTab {
+        let key = "\(e.id)|\(e.category?.rawValue ?? "-")|\(score?.isVIP == true)|\(score?.replies ?? 0 >= 1)|\((score?.ignored ?? 0) >= 3 && (score?.opens ?? 0) == 0 && (score?.replies ?? 0) == 0)"
+        if let hit = tabCache[key] { return hit }
+        let t = computeTab(e, score: score)
+        if tabCache.count > 8_000 { tabCache.removeAll() }
+        tabCache[key] = t
+        return t
+    }
+    private static var tabCache: [String: InboxTab] = [:]
+
+    private static func computeTab(_ e: EmailMessage, score: SenderScore?) -> InboxTab {
         if score?.isVIP == true { return .priority }
         if MailNoise.needsAttention(e) { return .priority }                           // payment failed, security alert, action required
         // Sales and promotional mail: always its own tab (people you've written back to are never cold pitches).

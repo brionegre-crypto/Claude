@@ -42,12 +42,33 @@ struct TodayProgressRing: View {
 
 // MARK: - Pinned emails on Today
 
+/// Pinned emails for Today, read when Today appears (not a live list: that redrew Today on every batch of mail during a sync).
+@MainActor @Observable
+final class PinnedMailStore {
+    static let shared = PinnedMailStore()
+    private(set) var items: [EmailMessage] = []
+    func load(_ ctx: ModelContext) {
+        guard UserDefaults.standard.object(forKey: "custom.today.pinnedMail") as? Bool ?? true else { items = []; return }
+        var d = FetchDescriptor<EmailMessage>(predicate: #Predicate { $0.isPinned && !$0.isArchived }, sortBy: [SortDescriptor(\.receivedAt, order: .reverse)])
+        d.fetchLimit = 3
+        let found = (try? ctx.fetch(d)) ?? []
+        if found.map(\.id) != items.map(\.id) { items = found }
+    }
+}
+
 struct PinnedEmailsCard: View {
-    @Query(filter: #Predicate<EmailMessage> { $0.isPinned && !$0.isArchived }, sort: \EmailMessage.receivedAt, order: .reverse) private var pinned: [EmailMessage]
+    @Environment(\.modelContext) private var ctx
     @AppStorage("custom.today.pinnedMail") private var on = true
     @State private var open: EmailMessage?
+    @State private var store = PinnedMailStore.shared
+    private var pinned: [EmailMessage] { store.items }
 
     var body: some View {
+        content
+            .sheet(item: $open, onDismiss: { store.load(ctx) }) { e in NavigationStack { EmailDetailView(email: e) } }
+    }
+
+    @ViewBuilder private var content: some View {
         if on && !pinned.isEmpty {
             VStack(alignment: .leading, spacing: 8) {
                 Label("Pinned emails", systemImage: "pin.fill").font(DS.Font.caption.weight(.semibold)).foregroundStyle(DS.Palette.inkSoft)
@@ -69,7 +90,6 @@ struct PinnedEmailsCard: View {
             .padding(DS.Space.m)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background { PremiumSurface(tint: DS.Palette.meeting) }
-            .sheet(item: $open) { e in NavigationStack { EmailDetailView(email: e) } }
         }
     }
 }

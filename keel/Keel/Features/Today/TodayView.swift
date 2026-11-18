@@ -55,7 +55,9 @@ struct TodayView: View {
                         .inlineTip(CaptureTip())
                     DailyAffirmationCard()                          // on/off: Today menu, or the card's own menu
                     if Custom.todayRoutine { UpcomingRoutineCard() } // a routine on your calendar, ready to start
-                    TomorrowPreviewCard()                           // evenings: tomorrow at a glance
+                    if Calendar.current.component(.hour, from: Date()) >= Custom.tomorrowHour {
+                        TomorrowPreviewCard()                       // evenings: tomorrow at a glance (not built during the day)
+                    }
                     FavoritePagesCard()                             // starred pages, one tap away
                     ClashesCard()                                   // overlapping events this week, with a fix
                     PinnedEmailsCard()                              // emails you pinned in Inbox
@@ -77,6 +79,7 @@ struct TodayView: View {
             .premiumBackground(DS.Palette.accent)
             .scrollEdgeEffectStyle(.hard, for: .top)          // content no longer smears under the top buttons
             .refreshable { await SyncEngine.shared.syncAll() }
+            .onAppear { PinnedMailStore.shared.load(ctx) }       // pinned emails, read once per visit
             .task {
                 // Short night → suggest a gentler day, unless you've already picked your energy today.
                 // Once is enough: asking Health again on every return to Today redrew the screen mid-transition.

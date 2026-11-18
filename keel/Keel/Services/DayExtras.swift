@@ -65,8 +65,19 @@ enum DayWrap {
     static var isOn: Bool { UserDefaults.standard.object(forKey: onKey) as? Bool ?? true }
     static var minute: Int { let v = UserDefaults.standard.integer(forKey: minuteKey); return v > 0 ? v : 18 * 60 }
     private static let id = "day.wrap"
+    private static var pending: Task<Void, Never>?
 
+    /// Called after every check-off: waits for a quiet moment (so the tap itself stays instant), then rewrites tonight's note.
     static func reschedule(ctx: ModelContext) {
+        pending?.cancel()
+        pending = Task { @MainActor in
+            try? await Task.sleep(for: .seconds(2))
+            guard !Task.isCancelled else { return }
+            rescheduleNow(ctx: ctx)
+        }
+    }
+
+    static func rescheduleNow(ctx: ModelContext) {
         let center = UNUserNotificationCenter.current()
         center.removePendingNotificationRequests(withIdentifiers: [id])
         guard isOn else { return }
