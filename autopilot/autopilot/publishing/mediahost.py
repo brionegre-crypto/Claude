@@ -45,8 +45,8 @@ class _Handler(http.server.BaseHTTPRequestHandler):
 
 
 class TunnelHost:
-    def __init__(self, port: int, binary: str = "cloudflared"):
-        self.port, self.binary = port, binary
+    def __init__(self, port: int, binary: str = "cloudflared", protocol: str = "http2"):
+        self.port, self.binary, self.protocol = port, binary, protocol
         self.proc = None
         self.server = None
         self.base = None
@@ -58,18 +58,33 @@ class TunnelHost:
         handler = type("H", (_Handler,), {"files": self.files})
         self.server = http.server.ThreadingHTTPServer(("127.0.0.1", self.port), handler)
         threading.Thread(target=self.server.serve_forever, daemon=True).start()
-        self.proc = subprocess.Popen([self.binary, "tunnel", "--no-autoupdate", "--url", f"http://127.0.0.1:{self.port}"],
+        # --protocol http2 = ordinary HTTPS on TCP 443. The default (QUIC over UDP 7844) is blocked by many routers.
+        self.proc = subprocess.Popen([self.binary, "tunnel", "--no-autoupdate", "--protocol", self.protocol,
+                                      "--url", f"http://127.0.0.1:{self.port}"],
                                      stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
-        deadline = time.time() + 45
-        while time.time() < deadline and not self.base:
-            line = self.proc.stdout.readline()
-            m = re.search(r"https://[a-z0-9-]+\.trycloudflare\.com", line or "")
-            if m:
-                self.base = m.group(0)
-        if not self.base:
+        self.log_lines: list[str] = []
+        self.registered = threading.Event()
+
+        def pump():
+            for line in self.proc.stdout:
+                self.log_lines = (self.log_lines + [line.rstrip()])[-25:]
+                m = re.search(r"https://[a-z0-9-]+\.trycloudflare\.com", line)
+                if m and not self.base:
+                    self.base = m.group(0)
+                if "Registered tunnel connection" in line or "Connection registered" in line:
+                    self.registered.set()
+
+        threading.Thread(target=pump, daemon=True).start()
+        deadline = time.time() + 60
+        while time.time() < deadline and not (self.base and self.registered.is_set()):
+            if self.proc.poll() is not None:
+                break
+            time.sleep(0.5)
+        if not self.base or not self.registered.is_set():
+            tail = "\n    ".join(self.log_lines[-8:])
             self.__exit__(None, None, None)
-            raise RuntimeError("cloudflared tunnel did not start")
-        threading.Thread(target=lambda: [None for _ in self.proc.stdout], daemon=True).start()
+            raise RuntimeError("cloudflared could not connect to Cloudflare (a firewall may block it). Last log lines:\n    " + tail)
+        time.sleep(2)
         return self
 
     def url_for(self, path: str) -> str:
@@ -131,8 +146,12 @@ def tunnel_test(port: int = 8766) -> list[str]:
     out = []
     tmp = Path(tempfile.mkdtemp()) / "tunnel-test.jpg"
     tmp.write_bytes(b"\xff\xd8\xff\xe0tunnel-test")
-    with TunnelHost(port) as t:
-        out.append(f"tunnel started: {t.base}")
+    try:
+        t = TunnelHost(port).__enter__()
+    except RuntimeError as e:
+        return [f"✗ {e}"]
+    try:
+        out.append(f"tunnel started and connected to Cloudflare: {t.base}")
         key = f"/m/{secrets.token_urlsafe(16)}/{tmp.name}"
         t.files[key] = tmp
         url = t.base + key
@@ -146,6 +165,11 @@ def tunnel_test(port: int = 8766) -> list[str]:
         out.append(("✓" if public_dns_resolves(t.base) else "✗") + " public DNS (what Instagram uses) can resolve it")
         ok = any(TunnelHost.local_ok(url) or time.sleep(3) for _ in range(5))
         out.append(("✓" if ok else "✗") + " fetched the test file through the tunnel from this Mac")
+        if not ok:
+            out.append("  cloudflared log (last lines):")
+            out += ["    " + l for l in t.log_lines[-6:]]
+    finally:
+        t.__exit__(None, None, None)
     return out
 
 

@@ -228,3 +228,40 @@ def test_timezone_answers_are_resolved_and_validated(env, monkeypatch):
     monkeypatch.setattr("builtins.input", lambda *a: next(answers))
     wizard.step_project(s, db)
     assert config.load(s.path).get("general.timezone") == "America/Chicago"
+
+
+def _fake_cloudflared(tmp_path, registers: bool):
+    import stat
+    script = tmp_path / "cloudflared"
+    lines = ['echo "INF |  https://fake-tunnel-abc.trycloudflare.com  |"']
+    lines.append('echo "INF Registered tunnel connection connIndex=0 protocol=http2"' if registers
+                 else 'echo "ERR Failed to dial a quic connection error=\\"timeout: no recent network activity\\""')
+    script.write_text("#!/bin/sh\n" + "\n".join(lines) + "\nsleep 30\n")
+    script.chmod(script.stat().st_mode | stat.S_IEXEC)
+    return str(script)
+
+
+def test_tunnel_waits_for_registration_and_uses_http2(tmp_path, monkeypatch):
+    from autopilot.publishing import mediahost
+    monkeypatch.setattr(mediahost.shutil, "which", lambda b: b)
+    seen = {}
+    real_popen = mediahost.subprocess.Popen
+    def spy(cmd, **kw):
+        seen["cmd"] = cmd
+        return real_popen(cmd, **kw)
+    monkeypatch.setattr(mediahost.subprocess, "Popen", spy)
+    with mediahost.TunnelHost(0, binary=_fake_cloudflared(tmp_path, True)) as t:
+        assert t.base == "https://fake-tunnel-abc.trycloudflare.com" and t.registered.is_set()
+    assert seen["cmd"][seen["cmd"].index("--protocol") + 1] == "http2"
+
+
+def test_tunnel_reports_cloudflared_log_when_it_cannot_connect(tmp_path, monkeypatch):
+    import pytest
+    from autopilot.publishing import mediahost
+    monkeypatch.setattr(mediahost.shutil, "which", lambda b: b)
+    real_time = mediahost.time.time
+    start = real_time()
+    monkeypatch.setattr(mediahost.time, "time", lambda: real_time() + (0 if real_time() - start < 2 else 120))
+    with pytest.raises(RuntimeError, match="(?s)could not connect.*quic"):
+        with mediahost.TunnelHost(0, binary=_fake_cloudflared(tmp_path, False)):
+            pass
