@@ -44,7 +44,9 @@ Your brain isn't broken. You were never given a system built for it.
 6. Work, money & home with ADHD: deadlines, bills, side projects, relationships and fatherhood with an ADHD brain.
 
 ## Offers (never invent others, prices or discounts)
-- Free: Step 1 worksheet ("What type of man do you want to be?"). Comment keyword: STEP1. Link: https://www.bethemansystem.com/step-1/#get
+- Free: Step 1 worksheet ("What type of man do you want to be?") plus its ADHD Edition insert (word bank instead of a
+  blank page, three 5-minute boxes, good-day / tired-day versions, lock-screen card). Comment keyword: STEP1.
+  Link: https://www.bethemansystem.com/step-1/#get. You may say "ADHD-friendly version included"; don't invent other features.
 - The Weekly Scorecard; The Be The Man Club. Mention only by name; never quote prices in posts.
 
 ## Hard rules (health content)
