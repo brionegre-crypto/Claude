@@ -71,6 +71,7 @@ struct KeelApp: App {
                 SyncEngine.shared.scheduleReminderSync()                 // ticks made in Reminders while Keel was away
                 TaskTimeZone.adjustIfMoved(ctx: container.mainContext)   // travelled: date-only tasks stay on their day
                 ShutdownManager.shared.restoreAfterRelaunch(ctx: container.mainContext)   // focus that ran while Keel was closed
+                if Throttle.due("routine.alarms", every: 3600) { RoutineAlarms.refresh() }
                 Task { await HealthHabits.check(ctx: container.mainContext) }
                 Task { await KeelFocusFilter.syncCurrent() }
                 #if !targetEnvironment(macCatalyst)
@@ -314,6 +315,7 @@ struct RootView: View {
         .tabViewBottomAccessory { FocusAccessory { router.showFocus = true } }
         .overlay(alignment: .bottom) { UndoToast() }
         .modifier(ShakeToUndo())                                     // shake to undo, like Apple's apps
+        .fullScreenCover(item: Binding(get: { RoutineLaunch.shared.routine }, set: { RoutineLaunch.shared.routine = $0 })) { RoutinePlayer(routine: $0) }
         .overlay { EveningCalm() }                                   // warmer after sunset
         // Top banners float over the screen. As safe-area insets wrapping the whole TabView they changed every tab's
         // layout (one even added its default gap while empty), so each tab's bar and title re-settled after

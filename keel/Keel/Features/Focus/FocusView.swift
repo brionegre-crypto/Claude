@@ -42,6 +42,7 @@ struct FocusView: View {
                                startPoint: .top, endPoint: .bottom).ignoresSafeArea()
             )
             .navigationTitle(shutdown.active == nil ? "Focus" : "")
+            .navigationBarTitleDisplayMode(.inline)          // a large title sat on top of the stats strip
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button { showRitual = true } label: { Label("Shutdown ritual", systemImage: "moon.stars") }
@@ -70,9 +71,15 @@ struct FocusView: View {
                 }
             }
             .tint(DS.Palette.focus)
-            Picker(selection: $sound) {
-                ForEach(FocusSound.Kind.allCases) { Text($0.label).tag($0.rawValue) }
-            } label: { Label("Focus sound", systemImage: "waveform") }
+            // Label on the left, choice on the right (a bare menu picker showed only "Off", floating in the middle).
+            HStack {
+                Label("Focus sound", systemImage: "waveform").font(DS.Font.body)
+                Spacer()
+                Picker("Focus sound", selection: $sound) {
+                    ForEach(FocusSound.Kind.allCases) { Text($0.label).tag($0.rawValue) }
+                }
+                .pickerStyle(.menu).labelsHidden()
+            }
             .onChange(of: sound) { _, new in
                 if shutdown.active != nil { FocusSound.shared.play(FocusSound.Kind(rawValue: new) ?? .off) }
             }

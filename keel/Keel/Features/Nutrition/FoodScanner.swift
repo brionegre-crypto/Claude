@@ -35,6 +35,17 @@ enum NutritionLog {
         Task { await NutritionHealth.save(e); try? ctx.save() }
     }
 
+    /// "Log again": the same food, now, as the meal it is at this time of day.
+    static func logAgain(_ old: FoodEntry, ctx: ModelContext) {
+        let h = Calendar.current.component(.hour, from: Date())
+        let meal = h < 11 ? "breakfast" : h < 15 ? "lunch" : h < 21 ? "dinner" : "snack"
+        let e = FoodEntry(name: old.name, facts: old.facts, meal: meal, verdict: DietVerdict(rawValue: old.verdictRaw) ?? .unknown)
+        e.servings = old.servings
+        e.barcode = old.barcode
+        e.tagsRaw = old.tagsRaw
+        finish(e, ctx: ctx)
+    }
+
     static func delete(_ e: FoodEntry, ctx: ModelContext) {
         let id = e.id
         ctx.delete(e)

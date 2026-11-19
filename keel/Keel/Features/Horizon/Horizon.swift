@@ -213,6 +213,7 @@ struct VoyageStop: Identifiable {
     var detail: String = ""
     var task: TaskItem?
     var gapEnd: Date?
+    var routineId: UUID?
 }
 
 /// Your day as a route: now at the bow, meetings as ports, timed tasks as waypoints, free time as open water, bedtime as the anchor.
@@ -232,7 +233,19 @@ struct VoyageView: View {
             out.append(VoyageStop(id: "e" + (e.calendarItemIdentifier) + "\(e.startDate.timeIntervalSince1970)", kind: .port, time: e.startDate,
                                   title: e.title ?? "Event", detail: "\(e.startDate.formatted(date: .omitted, time: .shortened))–\(e.endDate.formatted(date: .omitted, time: .shortened))", gapEnd: e.endDate))
         }
-        for t in live where t.hasDueTime && t.id != next?.id {
+        // Timed routines are one stop ("Morning routine · 6 steps"), and their steps don't also show as tasks.
+        let routines = RoutineStore.all.filter { $0.startMinute != nil }
+        let stepTitles = Set(routines.flatMap { r in r.steps.map { NoteText.fold($0.title) } })
+        for r in routines {
+            let m = r.startMinute ?? 0
+            guard let start = cal.date(bySettingHour: max(0, m) / 60, minute: max(0, m) % 60, second: 0, of: now) else { continue }
+            let end = start.addingTimeInterval(Double(r.totalMinutes * 60))
+            guard end > now, start < anchor else { continue }
+            out.append(VoyageStop(id: "r" + r.id.uuidString, kind: .waypoint, time: start, title: "\(r.name) routine",
+                                  detail: "\(start.formatted(date: .omitted, time: .shortened)) · \(r.steps.count) steps · \(r.totalMinutes) min",
+                                  gapEnd: end, routineId: r.id))
+        }
+        for t in live where t.hasDueTime && t.id != next?.id && !stepTitles.contains(NoteText.fold(t.title)) {
             if let d = t.dueDate, cal.isDateInToday(d), d >= now.addingTimeInterval(-3600), d < anchor {
                 out.append(VoyageStop(id: "t" + t.id.uuidString, kind: .waypoint, time: d, title: t.title, task: t))
             }
@@ -360,6 +373,10 @@ struct VoyageView: View {
                             Text(s.detail.isEmpty ? s.time.formatted(date: .omitted, time: .shortened) : s.detail).font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
                         }
                         Spacer()
+                        if let rid = s.routineId {
+                            Button { RoutineLaunch.shared.start(rid) } label: { Image(systemName: "play.circle.fill").font(.title2).foregroundStyle(DS.Palette.accent) }
+                                .buttonStyle(.plain).accessibilityLabel("Start \(s.title)")
+                        }
                         if let t = s.task, !t.isDeleted { Button { TaskActions.setDone(t, true) } label: { Image(systemName: "circle").font(.title3).foregroundStyle(DS.Palette.inkSoft) }.buttonStyle(.plain).accessibilityLabel("Mark \(t.title) done") }
                     }
                 }

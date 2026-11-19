@@ -139,6 +139,7 @@ enum BodyHubs {
         return AnyView(ToolHubView(spec: spec, tools: [
             (tool("b.food", "Today", "fork.knife.circle.fill") { NutritionView() }, "Today"),
             (tool("b.log", "Log", "fork.knife") { LogFoodView() }, "Log a meal"),
+            (tool("b.history", "History", "calendar") { FoodHistoryView() }, "History"),
             (tool("b.scan", "Scan", "barcode.viewfinder") { FoodScanView() }, "Scan"),
             (tool("b.library", "Library", "books.vertical.fill") { FoodLibraryView() }, "Library"),
             (tool("b.diet", "Diet guide", "book.closed.fill") { DietGuideView() }, "Diet guide"),

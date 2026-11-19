@@ -13,6 +13,7 @@ enum RoutineStore {
         }
         set {
             if let d = try? JSONEncoder().encode(newValue) { UserDefaults.standard.set(d, forKey: key) }
+            Task { @MainActor in RoutineAlarms.refresh() }      // alarms follow your routine times
         }
     }
 
@@ -108,9 +109,29 @@ struct RoutineEditor: View {
         })
     }
 
+    private var startOn: Binding<Bool> {
+        Binding(get: { routine.startAt != nil }, set: { routine.startAt = $0 ? 7 * 60 : nil })
+    }
+    private var startTime: Binding<Date> {
+        Binding(get: {
+            let m = routine.startAt ?? 420
+            return Calendar.current.date(bySettingHour: m / 60, minute: m % 60, second: 0, of: Date()) ?? Date()
+        }, set: { d in
+            let c = Calendar.current.dateComponents([.hour, .minute], from: d)
+            routine.startAt = (c.hour ?? 0) * 60 + (c.minute ?? 0)
+        })
+    }
+
     var body: some View {
         NavigationStack {
             Form {
+                Section {
+                    Toggle("Starts at a set time", isOn: startOn)
+                    if routine.startAt != nil { DatePicker("Start", selection: startTime, displayedComponents: .hourAndMinute) }
+                    if routine.startMinute != nil {
+                        Toggle("Full-screen alarm to start", isOn: Binding(get: { routine.alarm ?? false }, set: { routine.alarm = $0 }))
+                    }
+                } footer: { Text("Timed routines show on Today as one stop (not each step), and can ring like an alarm clock when it's time to begin.") }
                 Section {
                     TextField("Name, e.g. Morning", text: $routine.name)
                     ScrollView(.horizontal, showsIndicators: false) {

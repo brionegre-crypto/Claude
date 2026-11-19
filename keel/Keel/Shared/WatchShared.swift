@@ -172,6 +172,11 @@ struct Routine: Codable, Hashable, Identifiable {
     var icon: String
     var steps: [Step]
     var finishBy: Int? = nil          // minutes after midnight, e.g. 510 = out the door by 8:30
+    var startAt: Int? = nil           // minutes after midnight it begins (shows on Today, and can ring)
+    var alarm: Bool? = nil            // full-screen alarm when it's time to start (iPhone)
+
+    /// When it starts today: its start time, or worked back from "finish by".
+    var startMinute: Int? { startAt ?? finishBy.map { $0 - totalMinutes } }
 
     var totalMinutes: Int { steps.reduce(0) { $0 + $1.minutes } }
 
