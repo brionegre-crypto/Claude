@@ -19,8 +19,9 @@ ORG = {
     "alternateName": "The Be The Man System",
     "url": BASE + "/",
     "logo": BASE + "/assets/favicon.png",
-    "slogan": "Faith should function.",
-    "description": "A seven-step consistency system for Black Christian men: one sentence on who you are becoming, goals with dates, and a weekly scorecard.",
+    "slogan": "Built for the brain God gave you.",
+    "description": "A faith-first productivity system for neurodivergent Black Christian men: one sentence on who you are becoming, goals with a time and a place, a bad-day version of each, and a weekly scorecard.",
+    "audience": {"@type": "PeopleAudience", "audienceType": "Black Christian men, ages 25 to 40, who are neurodivergent (ADHD, autism, dyslexia and other minds that work differently) and struggle with productivity"},
     "founder": {"@id": BASE + "/about/#brian"},
     "sameAs": [
         "https://www.youtube.com/@BeTheManSystem",
@@ -45,7 +46,8 @@ PERSON = {
 NAV = [
     ("home", "/", "Home"),
     ("free", "Start free", [
-        ("/step-1/", "Step 1 worksheet", "20 minutes, one sentence", None),
+        ("/built-for-your-brain/", "Built for your brain", "Is this for me?", None),
+        ("/step-1/", "Step 1 worksheet", "20 minutes, or in pieces", None),
         ("/7-week-challenge/", "The 7-week challenge", "One email every Tuesday", None),
         ("/humility/", "The Low Seat Check", "How humble are you?", None),
         ("/truth-ledger/", "The Truth Ledger", "49 days to stop lying", None),

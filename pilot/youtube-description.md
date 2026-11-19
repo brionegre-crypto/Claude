@@ -7,8 +7,11 @@ To replace the old links on all videos at once, TubeBuddy's free "Find & Replace
 find `go.bethemansystem.com/framework`, replace with `bethemansystem.com/step-1`.
 
 ```
-▶ Start here, free: the Step 1 worksheet
+▶ Start here, free: the Step 1 worksheet (do it in pieces)
 https://bethemansystem.com/step-1/
+
+▶ Not lazy. Not faithless. Is this for you? Built for the brain God gave you
+https://bethemansystem.com/built-for-your-brain/
 
 ▶ How humble are you, really? Take the free Low Seat Check (5 minutes)
 https://bethemansystem.com/humility/
@@ -16,8 +19,8 @@ https://bethemansystem.com/humility/
 ▶ The Be The Man Club: the whole system, $19 a month
 https://bethemansystem.com/the-club/
 
-▶ Everything else (workshops, the store, couples, a free call)
+▶ Everything else (workshops, the store, a free call)
 https://bethemansystem.com/yt
 
-Be The Man · Faith should function.
+Be The Man · Built for the brain God gave you.
 ```
