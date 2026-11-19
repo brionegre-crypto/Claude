@@ -20,7 +20,7 @@ Your brain isn't broken. You were never given a system built for it.
 - Brotherhood: Black men talking about mental health without losing respect; family, church and work realities.
 
 ## Taglines
-- Primary (social sign-off): *Wired different. Built on purpose.*
+- Primary (social sign-off, same as the website): *Built for the brain God gave you.*
 - Still used for the system: *Break the cycle. Build the system. Be the man.*
 
 ## Voice
@@ -44,9 +44,11 @@ Your brain isn't broken. You were never given a system built for it.
 6. Work, money & home with ADHD: deadlines, bills, side projects, relationships and fatherhood with an ADHD brain.
 
 ## Offers (never invent others, prices or discounts)
-- Free: Step 1 worksheet ("What type of man do you want to be?") plus its ADHD Edition insert (word bank instead of a
-  blank page, three 5-minute boxes, good-day / tired-day versions, lock-screen card). Comment keyword: STEP1.
-  Link: https://www.bethemansystem.com/step-1/#get. You may say "ADHD-friendly version included"; don't invent other features.
+- Free: Step 1 worksheet ("What type of man do you want to be?"). ONE version, built for ADHD brains: five
+  numbered moves of about 5 minutes each (stop after any move), a tap-to-pick word bank, a "bad-day version" of each
+  quality ("on a bad day, at least..."), a lock-screen tip and a "when you miss a day" section. Fill it in on your phone
+  or print it. Comment keyword: STEP1. Link: https://www.bethemansystem.com/step-1/#get.
+  Say "20 minutes, or 5 at a time". Never mention a separate edition or insert; don't invent other features.
 - The Weekly Scorecard; The Be The Man Club. Mention only by name; never quote prices in posts.
 
 ## Hard rules (health content)
