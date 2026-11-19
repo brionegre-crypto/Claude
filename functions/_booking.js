@@ -14,7 +14,7 @@ const TIMES = ["19:00", "19:20", "19:40", "20:00", "20:20", "20:40"];
 export const CALL_MINUTES = 15;
 const HORIZON_DAYS = 14;
 const MIN_NOTICE_MS = 12 * 3600 * 1000;
-export const OFF_DAYS = [];
+export const OFF_DAYS = ["2026-12-24", "2026-12-31"]; // Christmas Eve and New Year's Eve
 
 // Brian's standing commitments (from his calendar), as [from, to) in Central time.
 function busy(date, dow, dayOfMonth) {

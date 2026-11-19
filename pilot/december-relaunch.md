@@ -9,7 +9,7 @@ Everything that has a start date now begins in December, with a break over the h
 | 7-week challenge (Tuesdays) | Oct 20 to Dec 1 | **Dec 1**, Dec 8, Dec 15, **break (no emails Dec 22 or 29)**, Jan 5, Jan 12, Jan 19, Jan 26 |
 | 6-week group (Sundays, 7 to 8 PM Central) | Nov 15 to Dec 20 | **Dec 6**, Dec 13, Dec 20, **break (no session Dec 27 or Jan 3)**, Jan 10, Jan 17, Jan 24 |
 | Fix Your Wednesday (every other Wednesday, 7 to 8 PM Central) | From Nov 4 | From **Dec 2**: Dec 2, Dec 16, Dec 30, Jan 13 (Dec 30 kept) |
-| Inner Circle (Thursdays, 7 to 8 PM Central) | Founding circle Nov 5 | Weekly from **Dec 3** (every Thursday, including Dec 24 and 31) |
+| Inner Circle (Thursdays, 7 to 8 PM Central) | Founding circle Nov 5 | Weekly from **Dec 3**, **break (no class Dec 24 or 31)** |
 | Thursday emails (8 AM Central) | Oct 22 to Dec 24 | **Dec 3**, Dec 10, Dec 17, **break (none Dec 24 or 31)**, Jan 7, Jan 14, Jan 21, Jan 28, Feb 4, Feb 11, Feb 18 |
 | Club monthly call | Second Tuesday | Unchanged (next: Dec 8) |
 | Truth Ledger | You pick Day 1 | Unchanged |
@@ -19,7 +19,7 @@ Everything that has a start date now begins in December, with a break over the h
 - **Website:** challenge, group, workshop and Inner Circle pages; the homepage banner; event data for search engines; the group checkout confirmation; the workshop "next session" dates.
 - **Code:** the workshop schedule and the free-call booking (blocks Thursdays 7 to 8 PM from Dec 3 and workshop Wednesdays from Dec 2).
 - **Stripe:** the 6-week group description now lists the six dates and the break. Prices and payment links are unchanged.
-- **Google Calendar:** the recurring workshop starts Dec 2; the recurring Inner Circle class starts Dec 3.
+- **Google Calendar:** the recurring workshop starts Dec 2; the recurring Inner Circle class starts Dec 3, with the Dec 24 and Dec 31 classes removed. The free-call booking page also closes those two days.
 - **Emails, rewritten in this repo (pilot/emails):**
   - Thursday emails 7 ("Say it at the table"), 10 ("The smallest version that still counts") and 11 (now "One evening to reset") no longer mention Thanksgiving, December, Christmas or January, so they work in any month. The teasers at the end of emails 6, 9 and 10 match. All ten Thursday emails now end "Built for the brain God gave you."
   - 7-week challenge: week 3 tells people the next email is Tuesday, January 5; week 4 refers to "week three"; weeks 5 and 6 no longer mention a Thanksgiving week; the welcome email says "if you joined after December 1".
@@ -67,5 +67,4 @@ It reschedules the 10 Thursday emails and 7 challenge emails to the dates above,
 ## Not changed
 
 - Step 1 welcome and follow-up sequences; the weekly Step 1 follow-up still starts for sign-ups from Nov 6 (FOLLOW_UP_FROM in functions/_mail.js). Revisit it when you decide about the Thursday series.
-- Inner Circle Thursdays Dec 24 and 31 are still on the calendar. Tell me if you want those skipped too.
 - The ADHD wording of the emails themselves (beyond the fixes above). They are mechanism emails and read fine for the audience, but none yet speaks to ADHD directly.
