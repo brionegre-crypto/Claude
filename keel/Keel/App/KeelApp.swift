@@ -314,15 +314,11 @@ struct RootView: View {
         // Focus lives above the tab bar (like Music's mini-player): always one tap away, shows the live timer.
         .tabViewBottomAccessory { FocusAccessory { router.showFocus = true } }
         .overlay(alignment: .bottom) { UndoToast() }
-        .modifier(ShakeToUndo())                                     // shake to undo, like Apple's apps
-        .fullScreenCover(item: Binding(get: { RoutineLaunch.shared.routine }, set: { RoutineLaunch.shared.routine = $0 })) { RoutinePlayer(routine: $0) }
+        .modifier(AppWideExtras())                                   // shake to undo, routine player, banners
         .overlay { EveningCalm() }                                   // warmer after sunset
         // Top banners float over the screen. As safe-area insets wrapping the whole TabView they changed every tab's
         // layout (one even added its default gap while empty), so each tab's bar and title re-settled after
         // appearing: the "snap into place" on every switch.
-        .overlay(alignment: .top) { OfflineBanner() }                // says so when there's no internet
-        .overlay(alignment: .bottom) { HandoffBanner().animation(DS.spring, value: Handoff.shared.current?.id) }      // the natural next step
-        .overlay(alignment: .bottom) { CaptureButton().padding(.bottom, 104) }       // capture anything, from anywhere
         .overlay(alignment: .top) {
             if let err = KeelStore.loadError {
                 Text(err).font(DS.Font.caption).foregroundStyle(.white).padding(10).frame(maxWidth: .infinity)
@@ -647,4 +643,18 @@ enum KeelRuntime {
     /// Health sign-ins, which a test simulator doesn't have and which have nothing to do with the tests.
     static let isTesting = ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil
         || NSClassFromString("XCTestCase") != nil
+}
+
+
+/// App-wide layers, kept out of RootView's long modifier chain so it stays quick to compile:
+/// the offline banner, the next-step banner, the capture button, shake to undo and the routine player.
+private struct AppWideExtras: ViewModifier {
+    func body(content: Content) -> some View {
+        content
+            .overlay(alignment: .top) { OfflineBanner() }                // says so when there's no internet
+            .overlay(alignment: .bottom) { HandoffBanner().animation(DS.spring, value: Handoff.shared.current?.id) }      // the natural next step
+            .overlay(alignment: .bottom) { CaptureButton().padding(.bottom, 104) }       // capture anything, from anywhere
+            .modifier(ShakeToUndo())                                     // shake to undo, like Apple's apps
+            .fullScreenCover(item: Binding(get: { RoutineLaunch.shared.routine }, set: { RoutineLaunch.shared.routine = $0 })) { RoutinePlayer(routine: $0) }
+    }
 }
