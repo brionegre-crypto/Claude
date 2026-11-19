@@ -1,8 +1,8 @@
 # Marketing scripts for the new audience
 
-Audience: Black Christian men, 25 to 40, neurodivergent, who struggle with productivity.
+Audience: Black Christian men, 25 to 40, with ADHD (diagnosed or still wondering), who struggle with productivity.
 Tagline: Built for the brain God gave you. Supporting line: Faith should function.
-Rules for every script: no cure or treatment language, no diagnosing, no "proven," no invented stories or numbers, no claim that Brian is neurodivergent, never imply a church runs Be The Man. Scripture is ESV. Brian says "I'm not a doctor" whenever a script gets near a diagnosis.
+Rules for every script: no cure or treatment language, no diagnosing, no "proven," no invented stories or numbers (the only statistics we use are the verified ones in section F), no claim that Brian has ADHD, never imply a church runs Be The Man. Scripture is ESV. Brian says "I'm not a doctor" whenever a script gets near a diagnosis.
 
 Format: each short-form script is 40 to 60 seconds spoken. Film vertical for Reels, Shorts and TikTok. Captions on, always: a lot of the audience watches with the sound off and a lot reads faster than it listens.
 
@@ -15,7 +15,7 @@ Format: each short-form script is 40 to 60 seconds spoken. Film vertical for Ree
 **Spoken:**
 You've been told to try harder. Pray harder. Be more disciplined. And you did. You prayed, you tried, you set the alarm, and by Thursday it was gone again.
 Hear me: I'm a pastor. I'm not against prayer. But Proverbs 16:9 says the heart of man plans his way, and the Lord establishes his steps. Plans are in the verse. The plan is not a lack of faith.
-If your brain works differently, the plan has to be built for that brain: on paper, with a time and a place, and a smaller version for the bad days.
+If you have ADHD, the plan has to be built for that brain: on paper, with a time and a place, and a smaller version for the bad days.
 **Scripture on screen:** Proverbs 16:9
 **CTA:** Step 1 is free. Twenty minutes, or five minutes at a time. Link in bio.
 
@@ -89,9 +89,11 @@ You don't need a better app. You need a plan that survives a bad week: on paper,
 ### 10. Do I need a diagnosis?
 **Hook:** "Do I have to be diagnosed to start?"
 **Spoken:**
-I get asked this a lot. Do I need a diagnosis? No. Diagnosed, self-identified, or still wondering, you can start.
-And let me be straight: I'm a pastor and a certified marriage counselor. I'm not a doctor. I can't diagnose you, and this isn't treatment.
-If you want to find out, a licensed clinician can help, and it's a good thing to do. In the meantime, you don't have to wait to start building a system that fits the brain you have.
+I get asked this a lot. Do I need an ADHD diagnosis? No. Diagnosed or still wondering, you can start.
+Here's something most men don't know. In a 2023 CDC survey, more than half of US adults with ADHD, 55.9 percent, were diagnosed as adults. A lot of us spent years being called lazy before anybody said the word.
+And let me be straight: I'm a pastor and a certified marriage counselor. I'm not a doctor. I can't diagnose you, and this isn't treatment. If you want to find out, a licensed clinician can help.
+In the meantime, you don't have to wait to build a system that fits the brain you have.
+**On-screen:** 55.9% of US adults with ADHD were diagnosed as adults. (CDC, 2023 survey, self-reported)
 **CTA:** Free Step 1, link in bio.
 
 ### 11. When you forgot again
@@ -140,8 +142,8 @@ You don't have to change how you're made. You have to build a system that fits i
 ## C. Long-form YouTube video (9 to 11 minutes)
 
 **Title options (pick one):**
-1. Why "Pray Harder" Fails Neurodivergent Christian Men
-2. Not Lazy. Under-Systemed. (A Faith-First System for the ADHD and Autistic Man)
+1. Why "Pray Harder" Fails Christian Men With ADHD
+2. Not Lazy. Under-Systemed. (A Faith-First System for the Man With ADHD)
 3. Christian Productivity Advice Wasn't Built for Your Brain
 
 **Thumbnail:** Brian, one line of text: "NOT LAZY." Second frame option: a hand writing on a sticky note.
@@ -150,7 +152,7 @@ You don't have to change how you're made. You have to build a system that fits i
 - 0:00 Cold open. "You've been told to try harder and pray harder. You did both."
 - 0:40 Who this is for, and who I am. Pastor, certified marriage counselor, not a doctor. Diagnosed, self-identified or wondering: all welcome.
 - 1:40 Three things you were told: try harder, pray harder, be disciplined. What each one assumes.
-- 3:30 What's actually going on, in plain language: starting, remembering and feeling time run on wiring, not character. Many neurodivergent men describe the same walls. (Keep it descriptive. No clinical claims.)
+- 3:30 What's actually going on, in plain language: starting, remembering and feeling time run on wiring, not character. Many men with ADHD describe the same walls. (Keep it descriptive. No clinical claims.)
 - 5:00 The six moves: 1 put it where you can see it, 2 time-place-trigger, 3 the bad-day version, 4 define the miss, 5 a brother alongside you, 6 God at the center. Screen-share Step 1 and the Weekly Scorecard.
 - 8:00 What Scripture says about how you're made: Psalm 139:14, 1 Corinthians 12:18, Proverbs 24:16.
 - 9:00 What this is and isn't: not therapy, not treatment, 988 for crisis, a licensed clinician for an assessment.
@@ -168,7 +170,7 @@ Built for the brain God gave you.
 
 ## D. Paid ad angles (check the current ad policy before running)
 
-Meta's policy bars ads that assert or imply a person's race, religion or health condition. Do not run "Are you a neurodivergent Black Christian man?" Write each ad as a situation, target by age (25 to 40), interests and lookalikes, and send people to the page that says who it's for.
+Meta's policy bars ads that assert or imply a person's race, religion or health condition. Do not run "Are you a Black Christian man with ADHD?" Write each ad as a situation, target by age (25 to 40), interests and lookalikes, and send people to the page that says who it's for.
 
 1. **The plan that dies on day three.** "You've started the plan three times. It's not you. It's the plan." Free Step 1.
 2. **Pray harder.** "Faith has plans in it. Proverbs 16:9." Free Step 1.
@@ -186,3 +188,20 @@ Every ad ends on a free thing first. The workshop ($27) and the Club ($19) come 
 The 12-week calendar, the 90 boost posts, the Reels, the highlights and the comment-bot prompts (on the claude/truth-ledger and Instagram branches, scheduled in Sprout) were written for "Black Christian men" and the old "consistency" angle. They still work as general content, but they do not carry the new audience.
 
 Suggested order: (1) post scripts 1, 2, 5 and 10 first, they carry the positioning; (2) swap the bio lines and pinned post; (3) rewrite the first two weeks of the calendar around scripts 1 to 12; (4) update the comment-bot system prompt to the voice rules in audience-and-voice.md. Say the word and I will do (3) and (4) on their own branch, so nothing already scheduled is touched.
+
+---
+
+## F. The statistics we can use (and what each one does and does not say)
+
+Only these. Each was read at the source on Nov 19, 2026. Do not add a number to a script, post, ad or email without a source.
+
+| Statistic | Source | Say it like this | Never say |
+|---|---|---|---|
+| 6.0% of US adults (about 15.5 million) reported a current ADHD diagnosis in 2023 | CDC, MMWR, Oct 10, 2024, 73(40):890-895, https://www.cdc.gov/mmwr/volumes/73/wr/mm7340a1.htm | "About 6 percent of US adults, roughly 15.5 million people, report a current ADHD diagnosis (CDC, 2023)." | That it is a clinical prevalence rate. It is self-reported, from an online panel survey. |
+| 55.9% of adults with a current ADHD diagnosis were diagnosed as adults (44.1% as children) | Same | "More than half of adults with ADHD were diagnosed as adults (CDC, 2023 survey)." | Any claim by sex or race. The report does not give those breakdowns. |
+| If-then plans helped children with ADHD: fewer shifting errors and better working-memory math (Study 1 and 2); better delay of gratification (45 inpatient children, then 47 outpatient children with ADHD plus 40 without) | Gawrilow, Gollwitzer & Oettingen (2011), Journal of Social and Clinical Psychology 30(6):616-646; and Cognitive Therapy and Research 35:442-455 | "In two 2011 studies, children with ADHD who made if-then plans did better on tasks needing attention-shifting, working memory and waiting." | That it was tested in adults or in men. It was children, about age 10. Never say "proven." Be The Man itself has not been studied. |
+
+**Not used, on purpose**
+- A stat that Black men are under-diagnosed with ADHD. The evidence is mixed (one 2024 health-records study found Black patients less likely to be diagnosed; a separate meta-analysis found higher prevalence). The CDC survey above has only 30 Black adults with ADHD and gives no significance test.
+- The 91% versus 38% figure (written plans, general population) and the 66-day habit figure. They are not about ADHD. They are off the public pages. The Club's month-3 and month-4 member lessons still quote a few general studies.
+- Anything about "men with ADHD" specifically. The sources above do not report men separately.

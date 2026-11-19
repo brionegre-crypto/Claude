@@ -4,17 +4,17 @@
  "bare": true,
  "crumb": "7-week challenge",
  "priority": "0.7",
- "title": "The Free 7-Week Challenge for Neurodivergent Black Christian Men | Be The Man",
+ "title": "The Free 7-Week Challenge for Black Christian Men With ADHD | Be The Man",
  "og_title": "The 7-week challenge: one email, one action a week",
- "description": "A free 7-week challenge for neurodivergent Black Christian men and any man who keeps making the same promise. One email every Tuesday. Join any week, no catching up.",
+ "description": "A free 7-week challenge for Black Christian men with ADHD, and any man who keeps making the same promise. One email every Tuesday from Dec 1. Join any week, no catching up.",
  "schema": [
   {
    "@type": "Event",
    "name": "The 7-week challenge",
    "eventAttendanceMode": "https://schema.org/OnlineEventAttendanceMode",
    "eventStatus": "https://schema.org/EventScheduled",
-   "startDate": "2026-10-20",
-   "endDate": "2026-12-01",
+   "startDate": "2026-12-01",
+   "endDate": "2027-01-12",
    "isAccessibleForFree": true,
    "location": {
     "@type": "VirtualLocation",
@@ -45,19 +45,19 @@
       <p><b>Brian Greene</b>Pastor · certified marriage counselor · father of three</p>
     </div>
 
-    <p class="eyebrow" style="color:var(--accent)">Free · Join any week</p>
+    <p class="eyebrow" style="color:var(--accent)">Free · Starts Dec 1 · Join any week</p>
     <h1>The 7-week <span class="grad">challenge.</span></h1>
-    <p class="lead">Seven weeks. One email a week. One action with a time attached, small enough to do on a bad week. For Black Christian men, including neurodivergent men, who keep making the same promise and calling it a character flaw.</p>
+    <p class="lead">Seven weeks. One email a week. One action with a time attached, small enough to do on a bad week. For Black Christian men with ADHD, and any man who keeps making the same promise and calling it a character flaw.</p>
 
     <div class="tile lp-card">
       <p class="label" style="color:var(--accent)">The seven weeks</p>
       <ul class="check">
-        <li>Oct 20: write one sentence about the man you're becoming</li>
-        <li>Oct 27: cut your goals down to three</li>
-        <li>Nov 3: name the one thing that keeps stopping you</li>
-        <li>Nov 10: give one goal a day and a time</li>
-        <li>Nov 17: write down what counts as a miss</li>
-        <li>Nov 24 and Dec 1: count it honestly, then put God at the center of it</li>
+        <li>Dec 1: write one sentence about the man you're becoming</li>
+        <li>Dec 8: cut your goals down to three</li>
+        <li>Dec 15: name the one thing that keeps stopping you</li>
+        <li>Dec 22: give one goal a day and a time</li>
+        <li>Dec 29: write down what counts as a miss</li>
+        <li>Jan 5 and Jan 12: count it honestly, then put God at the center of it</li>
       </ul>
       <form class="signup" id="get" action="/api/subscribe" method="post" novalidate>
         <input type="hidden" name="list" value="challenge">
@@ -88,8 +88,8 @@
 <script>
 (function(){
   var f=document.getElementById('get'); if(!f) return;
-  // The challenge ends with the Dec 1 email; after that, point people to Step 1.
-  if(Date.now()>Date.UTC(2026,11,2,6)){
+  // The challenge ends with the Jan 12 email; after that, point people to Step 1.
+  if(Date.now()>Date.UTC(2027,0,13,6)){
     f.outerHTML='<p style="color:var(--fg)">This round of the challenge has finished. Start with Step 1, free, and you will get the next round when it opens.</p><a class="btn btn-primary btn-lg btn-block" href="/step-1/">Get Step 1, free</a>';
     var fine=document.getElementById('su-fine'); if(fine) fine.hidden=true; return;
   }

@@ -1,5 +1,5 @@
 // Fix Your Wednesday: a live one-hour workshop on Google Meet, every other
-// Wednesday, 7:00 to 8:00 PM Central, from Nov 4, 2026. A ticket is for the next
+// Wednesday, 7:00 to 8:00 PM Central, from Dec 2, 2026. A ticket is for the next
 // session that hasn't started yet when the man pays.
 //
 // To cancel one session, add its date to SKIP as "YYYY-MM-DD"; buyers then
@@ -7,7 +7,7 @@
 
 import { centralToUtc, centralDate } from "./_time.js";
 
-export const FIRST = "2026-11-04";
+export const FIRST = "2026-12-02";
 export const EVERY_DAYS = 14;
 export const SKIP = [];
 export const MEET = "https://meet.google.com/mdt-djbx-kfo";

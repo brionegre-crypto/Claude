@@ -19,8 +19,8 @@ export const OFF_DAYS = [];
 // Brian's standing commitments (from his calendar), as [from, to) in Central time.
 function busy(date, dow, dayOfMonth) {
   const out = [];
-  // Inner Circle weekly class: Thursdays 7 to 8 PM, from Nov 5, 2026.
-  if (dow === 4 && date >= "2026-11-05") out.push(["19:00", "20:00"]);
+  // Inner Circle weekly class: Thursdays 7 to 8 PM, from Dec 3, 2026.
+  if (dow === 4 && date >= "2026-12-03") out.push(["19:00", "20:00"]);
   // Club live call: second Tuesday of the month, 7 to 8 PM.
   if (dow === 2 && dayOfMonth >= 8 && dayOfMonth <= 14) out.push(["19:00", "20:00"]);
   // Fix Your Wednesday workshop: every other Wednesday, 7 to 8 PM.

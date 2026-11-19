@@ -20,8 +20,8 @@ ORG = {
     "url": BASE + "/",
     "logo": BASE + "/assets/favicon.png",
     "slogan": "Built for the brain God gave you.",
-    "description": "A faith-first productivity system for neurodivergent Black Christian men: one sentence on who you are becoming, goals with a time and a place, a bad-day version of each, and a weekly scorecard.",
-    "audience": {"@type": "PeopleAudience", "audienceType": "Black Christian men, ages 25 to 40, who are neurodivergent (ADHD, autism, dyslexia and other minds that work differently) and struggle with productivity"},
+    "description": "A faith-first productivity system for Black Christian men with ADHD: one sentence on who you are becoming, goals with a time and a place, a bad-day version of each, and a weekly scorecard.",
+    "audience": {"@type": "PeopleAudience", "audienceType": "Black Christian men, ages 25 to 40, with ADHD (diagnosed or still wondering) who struggle with productivity"},
     "founder": {"@id": BASE + "/about/#brian"},
     "sameAs": [
         "https://www.youtube.com/@BeTheManSystem",
@@ -70,7 +70,7 @@ NAV = [
 
 # Fix Your Wednesday workshop: every other Wednesday, 7 to 8 PM Central (keep in step
 # with functions/_workshop.js).
-WORKSHOP_FIRST = datetime.date(2026, 11, 4)
+WORKSHOP_FIRST = datetime.date(2026, 12, 2)
 WORKSHOP_EVERY = 14
 WORKSHOP_SKIP = []
 
@@ -167,7 +167,7 @@ def render(meta, body):
                           "offers": {"@type": "Offer", "price": "27.00", "priceCurrency": "USD",
                                      "url": BASE + "/workshop/", "availability": "https://schema.org/InStock"}})
         body = (body.replace("{{workshop_next}}", long_date(dates[0]))
-                    .replace("{{workshop_dates}}", ", ".join(f"{d.strftime('%b')} {d.day}" for d in dates))
+                    .replace("{{workshop_dates}}", ", ".join(f"{d.strftime('%b')} {d.day}" for d in dates[1:]))
                     .replace("{{workshop_cfg}}", json.dumps({"first": WORKSHOP_FIRST.isoformat(), "every": WORKSHOP_EVERY, "skip": WORKSHOP_SKIP})))
     if meta.get("faq"):
         graph.append({"@type": "FAQPage", "mainEntity": [
