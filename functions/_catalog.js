@@ -61,7 +61,7 @@ export const FILES = {
   "name": "Forty_Cards_for_Men.pdf"
  },
  "step1_pdf": {
-  "url": "https://d1yei2z3i6k35z.cloudfront.net/18912984/6ab3bbee1bfe57.57860204_Step1-WhatTypeofManDoYouWanttoBe.pdf",
+  "url": "https://www.bethemansystem.com/downloads/step-1-what-type-of-man.pdf",
   "name": "Step1-WhatTypeofManDoYouWanttoBe.pdf"
  },
  "step2_pdf": {
