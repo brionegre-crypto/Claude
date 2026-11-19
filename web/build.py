@@ -204,6 +204,7 @@ def render(meta, body):
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@500&family=Caveat:wght@500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Khand:wght@700&display=swap&text=BETHEMAN%20">
 <link rel="stylesheet" href="/assets/site.css">
 <script type="application/ld+json">
 {ld}

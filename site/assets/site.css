@@ -45,8 +45,10 @@ p,ul,ol{margin:0}
 .skip:focus{top:12px}
 .nav{position:sticky;top:0;z-index:20;padding-top:env(safe-area-inset-top,0px);background:rgba(0,0,0,.72);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);border-bottom:1px solid var(--line)}
 .nav-in{display:flex;align-items:center;justify-content:space-between;gap:16px;height:56px}
-.logo{font-family:var(--display);font-weight:700;font-size:17px;letter-spacing:.02em;white-space:nowrap}
-.logo span{color:var(--accent)}
+/* Logo 1 ("Lock In"): target mark + BE THE MAN in Khand */
+.logo{display:inline-flex;align-items:center;gap:10px;font-family:"Khand",var(--display);font-weight:700;font-size:23px;line-height:1;letter-spacing:.05em;white-space:nowrap;color:var(--fg)}
+.logo::before{content:"";flex:none;width:28px;height:28px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Ccircle cx='100' cy='100' r='86' fill='none' stroke='%23F2EEE6' stroke-width='12'/%3E%3Ccircle cx='100' cy='100' r='54' fill='none' stroke='%23F2EEE6' stroke-width='12'/%3E%3Ccircle cx='100' cy='100' r='22' fill='%23E18B1F'/%3E%3C/svg%3E") center/contain no-repeat}
+.logo span{color:inherit}
 .links{display:flex;align-items:center;gap:26px;font-size:14px;color:var(--muted)}
 .links a{transition:color .2s}
 .links a:hover,.links a[aria-current="page"]{color:var(--fg)}
