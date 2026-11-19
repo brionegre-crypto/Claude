@@ -262,6 +262,11 @@ struct TasksView: View {
                             Button("Clear today's time blocks", systemImage: "calendar.badge.minus") { AutoScheduler.clearToday(tasks: tasks) }
                             NavigationLink { LazyView(PlanMyWeekView(embedded: true)) } label: { Label("Plan the week", systemImage: "calendar.day.timeline.left") }
                         }
+                        Button("Smart consolidate into routines", systemImage: "rectangle.stack.badge.plus") {
+                            let n = RoutineConsolidate.run(tasks: tasks)
+                            withAnimation { toast = n == 0 ? "No repeating tasks to group" : "Grouped \(n) tasks into routines on Today" }
+                            Task { try? await Task.sleep(for: .seconds(2.5)); withAnimation { toast = nil } }
+                        }
                         Section("Get unstuck") {
                             NavigationLink { LazyView(DoneForYouView()) } label: { Label("Break it down for me", systemImage: "sparkles") }
                             NavigationLink { LazyView(DreadRadarView()) } label: { Label("What am I avoiding?", systemImage: "tortoise.fill") }
@@ -1091,5 +1096,41 @@ extension EnvironmentValues {
     var taskSearchTerms: [String] {
         get { self[TaskSearchTermsKey.self] }
         set { self[TaskSearchTermsKey.self] = newValue }
+    }
+}
+
+
+/// One tap: repeating tasks with a time are grouped by part of the day into routines (Morning, Afternoon,
+/// Evening), so Today shows one routine stop instead of each task. The tasks themselves stay as they are.
+@MainActor
+enum RoutineConsolidate {
+    static func run(tasks: [TaskItem]) -> Int {
+        let cal = Calendar.current
+        let picks = tasks.filter { !$0.isDone && $0.recurrence != nil && $0.hasDueTime && $0.dueDate != nil }
+        let parts: [(String, String, ClosedRange<Int>)] = [("Morning", "sunrise.fill", 0...11), ("Afternoon", "sun.max.fill", 12...16), ("Evening", "moon.stars.fill", 17...23)]
+        var all = RoutineStore.all
+        var count = 0
+        for (name, icon, hours) in parts {
+            func minute(_ t: TaskItem) -> Int {
+                let d = t.dueDate ?? Date()
+                return cal.component(.hour, from: d) * 60 + cal.component(.minute, from: d)
+            }
+            let inPart = picks.filter { hours.contains(minute($0) / 60) }
+            let group = inPart.sorted { minute($0) < minute($1) }
+            guard group.count >= 2, let firstTask = group.first else { continue }
+            let start = minute(firstTask)
+            let steps = group.map { Routine.Step(title: $0.title, minutes: max(1, ADHDCoach.minutes($0))) }
+            let title = "\(name) tasks"
+            if let i = all.firstIndex(where: { $0.name == title }) {
+                let have = Set(all[i].steps.map { NoteText.fold($0.title) })
+                all[i].steps += steps.filter { !have.contains(NoteText.fold($0.title)) }
+                all[i].startAt = start
+            } else {
+                all.append(Routine(name: title, icon: icon, steps: steps, startAt: start))
+            }
+            count += group.count
+        }
+        if count > 0 { RoutineStore.all = all; Haptics.success() }
+        return count
     }
 }
