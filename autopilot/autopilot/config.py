@@ -109,12 +109,36 @@ def validate(raw: dict) -> list[str]:
     return errs
 
 
+AUDIENCE_FILE = PROJECT_ROOT / "config" / "audience.toml"
+_LIST_ADD = {("quality", "banned_phrases"), ("quality", "sensitive_terms")}
+
+
+def apply_audience_profile(raw: dict, path: Path | None = None) -> None:
+    """Overlay config/audience.toml (tracked in git) onto settings: lists are replaced, except the quality lists,
+    which are extended. Disable with AUTOPILOT_AUDIENCE=none (tests)."""
+    if os.environ.get("AUTOPILOT_AUDIENCE") == "none":
+        return
+    path = path or AUDIENCE_FILE
+    if not path.exists():
+        return
+    with open(path, "rb") as fh:
+        prof = tomllib.load(fh)
+    for section, values in prof.items():
+        target = raw.setdefault(section, {})
+        for k, v in values.items():
+            if (section, k) in _LIST_ADD:
+                target[k] = list(dict.fromkeys(list(target.get(k, [])) + list(v)))
+            else:
+                target[k] = v
+
+
 def load(path: str | os.PathLike | None = None, strict: bool = True) -> Settings:
     p = Path(path or os.environ.get("AUTOPILOT_CONFIG") or PROJECT_ROOT / "config" / "settings.toml")
     if not p.exists():
         p = PROJECT_ROOT / "config" / "settings.example.toml"
     with open(p, "rb") as fh:
         raw = tomllib.load(fh)
+    apply_audience_profile(raw)
     errs = validate(raw)
     if errs and strict:
         raise ConfigError("Invalid configuration:\n  - " + "\n  - ".join(errs))

@@ -143,3 +143,49 @@ def test_extract_json_variants():
     from autopilot.ai.provider import extract_json
     assert extract_json('Sure!\n```json\n{"a": 1}\n```') == {"a": 1}
     assert extract_json('noise {"b": [1,2]} trailing') == {"b": [1, 2]}
+
+
+def test_audience_profile_overlay_and_topic_retirement(env, tmp_path):
+    s, db = env
+    from autopilot import config, research
+    prof = tmp_path / "aud.toml"
+    prof.write_text('[audience]\nversion = "v2"\n[research]\nevergreen_topics = ["Time blindness"]\n'
+                    '[quality]\nbanned_phrases = ["cure adhd"]\n[brand]\nkeywords = ["adult adhd"]\n')
+    raw = {"quality": {"banned_phrases": ["guaranteed"]}, "research": {"evergreen_topics": ["Date night"]}}
+    import os
+    os.environ.pop("AUTOPILOT_AUDIENCE", None)
+    try:
+        config.apply_audience_profile(raw, prof)
+    finally:
+        os.environ["AUTOPILOT_AUDIENCE"] = "none"
+    assert raw["research"]["evergreen_topics"] == ["Time blindness"]
+    assert raw["quality"]["banned_phrases"] == ["guaranteed", "cure adhd"]     # quality lists are extended
+    # old audience topics get retired when the version changes
+    research.seed_evergreen(s, db)                       # seeds the old list (no audience version yet)
+    s.raw.update({"audience": {"version": "v2"}})
+    s.raw["research"]["evergreen_topics"] = ["Time blindness"]
+    research.seed_evergreen(s, db)
+    kinds = {r[0]: r[1] for r in db.q("SELECT topic, kind FROM research_items")}
+    assert kinds["Time blindness"] == "evergreen" and all(k == "retired" for t, k in kinds.items() if t != "Time blindness")
+    for _ in range(10):
+        assert research.pick_topic(s, db, "instagram", "image")["topic"] == "Time blindness"
+
+
+def test_live_audience_profile_is_valid():
+    from autopilot import config
+    raw = {}
+    import os
+    os.environ.pop("AUTOPILOT_AUDIENCE", None)
+    try:
+        config.apply_audience_profile(raw)
+    finally:
+        os.environ["AUTOPILOT_AUDIENCE"] = "none"
+    assert raw["audience"]["version"] and len(raw["research"]["evergreen_topics"]) >= 10
+    assert all(f.startswith("https://") for f in raw["research"]["feeds"])
+    assert "#bethemansystem" in raw["brand"]["hashtags_core"]
+
+
+def test_hashtag_only_lines_removed_from_caption():
+    from autopilot.generation import strip_hashtag_lines
+    cap = "Line one.\n\nWired different. #notatag here\n\n#bethemansystem #adhd #adultadhd\n"
+    assert strip_hashtag_lines(cap) == "Line one.\n\nWired different. #notatag here"

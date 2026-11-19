@@ -1,0 +1,45 @@
+# Audience profile: overrides the matching lists in settings.toml (which is local and not in git), so a `git pull`
+# is enough to re-target the content. Bump `version` whenever the audience changes: older research topics are
+# retired automatically and new ones are seeded.
+
+[audience]
+version = "2026-11-adhd-black-christian-men"
+summary = "Black Christian men, 25-40, neurodivergent (ADHD), who struggle with productivity"
+
+[brand]
+cta_default = "Comment \"STEP1\" and I'll send you the free worksheet."
+hashtags_core = ["#bethemansystem", "#adhdmen"]
+hashtag_pool = ["#adhd", "#adultadhd", "#adhdtips", "#adhdproductivity", "#neurodivergent", "#executivedysfunction",
+  "#adhdawareness", "#blackmentalhealth", "#blackmen", "#christianmen", "#faithandmentalhealth", "#adhdlife",
+  "#timeblindness", "#adhdsupport", "#blackmenheal"]
+keywords = ["adhd tips for men", "adult adhd", "adhd productivity", "adhd in black men", "christian with adhd",
+  "adhd time blindness", "adhd task paralysis", "how to focus with adhd", "adhd overwhelm", "adhd burnout",
+  "adhd routines", "adhd and faith", "body doubling", "rejection sensitive dysphoria", "adhd diagnosis as an adult",
+  "executive dysfunction", "adhd morning routine", "neurodivergent men", "adhd motivation", "adhd procrastination"]
+
+[research]
+feeds = [
+  "https://news.google.com/rss/search?q=adult+ADHD+study&hl=en-US&gl=US&ceid=US:en",
+  "https://news.google.com/rss/search?q=ADHD+Black+men&hl=en-US&gl=US&ceid=US:en",
+  "https://news.google.com/rss/search?q=executive+function+ADHD+productivity&hl=en-US&gl=US&ceid=US:en",
+  "https://news.google.com/rss/search?q=neurodivergent+workplace&hl=en-US&gl=US&ceid=US:en",
+  "https://news.google.com/rss/search?q=Black+men+mental+health+faith&hl=en-US&gl=US&ceid=US:en",
+]
+evergreen_topics = [
+  "Time blindness: making time visible", "Task paralysis: how to start when you're stuck",
+  "Body doubling for work and chores", "The 2-minute start rule", "Building an external brain (capture everything)",
+  "Morning routine for an ADHD brain", "Planning for the tired version of you", "Hyperfocus: using it without burning out",
+  "Overwhelm and shutdown: what to do in the moment", "Rejection sensitivity in relationships and at work",
+  "Healing from being called lazy", "Rebuilding trust with yourself after broken promises",
+  "Grace and accountability together", "Praying when your mind won't sit still", "Bible reading that fits ADHD",
+  "Talking to your family or church about ADHD", "Getting evaluated for ADHD as an adult",
+  "ADHD at work: deadlines, meetings and email", "Money and bills with ADHD", "ADHD burnout recovery",
+  "Phones, dopamine and doom-scrolling", "ADHD and being a husband or father", "Sunday reset that actually sticks",
+  "Strengths of an ADHD mind (without the superpower cliché)",
+]
+
+[quality]
+# added on top of settings.toml lists
+banned_phrases = ["cure adhd", "cures adhd", "adhd cure", "get rid of adhd", "stop taking your meds", "you don't need medication",
+  "you don't need therapy"]
+sensitive_terms = ["adderall", "vyvanse", "ritalin", "concerta", "strattera", "dosage", "milligram", "mg of"]

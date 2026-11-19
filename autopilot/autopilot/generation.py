@@ -57,6 +57,13 @@ def neighbour_posts(db: DB, content: dict, days: int = 4) -> list[dict]:
     return out[:20]
 
 
+def strip_hashtag_lines(caption: str) -> str:
+    """Hashtags are stored separately and appended once at publish time; drop lines that are only hashtags."""
+    import re as _re
+    lines = [ln for ln in caption.rstrip().split("\n") if not _re.fullmatch(r"\s*(#\w+\s*)+", ln)]
+    return "\n".join(lines).rstrip()
+
+
 def _learnings(db: DB) -> str:
     own = db.kv_get("learnings", "") or ""
     comp = db.kv_get("competitive_learnings", "") or ""
@@ -98,7 +105,8 @@ def generate_one(s, db: DB, provider, content: dict, link_checker=None) -> dict:
     style = design.norm_style(prev_body.get("style")) or design.pick_style(cid, render.recent_styles(db, content["platform"], cid))
     prompt = prompts.generate(s.brand_text(), content["platform"], content["format"], item["topic"], angle, sources,
                               recent_hooks(db), _learnings(db), s.get("brand.cta_default", ""), s.get("brand.link", ""),
-                              archetype=archetype, keyword=keyword, style=style, neighbours=neighbours)
+                              archetype=archetype, keyword=keyword, style=style, neighbours=neighbours,
+                              keyword_bank=s.get("brand.keywords"))
     try:
         data = provider.complete_json("generate", prompt)
     except (ProviderUnavailable, ProviderError):
@@ -112,7 +120,7 @@ def generate_one(s, db: DB, provider, content: dict, link_checker=None) -> dict:
             body["slides"] = [{"title": str(title)[:90], "text": ""}]
     rec = {**content, "topic": str(data.get("topic") or item["topic"])[:200], "pillar": data.get("pillar"),
            "hook": str(data.get("hook", ""))[:300], "headline": str(data.get("headline", ""))[:200],
-           "caption": str(data.get("caption", "")), "hashtags": [h if h.startswith("#") else "#" + h for h in data.get("hashtags", [])][:30],
+           "caption": strip_hashtag_lines(str(data.get("caption", ""))), "hashtags": [h if h.startswith("#") else "#" + h for h in data.get("hashtags", [])][:30],
            "cta": data.get("cta"), "body": body, "image_concept": data.get("image_concept"),
            "sources": json.dumps(sources), "research_ids": json.dumps([item["id"]]),
            "research_verification": item.get("verification")}
@@ -214,6 +222,7 @@ def refresh_queue(s, db: DB, provider, rewrite: bool = True, max_n: int | None =
     rows = db.q("""SELECT * FROM content WHERE status IN ('ready','blocked','draft','failed') AND scheduled_at > ?
                    ORDER BY scheduled_at""", (cutoff,))
     rows = [dict(r) for r in rows if r["id"] not in started][: max_n or None]
+    research.seed_evergreen(s, db)   # applies a changed audience profile before rewriting
     provider.ignore_budget = True
     out = {"rewritten": 0, "rerendered": 0, "blocked": 0, "errors": []}
     for i, c in enumerate(rows, 1):
@@ -227,7 +236,8 @@ def refresh_queue(s, db: DB, provider, rewrite: bool = True, max_n: int | None =
                     continue
                 body = json.loads(c["body"] or "{}")
                 body.pop("style", None)
-                db.x("UPDATE content SET body=? WHERE id=?", (json.dumps(body), c["id"]))
+                db.x("UPDATE content SET body=?, research_ids=NULL WHERE id=?", (json.dumps(body), c["id"]))
+                c["research_ids"] = None
                 res = generate_one(s, db, provider, {**c, "status": "generating", "body": json.dumps(body)})
                 out["rewritten"] += 1
                 out["blocked"] += res["status"] == "blocked"

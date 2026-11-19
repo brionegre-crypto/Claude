@@ -11,6 +11,7 @@ import pytest
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 os.environ.pop("ANTHROPIC_API_KEY", None)
+os.environ["AUTOPILOT_AUDIENCE"] = "none"
 
 
 @pytest.fixture

@@ -96,7 +96,7 @@ Respond with ONLY JSON: {{"items": [{{"id": int, "relevance": float, "kind": str
 
 def generate(brand: str, platform: str, fmt: str, topic: str, angle: str, sources: list[dict],
              recent_hooks: list[str], learnings: str, cta: str, link: str, archetype: str = "", keyword: str = "",
-             style: str = "", neighbours: list[dict] | None = None) -> str:
+             style: str = "", neighbours: list[dict] | None = None, keyword_bank: list[str] | None = None) -> str:
     arche_desc = ARCHETYPES.get(fmt, {}).get(archetype, "")
     family = style.split("-")[0]
     style_note = {
@@ -117,7 +117,7 @@ ANGLE: {angle}
 ARCHETYPE: {archetype} ({arche_desc}). Build the whole post around this archetype so the feed never feels like the same post twice.
 VISUAL STYLE: {style_note}
 KEYWORD (search phrase to rank for): suggested "{keyword}". Use it only if it fits the TOPIC naturally; otherwise
-choose the best-fitting phrase from this bank: {json.dumps(KEYWORDS)}, or write the natural phrase a man would type into
+choose the best-fitting phrase from this bank: {json.dumps(keyword_bank or KEYWORDS)}, or write the natural phrase a man would type into
 Instagram search for this topic. Never force a keyword that doesn't match the post. Return the one you used as "keyword".
 FORMAT SPEC: {FORMAT_SPECS[fmt]}
 {MARKUP}

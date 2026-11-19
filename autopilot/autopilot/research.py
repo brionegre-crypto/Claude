@@ -42,10 +42,24 @@ def fetch_feed(url: str, client: httpx.Client, limit: int) -> list[dict]:
     return out
 
 
+def apply_audience_version(s, db: DB) -> int:
+    """When the audience profile version changes, retire research from the old audience so it can't drive new posts."""
+    ver = s.get("audience.version")
+    if not ver or db.kv_get("audience_version") == ver:
+        return 0
+    with db.tx() as c:
+        n = c.execute("UPDATE research_items SET kind='retired' WHERE kind!='retired'").rowcount
+    db.kv_set("audience_version", ver)
+    db.kv_set("learnings", "")   # analytics learnings came from the old audience
+    return n
+
+
 def seed_evergreen(s, db: DB) -> int:
+    apply_audience_version(s, db)
     n = 0
     for t in s.get("research.evergreen_topics", []):
         key = _h("evergreen:" + t)
+        db.x("UPDATE research_items SET kind='evergreen' WHERE url_hash=? AND kind='retired'", (key,))
         if not db.one("SELECT 1 FROM research_items WHERE url_hash=?", (key,)):
             db.x("""INSERT INTO research_items(topic,title,source,url,url_hash,researched_at,relevance,kind,opportunities,verification)
                     VALUES(?,?,?,?,?,?,?,?,?,?)""",
@@ -77,7 +91,7 @@ def collect(s, db: DB, client: httpx.Client | None = None) -> dict:
 
 
 def evaluate(s, db: DB, provider, batch: int = 15) -> dict:
-    rows = db.q("SELECT id,title,summary,source,url,published_at FROM research_items WHERE kind!='evergreen' AND relevance=0 "
+    rows = db.q("SELECT id,title,summary,source,url,published_at FROM research_items WHERE kind NOT IN ('evergreen','retired') AND relevance=0 "
                 "AND researched_at >= ? ORDER BY published_at DESC LIMIT ?", (iso(utcnow() - timedelta(days=14)), batch))
     if not rows:
         return {"evaluated": 0}
@@ -147,7 +161,7 @@ def pick_topic(s, db: DB, platform: str, fmt: str, pillar_weights: dict | None =
     and never the same pillar twice in a row on a platform."""
     min_rel = float(s.get("research.min_relevance", 0.55))
     cutoff = iso(utcnow() - timedelta(days=21))
-    timely = db.q("""SELECT * FROM research_items WHERE kind!='evergreen' AND relevance>=? AND verification IN ('verified','not_applicable')
+    timely = db.q("""SELECT * FROM research_items WHERE kind NOT IN ('evergreen','retired') AND relevance>=? AND verification IN ('verified','not_applicable')
                      AND (last_used_at IS NULL) AND researched_at >= ? ORDER BY relevance DESC LIMIT 20""",
                   (min_rel, iso(utcnow() - timedelta(days=10))))
     evergreen = db.q("SELECT * FROM research_items WHERE kind='evergreen' AND (last_used_at IS NULL OR last_used_at < ?) "
