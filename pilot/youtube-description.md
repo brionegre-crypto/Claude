@@ -11,7 +11,7 @@ find `go.bethemansystem.com/framework`, replace with `bethemansystem.com/step-1`
 https://bethemansystem.com/step-1/
 
 ▶ Not lazy. Not faithless. Is this for you? Built for the brain God gave you
-https://bethemansystem.com/built-for-your-brain/
+https://bethemansystem.com/adhd/
 
 ▶ How humble are you, really? Take the free Low Seat Check (5 minutes)
 https://bethemansystem.com/humility/

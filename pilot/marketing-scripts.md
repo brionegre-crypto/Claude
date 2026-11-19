@@ -161,7 +161,7 @@ You don't have to change how you're made. You have to build a system that fits i
 **Description (paste under the video):**
 If you've been told to try harder and pray harder and it still didn't hold, this is for you. A faith-first system built around how your brain actually works.
 Start free (do it in pieces): https://bethemansystem.com/step-1/
-Is this for me? https://bethemansystem.com/built-for-your-brain/
+Is this for me? https://bethemansystem.com/adhd/
 Everything else: https://bethemansystem.com/yt
 Be The Man is faith-based teaching and accountability. It is not medical or mental health treatment. If you are in crisis, call or text 988 (US).
 Built for the brain God gave you.

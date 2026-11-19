@@ -1,0 +1,309 @@
+{
+ "note": "December relaunch. send_at is UTC (Central Standard Time: 8 AM = 14:00Z, 6 AM = 12:00Z). replace pairs are text replacements applied to the broadcast content in Kit; each old string must occur exactly once.",
+ "items": [
+  {
+   "id": 26434619,
+   "label": "Thursday email 2",
+   "send_at": "2026-12-03T14:00:00Z",
+   "description": "SCHEDULE: Thu Dec 3, 8:00 AM Central. Thursday email 2 (December restart).",
+   "replace": [
+    [
+     "Be The Man · Faith should function.",
+     "Be The Man · Built for the brain God gave you."
+    ]
+   ]
+  },
+  {
+   "id": 26434620,
+   "label": "Thursday email 3",
+   "send_at": "2026-12-10T14:00:00Z",
+   "description": "SCHEDULE: Thu Dec 10, 8:00 AM Central. Thursday email 3 (December restart).",
+   "replace": [
+    [
+     "Be The Man · Faith should function.",
+     "Be The Man · Built for the brain God gave you."
+    ]
+   ]
+  },
+  {
+   "id": 26434621,
+   "label": "Thursday email 4",
+   "send_at": "2026-12-17T14:00:00Z",
+   "description": "SCHEDULE: Thu Dec 17, 8:00 AM Central. Thursday email 4 (December restart).",
+   "replace": [
+    [
+     "Be The Man · Faith should function.",
+     "Be The Man · Built for the brain God gave you."
+    ]
+   ]
+  },
+  {
+   "id": 26434630,
+   "label": "Thursday email 5",
+   "send_at": "2027-01-07T14:00:00Z",
+   "description": "SCHEDULE: Thu Jan 7, 8:00 AM Central. Thursday email 5 (December restart).",
+   "replace": [
+    [
+     "Be The Man · Faith should function.",
+     "Be The Man · Built for the brain God gave you."
+    ]
+   ]
+  },
+  {
+   "id": 26434631,
+   "label": "Thursday email 6",
+   "send_at": "2027-01-14T14:00:00Z",
+   "description": "SCHEDULE: Thu Jan 14, 8:00 AM Central. Thursday email 6 (December restart).",
+   "replace": [
+    [
+     "Be The Man · Faith should function.",
+     "Be The Man · Built for the brain God gave you."
+    ],
+    [
+     "Next week is Thanksgiving: a mechanism for the table, and why “I’m thankful for my family” doesn’t count.",
+     "Next week: a mechanism for the table, and why “I’m thankful for my family” doesn’t count."
+    ]
+   ]
+  },
+  {
+   "id": 26434632,
+   "label": "Thursday email 7",
+   "send_at": "2027-01-21T14:00:00Z",
+   "description": "SCHEDULE: Thu Jan 21, 8:00 AM Central. Thursday email 7 (December restart).",
+   "replace": [
+    [
+     "Be The Man · Faith should function.",
+     "Be The Man · Built for the brain God gave you."
+    ],
+    [
+     "THE THURSDAY EMAIL · THANKSGIVING",
+     "THE THURSDAY EMAIL · AT THE TABLE"
+    ],
+    [
+     "Happy Thanksgiving. This one is short, because today should be spent with them, not with your inbox.",
+     "This one is short, because tonight should be spent with them, not with your inbox."
+    ],
+    [
+     "Somewhere today, someone will go around the table and ask what everyone is thankful for. Most men will say “my family.” It’s true. It’s also the kind of thing nobody at the table will remember by Friday.",
+     "Sometime this week you’ll sit down to a meal with your family, and someone will ask what everyone is thankful for. Most men will say “my family.” It’s true. It’s also the kind of thing nobody at the table will remember by Friday."
+    ],
+    [
+     "So before dinner, take five minutes",
+     "So before the meal, take five minutes"
+    ],
+    [
+     "Someone asks “what are you thankful for?” Or you ask it first.",
+     "You sit down to eat. Someone asks “what are you thankful for?” Or you ask it first."
+    ]
+   ]
+  },
+  {
+   "id": 26434639,
+   "label": "Thursday email 8",
+   "send_at": "2027-01-28T14:00:00Z",
+   "description": "SCHEDULE: Thu Jan 28, 8:00 AM Central. Thursday email 8 (December restart).",
+   "replace": [
+    [
+     "Be The Man · Faith should function.",
+     "Be The Man · Built for the brain God gave you."
+    ]
+   ]
+  },
+  {
+   "id": 26434640,
+   "label": "Thursday email 9",
+   "send_at": "2027-02-04T14:00:00Z",
+   "description": "SCHEDULE: Thu Feb 4, 8:00 AM Central. Thursday email 9 (December restart).",
+   "replace": [
+    [
+     "Be The Man · Faith should function.",
+     "Be The Man · Built for the brain God gave you."
+    ],
+    [
+     "Next week: the holidays are coming for your system. How to build the smallest version of it that survives December.",
+     "Next week: some weeks will break your system. How to build the smallest version of it that survives them."
+    ]
+   ]
+  },
+  {
+   "id": 26434650,
+   "label": "Thursday email 10",
+   "send_at": "2027-02-11T14:00:00Z",
+   "description": "SCHEDULE: Thu Feb 11, 8:00 AM Central. Thursday email 10 (December restart).",
+   "replace": [
+    [
+     "Be The Man · Faith should function.",
+     "Be The Man · Built for the brain God gave you."
+    ],
+    [
+     "The next two weeks will break more systems than any other part of the year. Travel, family in the house, kids off school, late nights, a different schedule every day. The plan that worked in October won’t survive it.",
+     "Some weeks will break more systems than any other. Travel, family in the house, a sick kid, a deadline, late nights, a different schedule every day. The plan that worked last month won’t survive it."
+    ],
+    [
+     "Most men respond by pausing everything until January. “I’ll start again after the holidays.” Then January comes, and they’re starting from zero, again.",
+     "Most men respond by pausing everything until things calm down. “I’ll start again after this week.” Then it never calms down, and they’re starting from zero, again."
+    ],
+    [
+     "Cut everything else until January.",
+     "Cut everything else until the week passes."
+    ],
+    [
+     "That’s what makes January a continuation, not a restart.",
+     "That’s what makes next week a continuation, not a restart."
+    ],
+    [
+     "This Sunday: write your holiday version before the week starts.",
+     "This Sunday: write your bad-day version before the week starts."
+    ],
+    [
+     "The things December can’t cancel.",
+     "The things a hard week can’t cancel."
+    ],
+    [
+     "On January 2nd you’re continuing, not starting over.",
+     "On Monday you’re continuing, not starting over."
+    ],
+    [
+     "built for exactly this kind of season.",
+     "built for exactly this kind of week."
+    ],
+    [
+     "Next week: a year-end review you can do in one evening between Christmas and New Year’s, so January starts with a plan instead of a resolution.",
+     "Next week: one evening to reset. Five questions on paper, so you leave with a plan instead of a resolution."
+    ],
+    [
+     "Build a holiday version that is so small it survives anything:",
+     "Build a bad-day version that is so small it survives anything:"
+    ]
+   ],
+   "preview_text": "Some weeks will break your system. Shrink it before they do."
+  },
+  {
+   "id": 26434651,
+   "label": "Thursday email 11",
+   "send_at": "2027-02-18T14:00:00Z",
+   "description": "SCHEDULE: Thu Feb 18, 8:00 AM Central. Thursday email 11 (December restart).",
+   "replace": [
+    [
+     "Be The Man · Faith should function.",
+     "Be The Man · Built for the brain God gave you."
+    ],
+    [
+     "One evening before January",
+     "One evening to reset"
+    ],
+    [
+     "Merry Christmas. Enjoy today and tomorrow. This one is for later in the week.",
+     "This one is for an evening when the house is quiet."
+    ],
+    [
+     "In a week, most men will make New Year’s resolutions. You already know how that goes: you’ll mean it, and by February it will be gone.",
+     "Most men reset with a resolution. You already know how that goes: you’ll mean it, and a few weeks later it’s gone."
+    ],
+    [
+     "So instead, pick one evening between Christmas and New Year’s and give it an hour.",
+     "So instead, pick one evening in the next seven days and give it an hour."
+    ],
+    [
+     "Pick one decision per pillar for January.",
+     "Pick one decision per pillar for the next 30 days."
+    ],
+    [
+     "One evening between Dec 26 and Dec 31. Pick it today.",
+     "One evening in the next seven days. Pick it today."
+    ],
+    [
+     "January 1st, you have a written plan. Not a resolution.",
+     "By the end of the hour you have a written plan for the next 30 days. Not a resolution."
+    ],
+    [
+     "If you want to start the year inside the Club, with the full framework, every tool, and a monthly call to bring your plan to, it’s $19 a month, or $149 a year with everything unlocked on day one.",
+     "If you want company for the next 30 days, the Club has the full framework, every tool, and a monthly call to bring your plan to. It’s $19 a month, or $149 a year with everything unlocked on day one."
+    ],
+    [
+     "Thank you for reading this year. Merry Christmas to you and yours.",
+     "Thank you for reading, and for doing the work."
+    ],
+    [
+     "Name three things that held this year,",
+     "Name three things that held this season,"
+    ]
+   ],
+   "subject": "One evening to reset",
+   "preview_text": "Five questions on paper that end with a plan, not a resolution."
+  },
+  {
+   "id": 26434585,
+   "label": "7-week challenge, week 1",
+   "send_at": "2026-12-01T12:00:00Z",
+   "description": "SCHEDULE: Tue Dec 1, 6:00 AM Central. 7-week challenge, week 1 (December round).",
+   "replace": []
+  },
+  {
+   "id": 26434587,
+   "label": "7-week challenge, week 2",
+   "send_at": "2026-12-08T12:00:00Z",
+   "description": "SCHEDULE: Tue Dec 8, 6:00 AM Central. 7-week challenge, week 2 (December round).",
+   "replace": []
+  },
+  {
+   "id": 26434588,
+   "label": "7-week challenge, week 3",
+   "send_at": "2026-12-15T12:00:00Z",
+   "description": "SCHEDULE: Tue Dec 15, 6:00 AM Central. 7-week challenge, week 3 (December round).",
+   "replace": [
+    [
+     "Next week, that moment gets a plan with a time on it.",
+     "There’s no email the next two Tuesdays. Enjoy Christmas with your people. The next one comes Tuesday, January 5, and that moment gets a plan with a time on it."
+    ]
+   ]
+  },
+  {
+   "id": 26434589,
+   "label": "7-week challenge, week 4",
+   "send_at": "2027-01-05T12:00:00Z",
+   "description": "SCHEDULE: Tue Jan 5, 6:00 AM Central. 7-week challenge, week 4 (December round).",
+   "replace": [
+    [
+     "Take the goal from last week, the one with the wall in front of it.",
+     "Take the goal from week three, the one with the wall in front of it."
+    ]
+   ]
+  },
+  {
+   "id": 26434596,
+   "label": "7-week challenge, week 5",
+   "send_at": "2027-01-12T12:00:00Z",
+   "description": "SCHEDULE: Tue Jan 12, 6:00 AM Central. 7-week challenge, week 5 (December round).",
+   "replace": [
+    [
+     "Next week is a holiday week. That's on purpose.",
+     "Next week: count it. Honestly, with numbers."
+    ]
+   ]
+  },
+  {
+   "id": 26434597,
+   "label": "7-week challenge, week 6",
+   "send_at": "2027-01-19T12:00:00Z",
+   "description": "SCHEDULE: Tue Jan 19, 6:00 AM Central. 7-week challenge, week 6 (December round).",
+   "replace": [
+    [
+     "Week six, and it's Thanksgiving week. Travel, family, late nights, a full house. This is exactly the kind of week your system has to survive.",
+     "Week six. Real life doesn't pause for a challenge: travel, family, late nights, a full house. This is exactly the kind of week your system has to survive."
+    ],
+    [
+     "Happy Thanksgiving. Next week is the last one.",
+     "Next week is the last one."
+    ]
+   ]
+  },
+  {
+   "id": 26434598,
+   "label": "7-week challenge, week 7",
+   "send_at": "2027-01-26T12:00:00Z",
+   "description": "SCHEDULE: Tue Jan 26, 6:00 AM Central. 7-week challenge, week 7 (December round).",
+   "replace": []
+  }
+ ]
+}

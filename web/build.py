@@ -46,7 +46,7 @@ PERSON = {
 NAV = [
     ("home", "/", "Home"),
     ("free", "Start free", [
-        ("/built-for-your-brain/", "Built for your brain", "Is this for me?", None),
+        ("/adhd/", "Built for your brain", "Is this for me?", None),
         ("/step-1/", "Step 1 worksheet", "20 minutes, or in pieces", None),
         ("/7-week-challenge/", "The 7-week challenge", "One email every Tuesday", None),
         ("/humility/", "The Low Seat Check", "How humble are you?", None),

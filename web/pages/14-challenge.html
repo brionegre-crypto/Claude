@@ -14,7 +14,7 @@
    "eventAttendanceMode": "https://schema.org/OnlineEventAttendanceMode",
    "eventStatus": "https://schema.org/EventScheduled",
    "startDate": "2026-12-01",
-   "endDate": "2027-01-12",
+   "endDate": "2027-01-26",
    "isAccessibleForFree": true,
    "location": {
     "@type": "VirtualLocation",
@@ -55,9 +55,10 @@
         <li>Dec 1: write one sentence about the man you're becoming</li>
         <li>Dec 8: cut your goals down to three</li>
         <li>Dec 15: name the one thing that keeps stopping you</li>
-        <li>Dec 22: give one goal a day and a time</li>
-        <li>Dec 29: write down what counts as a miss</li>
-        <li>Jan 5 and Jan 12: count it honestly, then put God at the center of it</li>
+        <li>Jan 5: give one goal a day and a time</li>
+        <li>Jan 12: write down what counts as a miss</li>
+        <li>Jan 19 and Jan 26: count it honestly, then put God at the center of it</li>
+        <li>No emails December 22 or 29. Enjoy the holidays.</li>
       </ul>
       <form class="signup" id="get" action="/api/subscribe" method="post" novalidate>
         <input type="hidden" name="list" value="challenge">
@@ -88,8 +89,8 @@
 <script>
 (function(){
   var f=document.getElementById('get'); if(!f) return;
-  // The challenge ends with the Jan 12 email; after that, point people to Step 1.
-  if(Date.now()>Date.UTC(2027,0,13,6)){
+  // The challenge ends with the Jan 26 email; after that, point people to Step 1.
+  if(Date.now()>Date.UTC(2027,0,27,6)){
     f.outerHTML='<p style="color:var(--fg)">This round of the challenge has finished. Start with Step 1, free, and you will get the next round when it opens.</p><a class="btn btn-primary btn-lg btn-block" href="/step-1/">Get Step 1, free</a>';
     var fine=document.getElementById('su-fine'); if(fine) fine.hidden=true; return;
   }
