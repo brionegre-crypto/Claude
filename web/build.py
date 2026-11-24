@@ -52,12 +52,6 @@ NAV = [
 # Pages kept live by direct link but out of the main menu (footer and drawer "More").
 MORE = [
     ("/the-club/", "The Club (graduates)"),
-    ("/products/", "Store"),
-    ("/couples/", "Couples"),
-    ("/humility/", "The Low Seat Check"),
-    ("/truth-ledger/", "The Truth Ledger"),
-    ("/workshop/", "Fix Your Wednesday"),
-    ("/speaking/", "Speaking"),
 ]
 
 
