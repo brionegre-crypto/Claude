@@ -626,7 +626,24 @@ def main():
         sm.append(f"  <url><loc>{BASE}{path}</loc><lastmod>{today}</lastmod><priority>{pr}</priority></url>")
     sm.append("</urlset>")
     (OUT / "sitemap.xml").write_text("\n".join(sm) + "\n")
+    version_assets()
     print(f"Built {len(urls)} indexable pages into {OUT}")
+
+
+def version_assets():
+    """Browsers cache /assets/ for a week, so each page asks for a script or stylesheet
+    by its content hash (?v=...). A changed file gets a new address and loads fresh."""
+    import hashlib, re
+    hashes = {}
+    for f in (OUT / "assets").glob("*"):
+        if f.suffix in (".js", ".css") and f.is_file():
+            hashes[f.name] = hashlib.sha256(f.read_bytes()).hexdigest()[:10]
+    pat = re.compile(r'(/assets/([\w.-]+\.(?:js|css)))(?=["\'])')
+    for page in OUT.rglob("*.html"):
+        t = page.read_text()
+        n = pat.sub(lambda m: m.group(1) + ("?v=" + hashes[m.group(2)] if m.group(2) in hashes else ""), t)
+        if n != t:
+            page.write_text(n)
 
 
 if __name__ == "__main__":
