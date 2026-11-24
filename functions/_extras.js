@@ -206,9 +206,14 @@ export async function cohortStatus(env) {
     const r = await fetch("https://api.stripe.com/v1/payment_links/" + plink, { headers: { authorization: `Bearer ${env.STRIPE_KEY}` } });
     if (r.ok) link = await r.json();
   }
-  const cs = link && link.restrictions && link.restrictions.completed_sessions;
+  let cs = link && link.restrictions && link.restrictions.completed_sessions;
+  if (!cs && plink && env.STRIPE_KEY) {
+    // The key may not read payment links; count paid cohort checkouts instead.
+    const r = await fetch(`https://api.stripe.com/v1/checkout/sessions?payment_link=${plink}&status=complete&limit=100`, { headers: { authorization: `Bearer ${env.STRIPE_KEY}` } });
+    if (r.ok) { const d = await r.json(); cs = { count: (d.data || []).filter((s) => s.payment_status === "paid").length, limit: 10 }; }
+  }
   const sold = cs ? cs.count : null, limit = cs ? cs.limit : 10;
-  const full = link ? !link.active || (cs && cs.count >= cs.limit) : false;
+  const full = (link && !link.active) || !!(cs && cs.count >= cs.limit);
   const started = cohortStarted();
   return { open: !full && !started, full, started, sold, limit, start: COHORT_DATES[0] };
 }

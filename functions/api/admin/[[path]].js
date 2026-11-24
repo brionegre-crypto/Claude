@@ -108,9 +108,8 @@ export async function onRequest(context) {
       const day = new Date(c.d || 0).toISOString().slice(0, 10);
       if (Date.now() - (c.d || 0) < 30 * 86400000) growth[day] = (growth[day] || 0) + 1;
     }
-    const plink = OFFERS.cohort && OFFERS.cohort.plink;
-    const link = plink ? await stripeGet(env, "/payment_links/" + plink) : null;
-    const seats = link && link.restrictions && link.restrictions.completed_sessions;
+    const cst = await cohortStatus(env).catch(() => null);
+    const seats = cst && cst.sold != null ? { count: cst.sold, limit: cst.limit } : null;
     context.waitUntil(runAll(env).catch(() => null));
     const sources = {};
     for (const c of all) { const s = c.so || "unknown"; sources[s] = (sources[s] || 0) + 1; }
