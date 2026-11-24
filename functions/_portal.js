@@ -94,6 +94,8 @@ export function stepState(pd, n) {
   const s = pd.steps[n] || {};
   if (s.status && s.status !== "locked") return { status: s.status, opens: null };
   if (pd.role === "step1" && n > 1) return { status: "locked", opens: null, upgrade: true };
+  // Brian's own system: every step is open, no waiting on dates or approval.
+  if (pd.role === "admin") return { status: "open", opens: null };
   if (s.forced) return { status: "open", opens: null };
   const prevOk = n === 1 || (pd.steps[n - 1] && pd.steps[n - 1].status === "approved");
   const date = stepDate(pd, n);
@@ -337,6 +339,7 @@ export async function getSessions(env) { return (await env.FILES.get("sessions",
 export async function saveSessions(env, s) { await env.FILES.put("sessions", JSON.stringify(s)); }
 
 export function lessonOpen(pd, week) {
+  if (pd.role === "admin") return true;
   if (pd.role === "step1") return week === 1;
   if (pd.pace.mode === "cohort") return week === 1 || today() >= COHORT_DATES[week - 1];
   const st = stepState(pd, WEEK_STEP[week]).status;

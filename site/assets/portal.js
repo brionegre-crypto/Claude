@@ -188,7 +188,7 @@
     if (ro()) return "";
     var st = S.steps[n].status;
     return '<div class="row" style="margin-top:16px"><button type="button" class="pb" id="save">Save</button>' +
-      (st !== "approved" ? '<button type="button" class="pb primary" id="submit">' + (st === "submitted" ? "Send again" : "Send to Brian") + "</button>" : "") + "</div>";
+      (st !== "approved" ? '<button type="button" class="pb primary" id="submit">' + (S.me.role === "admin" ? "Mark Step " + n + " done" : st === "submitted" ? "Send again" : "Send to Brian") + "</button>" : "") + "</div>";
   }
   function commitEditor(list, mode) {
     // mode 2: what/pillar/days/measure/miss. mode 3: time/place/trigger/breaks/floor. mode "all": both.
@@ -271,8 +271,9 @@
       if (n === 1) body.data = { roles: $$("[data-role]").map(function (s) { var o = {}; $$("[data-r]", s).forEach(function (el) { o[el.getAttribute("data-r")] = el.value; }); return o; }).filter(function (r) { return r.role.trim(); }), sentence: $("#sentence").value, scripture: $("#scripture").value };
       if (n === 2 || n === 3) { draft = readCommitments(draft); body.commitments = draft.filter(function (c) { return String(c.what || "").trim(); }); }
       if (n === 4) body.data = { reviewTime: $("#rt").value, partner: $("#rp").value, where: $("#rw").value };
-      if (submit && !confirm("Send Step " + n + " to Brian? You can still make changes after.")) return;
-      api("step", body).then(function (d) { crisis(d); draft = null; flash(submit ? "Sent to Brian." : "Saved."); return refresh(); }).catch(fail);
+      var mine = S.me.role === "admin";
+      if (submit && !mine && !confirm("Send Step " + n + " to Brian? You can still make changes after.")) return;
+      api("step", body).then(function (d) { crisis(d); draft = null; flash(submit ? (mine ? "Step " + n + " done." : "Sent to Brian.") : "Saved."); return refresh(); }).catch(fail);
     };
     var s = $("#save"); if (s) s.onclick = function () { go(false); };
     var b = $("#submit"); if (b) b.onclick = function () { go(true); };

@@ -330,7 +330,7 @@
         S.seqs.map(function (s, si) {
           return "<section class='adm-card' data-si='" + si + "'><div class='adm-row'><h2>" + esc(s.name) + "</h2><span class='muted small'>" + esc(s.starts) + " · " + s.inProgress + " in progress" + (s.edited ? " · edited " + day(s.edited) : "") + "</span></div>" +
             (s.kind === "dated" ? "<p class='muted small'>Dates use Central time, for example 2026-12-09T10:00:00-06:00. A man who joins late skips dates already past.</p>" : "") +
-            (s.kind === "weekly" ? "<p class='muted small'>One email each Thursday at 8 AM Central, in this order, starting the Thursday after he joins. No emails " + esc((s.skip || []).join(", ")) + ".</p>" : "") +
+            (s.kind === "weekly" ? "<p class='muted small'>One email each Thursday at 8 AM Central, in this order, starting the Thursday after he joins." + ((s.skip || []).length ? " No emails " + esc(s.skip.join(", ")) + "." : "") + "</p>" : "") +
             "<div class='asteps'>" + s.emails.map(function (e, i) { return stepCard(s, e, i); }).join("") + "</div>" +
             "<div class='adm-row'><button class='btn btn-ghost btn-sm q-add'>Add a step</button><button class='btn btn-primary btn-sm q-save'>Save series</button>" + (s.edited ? "<button class='btn btn-ghost btn-sm q-reset'>Restore the original</button>" : "") + "</div></section>";
         }).join("");

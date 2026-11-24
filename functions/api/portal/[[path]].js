@@ -97,7 +97,8 @@ export async function onRequest(context) {
   if (write && u.coach) return bad("Coach view is read-only.", 403);
   if (!u.coach) pd.lastActive = Date.now();
   const save = async () => { await putRecord(env, pd); };
-  const notify = (subject, text) => { const p = emailBrian(env, subject, text).catch(() => null); waitUntil ? waitUntil(p) : null; return p; };
+  // Brian using his own system gets no alerts about himself.
+  const notify = (subject, text) => { if (pd.role === "admin") return Promise.resolve(); const p = emailBrian(env, subject, text).catch(() => null); waitUntil ? waitUntil(p) : null; return p; };
   const label = `${name || pd.email}`;
 
   if (route === "me") {
@@ -142,8 +143,11 @@ export async function onRequest(context) {
       if (n === 1 && !(s.data && s.data.sentence)) return bad("Write your sentence before you send it.");
       if ((n === 2 || n === 3) && !pd.commitments.length) return bad("Add at least one commitment first.");
       if (n === 3 && pd.commitments.some((c) => !c.floor || !c.time)) return bad("Each commitment needs a time and a bad-day version first.");
+      if (pd.role === "admin") { s.status = "approved"; s.submittedAt = s.approvedAt = Date.now(); delete s.note; }
+      else {
       s.status = "submitted"; s.submittedAt = Date.now(); delete s.note;
       notify(`${label} sent you Step ${n} to approve`, `**${label}** finished Step ${n}, ${STEPS[n]}, and sent it to you.\n\n[[Open his page|${SITE}/admin/#man/${encodeURIComponent(pd.email)}]]`);
+      }
     } else if (!s.status || s.status === "locked") s.status = "open";
     const flagged = await safetyCheck(env, waitUntil, pd, name, JSON.stringify(s.data || "") + " " + pd.commitments.map((c) => c.what + " " + c.breaks).join(" "), `Step ${n}`);
     await save();
