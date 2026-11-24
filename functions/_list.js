@@ -64,6 +64,7 @@ function meta(c) {
     nx: ["active", "unsubscribed"].includes(c.status) ? nextDue(c) : 0, q: active.slice(0, 200),
     ph: c.phone || "", sm: (c.sms && c.sms.status) || "", en: engagement(c), lo: s.lastOpen || 0, lc: s.lastClick || 0, sn: s.sent || 0,
     so: (c.src || "").slice(0, 40), rc: c.refCount || 0, lg: c.ledger ? Object.keys(c.ledger).length : 0,
+    w: c.seq && c.seq.weekly ? 1 : 0,
   };
 }
 
@@ -279,7 +280,25 @@ export async function allSequences(env) {
 function dueAt(def, state, step) {
   const e = def.emails[step];
   if (!e) return 0;
+  if (def.kind === "weekly") return nextWeekly(def, step === 0 ? state.start : (state.prevAt || now()));
   return def.kind === "dated" ? Date.parse(e.at) : state.start + (e.delayDays || 0) * DAY;
+}
+
+// "weekly" series: the next send day (def.day, 0 = Sunday) at def.hour Central, strictly
+// after the given time, skipping def.skip dates (YYYY-MM-DD, e.g. holiday breaks).
+export function nextWeekly(def, after) {
+  const day = def.day ?? 4, hour = def.hour ?? 8;
+  for (let i = 0; i < 60; i++) {
+    const d = centralDay(after + i * DAY);
+    const dow = new Date(d + "T12:00:00Z").getUTCDay();
+    if (dow !== day || (def.skip || []).includes(d)) continue;
+    // Central offset on that date: -5 in daylight time, -6 otherwise.
+    const off = new Intl.DateTimeFormat("en-US", { timeZone: "America/Chicago", timeZoneName: "shortOffset" }).formatToParts(new Date(d + "T12:00:00Z")).find((x) => x.type === "timeZoneName").value.replace("GMT", "") || "-6";
+    const hh = String(hour).padStart(2, "0"), o = Number(off);
+    const at = Date.parse(`${d}T${hh}:00:00${o < 0 ? "-" : "+"}${String(Math.abs(o)).padStart(2, "0")}:00`);
+    if (at > after) return at;
+  }
+  return after + 7 * DAY;
 }
 
 function firstStep(def, from, start) {
@@ -538,6 +557,7 @@ export async function runContact(env, c, budget = Infinity) {
       if (r.ok) sent++;
     }
     delete st.texted;
+    st.prevAt = st.next;
     st.step = firstStep(def, st.step + 1, now());
     st.fails = 0;
     if (st.step >= def.emails.length) { st.done = true; delete st.next; } else st.next = dueAt(def, st, st.step);

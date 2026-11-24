@@ -135,3 +135,26 @@ Every man gets his own portal at **bethemansystem.com/portal**. He signs in with
 **Safety**
 - The 988 line is on every portal screen.
 - If anything he writes suggests self-harm, he sees the 988 and 911 message straight away. You get an email marked URGENT, plus a text to `ADMIN_PHONE` if it's set in Cloudflare. His page shows a safety flag.
+
+## Added Nov 24: the Thursday email (weekly tips)
+
+Ten weekly tips for the four-step system, one every Thursday at 8 AM Central, with no weeks skipped. Every man tagged "Step 1" gets them in order, starting the first Thursday after he joins. That covers new sign-ups, everyone already on the list, and Kit imports that carry the "Step 1" tag. Men who are unsubscribed, bounced or complained are skipped.
+
+The men on the list on Nov 24 get email 1 on Thursday, Nov 26. Email 10 goes out on Jan 28.
+
+| Week | Subject |
+|---|---|
+| 1 | "This week" is not a time |
+| 2 | Start with who, not what |
+| 3 | Three, not ten |
+| 4 | The first ten minutes home |
+| 5 | The smallest version that still counts |
+| 6 | Fifteen minutes on Sunday |
+| 7 | The miss that keeps coming back |
+| 8 | Say it out loud to one man |
+| 9 | When shame says quit |
+| 10 | One evening to reset |
+
+You can edit them in the dashboard under Email series, "The Thursday email". The source is functions/_weekly.js.
+
+The daily email limit is 90. If more men are due on a Thursday than that, the rest go out the next morning.

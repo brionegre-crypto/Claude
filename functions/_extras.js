@@ -7,7 +7,7 @@
 //          ledger:asked:<week>, ledger:nudged:<week>, report:<date>, meta:rss
 
 import {
-  getContact, putContact, addEvent, allContacts, tick, textContact, sendToContact, emailBrian, audience,
+  getContact, putContact, addEvent, allContacts, enroll, tick, textContact, sendToContact, emailBrian, audience,
   putBroadcast, queueBroadcast, getAutomations, startTriggered, runContact, centralDay, recentLog, emailHtml, bodyHtml, SITE, BRIAN, uid,
 } from "./_list.js";
 import { sign, unsign } from "./_club.js";
@@ -422,6 +422,21 @@ export async function personalEmail(env, c, subject, body) {
 
 // ---------- the full scheduler run (cron and dashboard) ----------
 
+// Anyone on the list with the "Step 1" tag (Step 1 sign-ups, and Kit imports that carry the tag)
+// gets the Thursday email series. Contacts already in it are marked in their summary (w).
+async function weeklyEnrollJob(env) {
+  let n = 0;
+  for (const m of await allContacts(env)) {
+    if (m.w || m.s !== "active" || !(m.t || "").split("|").includes("Step 1")) continue;
+    const c = await getContact(env, m.email);
+    if (!c || (c.seq && c.seq.weekly)) continue;
+    await enroll(env, c, "weekly");
+    await putContact(env, c);
+    if (++n >= 300) break;
+  }
+  return n;
+}
+
 export async function runAll(env) {
   const out = { list: await tick(env) };
   const settings = await getSettings(env);
@@ -430,5 +445,6 @@ export async function runAll(env) {
   try { out.report = await reportJob(env, settings); } catch (e) { out.reportError = String(e); }
   try { out.reminders = await reminderJob(env); } catch (e) { out.reminderError = String(e); }
   try { out.portal = await portalJobs(env); } catch (e) { out.portalError = String(e); }
+  try { out.weekly = await weeklyEnrollJob(env); } catch (e) { out.weeklyError = String(e); }
   return out;
 }

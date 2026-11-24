@@ -330,6 +330,7 @@
         S.seqs.map(function (s, si) {
           return "<section class='adm-card' data-si='" + si + "'><div class='adm-row'><h2>" + esc(s.name) + "</h2><span class='muted small'>" + esc(s.starts) + " · " + s.inProgress + " in progress" + (s.edited ? " · edited " + day(s.edited) : "") + "</span></div>" +
             (s.kind === "dated" ? "<p class='muted small'>Dates use Central time, for example 2026-12-09T10:00:00-06:00. A man who joins late skips dates already past.</p>" : "") +
+            (s.kind === "weekly" ? "<p class='muted small'>One email each Thursday at 8 AM Central, in this order, starting the Thursday after he joins. No emails " + esc((s.skip || []).join(", ")) + ".</p>" : "") +
             "<div class='asteps'>" + s.emails.map(function (e, i) { return stepCard(s, e, i); }).join("") + "</div>" +
             "<div class='adm-row'><button class='btn btn-ghost btn-sm q-add'>Add a step</button><button class='btn btn-primary btn-sm q-save'>Save series</button>" + (s.edited ? "<button class='btn btn-ghost btn-sm q-reset'>Restore the original</button>" : "") + "</div></section>";
         }).join("");
@@ -338,7 +339,7 @@
     function stepCard(s, e, i) {
       var st = (s.stats || []).filter(function (x) { return x.i === i; })[0];
       return "<div class='astep'><div class='astep-h'><b>Step " + (i + 1) + "</b>" +
-        (s.kind === "dated" ? "<label class='inline'>Sends<input class='q-at' value='" + esc(e.at || "") + "' size='26'></label>" : "<label class='inline'>Days after he joins<input class='q-d' type='number' min='0' value='" + esc(e.delayDays || 0) + "' style='width:80px'></label>") +
+        (s.kind === "weekly" ? "<span class='muted small'>Week " + (i + 1) + "</span>" : s.kind === "dated" ? "<label class='inline'>Sends<input class='q-at' value='" + esc(e.at || "") + "' size='26'></label>" : "<label class='inline'>Days after he joins<input class='q-d' type='number' min='0' value='" + esc(e.delayDays || 0) + "' style='width:80px'></label>") +
         "<button class='btn btn-ghost btn-sm q-rm'>Remove</button></div>" +
         "<label>Email subject (leave blank for a text-only step)<input class='q-s' value='" + esc(e.subject || "") + "'></label><label>Email body<textarea class='q-b'>" + esc(e.body || "") + "</textarea></label>" +
         "<label>Text message (optional)<textarea class='q-t short' maxlength='600'>" + esc(e.text || "") + "</textarea></label>" +
@@ -355,7 +356,7 @@
       $$(".astep", sec).forEach(wireStep);
       $(".q-add", sec).onclick = function () { var t = document.createElement("div"); t.innerHTML = stepCard(s, { subject: "", body: "", text: "", delayDays: 0, at: "" }, $$(".astep", sec).length); var c = t.firstChild; $(".asteps", sec).appendChild(c); wireStep(c); };
       $(".q-save", sec).onclick = function () {
-        var emails = $$(".astep", sec).map(function (c) { var e = { subject: $(".q-s", c).value, body: $(".q-b", c).value, text: $(".q-t", c).value }; if (s.kind === "dated") e.at = $(".q-at", c).value; else e.delayDays = $(".q-d", c).value; return e; });
+        var emails = $$(".astep", sec).map(function (c) { var e = { subject: $(".q-s", c).value, body: $(".q-b", c).value, text: $(".q-t", c).value }; if (s.kind === "dated") e.at = $(".q-at", c).value; else if (s.kind !== "weekly") e.delayDays = $(".q-d", c).value; return e; });
         api("sequence", { id: s.id, emails: emails }).then(function (r) { if (r.ok) { flash("Saved. Men already in the series get the new wording from their next step."); VIEWS.series(); } });
       };
       var rs = $(".q-reset", sec); if (rs) rs.onclick = function () { if (confirm("Restore the original steps for this series?")) api("sequence-reset", { id: s.id }).then(function () { flash("Restored."); VIEWS.series(); }); };

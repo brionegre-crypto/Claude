@@ -7,7 +7,7 @@
 
 import { notifyBrian, firstName } from "../_mail.js";
 import { toE164 } from "../_sms.js";
-import { upsertContact, getContact, enroll, runContact, sendToContact, getSequence, fireTrigger, tick } from "../_list.js";
+import { upsertContact, getContact, putContact, enroll, runContact, sendToContact, getSequence, fireTrigger, tick } from "../_list.js";
 import { attribute } from "../_extras.js";
 import { ensureRecord } from "../_portal.js";
 
@@ -113,6 +113,10 @@ async function handle(request, env, data, context) {
       ok = (await sendToContact(env, c, lowSeatEmail(fields), "result")).ok;
     }
   } catch (e) {}
+  // Every Step 1 sign-up also gets the Thursday email, starting the Thursday after he joins.
+  if (list === LISTS.step1) {
+    try { const c3 = await getContact(env, email); if (c3 && !(c3.seq && c3.seq.weekly)) { await enroll(env, c3, "weekly"); await putContact(env, c3); } } catch (e) {}
+  }
   if (ok) {
     try { const c2 = await getContact(env, email); if (c2) await fireTrigger(env, c2, "form", key); } catch (e) {}
     notifyBrian(env, context, {

@@ -19,7 +19,10 @@
 const SITE = "https://bethemansystem.com";
 export const MEET = "https://meet.google.com/tcg-zspn-cco";
 
+import { WEEKLY } from "./_weekly.js";
+
 export const SEQUENCES = {
+  weekly: WEEKLY,
   step1: {
     id: "step1",
     name: "Step 1 welcome series",
