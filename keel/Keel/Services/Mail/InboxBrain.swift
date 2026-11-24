@@ -86,8 +86,20 @@ enum InboxBrain {
     }
 
     /// Minutes a reply probably takes: short notes with a clear ask are 2-minute wins.
+    /// Worked out once per email (it reads the whole body), not on every Inbox redraw.
+    nonisolated(unsafe) private static var replyCache: [String: (len: Int, minutes: Int)] = [:]
+
     static func replyMinutes(_ e: EmailMessage) -> Int {
         if e.category == .calendar { return 1 }
+        let len = e.bodyPlain.utf8.count
+        if let c = replyCache[e.id], c.len == len { return c.minutes }
+        let m = computeReplyMinutes(e)
+        if replyCache.count > 5_000 { replyCache.removeAll(keepingCapacity: true) }
+        replyCache[e.id] = (len, m)
+        return m
+    }
+
+    private static func computeReplyMinutes(_ e: EmailMessage) -> Int {
         let body = GmailProvider.stripQuotedReply(e.bodyPlain)
         let words = body.split(whereSeparator: { $0.isWhitespace }).count
         let questions = body.filter { $0 == "?" }.count

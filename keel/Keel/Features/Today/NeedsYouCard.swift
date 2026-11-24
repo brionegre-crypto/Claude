@@ -14,7 +14,17 @@ struct NeedsYouCard: View {
                         sort: \EmailMessage.receivedAt, order: .reverse)
     }
 
+    @State private var memo: (key: String, list: [EmailMessage])?
+
     private var items: [EmailMessage] {
+        let key = "\(emails.count)|\(emails.first?.id ?? "")|\(emails.filter { !$0.isRead }.count)|\(accounts.count)"
+        if let m = memo, m.key == key { return m.list }
+        let list = computeItems()
+        DispatchQueue.main.async { memo = (key, list) }
+        return list
+    }
+
+    private func computeItems() -> [EmailMessage] {
         let mine = Set(accounts.map { $0.address.lowercased() })
         return emails.filter { MailNoise.needsYou($0, myAddresses: mine) }
             .sorted { ($0.priorityScore, $0.receivedAt) > ($1.priorityScore, $1.receivedAt) }

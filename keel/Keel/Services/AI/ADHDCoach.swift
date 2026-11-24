@@ -8,7 +8,20 @@ enum ADHDCoach {
     // MARK: 1. "Just One Thing" — the single best next action right now
 
     /// Picks ONE task using energy, time until the next event, deadlines and how long it's been avoided.
+    /// Remembered pick: Today redraws often (every email during a sync), but the answer only changes when your
+    /// tasks, your energy or the time (in 5-minute steps) change.
+    private static var lastPick: (key: String, id: UUID?)?
+
     static func nextThing(tasks: [TaskItem], energy: EnergyLevel) -> TaskItem? {
+        let stamp = tasks.reduce(0.0) { max($0, $1.updatedAt.timeIntervalSince1970) }
+        let key = "\(tasks.count)|\(stamp)|\(energy.rawValue)|\(Int(Date().timeIntervalSince1970 / 300))"
+        if let p = lastPick, p.key == key { return p.id.flatMap { id in tasks.first { $0.id == id } } }
+        let pick = rankNext(tasks: tasks, energy: energy)
+        lastPick = (key, pick?.id)
+        return pick
+    }
+
+    private static func rankNext(tasks: [TaskItem], energy: EnergyLevel) -> TaskItem? {
         let openIds = Set(tasks.filter { !$0.isDone }.map(\.id))
         let open = tasks.filter { !$0.isDone && !$0.isWaitingOn && !($0.blockedById.map(openIds.contains) ?? false) }
         let minutesFree = CalendarService.shared.freeSlots(minMinutes: 5).first.map { Int($0.duration / 60) } ?? 60

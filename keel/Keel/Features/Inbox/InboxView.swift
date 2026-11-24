@@ -175,7 +175,8 @@ struct InboxView: View {
         var threads: [String: [EmailMessage]]?
         var mailbox: [EmailMessage]?
         var visible: [EmailMessage]?
-        func reset() { scores = nil; threads = nil; mailbox = nil; visible = nil }
+        var tabCounts: [InboxTab: Int]?
+        func reset() { scores = nil; threads = nil; mailbox = nil; visible = nil; tabCounts = nil }
     }
     private let memo = Memo()
 
@@ -186,6 +187,13 @@ struct InboxView: View {
         return t
     }
     private var tabCounts: [InboxTab: Int] {
+        if let c = memo.tabCounts { return c }
+        let c = computeTabCounts()
+        memo.tabCounts = c
+        return c
+    }
+
+    private func computeTabCounts() -> [InboxTab: Int] {
         let scores = scoreMap
         let live = mailboxEmails.filter { !$0.isRead && !InboxBrain.isHeld($0, score: scores[$0.from.lowercased()]) }
         var c: [InboxTab: Int] = [:]
