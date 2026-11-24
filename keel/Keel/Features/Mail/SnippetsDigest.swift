@@ -273,7 +273,7 @@ struct FillBlanksSheet: View {
 /// Today's newsletters and promotions in one calm screen, with a combined summary and "archive all".
 struct DigestView: View {
     @Environment(\.modelContext) private var ctx
-    @Query(sort: \EmailMessage.receivedAt, order: .reverse) private var mail: [EmailMessage]
+    @Query(InboxView.recentMail) private var mail: [EmailMessage]               // newest 2,500, like the Inbox
     @Query private var accounts: [MailAccount]
     @State private var briefing: String?
     @State private var summarizing = false

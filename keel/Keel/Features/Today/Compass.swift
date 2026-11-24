@@ -388,7 +388,7 @@ struct HubGroup: Identifiable {
 @MainActor
 enum HubCatalog {
     private static func t<V: View>(_ id: String, _ title: String, _ icon: String, _ keywords: String, @ViewBuilder _ dest: @escaping () -> V) -> HubTool {
-        HubTool(id: id, title: title, icon: icon, keywords: keywords, dest: { AnyView(dest()) })
+        HubTool(id: id, title: title, icon: icon, keywords: keywords, dest: { AnyView(dest().premiumBackground()) })   // no plain gray pages
     }
 
     /// Any tool by id, including ones that now live inside a combined tool (old links and tab bar picks still work).

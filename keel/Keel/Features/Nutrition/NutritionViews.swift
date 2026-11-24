@@ -277,6 +277,7 @@ struct NutritionView: View {
 
             Section {
                 NavigationLink { LazyView(FoodLibraryView()) } label: { Label("Your food library", systemImage: "books.vertical.fill") }
+                NavigationLink { LazyView(MyDietsView()) } label: { Label("Your diets (upload your own)", systemImage: "list.bullet.clipboard.fill") }
                 NavigationLink { LazyView(DietGuideView()) } label: { Label("Your diet guide", systemImage: "book.closed.fill") }
                 NavigationLink { LazyView(NutritionSettingsView()) } label: { Label("Goals & Apple Health", systemImage: "heart.text.square.fill") }
             }
@@ -441,6 +442,11 @@ struct NutritionSettingsView: View {
     var body: some View {
         Form {
             Section {
+                NavigationLink { LazyView(MyDietsView()) } label: {
+                    Label("Your diets", systemImage: "list.bullet.clipboard")
+                }
+            } footer: { Text("Upload or paste the plan you follow (from your dietitian, doctor or faith), or start from a template. Every scan and meal is checked against it.") }
+            Section {
                 Toggle("Share with Apple Health", isOn: Binding(get: { sync }, set: { on in
                     if on { Task { sync = await NutritionHealth.connect() } } else { sync = false }
                 }))
@@ -456,7 +462,7 @@ struct NutritionSettingsView: View {
                 Text("Carbs and fat targets follow your calories (about 45% and 30%). Automatic protein is about 1.6 g per kg of your weight from Health, or 120 g without it.")
             }
             Section {
-                Text("🟢 Fits your plan. 🟡 Fine sometimes, or check the label (natural flavors, honey, erythritol, gelatin, seed oils, high caffeine). 🔴 Skip: soy in any form, artificial dyes, artificial sweeteners, sorbitol or maltitol, pork or shellfish [Lev 11], refined sugar in the first five ingredients, or more than 10 g added sugar.")
+                Text("Your own diets (above) are checked too. Built-in brain diet: 🟢 Fits your plan. 🟡 Fine sometimes, or check the label (natural flavors, honey, erythritol, gelatin, seed oils, high caffeine). 🔴 Skip: soy in any form, artificial dyes, artificial sweeteners, sorbitol or maltitol, pork or shellfish [Lev 11], refined sugar in the first five ingredients, or more than 10 g added sugar.")
                     .font(DS.Font.caption)
             } header: { Text("How Keel decides") }
         }

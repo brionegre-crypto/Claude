@@ -194,7 +194,12 @@ struct MedEditor: View {
 /// Today card: shows only when a dose is due or overdue and not yet taken.
 struct MedsTodayCard: View {
     @Query private var meds: [Medication]
-    @Query private var doses: [MedDose]
+    @Query(MedsTodayCard.recentDoses) private var doses: [MedDose]      // today's doses only, not every dose ever logged
+
+    static var recentDoses: FetchDescriptor<MedDose> {
+        let since = Calendar.current.startOfDay(for: Date()).addingTimeInterval(-86_400)
+        return FetchDescriptor<MedDose>(predicate: #Predicate { $0.day >= since })
+    }
 
     var body: some View {
         let now = Calendar.current.dateComponents([.hour, .minute], from: Date())

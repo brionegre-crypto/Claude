@@ -220,7 +220,7 @@ struct FocusView: View {
 struct ShutdownRitualView: View {
     @Environment(\.dismiss) private var dismiss
     @Query(filter: #Predicate<TaskItem> { !$0.isDone }) private var open: [TaskItem]
-    @Query(filter: #Predicate<EmailMessage> { !$0.isArchived }) private var inbox: [EmailMessage]
+    @Query(DreadTodayCard.recentMail) private var inbox: [EmailMessage]         // last 60 days, not the whole mailbox
     @State private var step = 0
     @State private var win = ""
 

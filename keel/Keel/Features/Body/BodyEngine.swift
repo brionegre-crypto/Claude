@@ -264,8 +264,11 @@ enum BodyMath {
 
     /// Fills in Anchor, sleep need and Tide for every day, each compared with the 30 days before it.
     static func score(_ days: inout [BodyDay], base: Double) {
+        let marked = LifeEvents.markedDayKeys()       // sick, travel, late nights…: left out of your normal
         for i in days.indices {
-            let prior = Array(days[max(0, i - 30)..<i])
+            let window = Array(days[max(0, i - 30)..<i])
+            let kept = window.filter { !LifeEvents.isMarked($0.day, in: marked) }
+            let prior = kept.count >= 5 ? kept : window
             var b = days[i]
             // Sleep need: your base, plus a little after a hard day, plus a third of recent sleep debt.
             let yesterdaySwell = i > 0 ? days[i - 1].swell : 0
@@ -318,6 +321,9 @@ enum BodyMath {
             }
             if let t = b.temp, t > 0.5 { tide -= 8; notes.append(String(format: "Wrist temperature +%.1f°C", t)) }
             if let o = b.spo2, o < 93 { notes.append(String(format: "Blood oxygen %.0f%%", o)) }
+            if LifeEvents.isMarked(b.day, in: marked) {
+                notes.append("You marked this day: " + LifeEvents.events(on: b.day).map(\.title).joined(separator: ", "))
+            }
             b.tide = have ? Int(min(100, max(1, tide)).rounded()) : nil
             b.tideNotes = notes
             days[i] = b
@@ -447,6 +453,15 @@ final class BodyEngine {
     }
 
     /// The small summary widgets, the Watch and Focus Forecast read.
+    /// Re-works the scores without reading Health again (after you mark a day as not normal).
+    func rescore() {
+        guard !days.isEmpty else { return }
+        var all = days
+        BodyMath.score(&all, base: BodyPrefs.sleepNeed)
+        days = all
+        share()
+    }
+
     func share() {
         let t = today
         let tn = BodyMath.tonight(days, base: BodyPrefs.sleepNeed)

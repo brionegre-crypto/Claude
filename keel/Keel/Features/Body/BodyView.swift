@@ -221,6 +221,7 @@ struct BodyView: View {
             if !engine.loading, engine.days.suffix(3).allSatisfy({ !$0.hasSleep && $0.hrv == nil && $0.swell == 0 }) { noDataCard }
             if isToday { IllnessWarningCard(days: engine.days).overlay(alignment: .topTrailing) { MetricInfoButton(id: "illness").padding(6) } }
             if isToday { adviceCard }
+            if isToday { LifeEventsCard(day: Date()) }          // "not a normal day": kept out of your baselines
             EnergyBankCard(day: t, days: engine.days)
             BodyMetricsGrid(day: t, days: engine.days)
             BodyTimelineCard(day: t, date: t?.day ?? Date())

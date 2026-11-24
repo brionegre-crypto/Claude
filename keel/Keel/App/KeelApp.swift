@@ -11,6 +11,7 @@ struct KeelApp: App {
     @Environment(\.scenePhase) private var scenePhase
 
     init() {
+        KeelChrome.apply()                      // serif large titles everywhere, matching Keel's type
         SyncEngine.registerBackgroundTasks()
         WidgetActions.startListening()          // widget check-offs land at once while Keel is open
         UNUserNotificationCenter.current().delegate = NotificationHandler.shared

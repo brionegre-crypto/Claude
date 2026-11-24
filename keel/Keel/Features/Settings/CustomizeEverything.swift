@@ -94,10 +94,11 @@ struct CustomizeHubView: View {
             }
         }
         .navigationTitle("Customize Keel")
+        .premiumBackground(.pink)
     }
 
     private func link<V: View>(_ t: String, _ icon: String, _ c: Color, @ViewBuilder _ dest: @escaping () -> V) -> some View {
-        NavigationLink { LazyView(dest()) } label: {
+        NavigationLink { LazyView(dest().premiumBackground(c)) } label: {
             Label { Text(t) } icon: {
                 Image(systemName: icon).foregroundStyle(.white).font(.caption.weight(.semibold))
                     .frame(width: 28, height: 28).background(c.gradient, in: .rect(cornerRadius: 7))

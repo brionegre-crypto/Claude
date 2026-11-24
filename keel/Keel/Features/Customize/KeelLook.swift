@@ -29,7 +29,10 @@ enum KeelLook: String, CaseIterable, Identifiable {
         switch self {
         case .paper: Color(red: 0.98, green: 0.965, blue: 0.94)
         case .midnight: .black
-        default: Color(uiColor: .systemBackground)
+        case .contrast: Color(uiColor: .systemBackground)
+        // Standard: warm porcelain by day, deep graphite at night. Quieter than pure white or black.
+        default: Color(uiColor: UIColor { $0.userInterfaceStyle == .dark ? UIColor(red: 0.055, green: 0.058, blue: 0.068, alpha: 1)
+                                                                        : UIColor(red: 0.972, green: 0.966, blue: 0.955, alpha: 1) })
         }
     }
     var elevated: Color {
@@ -37,7 +40,8 @@ enum KeelLook: String, CaseIterable, Identifiable {
         case .paper: Color(red: 0.95, green: 0.93, blue: 0.89)
         case .midnight: Color(white: 0.09)
         case .contrast: Color(uiColor: .tertiarySystemFill)
-        default: Color(uiColor: .secondarySystemBackground)
+        // Cards: clean white on porcelain; lifted graphite at night.
+        default: Color(uiColor: UIColor { $0.userInterfaceStyle == .dark ? UIColor(red: 0.105, green: 0.11, blue: 0.125, alpha: 1) : .white })
         }
     }
     var inkSoft: Color {

@@ -4,7 +4,7 @@ import SwiftUI
 @MainActor
 enum KitCatalog {
     private static func t<V: View>(_ id: String, _ title: String, _ icon: String, _ keywords: String, @ViewBuilder _ dest: @escaping () -> V) -> HubTool {
-        HubTool(id: id, title: title, icon: icon, keywords: keywords, dest: { AnyView(dest()) })
+        HubTool(id: id, title: title, icon: icon, keywords: keywords, dest: { AnyView(dest().premiumBackground()) })
     }
 
     static func tools(for group: String) -> [HubTool] { all[group] ?? [] }

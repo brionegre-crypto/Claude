@@ -158,7 +158,7 @@ enum WeeklyRecap {
 struct WeeklyRecapSection: View {
     @Environment(\.modelContext) private var ctx
     @Query private var tasks: [TaskItem]
-    @Query(filter: #Predicate<EmailMessage> { !$0.isArchived }) private var mail: [EmailMessage]
+    @Query(DreadTodayCard.recentMail) private var mail: [EmailMessage]          // last 60 days, not the whole mailbox
     @Query private var promises: [Commitment]
     @Query private var accounts: [MailAccount]
     @State private var plan: [WeeklyRecap.PlanItem] = []

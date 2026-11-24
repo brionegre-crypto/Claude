@@ -251,7 +251,8 @@ enum DietChecker {
             if !findings.contains(where: { $0.rule == rule }) { findings.append(DietFinding(level: level, rule: rule, matched: matched, why: why)) }
         }
 
-        for r in rules {
+        let builtIn = PersonalDiets.builtInOn
+        for r in rules where builtIn {
             for t in r.terms where containsWord(haystack, t) {
                 // Sunflower lecithin and beef gelatin are fine; specific soy terms take priority over the generic ones.
                 if t == "lecithin" && (haystack.contains("sunflower lecithin") || haystack.contains("soy lecithin")) { continue }
@@ -264,7 +265,7 @@ enum DietChecker {
 
         // Tier 4 sugars: red when it's a main ingredient (first five) or there's real added sugar.
         let added = facts?.addedSugar
-        for (i, ing) in list.enumerated() {
+        for (i, ing) in list.enumerated() where builtIn {
             guard let term = refinedSugars.first(where: { containsWord(ing, $0) }) else { continue }
             if ["coconut sugar", "coconut palm sugar", "date sugar", "maple sugar"].contains(where: { ing.contains($0) }) { continue }
             if term == "sugar" && (ing.contains("sugar alcohol") || ing.contains("no sugar")) { continue }
@@ -275,7 +276,7 @@ enum DietChecker {
                      : "Refined sugar appears in the list. Keep it rare.")
             break
         }
-        if let a = added, a > 6, !findings.contains(where: { $0.rule == "Refined sugar (Tier 4)" }) {
+        if builtIn, let a = added, a > 6, !findings.contains(where: { $0.rule == "Refined sugar (Tier 4)" }) {
             add(a > 10 ? .red : .yellow, "Added sugar", String(format: "%.0f g", a), "That's a lot of added sugar for one serving.")
         }
         if let c = facts?.caffeineMg, c > 200 {
@@ -283,6 +284,7 @@ enum DietChecker {
         }
 
         // Database tags catch what the text misses.
+        if builtIn {
         let dyeE = ["en:e129", "en:e127", "en:e102", "en:e110", "en:e133", "en:e132", "en:e143"]
         if let tag = additiveTags.first(where: { dyeE.contains($0) }) { add(.red, "Artificial dye", tag.replacingOccurrences(of: "en:", with: "").uppercased(), "Artificial dyes are out.") }
         if let tag = additiveTags.first(where: { ["en:e955", "en:e951", "en:e954", "en:e950", "en:e961", "en:e969"].contains($0) }) {
@@ -292,19 +294,40 @@ enum DietChecker {
         if allergenTags.contains(where: { ["en:crustaceans", "en:molluscs"].contains($0) }) {
             add(.red, "Shellfish or no-scale fish [Lev 11:9-12]", "shellfish (allergen list)", "The allergen list says this contains shellfish.")
         }
+        }
+
+        // Your own diets (uploaded, pasted or from a template).
+        var personalPositives: [String] = []
+        for d in PersonalDiets.active {
+            if let t = d.avoid.first(where: { containsWord(haystack, $0) }) {
+                add(.red, "\(d.name): avoid", t, "Your \(d.name) plan says to avoid \(t).")
+            } else if let t = d.caution.first(where: { containsWord(haystack, $0) }) {
+                add(.yellow, "\(d.name): careful", t, "Your \(d.name) plan says to limit or check \(t).")
+            }
+            for t in d.favor where containsWord(haystack, t) { personalPositives.append("\(t.capitalized) (\(d.name))") }
+        }
+        // Allergen tags also count for allergy-style diets.
+        let tagWords: [String: [String]] = ["en:gluten": ["wheat", "gluten", "barley", "rye"], "en:milk": ["milk", "dairy", "lactose", "whey", "casein"],
+                                            "en:nuts": ["almond", "cashew", "walnut", "nut"], "en:peanuts": ["peanut", "peanuts"], "en:eggs": ["egg", "eggs"]]
+        for (tag, words) in tagWords where allergenTags.contains(tag) {
+            for d in PersonalDiets.active where d.avoid.contains(where: { a in words.contains(where: { a.contains($0) }) }) {
+                add(.red, "\(d.name): avoid", tag.replacingOccurrences(of: "en:", with: "") + " (allergen list)", "The allergen list shows \(tag.replacingOccurrences(of: "en:", with: "")), which your \(d.name) plan avoids.")
+            }
+        }
 
         // Good stuff.
         var positives: [String] = []
         if let p = facts?.protein, p >= 10 { positives.append(String(format: "%.0f g protein", p)) }
         if let f = facts?.fiber, f >= 5 { positives.append(String(format: "%.0f g fiber", f)) }
         for (w, label) in positiveWords where haystack.contains(w) && !positives.contains(label) { positives.append(label) }
+        for p in personalPositives.prefix(3) where !positives.contains(p) { positives.append(p) }
         if haystack.contains("dark chocolate"), let pct = Int(haystack.range(of: #"\d{2}%"#, options: .regularExpression).map { String(haystack[$0].dropLast()) } ?? ""), pct >= 70 {
             positives.append("Magnesium (\(pct)% dark chocolate)")
         }
 
         // The guide's own word on this exact product.
         var note: String?
-        if let g = DietGuide.match(name: name, brand: brand) {
+        if builtIn, let g = DietGuide.match(name: name, brand: brand) {
             note = "Your guide: \(g.name) — \(g.status.uppercased()). \(g.details)"
             if g.verdict == .red { add(.red, "On your avoid list", g.name, g.details) }
             if g.verdict == .yellow { add(.yellow, "Caution in your guide", g.name, g.details) }

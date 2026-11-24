@@ -131,7 +131,7 @@ struct HealthTilesSection: View {
 @MainActor
 enum BodyHubs {
     private static func tool<V: View>(_ id: String, _ title: String, _ icon: String, @ViewBuilder _ v: @escaping () -> V) -> HubTool {
-        HubTool(id: id, title: title, icon: icon, keywords: "", dest: { AnyView(v()) })
+        HubTool(id: id, title: title, icon: icon, keywords: "", dest: { AnyView(v().premiumBackground(BodyStyle.tide)) })
     }
 
     static var food: AnyView {

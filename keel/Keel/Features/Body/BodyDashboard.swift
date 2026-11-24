@@ -435,8 +435,31 @@ struct BodyWeekCard: View {
                     }
                 }
             }
+            // The report in words: your biggest win and one thing to work on next week.
+            let r = report(rows)
+            if let win = r.win { Label(win, systemImage: "hands.clap.fill").font(DS.Font.caption).foregroundStyle(DS.Palette.calm) }
+            if let focus = r.focus { Label(focus, systemImage: "scope").font(DS.Font.caption).foregroundStyle(.orange) }
+            ShareLink(item: r.text) { Label("Share my week", systemImage: "square.and.arrow.up").font(DS.Font.caption.weight(.semibold)) }
         }
         .bodyCard()
+    }
+
+    private func report(_ rows: [BodyMetric]) -> (win: String?, focus: String?, text: String) {
+        var best: (String, Double)?, worst: (String, Double)?
+        var lines = ["My week in Keel"]
+        for m in rows {
+            guard let now = BodyDash.average(m, days: days, count: 7) else { continue }
+            let name = m.short == m.name ? (m.name.components(separatedBy: " · ").first ?? m.name) : m.short
+            lines.append("\(name): \(m.format(now))")
+            guard let before = BodyDash.average(m, days: days, count: 7, endingDaysAgo: 7), before != 0,
+                  abs(now - before) >= m.noticeable, let higher = m.higherIsBetter else { continue }
+            let change = (now - before) / abs(before) * (higher ? 1 : -1)      // + is better
+            if change > (best?.1 ?? 0) { best = ("Biggest win: \(name) \(m.format(before)) → \(m.format(now))", change) }
+            if change < (worst?.1 ?? 0) { worst = ("Work on next week: \(name) (\(m.format(before)) → \(m.format(now)))", change) }
+        }
+        if let b = best { lines.append(b.0) }
+        if let w = worst { lines.append(w.0) }
+        return (best?.0, worst?.0, lines.joined(separator: "\n"))
     }
 }
 

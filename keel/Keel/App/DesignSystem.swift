@@ -30,18 +30,18 @@ enum DS {
         }
     }
 
-    // MARK: Type — SF Pro Rounded for warmth, big readable sizes, Dynamic Type everywhere
+    // MARK: Type — an editorial serif (New York) for display, crisp SF Pro for reading. Dynamic Type everywhere.
     enum Font {
-        static let hero = SwiftUI.Font.system(.largeTitle, design: .rounded, weight: .bold)
-        static let title = SwiftUI.Font.system(.title2, design: .rounded, weight: .semibold)
-        static let headline = SwiftUI.Font.system(.headline, design: .rounded)
+        static let hero = SwiftUI.Font.system(.largeTitle, design: .serif, weight: .semibold)
+        static let title = SwiftUI.Font.system(.title2, design: .serif, weight: .semibold)
+        static let headline = SwiftUI.Font.system(.headline, design: .default, weight: .semibold)
         static let body = SwiftUI.Font.system(.body, design: .default)
-        static let caption = SwiftUI.Font.system(.caption, design: .rounded, weight: .medium)
-        static let timer = SwiftUI.Font.system(size: 72, weight: .light, design: .rounded).monospacedDigit()
+        static let caption = SwiftUI.Font.system(.caption, design: .default, weight: .medium)
+        static let timer = SwiftUI.Font.system(size: 72, weight: .thin, design: .default).monospacedDigit()
     }
 
     enum Space { static let xs: CGFloat = 4, s: CGFloat = 8, m: CGFloat = 16, l: CGFloat = 24, xl: CGFloat = 40 }
-    enum Radius { static let card: CGFloat = 22, chip: CGFloat = 12 }
+    enum Radius { static let card: CGFloat = 24, chip: CGFloat = 12 }
 
     // MARK: Motion
     /// Smooth, critically damped motion (no wobble) for everyday state changes: lists, cards, toggles.
@@ -103,17 +103,17 @@ struct PremiumSurface: View {
         let shape = RoundedRectangle(cornerRadius: radius, style: .continuous)
         let dark = scheme == .dark
         // A soft edge underneath instead of a blurred shadow: looks lifted, costs nothing to draw while scrolling.
-        shape.fill(Color.black.opacity(dark ? 0.35 : 0.06)).offset(y: dark ? 2 : 1.5)
-        shape.fill(LinearGradient(colors: [DS.Palette.elevated.mix(with: .white, by: dark ? 0.05 : 0.6), DS.Palette.elevated],
+        shape.fill(Color.black.opacity(dark ? 0.45 : 0.045)).offset(y: dark ? 1.5 : 1)
+        shape.fill(LinearGradient(colors: [DS.Palette.elevated.mix(with: .white, by: dark ? 0.035 : 0.5), DS.Palette.elevated],
                                   startPoint: .top, endPoint: .bottom))
             .overlay {
                 if let tint {
-                    shape.fill(LinearGradient(colors: [tint.opacity(dark ? 0.24 : 0.16), tint.opacity(0.03)], startPoint: .topLeading, endPoint: .bottomTrailing))
+                    shape.fill(LinearGradient(colors: [tint.opacity(dark ? 0.18 : 0.10), tint.opacity(0.02)], startPoint: .topLeading, endPoint: .bottomTrailing))
                 }
             }
             .overlay {
-                shape.strokeBorder(LinearGradient(colors: [Color.white.opacity(dark ? 0.16 : 0.9), Color.primary.opacity(dark ? 0.03 : 0.06)],
-                                                  startPoint: .top, endPoint: .bottom), lineWidth: 0.75)
+                shape.strokeBorder(LinearGradient(colors: [Color.white.opacity(dark ? 0.12 : 0.95), Color.primary.opacity(dark ? 0.04 : 0.07)],
+                                                  startPoint: .top, endPoint: .bottom), lineWidth: 0.5)
             }
     }
 }
@@ -128,7 +128,7 @@ struct PremiumBackdrop: ViewModifier {
             .background {
                 ZStack {
                     DS.Palette.canvas
-                    EllipticalGradient(colors: [tint.opacity(0.30), tint.opacity(0.10), .clear], center: .top,
+                    EllipticalGradient(colors: [tint.opacity(0.16), tint.opacity(0.05), .clear], center: .top,
                                        startRadiusFraction: 0, endRadiusFraction: 0.85)
                         .frame(maxHeight: 560)
                         .frame(maxHeight: .infinity, alignment: .top)
@@ -153,7 +153,8 @@ struct Chip: View {
         }
         .font(DS.Font.caption)
         .padding(.horizontal, 10).padding(.vertical, 5)
-        .background(color.opacity(0.14), in: Capsule())
+        .background(color.opacity(0.11), in: Capsule())
+        .overlay(Capsule().strokeBorder(color.opacity(0.22), lineWidth: 0.5))
         .foregroundStyle(color)
     }
 }
@@ -210,12 +211,14 @@ struct SectionHeader: View {
 
 /// Accent color choices (Settings → Appearance).
 enum Theme: String, CaseIterable, Identifiable {
-    case indigo, ocean, forest, sunset, rose, graphite
+    case indigo, champagne, onyx, ocean, forest, sunset, rose, graphite
     var id: String { rawValue }
     var name: String { rawValue.capitalized }
     var color: Color {
         switch self {
-        case .indigo: Color(red: 0.36, green: 0.42, blue: 0.98)
+        case .indigo: Color(red: 0.33, green: 0.36, blue: 0.88)          // royal indigo
+        case .champagne: Color(red: 0.72, green: 0.58, blue: 0.36)       // brushed gold
+        case .onyx: Color(uiColor: UIColor { $0.userInterfaceStyle == .dark ? UIColor(white: 0.92, alpha: 1) : UIColor(white: 0.12, alpha: 1) })
         case .ocean: Color(red: 0.12, green: 0.55, blue: 0.86)
         case .forest: Color(red: 0.20, green: 0.62, blue: 0.42)
         case .sunset: Color(red: 0.96, green: 0.50, blue: 0.25)
@@ -311,5 +314,22 @@ struct KeelTextSizeModifier: ViewModifier {
             // Follows the iPhone all the way into the larger accessibility sizes; the top two are capped so layouts hold.
             content.dynamicTypeSize(...DynamicTypeSize.accessibility3)
         }
+    }
+}
+
+// MARK: - App chrome
+
+/// Navigation titles: an editorial serif for large titles, crisp SF for inline ones. Set once for every screen.
+/// Only the title font changes; bar backgrounds and Liquid Glass stay as the system draws them.
+@MainActor enum KeelChrome {
+    static func apply() {
+        func designed(_ style: UIFont.TextStyle, _ weight: UIFont.Weight, _ design: UIFontDescriptor.SystemDesign?) -> UIFont {
+            let base = UIFont.systemFont(ofSize: UIFont.preferredFont(forTextStyle: style).pointSize, weight: weight)
+            let desc = design.flatMap { base.fontDescriptor.withDesign($0) } ?? base.fontDescriptor
+            return UIFontMetrics(forTextStyle: style).scaledFont(for: UIFont(descriptor: desc, size: 0))
+        }
+        let nav = UINavigationBar.appearance()
+        nav.largeTitleTextAttributes = [.font: designed(.largeTitle, .semibold, .serif)]
+        nav.titleTextAttributes = [.font: designed(.headline, .semibold, nil)]
     }
 }

@@ -338,8 +338,15 @@ private struct MedTimingRow: View {
 /// Today card: your best focus window, and what to put in it.
 struct FocusForecastCard: View {
     @Query private var meds: [Medication]
-    @Query private var doses: [MedDose]
-    @Query(sort: \FocusSession.startedAt) private var sessions: [FocusSession]
+    // On Today: just the last two days of doses and your latest 200 sessions (it read the whole history on every redraw).
+    @Query(MedsTodayCard.recentDoses) private var doses: [MedDose]
+    @Query(FocusForecastCard.recentSessions) private var sessions: [FocusSession]
+
+    static var recentSessions: FetchDescriptor<FocusSession> {
+        var d = FetchDescriptor<FocusSession>(sortBy: [SortDescriptor(\.startedAt, order: .reverse)])
+        d.fetchLimit = 200
+        return d
+    }
     @Query(filter: #Predicate<TaskItem> { !$0.isDone }) private var tasks: [TaskItem]
     @Query(sort: \CheckIn.day, order: .reverse) private var checkIns: [CheckIn]
 

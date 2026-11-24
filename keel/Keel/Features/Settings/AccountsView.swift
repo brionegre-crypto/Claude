@@ -27,7 +27,7 @@ struct SettingsRow<Destination: View>: View {
     var value: String? = nil
     @ViewBuilder var destination: () -> Destination        // built only when the row is opened
     var body: some View {
-        NavigationLink { LazyView(destination()) } label: {
+        NavigationLink { LazyView(destination().premiumBackground(color)) } label: {
             HStack(spacing: 12) {
                 SettingsIcon(symbol: symbol, color: color)
                 Text(title)

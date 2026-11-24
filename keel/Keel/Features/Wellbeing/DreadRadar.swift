@@ -181,10 +181,9 @@ private extension String {
 struct DreadRadarView: View {
     @Environment(\.modelContext) private var ctx
     @Query private var tasks: [TaskItem]
-    @Query(filter: #Predicate<EmailMessage> { !$0.isArchived }) private var mail: [EmailMessage]
+    @Query(DreadTodayCard.recentMail) private var mail: [EmailMessage]          // last 60 days, not the whole mailbox
     @Query private var sessions: [FocusSession]
     @Query private var accounts: [MailAccount]
-    @Query private var allMail: [EmailMessage]
     @State private var fixing: Dread.Item?
     @State private var refresh = 0
 
@@ -198,7 +197,8 @@ struct DreadRadarView: View {
             }
             if r.id.hasPrefix("mail:") {
                 let eid = String(r.id.dropFirst(5))
-                return allMail.first { $0.id == eid }?.isArchived ?? true
+                var d = FetchDescriptor<EmailMessage>(predicate: #Predicate { $0.id == eid }); d.fetchLimit = 1
+                return (try? ctx.fetch(d))?.first?.isArchived ?? true
             }
             return false
         }
@@ -540,13 +540,33 @@ struct DreadFixView: View {
 // MARK: - Today card
 
 struct DreadTodayCard: View {
-    @Query private var tasks: [TaskItem]
-    @Query(filter: #Predicate<EmailMessage> { !$0.isArchived }) private var mail: [EmailMessage]
-    @Query private var sessions: [FocusSession]
+    // On Today, so it reads only what it needs: open tasks, recent mail and early-stopped sessions.
+    // (It loaded every email, task and focus session ever saved on each redraw of Today.)
+    @Query(filter: #Predicate<TaskItem> { !$0.isDone }) private var tasks: [TaskItem]
+    @Query(DreadTodayCard.recentMail) private var mail: [EmailMessage]
+    @Query(filter: #Predicate<FocusSession> { $0.brokeEarly }) private var sessions: [FocusSession]
     @Query private var accounts: [MailAccount]
+    @State private var memo = DreadMemo()
+
+    static var recentMail: FetchDescriptor<EmailMessage> {
+        let since = Date().addingTimeInterval(-60 * 86_400)
+        var d = FetchDescriptor<EmailMessage>(predicate: #Predicate { !$0.isArchived && $0.receivedAt > since },
+                                              sortBy: [SortDescriptor(\.receivedAt, order: .reverse)])
+        d.fetchLimit = 600
+        return d
+    }
+
+    final class DreadMemo { var key = ""; var items: [Dread.Item] = [] }
 
     var body: some View {
-        let items = Dread.items(tasks: tasks, mail: mail, sessions: sessions, accounts: accounts)
+        // Worked out again only when tasks, mail or sessions change.
+        let key = "\(tasks.count)|\(tasks.reduce(0) { $0 &+ $1.timesRescheduled })|\(mail.count)|\(mail.first?.id ?? "")|\(sessions.count)|\(Dread.dismissed.count)"
+        let items: [Dread.Item] = {
+            if memo.key == key { return memo.items }
+            let v = Dread.items(tasks: tasks, mail: mail, sessions: sessions, accounts: accounts)
+            memo.key = key; memo.items = v
+            return v
+        }()
         if let top = items.first {
             NavigationLink { LazyView(DreadRadarView()) } label: {
                 GlassCard(tint: DS.Palette.warmth) {
