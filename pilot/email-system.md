@@ -29,9 +29,10 @@ Sign in with brian@bethemansystem.com. You get a link by email, and there's no p
 
 Series emails go out on time even without this: every sign-up and every dashboard visit also sends what's due. The scheduler makes timing exact.
 
-1. **Make a long random password.** For example, a 32-character password from your password manager.
-2. **Cloudflare:** Workers & Pages, then bethemansystem, Settings, Variables and Secrets, Add. Name it `CRON_SECRET`, paste the password, type Secret, environment Production. Save.
-3. **GitHub:** the brionegre-crypto/Claude repository, then Settings, Secrets and variables, Actions, New repository secret. Name it `CRON_SECRET` and paste the same password.
-4. **Check it:** in GitHub, open Actions, then "Email scheduler", then "Run workflow". It should finish green.
+1. **Set the default branch on GitHub.** GitHub only runs scheduled jobs from a repository's default branch, and yours is currently `claude/betheman-instagram-strategy-qjlm3l`. In the brionegre-crypto/Claude repository, go to Settings, then General, then Default branch, and switch it to `claude/sharp-sagan-jrcxxn` (the branch the live site runs from).
+2. **Make a long random password.** For example, a 32-character password from your password manager.
+3. **Cloudflare:** Workers & Pages, then bethemansystem, Settings, Variables and Secrets, Add. Name it `CRON_SECRET`, paste the password, type Secret, environment Production. Save.
+4. **GitHub:** the brionegre-crypto/Claude repository, then Settings, Secrets and variables, Actions, New repository secret. Name it `CRON_SECRET` and paste the same password.
+5. **Check it:** in GitHub, open Actions, then "Email scheduler", then "Run workflow". It should finish green.
 
 Don't paste the password into chat.
