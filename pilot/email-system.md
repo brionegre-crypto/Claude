@@ -83,3 +83,55 @@ Never paste these keys into chat.
 | Calls | Upcoming and past free calls. Record an outcome (joined, not now, follow up, no show) with a note. A follow-up date emails you a reminder that morning. |
 
 The Ledger, the Monday report, Substack and the reminders run on the hourly scheduler. Until `CRON_SECRET` is set up, they run whenever you open the dashboard.
+
+## Added Nov 24: the men's portal
+
+Every man gets his own portal at **bethemansystem.com/portal**. He signs in with an emailed link, or a text code once Twilio is set up. There's no password. On his phone, he can add it to his home screen so it opens like an app. Paper still works: every worksheet prints, and he can type in his number or upload a photo of his paper Ledger.
+
+**Who gets one, automatically**
+- **Founding Cohort purchase:** a full portal, plus a "Your portal is ready" email with a 7-day sign-in button.
+- **Club join:** a full portal. A graduate who was read-only gets full access back.
+- **Step 1 sign-up:** a mini portal with Step 1 only. Steps 2 to 4 show an invitation to the cohort.
+- **Anyone else:** add him from Men, then "Add a man".
+
+**What he does there**
+- **Today:**
+  - your next step for him;
+  - his current step;
+  - his commitments for today, each with Kept, Floor or Missed (he can mark today and the two days before; older days are locked);
+  - his streak ("Weeks reported", or "Restart Monday");
+  - the next session, with the Meet link, a "what I want help with" note, and an "I'm here" button during the call;
+  - your notes to him;
+  - an "I'm in a hard week" button.
+- **Steps 1 to 4:** a worksheet for each, sent to you to approve. Starter examples, a calendar subscription for his commitments, and printable PDFs.
+- **The Ledger:**
+  - his week at a glance and the last eight weeks;
+  - the group average, with no names;
+  - the Sunday review: his number plus four questions;
+  - editing his commitments any time, with every version kept.
+- **Lessons:** six weeks. Each is text, an optional video, your teaching recording, an action checkbox and a reflection. Men who missed a session also see your catch-up note.
+- **More:**
+  - messages and prayer requests to you (private);
+  - his partner's weekly numbers and Sunday answers;
+  - settings: name, mobile, daily reminder time, large text, share link, download his data, and ask to delete it.
+
+**Your side, in the dashboard**
+
+| Tab | What it does |
+|---|---|
+| Men | Every portal, with where he is, his last two weekly numbers, when he last signed in, and flags. Buttons for: Add a man, Call sheet (each man's note for Thursday, his number and flags), Cohort insights (group trend, steps, attendance, what the men keep missing), Messages, Download backup, and My system. |
+| A man's page | Approve or Revisit each step (with a note), open a step early, pace (with the cohort, his own pace, or custom dates), partner, next steps (he's emailed), notes he sees, private notes only you see, messages, Sunday reviews, reflections, Ledger photos, earlier commitment versions, Graduate, Coach view (his portal exactly as he sees it, read-only), and Delete portal. |
+| Library | Edit the six lessons and the printables. "Restore the drafts" goes back to the originals. |
+| Sessions | For each Thursday, the YouTube link to the teaching part only, and a catch-up note for men who missed. |
+| My system | Your own portal: the same as the men's, to follow along and track your own Ledger. |
+
+**What runs on its own (hourly scheduler)**
+- **Daily reminder:** at the hour he chose, by email or text, only if something today is still unmarked.
+- **Quiet check-in:** after 7 days without signing in, he gets one gentle note, and you get the list.
+- **Call prep:** at 6 PM on the Wednesday before a session, men who haven't written a note are asked what they want help with.
+- **Backup:** Monday at 7 AM, a backup file is emailed to you.
+- **Club access:** daily, Club members whose membership has ended become read-only.
+
+**Safety**
+- The 988 line is on every portal screen.
+- If anything he writes suggests self-harm, he sees the 988 and 911 message straight away. You get an email marked URGENT, plus a text to `ADMIN_PHONE` if it's set in Cloudflare. His page shows a safety flag.

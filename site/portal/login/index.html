@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sign in | Be The Man portal</title>
+<meta name="description" content="Sign in to your Be The Man portal.">
+<meta name="robots" content="noindex, follow">
+<link rel="canonical" href="https://bethemansystem.com/portal/login/">
+<link rel="icon" type="image/png" href="/assets/favicon.png">
+<link rel="apple-touch-icon" href="/assets/favicon.png">
+<meta name="theme-color" content="#000000">
+<link rel="manifest" href="/portal.webmanifest">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Be The Man">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Be The Man">
+<meta property="og:title" content="Sign in | Be The Man portal">
+<meta property="og:description" content="Sign in to your Be The Man portal.">
+<meta property="og:url" content="https://bethemansystem.com/portal/login/">
+<meta property="og:image" content="https://bethemansystem.com/assets/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@500&family=Caveat:wght@500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Khand:wght@700&display=swap&text=BETHEMAN%20">
+<link rel="stylesheet" href="/assets/site.css">
+<script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@graph": [
+  {
+   "@type": "Organization",
+   "@id": "https://bethemansystem.com/#org",
+   "name": "Be The Man",
+   "alternateName": "The Be The Man System",
+   "url": "https://bethemansystem.com/",
+   "logo": "https://bethemansystem.com/assets/favicon.png",
+   "slogan": "Built for the brain God gave you.",
+   "description": "A faith-first four-step system for Black Christian men with ADHD: one sentence on who you are becoming, three commitments with a time and a place, a bad-day version of each, and a weekly scorecard reviewed with other men.",
+   "audience": {
+    "@type": "PeopleAudience",
+    "audienceType": "Black Christian men, ages 25 to 40, with ADHD (diagnosed or still wondering) who struggle with productivity"
+   },
+   "founder": {
+    "@id": "https://bethemansystem.com/about/#brian"
+   },
+   "sameAs": [
+    "https://www.youtube.com/@BeTheManSystem",
+    "https://bethemansystem.substack.com",
+    "https://www.facebook.com/profile.php?id=61593655779820"
+   ]
+  },
+  {
+   "@type": "WebPage",
+   "@id": "https://bethemansystem.com/portal/login/#page",
+   "url": "https://bethemansystem.com/portal/login/",
+   "name": "Sign in | Be The Man portal",
+   "description": "Sign in to your Be The Man portal.",
+   "isPartOf": {
+    "@id": "https://bethemansystem.com/#site"
+   },
+   "about": {
+    "@id": "https://bethemansystem.com/#org"
+   },
+   "inLanguage": "en-US"
+  },
+  {
+   "@type": "BreadcrumbList",
+   "itemListElement": [
+    {
+     "@type": "ListItem",
+     "position": 1,
+     "name": "Home",
+     "item": "https://bethemansystem.com/"
+    },
+    {
+     "@type": "ListItem",
+     "position": 2,
+     "name": "Sign in | Be The Man portal",
+     "item": "https://bethemansystem.com/portal/login/"
+    }
+   ]
+  }
+ ]
+}
+</script>
+</head>
+<body>
+
+<main id="main">
+<div class="wrap">
+  <div class="lp">
+    <a class="logo" href="/">BE <span>THE MAN</span></a>
+    <h1>Your <span class="grad">portal.</span></h1>
+    <p class="lead" id="lead">Enter the email you signed up with. We'll send you a sign-in link. No password.</p>
+    <form class="tile lp-card signup" id="f" novalidate>
+      <label class="sr-only" for="e">Email</label>
+      <input id="e" class="pf" type="email" autocomplete="email" placeholder="Email address" required>
+      <button class="btn btn-primary btn-lg btn-block" type="submit">Email me a sign-in link</button>
+      <p class="muted" id="m" role="status"></p>
+      <p class="fine"><button type="button" class="textlink" id="usetext">Sign in with a text code instead</button></p>
+    </form>
+    <form class="tile lp-card signup" id="t" novalidate hidden>
+      <label class="sr-only" for="ph">Mobile number</label>
+      <input id="ph" class="pf" type="tel" autocomplete="tel" placeholder="Mobile number">
+      <button class="btn btn-primary btn-lg btn-block" type="submit" id="tb">Text me a code</button>
+      <div id="codebox" hidden>
+        <label class="sr-only" for="code">6-digit code</label>
+        <input id="code" class="pf" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="6-digit code">
+        <button class="btn btn-primary btn-lg btn-block" type="button" id="cb">Sign in</button>
+      </div>
+      <p class="muted" id="tm" role="status"></p>
+      <p class="fine"><button type="button" class="textlink" id="useemail">Use my email instead</button></p>
+    </form>
+    <p class="fine center">The portal is for Founding Cohort men, Club members and men working through Step 1.</p>
+    <p class="fine center">Thinking about harming yourself? Call or text <a href="tel:988">988</a>, any time.</p>
+  </div>
+</div>
+<style>.pf{width:100%;font:inherit;font-size:17px;color:var(--fg);background:var(--bg);border:1px solid var(--line-2);border-radius:14px;padding:15px 16px}.textlink{background:none;border:0;color:var(--accent-hi);font:inherit;cursor:pointer;padding:0;text-decoration:underline}</style>
+<script>
+(function(){
+  var q=new URLSearchParams(location.search);
+  if(q.get('expired')) document.getElementById('lead').textContent='That link expired. Enter your email for a new one.';
+  var $=function(i){return document.getElementById(i);};
+  function post(u,b){return fetch(u,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(b)}).then(function(r){return r.json();});}
+  $('usetext').onclick=function(){$('f').hidden=true;$('t').hidden=false;$('ph').focus();};
+  $('useemail').onclick=function(){$('t').hidden=true;$('f').hidden=false;$('e').focus();};
+  $('f').addEventListener('submit',function(e){e.preventDefault();$('m').textContent='Sending…';
+    post('/api/portal/login',{email:$('e').value,next:q.get('next')||''}).then(function(d){$('m').textContent=d.message||d.error;}).catch(function(){$('m').textContent='Please try again.';});});
+  $('t').addEventListener('submit',function(e){e.preventDefault();$('tm').textContent='Sending…';
+    post('/api/portal/code-send',{phone:$('ph').value}).then(function(d){$('tm').textContent=d.message||d.error;if(d.ok){$('codebox').hidden=false;$('code').focus();}}).catch(function(){$('tm').textContent='Please try again.';});});
+  $('cb').onclick=function(){$('tm').textContent='Checking…';
+    post('/api/portal/code-check',{phone:$('ph').value,code:$('code').value}).then(function(d){if(d.ok)location.href='/portal/';else $('tm').textContent=d.error;}).catch(function(){$('tm').textContent='Please try again.';});};
+})();
+</script>
+</main>
+<script src="/assets/site.js" defer></script>
+</body>
+</html>

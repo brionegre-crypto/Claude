@@ -2,6 +2,7 @@
 // See web/static/assets/admin.js for the screens that use it.
 
 import { adminFrom } from "../../_admin.js";
+import { portalAdmin } from "../../_portaladmin.js";
 import { OFFERS } from "../../_catalog.js";
 import {
   allContacts, getContact, putContact, upsertContact, setStatus, setSms, addEvent, enroll, runContact,
@@ -88,7 +89,7 @@ function cleanForm(f) {
 }
 
 export async function onRequest(context) {
-  const { request, env, params } = context;
+  const { request, env, params, waitUntil } = context;
   const admin = await adminFrom(request, env);
   if (!admin) return json({ ok: false, error: "Please sign in again." }, 401);
   if (!env.FILES) return json({ ok: false, error: "The FILES store isn't connected." }, 503);
@@ -96,6 +97,9 @@ export async function onRequest(context) {
   const url = new URL(request.url);
   let d = {};
   if (request.method === "POST") { try { d = await request.json(); } catch (e) {} }
+
+  const portal = await portalAdmin(route, d, request, env, url, waitUntil ? (p) => waitUntil(p) : null);
+  if (portal) return portal;
 
   // ----- overview -----
   if (route === "overview") {
@@ -130,7 +134,7 @@ export async function onRequest(context) {
         email: !!env.RESEND_API_KEY, texts: smsReady(env), bounces: !!env.RESEND_WEBHOOK_SECRET, scheduler: !!env.CRON_SECRET,
         lastTick: await env.FILES.get("meta:lasttick", "json"),
       },
-      unreadTexts: !!(await env.FILES.get("unread:texts")),
+      unreadTexts: !!(await env.FILES.get("unread:texts")), unreadPortal: !!(await env.FILES.get("unread:portal")),
     });
   }
 

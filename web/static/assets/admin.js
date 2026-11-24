@@ -35,12 +35,16 @@
 
   // ---------- router ----------
   var VIEWS = {};
+  var PARENT = { man: "men" };
   function show(tab) {
-    if (!VIEWS[tab]) tab = "overview";
-    $$(".adm-tabs button").forEach(function (b) { b.classList.toggle("on", b.dataset.tab === tab); });
-    if (location.hash !== "#" + tab) history.replaceState(null, "", "#" + tab);
+    var parts = String(tab || "").split("/"), name = parts[0];
+    if (!VIEWS[name]) { name = "overview"; parts = [name]; }
+    var hl = PARENT[name] || name;
+    $$(".adm-tabs button").forEach(function (b) { b.classList.toggle("on", b.dataset.tab === hl); });
+    var h = "#" + parts.join("/");
+    if (location.hash !== h) history.replaceState(null, "", h);
     view.innerHTML = "<p class='muted'>Loading…</p>";
-    VIEWS[tab]();
+    VIEWS[name].apply(null, parts.slice(1).map(function (x) { try { return decodeURIComponent(x); } catch (e) { return x; } }));
   }
   $$(".adm-tabs button").forEach(function (b) { b.onclick = function () { show(b.dataset.tab); }; });
 

@@ -17,7 +17,7 @@
 // skips the dates already past.
 
 const SITE = "https://bethemansystem.com";
-const MEET = "https://meet.google.com/tcg-zspn-cco";
+export const MEET = "https://meet.google.com/tcg-zspn-cco";
 
 export const SEQUENCES = {
   step1: {

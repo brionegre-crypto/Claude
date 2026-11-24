@@ -15,6 +15,7 @@ import { OFFERS, CLUB } from "./_catalog.js";
 import { COHORT_DATES } from "./_booking.js";
 import { sendEmail } from "./_mail.js";
 import { centralHour, smsReady } from "./_sms.js";
+import { portalJobs } from "./_portaljobs.js";
 
 const now = () => Date.now();
 const DAY = 86400000;
@@ -416,5 +417,6 @@ export async function runAll(env) {
   try { out.rss = await rssJob(env, settings); } catch (e) { out.rssError = String(e); }
   try { out.report = await reportJob(env, settings); } catch (e) { out.reportError = String(e); }
   try { out.reminders = await reminderJob(env); } catch (e) { out.reminderError = String(e); }
+  try { out.portal = await portalJobs(env); } catch (e) { out.portalError = String(e); }
   return out;
 }

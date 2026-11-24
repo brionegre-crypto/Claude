@@ -6,6 +6,7 @@
 import { CLUB } from "../../_catalog.js";
 import { stripe, clubSubscription, sessionCookie, json } from "../../_club.js";
 import { subscribe, notifyBrian, TAGS, firstName } from "../../_mail.js";
+import { ensureRecord, sendWelcome, getRecord, putRecord } from "../../_portal.js";
 
 export async function onRequestPost(context) {
   const { request, env } = context;
@@ -25,6 +26,13 @@ export async function onRequestPost(context) {
   if (email) {
     const tags = sub.ic ? [TAGS.club, TAGS.innerCircle] : [TAGS.club];
     try { await subscribe(env, email, { firstName: firstName((s.customer_details || {}).name), tags }); } catch (e) {}
+    // Portal: a new account, or full access again for a graduate who joins.
+    try {
+      const had = await getRecord(env, email.toLowerCase());
+      const { pd, created } = await ensureRecord(env, email, { role: "club", name: (s.customer_details || {}).name });
+      if (!created && pd.access === "readonly") { pd.access = "full"; await putRecord(env, pd); }
+      if (created || (had && had.role === "step1")) await sendWelcome(env, email.toLowerCase(), "club");
+    } catch (e) {}
     // Alert Brian once per new membership (this page can be reloaded).
     const seen = env.FILES ? await env.FILES.get(`joined:${s.id}`) : null;
     if (!seen) {

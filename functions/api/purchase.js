@@ -13,6 +13,7 @@ import { subscribe, sendEmail, tagByName, notifyBrian, TAGS, firstName } from ".
 import { upsertContact, enroll, putContact, getContact, fireTrigger } from "../_list.js";
 import { attribute, parseClientRef } from "../_extras.js";
 import { nextSession } from "../_workshop.js";
+import { ensureRecord, sendWelcome } from "../_portal.js";
 import { downloadsEmail } from "../_emails.js";
 
 // Offers with no files (the Founding Cohort) reuse the receipt email with enrolment wording.
@@ -70,6 +71,8 @@ export async function onRequestPost(context) {
       const c = await upsertContact(env, { email, name, tags: ["Founding Cohort"], source: "Founding Cohort" });
       if (c) await putContact(env, await enroll(env, c, "cohort"));
     } catch (e) {}
+    // His portal account, and the email with his sign-in link.
+    try { const { created } = await ensureRecord(env, email, { role: "cohort", name }); if (created) await sendWelcome(env, email, "cohort"); } catch (e) {}
   }
 
   const emailed = await sendEmail(env, {

@@ -1,0 +1,55 @@
+---
+{
+ "path": "/portal/login/",
+ "bare": true,
+ "noindex": true,
+ "manifest": "/portal.webmanifest",
+ "title": "Sign in | Be The Man portal",
+ "description": "Sign in to your Be The Man portal."
+}
+---
+<div class="wrap">
+  <div class="lp">
+    <a class="logo" href="/">BE <span>THE MAN</span></a>
+    <h1>Your <span class="grad">portal.</span></h1>
+    <p class="lead" id="lead">Enter the email you signed up with. We'll send you a sign-in link. No password.</p>
+    <form class="tile lp-card signup" id="f" novalidate>
+      <label class="sr-only" for="e">Email</label>
+      <input id="e" class="pf" type="email" autocomplete="email" placeholder="Email address" required>
+      <button class="btn btn-primary btn-lg btn-block" type="submit">Email me a sign-in link</button>
+      <p class="muted" id="m" role="status"></p>
+      <p class="fine"><button type="button" class="textlink" id="usetext">Sign in with a text code instead</button></p>
+    </form>
+    <form class="tile lp-card signup" id="t" novalidate hidden>
+      <label class="sr-only" for="ph">Mobile number</label>
+      <input id="ph" class="pf" type="tel" autocomplete="tel" placeholder="Mobile number">
+      <button class="btn btn-primary btn-lg btn-block" type="submit" id="tb">Text me a code</button>
+      <div id="codebox" hidden>
+        <label class="sr-only" for="code">6-digit code</label>
+        <input id="code" class="pf" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="6-digit code">
+        <button class="btn btn-primary btn-lg btn-block" type="button" id="cb">Sign in</button>
+      </div>
+      <p class="muted" id="tm" role="status"></p>
+      <p class="fine"><button type="button" class="textlink" id="useemail">Use my email instead</button></p>
+    </form>
+    <p class="fine center">The portal is for Founding Cohort men, Club members and men working through Step 1.</p>
+    <p class="fine center">Thinking about harming yourself? Call or text <a href="tel:988">988</a>, any time.</p>
+  </div>
+</div>
+<style>.pf{width:100%;font:inherit;font-size:17px;color:var(--fg);background:var(--bg);border:1px solid var(--line-2);border-radius:14px;padding:15px 16px}.textlink{background:none;border:0;color:var(--accent-hi);font:inherit;cursor:pointer;padding:0;text-decoration:underline}</style>
+<script>
+(function(){
+  var q=new URLSearchParams(location.search);
+  if(q.get('expired')) document.getElementById('lead').textContent='That link expired. Enter your email for a new one.';
+  var $=function(i){return document.getElementById(i);};
+  function post(u,b){return fetch(u,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(b)}).then(function(r){return r.json();});}
+  $('usetext').onclick=function(){$('f').hidden=true;$('t').hidden=false;$('ph').focus();};
+  $('useemail').onclick=function(){$('t').hidden=true;$('f').hidden=false;$('e').focus();};
+  $('f').addEventListener('submit',function(e){e.preventDefault();$('m').textContent='Sending…';
+    post('/api/portal/login',{email:$('e').value,next:q.get('next')||''}).then(function(d){$('m').textContent=d.message||d.error;}).catch(function(){$('m').textContent='Please try again.';});});
+  $('t').addEventListener('submit',function(e){e.preventDefault();$('tm').textContent='Sending…';
+    post('/api/portal/code-send',{phone:$('ph').value}).then(function(d){$('tm').textContent=d.message||d.error;if(d.ok){$('codebox').hidden=false;$('code').focus();}}).catch(function(){$('tm').textContent='Please try again.';});});
+  $('cb').onclick=function(){$('tm').textContent='Checking…';
+    post('/api/portal/code-check',{phone:$('ph').value,code:$('code').value}).then(function(d){if(d.ok)location.href='/portal/';else $('tm').textContent=d.error;}).catch(function(){$('tm').textContent='Please try again.';});};
+})();
+</script>

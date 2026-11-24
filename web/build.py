@@ -212,6 +212,7 @@ def render(meta, body):
     ld = json.dumps({"@context": "https://schema.org", "@graph": graph}, ensure_ascii=False, indent=1)
     robots = "noindex, follow" if meta.get("noindex") else "index, follow, max-image-preview:large"
     og_image = BASE + meta.get("og_image", "/assets/og.png")
+    manifest = (f'<link rel="manifest" href="{meta["manifest"]}">\n<meta name="apple-mobile-web-app-capable" content="yes">\n<meta name="mobile-web-app-capable" content="yes">\n<meta name="apple-mobile-web-app-title" content="Be The Man">\n') if meta.get("manifest") else ""
     head = f"""<!doctype html>
 <html lang="en">
 <head>
@@ -224,7 +225,7 @@ def render(meta, body):
 <link rel="icon" type="image/png" href="/assets/favicon.png">
 <link rel="apple-touch-icon" href="/assets/favicon.png">
 <meta name="theme-color" content="#000000">
-<meta property="og:type" content="website">
+{manifest}<meta property="og:type" content="website">
 <meta property="og:site_name" content="Be The Man">
 <meta property="og:title" content="{html.escape(meta.get('og_title', title))}">
 <meta property="og:description" content="{html.escape(desc)}">

@@ -9,6 +9,7 @@ import { notifyBrian, firstName } from "../_mail.js";
 import { toE164 } from "../_sms.js";
 import { upsertContact, getContact, enroll, runContact, sendToContact, getSequence, fireTrigger, tick } from "../_list.js";
 import { attribute } from "../_extras.js";
+import { ensureRecord } from "../_portal.js";
 
 const LISTS = {
   step1: { tag: "Step 1", series: "step1", thanks: "/step-1/thanks/" },
@@ -98,6 +99,7 @@ async function handle(request, env, data, context) {
     const c = await upsertContact(env, { email, name, tags: [list.tag], fields, source: list.tag, phone,
       smsConsent: phone && (data.sms === true || data.sms === "1" || data.sms === "on") ? { source: list.tag, ip: request.headers.get("cf-connecting-ip") || "" } : null });
     if (c) await attribute(env, c, { src: data.src, ref: data.ref });
+    if (c && list === LISTS.step1) { try { await ensureRecord(env, email, { role: "step1", name }); } catch (e) {} }
     if (c && list.series && !(c.seq && c.seq[list.series])) {
       await enroll(env, c, list.series);
       ok = (await runContact(env, c)) > 0;
