@@ -42,7 +42,7 @@ enum TaskFilter: Hashable {
 
 struct TasksView: View {
     @Environment(\.modelContext) private var ctx
-    @Query(sort: \TaskItem.createdAt, order: .reverse, animation: .snappy) private var tasks: [TaskItem]
+    @Query(sort: \TaskItem.createdAt, order: .reverse) private var tasks: [TaskItem]      // no list-wide animation: sync and AI autofill updates no longer animate the whole list
     @Query(sort: \SmartList.createdAt) private var smartLists: [SmartList]
     @State private var deadlineFor: TaskItem?
     @State private var editingSmart: SmartList?

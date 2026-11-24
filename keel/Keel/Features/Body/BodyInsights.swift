@@ -18,6 +18,18 @@ struct HealthExtras {
         HKQuantityType(.bodyMass), HKCategoryType(.menstrualFlow),
     ]
 
+    /// The last read, kept for a few minutes: Body showed nothing, read Apple Health on every visit and then redrew
+    /// every card when it arrived. Now it shows the last numbers at once and re-reads at most every 5 minutes.
+    nonisolated(unsafe) static var last: HealthExtras?
+    nonisolated(unsafe) private static var lastAt = Date.distantPast
+
+    static func cached(force: Bool = false) async -> HealthExtras {
+        if !force, let l = last, Date().timeIntervalSince(lastAt) < 300 { return l }
+        let fresh = await load()
+        last = fresh; lastAt = Date()
+        return fresh
+    }
+
     static func load() async -> HealthExtras {
         guard BodyHealth.available else { return HealthExtras() }
         let store = BodyHealth.store
@@ -411,5 +423,15 @@ extension View {
         padding(DS.Space.m)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background { PremiumSurface() }
+    }
+}
+
+
+extension HealthExtras {
+    /// Cheap check so Body only redraws when the numbers actually changed.
+    static func changed(_ a: HealthExtras, _ b: HealthExtras) -> Bool {
+        a.steps != b.steps || a.daylightMinutes != b.daylightMinutes || a.mindfulMinutes != b.mindfulMinutes
+            || a.zoneMinutes != b.zoneMinutes || a.weight.count != b.weight.count || a.periodDays != b.periodDays
+            || a.weight.last?.1 != b.weight.last?.1
     }
 }

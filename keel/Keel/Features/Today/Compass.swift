@@ -19,7 +19,7 @@ struct HubView: View {
     private var groups: [HubGroup] { HubCatalog.groups }
     private var allTools: [HubTool] { HubCatalog.everyTool }
     private func tool(_ id: String) -> HubTool? { allTools.first { $0.id == id } }
-    private func color(of id: String) -> Color { groups.first { g in g.tools.contains { $0.id == id } }?.color ?? DS.Palette.accent }
+    private func color(of id: String) -> Color { HubCatalog.colorById[id] ?? DS.Palette.accent }
 
     var body: some View {
         ScrollView {
@@ -205,7 +205,7 @@ struct HubView: View {
         let q = search.lowercased()
         let words = q.split(separator: " ").map(String.init)
         let hits = allTools.filter { t in
-            let hay = (t.title + " " + t.keywords).lowercased()
+            let hay = HubCatalog.haystack[t.id] ?? ""
             return hay.contains(q) || words.contains { $0.count > 2 && hay.contains($0) }
         }
         return VStack(alignment: .leading, spacing: 10) {
@@ -393,6 +393,15 @@ enum HubCatalog {
 
     /// Any tool by id, including ones that now live inside a combined tool (old links and tab bar picks still work).
     static func tool(_ id: String) -> HubTool? { everyTool.first { $0.id == id } }
+
+    /// Worked out once: search text per tool (so typing in Compass search doesn't lowercase 200 strings per key)
+    /// and each tool's group colour.
+    static let haystack: [String: String] = Dictionary(everyTool.map { ($0.id, ($0.title + " " + $0.keywords).lowercased()) }, uniquingKeysWith: { a, _ in a })
+    static let colorById: [String: Color] = {
+        var m: [String: Color] = [:]
+        for g in groups { for t in g.tools where m[t.id] == nil { m[t.id] = g.color } }
+        return m
+    }()
 
     /// Every tool there is: each original tool plus the combined ones. Used for search, links and the tab bar.
     static let everyTool: [HubTool] = {

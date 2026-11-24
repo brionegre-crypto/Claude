@@ -48,7 +48,28 @@ struct HTMLMailView: UIViewRepresentable {
     }
 
     /// True if the email tries to load anything from the internet (images, fonts, tracking pixels).
+    /// Remembered per email: this ran a regular expression over the whole email on every redraw of the reader.
+    nonisolated(unsafe) private static var remoteMemo: [Int: Bool] = [:]
     static func hasRemoteContent(_ html: String) -> Bool {
+        let k = html.hashValue
+        if let v = remoteMemo[k] { return v }
+        if remoteMemo.count > 200 { remoteMemo.removeAll() }
+        let v = scanRemote(html)
+        remoteMemo[k] = v
+        return v
+    }
+
+    /// The first web view in a session takes a moment to start WebKit, so the first email opened felt slow.
+    /// Started once shortly after launch, in the background of the app's quiet time.
+    @MainActor private static var warm: WKWebView?
+    @MainActor static func prewarm() {
+        guard warm == nil else { return }
+        let w = WKWebView(frame: .zero)
+        w.loadHTMLString("<html></html>", baseURL: nil)
+        warm = w
+    }
+
+    private static func scanRemote(_ html: String) -> Bool {
         html.range(of: #"(src|background)\s*=\s*["']?https?://"#, options: [.regularExpression, .caseInsensitive]) != nil
     }
 

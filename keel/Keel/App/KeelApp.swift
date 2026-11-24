@@ -61,6 +61,8 @@ struct KeelApp: App {
                     try? await Task.sleep(for: .seconds(1.5))           // let the first screen draw before the big sync
                     await SyncEngine.shared.syncAll()
                     SyncEngine.scheduleNextRefresh()
+                    try? await Task.sleep(for: .seconds(2))
+                    HTMLMailView.prewarm()                               // the first email you open shows at once
                 }
         }
         .modelContainer(container)
@@ -674,6 +676,7 @@ struct FocusBarSetting: ViewModifier {
     @AppStorage(FocusBarSetting.key) private var on = !ProcessInfo.processInfo.isMacCatalystApp
     var open: () -> Void
     func body(content: Content) -> some View {
-        if on { content.tabViewBottomAccessory { FocusAccessory(onOpen: open) } } else { content }
+        // iPhone: the tab bar and Focus bar shrink as you scroll down, so nothing stays hidden behind them.
+        if on { content.tabViewBottomAccessory { FocusAccessory(onOpen: open) }.tabBarMinimizeBehavior(.onScrollDown) } else { content }
     }
 }

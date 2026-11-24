@@ -98,7 +98,7 @@ struct BodyView: View {
     @AppStorage(SmartWake.key) private var wakeAlarm = false
     @AppStorage(Drinks.goalKey) private var waterGoal = 2_000
     @AppStorage("drinks.nudge") private var waterNudge = true
-    @State private var extras = HealthExtras()
+    @State private var extras = HealthExtras.last ?? HealthExtras()       // last numbers at once, no pop-in
     @AppStorage("body.page") private var pageRaw = BodyPage.today.rawValue
     @State private var selectedDay: Date?
     @State private var logDose = false
@@ -153,13 +153,16 @@ struct BodyView: View {
             case .fasting: FastingView()
             }
         }
-        .refreshable { await engine.refresh(force: true); if engine.connected { extras = await HealthExtras.load() } }
+        .refreshable { await engine.refresh(force: true); if engine.connected { extras = await HealthExtras.cached(force: true) } }
         .task {
             if !Custom.bodyStartApplied, let start = UserDefaults.standard.string(forKey: Custom.bodyStartKey), !start.isEmpty, BodyPage(rawValue: start) != nil {
                 Custom.bodyStartApplied = true; pageRaw = start             // once per launch, so switching tabs keeps your place
             }
             await engine.refresh()
-            if engine.connected { extras = await HealthExtras.load() }
+            if engine.connected {
+                let x = await HealthExtras.cached()
+                if HealthExtras.changed(extras, x) { extras = x }          // redraw only when something changed
+            }
         }
     }
 
@@ -182,7 +185,7 @@ struct BodyView: View {
             }
             if live {
                 Button("Refresh from Apple Health", systemImage: "arrow.clockwise") {
-                    Task { await engine.refresh(force: true); extras = await HealthExtras.load() }
+                    Task { await engine.refresh(force: true); extras = await HealthExtras.cached(force: true) }
                 }
             }
         } label: {
