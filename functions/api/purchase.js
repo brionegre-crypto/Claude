@@ -10,7 +10,7 @@ import { OFFERS } from "../_catalog.js";
 import { paidSession, boughtPrices } from "./download.js";
 import { sign } from "../_club.js";
 import { subscribe, sendEmail, tagByName, notifyBrian, TAGS, firstName } from "../_mail.js";
-import { upsertContact, enroll, putContact } from "../_list.js";
+import { upsertContact, enroll, putContact, getContact, fireTrigger } from "../_list.js";
 import { nextSession } from "../_workshop.js";
 import { downloadsEmail } from "../_emails.js";
 
@@ -61,6 +61,8 @@ export async function onRequestPost(context) {
   const tags = offer.tag ? [TAGS.customer, offer.tag] : [TAGS.customer];
   try { await subscribe(env, email, { firstName: name, tags }); } catch (e) {}
   if (ws) { try { await tagByName(env, email, ws.tag); } catch (e) {} }
+  // Automations triggered by "bought <product>".
+  try { const pc = await getContact(env, email); if (pc) await fireTrigger(env, pc, "purchase", data.o); } catch (e) {}
   // Founding Cohort: tag the buyer and start the session reminders.
   if (data.o === "cohort") {
     try {

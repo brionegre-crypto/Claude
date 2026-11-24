@@ -1,38 +1,67 @@
-# Be The Man email system (replaces Kit, Nov 24, 2026)
+# Be The Man email and text system (replaces Kit, Nov 24, 2026)
 
-Your list now lives on your own site. Resend sends every email. Kit is no longer used.
+Your list lives on your own site. Resend sends the email and Twilio sends the texts. Kit is no longer used.
 
-## The dashboard: bethemansystem.com/admin
+## Dashboard: bethemansystem.com/admin
 
-Sign in with brian@bethemansystem.com. You get a link by email, and there's no password. The session lasts 30 days.
+Sign in with brian@bethemansystem.com. You get a link by email, and there's no password.
 
-- **Overview:** active contacts, new this week, cohort seats sold, emails sent today against the daily limit, unsubscribes, bounces, tags, and the last 30 emails sent. "Send due emails now" sends anything that's waiting.
-- **Contacts:** search and filter by tag or status. Click a contact to rename, tag, unsubscribe, start a series or delete. Add one by hand, import a CSV (a Kit export works), or export everything.
-- **Email series:** the Step 1 welcome series (5 emails over 14 days) and the Founding Cohort reminders (the day before each session, with the Meet link). Edit any email, preview it, send yourself a test, then save. "Restore the original" undoes your edits.
-- **Broadcasts:** write one email to everyone, or to a tag, send yourself a test, then send.
+| Tab | What it does |
+|---|---|
+| Overview | Contacts on email and on texts, new this week, cohort seats sold, emails and texts sent today against the limits, unsubscribes and bounces. Also a 30-day sign-up chart, engagement levels, tags, setup status and recent emails. |
+| Contacts | Search and filter by tag, status, engagement and text opt-in. Open a contact to edit his name, mobile, tags and custom fields, see his activity timeline, start a series or automation, or delete him. Import and export CSV (a Kit export works). |
+| Segments | Saved filters: has all, any or none of some tags; status; engagement; joined between two dates; opted in to texts; a custom field value. They update themselves, and you can send a broadcast to any of them. |
+| Automations | When a man signs up through a form, gets a tag, buys something, clicks a link or opts in to texts, run these steps: wait, send an email, send a text, add or remove a tag, start a series, email you an alert, or continue only if he has (or doesn't have) a tag. Each step shows its own sent, opened and clicked numbers. |
+| Forms | Your own sign-up forms. Each has a page at bethemansystem.com/f/name and an embed code, and can carry a tag, a series to start, a mobile number field, the text-consent checkbox, double opt-in, and a thank-you message or page. |
+| Email series | The Step 1 welcome series and the Founding Cohort reminders. A step can be an email, a text, or both, and each step shows its stats. |
+| Broadcasts | Email or text to everyone, a tag, or a segment. Send now or schedule. A/B test two subject lines. See opens, clicks, the links clicked and unsubscribes. Resend to the people who didn't open. |
+| Texts | A two-way inbox. Replies to your texts land here and are emailed to you, and you answer from the dashboard. |
+| Setup and help | The setup steps below, with their status. |
 
-## What happens automatically
+## Better than Kit
 
-- **Step 1 sign-up:** the man is tagged "Step 1" and gets email 1 straight away, then the rest of the series. You get an alert.
-- **Low Seat Check:** he gets his result by email and is tagged "Low Seat Check".
-- **Founding Cohort purchase:** he's tagged "Founding Cohort" and "Customer", gets the "You're in" email, then a reminder with the Meet link the morning before each session (10 AM Central).
-- **Free call, couples inquiry, Club join:** each is added to the list with its tag, as Kit used to do.
-- **Unsubscribe:** every list email has an unsubscribe link and Gmail's one-click unsubscribe. Unsubscribed and bounced contacts never get series emails or broadcasts. Receipts and sign-in links still go to them.
-- **Footer:** every list email ends with the ADHD disclaimer and your mailing address (PO Box 3425, Huntsville, AL 35810, USA), as the law requires for marketing email. The address appears only in emails, never on the website.
+- **One place for everything:** email, texts, purchases, cohort seats and the Club.
+- **Texts in the same automations and series as email.**
+- **A two-way text inbox.**
+- **No monthly fee** at your size, and nothing that can lock you out.
+- **Compliance built in:**
+  - unsubscribe link and one-click unsubscribe on every list email;
+  - your mailing address and the ADHD disclaimer in every footer;
+  - texts only to men who checked the consent box;
+  - every text starts "Be The Man:" and ends "Reply STOP to opt out.";
+  - texts only between 9 AM and 8 PM Central;
+  - STOP, START and HELP handled automatically;
+  - a consent record kept for every text opt-in.
+
+## What happens on its own
+
+- **Step 1 page:** the man is tagged "Step 1" and gets the welcome series straight away. The mobile number is optional. If he checks the text box, he's opted in to texts.
+- **Founding Cohort purchase:** "You're in", then an email reminder the morning before each session and a text at 5 PM on the day for men who opted in. Both carry the Meet link.
+- **Forms, purchases, link clicks and text opt-ins:** each starts any automation you've set to that trigger.
+- **Bounces and spam complaints:** once the Resend webhook is set up (step 2), they take the address off the list automatically.
+
+## Setup (once)
+
+1. **Hourly scheduler** (exact timing; mail still flows without it):
+   1. In GitHub, set the default branch to `claude/sharp-sagan-jrcxxn`.
+   2. Make a long random password.
+   3. Add it as `CRON_SECRET` in two places: Cloudflare (Pages, Settings, Variables and Secrets, type Secret) and GitHub (Settings, Secrets and variables, Actions).
+   4. Run "Email scheduler" once from GitHub's Actions tab.
+2. **Bounce protection:**
+   1. In Resend, go to Webhooks and add the endpoint `https://bethemansystem.com/api/mail/webhook` with the events `email.bounced` and `email.complained`.
+   2. Save its signing secret in Cloudflare as `RESEND_WEBHOOK_SECRET`.
+3. **Texts:**
+   1. Create a Twilio account and buy a number. A toll-free number is usually simplest for a small sender.
+   2. Get it approved for business texting. US carriers require toll-free verification, or A2P 10DLC registration for a local number. This takes days to weeks and has small fees, so check Twilio's current pricing.
+   3. In Cloudflare, add `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN` and `TWILIO_FROM`.
+   4. On the Twilio number, set "A message comes in" to `https://bethemansystem.com/api/sms/inbound` (HTTP POST).
+   5. Send yourself a test from the Texts tab.
+
+Never paste these keys into chat.
 
 ## Limits
 
-- **Daily limit:** 90 list emails a day, which keeps you inside Resend's free plan of 100 a day and leaves room for receipts. Anything over the limit goes out the next day. If you upgrade Resend, set MAIL_DAILY_CAP in Cloudflare to raise it.
-- **Cloudflare's free storage:** about 1,000 writes a day, and each email sent uses about three. That's plenty at this size.
-
-## One-time setup: the hourly scheduler (5 minutes)
-
-Series emails go out on time even without this: every sign-up and every dashboard visit also sends what's due. The scheduler makes timing exact.
-
-1. **Set the default branch on GitHub.** GitHub only runs scheduled jobs from a repository's default branch, and yours is currently `claude/betheman-instagram-strategy-qjlm3l`. In the brionegre-crypto/Claude repository, go to Settings, then General, then Default branch, and switch it to `claude/sharp-sagan-jrcxxn` (the branch the live site runs from).
-2. **Make a long random password.** For example, a 32-character password from your password manager.
-3. **Cloudflare:** Workers & Pages, then bethemansystem, Settings, Variables and Secrets, Add. Name it `CRON_SECRET`, paste the password, type Secret, environment Production. Save.
-4. **GitHub:** the brionegre-crypto/Claude repository, then Settings, Secrets and variables, Actions, New repository secret. Name it `CRON_SECRET` and paste the same password.
-5. **Check it:** in GitHub, open Actions, then "Email scheduler", then "Run workflow". It should finish green.
-
-Don't paste the password into chat.
+- **Email:** 90 list emails a day (Resend's free plan allows 100). Change it with `MAIL_DAILY_CAP`.
+- **Texts:** 50 a day. Change it with `SMS_DAILY_CAP`.
+- **Storage:** Cloudflare's free plan allows about 1,000 database writes a day. Each email, open or click uses one to three. That's fine at your size. If the list grows into the thousands, Cloudflare's $5-a-month Workers plan raises the limit about a thousandfold.
+- **Open rates:** these run high, because some email apps load images automatically. Clicks are the honest number.

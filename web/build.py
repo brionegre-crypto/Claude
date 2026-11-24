@@ -85,6 +85,10 @@ def long_date(d):
 
 
 CFG = json.loads((ROOT / "site-config.json").read_text())["cohort"]
+# Keep in step with SMS_CONSENT in functions/_sms.js.
+SMS_CONSENT = ("Yes, text me Be The Man reminders. By checking this box, you agree to receive recurring automated text messages "
+               "from Be The Man at the number provided. Consent is not a condition of purchase. Msg frequency varies. Msg & data rates "
+               "may apply. Reply HELP for help, STOP to cancel. See our Terms and Privacy Policy at bethemansystem.com.")
 
 
 def cohort_vars(body):
@@ -104,6 +108,7 @@ def cohort_vars(body):
     }
     for k, v in rep.items():
         body = body.replace(k, v)
+    body = body.replace("{{sms_consent}}", html.escape(SMS_CONSENT))
     return body.replace("{{results}}", results_html())
 
 

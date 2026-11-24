@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Dashboard | Be The Man</title>
-<meta name="description" content="The Be The Man dashboard: contacts, email series and broadcasts.">
+<meta name="description" content="The Be The Man dashboard: contacts, segments, automations, forms, email series, broadcasts and texts.">
 <meta name="robots" content="noindex, follow">
 <link rel="canonical" href="https://bethemansystem.com/admin/">
 <link rel="icon" type="image/png" href="/assets/favicon.png">
@@ -13,7 +13,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Be The Man">
 <meta property="og:title" content="Dashboard | Be The Man">
-<meta property="og:description" content="The Be The Man dashboard: contacts, email series and broadcasts.">
+<meta property="og:description" content="The Be The Man dashboard: contacts, segments, automations, forms, email series, broadcasts and texts.">
 <meta property="og:url" content="https://bethemansystem.com/admin/">
 <meta property="og:image" content="https://bethemansystem.com/assets/og.png">
 <meta property="og:image:width" content="1200">
@@ -55,7 +55,7 @@
    "@id": "https://bethemansystem.com/admin/#page",
    "url": "https://bethemansystem.com/admin/",
    "name": "Dashboard | Be The Man",
-   "description": "The Be The Man dashboard: contacts, email series and broadcasts.",
+   "description": "The Be The Man dashboard: contacts, segments, automations, forms, email series, broadcasts and texts.",
    "isPartOf": {
     "@id": "https://bethemansystem.com/#site"
    },
@@ -91,248 +91,24 @@
 <div class="adm">
   <header class="adm-top">
     <a class="logo" href="/">BE <span>THE MAN</span></a>
-    <nav class="adm-tabs" role="tablist">
-      <button type="button" data-tab="overview" class="on">Overview</button>
+    <nav class="adm-tabs" aria-label="Dashboard">
+      <button type="button" data-tab="overview">Overview</button>
       <button type="button" data-tab="contacts">Contacts</button>
+      <button type="button" data-tab="segments">Segments</button>
+      <button type="button" data-tab="automations">Automations</button>
+      <button type="button" data-tab="forms">Forms</button>
       <button type="button" data-tab="series">Email series</button>
       <button type="button" data-tab="broadcasts">Broadcasts</button>
+      <button type="button" data-tab="texts">Texts <span class="dot-new" id="unread" hidden></span></button>
+      <button type="button" data-tab="help">Setup and help</button>
     </nav>
   </header>
   <p class="adm-flash" id="flash" role="status" hidden></p>
-
-  <section data-panel="overview">
-    <div class="adm-stats" id="stats"><p class="muted">Loading…</p></div>
-    <div class="adm-row">
-      <h2>Recent emails</h2>
-      <button class="btn btn-ghost btn-sm" type="button" id="run">Send due emails now</button>
-    </div>
-    <div class="adm-table" id="log"></div>
-  </section>
-
-  <section data-panel="contacts" hidden>
-    <div class="adm-row">
-      <input id="q" type="search" placeholder="Search name or email" aria-label="Search contacts">
-      <select id="tagf" aria-label="Filter by tag"><option value="">All tags</option></select>
-      <select id="statf" aria-label="Filter by status"><option value="">Any status</option><option>active</option><option>unsubscribed</option><option>bounced</option></select>
-    </div>
-    <div class="adm-row">
-      <button class="btn btn-primary btn-sm" type="button" id="add">Add a contact</button>
-      <button class="btn btn-ghost btn-sm" type="button" id="imp">Import CSV</button>
-      <a class="btn btn-ghost btn-sm" href="/api/admin/export">Export CSV</a>
-      <span class="muted" id="count"></span>
-    </div>
-    <div class="adm-table" id="contacts"></div>
-  </section>
-
-  <section data-panel="series" hidden>
-    <p class="muted">Each series sends on its own. Edit any email, send yourself a test, then save. Write in plain text: a blank line starts a new paragraph, <code>[[Button text|https://link]]</code> on its own line makes a button, <code>[text](https://link)</code> makes a link, <code>**bold**</code>, lines starting with <code>- </code> make a list, and <code>{{first_name}}</code> is the man's first name.</p>
-    <div id="series"></div>
-  </section>
-
-  <section data-panel="broadcasts" hidden>
-    <div class="adm-row"><button class="btn btn-primary btn-sm" type="button" id="newbc">New broadcast</button></div>
-    <div id="bcedit" hidden></div>
-    <div class="adm-table" id="bclist"></div>
-  </section>
-
+  <main id="view"><p class="muted">Loading…</p></main>
   <dialog id="dlg"><div id="dlgbody"></div></dialog>
 </div>
-
-<style>
-.adm{max-width:1080px;margin-inline:auto;padding:0 var(--gutter) 80px;display:grid;gap:20px}
-.adm-top{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:14px;padding-block:18px;border-bottom:1px solid var(--line)}
-.adm-tabs{display:flex;flex-wrap:wrap;gap:6px}
-.adm-tabs button{font:inherit;font-size:15px;font-weight:600;color:var(--muted);background:none;border:1px solid transparent;border-radius:999px;padding:8px 14px;cursor:pointer}
-.adm-tabs button.on{color:var(--fg);background:var(--tile-2);border-color:var(--line-2)}
-.adm h2{font-size:22px;font-weight:700}
-.adm-row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
-.adm-row h2{margin-right:auto}
-.adm input,.adm select,.adm textarea{font:inherit;font-size:15px;color:var(--fg);background:var(--bg);border:1px solid var(--line-2);border-radius:10px;padding:9px 12px;max-width:100%}
-.adm textarea{width:100%;min-height:200px;line-height:1.5}
-.adm input[type=search]{flex:1;min-width:200px}
-.adm-stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px}
-.adm-stat{background:var(--tile);border:1px solid var(--line);border-radius:16px;padding:16px 18px}
-.adm-stat b{display:block;font-size:30px;font-weight:700;line-height:1.1}
-.adm-stat span{color:var(--muted);font-size:14px}
-.adm-table{overflow-x:auto;border:1px solid var(--line);border-radius:14px}
-.adm-table table{width:100%;border-collapse:collapse;font-size:14px}
-.adm-table th,.adm-table td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
-.adm-table th{color:var(--dim);font-weight:600;font-size:13px}
-.adm-table tr.click{cursor:pointer}.adm-table tr.click:hover{background:var(--tile)}
-.tag{display:inline-block;font-size:12px;padding:2px 8px;border-radius:999px;background:var(--tile-2);border:1px solid var(--line);margin:0 4px 4px 0}
-.st-unsubscribed,.st-bounced,.fail{color:#ff9f8a}
-.adm-card{background:var(--tile);border:1px solid var(--line);border-radius:16px;padding:18px;display:grid;gap:12px;margin-bottom:14px}
-.adm-card label{display:grid;gap:6px;font-size:14px;color:var(--muted)}
-.adm-flash{padding:12px 16px;border-radius:12px;background:var(--tile-2);border:1px solid var(--line-2)}
-.adm dialog{max-width:640px;width:calc(100% - 32px);background:var(--bg);color:var(--fg);border:1px solid var(--line-2);border-radius:18px;padding:22px}
-.adm dialog::backdrop{background:rgba(0,0,0,.6)}
-.adm iframe{width:100%;height:520px;border:1px solid var(--line);border-radius:12px;background:#f4f2ee}
-.adm code{font-family:var(--mono);font-size:13px}
-</style>
-
-<script>
-(function(){
-  var $=function(s,r){return (r||document).querySelector(s)}, $$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
-  var esc=function(v){return String(v==null?'':v).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})};
-  var day=function(t){return t?new Date(t).toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'}):''};
-  var when=function(t){return t?new Date(t).toLocaleString(undefined,{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}):''};
-  function flash(msg){var f=$('#flash');f.textContent=msg;f.hidden=false;clearTimeout(flash.t);flash.t=setTimeout(function(){f.hidden=true},5000)}
-  function api(path,body){
-    return fetch('/api/admin/'+path,body?{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(body)}:{credentials:'same-origin'})
-      .then(function(r){if(r.status===401){location.href='/admin-login/';throw 0}return r.json()})
-      .then(function(d){if(!d.ok&&d.error)flash(d.error);return d});
-  }
-  function dialog(html){$('#dlgbody').innerHTML=html;$('#dlg').showModal();return $('#dlgbody')}
-  $('#dlg').addEventListener('click',function(e){if(e.target.id==='dlg'||e.target.dataset.close!==undefined)$('#dlg').close()});
-
-  // tabs
-  var loaded={};
-  function show(tab){
-    $$('.adm-tabs button').forEach(function(b){b.classList.toggle('on',b.dataset.tab===tab)});
-    $$('[data-panel]').forEach(function(p){p.hidden=p.dataset.panel!==tab});
-    try{localStorage.setItem('btm-admin-tab',tab)}catch(e){}
-    ({overview:overview,contacts:contacts,series:series,broadcasts:broadcasts})[tab]();
-  }
-  $$('.adm-tabs button').forEach(function(b){b.onclick=function(){show(b.dataset.tab)}});
-
-  // overview
-  function overview(){
-    api('overview').then(function(d){
-      if(!d.ok)return;
-      var s=[['Active contacts',d.active],['New this week',d.newThisWeek],['Cohort seats sold',d.seats?d.seats.sold+' of '+d.seats.limit:'n/a'],['Emails sent today',d.sentToday+' of '+d.cap],['Unsubscribed',d.unsubscribed],['Bounced',d.bounced]];
-      var tags=Object.keys(d.tags).sort().map(function(t){return '<span class="tag">'+esc(t)+' · '+d.tags[t]+'</span>'}).join('');
-      $('#stats').innerHTML=s.map(function(x){return '<div class="adm-stat"><b>'+esc(x[1])+'</b><span>'+esc(x[0])+'</span></div>'}).join('')+
-        (tags?'<div class="adm-stat" style="grid-column:1/-1"><span>Tags</span><div style="margin-top:8px">'+tags+'</div></div>':'');
-      $('#log').innerHTML=d.log.length?'<table><tr><th>When</th><th>To</th><th>Email</th><th>From</th><th></th></tr>'+d.log.map(function(l){
-        return '<tr><td>'+when(l.at)+'</td><td>'+esc(l.e)+'</td><td>'+esc(l.s)+'</td><td>'+esc((l.k||'').replace('series:','Series: ').replace('broadcast:','Broadcast'))+'</td><td>'+(l.ok?'Sent':'<span class="fail">Failed: '+esc(l.err||'')+'</span>')+'</td></tr>'}).join('')+'</table>':'<p class="muted" style="padding:14px">No emails sent yet.</p>';
-    });
-  }
-  $('#run').onclick=function(){api('tick',{}).then(function(d){if(d.ok)flash(d.busy?'Already sending. Check again in a minute.':'Sent '+(d.series+d.broadcast)+' due email(s).'+(d.capped?' The daily limit is reached; the rest go tomorrow.':''));overview()})};
-
-  // contacts
-  var CONTACTS=[];
-  function contacts(){
-    api('contacts').then(function(d){
-      if(!d.ok)return; CONTACTS=d.contacts;
-      var tags={};CONTACTS.forEach(function(c){(c.t||'').split('|').filter(Boolean).forEach(function(t){tags[t]=1})});
-      var sel=$('#tagf'),cur=sel.value;sel.innerHTML='<option value="">All tags</option>'+Object.keys(tags).sort().map(function(t){return '<option>'+esc(t)+'</option>'}).join('');sel.value=cur;
-      drawContacts();
-    });
-  }
-  function drawContacts(){
-    var q=$('#q').value.trim().toLowerCase(),tg=$('#tagf').value,st=$('#statf').value;
-    var list=CONTACTS.filter(function(c){return (!q||(c.email+' '+(c.n||'')).toLowerCase().indexOf(q)>=0)&&(!tg||(c.t||'').split('|').indexOf(tg)>=0)&&(!st||c.s===st)});
-    $('#count').textContent=list.length+' of '+CONTACTS.length;
-    $('#contacts').innerHTML=list.length?'<table><tr><th>Name</th><th>Email</th><th>Tags</th><th>Status</th><th>Joined</th></tr>'+list.slice(0,500).map(function(c){
-      return '<tr class="click" data-e="'+esc(c.email)+'"><td>'+esc(c.n||'')+'</td><td>'+esc(c.email)+'</td><td>'+(c.t||'').split('|').filter(Boolean).map(function(t){return '<span class="tag">'+esc(t)+'</span>'}).join('')+'</td><td class="st-'+esc(c.s)+'">'+esc(c.s)+'</td><td>'+day(c.d)+'</td></tr>'}).join('')+'</table>':'<p class="muted" style="padding:14px">No contacts match.</p>';
-    $$('#contacts tr.click').forEach(function(r){r.onclick=function(){openContact(r.dataset.e)}});
-  }
-  ['q','tagf','statf'].forEach(function(id){$('#'+id).addEventListener('input',drawContacts)});
-  function openContact(email){
-    api('contact?e='+encodeURIComponent(email)).then(function(d){
-      if(!d.ok)return; var c=d.contact;
-      var seq=Object.keys(c.seq||{}).map(function(id){var s=c.seq[id];return '<li>'+esc(id)+': '+(s.done?'finished':'next email '+when(s.next)+' (email '+(s.step+1)+')')+'</li>'}).join('')||'<li>None</li>';
-      var fields=Object.keys(c.fields||{}).map(function(k){return '<li>'+esc(k)+': '+esc(c.fields[k])+'</li>'}).join('');
-      var b=dialog('<div class="adm-card" style="margin:0"><h2>'+esc(c.name||c.email)+'</h2><p class="muted">'+esc(c.email)+' · joined '+day(c.created)+(c.source?' · from '+esc(c.source):'')+'</p>'+
-        '<label>Name<input id="cn" value="'+esc(c.name||'')+'"></label>'+
-        '<label>Tags (comma-separated)<input id="ct" value="'+esc((c.tags||[]).join(', '))+'"></label>'+
-        '<label>Status<select id="cs"><option>active</option><option>unsubscribed</option><option>bounced</option></select></label>'+
-        '<div><p class="muted">Series</p><ul>'+seq+'</ul></div>'+(fields?'<div><p class="muted">Details</p><ul>'+fields+'</ul></div>':'')+
-        '<div class="adm-row"><button class="btn btn-primary btn-sm" id="csave">Save</button><select id="cen"><option value="">Start a series…</option><option value="step1">Step 1 welcome series</option><option value="cohort">Founding Cohort reminders</option></select><button class="btn btn-ghost btn-sm" id="cdel">Delete</button><button class="btn btn-ghost btn-sm" data-close>Close</button></div>'+
-        '<p class="muted" style="font-size:13px">Only set someone back to active if they asked to be on the list again.</p></div>');
-      $('#cs',b).value=c.status;
-      $('#csave',b).onclick=function(){
-        var now=$('#ct',b).value.split(',').map(function(s){return s.trim()}).filter(Boolean);
-        api('contact',{email:c.email,name:$('#cn',b).value,addTags:now.filter(function(t){return c.tags.indexOf(t)<0}),removeTags:c.tags.filter(function(t){return now.indexOf(t)<0}),status:$('#cs',b).value})
-          .then(function(r){if(r.ok){flash('Saved.');$('#dlg').close();contacts()}});
-      };
-      $('#cen',b).onchange=function(){var id=this.value;if(!id)return;api('enroll',{email:c.email,id:id}).then(function(r){if(r.ok){flash('Started the series. Any email due now has gone out.');$('#dlg').close();contacts()}})};
-      $('#cdel',b).onclick=function(){if(!confirm('Delete '+c.email+'? This removes them from the list completely. To stop emails but keep the record, set them to unsubscribed instead.'))return;api('contact-delete',{email:c.email}).then(function(){flash('Deleted.');$('#dlg').close();contacts()})};
-    });
-  }
-  $('#add').onclick=function(){
-    var b=dialog('<div class="adm-card" style="margin:0"><h2>Add a contact</h2><label>Email<input id="ae" type="email"></label><label>Name<input id="an"></label><label>Tags (comma-separated)<input id="at"></label><p class="muted" style="font-size:13px">Only add people who asked to hear from you.</p><div class="adm-row"><button class="btn btn-primary btn-sm" id="asave">Add</button><button class="btn btn-ghost btn-sm" data-close>Cancel</button></div></div>');
-    $('#asave',b).onclick=function(){api('contact',{email:$('#ae',b).value,name:$('#an',b).value,addTags:$('#at',b).value.split(',').map(function(s){return s.trim()}).filter(Boolean)}).then(function(r){if(r.ok){flash('Added.');$('#dlg').close();contacts()}})};
-  };
-  $('#imp').onclick=function(){
-    var b=dialog('<div class="adm-card" style="margin:0"><h2>Import contacts</h2><p class="muted">Paste a CSV with an email column and, if you have it, a name column (a Kit export works). Everyone gets the tag below. Existing contacts keep their status.</p><label>CSV<textarea id="icsv" placeholder="email,name"></textarea></label><label>Tag<input id="itag" value="Imported"></label><div class="adm-row"><button class="btn btn-primary btn-sm" id="igo">Import</button><button class="btn btn-ghost btn-sm" data-close>Cancel</button></div></div>');
-    $('#igo',b).onclick=function(){api('import',{csv:$('#icsv',b).value,tag:$('#itag',b).value.trim()}).then(function(r){if(r.ok){flash('Imported '+r.added+(r.skipped?', skipped '+r.skipped+' without a valid email':'')+'.');$('#dlg').close();contacts()}})};
-  };
-
-  // series
-  function emailFields(s,e,i){
-    return '<div class="adm-card" data-i="'+i+'"><div class="adm-row"><b>Email '+(i+1)+'</b>'+
-      (s.kind==='dated'?'<label style="display:flex;gap:8px;align-items:center">Sends<input class="f-at" value="'+esc(e.at)+'" size="28"></label>':'<label style="display:flex;gap:8px;align-items:center">Days after they join<input class="f-d" type="number" min="0" value="'+esc(e.delayDays)+'" style="width:80px"></label>')+
-      '</div><label>Subject<input class="f-s" value="'+esc(e.subject)+'"></label><label>Body<textarea class="f-b">'+esc(e.body)+'</textarea></label>'+
-      '<div class="adm-row"><button class="btn btn-ghost btn-sm f-prev" type="button">Preview</button><button class="btn btn-ghost btn-sm f-test" type="button">Send me a test</button><button class="btn btn-ghost btn-sm f-rm" type="button">Remove</button></div></div>';
-  }
-  function series(){
-    api('sequences').then(function(d){
-      if(!d.ok)return;
-      $('#series').innerHTML=d.sequences.map(function(s){
-        return '<section class="adm-card" data-id="'+esc(s.id)+'" data-kind="'+esc(s.kind)+'"><div class="adm-row"><h2>'+esc(s.name)+'</h2><span class="muted">'+esc(s.starts)+' · '+s.inProgress+' in progress'+(s.edited?' · edited '+day(s.edited):'')+'</span></div>'+
-          (s.kind==='dated'?'<p class="muted" style="font-size:13px">Dates use Central time, for example 2026-12-09T10:00:00-06:00. A man who joins late skips dates already past.</p>':'')+
-          '<div class="mails">'+s.emails.map(function(e,i){return emailFields(s,e,i)}).join('')+'</div>'+
-          '<div class="adm-row"><button class="btn btn-ghost btn-sm s-add" type="button">Add an email</button><button class="btn btn-primary btn-sm s-save" type="button">Save series</button>'+(s.edited?'<button class="btn btn-ghost btn-sm s-reset" type="button">Restore the original</button>':'')+'</div></section>';
-      }).join('');
-      $$('#series section').forEach(function(sec){
-        var kind=sec.dataset.kind;
-        function wire(card){
-          $('.f-prev',card).onclick=function(){api('preview',{body:$('.f-b',card).value}).then(function(r){var b=dialog('<h2 style="margin-bottom:10px">'+esc($('.f-s',card).value)+'</h2><iframe></iframe><div class="adm-row" style="margin-top:12px"><button class="btn btn-ghost btn-sm" data-close>Close</button></div>');$('iframe',b).srcdoc=r.html})};
-          $('.f-test',card).onclick=function(){api('test',{subject:$('.f-s',card).value,body:$('.f-b',card).value}).then(function(r){if(r.ok)flash('Test sent to '+r.to+'.')})};
-          $('.f-rm',card).onclick=function(){if(confirm('Remove this email from the series? It is gone once you save.'))card.remove()};
-        }
-        $$('.mails .adm-card',sec).forEach(wire);
-        $('.s-add',sec).onclick=function(){var tmp=document.createElement('div');tmp.innerHTML=emailFields({kind:kind},{subject:'',body:'',delayDays:0,at:''},$$('.mails .adm-card',sec).length);var card=tmp.firstChild;$('.mails',sec).appendChild(card);wire(card)};
-        $('.s-save',sec).onclick=function(){
-          var emails=$$('.mails .adm-card',sec).map(function(card){var e={subject:$('.f-s',card).value,body:$('.f-b',card).value};if(kind==='dated')e.at=$('.f-at',card).value;else e.delayDays=$('.f-d',card).value;return e});
-          api('sequence',{id:sec.dataset.id,emails:emails}).then(function(r){if(r.ok){flash('Saved. Men already in the series get the new wording from their next email.');series()}});
-        };
-        var rs=$('.s-reset',sec);if(rs)rs.onclick=function(){if(confirm('Restore the original emails for this series?'))api('sequence-reset',{id:sec.dataset.id}).then(function(){flash('Restored.');series()})};
-      });
-    });
-  }
-
-  // broadcasts
-  function broadcasts(){
-    api('broadcasts').then(function(d){
-      if(!d.ok)return;
-      $('#bclist').innerHTML=d.broadcasts.length?'<table><tr><th>Subject</th><th>To</th><th>Status</th><th>Created</th></tr>'+d.broadcasts.map(function(b){
-        return '<tr class="click" data-id="'+esc(b.id)+'"><td>'+esc(b.s)+'</td><td>'+(b.t?'<span class="tag">'+esc(b.t)+'</span>':'Everyone active')+'</td><td>'+esc(b.st)+(b.st!=='draft'?' · '+(b.sent||0)+' of '+(b.total||0):'')+'</td><td>'+day(b.c)+'</td></tr>'}).join('')+'</table>':'<p class="muted" style="padding:14px">No broadcasts yet.</p>';
-      $$('#bclist tr.click').forEach(function(r){r.onclick=function(){api('broadcast?id='+encodeURIComponent(r.dataset.id)).then(function(x){if(x.ok)editBroadcast(x.broadcast)})}});
-    });
-  }
-  function editBroadcast(b){
-    b=b||{subject:'',body:'',tag:'',status:'draft'};
-    var tags={};CONTACTS.forEach(function(c){(c.t||'').split('|').filter(Boolean).forEach(function(t){tags[t]=1})});
-    var draft=b.status==='draft', el=$('#bcedit');el.hidden=false;
-    el.innerHTML='<div class="adm-card"><h2>'+(b.id?(draft?'Edit draft':'Sent broadcast'):'New broadcast')+'</h2>'+
-      '<label>Send to<select id="bt"'+(draft?'':' disabled')+'><option value="">Everyone active</option>'+Object.keys(tags).sort().map(function(t){return '<option>'+esc(t)+'</option>'}).join('')+'</select></label>'+
-      '<label>Subject<input id="bs" value="'+esc(b.subject)+'"'+(draft?'':' readonly')+'></label><label>Body<textarea id="bb"'+(draft?'':' readonly')+'>'+esc(b.body)+'</textarea></label>'+
-      (draft?'<div class="adm-row"><button class="btn btn-ghost btn-sm" id="bprev">Preview</button><button class="btn btn-ghost btn-sm" id="btest">Send me a test</button><button class="btn btn-ghost btn-sm" id="bsave">Save draft</button><button class="btn btn-primary btn-sm" id="bsend">Send</button>'+(b.id?'<button class="btn btn-ghost btn-sm" id="bdel">Delete draft</button>':'')+'<button class="btn btn-ghost btn-sm" id="bclose">Close</button></div><p class="muted" style="font-size:13px">Sending goes out within the daily limit ('+'unsubscribed and bounced contacts are skipped). Anything over the limit goes the next day.</p>'
-        :'<p class="muted">'+esc(b.status)+' · '+(b.sent||0)+' sent of '+(b.total||0)+(b.failed?' · '+b.failed+' failed':'')+'</p><div class="adm-row"><button class="btn btn-ghost btn-sm" id="bclose">Close</button></div>')+'</div>';
-    if(!CONTACTS.length)api('contacts').then(function(d){if(d.ok){CONTACTS=d.contacts;}});
-    $('#bt').value=b.tag||'';
-    $('#bclose').onclick=function(){el.hidden=true};
-    if(!draft)return;
-    var data=function(){return {id:b.id,subject:$('#bs').value,body:$('#bb').value,tag:$('#bt').value}};
-    $('#bprev').onclick=function(){api('preview',{body:$('#bb').value}).then(function(r){var x=dialog('<h2 style="margin-bottom:10px">'+esc($('#bs').value)+'</h2><iframe></iframe><div class="adm-row" style="margin-top:12px"><button class="btn btn-ghost btn-sm" data-close>Close</button></div>');$('iframe',x).srcdoc=r.html})};
-    $('#btest').onclick=function(){api('test',data()).then(function(r){if(r.ok)flash('Test sent to '+r.to+'.')})};
-    $('#bsave').onclick=function(){api('broadcast',data()).then(function(r){if(r.ok){b=r.broadcast;flash('Draft saved.');broadcasts();editBroadcast(b)}})};
-    $('#bsend').onclick=function(){
-      var n=CONTACTS.filter(function(c){return c.s==='active'&&(!$('#bt').value||(c.t||'').split('|').indexOf($('#bt').value)>=0)}).length;
-      if(!confirm('Send "'+$('#bs').value+'" to '+n+' contact(s)? This can\'t be undone.'))return;
-      api('broadcast',data()).then(function(r){if(!r.ok)return;return api('broadcast-send',{id:r.broadcast.id})}).then(function(r){if(r&&r.ok){flash('Sending. Progress shows in the list.');el.hidden=true;broadcasts()}});
-    };
-    var del=$('#bdel');if(del)del.onclick=function(){if(confirm('Delete this draft?'))api('broadcast-delete',{id:b.id}).then(function(){el.hidden=true;broadcasts()})};
-  }
-  $('#newbc').onclick=function(){editBroadcast(null)};
-
-  var first='overview';try{first=localStorage.getItem('btm-admin-tab')||'overview'}catch(e){}
-  show(first);
-  api('contacts').then(function(d){if(d.ok)CONTACTS=d.contacts});
-})();
-</script>
+<link rel="stylesheet" href="/assets/admin.css">
+<script src="/assets/admin.js" defer></script>
 </main>
 <script src="/assets/site.js" defer></script>
 </body>

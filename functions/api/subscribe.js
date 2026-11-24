@@ -6,7 +6,8 @@
 // If the email can't be sent, the visitor sees a "please try again" message.
 
 import { notifyBrian, firstName } from "../_mail.js";
-import { upsertContact, enroll, runContact, sendToContact, getSequence, tick } from "../_list.js";
+import { toE164 } from "../_sms.js";
+import { upsertContact, getContact, enroll, runContact, sendToContact, getSequence, fireTrigger, tick } from "../_list.js";
 
 const LISTS = {
   step1: { tag: "Step 1", series: "step1", thanks: "/step-1/thanks/" },
@@ -86,7 +87,9 @@ async function handle(request, env, data, context) {
   const fields = list === LISTS.lowseat ? lowSeatFields(data) : {};
   let ok = false;
   try {
-    const c = await upsertContact(env, { email, name, tags: [list.tag], fields, source: list.tag });
+    const phone = toE164(data.phone);
+    const c = await upsertContact(env, { email, name, tags: [list.tag], fields, source: list.tag, phone,
+      smsConsent: phone && (data.sms === true || data.sms === "1" || data.sms === "on") ? { source: list.tag, ip: request.headers.get("cf-connecting-ip") || "" } : null });
     if (c && list.series && !(c.seq && c.seq[list.series])) {
       await enroll(env, c, list.series);
       ok = (await runContact(env, c)) > 0;
@@ -99,10 +102,11 @@ async function handle(request, env, data, context) {
     }
   } catch (e) {}
   if (ok) {
+    try { const c2 = await getContact(env, email); if (c2) await fireTrigger(env, c2, "form", key); } catch (e) {}
     notifyBrian(env, context, {
       subject: `New sign-up: ${LIST_NAMES[key]}${name ? `, ${firstName(name)}` : ""}`,
       replyTo: email,
-      rows: [["Signed up for", LIST_NAMES[key]], ["Name", name], ["Email", email],
+      rows: [["Signed up for", LIST_NAMES[key]], ["Name", name], ["Email", email], ["Mobile", toE164(data.phone)], ["Texts", toE164(data.phone) && data.sms ? "Opted in" : ""],
         ["Low Seat score", fields.low_seat_score], ["Thinnest posture", fields.low_seat_posture]],
     });
     if (context.waitUntil) context.waitUntil(tick(env, { max: 10 }).catch(() => null));

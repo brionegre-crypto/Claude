@@ -9,6 +9,9 @@
 //   - item                a bullet list
 //   {{first_name}}        the man's first name ("friend" if unknown)
 //
+// A step can also carry "text": a text message sent at the same time to men who
+// opted in to texts (sending hours apply). A step with only "text" sends no email.
+//
 // "relative" series send each email delayDays after the man joins the series.
 // "dated" series send on fixed dates (at, Central time); a man who joins late
 // skips the dates already past.
@@ -118,6 +121,10 @@ Join two minutes early from a quiet room. See you there.
 Brian`,
       },
       {
+        at: "2026-12-10T17:00:00-06:00",
+        text: "Founding Cohort tonight, 7 PM Central (Week 1). Join here: ${MEET}",
+      },
+      {
         at: "2026-12-16T10:00:00-06:00",
         subject: "Tomorrow, 7 PM Central: Week 2, The Commitments",
         body: `{{first_name}}, Week 2 is tomorrow, Thursday, at 7 PM Central.
@@ -131,6 +138,10 @@ After tomorrow we break for Christmas and New Year's. No call December 24 or 31.
 Brian`,
       },
       {
+        at: "2026-12-17T17:00:00-06:00",
+        text: "Founding Cohort tonight, 7 PM Central (Week 2). Join here: ${MEET}",
+      },
+      {
         at: "2027-01-06T10:00:00-06:00",
         subject: "Tomorrow, 7 PM Central: Week 3, The Floor",
         body: `{{first_name}}, we are back tomorrow, Thursday, at 7 PM Central.
@@ -142,6 +153,10 @@ Week 3 is The Floor, part one: a day, a time, a place and a trigger for each com
 Brian`,
       },
       {
+        at: "2027-01-07T17:00:00-06:00",
+        text: "Founding Cohort tonight, 7 PM Central (Week 3). Join here: ${MEET}",
+      },
+      {
         at: "2027-01-13T10:00:00-06:00",
         subject: "Tomorrow, 7 PM Central: Week 4, the bad-day version",
         body: `{{first_name}}, Week 4 is tomorrow, Thursday, at 7 PM Central.
@@ -151,6 +166,10 @@ Brian`,
 The Floor, part two: the two-minute version of every commitment, so one bad Wednesday bends the plan instead of ending it. Bring the commitment you missed most this week.
 
 Brian`,
+      },
+      {
+        at: "2027-01-14T17:00:00-06:00",
+        text: "Founding Cohort tonight, 7 PM Central (Week 4). Join here: ${MEET}",
       },
       {
         at: "2027-01-20T10:00:00-06:00",
@@ -166,6 +185,10 @@ The Ledger: score, report, take grace, reset. Print the scorecard and fill in th
 Brian`,
       },
       {
+        at: "2027-01-21T17:00:00-06:00",
+        text: "Founding Cohort tonight, 7 PM Central (Week 5). Join here: ${MEET}",
+      },
+      {
         at: "2027-01-27T10:00:00-06:00",
         subject: "Tomorrow, 7 PM Central: Week 6, the reset",
         body: `{{first_name}}, our last session is tomorrow, Thursday, at 7 PM Central.
@@ -175,6 +198,10 @@ Brian`,
 Bring every Ledger you have kept. We read the numbers together, decide what stays, and I'll show you how to keep it running in the Club.
 
 Brian`,
+      },
+      {
+        at: "2027-01-28T17:00:00-06:00",
+        text: "Founding Cohort tonight, 7 PM Central (Week 6). Join here: ${MEET}",
       },
     ],
   },

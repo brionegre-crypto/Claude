@@ -2,7 +2,7 @@
 // GET shows a confirm button; POST unsubscribes. Gmail and Apple Mail's one-click
 // unsubscribe (List-Unsubscribe-Post) POSTs here directly.
 
-import { verifyUnsub, setStatus, getContact } from "../../_list.js";
+import { verifyUnsub, recordUnsub, getContact } from "../../_list.js";
 
 const page = (title, msg, form = "") => new Response(
   `<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>${title}</title>` +
@@ -12,8 +12,9 @@ const page = (title, msg, form = "") => new Response(
 
 export async function onRequestGet({ request, env }) {
   const t = new URL(request.url).searchParams.get("t") || "";
-  const email = await verifyUnsub(env, t);
-  if (!email) return page("That link has expired.", "Reply to any email from Brian and say \"unsubscribe\", and he'll take you off the list.");
+  const d = await verifyUnsub(env, t);
+  if (!d) return page("That link has expired.", "Reply to any email from Brian and say \"unsubscribe\", and he'll take you off the list.");
+  const email = d.e;
   const c = await getContact(env, email);
   if (c && c.status === "unsubscribed") return page("You're unsubscribed.", "You won't get list emails from Be The Man. If you ever want them again, sign up for Step 1 at bethemansystem.com.");
   return page("Unsubscribe?", `Stop all list emails to <b>${email.replace(/</g, "&lt;")}</b>?`,
@@ -24,8 +25,8 @@ export async function onRequestPost({ request, env }) {
   const url = new URL(request.url);
   let t = url.searchParams.get("t") || "";
   try { const f = await request.formData(); if (f.get("t")) t = f.get("t"); } catch (e) {}
-  const email = await verifyUnsub(env, t);
-  if (!email) return page("That link has expired.", "Reply to any email from Brian and say \"unsubscribe\", and he'll take you off the list.");
-  await setStatus(env, email, "unsubscribed");
+  const d = await verifyUnsub(env, t);
+  if (!d) return page("That link has expired.", "Reply to any email from Brian and say \"unsubscribe\", and he'll take you off the list.");
+  await recordUnsub(env, d);
   return page("You're unsubscribed.", "You won't get list emails from Be The Man anymore. Receipts for anything you buy still come through.");
 }
