@@ -295,6 +295,7 @@ struct TasksView: View {
                         }
                         Menu("Set up", systemImage: "gearshape") {
                             NavigationLink { LazyView(TagsManagerView()) } label: { Label("Manage tags", systemImage: "number") }
+                            NavigationLink { LazyView(CalendarRolesView()) } label: { Label("Calendars in Tasks & Today", systemImage: "calendar.badge.checkmark") }
                             NavigationLink { LazyView(AutomationsView()) } label: { Label("Automations", systemImage: "bolt.horizontal") }
                             NavigationLink { LazyView(ScreenshotTasksView()) } label: { Label("Tasks from screenshots", systemImage: "camera.viewfinder") }
                             NavigationLink { LazyView(TaskCSVImportView()) } label: { Label("Import a spreadsheet", systemImage: "tablecells") }

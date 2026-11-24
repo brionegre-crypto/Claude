@@ -230,8 +230,10 @@ struct VoyageView: View {
         let anchor = cal.date(bySettingHour: bedtime / 60, minute: bedtime % 60, second: 0, of: now) ?? now.addingTimeInterval(4 * 3600)
         var out: [VoyageStop] = []
         for e in CalendarService.shared.todaysEvents() where !e.isAllDay && e.endDate > now && e.startDate < anchor {
+            guard CalendarRoles.busy(e) else { continue }
+            let listed = CalendarRoles.shows(e)                        // shared/others' events: just "Busy"
             out.append(VoyageStop(id: "e" + (e.calendarItemIdentifier) + "\(e.startDate.timeIntervalSince1970)", kind: .port, time: e.startDate,
-                                  title: e.title ?? "Event", detail: "\(e.startDate.formatted(date: .omitted, time: .shortened))–\(e.endDate.formatted(date: .omitted, time: .shortened))", gapEnd: e.endDate))
+                                  title: listed ? (e.title ?? "Event") : "Busy", detail: "\(e.startDate.formatted(date: .omitted, time: .shortened))–\(e.endDate.formatted(date: .omitted, time: .shortened))", gapEnd: e.endDate))
         }
         // Timed routines are one stop ("Morning routine · 6 steps"), and their steps don't also show as tasks.
         let routines = RoutineStore.all.filter { $0.startMinute != nil }
@@ -255,7 +257,7 @@ struct VoyageView: View {
         var withWater: [VoyageStop] = []
         var cursor = now
         for s in out {
-            if s.time.timeIntervalSince(cursor) >= 45 * 60 {
+            if s.time.timeIntervalSince(cursor) >= 45 * 60 && (UserDefaults.standard.object(forKey: "custom.today.openWater") as? Bool ?? true) {
                 withWater.append(VoyageStop(id: "w\(cursor.timeIntervalSince1970)", kind: .water, time: cursor, title: Self.span(cursor, s.time), gapEnd: s.time))
             }
             withWater.append(s)

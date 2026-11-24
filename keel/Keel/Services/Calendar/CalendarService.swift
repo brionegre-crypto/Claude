@@ -87,7 +87,7 @@ final class CalendarService {
         guard end > from else { return [] }
         var cursor = from
         var gaps: [DateInterval] = []
-        for e in events(from: from, to: end) where !e.isAllDay {
+        for e in events(from: from, to: end) where !e.isAllDay && CalendarRoles.busy(e) {      // shared calendars block time too
             if e.startDate.timeIntervalSince(cursor) >= Double(minMinutes * 60) {
                 gaps.append(DateInterval(start: cursor, end: e.startDate))
             }

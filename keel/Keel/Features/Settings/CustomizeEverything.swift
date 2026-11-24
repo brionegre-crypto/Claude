@@ -113,6 +113,10 @@ struct TodayCustomizeView: View {
     @AppStorage("custom.today.favoritePages") private var favoritePages = true
     @AppStorage(CalendarClashes.onKey) private var clashes = true
     @AppStorage("custom.today.progress") private var progress = true
+    @AppStorage("custom.today.voyage") private var voyage = true
+    @AppStorage("custom.today.openWater") private var openWater = true
+    @AppStorage("custom.today.nextPeople") private var nextPeople = true
+    @AppStorage("custom.today.waterline") private var waterline = true
     @AppStorage("custom.today.pinnedMail") private var pinnedMail = true
     @AppStorage(DailyAffirmation.toggleKey) private var affirmation = true
     @AppStorage("today.tomorrowPreview") private var tomorrow = true
@@ -138,6 +142,12 @@ struct TodayCustomizeView: View {
                 Toggle("Pinned emails", isOn: $pinnedMail)
                 Toggle("Today's progress ring", isOn: $progress)
             }
+            Section {
+                Toggle("Your day as a route (the voyage)", isOn: $voyage)
+                if voyage { Toggle("Show free time (open water)", isOn: $openWater) }
+                Toggle("Who you're meeting next", isOn: $nextPeople)
+                Toggle("Waterline divider", isOn: $waterline)
+            } header: { Text("Your day") } footer: { Text("Which calendars show here, block time or are ignored: Tasks → menu → Set up → Calendars in Tasks & Today.") }
             Section {
                 Toggle("Tomorrow at a glance", isOn: $tomorrow)
                 if tomorrow {

@@ -412,7 +412,7 @@ enum HubCatalog {
                 let at = tools.firstIndex { t in spec.members.contains { $0.id == t.id } } ?? tools.count
                 tools.insert(hub, at: at)
             }
-            tools.removeAll { merged.contains($0.id) }
+            tools.removeAll { merged.contains($0.id) || ToolHubs.inBodyTab.contains($0.id) }
             return HubGroup(id: g.id, title: g.title, subtitle: g.subtitle, icon: g.icon, color: g.color, tools: tools)
         }
     }()

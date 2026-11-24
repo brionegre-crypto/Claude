@@ -58,7 +58,7 @@ struct TodayView: View {
 
     private var energy: EnergyLevel { EnergyLevel(rawValue: energyRaw) ?? .medium }
     private var nextThing: TaskItem? { ADHDCoach.nextThing(tasks: tasks, energy: energy) }
-    private var events: [EKEvent] { CalendarService.shared.todaysEvents().filter { $0.endDate > Date() } }
+    private var events: [EKEvent] { CalendarService.shared.todaysEvents().filter { $0.endDate > Date() && CalendarRoles.shows($0) } }
     /// "Up next" skips all-day events (holidays, birthdays): they have no start to count down to.
     private var upNextEvents: [EKEvent] { events.filter { !$0.isAllDay } }
 
@@ -78,9 +78,15 @@ struct TodayView: View {
                     FavoritePagesCard()                             // starred pages, one tap away
                     ClashesCard()                                   // overlapping events this week, with a fix
                     PinnedEmailsCard()                              // emails you pinned in Inbox
-                    VoyageView()                                    // your day as a route: now, ports, open water, anchor
-                    NextMeetingPeopleCard()                         // who you're meeting next, with Running late and Prep
-                    Waterline(label: "Below the waterline · the rest of your day")
+                    if UserDefaults.standard.object(forKey: "custom.today.voyage") as? Bool ?? true {
+                        VoyageView()                                // your day as a route: now, ports, open water, anchor
+                    }
+                    if UserDefaults.standard.object(forKey: "custom.today.nextPeople") as? Bool ?? true {
+                        NextMeetingPeopleCard()                     // who you're meeting next, with Running late and Prep
+                    }
+                    if UserDefaults.standard.object(forKey: "custom.today.waterline") as? Bool ?? true {
+                        Waterline(label: "Below the waterline · the rest of your day")
+                    }
                     ForEach((calm ? TodayCard.calm : TodayCard.current(phase: DayPhase.now)).filter { $0 != .upNext && $0 != .oneThing }) { card($0) }
                     if calm {
                         Label("Calm mode is on. Everything else is still here when you want it.", systemImage: "leaf")

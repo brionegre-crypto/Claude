@@ -40,14 +40,26 @@ enum ToolHubs {
               keywords: "calm breathe grounding feelings reframe worry anxious stress panic", group: "calm",
               intro: "Ways to settle your mind and body. Breathe slows your heart, Grounding brings you back to the room, Feelings names what's going on, Reframe untangles a thought, Worry time parks worries for later.",
               members: [("breathe", "Breathe"), ("grounding", "Grounding"), ("feelings", "Feelings"), ("reframe", "Reframe"), ("worry", "Worry time")]),
-        .init(id: "foodHub", title: "Food", icon: "fork.knife.circle.fill",
-              keywords: "food meal log eat nutrition calories meal plan groceries caffeine water fasting", group: "food",
-              intro: "Everything about eating: today's totals, logging a meal, your meal plan and groceries, caffeine and water, and fasting.",
-              members: [("food", "Today"), ("describeMeal", "Log a meal"), ("mealplan", "Meal plan"), ("drinks", "Drinks"), ("fasting", "Fasting")]),
-        .init(id: "medsHub", title: "Medications", icon: "pills.fill",
-              keywords: "medications meds pills doses as needed prn refill", group: "food",
-              intro: "Your daily medications and the ones you take only when needed, with doses, reminders and refills.",
-              members: [("meds", "Daily"), ("prn", "As needed")]),
+        .init(id: "autopilotHub", title: "Autopilot", icon: "sparkles", keywords: "autopilot done for you overnight agent suggestions", group: "ask",
+              intro: "What Keel does for you: suggestions now, and work done overnight.", members: [("autopilot", "Suggestions"), ("doneForYou", "Done for you")]),
+        .init(id: "focusTools", title: "Focus tools", icon: "moon.zzz.fill", keywords: "focus room forecast history body doubling", group: "go",
+              intro: "Focus with others, see your best focus times, and look back at past sessions.", members: [("focusRoom", "Focus room"), ("forecast", "Forecast"), ("focusHistory", "History")]),
+        .init(id: "unstuck", title: "Get unstuck", icon: "bolt.fill", keywords: "quick wins roulette what fits sort loose tasks stuck", group: "go",
+              intro: "Ways to get moving: quick wins, a random pick, what fits the time you have, and sorting loose tasks.", members: [("quickWins", "Quick wins"), ("roulette", "Roulette"), ("whatFits", "What fits"), ("sort", "Sort loose")]),
+        .init(id: "money", title: "Money", icon: "dollarsign.circle.fill", keywords: "bills money savings no spend impulse tip split deal", group: "top",
+              intro: "Bills, savings jars, no-spend days, an impulse waiting list, tip & split, and better-deal checks.", members: [("bills", "Bills"), ("jars", "Savings jars"), ("noSpend", "No-spend"), ("waitlist", "Wait list"), ("tipSplit", "Tip & split"), ("deal", "Better deal")]),
+        .init(id: "home", title: "Home", icon: "house.fill", keywords: "home car upkeep chores tidy pets", group: "top",
+              intro: "Home and car upkeep, chores, tidy sprints and pet care.", members: [("upkeep", "Upkeep"), ("chores", "Chores"), ("tidy", "Tidy sprint"), ("pets", "Pets")]),
+        .init(id: "readingHub", title: "Reading", icon: "books.vertical.fill", keywords: "read later kindle pocket instapaper reading books", group: "brain",
+              intro: "Your reading list, highlights and books.", members: [("readLater", "Read later"), ("reading", "Books"), ("kindle", "Kindle"), ("readingImport", "Import")]),
+        .init(id: "brainTools", title: "Second-brain tools", icon: "brain.head.profile", keywords: "brain map health setup tags supertags", group: "brain",
+              intro: "Map, health check, setup, tags and supertags for your notes.", members: [("brainMap", "Map"), ("brainHealth", "Health"), ("tags", "Tags"), ("supertags", "Supertags"), ("setup", "Setup")]),
+        .init(id: "habitsHub", title: "Habits", icon: "repeat", keywords: "habits stacks library counters chains practice", group: "ahead",
+              intro: "Habit stacks, ideas from the library, counters, chains and practice logs.", members: [("habits", "Stacks"), ("habitLibrary", "Library"), ("chains", "Chains"), ("counters", "Counters"), ("practice", "Practice")]),
+        .init(id: "lifeVision", title: "Life vision", icon: "sparkles.rectangle.stack", keywords: "vision board odyssey bucket list life in weeks", group: "ahead",
+              intro: "The big picture: vision board, odyssey plans, bucket list and your life in weeks.", members: [("vision", "Vision board"), ("odyssey", "Odyssey"), ("bucket", "Bucket list"), ("lifeWeeks", "Life in weeks")]),
+        .init(id: "calendarTools", title: "Plan the week", icon: "calendar.badge.clock", keywords: "plan week ideal week protect mornings change calendar routines countdowns shared calendars world clock places", group: "ahead",
+              intro: "Plan your week, shape an ideal week, protect focus mornings, change your calendar by asking, and more.", members: [("weekPlan", "Plan week"), ("idealWeek", "Ideal week"), ("protectMornings", "Mornings"), ("calendarAI", "Change calendar"), ("routineBuilder", "Routines"), ("countdowns", "Countdowns"), ("shared", "Shared"), ("clock", "World clock"), ("places", "Places")]),
     ]
 
     static func hubTool(_ spec: ToolHubSpec, from all: [HubTool]) -> HubTool? {
@@ -58,6 +70,8 @@ enum ToolHubs {
     }
 
     static let memberIds: Set<String> = Set(specs.flatMap { $0.members.map(\.id) })
+    /// Removed from Compass because they already live in the Body tab (still reachable from search and links).
+    static let inBodyTab: Set<String> = ["meds", "prn", "food", "describeMeal", "mealplan", "drinks", "fasting", "symptoms", "bp", "sleepSounds", "medicalCard", "doctor"]
 }
 
 /// One combined tool: tabs across the top, each showing one of the original tools.
