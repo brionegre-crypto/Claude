@@ -72,6 +72,13 @@ struct KeelApp: App {
                 TaskTimeZone.adjustIfMoved(ctx: container.mainContext)   // travelled: date-only tasks stay on their day
                 ShutdownManager.shared.restoreAfterRelaunch(ctx: container.mainContext)   // focus that ran while Keel was closed
                 if Throttle.due("routine.alarms", every: 3600) { RoutineAlarms.refresh() }
+                #if !targetEnvironment(macCatalyst)
+                // Ask for alarm permission while Keel is on screen (iPhone won't show the prompt from the background).
+                if TaskAlarms.globalOn, !UserDefaults.standard.bool(forKey: "alarms.asked") {
+                    UserDefaults.standard.set(true, forKey: "alarms.asked")
+                    Task { if await TaskAlarms.authorize() { TaskAlerts.rescheduleAll((try? container.mainContext.fetch(FetchDescriptor<TaskItem>(predicate: #Predicate { !$0.isDone }))) ?? []) } }
+                }
+                #endif
                 Task { await HealthHabits.check(ctx: container.mainContext) }
                 Task { await KeelFocusFilter.syncCurrent() }
                 #if !targetEnvironment(macCatalyst)

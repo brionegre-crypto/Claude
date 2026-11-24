@@ -106,7 +106,12 @@ struct InboxView: View {
         if tab == .quick {
             return shown.filter { InboxBrain.isQuickWin($0, score: scores[$0.from.lowercased()]) }.sorted { $0.receivedAt < $1.receivedAt }
         }
-        return shown.filter { InboxBrain.tab($0, score: scores[$0.from.lowercased()]) == tab }
+        // Brand-new mail (unread, last 3 hours) always shows first, whichever tab it would be sorted into,
+        // with a "Sort to …" suggestion on the row, so nothing new is filed away before you've seen it.
+        let cutoff = Date().addingTimeInterval(-3 * 3600)
+        let fresh = shown.filter { !$0.isRead && $0.receivedAt > cutoff }.sorted { $0.receivedAt > $1.receivedAt }
+        let freshIds = Set(fresh.map(\.id))
+        return fresh + shown.filter { !freshIds.contains($0.id) && InboxBrain.tab($0, score: scores[$0.from.lowercased()]) == tab }
             .sorted { a, b in
                 let va = scores[a.from.lowercased()]?.isVIP == true, vb = scores[b.from.lowercased()]?.isVIP == true
                 return va != vb ? va : a.receivedAt > b.receivedAt
@@ -931,6 +936,11 @@ struct EmailRow: View {
         if InboxBrain.isQuickWin(email, score: score) { out.append(("2 min", "bolt.fill", DS.Palette.calm)) }
         if email.hasAttachments { out.append(("Attachment", "paperclip", DS.Palette.inkSoft)) }
         if AutoDrafts.has(email.id) && !email.isRead { out.insert(("Draft ready", "pencil.line", DS.Palette.accent), at: 0) }
+        // New and not for you personally: suggest where it belongs instead of filing it before you've seen it.
+        if !email.isRead && age < 3 * 3600 {
+            let t = InboxBrain.tab(email, score: score)
+            if t != .priority && t != .all { out.insert(("Sort to \(t.title)", "arrow.turn.down.right", DS.Palette.inkSoft), at: 0) }
+        }
         if let task = email.extractedTaskTitle, out.count < 3 { out.append((task, "checklist", DS.Palette.accent)) }
         return Array(out.prefix(3))
     }

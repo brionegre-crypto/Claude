@@ -160,7 +160,10 @@ enum TaskAlerts {
 
     static func schedule(_ t: TaskItem) {
         cancel(t)
-        guard !t.isDone, let due = t.dueDate, let offset = t.alertOffsetMinutes else { return }
+        // A timed task with full-screen alarms on rings at its time even if no reminder time was picked
+        // (before, those never rang at all).
+        let alarmDefault: Int? = (t.hasDueTime && TaskAlarms.wanted(t)) ? 0 : nil
+        guard !t.isDone, let due = t.dueDate, let offset = t.alertOffsetMinutes ?? alarmDefault else { return }
         // Date-only tasks alert at 9am on the day (minus the offset).
         let base = t.hasDueTime ? due : (Calendar.current.date(bySettingHour: 9, minute: 0, second: 0, of: due) ?? due)
         let fire = base.addingTimeInterval(-Double(offset * 60))
@@ -198,7 +201,8 @@ enum TaskAlerts {
 
     /// When a task's alert goes off (nil: no alert, or it's done).
     static func fireDate(_ t: TaskItem) -> Date? {
-        guard !t.isDone, let due = t.dueDate, let offset = t.alertOffsetMinutes else { return nil }
+        let alarmDefault: Int? = (t.hasDueTime && TaskAlarms.wanted(t)) ? 0 : nil
+        guard !t.isDone, let due = t.dueDate, let offset = t.alertOffsetMinutes ?? alarmDefault else { return nil }
         let base = t.hasDueTime ? due : (Calendar.current.date(bySettingHour: 9, minute: 0, second: 0, of: due) ?? due)
         return base.addingTimeInterval(-Double(offset * 60))
     }
