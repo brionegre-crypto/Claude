@@ -25,6 +25,6 @@ final class KeelMemory {
     /// A compact block for AI instructions; empty when nothing's saved.
     var context: String {
         guard !facts.isEmpty else { return "" }
-        return "What you know about the user (use when relevant, never recite it):\n" + facts.suffix(40).map { "- \($0)" }.joined(separator: "\n")
+        return "What you know about the user (use when relevant, never recite it):\n" + facts.suffix(80).map { "- \($0)" }.joined(separator: "\n")
     }
 }

@@ -18,6 +18,8 @@ struct MemoryView: View {
                         .onSubmit(add)
                     Button("Add", action: add).disabled(newFact.trimmingCharacters(in: .whitespaces).isEmpty)
                 }
+                // Many at once: copy a list (one fact per line) from Notes, a message or anywhere, then tap.
+                Button("Paste a list of facts", systemImage: "doc.on.clipboard") { pasteMany() }
             } footer: {
                 Text("Keel uses these to personalize plans, reply drafts, briefings and answers. You can also just tell Ask Keel: “Remember that my manager is Dana.” Stored only on this iPhone.")
             }
@@ -38,4 +40,13 @@ struct MemoryView: View {
     }
 
     private func add() { memory.add(newFact); newFact = ""; Haptics.success() }
+
+    private func pasteMany() {
+        let text = UIPasteboard.general.string ?? ""
+        let lines = text.split(whereSeparator: \.isNewline)
+            .map { $0.trimmingCharacters(in: CharacterSet(charactersIn: " \t-•*")) }
+            .filter { $0.count > 2 && !$0.hasSuffix(":") }          // skip blank lines and headings like "Work:"
+        for l in lines { memory.add(l) }
+        if !lines.isEmpty { Haptics.success() }
+    }
 }

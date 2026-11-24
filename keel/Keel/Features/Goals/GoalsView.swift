@@ -174,6 +174,7 @@ struct NewGoalSheet: View {
     @State private var emoji = "🎯"
     @State private var makeTasks = true
     @State private var working = false
+    @State private var aiNote: String?
 
     private var done: Int { [title, measure, achievable, why].filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty }.count + (hasDate ? 1 : 0) }
 
@@ -184,7 +185,8 @@ struct NewGoalSheet: View {
                     TextField("A rough idea, e.g. get fitter", text: $idea, axis: .vertical)
                     Button { Task { await smartify() } } label: {
                         Label(working ? "Thinking…" : "Make it SMART", systemImage: "sparkles")
-                    }.disabled(idea.isEmpty || working)
+                    }.disabled(idea.trimmingCharacters(in: .whitespaces).isEmpty || working)
+                    if let aiNote { Text(aiNote).font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft) }
                     ProgressView(value: Double(done), total: 5) { Text("\(done) of 5 SMART steps").font(DS.Font.caption) }
                 } footer: { Text("Or fill in each step yourself. A SMART goal is clear enough that you'll know when you've done it.") }
                 Section {
@@ -207,7 +209,8 @@ struct NewGoalSheet: View {
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() } }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Add") { Task { await save() } }.disabled(title.isEmpty || working)
+                    // Works with just the rough idea too: it becomes the goal's title.
+                    Button("Add") { save() }.disabled(goalTitle.isEmpty || working)
                 }
             }
         }
@@ -224,24 +227,47 @@ struct NewGoalSheet: View {
         MONTHS: <number of months to give it, 1-24>
         Goal: \(idea)
         """
-        guard let out = await AIRouter.shared.write(prompt) else { return }
-        for line in out.split(separator: "\n") {
-            let parts = line.split(separator: ":", maxSplits: 1).map { $0.trimmingCharacters(in: .whitespaces) }
-            guard parts.count == 2 else { continue }
-            switch parts[0].uppercased() {
-            case "SPECIFIC": title = parts[1]
-            case "MEASURABLE": measure = parts[1]
-            case "ACHIEVABLE": achievable = parts[1]
-            case "RELEVANT": if why.isEmpty { why = parts[1] }
-            case "MONTHS": if let m = Int(parts[1].filter(\.isNumber)), m > 0 { hasDate = true; date = Calendar.current.date(byAdding: .month, value: min(24, m), to: Date()) ?? date }
-            default: break
+        aiNote = nil
+        guard let out = await AIRouter.shared.write(prompt), !out.isEmpty else {
+            // No AI on this device (or it didn't answer): still move forward instead of doing nothing.
+            if title.isEmpty { title = String(idea.prefix(60)) }
+            aiNote = "Apple Intelligence isn't available right now, so your idea is the goal's title. Fill in the steps below and tap Add."
+            return
+        }
+        var filled = 0
+        for line in out.split(whereSeparator: \.isNewline) {
+            // Accepts "SPECIFIC: …", "**Specific:** …", "1. Specific - …" and similar.
+            let clean = line.replacingOccurrences(of: "*", with: "").replacingOccurrences(of: "#", with: "")
+                .trimmingCharacters(in: CharacterSet(charactersIn: " \t-•0123456789."))
+            guard let sep = clean.firstIndex(where: { $0 == ":" || $0 == "–" || $0 == "-" }) else { continue }
+            let key = clean[..<sep].trimmingCharacters(in: .whitespaces).uppercased()
+            let value = clean[clean.index(after: sep)...].trimmingCharacters(in: .whitespaces)
+            guard !value.isEmpty else { continue }
+            if key.hasPrefix("SPECIFIC") || key == "S" { title = value; filled += 1 }
+            else if key.hasPrefix("MEASURABLE") || key == "M" { measure = value; filled += 1 }
+            else if key.hasPrefix("ACHIEVABLE") || key == "A" { achievable = value; filled += 1 }
+            else if key.hasPrefix("RELEVANT") || key == "R" { if why.isEmpty { why = value }; filled += 1 }
+            else if key.hasPrefix("MONTH") || key.hasPrefix("TIME") || key == "T" {
+                if let m = Int(value.prefix { $0.isNumber || $0 == " " }.filter(\.isNumber)), m > 0 {
+                    hasDate = true; date = Calendar.current.date(byAdding: .month, value: min(24, m), to: Date()) ?? date
+                }
             }
+        }
+        if filled == 0 {
+            if title.isEmpty { title = String(idea.prefix(60)) }
+            aiNote = "Couldn't shape that one. Your idea is the title; fill in the steps below."
+        } else {
+            Haptics.success()
         }
     }
 
-    private func save() async {
-        working = true; defer { working = false }
-        let g = Goal(title: title, area: area)
+    private var goalTitle: String {
+        let t = title.trimmingCharacters(in: .whitespacesAndNewlines)
+        return t.isEmpty ? String(idea.trimmingCharacters(in: .whitespacesAndNewlines).prefix(60)) : t
+    }
+
+    private func save() {
+        let g = Goal(title: goalTitle, area: area)
         // Kept in the goal's "why" so nothing about how goals are stored (and synced) changes.
         var lines = [why]
         if !measure.isEmpty { lines.append("Measure: \(measure)") }
@@ -250,17 +276,25 @@ struct NewGoalSheet: View {
         g.emoji = emoji.isEmpty ? "🎯" : String(emoji.prefix(2))
         g.targetDate = hasDate ? date : nil
         ctx.insert(g)
-        if makeTasks, let out = await AIRouter.shared.write("List 3 to 5 concrete first tasks (one per line, no numbering, under 10 words each) for this goal: \(title). Measure: \(measure). Plan: \(achievable).") {
-            for line in out.split(separator: "\n").map({ $0.trimmingCharacters(in: CharacterSet(charactersIn: " -•*0123456789.")) }).filter({ !$0.isEmpty }).prefix(5) {
+        try? ctx.save()
+        Haptics.success()
+        dismiss()                                 // the goal is saved now; first tasks follow a moment later
+        guard makeTasks else { return }
+        let ctx = ctx, goalId = g.id
+        let prompt = "List 3 to 5 concrete first tasks (one per line, no numbering, under 10 words each) for this goal: \(goalTitle). Measure: \(measure). Plan: \(achievable)."
+        Task { @MainActor in
+            guard let out = await AIRouter.shared.write(prompt) else { return }
+            let lines = out.split(whereSeparator: \.isNewline)
+                .map { $0.replacingOccurrences(of: "*", with: "").trimmingCharacters(in: CharacterSet(charactersIn: " -•0123456789.)")) }
+                .filter { !$0.isEmpty && !$0.hasSuffix(":") }
+            for line in lines.prefix(5) {
                 let t = TaskItem(title: String(line.prefix(80)))
-                t.goalId = g.id
+                t.goalId = goalId
                 ctx.insert(t)
                 try? CalendarService.shared.push(t)
             }
+            try? ctx.save()
         }
-        try? ctx.save()
-        Haptics.success()
-        dismiss()
     }
 }
 
