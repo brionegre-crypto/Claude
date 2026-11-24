@@ -1,15 +1,16 @@
 // Cloudflare Pages Function: POST /api/purchase  {o: <offer>, s: <checkout session>}
 // Called by the thank-you page right after a Stripe purchase. Confirms the
 // purchase with Stripe, emails the buyer their download page link (Resend),
-// and adds them to Kit with the tag "Customer" plus the product's own tag
-// (workshop, 6-week group, ministry kit).
-// Needs STRIPE_KEY; the email needs RESEND_API_KEY and the tags KIT_API_KEY.
+// and adds them to the site's own list with the tag "Customer" plus the
+// product's tag. Founding Cohort buyers also start the session reminders.
+// Needs STRIPE_KEY and RESEND_API_KEY.
 // Sends at most one email per purchase, however many times the page is reloaded.
 
 import { OFFERS } from "../_catalog.js";
 import { paidSession, boughtPrices } from "./download.js";
 import { sign } from "../_club.js";
 import { subscribe, sendEmail, tagByName, notifyBrian, TAGS, firstName } from "../_mail.js";
+import { upsertContact, enroll, putContact } from "../_list.js";
 import { nextSession } from "../_workshop.js";
 import { downloadsEmail } from "../_emails.js";
 
@@ -60,6 +61,13 @@ export async function onRequestPost(context) {
   const tags = offer.tag ? [TAGS.customer, offer.tag] : [TAGS.customer];
   try { await subscribe(env, email, { firstName: name, tags }); } catch (e) {}
   if (ws) { try { await tagByName(env, email, ws.tag); } catch (e) {} }
+  // Founding Cohort: tag the buyer and start the session reminders.
+  if (data.o === "cohort") {
+    try {
+      const c = await upsertContact(env, { email, name, tags: ["Founding Cohort"], source: "Founding Cohort" });
+      if (c) await putContact(env, await enroll(env, c, "cohort"));
+    } catch (e) {}
+  }
 
   const emailed = await sendEmail(env, {
     to: email,

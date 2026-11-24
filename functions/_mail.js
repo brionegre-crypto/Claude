@@ -1,12 +1,15 @@
-// Email for the site: Kit (kit.com) holds the list and sends the newsletters and
-// email series; Resend (resend.com) sends one-to-one emails (download links,
-// Club sign-in links, inquiry alerts to Brian).
+// Email for the site. Since Nov 24, 2026 the list lives on this site, not in Kit:
+// subscribe(), tagByName() and untag() write to Be The Man's own list
+// (functions/_list.js, stored in the FILES KV namespace), and Resend
+// (resend.com) sends everything. Kit is no longer called. The Kit ids below
+// stay only so the tag names match what was in Kit.
 //
 // Secrets (Cloudflare -> Pages -> bethemansystem -> Settings -> Variables and secrets):
-//   KIT_API_KEY     Kit v4 API key (Kit -> Settings -> Developer)
+//   CRON_SECRET     shared with the GitHub Actions job that runs /api/mail/tick
+//   MAIL_DAILY_CAP  optional, list emails per day (default 90, inside Resend's free 100)
 //   RESEND_API_KEY  Resend API key, with bethemansystem.com verified in Resend
 
-const KIT = "https://api.kit.com/v4";
+import { upsertContact, removeTag } from "./_list.js";
 
 export const FROM = "Brian Greene <brian@bethemansystem.com>";
 export const BRIAN = "brian@bethemansystem.com";
@@ -39,47 +42,33 @@ export const SEQUENCES = {
 // Thursday emails cover the same steps, so starting both would double up.
 export const FOLLOW_UP_FROM = Date.parse("2026-11-06T00:00:00-06:00");
 
-function kit(env, path, body, method = "POST") {
-  return fetch(KIT + path, {
-    method,
-    headers: { "x-kit-api-key": env.KIT_API_KEY, "content-type": "application/json", accept: "application/json" },
-    body: body ? JSON.stringify(body) : undefined,
-  });
+
+// Kit tag id -> tag name on the site's own list.
+const TAG_NAMES = {
+  [TAGS.step1]: "Step 1", [TAGS.challenge]: "7-week challenge", [TAGS.customer]: "Customer",
+  [TAGS.club]: "Club member", [TAGS.innerCircle]: "Inner Circle", [TAGS.workshop]: "Workshop",
+  [TAGS.group]: "6-week group", [TAGS.ministryKit]: "Ministry kit", [TAGS.couples]: "Couples",
+  [TAGS.call]: "Free call", [TAGS.lowSeat]: "Low Seat Check", [TAGS.pair]: "Accountability pair",
+  [TAGS.speaking]: "Speaking",
+};
+export const tagName = (t) => (typeof t === "number" ? TAG_NAMES[t] || String(t) : String(t));
+
+// Add or update a contact on the site's own list and apply tags.
+// (Series are started by the caller with enroll() from _list.js.)
+// Returns true when the contact was saved.
+export async function subscribe(env, email, { firstName, tags = [], fields } = {}) {
+  const names = tags.map(tagName);
+  const c = await upsertContact(env, { email, name: firstName, tags: names, fields, source: names[0] });
+  return !!c;
 }
 
-// Add or update a subscriber, then apply tags and start sequences.
-// Never resubscribes someone who unsubscribed: Kit keeps their state as is.
-// Returns true when Kit accepted the subscriber.
-export async function subscribe(env, email, { firstName, tags = [], sequences = [], fields } = {}) {
-  if (!env.KIT_API_KEY) return false;
-  const body = { email_address: email };
-  if (firstName) body.first_name = firstName;
-  if (fields) body.fields = fields;
-  const r = await kit(env, "/subscribers", body);
-  if (!r.ok) return false;
-  const add = [
-    ...tags.map((id) => kit(env, `/tags/${id}/subscribers`, { email_address: email })),
-    ...sequences.map((id) => kit(env, `/sequences/${id}/subscribers`, { email_address: email })),
-  ];
-  await Promise.all(add.map((p) => p.catch(() => null)));
-  return true;
-}
-
-// Tag by name, creating the tag the first time (Kit returns the existing tag if
-// the name is taken). Used for per-session workshop tags like "Workshop 2026-11-04".
+// Tag by name (for example "Workshop 2026-11-04").
 export async function tagByName(env, email, name) {
-  if (!env.KIT_API_KEY) return false;
-  const r = await kit(env, "/tags", { name });
-  if (!r.ok) return false;
-  const id = ((await r.json().catch(() => ({}))).tag || {}).id;
-  if (!id) return false;
-  return (await kit(env, `/tags/${id}/subscribers`, { email_address: email })).ok;
+  return !!(await upsertContact(env, { email, tags: [name], optIn: false }));
 }
 
-export async function untag(env, email, tagId) {
-  if (!env.KIT_API_KEY) return false;
-  const r = await kit(env, `/tags/${tagId}/subscribers`, { email_address: email }, "DELETE");
-  return r.ok;
+export async function untag(env, email, tag) {
+  return !!(await removeTag(env, email, tagName(tag)));
 }
 
 // One-to-one email through Resend. Returns true when Resend accepted it.

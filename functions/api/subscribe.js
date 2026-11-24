@@ -1,20 +1,16 @@
 // Cloudflare Pages Function: POST /api/subscribe
-// Adds a sign-up to Kit. Default list is Step 1 (tag "Step 1", the "Step 1."
-// email straight away, and from Nov 6 the weekly Step 1 follow-up); list
-// "challenge" is the free 7-week challenge (tag "7-week challenge" and its
-// welcome email); list "lowseat" emails a Low Seat Check result (tag "Low Seat
-// Check", score and posture fields, and the 7-day plan). Needs the KIT_API_KEY secret.
-// If Kit is unavailable (missing key, lapsed plan, outage), Step 1 and Low Seat Check
-// sign-ups still go through: the email is sent directly with Resend, the visitor
-// reaches the thank-you page, and Brian's alert says "Not in Kit yet" so he can add
-// the person to Kit later. Only if Resend also fails does the visitor see "please try again".
+// Adds a sign-up to Be The Man's own list (functions/_list.js). Default list is
+// Step 1: tag "Step 1" and the Step 1 welcome series, whose first email goes
+// out straight away. List "lowseat" emails a Low Seat Check result (tag "Low
+// Seat Check" with score and posture). Brian gets an alert for every sign-up.
+// If the email can't be sent, the visitor sees a "please try again" message.
 
-import { subscribe, sendEmail, notifyBrian, TAGS, SEQUENCES, FOLLOW_UP_FROM, firstName } from "../_mail.js";
+import { notifyBrian, firstName } from "../_mail.js";
+import { upsertContact, enroll, runContact, sendToContact, getSequence, tick } from "../_list.js";
 
 const LISTS = {
-  step1: { tag: TAGS.step1, sequences: [SEQUENCES.step1Welcome], thanks: "/step-1/thanks/" },
-  challenge: { tag: TAGS.challenge, sequences: [SEQUENCES.challengeWelcome], thanks: "/7-week-challenge/thanks/" },
-  lowseat: { tag: TAGS.lowSeat, sequences: [SEQUENCES.lowSeat], thanks: "/humility/#sent" },
+  step1: { tag: "Step 1", series: "step1", thanks: "/step-1/thanks/" },
+  lowseat: { tag: "Low Seat Check", thanks: "/humility/#sent" },
 };
 
 const POSTURES = ["Teachable", "Owned", "Unseen", "Credit", "Dependent"];
@@ -49,40 +45,18 @@ function done(request, ok, url) {
 }
 
 
-const escH = (v) => String(v ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
-const wrap = (inner) => `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>` +
-  `<body style="margin:0;padding:0;background:#f4f2ee"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f4f2ee"><tr><td align="center" style="padding:32px 16px">` +
-  `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;background:#ffffff;border-radius:16px"><tr><td style="padding:36px 32px;font-family:-apple-system,Segoe UI,Helvetica,Arial,sans-serif;color:#1d1d1f;font-size:17px;line-height:1.55">` +
-  `<p style="margin:0 0 6px;font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:#b8730f">Be The Man</p>${inner}` +
-  `<p style="margin:24px 0 0;font-size:13px;color:#6e6e73">Be The Man is a faith-based coaching and consistency system, not medical treatment, diagnosis, or clinical therapy for ADHD.</p>` +
-  `</td></tr></table></td></tr></table></body></html>`;
-const btn = (href, label) => `<p style="margin:0 0 14px"><a href="${href}" style="display:inline-block;background:#e18b1f;color:#0b0b0c;font-weight:700;text-decoration:none;padding:14px 26px;border-radius:12px">${label}</a></p>`;
-
-// Sent directly (Resend) when Kit can't take the sign-up.
-function directEmail(list, name, fields) {
-  const hi = name ? `${escH(firstName(name))}, here` : "Here";
-  if (list === LISTS.lowseat) {
-    return {
-      subject: "Your Low Seat Check result",
-      html: wrap(`<h1 style="margin:0 0 18px;font-size:26px;line-height:1.2">${hi} is your Low Seat Check result.</h1>` +
-        (fields.low_seat_score ? `<p style="margin:0 0 10px">Your score: <strong>${escH(fields.low_seat_score)}</strong></p>` : "") +
-        (fields.low_seat_posture ? `<p style="margin:0 0 20px">Your thinnest posture: <strong>${escH(fields.low_seat_posture)}</strong>. Pick one decision in that posture, give it a day and a time this week, and put it on your Ledger.</p>` : "") +
-        btn("https://bethemansystem.com/humility/", "Take it again or send it to a witness") +
-        `<p style="margin:16px 0 0">Brian</p>`),
-    };
-  }
+// The Low Seat Check result email.
+function lowSeatEmail(fields) {
   return {
-    subject: "Step 1: The Calling",
-    html: wrap(`<h1 style="margin:0 0 18px;font-size:26px;line-height:1.2">${hi} is Step 1.</h1>` +
-      `<p style="margin:0 0 14px">Step 1 is The Calling: one sentence on who God has called you to be. List your roles, ask what God expects of you in each, make it a Tuesday, and write the sentence. Twenty minutes, or four five-minute pieces.</p>` +
-      btn("https://bethemansystem.com/step-1/worksheet/", "Open the worksheet") +
-      `<p style="margin:0 0 20px;font-size:15px">Rather print it? <a href="https://bethemansystem.com/downloads/step-1-the-calling.pdf" style="color:#b8730f">Download the PDF</a>.</p>` +
-      `<p style="margin:0 0 14px">When your sentence is written, the next three steps build the plan around it. The Founding Cohort builds them with you, live, with other men: <a href="https://bethemansystem.com/cohort/" style="color:#b8730f">bethemansystem.com/cohort</a>.</p>` +
-      `<p style="margin:0">Reply any time. It comes straight to me.</p><p style="margin:16px 0 0">Brian</p>`),
+    subject: "Your Low Seat Check result",
+    body: `{{first_name}}, here is your Low Seat Check result.` +
+      (fields.low_seat_score ? `\n\nYour score: **${fields.low_seat_score}**` : "") +
+      (fields.low_seat_posture ? `\n\nYour thinnest posture: **${fields.low_seat_posture}**. Pick one decision in that posture, give it a day and a time this week, and put it on your Ledger.` : "") +
+      `\n\n[[Take it again or send it to a witness|https://bethemansystem.com/humility/]]\n\nBrian`,
   };
 }
 
-const LIST_NAMES = { step1: "Step 1 (free worksheet)", challenge: "7-week challenge", lowseat: "Low Seat Check results" };
+const LIST_NAMES = { step1: "Step 1 (free worksheet)", lowseat: "Low Seat Check results" };
 
 export async function onRequestPost(context) {
   const { request, env } = context;
@@ -109,27 +83,29 @@ async function handle(request, env, data, context) {
     });
   }
   const key = Object.keys(LISTS).find((k) => LISTS[k] === list);
-  const sequences = [...list.sequences];
-  if (list === LISTS.step1 && Date.now() >= FOLLOW_UP_FROM) sequences.push(SEQUENCES.step1FollowUp);
   const fields = list === LISTS.lowseat ? lowSeatFields(data) : {};
-  let inKit = false;
+  let ok = false;
   try {
-    inKit = await subscribe(env, email, { firstName: firstName(name), tags: [list.tag], sequences, fields: list === LISTS.lowseat ? fields : undefined });
+    const c = await upsertContact(env, { email, name, tags: [list.tag], fields, source: list.tag });
+    if (c && list.series && !(c.seq && c.seq[list.series])) {
+      await enroll(env, c, list.series);
+      ok = (await runContact(env, c)) > 0;
+    } else if (c && list.series) {
+      // Already in the series (signed up before): resend the first email only.
+      const def = await getSequence(env, list.series);
+      ok = (await sendToContact(env, c, def.emails[0], "series:" + list.series)).ok;
+    } else if (c) {
+      ok = (await sendToContact(env, c, lowSeatEmail(fields), "result")).ok;
+    }
   } catch (e) {}
-  let sent = false;
-  if (!inKit && list !== LISTS.challenge) {
-    const m = directEmail(list, name, fields);
-    sent = await sendEmail(env, { to: email, subject: m.subject, html: m.html });
-  }
-  const ok = inKit || sent;
   if (ok) {
     notifyBrian(env, context, {
-      subject: `New sign-up: ${LIST_NAMES[key]}${name ? `, ${firstName(name)}` : ""}${inKit ? "" : " (not in Kit yet)"}`,
+      subject: `New sign-up: ${LIST_NAMES[key]}${name ? `, ${firstName(name)}` : ""}`,
       replyTo: email,
       rows: [["Signed up for", LIST_NAMES[key]], ["Name", name], ["Email", email],
-        ["Low Seat score", fields.low_seat_score], ["Thinnest posture", fields.low_seat_posture],
-        ["Kit", inKit ? "Added" : "Not in Kit yet: Kit refused the sign-up, so the email went out directly. Add this person to Kit once it is renewed."]],
+        ["Low Seat score", fields.low_seat_score], ["Thinnest posture", fields.low_seat_posture]],
     });
+    if (context.waitUntil) context.waitUntil(tick(env, { max: 10 }).catch(() => null));
   }
   return done(request, ok, THANKS);
 }

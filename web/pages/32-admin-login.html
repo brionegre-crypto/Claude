@@ -1,0 +1,32 @@
+---
+{
+ "path": "/admin-login/",
+ "bare": true,
+ "noindex": true,
+ "title": "Dashboard sign in | Be The Man",
+ "description": "Sign in to the Be The Man dashboard."
+}
+---
+<div class="wrap">
+  <div class="lp">
+    <a class="logo" href="/">BE <span>THE MAN</span></a>
+    <h1>Dashboard <span class="grad">sign in.</span></h1>
+    <p class="lead" id="lead">Enter your email and we'll send you a sign-in link. No password.</p>
+    <form class="tile lp-card signup" id="f" novalidate>
+      <label class="sr-only" for="e">Email</label>
+      <input id="e" type="email" autocomplete="email" placeholder="Email address" required style="width:100%;font:inherit;font-size:17px;color:var(--fg);background:var(--bg);border:1px solid var(--line-2);border-radius:14px;padding:15px 16px">
+      <button class="btn btn-primary btn-lg btn-block" type="submit">Email me a sign-in link</button>
+      <p class="muted" id="m" role="status"></p>
+    </form>
+  </div>
+</div>
+<script>
+(function(){
+  if(new URLSearchParams(location.search).get('expired')) document.getElementById('lead').textContent='That link expired. Enter your email for a new one.';
+  var f=document.getElementById('f'),m=document.getElementById('m');
+  f.addEventListener('submit',function(e){e.preventDefault();m.textContent='Sending…';
+    fetch('/api/admin-login',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({email:document.getElementById('e').value})})
+      .then(function(r){return r.json();}).then(function(d){m.textContent=d.message||d.error||'Check your email.';}).catch(function(){m.textContent='Please try again.';});
+  });
+})();
+</script>

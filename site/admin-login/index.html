@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Dashboard sign in | Be The Man</title>
+<meta name="description" content="Sign in to the Be The Man dashboard.">
+<meta name="robots" content="noindex, follow">
+<link rel="canonical" href="https://bethemansystem.com/admin-login/">
+<link rel="icon" type="image/png" href="/assets/favicon.png">
+<link rel="apple-touch-icon" href="/assets/favicon.png">
+<meta name="theme-color" content="#000000">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Be The Man">
+<meta property="og:title" content="Dashboard sign in | Be The Man">
+<meta property="og:description" content="Sign in to the Be The Man dashboard.">
+<meta property="og:url" content="https://bethemansystem.com/admin-login/">
+<meta property="og:image" content="https://bethemansystem.com/assets/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@500&family=Caveat:wght@500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Khand:wght@700&display=swap&text=BETHEMAN%20">
+<link rel="stylesheet" href="/assets/site.css">
+<script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@graph": [
+  {
+   "@type": "Organization",
+   "@id": "https://bethemansystem.com/#org",
+   "name": "Be The Man",
+   "alternateName": "The Be The Man System",
+   "url": "https://bethemansystem.com/",
+   "logo": "https://bethemansystem.com/assets/favicon.png",
+   "slogan": "Built for the brain God gave you.",
+   "description": "A faith-first four-step system for Black Christian men with ADHD: one sentence on who you are becoming, three commitments with a time and a place, a bad-day version of each, and a weekly scorecard reviewed with other men.",
+   "audience": {
+    "@type": "PeopleAudience",
+    "audienceType": "Black Christian men, ages 25 to 40, with ADHD (diagnosed or still wondering) who struggle with productivity"
+   },
+   "founder": {
+    "@id": "https://bethemansystem.com/about/#brian"
+   },
+   "sameAs": [
+    "https://www.youtube.com/@BeTheManSystem",
+    "https://bethemansystem.substack.com",
+    "https://www.facebook.com/profile.php?id=61593655779820"
+   ]
+  },
+  {
+   "@type": "WebPage",
+   "@id": "https://bethemansystem.com/admin-login/#page",
+   "url": "https://bethemansystem.com/admin-login/",
+   "name": "Dashboard sign in | Be The Man",
+   "description": "Sign in to the Be The Man dashboard.",
+   "isPartOf": {
+    "@id": "https://bethemansystem.com/#site"
+   },
+   "about": {
+    "@id": "https://bethemansystem.com/#org"
+   },
+   "inLanguage": "en-US"
+  },
+  {
+   "@type": "BreadcrumbList",
+   "itemListElement": [
+    {
+     "@type": "ListItem",
+     "position": 1,
+     "name": "Home",
+     "item": "https://bethemansystem.com/"
+    },
+    {
+     "@type": "ListItem",
+     "position": 2,
+     "name": "Dashboard sign in | Be The Man",
+     "item": "https://bethemansystem.com/admin-login/"
+    }
+   ]
+  }
+ ]
+}
+</script>
+</head>
+<body>
+
+<main id="main">
+<div class="wrap">
+  <div class="lp">
+    <a class="logo" href="/">BE <span>THE MAN</span></a>
+    <h1>Dashboard <span class="grad">sign in.</span></h1>
+    <p class="lead" id="lead">Enter your email and we'll send you a sign-in link. No password.</p>
+    <form class="tile lp-card signup" id="f" novalidate>
+      <label class="sr-only" for="e">Email</label>
+      <input id="e" type="email" autocomplete="email" placeholder="Email address" required style="width:100%;font:inherit;font-size:17px;color:var(--fg);background:var(--bg);border:1px solid var(--line-2);border-radius:14px;padding:15px 16px">
+      <button class="btn btn-primary btn-lg btn-block" type="submit">Email me a sign-in link</button>
+      <p class="muted" id="m" role="status"></p>
+    </form>
+  </div>
+</div>
+<script>
+(function(){
+  if(new URLSearchParams(location.search).get('expired')) document.getElementById('lead').textContent='That link expired. Enter your email for a new one.';
+  var f=document.getElementById('f'),m=document.getElementById('m');
+  f.addEventListener('submit',function(e){e.preventDefault();m.textContent='Sending…';
+    fetch('/api/admin-login',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({email:document.getElementById('e').value})})
+      .then(function(r){return r.json();}).then(function(d){m.textContent=d.message||d.error||'Check your email.';}).catch(function(){m.textContent='Please try again.';});
+  });
+})();
+</script>
+</main>
+<script src="/assets/site.js" defer></script>
+</body>
+</html>
