@@ -30,12 +30,14 @@ struct FocusView: View {
     private let tick = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
 
     var body: some View {
+        ScrollView {                                     // scrolls instead of spilling under the toolbar on short windows (Mac)
             VStack(spacing: DS.Space.l) {
                 if let session = shutdown.active { running(session) }
                 else if let end = breakEndsAt { breakView(end) }
                 else { setup }
             }
             .padding()
+            }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(
                 LinearGradient(colors: [DS.Palette.focus.opacity(shutdown.active == nil ? 0.05 : 0.22), .clear],

@@ -312,7 +312,7 @@ struct RootView: View {
         }
         .modifier(SidebarStyle(hidden: sidebarHidden && showsSidebarSettings))   // tabs on iPhone; a sidebar on Mac and iPad (hideable)
         // Focus lives above the tab bar (like Music's mini-player): always one tap away, shows the live timer.
-        .tabViewBottomAccessory { FocusAccessory { router.showFocus = true } }
+        .modifier(FocusBarSetting { router.showFocus = true })
         .overlay(alignment: .bottom) { UndoToast() }
         .modifier(AppWideExtras())                                   // shake to undo, routine player, banners
         .overlay { EveningCalm() }                                   // warmer after sunset
@@ -656,5 +656,17 @@ private struct AppWideExtras: ViewModifier {
             .overlay(alignment: .bottom) { CaptureButton().padding(.bottom, 104) }       // capture anything, from anywhere
             .modifier(ShakeToUndo())                                     // shake to undo, like Apple's apps
             .fullScreenCover(item: Binding(get: { RoutineLaunch.shared.routine }, set: { RoutineLaunch.shared.routine = $0 })) { RoutinePlayer(routine: $0) }
+    }
+}
+
+
+/// The Focus bar above the tab bar, with an on/off setting (Settings → Customize Keel → Focus bar).
+/// Off by default on Mac, where it sat over the bottom of screens and hid what was underneath.
+struct FocusBarSetting: ViewModifier {
+    static let key = "focus.bar.on"
+    @AppStorage(FocusBarSetting.key) private var on = !ProcessInfo.processInfo.isMacCatalystApp
+    var open: () -> Void
+    func body(content: Content) -> some View {
+        if on { content.tabViewBottomAccessory { FocusAccessory(onOpen: open) } } else { content }
     }
 }

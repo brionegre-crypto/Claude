@@ -251,14 +251,33 @@ enum KeelAlerts {
 }
 
 /// Shows alerts while Keel is open and handles the Complete / Snooze buttons.
+/// Uses the completion-handler forms on purpose: when you tap a notification, iPhone updates Keel's snapshot as the
+/// handler completes, which must happen on the main thread. The async forms could finish on a background thread
+/// and crash (the crash on tapping a notification).
+@MainActor
 final class NotificationHandler: NSObject, UNUserNotificationCenterDelegate {
     static let shared = NotificationHandler()
 
-    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification) async -> UNNotificationPresentationOptions {
+    nonisolated func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification,
+                                            withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        completionHandler([.banner, .list, .sound])
+    }
+
+    nonisolated func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse,
+                                            withCompletionHandler completionHandler: @escaping () -> Void) {
+        nonisolated(unsafe) let r = response
+        nonisolated(unsafe) let done = completionHandler
+        Task { @MainActor in
+            await NotificationHandler.shared.handle(r)
+            done()                                          // on the main thread
+        }
+    }
+
+    private func presentOptions(_ notification: UNNotification) async -> UNNotificationPresentationOptions {
         [.banner, .list, .sound]
     }
 
-    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse) async {
+    func handle(_ response: UNNotificationResponse) async {
         let action = response.actionIdentifier
         let info = response.notification.request.content.userInfo
         if let emailId = info["emailId"] as? String, action != UNNotificationDefaultActionIdentifier {

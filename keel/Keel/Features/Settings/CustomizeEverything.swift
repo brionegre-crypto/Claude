@@ -89,6 +89,10 @@ struct CustomizeHubView: View {
             Section {
                 link("Look & feel (theme, colors, fonts, text size)", "paintbrush.fill", .pink) { AppearanceSettings() }
                 link("Tab bar", "dock.rectangle", .gray) { TabBarSettings() }
+                Toggle(isOn: Binding(get: { UserDefaults.standard.object(forKey: FocusBarSetting.key) as? Bool ?? !ProcessInfo.processInfo.isMacCatalystApp },
+                                     set: { UserDefaults.standard.set($0, forKey: FocusBarSetting.key) })) {
+                    Label("Focus bar above the tabs", systemImage: "moon.zzz")
+                }
                 link("Inbox tabs", "rectangle.split.3x1", .blue) { InboxTabsSettings() }
             }
         }
