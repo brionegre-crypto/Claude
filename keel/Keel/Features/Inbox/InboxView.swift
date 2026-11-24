@@ -1139,13 +1139,11 @@ struct EmailDetailView: View {
                     Button("Move to trash", systemImage: "trash", role: .destructive) { trash() }
                 } label: { Image(systemName: "ellipsis.circle") }.accessibilityLabel("More")
             }
-            ToolbarItemGroup(placement: .bottomBar) {
-                Button { compose = .reply(to: email, all: false, accounts: accounts) } label: { Label("Reply", systemImage: "arrowshape.turn.up.left") }
-                Spacer()
-                Button { compose = .reply(to: email, all: true, accounts: accounts) } label: { Label("Reply All", systemImage: "arrowshape.turn.up.left.2") }
-                Spacer()
-                Button { compose = .forward(email) } label: { Label("Forward", systemImage: "arrowshape.turn.up.right") }
-            }
+        }
+        .floatingBar {                       // above the Focus bar, never hidden behind it
+            Button { compose = .reply(to: email, all: false, accounts: accounts) } label: { Label("Reply", systemImage: "arrowshape.turn.up.left") }
+            Button { compose = .reply(to: email, all: true, accounts: accounts) } label: { Label("Reply All", systemImage: "arrowshape.turn.up.left.2") }
+            Button { compose = .forward(email) } label: { Label("Forward", systemImage: "arrowshape.turn.up.right") }
         }
         .sheet(item: $compose) { ComposeView(draft: $0) }
         .sheet(isPresented: $showSender) { NavigationStack { SenderProfileView(address: email.from, name: email.fromName) }.presentationDetents([.medium, .large]) }

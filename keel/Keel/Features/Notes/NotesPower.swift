@@ -400,8 +400,9 @@ struct CanvasBoardView: View {
         }
         .navigationTitle(note.title)
         .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItemGroup(placement: .bottomBar) {
+        // Canvas tools float above the Focus bar (in the system bottom bar the Focus bar covered them on Mac).
+        .floatingBar {
+            Group {
                 Button { addCard() } label: { Label("Card", systemImage: "note.text.badge.plus") }
                 Button { pickingPage = true } label: { Label("Page", systemImage: "doc.badge.plus") }
                 Button { pickingAny = true } label: { Label("Task, email, person or PDF", systemImage: "square.stack.3d.up.badge.plus") }
@@ -409,6 +410,10 @@ struct CanvasBoardView: View {
                     .disabled(selected == nil)
                 Button(role: .destructive) { deleteSelected() } label: { Label("Delete", systemImage: "trash") }.disabled(selected == nil)
             }
+            .labelStyle(.iconOnly)                // names stay for VoiceOver; hold on Mac to see them
+            .font(.title3)
+        }
+        .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Button { withAnimation(DS.spring) { offset = .zero; dragStart = .zero; scale = 1; scaleStart = 1 } } label: { Image(systemName: "scope") }
                     .accessibilityLabel("Back to center")

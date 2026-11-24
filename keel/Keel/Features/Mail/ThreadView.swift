@@ -70,15 +70,11 @@ struct ThreadView: View {
             .padding()
         }
         .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItemGroup(placement: .bottomBar) {
-                if let last = sorted.last {
-                    Button { compose = .reply(to: last, all: false, accounts: accounts) } label: { Label("Reply", systemImage: "arrowshape.turn.up.left") }
-                    Spacer()
-                    Button { compose = .reply(to: last, all: true, accounts: accounts) } label: { Label("Reply All", systemImage: "arrowshape.turn.up.left.2") }
-                    Spacer()
-                    Button { compose = .forward(last) } label: { Label("Forward", systemImage: "arrowshape.turn.up.right") }
-                }
+        .floatingBar {                       // above the Focus bar, never hidden behind it
+            if let last = sorted.last {
+                Button { compose = .reply(to: last, all: false, accounts: accounts) } label: { Label("Reply", systemImage: "arrowshape.turn.up.left") }
+                Button { compose = .reply(to: last, all: true, accounts: accounts) } label: { Label("Reply All", systemImage: "arrowshape.turn.up.left.2") }
+                Button { compose = .forward(last) } label: { Label("Forward", systemImage: "arrowshape.turn.up.right") }
             }
         }
         .sheet(item: $compose) { ComposeView(draft: $0) }

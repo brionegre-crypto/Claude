@@ -45,6 +45,7 @@ struct FocusView: View {
             )
             .navigationTitle(shutdown.active == nil ? "Focus" : "")
             .navigationBarTitleDisplayMode(.inline)          // a large title sat on top of the stats strip
+            .scrollEdgeEffectStyle(.hard, for: .top)         // a solid edge under the title, so rows don't show through the buttons (Mac)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button { showRitual = true } label: { Label("Shutdown ritual", systemImage: "moon.stars") }

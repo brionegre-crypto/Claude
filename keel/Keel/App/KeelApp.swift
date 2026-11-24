@@ -664,10 +664,19 @@ private struct AppWideExtras: ViewModifier {
             .overlay(alignment: .bottom) { HandoffBanner().animation(DS.spring, value: Handoff.shared.current?.id) }      // the natural next step
             .overlay(alignment: .bottom) { CaptureButton().padding(.bottom, 104) }       // capture anything, from anywhere
             .modifier(ShakeToUndo())                                     // shake to undo, like Apple's apps
+            .modifier(MacHardEdges())
             .fullScreenCover(item: Binding(get: { RoutineLaunch.shared.routine }, set: { RoutineLaunch.shared.routine = $0 })) { RoutinePlayer(routine: $0) }
     }
 }
 
+
+/// Mac: a solid edge under every title bar, as Mac apps have. With the soft iPhone-style edge, rows scrolled up
+/// showed straight through the title and the round toolbar buttons.
+private struct MacHardEdges: ViewModifier {
+    func body(content: Content) -> some View {
+        if ProcessInfo.processInfo.isMacCatalystApp { content.scrollEdgeEffectStyle(.hard, for: .top) } else { content }
+    }
+}
 
 /// The Focus bar above the tab bar, with an on/off setting (Settings → Customize Keel → Focus bar).
 /// Off by default on Mac, where it sat over the bottom of screens and hid what was underneath.
