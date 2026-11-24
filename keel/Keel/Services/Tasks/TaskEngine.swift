@@ -456,7 +456,46 @@ enum QuickAdd {
         ctx.insert(t)
         try? CalendarService.shared.push(t)
         TaskAlerts.schedule(t)
+        TaskAutofill.fill(t, explicitList: r.list != nil || defaultList != nil)   // AI fills the rest, in the background
         return t
+    }
+}
+
+/// Notion-style AI autofill for tasks: a new task gets a time estimate, an energy level and (when you didn't say)
+/// the best of your existing lists, filled in quietly a moment after you add it. Uses Apple Intelligence on this
+/// device when it can. Never overwrites anything you set. Settings → Customize Keel → Tasks → "AI fills in new tasks".
+@MainActor
+enum TaskAutofill {
+    static let key = "tasks.aiAutofill"
+    static var on: Bool { UserDefaults.standard.object(forKey: key) as? Bool ?? true }
+
+    static func fill(_ t: TaskItem, explicitList: Bool) {
+        guard on, t.estimatedMinutes == nil, t.title.count >= 3 else { return }
+        let lists = Array(Set(((try? t.modelContext?.fetch(FetchDescriptor<TaskItem>())) ?? []).map(\.listName))).sorted()
+        let title = t.title
+        Task { @MainActor in
+            let prompt = """
+            For this to-do, reply with exactly three lines and nothing else:
+            MINUTES: <realistic minutes to do it, a number>
+            ENERGY: <low, medium or high: the focus it needs>
+            LIST: <the best fit from these lists, or none: \(lists.joined(separator: ", "))>
+            To-do: \(title)
+            """
+            guard let out = await AIRouter.shared.write(prompt), !t.isDeleted, t.estimatedMinutes == nil else { return }
+            for line in out.split(separator: "\n") {
+                let p = line.split(separator: ":", maxSplits: 1).map { $0.trimmingCharacters(in: .whitespaces).lowercased() }
+                guard p.count == 2 else { continue }
+                switch p[0] {
+                case "minutes": if let m = Int(p[1].filter(\.isNumber)), m > 0 { t.estimatedMinutes = min(m, 480) }
+                case "energy": t.energy = p[1].hasPrefix("low") ? .low : p[1].hasPrefix("high") ? .high : .medium
+                case "list":
+                    if !explicitList, t.listName == "Inbox", let match = lists.first(where: { $0.lowercased() == p[1] }), match != "Inbox" { t.listName = match }
+                default: break
+                }
+            }
+            t.updatedAt = Date()
+            try? t.modelContext?.save()
+        }
     }
 }
 

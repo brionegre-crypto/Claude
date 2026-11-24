@@ -194,6 +194,7 @@ struct TasksCustomizeView: View {
                     Text("A to Z").tag("title"); Text("Newest first").tag("newest")
                 }
                 Toggle("“This Evening” section", isOn: $evening)
+                AIAutofillToggle()
                 Toggle("Move overdue tasks to today each morning", isOn: $rollover)
             } header: { Text("Order") } footer: { Text("Roll-over keeps each task's time of day; repeating tasks keep their own schedule; Undo puts them back.") }
             Section {
@@ -406,4 +407,17 @@ struct QuietHoursView: View {
 struct FocusBarToggle: View {
     @AppStorage(FocusBarSetting.key) private var on = !ProcessInfo.processInfo.isMacCatalystApp
     var body: some View { Toggle(isOn: $on) { Label("Focus bar above the tabs", systemImage: "moon.zzz") } }
+}
+
+
+struct AIAutofillToggle: View {
+    @AppStorage(TaskAutofill.key) private var on = true
+    var body: some View {
+        Toggle(isOn: $on) {
+            VStack(alignment: .leading, spacing: 2) {
+                Text("AI fills in new tasks")
+                Text("Time estimate, energy and the best list, a moment after you add a task. Never changes what you set.").font(.caption).foregroundStyle(.secondary)
+            }
+        }
+    }
 }

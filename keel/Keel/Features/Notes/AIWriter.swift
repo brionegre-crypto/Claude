@@ -239,6 +239,11 @@ struct AIAction: Identifiable, Hashable {
         .init(id: "table", title: "Turn into a table", icon: "tablecells", instruction: "Turn this into a Markdown table with sensible columns."),
         .init(id: "steps", title: "Break into steps", icon: "list.number", instruction: "Turn this into small, numbered, doable steps."),
         .init(id: "explain", title: "Explain this", icon: "questionmark.circle", instruction: "Explain this simply, in a short paragraph, for someone new to it."),
+        .init(id: "casual", title: "More casual", icon: "bubble.left", instruction: "Rewrite in a relaxed, casual tone."),
+        .init(id: "translateEn", title: "Translate to English", icon: "character.bubble", instruction: "Translate into natural English. Keep formatting."),
+        .init(id: "translateEs", title: "Translate to Spanish", icon: "character.bubble", instruction: "Translate into natural Spanish. Keep formatting."),
+        .init(id: "translateFr", title: "Translate to French", icon: "character.bubble", instruction: "Translate into natural French. Keep formatting."),
+        .init(id: "translateDe", title: "Translate to German", icon: "character.bubble", instruction: "Translate into natural German. Keep formatting."),
     ]
 
     /// For the whole page.
