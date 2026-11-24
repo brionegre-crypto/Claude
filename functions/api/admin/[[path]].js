@@ -186,22 +186,32 @@ export async function onRequest(context) {
     return new Response(lines.join("\n") + "\n", { headers: { "content-type": "text/csv; charset=utf-8", "content-disposition": "attachment; filename=be-the-man-contacts.csv", "cache-control": "no-store" } });
   }
 
+  // CSV import (a Kit export works): keeps each row's tags, and never re-subscribes
+  // someone Kit lists as unsubscribed, bounced or complained. Imports start no emails or automations.
   if (route === "import") {
     const rows = parseCsv(d.csv);
     if (!rows.length) return bad("Paste at least one line: email, name.");
-    const head = rows[0].map((h) => h.toLowerCase());
+    const head = rows[0].map((h) => h.toLowerCase().trim());
     const ei = head.findIndex((h) => h.includes("email"));
-    const ni = head.findIndex((h) => h.includes("name") && !h.includes("last"));
+    const ni = head.findIndex((h) => (h === "name" || h.includes("first")) && !h.includes("last"));
+    const ti = head.findIndex((h) => h === "tags" || h === "tag");
+    const si = head.findIndex((h) => h === "status" || h === "state");
     const body = ei >= 0 ? rows.slice(1) : rows;
     const E = ei >= 0 ? ei : 0, N = ei >= 0 ? ni : 1;
-    let added = 0, skipped = 0;
-    for (const r of body.slice(0, 2000)) {
+    const STOP = { cancelled: "unsubscribed", canceled: "unsubscribed", unsubscribed: "unsubscribed", inactive: "unsubscribed", bounced: "bounced", complained: "complained" };
+    let added = 0, updated = 0, skipped = 0, stopped = 0;
+    for (const r of body.slice(0, 5000)) {
       const email = cleanEmail(r[E]);
       if (!validEmail(email)) { skipped++; continue; }
-      await upsertContact(env, { email, name: N >= 0 ? r[N] : "", tags: d.tag ? [d.tag] : [], source: "Imported", optIn: false, run: false });
-      added++;
+      const rowTags = ti >= 0 ? String(r[ti] || "").split(/[,;|]/).map((t) => t.trim()).filter(Boolean).slice(0, 30) : [];
+      const tags = [...new Set([...(d.tag ? [d.tag] : []), ...rowTags])];
+      const kitStatus = si >= 0 ? STOP[String(r[si] || "").toLowerCase().trim()] : undefined;
+      const existed = !!(await getContact(env, email));
+      await upsertContact(env, { email, name: N >= 0 ? r[N] : "", tags, source: "Imported", optIn: false, run: false, autos: false, status: kitStatus });
+      if (kitStatus) stopped++;
+      if (existed) updated++; else added++;
     }
-    return json({ ok: true, added, skipped });
+    return json({ ok: true, added, updated, skipped, stopped });
   }
 
   // ----- segments -----

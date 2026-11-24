@@ -91,7 +91,7 @@ export function addEvent(c, type, detail) {
 // for any new tag. A man who signs up again through a form opts back in to email.
 //   phone, smsConsent: {source, ip}  -> records consent to texts
 //   status: "unconfirmed" for double opt-in forms (only for new contacts)
-export async function upsertContact(env, { email, name, tags = [], source, fields, optIn = true, phone, smsConsent, status, run = true }) {
+export async function upsertContact(env, { email, name, tags = [], source, fields, optIn = true, phone, smsConsent, status, run = true, autos: useAutos = true }) {
   email = cleanEmail(email);
   if (!validEmail(email) || !env.FILES) return null;
   let c = await getContact(env, email);
@@ -119,7 +119,7 @@ export async function upsertContact(env, { email, name, tags = [], source, field
   const added = [];
   for (const t of tags) if (t && !c.tags.includes(t)) { c.tags.push(t); added.push(t); }
   if (added.length) addEvent(c, "tagged", added.join(", "));
-  if (c.status !== "unconfirmed") {
+  if (c.status !== "unconfirmed" && useAutos) {
     const autos = await getAutomations(env);
     for (const t of added) startTriggered(c, autos, "tag", t);
     if (smsJoined) startTriggered(c, autos, "sms", "");
