@@ -47,7 +47,12 @@ struct InboxView: View {
     @State private var snoozing: EmailMessage?
     @State private var ruleFrom: EmailMessage?
     @State private var selecting = false
-    @State private var unsubCandidates: [UnsubscribeSuggestions.Candidate] = []
+    @State private var unsubCandidates: [UnsubscribeSuggestions.Candidate] = InboxView.lastUnsub     // shown at once, no slide-in
+    /// How many conversations the list builds. Building all 2,500 on every visit was the lag; older mail is one tap away.
+    @State private var shownLimit = 250
+    /// New senders waiting in the Screener, counted after the tab opens instead of on every redraw.
+    @State private var newSenderCount = 0
+    @MainActor static var lastUnsub: [UnsubscribeSuggestions.Candidate] = []
     @AppStorage(Prefs.calm) private var calm = false
     @State private var selected = Set<String>()
     @AppStorage(MailSwipe.threadsKey) private var threaded = true
@@ -98,9 +103,9 @@ struct InboxView: View {
                 .sorted { $0.receivedAt > $1.receivedAt }
         }
         guard mailbox == .inbox else { return base }
-        if let c = customTab { return base.filter { !$0.isPinned && MailTabs.matches($0, c) }.sorted { $0.receivedAt > $1.receivedAt } }
+        if let c = customTab { return Self.newestFirst(base.filter { !$0.isPinned && MailTabs.matches($0, c) }) }
         // All: a regular inbox. Every account, newest first, nothing sorted away or held back.
-        if tab == .all { return base.filter { !$0.isPinned }.sorted { $0.receivedAt > $1.receivedAt } }
+        if tab == .all { return Self.newestFirst(base.filter { !$0.isPinned }) }
         let scores = scoreMap
         let shown = base.filter { !$0.isPinned && !InboxBrain.isHeld($0, score: scores[$0.from.lowercased()]) }
         if tab == .quick {
@@ -137,8 +142,16 @@ struct InboxView: View {
     }
 
     /// Which inbox each email came to, when there's more than one account.
+    @MainActor private static var tagCache: (key: String, value: [String: AccountTag]) = ("", [:])
     private var accountTags: [String: AccountTag] {
         guard accounts.count > 1 else { return [:] }
+        let key = accounts.map { $0.id + $0.address }.sorted().joined(separator: "|")
+        if Self.tagCache.key == key { return Self.tagCache.value }
+        let v = makeAccountTags()
+        Self.tagCache = (key, v)
+        return v
+    }
+    private func makeAccountTags() -> [String: AccountTag] {
         let palette: [Color] = [.blue, .orange, .green, .purple, .pink, .teal, .indigo, .brown]
         let sorted = accounts.sorted { $0.address < $1.address }
         let locals = sorted.map { String($0.address.split(separator: "@").first ?? "") }
@@ -176,7 +189,8 @@ struct InboxView: View {
         var mailbox: [EmailMessage]?
         var visible: [EmailMessage]?
         var tabCounts: [InboxTab: Int]?
-        func reset() { scores = nil; threads = nil; mailbox = nil; visible = nil; tabCounts = nil }
+        var more = false
+        func reset() { scores = nil; threads = nil; mailbox = nil; visible = nil; tabCounts = nil; more = false }
     }
     private let memo = Memo()
 
@@ -354,7 +368,8 @@ struct InboxView: View {
                 if !allTabIntroduced { allTabIntroduced = true; tabRaw = InboxTab.all.rawValue }
                 try? await Task.sleep(for: .milliseconds(450))
                 guard !Task.isCancelled else { return }
-                if Date().timeIntervalSince(Self.lastHousekeeping) > 180 || unsubCandidates.isEmpty {
+                if Screener.enabled { newSenderCount = Screener.pending(emails: allEmails, rules: rules).count }
+                if Date().timeIntervalSince(Self.lastHousekeeping) > 180 {
                     Self.lastHousekeeping = Date()
                     wakeSnoozed()
                     refreshUnsubscribe()
@@ -364,9 +379,15 @@ struct InboxView: View {
                 Task {
                     try? await Task.sleep(for: .milliseconds(600))
                     refreshUnsubscribe()
+                    if Screener.enabled { newSenderCount = Screener.pending(emails: allEmails, rules: rules).count }
                 }
             }
-            .onChange(of: mailbox) { if mailbox == .sent { Task { await loadSent() } } }
+            .onChange(of: mailbox) {
+                shownLimit = 250
+                if mailbox == .sent { Task { await loadSent() } }
+                if mailbox == .inbox, Screener.enabled { newSenderCount = Screener.pending(emails: allEmails, rules: rules).count }
+            }
+            .onChange(of: tabRaw) { shownLimit = 250 }
         }
     }
 
@@ -379,7 +400,7 @@ struct InboxView: View {
                     .selectionDisabled()
             }
             if mailbox == .inbox && search.isEmpty && Screener.enabled {
-                let newSenders = Screener.pending(emails: allEmails, rules: rules).count
+                let newSenders = newSenderCount
                 if newSenders > 0 {
                     Button { mailbox = .screener } label: {
                         Label("\(newSenders) new sender\(newSenders == 1 ? "" : "s") to screen", systemImage: "person.crop.circle.badge.questionmark")
@@ -455,7 +476,15 @@ struct InboxView: View {
             if mailbox == .inbox && search.isEmpty {
                 inboxContent
             } else {
-                ForEach(collapse(visible)) { e in row(e) }
+                ForEach(paged(collapse(visible))) { e in row(e) }
+            }
+            if moreToShow {
+                Button { shownLimit += 500 } label: {
+                    Label("Show older mail", systemImage: "chevron.down.circle").frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.borderless)
+                .listRowBackground(Color.clear)
+                .selectionDisabled()
             }
 
             if !search.isEmpty {
@@ -493,7 +522,7 @@ struct InboxView: View {
         switch tab {
         case .all:
             // Above the waterline: new mail from real people, every account, newest first. Below: everything else, quieter.
-            let items = collapse(visible)
+            let items = paged(collapse(visible))
             let since = Date().addingTimeInterval(-72 * 3600)
             let fresh = items.filter { !$0.isRead && $0.receivedAt > since && (AutoDrafts.isRealPerson($0) || scoreMap[$0.from.lowercased()]?.isVIP == true) }
             let freshIds = Set(fresh.map(\.id))
@@ -521,7 +550,7 @@ struct InboxView: View {
                 }
             }
         case .priority:
-            let items = collapse(visible)
+            let items = paged(collapse(visible))
             otherTabsCard
             let fresh = justArrived
             if !fresh.isEmpty {
@@ -588,7 +617,7 @@ struct InboxView: View {
                 }
                 .selectionDisabled()
                 Section {
-                    ForEach(collapse(visible)) { e in row(e) }
+                    ForEach(paged(collapse(visible))) { e in row(e) }
                 } header: { Text("Each of these takes about 2 minutes. Clear a few for momentum.") }
             }
         }
@@ -633,10 +662,24 @@ struct InboxView: View {
     private func threadCount(_ e: EmailMessage) -> Int { threadIndex[e.threadId]?.count ?? 1 }
 
     /// One row per conversation (its newest message) when threading is on.
+    private func paged(_ list: [EmailMessage]) -> [EmailMessage] {
+        if list.count > shownLimit { memo.more = true; return Array(list.prefix(shownLimit)) }
+        return list
+    }
+    private var moreToShow: Bool { memo.more }
+
     private func collapse(_ list: [EmailMessage]) -> [EmailMessage] {
         guard threaded, mailbox != .sent, search.isEmpty else { return list }
         var seen = Set<String>()
-        return list.sorted { $0.receivedAt > $1.receivedAt }.filter { seen.insert($0.threadId.isEmpty ? $0.id : $0.threadId).inserted }
+        return Self.newestFirst(list).filter { seen.insert($0.threadId.isEmpty ? $0.id : $0.threadId).inserted }
+    }
+
+    /// Mail is fetched newest first, so this is almost always already in order: one quick pass checks,
+    /// instead of re-sorting thousands of emails on every redraw.
+    static func newestFirst(_ list: [EmailMessage]) -> [EmailMessage] {
+        var prev = Date.distantFuture
+        for e in list { let d = e.receivedAt; if d > prev { return list.sorted { $0.receivedAt > $1.receivedAt } }; prev = d }
+        return list
     }
 
     private func conversation(_ e: EmailMessage) -> [EmailMessage] {
@@ -705,7 +748,8 @@ struct InboxView: View {
         let fresh = UnsubscribeSuggestions.candidates(allEmails)
         UnsubscribeSuggestions.scheduleWeeklyReport(count: fresh.count)
         guard fresh.map(\.id) != unsubCandidates.map(\.id) else { return }      // unchanged: no redraw
-        withAnimation(DS.spring) { unsubCandidates = fresh }
+        Self.lastUnsub = fresh
+        unsubCandidates = fresh             // no slide-in: the list jumped down under your finger just after opening the tab
     }
 
     private func provider(for e: EmailMessage) -> MailProvider? {
