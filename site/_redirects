@@ -16,7 +16,7 @@
 /store          /products/                                301
 /shop           /products/                                301
 /youtube        https://www.youtube.com/@BeTheManSystem   302
-/apply          /inner-circle/                            302
+/apply          /cohort/                                  302
 /inquire        /couples/#inquire                         302
 /challenge      /7-week-challenge/                        302
 /7-weeks        /7-week-challenge/                        302
@@ -25,3 +25,5 @@
 /kit            /ministry-kit/                            302
 /watch          /training/                                302
 /fix            /workshop/                                302
+/the-system    /how-it-works/                            301
+/cohort-apply  /call/                                    302

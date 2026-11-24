@@ -36,7 +36,7 @@
    "url": "https://bethemansystem.com/",
    "logo": "https://bethemansystem.com/assets/favicon.png",
    "slogan": "Built for the brain God gave you.",
-   "description": "A faith-first productivity system for Black Christian men with ADHD: one sentence on who you are becoming, goals with a time and a place, a bad-day version of each, and a weekly scorecard.",
+   "description": "A faith-first four-step system for Black Christian men with ADHD: one sentence on who you are becoming, three commitments with a time and a place, a bad-day version of each, and a weekly scorecard reviewed with other men.",
    "audience": {
     "@type": "PeopleAudience",
     "audienceType": "Black Christian men, ages 25 to 40, with ADHD (diagnosed or still wondering) who struggle with productivity"
@@ -168,7 +168,7 @@
   var f=document.getElementById('get'); if(!f) return;
   // The challenge ends with the Jan 26 email; after that, point people to Step 1.
   if(Date.now()>Date.UTC(2027,0,27,6)){
-    f.outerHTML='<p style="color:var(--fg)">This round of the challenge has finished. Start with Step 1, free, and you will get the next round when it opens.</p><a class="btn btn-primary btn-lg btn-block" href="/step-1/">Get Step 1, free</a>';
+    f.outerHTML='<p style="color:var(--fg)">This round of the challenge has finished. Start with Step 1, free, and you will get the next round when it opens.</p><a class="btn btn-primary btn-lg btn-block" href="/step-1/">Start Step 1 Free</a>';
     var fine=document.getElementById('su-fine'); if(fine) fine.hidden=true; return;
   }
   if(!window.fetch) return;

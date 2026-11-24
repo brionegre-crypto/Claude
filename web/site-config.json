@@ -1,0 +1,20 @@
+{
+ "_note": "Edit here to change the cohort date, price and sessions site-wide. Do not hard-code them in pages.",
+ "cohort": {
+  "name": "The Founding Cohort",
+  "start": "2026-12-10",
+  "sessions": [
+   "2026-12-10",
+   "2026-12-17",
+   "2027-01-07",
+   "2027-01-14",
+   "2027-01-21",
+   "2027-01-28"
+  ],
+  "time": "Thursdays, 7 to 8 PM Central",
+  "seats": 10,
+  "founding_price": 197,
+  "regular_price": 297,
+  "apply_href": "/call/"
+ }
+}

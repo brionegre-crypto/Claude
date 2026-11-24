@@ -20,7 +20,7 @@ ORG = {
     "url": BASE + "/",
     "logo": BASE + "/assets/favicon.png",
     "slogan": "Built for the brain God gave you.",
-    "description": "A faith-first productivity system for Black Christian men with ADHD: one sentence on who you are becoming, goals with a time and a place, a bad-day version of each, and a weekly scorecard.",
+    "description": "A faith-first four-step system for Black Christian men with ADHD: one sentence on who you are becoming, three commitments with a time and a place, a bad-day version of each, and a weekly scorecard reviewed with other men.",
     "audience": {"@type": "PeopleAudience", "audienceType": "Black Christian men, ages 25 to 40, with ADHD (diagnosed or still wondering) who struggle with productivity"},
     "founder": {"@id": BASE + "/about/#brian"},
     "sameAs": [
@@ -44,27 +44,20 @@ PERSON = {
 # Main menu. A tuple with a list is a dropdown: (key, label, [(href, label, note, until), ...]).
 # "until" (YYYY-MM-DD) hides an item after that date, at build time and in the browser (site.js).
 NAV = [
-    ("home", "/", "Home"),
-    ("free", "Start free", [
-        ("/adhd/", "Built for your brain", "Is this for me?", None),
-        ("/step-1/", "Step 1 worksheet", "20 minutes, or in pieces", None),
-        ("/7-week-challenge/", "The 7-week challenge", "One email every Tuesday", None),
-        ("/humility/", "The Low Seat Check", "How humble are you?", None),
-        ("/truth-ledger/", "The Truth Ledger", "49 days to stop lying", None),
-        ("/training/", "Free training", "6-minute video", None),
-        ("/call/", "Book a free call", "15 minutes with Brian", None),
-    ]),
-    ("programs", "Programs", [
-        ("/the-club/", "The Be The Man Club", "$19 a month", None),
-        ("/group/", "The 6-week group", "Live on Google Meet, four seats", None),
-        ("/inner-circle/", "The Inner Circle", "By application", None),
-        ("/ministry-kit/", "Men's ministry kit", "For churches", None),
-        ("/speaking/", "Book Brian to speak", "Men's nights, retreats, conferences", None),
-        ("/workshop/", "Live workshop: Fix Your Wednesday", "Every other Wednesday, $27", None),
-    ]),
-    ("store", "/products/", "Store"),
-    ("couples", "/couples/", "Couples"),
+    ("how", "/how-it-works/", "How It Works"),
+    ("cohort", "/cohort/", "The Cohort"),
     ("about", "/about/", "About"),
+]
+
+# Pages kept live by direct link but out of the main menu (footer and drawer "More").
+MORE = [
+    ("/the-club/", "The Club (graduates)"),
+    ("/products/", "Store"),
+    ("/couples/", "Couples"),
+    ("/humility/", "The Low Seat Check"),
+    ("/truth-ledger/", "The Truth Ledger"),
+    ("/workshop/", "Fix Your Wednesday"),
+    ("/speaking/", "Speaking"),
 ]
 
 
@@ -97,6 +90,41 @@ def long_date(d):
     return f"{d.strftime('%A, %B')} {d.day}"
 
 
+CFG = json.loads((ROOT / "site-config.json").read_text())["cohort"]
+
+
+def cohort_vars(body):
+    """Fill the cohort placeholders from web/site-config.json."""
+    d = [datetime.date.fromisoformat(s) for s in CFG["sessions"]]
+    start = datetime.date.fromisoformat(CFG["start"])
+    rep = {
+        "{{cohort_start}}": long_date(start),
+        "{{cohort_start_short}}": f"{start.strftime('%b')} {start.day}",
+        "{{cohort_dates}}": ", ".join(f"{x.strftime('%b')} {x.day}" for x in d),
+        "{{cohort_time}}": CFG["time"],
+        "{{cohort_seats}}": str(CFG["seats"]),
+        "{{cohort_price}}": f"${CFG['founding_price']}",
+        "{{cohort_regular}}": f"${CFG['regular_price']}",
+        "{{cohort_apply}}": CFG["apply_href"],
+    }
+    for k, v in rep.items():
+        body = body.replace(k, v)
+    return body.replace("{{results}}", results_html())
+
+
+def results_html():
+    """Real results from web/results.json. Renders nothing while enabled is false or the list is empty."""
+    r = json.loads((ROOT / "results.json").read_text())
+    items = r.get("testimonials", [])
+    if not r.get("enabled") or not items:
+        return ""
+    cards = "\n".join(
+        f'      <figure class="tile stack"><p class="label">{html.escape(t["first_name"])} · {html.escape(t["completion"])}</p>'
+        f'<blockquote>{html.escape(t["quote"])}</blockquote></figure>' for t in items)
+    return (f'<section class="section tight"><div class="wrap"><div class="sec-head center"><h2>Real scorecard results.</h2></div>'
+            f'<div class="grid-3">\n{cards}\n</div></div></section>')
+
+
 def read_page(path):
     text = path.read_text()
     _, meta, body = text.split("---\n", 2)
@@ -126,9 +154,8 @@ def header(current, path=""):
         else:
             key, href, label = item
             links.append(f'      <a href="{href}"{cur if key == current or path == href else ""}>{label}</a>')
-    more = [i for i in NAV if not isinstance(i[2], list) and i[0] != "home"]
-    drawer.append('      <p class="drawer-h">More</p>\n' + "\n".join(f'      <a href="{href}">{label}</a>' for _, href, label in more)
-                  + '\n      <a href="/members/">Member sign in</a>')
+    drawer.append('      <p class="drawer-h">More</p>\n' + "\n".join(f'      <a href="{href}">{label}</a>' for href, label in MORE)
+                  + '\n      <a href="/members/">Sign in</a>')
     return (ROOT / "partials" / "header.html").read_text().replace("{{links}}", "\n".join(links)).replace("{{drawer}}", "\n".join(drawer))
 
 
@@ -518,11 +545,11 @@ def main():
     write_catalog(products)
     entries = [read_page(p) for p in sorted((ROOT / "pages").glob("*.html"))] + delivery_pages(products) + member_pages(products)
     for meta, body in entries:
-        body = swap_checkout_links(body, products)
+        body = cohort_vars(swap_checkout_links(body, products))
         rel = "404.html" if meta["path"] == "/404" else (meta["path"].strip("/") + "/index.html").lstrip("/")
         out = OUT / rel
         out.parent.mkdir(parents=True, exist_ok=True)
-        out.write_text(swap_checkout_links(render(meta, body), products))
+        out.write_text(cohort_vars(swap_checkout_links(render(meta, body), products)))
         if not meta.get("noindex"):
             urls.append((meta["path"], meta.get("priority", "0.8")))
     urls.append(("/truth-ledger/", "0.7"))  # static page: web/static/truth-ledger/index.html

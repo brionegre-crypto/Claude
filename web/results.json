@@ -1,0 +1,5 @@
+{
+ "_note": "Hidden by default. Set enabled to true only after real, permissioned results exist from the founding cohort. Never use invented testimonials. Each entry: first_name, completion (for example 13 of 15 kept), quote (two sentences at most).",
+ "enabled": false,
+ "testimonials": []
+}
