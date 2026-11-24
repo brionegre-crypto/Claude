@@ -158,40 +158,109 @@ struct GoalDetailView: View {
     }
 }
 
+/// A SMART goal, step by step: Specific, Measurable, Achievable, Relevant, Time-bound. Type a rough idea and
+/// "Make it SMART" fills the steps in with AI; then Keel can break it into a few first tasks linked to the goal.
 struct NewGoalSheet: View {
     @State var area: LifeArea
     @Environment(\.modelContext) private var ctx
     @Environment(\.dismiss) private var dismiss
-    @State private var title = ""
-    @State private var why = ""
+    @State private var idea = ""
+    @State private var title = ""              // Specific
+    @State private var measure = ""            // Measurable
+    @State private var achievable = ""         // Achievable
+    @State private var why = ""                // Relevant
+    @State private var hasDate = true          // Time-bound
+    @State private var date = Calendar.current.date(byAdding: .month, value: 3, to: Date()) ?? Date()
     @State private var emoji = "🎯"
+    @State private var makeTasks = true
+    @State private var working = false
+
+    private var done: Int { [title, measure, achievable, why].filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty }.count + (hasDate ? 1 : 0) }
 
     var body: some View {
         NavigationStack {
             Form {
-                HStack {
-                    TextField("🎯", text: $emoji).frame(width: 44).font(.title)
-                    TextField("e.g. Run a half marathon", text: $title)
-                }
-                Picker("Life area", selection: $area) { ForEach(LifeArea.allCases) { Label($0.title, systemImage: $0.icon).tag($0) } }
-                Section("Why it matters") { TextField("Because…", text: $why, axis: .vertical) }
+                Section {
+                    TextField("A rough idea, e.g. get fitter", text: $idea, axis: .vertical)
+                    Button { Task { await smartify() } } label: {
+                        Label(working ? "Thinking…" : "Make it SMART", systemImage: "sparkles")
+                    }.disabled(idea.isEmpty || working)
+                    ProgressView(value: Double(done), total: 5) { Text("\(done) of 5 SMART steps").font(DS.Font.caption) }
+                } footer: { Text("Or fill in each step yourself. A SMART goal is clear enough that you'll know when you've done it.") }
+                Section {
+                    HStack {
+                        TextField("🎯", text: $emoji).frame(width: 44).font(.title)
+                        TextField("Run a half marathon", text: $title)
+                    }
+                    Picker("Life area", selection: $area) { ForEach(LifeArea.allCases) { Label($0.title, systemImage: $0.icon).tag($0) } }
+                } header: { Text("S · Specific") } footer: { Text("Exactly what you'll achieve.") }
+                Section { TextField("e.g. finish 21 km in under 2 h 15", text: $measure, axis: .vertical) } header: { Text("M · Measurable") } footer: { Text("The number or sign that tells you it's done.") }
+                Section { TextField("e.g. 3 runs a week, building 10% a week", text: $achievable, axis: .vertical) } header: { Text("A · Achievable") } footer: { Text("How you'll get there, and why it's realistic for you.") }
+                Section { TextField("Because…", text: $why, axis: .vertical) } header: { Text("R · Relevant") } footer: { Text("Why it matters to you. Keel shows this when motivation dips.") }
+                Section {
+                    Toggle("By a date", isOn: $hasDate)
+                    if hasDate { DatePicker("Target date", selection: $date, in: Date()..., displayedComponents: .date) }
+                } header: { Text("T · Time-bound") }
+                Section { Toggle("Create the first tasks for it", isOn: $makeTasks) } footer: { Text("AI suggests 3–5 first steps, linked to this goal so they count toward it.") }
             }
-            .navigationTitle("New goal")
+            .navigationTitle("New SMART goal")
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() } }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Add") {
-                        let g = Goal(title: title, area: area)
-                        g.why = why; g.emoji = emoji.isEmpty ? "🎯" : String(emoji.prefix(2))
-                        ctx.insert(g)
-                        Haptics.success()
-                        dismiss()
-                    }
-                    .disabled(title.isEmpty)
+                    Button("Add") { Task { await save() } }.disabled(title.isEmpty || working)
                 }
             }
         }
-        .presentationDetents([.medium])
+    }
+
+    private func smartify() async {
+        working = true; defer { working = false }
+        let prompt = """
+        Turn this rough goal into a SMART goal. Reply with exactly five lines, no extra text:
+        SPECIFIC: <short goal title, under 8 words>
+        MEASURABLE: <the measurable target>
+        ACHIEVABLE: <how, realistically, e.g. weekly plan>
+        RELEVANT: <why it could matter, one sentence>
+        MONTHS: <number of months to give it, 1-24>
+        Goal: \(idea)
+        """
+        guard let out = await AIRouter.shared.write(prompt) else { return }
+        for line in out.split(separator: "\n") {
+            let parts = line.split(separator: ":", maxSplits: 1).map { $0.trimmingCharacters(in: .whitespaces) }
+            guard parts.count == 2 else { continue }
+            switch parts[0].uppercased() {
+            case "SPECIFIC": title = parts[1]
+            case "MEASURABLE": measure = parts[1]
+            case "ACHIEVABLE": achievable = parts[1]
+            case "RELEVANT": if why.isEmpty { why = parts[1] }
+            case "MONTHS": if let m = Int(parts[1].filter(\.isNumber)), m > 0 { hasDate = true; date = Calendar.current.date(byAdding: .month, value: min(24, m), to: Date()) ?? date }
+            default: break
+            }
+        }
+    }
+
+    private func save() async {
+        working = true; defer { working = false }
+        let g = Goal(title: title, area: area)
+        // Kept in the goal's "why" so nothing about how goals are stored (and synced) changes.
+        var lines = [why]
+        if !measure.isEmpty { lines.append("Measure: \(measure)") }
+        if !achievable.isEmpty { lines.append("Plan: \(achievable)") }
+        g.why = lines.filter { !$0.isEmpty }.joined(separator: "\n")
+        g.emoji = emoji.isEmpty ? "🎯" : String(emoji.prefix(2))
+        g.targetDate = hasDate ? date : nil
+        ctx.insert(g)
+        if makeTasks, let out = await AIRouter.shared.write("List 3 to 5 concrete first tasks (one per line, no numbering, under 10 words each) for this goal: \(title). Measure: \(measure). Plan: \(achievable).") {
+            for line in out.split(separator: "\n").map({ $0.trimmingCharacters(in: CharacterSet(charactersIn: " -•*0123456789.")) }).filter({ !$0.isEmpty }).prefix(5) {
+                let t = TaskItem(title: String(line.prefix(80)))
+                t.goalId = g.id
+                ctx.insert(t)
+                try? CalendarService.shared.push(t)
+            }
+        }
+        try? ctx.save()
+        Haptics.success()
+        dismiss()
     }
 }
 
