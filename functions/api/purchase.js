@@ -13,6 +13,14 @@ import { subscribe, sendEmail, tagByName, notifyBrian, TAGS, firstName } from ".
 import { nextSession } from "../_workshop.js";
 import { downloadsEmail } from "../_emails.js";
 
+// Offers with no files (the Founding Cohort) reuse the receipt email with enrolment wording.
+const enrolledEmail = (v) => downloadsEmail(v)
+  .replace(/Thank you\. Here&#39;s|Thank you\. Here's/, "You're in:")
+  .replace("Your files are on your own download page. Keep this email so you can always get back to them.",
+    "Your seat is held. Your page has the session dates and what to do before the first one. Brian will email you the Google Meet link before the first session.")
+  .replace("Open my downloads", "Open my page")
+  .replace("Questions or trouble downloading? Just reply.", "Questions? Just reply.");
+
 const reply = (body, status = 200) =>
   new Response(JSON.stringify(body), { status, headers: { "content-type": "application/json", "cache-control": "no-store" } });
 
@@ -21,7 +29,7 @@ export async function onRequestPost(context) {
   let data = {};
   try { data = await request.json(); } catch (e) {}
   const offer = OFFERS[data.o];
-  if (!offer || !offer.files.length) return reply({ ok: false, error: "unknown product" }, 400);
+  if (!offer) return reply({ ok: false, error: "unknown product" }, 400);
   if (!env.STRIPE_KEY) return reply({ ok: false, error: "not configured" }, 503);
 
   const session = await paidSession(env, data.s, offer.plink);
@@ -55,8 +63,8 @@ export async function onRequestPost(context) {
 
   const emailed = await sendEmail(env, {
     to: email,
-    subject: `Your downloads: ${offer.name}`,
-    html: downloadsEmail({
+    subject: offer.files.length ? `Your downloads: ${offer.name}` : `You're in: ${offer.name}`,
+    html: (offer.files.length ? downloadsEmail : enrolledEmail)({
       product_name: ws ? `${offer.name}, ${when}` : offer.name,
       download_url: `https://bethemansystem.com/get/${offer.slug}/?session_id=${session.id}`,
     }),

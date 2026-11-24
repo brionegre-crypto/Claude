@@ -3,18 +3,18 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Request received | Be The Man</title>
-<meta name="description" content="Your speaking request has been received.">
+<title>Thank you: The Founding Cohort | Be The Man</title>
+<meta name="description" content="Your download for The Founding Cohort.">
 <meta name="robots" content="noindex, follow">
-<link rel="canonical" href="https://bethemansystem.com/speaking/thanks/">
+<link rel="canonical" href="https://bethemansystem.com/get/cohort-q4m8tz2k/">
 <link rel="icon" type="image/png" href="/assets/favicon.png">
 <link rel="apple-touch-icon" href="/assets/favicon.png">
 <meta name="theme-color" content="#000000">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Be The Man">
-<meta property="og:title" content="Request received | Be The Man">
-<meta property="og:description" content="Your speaking request has been received.">
-<meta property="og:url" content="https://bethemansystem.com/speaking/thanks/">
+<meta property="og:title" content="Thank you: The Founding Cohort | Be The Man">
+<meta property="og:description" content="Your download for The Founding Cohort.">
+<meta property="og:url" content="https://bethemansystem.com/get/cohort-q4m8tz2k/">
 <meta property="og:image" content="https://bethemansystem.com/assets/og.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -52,10 +52,10 @@
   },
   {
    "@type": "WebPage",
-   "@id": "https://bethemansystem.com/speaking/thanks/#page",
-   "url": "https://bethemansystem.com/speaking/thanks/",
-   "name": "Request received | Be The Man",
-   "description": "Your speaking request has been received.",
+   "@id": "https://bethemansystem.com/get/cohort-q4m8tz2k/#page",
+   "url": "https://bethemansystem.com/get/cohort-q4m8tz2k/",
+   "name": "Thank you: The Founding Cohort | Be The Man",
+   "description": "Your download for The Founding Cohort.",
    "isPartOf": {
     "@id": "https://bethemansystem.com/#site"
    },
@@ -76,8 +76,8 @@
     {
      "@type": "ListItem",
      "position": 2,
-     "name": "Request received | Be The Man",
-     "item": "https://bethemansystem.com/speaking/thanks/"
+     "name": "Thank you: The Founding Cohort | Be The Man",
+     "item": "https://bethemansystem.com/get/cohort-q4m8tz2k/"
     }
    ]
   }
@@ -113,15 +113,32 @@
 
 <main id="main">
 <div class="wrap hero narrow">
-  <p class="eyebrow">Request received</p>
-  <h1 style="font-size:clamp(40px,6vw,64px)">Thank you. <span class="grad">Brian will be in touch.</span></h1>
-  <p class="lead">Brian will reply within two business days about your event. Watch for an email from brian@bethemansystem.com, and check your spam folder if you don't see it.</p>
-  <div class="tile stack" style="margin-top:28px">
-    <h3>A taste of the teaching</h3>
-    <p>Step 1 is free and takes twenty minutes. It's the same place a talk would start.</p>
-    <div class="actions"><a class="btn btn-primary" href="/step-1/">Start Step 1 Free</a><a class="textlink" href="/ministry-kit/">See the men's ministry kit ›</a></div>
+  <p class="eyebrow">Payment received</p>
+  <h1 style="font-size:clamp(40px,6vw,64px)">You're in. <span class="grad">Your seat is held.</span></h1>
+  <p class="lead">Welcome to the Founding Cohort. A receipt is on its way to your email, and Brian will email you the Google Meet link before the first session.</p>
+  <p class="muted" id="emailed" hidden></p>
+  <div class="tile hi stack" style="margin-top:24px">
+    <p class="label">When and where</p>
+    <p style="color:var(--fg)">Google Meet, Thursdays, 7 to 8 PM Central. Sessions: Dec 10, Dec 17, Jan 7, Jan 14, Jan 21, Jan 28. No class December 24 or 31.</p>
   </div>
+  <div class="tile stack" style="margin-top:16px">
+    <p class="label">Before the first session</p>
+    <ul class="check">
+      <li>Finish Step 1, The Calling: one sentence on who God has called you to be. <a class="textlink" href="/step-1/worksheet/">Open the worksheet</a></li>
+      <li>Put every session on your calendar now, with a reminder an hour before.</li>
+      <li>Questions? Reply to your receipt email, or write to brian@bethemansystem.com.</li>
+    </ul>
+  </div>
+  <p class="fine" style="margin-top:20px">Refunds: full refund up to 24 hours before the first session. After that, you can move to the next round. Be The Man is a faith-based coaching and consistency system, not medical treatment, diagnosis, or clinical therapy for ADHD.</p>
 </div>
+<script>
+(function(){
+  var s=new URLSearchParams(location.search).get('session_id');
+  if(!s||!window.fetch) return;
+  fetch('/api/purchase',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({o:'cohort',s:s})})
+    .then(function(r){return r.json();}).then(function(d){if(d.emailed){var n=document.getElementById('emailed');n.textContent='We also emailed you a link to this page.';n.hidden=false;}}).catch(function(){});
+})();
+</script>
 <div style="height:clamp(80px,12vw,140px)"></div>
 </main>
 <footer>

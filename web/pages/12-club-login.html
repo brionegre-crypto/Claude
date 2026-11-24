@@ -20,13 +20,13 @@
     </form>
     <p class="muted" id="lg-done" role="status" hidden></p>
   </div>
-  <p class="fine" style="margin-top:20px">Not a member yet? <a class="textlink" href="/the-club/">Join the Club</a>. Need help? Email <a class="textlink" href="mailto:brian@bethemansystem.com">brian@bethemansystem.com</a>.</p>
+  <p class="fine" style="margin-top:20px">The Club is for Founding Cohort graduates. <a class="textlink" href="/cohort/">See the cohort</a>. Need help? Email <a class="textlink" href="mailto:brian@bethemansystem.com">brian@bethemansystem.com</a>.</p>
 </div>
 <div style="height:clamp(80px,12vw,140px)"></div>
 <script>
 (function(){
   var q=new URLSearchParams(location.search), lead=document.getElementById('login-lead');
-  if(q.get('ended')) lead.textContent="Your membership isn't active anymore. Rejoin any time from the Club page, or sign in below if you've already rejoined.";
+  if(q.get('ended')) lead.textContent="Your membership isn't active anymore. Email brian@bethemansystem.com to rejoin, or sign in below if you've already rejoined.";
   if(q.get('expired')) lead.textContent="That sign-in link has expired or was already replaced. Send yourself a new one below.";
   if(q.get('out')) lead.textContent="You're signed out. Enter your email to sign back in.";
   var f=document.getElementById('login'), msg=document.getElementById('lg-msg'), done=document.getElementById('lg-done'), btn=f.querySelector('button');

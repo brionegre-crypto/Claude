@@ -423,6 +423,18 @@
    ],
    "start": "One step a week, in order, starting with Step 1. Put your Sunday review on the calendar before you begin.",
    "_note": "Retired 2026-10-23: merged into \"library\" (The Complete Be The Man System). Kept so earlier buyers' download page still works."
+  },
+  {
+   "key": "cohort",
+   "name": "The Founding Cohort",
+   "price": 197,
+   "type": "one_time",
+   "stripe_link": "https://buy.stripe.com/6oU6oI3fBcCxbttaPG6kg0m",
+   "stripe_plink": "plink_1UfJ00IJyHMhQ40vgGHsFFNJ",
+   "slug": "cohort-q4m8tz2k",
+   "files": [],
+   "start": "Finish Step 1 before the first session.",
+   "_note": "Stripe product prod_VggGdRnWzldOtc. Promo code FOUNDING97 (one use, $100 off) brings it to $97."
   }
  ]
 }

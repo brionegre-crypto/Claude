@@ -61,8 +61,8 @@ export const FILES = {
   "name": "Forty_Cards_for_Men.pdf"
  },
  "step1_pdf": {
-  "url": "https://www.bethemansystem.com/downloads/step-1-what-type-of-man.pdf",
-  "name": "Step1-WhatTypeofManDoYouWanttoBe.pdf"
+  "url": "https://www.bethemansystem.com/downloads/step-1-the-calling.pdf",
+  "name": "step-1-the-calling.pdf"
  },
  "step2_pdf": {
   "url": "https://d1yei2z3i6k35z.cloudfront.net/18912984/6ab3bbee0e6046.99310542_Step2-WhatAreYourGoals.pdf",
@@ -380,6 +380,15 @@ export const OFFERS = {
   ],
   "slug": "system-uqn297ax",
   "name": "The Be The Man System",
+  "addons": [],
+  "tag": null,
+  "guide": false
+ },
+ "cohort": {
+  "plink": "plink_1UfJ00IJyHMhQ40vgGHsFFNJ",
+  "files": [],
+  "slug": "cohort-q4m8tz2k",
+  "name": "The Founding Cohort",
   "addons": [],
   "tag": null,
   "guide": false

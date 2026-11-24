@@ -100,6 +100,7 @@ def cohort_vars(body):
         "{{cohort_price}}": f"${CFG['founding_price']}",
         "{{cohort_regular}}": f"${CFG['regular_price']}",
         "{{cohort_apply}}": CFG["apply_href"],
+        "{{cohort_call}}": CFG["call_href"],
     }
     for k, v in rep.items():
         body = body.replace(k, v)
@@ -272,6 +273,9 @@ def guide_pages(o):
     return pages
 
 
+D = "Be The Man is a faith-based coaching and consistency system, not medical treatment, diagnosis, or clinical therapy for ADHD."
+
+
 def delivery_pages(products):
     """Thank-you and download pages Stripe redirects to after payment."""
     pages = []
@@ -279,7 +283,36 @@ def delivery_pages(products):
         meta = {"path": f"/get/{o['slug']}/", "noindex": True, "nav": "store",
                 "title": f"Thank you: {o['name']} | Be The Man",
                 "description": f"Your download for {o['name']}."}
-        if o["key"] == "couples":
+        if o["key"] == "cohort":
+            body = """<div class="wrap hero narrow">
+  <p class="eyebrow">Payment received</p>
+  <h1 style="font-size:clamp(40px,6vw,64px)">You're in. <span class="grad">Your seat is held.</span></h1>
+  <p class="lead">Welcome to the Founding Cohort. A receipt is on its way to your email, and Brian will email you the Google Meet link before the first session.</p>
+  <p class="muted" id="emailed" hidden></p>
+  <div class="tile hi stack" style="margin-top:24px">
+    <p class="label">When and where</p>
+    <p style="color:var(--fg)">Google Meet, {{cohort_time}}. Sessions: {{cohort_dates}}. No class December 24 or 31.</p>
+  </div>
+  <div class="tile stack" style="margin-top:16px">
+    <p class="label">Before the first session</p>
+    <ul class="check">
+      <li>Finish Step 1, The Calling: one sentence on who God has called you to be. <a class="textlink" href="/step-1/worksheet/">Open the worksheet</a></li>
+      <li>Put every session on your calendar now, with a reminder an hour before.</li>
+      <li>Questions? Reply to your receipt email, or write to brian@bethemansystem.com.</li>
+    </ul>
+  </div>
+  <p class="fine" style="margin-top:20px">Refunds: full refund up to 24 hours before the first session. After that, you can move to the next round. """+D+"""</p>
+</div>
+<script>
+(function(){
+  var s=new URLSearchParams(location.search).get('session_id');
+  if(!s||!window.fetch) return;
+  fetch('/api/purchase',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({o:'cohort',s:s})})
+    .then(function(r){return r.json();}).then(function(d){if(d.emailed){var n=document.getElementById('emailed');n.textContent='We also emailed you a link to this page.';n.hidden=false;}}).catch(function(){});
+})();
+</script>
+<div style="height:clamp(80px,12vw,140px)"></div>"""
+        elif o["key"] == "couples":
             body = f"""<div class="wrap hero narrow">
   <p class="eyebrow">Payment received</p>
   <h1 style="font-size:clamp(40px,6vw,64px)">Thank you. <span class="grad">You're booked in.</span></h1>
@@ -324,9 +357,9 @@ def delivery_pages(products):
   {o.get("after_html", "")}
   <div class="tile hi stack" style="margin-top:16px">
     <p class="label">Keep going</p>
-    <h3>Get every tool, plus the monthly call.</h3>
-    <p>The Be The Man Club is $19 a month: all seven steps, a new set of tools every month, a Club-only tool, and a live call on the second Tuesday.</p>
-    <div class="actions"><a class="btn btn-primary" href="/the-club/">See the Club</a></div>
+    <h3>Build your plan with other men.</h3>
+    <p>The Founding Cohort is six live weeks with at most ten men. You write the plan, build a bad-day version of every commitment, and report your scorecard each week.</p>
+    <div class="actions"><a class="btn btn-primary" href="/cohort/">See the Founding Cohort</a></div>
   </div>
   <p class="fine" style="margin-top:20px">Trouble downloading? Email <a class="textlink" href="mailto:brian@bethemansystem.com">brian@bethemansystem.com</a> and you'll get your files the same day.</p>
 </div>
@@ -496,7 +529,7 @@ def write_catalog(products):
     """Product and file list for the /api/download Pages Function."""
     club, cfg = club_data()
     all_files = {**products["files"], **club["step_files"]}
-    files = {k: {"url": v["url"], "name": v["url"].rsplit("/", 1)[1].split("_", 1)[1]}
+    files = {k: {"url": v["url"], "name": v["url"].rsplit("/", 1)[1].split("_", 1)[-1]}
              for k, v in all_files.items()}
     club_files = {}
     for l in club["lessons"]:
@@ -521,7 +554,8 @@ def write_catalog(products):
 def swap_checkout_links(text, products):
     for o in products["offers"]:
         if o.get("stripe_link"):
-            text = text.replace(o["systeme_link"], o["stripe_link"])
+            if o.get("systeme_link"):
+                text = text.replace(o["systeme_link"], o["stripe_link"])
     # Club: until the members area is switched on, Join buttons keep using the systeme checkout.
     _, cfg = club_data()
     if not cfg.get("live"):
