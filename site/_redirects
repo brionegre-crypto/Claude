@@ -29,7 +29,13 @@
 /framework      /step-1/#get      302
 /free           /step-1/          302
 /start          /step-1/          302
-/yt             /links/           302
+/yt             /links/?src=youtube     302
+/ig             /links/?src=instagram   302
+/fb             /links/?src=facebook    302
+/tt             /links/?src=tiktok      302
+/sub            /links/?src=substack    302
+/pod            /step-1/?src=podcast    302
+/dm             /step-1/?src=dm         302
 /humble         /humility/        302
 /low-seat       /humility/        302
 /humility-check /humility/        302

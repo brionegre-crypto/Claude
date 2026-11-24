@@ -47,7 +47,15 @@
         <p class="label">Founding rate · {{cohort_seats}} seats</p>
         <p class="big">{{cohort_price}}<span style="font-size:.35em;font-weight:500;letter-spacing:0"> for the six weeks</span></p>
         <p>Then {{cohort_regular}}. Sessions: {{cohort_dates}}. No class December 24 or 31.</p>
-        <div class="actions"><a class="btn btn-primary btn-lg" href="{{cohort_apply}}">Join the Cohort</a></div>
+        <div class="actions" id="join-cta"><a class="btn btn-primary btn-lg" href="{{cohort_apply}}">Join the Cohort</a></div>
+        <form class="signup" id="waitlist" hidden novalidate style="display:grid;gap:10px">
+          <p style="color:var(--fg)"><b id="wl-why">The founding seats are taken.</b> Join the waitlist and you'll hear first when the next cohort opens.</p>
+          <input name="name" placeholder="First name" autocomplete="given-name" aria-label="First name" style="width:100%;font:inherit;font-size:17px;color:var(--fg);background:var(--bg);border:1px solid var(--line-2);border-radius:14px;padding:15px 16px">
+          <input name="email" type="email" placeholder="Email address" autocomplete="email" required aria-label="Email" style="width:100%;font:inherit;font-size:17px;color:var(--fg);background:var(--bg);border:1px solid var(--line-2);border-radius:14px;padding:15px 16px">
+          <div style="position:absolute;left:-9999px" aria-hidden="true"><input name="company" tabindex="-1" autocomplete="off"></div>
+          <button class="btn btn-primary btn-lg" type="submit">Join the waitlist</button>
+          <p class="muted" id="wl-msg" role="status"></p>
+        </form>
         <p class="muted"><b>Refunds:</b> full refund up to 24 hours before the first session. After that, you can move to the next round. <a class="textlink" href="/refunds/">Full refund policy</a></p>
         <p class="fine">Ten seats. Questions first? <a class="textlink" href="{{cohort_call}}">Book a free 15-minute call with Brian</a>.</p>
       </div>
@@ -109,3 +117,16 @@
     </div>
   </div>
 </section>
+<script>
+(function(){if(!window.fetch)return;
+  fetch('/api/cohort-status').then(function(r){return r.json()}).then(function(s){
+    if(!s||s.open!==false)return;
+    document.getElementById('join-cta').hidden=true;var f=document.getElementById('waitlist');f.hidden=false;
+    if(s.started)document.getElementById('wl-why').textContent='This cohort has started.';
+  }).catch(function(){});
+  var f=document.getElementById('waitlist'),m=document.getElementById('wl-msg');
+  f.addEventListener('submit',function(e){e.preventDefault();var em=f.email.value.trim();if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(em)){m.textContent='Please enter a valid email address.';return}
+    m.textContent='Sending…';fetch('/api/subscribe',{method:'POST',headers:{'content-type':'application/json',accept:'application/json'},body:JSON.stringify(Object.assign({list:'waitlist',name:f.name.value.trim(),email:em,company:f.company.value},window.btmAttr?window.btmAttr():{}))})
+      .then(function(r){return r.json()}).then(function(d){m.textContent=d.ok?"You're on the list. Check your email.":(d.error||'Please try again.');if(d.ok)f.reset();}).catch(function(){m.textContent='Please try again.'});});
+})();
+</script>

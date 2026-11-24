@@ -8,10 +8,17 @@
 import { notifyBrian, firstName } from "../_mail.js";
 import { toE164 } from "../_sms.js";
 import { upsertContact, getContact, enroll, runContact, sendToContact, getSequence, fireTrigger, tick } from "../_list.js";
+import { attribute } from "../_extras.js";
 
 const LISTS = {
   step1: { tag: "Step 1", series: "step1", thanks: "/step-1/thanks/" },
   lowseat: { tag: "Low Seat Check", thanks: "/humility/#sent" },
+  waitlist: { tag: "Cohort waitlist", thanks: "/cohort/#waitlist" },
+};
+
+const WAITLIST_EMAIL = {
+  subject: "You're on the list for the next cohort",
+  body: `{{first_name}}, you're on the list. When the next Founding Cohort opens, you'll hear first, before anyone else.\n\nWhile you wait, do Step 1 if you haven't. It's free and takes twenty minutes.\n\n[[Start Step 1|https://bethemansystem.com/step-1/]]\n\nBrian`,
 };
 
 const POSTURES = ["Teachable", "Owned", "Unseen", "Credit", "Dependent"];
@@ -57,7 +64,7 @@ function lowSeatEmail(fields) {
   };
 }
 
-const LIST_NAMES = { step1: "Step 1 (free worksheet)", lowseat: "Low Seat Check results" };
+const LIST_NAMES = { step1: "Step 1 (free worksheet)", lowseat: "Low Seat Check results", waitlist: "Founding Cohort waitlist" };
 
 export async function onRequestPost(context) {
   const { request, env } = context;
@@ -90,6 +97,7 @@ async function handle(request, env, data, context) {
     const phone = toE164(data.phone);
     const c = await upsertContact(env, { email, name, tags: [list.tag], fields, source: list.tag, phone,
       smsConsent: phone && (data.sms === true || data.sms === "1" || data.sms === "on") ? { source: list.tag, ip: request.headers.get("cf-connecting-ip") || "" } : null });
+    if (c) await attribute(env, c, { src: data.src, ref: data.ref });
     if (c && list.series && !(c.seq && c.seq[list.series])) {
       await enroll(env, c, list.series);
       ok = (await runContact(env, c)) > 0;
@@ -97,6 +105,8 @@ async function handle(request, env, data, context) {
       // Already in the series (signed up before): resend the first email only.
       const def = await getSequence(env, list.series);
       ok = (await sendToContact(env, c, def.emails[0], "series:" + list.series)).ok;
+    } else if (c && list === LISTS.waitlist) {
+      ok = (await sendToContact(env, c, WAITLIST_EMAIL, "waitlist")).ok;
     } else if (c) {
       ok = (await sendToContact(env, c, lowSeatEmail(fields), "result")).ok;
     }
@@ -106,7 +116,7 @@ async function handle(request, env, data, context) {
     notifyBrian(env, context, {
       subject: `New sign-up: ${LIST_NAMES[key]}${name ? `, ${firstName(name)}` : ""}`,
       replyTo: email,
-      rows: [["Signed up for", LIST_NAMES[key]], ["Name", name], ["Email", email], ["Mobile", toE164(data.phone)], ["Texts", toE164(data.phone) && data.sms ? "Opted in" : ""],
+      rows: [["Signed up for", LIST_NAMES[key]], ["Name", name], ["Email", email], ["Came from", String(data.src || (data.ref ? "referral" : "")).slice(0, 40)], ["Mobile", toE164(data.phone)], ["Texts", toE164(data.phone) && data.sms ? "Opted in" : ""],
         ["Low Seat score", fields.low_seat_score], ["Thinnest posture", fields.low_seat_posture]],
     });
     if (context.waitUntil) context.waitUntil(tick(env, { max: 10 }).catch(() => null));

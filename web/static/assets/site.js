@@ -40,3 +40,18 @@
     });
   });
 })();
+// Where a visitor came from (first touch: ?src=, utm_source or the referring site) and who
+// referred him (?ref=). Sent with sign-ups, and added to checkout links so purchases carry it too.
+(function(){
+  try{
+    var q=new URLSearchParams(location.search),s=q.get('src')||q.get('utm_source'),r=q.get('ref');
+    if(!s&&document.referrer){var h='';try{h=new URL(document.referrer).hostname}catch(e){}
+      var map={'instagram':'instagram','facebook':'facebook','fb.':'facebook','youtube':'youtube','youtu.be':'youtube','tiktok':'tiktok','substack':'substack','google.':'google','bing.':'bing','t.co':'x','twitter':'x','linkedin':'linkedin'};
+      if(h&&h.indexOf('bethemansystem.com')<0)for(var k in map)if(h.indexOf(k)>=0){s=map[k];break;}}
+    if(s&&!localStorage.getItem('btm_src'))localStorage.setItem('btm_src',String(s).toLowerCase().replace(/[^a-z0-9_-]/g,'').slice(0,40));
+    if(r)localStorage.setItem('btm_ref',String(r).replace(/[^a-z0-9]/gi,'').slice(0,12));
+  }catch(e){}
+  window.btmAttr=function(){try{return {src:localStorage.getItem('btm_src')||'',ref:localStorage.getItem('btm_ref')||''}}catch(e){return {src:'',ref:''}}};
+  var a=window.btmAttr(),cr=a.ref?'ref-'+a.ref:(a.src?'src-'+a.src:'');
+  if(cr)document.querySelectorAll('a[href^="https://buy.stripe.com/"]').forEach(function(l){try{var u=new URL(l.href);u.searchParams.set('client_reference_id',cr);l.href=u.toString();}catch(e){}});
+})();

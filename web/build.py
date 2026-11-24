@@ -113,16 +113,21 @@ def cohort_vars(body):
 
 
 def results_html():
-    """Real results from web/results.json. Renders nothing while enabled is false or the list is empty."""
-    r = json.loads((ROOT / "results.json").read_text())
-    items = r.get("testimonials", [])
-    if not r.get("enabled") or not items:
-        return ""
-    cards = "\n".join(
-        f'      <figure class="tile stack"><p class="label">{html.escape(t["first_name"])} · {html.escape(t["completion"])}</p>'
-        f'<blockquote>{html.escape(t["quote"])}</blockquote></figure>' for t in items)
-    return (f'<section class="section tight"><div class="wrap"><div class="sec-head center"><h2>Real scorecard results.</h2></div>'
-            f'<div class="grid-3">\n{cards}\n</div></div></section>')
+    """The home page's results section. Hidden until at least one result is both permitted by
+    the man and approved by Brian in the dashboard (Cohort tab); then /api/results fills it."""
+    return """<section class="section tight" id="results" hidden>
+  <div class="wrap">
+    <div class="sec-head center"><p class="eyebrow">Real results</p><h2>From the men who did the work.</h2><p class="lead">First names and their own numbers, shared with their permission.</p></div>
+    <div class="grid-3" id="results-list"></div>
+    <p class="fine center" style="margin-top:16px">Individual results, not a promise. Be The Man is a faith-based coaching and consistency system, not medical treatment, diagnosis, or clinical therapy for ADHD.</p>
+  </div>
+</section>
+<script>
+(function(){if(!window.fetch)return;fetch('/api/results').then(function(r){return r.json()}).then(function(d){
+  var l=(d&&d.results)||[];if(!l.length)return;var e=function(v){return String(v||'').replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})};
+  document.getElementById('results-list').innerHTML=l.map(function(x){return '<figure class="tile stack"><p class="label">'+e(x.name)+(x.before&&x.after?' · '+e(x.before)+' to '+e(x.after):'')+'</p><blockquote>'+e(x.quote)+'</blockquote></figure>'}).join('');
+  document.getElementById('results').hidden=false;}).catch(function(){});})();
+</script>"""
 
 
 def read_page(path):

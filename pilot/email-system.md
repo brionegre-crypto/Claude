@@ -65,3 +65,21 @@ Never paste these keys into chat.
 - **Texts:** 50 a day. Change it with `SMS_DAILY_CAP`.
 - **Storage:** Cloudflare's free plan allows about 1,000 database writes a day. Each email, open or click uses one to three. That's fine at your size. If the list grows into the thousands, Cloudflare's $5-a-month Workers plan raises the limit about a thousandfold.
 - **Open rates:** these run high, because some email apps load images automatically. Clicks are the honest number.
+
+## Added Nov 24: cohort, growth and money tools
+
+| Tab or feature | What it does |
+|---|---|
+| Cohort | Every man tagged "Founding Cohort": Step 1 done, attendance for each Thursday, his weekly Ledger numbers, notes, buttons to text or email the whole cohort, and the results he shares. |
+| The Ledger by text | Sunday 6 PM Central, each cohort man is asked for his number by text (or by email if he isn't on texts). He replies "13/15" or uses the link. Monday at noon, anyone missing gets one nudge, and you get the list. Turn it on or off in Settings. |
+| Results | "Ask for results" emails each man a short form: his first and latest numbers, two sentences, and a permission checkbox. Nothing shows on the home page unless he checked the box and you click Approve. |
+| Where people come from | Short links tag the source: bethemansystem.com/yt, /ig, /fb, /tt, /sub, /pod, /dm (or add ?src=anything to a link). The site also reads the site a visitor came from. Sign-ups and purchases both carry it. |
+| Referral links | Every contact gets bethemansystem.com/r/code (shown on his contact card, and `{{referral_link}}` in emails). Sign-ups through it are credited to him, and "Refers someone who signs up" can start an automation, for example a thank-you. |
+| Waitlist | When the 10 seats sell out or the cohort starts, the cohort page swaps the buy button for a waitlist form. The waitlist is the tag "Cohort waitlist". |
+| Substack to email | In Settings: do nothing, make a draft and email you, or send automatically when you publish. Posts published before you turn it on are never sent. |
+| Money | Revenue this month and over 30 days, sales by product, Club members and monthly revenue, refunds, the path from Step 1 to buyer, and sign-ups, buyers and revenue by source. |
+| Monday report | Every Monday at 8 AM Central, an email to you with the week's numbers. You can preview it in Settings. |
+| Saved replies | Write them in Settings and insert them in the text inbox or in "Email him" on a contact. |
+| Calls | Upcoming and past free calls. Record an outcome (joined, not now, follow up, no show) with a note. A follow-up date emails you a reminder that morning. |
+
+The Ledger, the Monday report, Substack and the reminders run on the hourly scheduler. Until `CRON_SECRET` is set up, they run whenever you open the dashboard.

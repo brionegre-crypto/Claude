@@ -7,6 +7,7 @@ import { readToken } from "../../_list.js";
 import { sign } from "../../_club.js";
 import { sendEmail, notifyBrian, firstName } from "../../_mail.js";
 import { toE164 } from "../../_sms.js";
+import { attribute } from "../../_extras.js";
 
 const json = (b, s = 200) => new Response(JSON.stringify(b), { status: s, headers: { "content-type": "application/json", "cache-control": "no-store" } });
 
@@ -30,6 +31,7 @@ export async function onRequestPost(context) {
     status: f.doubleOptIn ? "unconfirmed" : undefined, run: !f.doubleOptIn,
   });
   if (!c) return json({ ok: false, error: "Please try again." }, 500);
+  await attribute(env, c, { src: d.src, ref: d.ref });
 
   if (c.status === "unconfirmed") {
     c.pending = { form: f.id };

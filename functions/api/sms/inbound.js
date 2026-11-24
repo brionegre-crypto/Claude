@@ -5,6 +5,7 @@
 // text. Any other reply lands in the dashboard's Texts inbox and is emailed to Brian.
 import { validTwilio, twiml, toE164, STOP_WORDS, START_WORDS, HELP_WORDS, SMS_HELP, SMS_STOPPED, SMS_STARTED } from "../../_sms.js";
 import { contactByPhone, setSms, addEvent, putContact, logText, emailBrian } from "../../_list.js";
+import { parseLedger, recordLedger, getSettings } from "../../_extras.js";
 
 export async function onRequestPost({ request, env, waitUntil }) {
   const form = await request.formData();
@@ -26,6 +27,15 @@ export async function onRequestPost({ request, env, waitUntil }) {
   }
   if (HELP_WORDS.includes(word)) return twiml(SMS_HELP);
 
+  // A Ledger number ("13/15") from a man in the Ledger group is saved, not sent to the inbox.
+  const num = parseLedger(body);
+  if (c && num) {
+    const settings = await getSettings(env);
+    if (settings.ledger.on && c.tags.includes(settings.ledger.tag)) {
+      await recordLedger(env, c, num, "text");
+      return twiml(`Be The Man: got it, ${num.k} of ${num.t}. Take grace for the misses, pick one change for Monday, and reset.`);
+    }
+  }
   if (c) { addEvent(c, "text reply", body.slice(0, 120)); await putContact(env, c); }
   waitUntil(emailBrian(env, `Text from ${c ? c.name || c.email : from}`,
     `**${c ? (c.name || "") + " " + c.email : "Unknown number"}** (${from}) texted:\n\n${body}\n\n[[Reply in the dashboard|https://bethemansystem.com/admin/#texts]]`).catch(() => null));

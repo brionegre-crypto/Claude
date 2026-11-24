@@ -9,6 +9,9 @@
   var pct = function (a, b) { return b ? Math.round((100 * (a || 0)) / b) + "%" : "–"; };
   var view = $("#view");
   var S = { contacts: [], segments: [], autos: [], forms: [], seqs: [] };
+  var HOOKS = {};
+  function after(name, fn) { (HOOKS[name] = HOOKS[name] || []).push(fn); }
+  function fire(name) { var args = Array.prototype.slice.call(arguments, 1); (HOOKS[name] || []).forEach(function (f) { try { f.apply(null, args); } catch (e) { console.error(e); } }); }
 
   function flash(msg) { var f = $("#flash"); f.textContent = msg; f.hidden = false; clearTimeout(flash.t); flash.t = setTimeout(function () { f.hidden = true; }, 6000); window.scrollTo({ top: 0, behavior: "smooth" }); }
   function api(path, body) {
@@ -67,6 +70,7 @@
         "<div class='adm-table'>" + (d.log.length ? "<table><tr><th>When</th><th>To</th><th>Email</th><th>From</th><th></th></tr>" + d.log.map(function (l) {
           return "<tr><td>" + when(l.at) + "</td><td>" + esc(l.e) + "</td><td>" + esc(l.s) + "</td><td>" + esc(l.k) + "</td><td>" + (l.ok ? "Sent" : "<span class='fail'>Failed: " + esc(l.err || "") + "</span>") + "</td></tr>";
         }).join("") + "</table>" : "<p class='muted' style='padding:14px'>No emails sent yet.</p>") + "</div>";
+      fire("overview", d);
       $("#run").onclick = function () {
         api("tick", {}).then(function (r) { if (r.ok) flash(r.busy ? "Already sending. Check again in a minute." : "Sent " + (r.series + r.broadcast) + " email(s) and " + (r.texts || 0) + " text(s)." + (r.capped ? " The daily email limit is reached; the rest go tomorrow." : "")); VIEWS.overview(); });
       };
@@ -138,6 +142,7 @@
         "<div><p class='muted small'>Activity</p><ul class='timeline'>" + (c.events || []).map(function (e) { return "<li><span>" + when(e.t) + "</span>" + esc(e.y) + (e.d ? ": " + esc(e.d) : "") + "</li>"; }).join("") + "</ul></div>" +
         "<div class='adm-row'><button class='btn btn-primary btn-sm' id='csave'>Save</button><button class='btn btn-ghost btn-sm' id='cdel'>Delete</button><button class='btn btn-ghost btn-sm' data-close>Close</button></div></div>");
       $("#cs", b).value = ["active", "unsubscribed", "bounced"].indexOf(c.status) >= 0 ? c.status : "active";
+      fire("contact", c, b);
       $("#csms", b).value = sms;
       $("#csms", b).onchange = function () { $("#cnote-w", b).hidden = !(this.value === "subscribed" && sms !== "subscribed"); };
       $("#csave", b).onclick = function () {
@@ -195,7 +200,7 @@
 
   // ---------- automations ----------
   var STEP_LABEL = { wait: "Wait", email: "Send an email", sms: "Send a text", tag: "Add a tag", untag: "Remove a tag", series: "Start a series", notify: "Email me an alert", iftag: "Continue only if he has a tag", ifnottag: "Stop if he has a tag" };
-  var TRIG_LABEL = { form: "Signs up through a form", tag: "Gets a tag", purchase: "Buys something", click: "Clicks a link in an email", sms: "Opts in to texts" };
+  var TRIG_LABEL = { form: "Signs up through a form", tag: "Gets a tag", purchase: "Buys something", click: "Clicks a link in an email", sms: "Opts in to texts", referral: "Refers someone who signs up" };
   VIEWS.automations = function () {
     Promise.all([api("automations"), api("forms"), loadContacts()]).then(function (res) {
       S.autos = res[0].automations || []; S.forms = res[1].forms || [];
@@ -205,7 +210,7 @@
       var t = a.trigger || { type: "tag", value: "" };
       if (t.type === "form") return "<select class='a-tv'><option value=''>Any form</option><option value='step1'>Step 1 page</option><option value='lowseat'>Low Seat Check</option>" + S.forms.map(function (f) { return "<option value='" + esc(f.id) + "'>" + esc(f.name) + "</option>"; }).join("") + "</select>";
       if (t.type === "purchase") return "<select class='a-tv'><option value=''>Anything</option><option value='cohort'>The Founding Cohort</option><option value='couples'>Couples counseling</option></select>";
-      if (t.type === "sms") return "";
+      if (t.type === "sms" || t.type === "referral") return "";
       return "<input class='a-tv' value='" + esc(t.value) + "' placeholder='" + (t.type === "click" ? "Link contains, for example /cohort/" : "Tag name") + "' list='taglist'>";
     }
     function stepHtml(s, i, a) {
@@ -453,6 +458,7 @@
             "</div><label class='small muted' style='display:grid;gap:6px;margin-top:12px'>Reply<textarea id='rbody' class='short' maxlength='600'></textarea></label><div class='adm-row' style='margin-top:8px'><button class='btn btn-primary btn-sm' id='rsend'>Send reply</button><button class='btn btn-ghost btn-sm' data-close>Close</button></div>" +
             "<p class='muted small'>Replies to a man's own text are conversation, so they go out right away. Don't use replies for promotions.</p>");
           $(".thread", b).scrollTop = 1e6;
+          fire("textReply", b);
           $("#rsend", b).onclick = function () { api("text-reply", { phone: p, email: who ? who.e : "", body: $("#rbody", b).value }).then(function (x) { if (x.ok) { flash("Sent."); $("#dlg").close(); VIEWS.texts(); } }); };
         };
       });
@@ -488,6 +494,10 @@
     });
   };
 
-  show((location.hash || "").slice(1) || "overview");
-  api("overview").then(function (d) { if (d.ok) $("#unread").hidden = !d.unreadTexts; });
+  window.BTM = { $: $, $$: $$, esc: esc, day: day, when: when, api: api, flash: flash, dialog: dialog, view: view, VIEWS: VIEWS, show: show, tags: tags, after: after, S: S };
+  document.addEventListener("DOMContentLoaded", function () {
+    var first = (location.hash || "").slice(1) || "overview";
+    show(first);
+    if (first !== "overview") api("overview").then(function (d) { if (d.ok) $("#unread").hidden = !d.unreadTexts; });
+  });
 })();

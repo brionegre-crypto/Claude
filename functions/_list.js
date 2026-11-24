@@ -62,7 +62,8 @@ function meta(c) {
   return {
     n: (c.name || "").slice(0, 60), t: (c.tags || []).join("|").slice(0, 400), s: c.status, d: c.created,
     nx: ["active", "unsubscribed"].includes(c.status) ? nextDue(c) : 0, q: active.slice(0, 200),
-    ph: c.phone || "", sm: (c.sms && c.sms.status) || "", en: engagement(c), lo: s.lastOpen || 0, sn: s.sent || 0,
+    ph: c.phone || "", sm: (c.sms && c.sms.status) || "", en: engagement(c), lo: s.lastOpen || 0, lc: s.lastClick || 0, sn: s.sent || 0,
+    so: (c.src || "").slice(0, 40), rc: c.refCount || 0, lg: c.ledger ? Object.keys(c.ledger).length : 0,
   };
 }
 
@@ -313,6 +314,7 @@ function merge(body, c) {
     .replace(/\{\{first_name\}\}/g, first)
     .replace(/\{\{name\}\}/g, (c && c.name) || "friend")
     .replace(/\{\{email\}\}/g, (c && c.email) || "")
+    .replace(/\{\{referral_link\}\}/g, c && c.ref ? `${SITE}/r/${c.ref}` : `${SITE}/step-1/`)
     .replace(/\{\{([a-z0-9_]+)\}\}/gi, (m, k) => (c && c.fields && c.fields[k] != null ? String(c.fields[k]) : ""));
 }
 

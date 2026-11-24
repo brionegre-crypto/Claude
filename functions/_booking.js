@@ -16,7 +16,7 @@ const MIN_NOTICE_MS = 12 * 3600 * 1000;
 export const OFF_DAYS = ["2026-12-24", "2026-12-31"]; // Christmas Eve and New Year's Eve
 
 // Founding Cohort session dates (keep in step with web/site-config.json and the calendar).
-const COHORT_DATES = ["2026-12-10", "2026-12-17", "2027-01-07", "2027-01-14", "2027-01-21", "2027-01-28"];
+export const COHORT_DATES = ["2026-12-10", "2026-12-17", "2027-01-07", "2027-01-14", "2027-01-21", "2027-01-28"];
 
 // Brian's standing commitments (from his calendar), as [from, to) in Central time.
 function busy(date, dow, dayOfMonth) {

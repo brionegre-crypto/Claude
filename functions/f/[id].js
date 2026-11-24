@@ -29,13 +29,13 @@ ${embed ? "" : `<p class="fine center">Be The Man is a faith-based coaching and 
 </div></main>
 <script>
 (function(){var f=document.getElementById('bf'),m=document.getElementById('bm'),b=f.querySelector('button'),label=b.textContent;
-f.addEventListener('submit',function(e){e.preventDefault();var d={};new FormData(f).forEach(function(v,k){d[k]=v});
+f.addEventListener('submit',function(e){e.preventDefault();var d={};new FormData(f).forEach(function(v,k){d[k]=v});if(window.btmAttr){var at=window.btmAttr();d.src=at.src;d.ref=at.ref;}
 if(!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$/.test((d.email||'').trim())){m.textContent='Please enter a valid email address.';return}
 b.disabled=true;b.textContent='Sending…';
 fetch('/api/form/${encodeURIComponent(f.id)}',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(d)}).then(function(r){return r.json()}).then(function(x){
  if(x.redirect){(window.top||window).location.href=x.redirect;return}
  b.disabled=false;b.textContent=label;m.textContent=x.ok?(x.message||'Done.'):(x.error||'Please try again.');if(x.ok)f.reset();
 }).catch(function(){b.disabled=false;b.textContent=label;m.textContent='Please try again.'})});})();
-</script></body></html>`;
+</script><script src="/assets/site.js" defer></script></body></html>`;
   return new Response(page, { headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-store", ...(embed ? {} : { "x-frame-options": "SAMEORIGIN" }) } });
 }

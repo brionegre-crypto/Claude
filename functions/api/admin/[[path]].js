@@ -11,6 +11,10 @@ import {
   getStats, logText, uid,
 } from "../../_list.js";
 import { smsReady, smsCap, sendSms, toE164, listText } from "../../_sms.js";
+import {
+  runAll, getSettings, saveSettings, ledgerWeek, ledgerLink, allResults, resultsLink, money, weeklyReport, getSnippets, saveSnippets,
+  personalEmail, addReminder, rssJob, SESSIONS, cohortStatus,
+} from "../../_extras.js";
 
 const json = (b, s = 200) => new Response(JSON.stringify(b), { status: s, headers: { "content-type": "application/json", "cache-control": "no-store" } });
 const bad = (msg) => json({ ok: false, error: msg }, 400);
@@ -41,7 +45,7 @@ function parseCsv(text) {
 }
 
 const STEP_TYPES = ["wait", "email", "sms", "tag", "untag", "series", "notify", "iftag", "ifnottag"];
-const TRIGGERS = ["form", "tag", "purchase", "click", "sms"];
+const TRIGGERS = ["form", "tag", "purchase", "click", "sms", "referral"];
 
 function cleanAutomation(a) {
   return {
@@ -107,9 +111,12 @@ export async function onRequest(context) {
     const plink = OFFERS.cohort && OFFERS.cohort.plink;
     const link = plink ? await stripeGet(env, "/payment_links/" + plink) : null;
     const seats = link && link.restrictions && link.restrictions.completed_sessions;
-    context.waitUntil(tick(env, { max: 20 }).catch(() => null));
+    context.waitUntil(runAll(env).catch(() => null));
+    const sources = {};
+    for (const c of all) { const s = c.so || "unknown"; sources[s] = (sources[s] || 0) + 1; }
+    const referrers = all.filter((c) => c.rc).sort((a, b) => b.rc - a.rc).slice(0, 10).map((c) => ({ email: c.email, n: c.n, rc: c.rc }));
     return json({
-      ok: true, contacts: all.length,
+      ok: true, contacts: all.length, sources, referrers,
       active: all.filter((c) => c.s === "active").length,
       unsubscribed: all.filter((c) => c.s === "unsubscribed").length,
       bounced: all.filter((c) => c.s === "bounced" || c.s === "complained").length,
@@ -385,7 +392,126 @@ export async function onRequest(context) {
     const r = await sendTest(env, d, admin);
     return r.ok ? json({ ok: true, to: admin }) : bad(r.error || "Resend didn't accept it.");
   }
-  if (route === "tick") return json(await tick(env));
+  if (route === "tick") { const r = await runAll(env); return json({ ...r.list, extras: r }); }
+
+  // ----- cohort roster, Ledger and results -----
+  if (route === "cohort" && request.method === "GET") {
+    const settings = await getSettings(env);
+    const tag = url.searchParams.get("tag") || settings.ledger.tag;
+    const metas = (await allContacts(env)).filter((m) => (m.t || "").split("|").includes(tag));
+    const members = [];
+    for (const m of metas) {
+      const c = await getContact(env, m.email);
+      if (c) members.push({ email: c.email, name: c.name, phone: c.phone || "", texts: c.sms && c.sms.status === "subscribed", status: c.status, cohort: c.cohort || {}, ledger: c.ledger || {}, joined: c.created });
+    }
+    const results = await allResults(env);
+    return json({ ok: true, tag, sessions: SESSIONS, week: ledgerWeek(), members, results, status: await cohortStatus(env).catch(() => null), settings });
+  }
+  if (route === "cohort-update") {
+    const c = await getContact(env, d.email);
+    if (!c) return bad("Not found.");
+    c.cohort = c.cohort || {};
+    if (d.step1 !== undefined) c.cohort.step1 = !!d.step1;
+    if (d.att && typeof d.att === "object") { c.cohort.att = { ...(c.cohort.att || {}) }; for (const [k, v] of Object.entries(d.att)) if (SESSIONS.includes(k)) c.cohort.att[k] = !!v; }
+    if (d.notes !== undefined) c.cohort.notes = str(d.notes, 3000);
+    if (d.ledger && d.ledger.week) {
+      const k = Number(d.ledger.k), tt = Number(d.ledger.t);
+      c.ledger = c.ledger || {};
+      if (d.ledger.clear) delete c.ledger[d.ledger.week];
+      else if (tt > 0 && k >= 0 && k <= tt) c.ledger[d.ledger.week] = { k, t: tt, at: Date.now(), via: "dashboard" };
+      else return bad("Kept can't be more than the total.");
+    }
+    await putContact(env, c);
+    return json({ ok: true });
+  }
+  if (route === "ledger-ask") {
+    const c = await getContact(env, d.email);
+    if (!c) return bad("Not found.");
+    const link = await ledgerLink(env, c.email);
+    return json({ ok: true, link });
+  }
+  if (route === "results-request") {
+    const settings = await getSettings(env);
+    const tag = d.tag || settings.ledger.tag;
+    const metas = (await allContacts(env)).filter((m) => (m.t || "").split("|").includes(tag) && m.s === "active");
+    let n = 0;
+    for (const m of metas) {
+      const c = await getContact(env, m.email);
+      const link = await resultsLink(env, c.email);
+      const r = await personalEmail(env, c, "Your six weeks, in your words",
+        `{{first_name}}, you did six weeks of real work. Would you tell the next man what changed?\n\nTwo sentences and your numbers. Only your first name is ever used, and only if you say yes.\n\n[[Share my result|${link}]]\n\nThank you, brother.\n\nBrian`);
+      if (r) n++;
+    }
+    return json({ ok: true, sent: n });
+  }
+  if (route === "result-approve") {
+    const r = await env.FILES.get("result:" + cleanEmail(d.email), "json");
+    if (!r) return bad("Not found.");
+    if (d.approved && !r.permission) return bad("He didn't give permission to publish this one.");
+    r.approved = !!d.approved; r.approvedAt = Date.now();
+    if (d.quote !== undefined && !r.approved) r.quote = str(d.quote, 300);
+    await env.FILES.put("result:" + r.email, JSON.stringify(r));
+    return json({ ok: true });
+  }
+  if (route === "result-delete") { await env.FILES.delete("result:" + cleanEmail(d.email)); return json({ ok: true }); }
+
+  // ----- money -----
+  if (route === "money") return json(await money(env));
+
+  // ----- free calls -----
+  if (route === "calls" && request.method === "GET") {
+    const page = await env.FILES.list({ prefix: "booking:" });
+    const calls = [];
+    for (const k of page.keys) {
+      const start = k.name.slice(8);
+      const b = await env.FILES.get(k.name, "json");
+      if (!b) continue;
+      const out = await env.FILES.get("callout:" + start, "json");
+      calls.push({ start, name: b.name, email: b.email, phone: b.phone, note: b.note, booked: b.at, outcome: out || null });
+    }
+    calls.sort((a, b) => Date.parse(a.start) - Date.parse(b.start));
+    return json({ ok: true, calls });
+  }
+  if (route === "call-outcome") {
+    const OUT = { joined: "Call: joined", notnow: "Call: not now", followup: "Call: follow up", noshow: "Call: no show" };
+    if (!OUT[d.outcome]) return bad("Pick an outcome.");
+    const rec = { outcome: d.outcome, note: str(d.note, 1000), followUp: d.followUp || "", at: Date.now() };
+    await env.FILES.put("callout:" + str(d.start, 40), JSON.stringify(rec), { expirationTtl: 400 * 86400 });
+    if (validEmail(cleanEmail(d.email))) {
+      const c = await upsertContact(env, { email: d.email, tags: [OUT[d.outcome]], optIn: false });
+      if (c) { addEvent(c, "call outcome", d.outcome + (rec.note ? ": " + rec.note : "")); if (rec.note) { c.cohort = c.cohort || {}; c.cohort.notes = ((c.cohort.notes || "") + "\n" + rec.note).trim(); } await putContact(env, c); }
+    }
+    if (d.outcome === "followup" && /^\d{4}-\d{2}-\d{2}$/.test(d.followUp || "")) {
+      await addReminder(env, Date.parse(d.followUp + "T09:00:00-06:00"), `Follow up with ${str(d.name, 80)} (${str(d.phone, 40)}, ${str(d.email, 120)}).\n\n${rec.note}`);
+    }
+    return json({ ok: true });
+  }
+
+  // ----- saved replies, one-off email, settings -----
+  if (route === "snippets" && request.method === "GET") return json({ ok: true, snippets: await getSnippets(env) });
+  if (route === "snippets" && request.method === "POST") {
+    const list = (d.snippets || []).slice(0, 100).map((s) => ({ id: s.id || uid(), name: str(s.name, 60) || "Untitled", text: str(s.text, 2000) })).filter((s) => s.text);
+    await saveSnippets(env, list);
+    return json({ ok: true, snippets: list });
+  }
+  if (route === "email-contact") {
+    const c = await getContact(env, d.email);
+    if (!c) return bad("Not found.");
+    if (!d.subject || !d.body) return bad("Add a subject and a message.");
+    return (await personalEmail(env, c, str(d.subject), str(d.body, 20000))) ? json({ ok: true }) : bad("Resend didn't accept it.");
+  }
+  if (route === "settings" && request.method === "GET") return json({ ok: true, settings: await getSettings(env), rss: await env.FILES.get("meta:rss", "json") });
+  if (route === "settings" && request.method === "POST") {
+    const s = await getSettings(env);
+    if (d.ledger) s.ledger = { on: !!d.ledger.on, tag: str(d.ledger.tag, 80) || "Founding Cohort" };
+    if (d.rss) s.rss = { mode: ["off", "draft", "send"].includes(d.rss.mode) ? d.rss.mode : "off", url: /^https:\/\//.test(d.rss.url || "") ? str(d.rss.url, 300) : s.rss.url,
+      audience: d.rss.audience && ["all", "tag", "segment"].includes(d.rss.audience.type) ? { type: d.rss.audience.type, value: str(d.rss.audience.value, 80) } : { type: "all", value: "" } };
+    if (d.report) s.report = { on: !!d.report.on };
+    await saveSettings(env, s);
+    return json({ ok: true, settings: s });
+  }
+  if (route === "rss-check") return json({ ok: true, result: await rssJob(env, await getSettings(env), { force: true }) });
+  if (route === "report-preview") return json({ ok: true, html: emailHtml(bodyHtml(await weeklyReport(env), { name: "Brian" }), null) });
 
   return json({ ok: false, error: "Not found." }, 404);
 }

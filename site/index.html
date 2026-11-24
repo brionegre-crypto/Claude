@@ -466,7 +466,19 @@
   </div>
 </section>
 
-
+<section class="section tight" id="results" hidden>
+  <div class="wrap">
+    <div class="sec-head center"><p class="eyebrow">Real results</p><h2>From the men who did the work.</h2><p class="lead">First names and their own numbers, shared with their permission.</p></div>
+    <div class="grid-3" id="results-list"></div>
+    <p class="fine center" style="margin-top:16px">Individual results, not a promise. Be The Man is a faith-based coaching and consistency system, not medical treatment, diagnosis, or clinical therapy for ADHD.</p>
+  </div>
+</section>
+<script>
+(function(){if(!window.fetch)return;fetch('/api/results').then(function(r){return r.json()}).then(function(d){
+  var l=(d&&d.results)||[];if(!l.length)return;var e=function(v){return String(v||'').replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})};
+  document.getElementById('results-list').innerHTML=l.map(function(x){return '<figure class="tile stack"><p class="label">'+e(x.name)+(x.before&&x.after?' · '+e(x.before)+' to '+e(x.after):'')+'</p><blockquote>'+e(x.quote)+'</blockquote></figure>'}).join('');
+  document.getElementById('results').hidden=false;}).catch(function(){});})();
+</script>
 
 <section class="section tight" id="watch">
   <div class="wrap">

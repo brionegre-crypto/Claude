@@ -355,7 +355,7 @@
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) { msg.textContent = "Please enter a valid email address."; msg.hidden = false; f.email.focus(); return; }
       btn.disabled = true; btn.textContent = "Sending…"; msg.hidden = true;
       fetch("/api/subscribe", {method: "POST", headers: {"content-type": "application/json", accept: "application/json"},
-        body: JSON.stringify({list: "lowseat", name: f.name.value.trim(), email: email, company: f.company.value, score: window.__lsScore, posture: window.__lsPosture})})
+        body: JSON.stringify(Object.assign({list: "lowseat", name: f.name.value.trim(), email: email, company: f.company.value, score: window.__lsScore, posture: window.__lsPosture}, window.btmAttr ? window.btmAttr() : {}))})
         .then(function (r) { return r.json().catch(function () { return {}; }); })
         .then(function (d) {
           if (d.ok) { f.hidden = true; $("ls-mail-ok").hidden = false; return; }
