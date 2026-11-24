@@ -1,19 +1,19 @@
 {
- "_note": "Club billing (Stripe, live) and email (MailerLite) settings used by the members area. Created 2026-10-08.",
- "product": "prod_VP2P69gbKV3XiA",
+ "_note": "Club billing (Stripe, live account acct_1UDMttIis5hh45UQ since Nov 24, 2026) and email settings used by the members area.",
+ "product": "prod_VNdPzULeF1Ntb5",
  "prices": {
-  "monthly": "price_1UOELDIJyHMhQ40vrMP26SAG",
-  "yearly": "price_1UOELGIJyHMhQ40v3ZjwH3Qn"
+  "monthly": "price_1UMs8vIis5hh45UQwvSLQyk8",
+  "yearly": "price_1UMs8wIis5hh45UQj9pU8VGO"
  },
  "plinks": {
-  "monthly": "plink_1UOELMIJyHMhQ40viCMV3UFe",
-  "yearly": "plink_1UOELQIJyHMhQ40vIRTFPTbD"
+  "monthly": "plink_1UfL9QIis5hh45UQuO6YRTnR",
+  "yearly": "plink_1UfL9nIis5hh45UQjUr01w7i"
  },
  "links": {
-  "monthly": "https://buy.stripe.com/3cIaEY3fB6e9app6zq6kg0f",
-  "yearly": "https://buy.stripe.com/6oUcN6cQbdGB5556zq6kg0g"
+  "monthly": "https://buy.stripe.com/4gM9AT7qr0rz9kkaxafrW02",
+  "yearly": "https://buy.stripe.com/eVqbJ1bGHa290NOdJmfrW03"
  },
- "portal": "https://billing.stripe.com/p/login/3cIfZi17t31X0OPga06kg00",
+ "portal": "https://billing.stripe.com/p/login/aFa4gzeST8Y56889t6frW00",
  "mailerlite": {
   "members": "200754586620789990",
   "signin": "200754587357939123",
@@ -40,5 +40,16 @@
   },
   "mailerlite_group": "200858236120728686",
   "_note": "Founding link is capped at 8 sales. Brian sends it after the application call. $297/mo and $2,970/yr prices exist; make Payment Links for them when founding closes."
+ },
+ "products": {
+  "monthly": "prod_VNdPzULeF1Ntb5",
+  "yearly": "prod_VNdPFjFbuOn9ZQ"
+ },
+ "previous_account": {
+  "_note": "Old Stripe account acct_1F3uI6IJyHMhQ40v, no longer accessible. Kept for reference.",
+  "prices": {
+   "monthly": "price_1UOELDIJyHMhQ40vrMP26SAG",
+   "yearly": "price_1UOELGIJyHMhQ40v3ZjwH3Qn"
+  }
  }
 }

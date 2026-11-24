@@ -300,11 +300,12 @@
    "price": 300,
    "type": "one_time",
    "systeme_link": "https://5e95-brian.systeme.io/9daca0e0",
-   "stripe_link": "https://book.stripe.com/fZu8wQbM79ql1STbTK6kg0e",
+   "stripe_link": "https://buy.stripe.com/cNifZh9yz4HP1RSeNqfrW01",
    "slug": "couples-m7pwwkaj",
    "files": [],
    "start": "",
-   "stripe_plink": "plink_1UNzbHIJyHMhQ40vQv4YF1tj"
+   "stripe_plink": "plink_1UfL9IIis5hh45UQkxhVBGc9",
+   "previous_stripe_link": "https://book.stripe.com/fZu8wQbM79ql1STbTK6kg0e"
   },
   {
    "key": "workshop",
@@ -429,12 +430,13 @@
    "name": "The Founding Cohort",
    "price": 197,
    "type": "one_time",
-   "stripe_link": "https://buy.stripe.com/6oU6oI3fBcCxbttaPG6kg0m",
-   "stripe_plink": "plink_1UfJ00IJyHMhQ40vgGHsFFNJ",
+   "stripe_link": "https://buy.stripe.com/aFa4gzeST8Y56889t6frW00",
+   "stripe_plink": "plink_1UfL98Iis5hh45UQkBzC3TjF",
    "slug": "cohort-q4m8tz2k",
    "files": [],
    "start": "Finish Step 1 before the first session.",
-   "_note": "Stripe product prod_VggGdRnWzldOtc. Promo code FOUNDING97 (one use, $100 off) brings it to $97."
+   "_note": "Stripe account acct_1UDMttIis5hh45UQ, product prod_VgiZ3NptyM2yd9. Promo code FOUNDING97 (one use, $100 off) brings it to $97."
   }
- ]
+ ],
+ "_stripe_account": "Live Stripe account acct_1UDMttIis5hh45UQ since Nov 24, 2026. Store, kit and old-program offers still point at links in the old account (acct_1F3uI6IJyHMhQ40v), which is no longer accessible; their pages are archived."
 }
