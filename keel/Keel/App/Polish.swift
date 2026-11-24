@@ -12,20 +12,20 @@ import ActivityKit
 /// layer (no blending), so it costs nothing while scrolling.
 struct EveningCalm: View {
     static let key = "evening.calm"
-    @AppStorage(EveningCalm.key) private var on = true
-    var body: some View {
-        TimelineView(.periodic(from: .now, by: 300)) { ctx in
-            let sun = SunClock.today(ctx.date)
-            let evening = on && (ctx.date > sun.set || ctx.date < sun.dawn)
-            // Daytime: no layer at all (an invisible full-screen layer still costs a little on every scroll frame).
-            ZStack {
-                if evening { Color(red: 1, green: 0.55, blue: 0.2).opacity(0.06).transition(.opacity) }
-            }
-            .animation(.easeInOut(duration: 2), value: evening)
-        }
-        .allowsHitTesting(false)
-        .ignoresSafeArea()
-        .accessibilityHidden(true)
+    // The warm tint used to be a full-screen layer over the whole app (tab bar glass included), which every
+    // frame had to blend after sunset. It now lives in each page's background instead; this view draws nothing.
+    var body: some View { EmptyView() }
+
+    /// After sunset (and before dawn), with the setting on. Worked out at most every 5 minutes.
+    @MainActor private static var cache: (at: Date, value: Bool) = (.distantPast, false)
+    @MainActor static var isEvening: Bool {
+        let now = Date()
+        if now.timeIntervalSince(cache.at) < 300 { return cache.value }
+        let on = UserDefaults.standard.object(forKey: key) as? Bool ?? true
+        let sun = SunClock.today(now)
+        let v = on && (now > sun.set || now < sun.dawn)
+        cache = (now, v)
+        return v
     }
 }
 

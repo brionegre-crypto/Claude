@@ -7,12 +7,14 @@ enum DS {
     // MARK: Color — muted base, a single accent, semantic hues for time/energy
     enum Palette {
         /// Accent follows Settings → Appearance (Keel indigo by default).
-        static var accent: Color { Theme.current.color }
+        // These are read thousands of times per screen (every label and card), so they come from a cache in
+        // memory, not from settings storage on each read. The cache follows Settings → Appearance (see PaletteCache).
+        static var accent: Color { PaletteCache.accent }
         // Follow Settings → Look & Feel → Theme (Standard, Paper, Midnight, High contrast).
-        static var canvas: Color { KeelLook.current.canvas }
-        static var elevated: Color { KeelLook.current.elevated }
-        static var ink: Color { KeelLook.current.ink }
-        static var inkSoft: Color { KeelLook.current.inkSoft }
+        static var canvas: Color { PaletteCache.canvas }
+        static var elevated: Color { PaletteCache.elevated }
+        static var ink: Color { PaletteCache.ink }
+        static var inkSoft: Color { PaletteCache.inkSoft }
         static let focus = Color(red: 0.42, green: 0.36, blue: 0.95)
         static let calm = Color(red: 0.27, green: 0.70, blue: 0.62)         // done / healthy
         static let warmth = Color(red: 0.98, green: 0.62, blue: 0.29)       // gentle attention, never red alarms
@@ -44,10 +46,11 @@ enum DS {
     enum Radius { static let card: CGFloat = 24, chip: CGFloat = 12 }
 
     // MARK: Motion
-    /// Smooth, critically damped motion (no wobble) for everyday state changes: lists, cards, toggles.
-    static let spring = Animation.smooth(duration: 0.35)
+    /// Quick and settled, like Apple's own apps: everyday state changes (lists, cards, toggles).
+    /// (Was a 0.35 s glide, which made every tap feel a beat behind.)
+    static let spring = Animation.snappy(duration: 0.24)
     /// A touch of bounce, only for wins (finishing a task, a streak).
-    static let celebrate = Animation.spring(duration: 0.45, bounce: 0.25)
+    static let celebrate = Animation.spring(duration: 0.32, bounce: 0.22)
 }
 
 // MARK: - Haptics (dopamine on completion — important for ADHD reward loops)
@@ -104,6 +107,13 @@ struct PremiumSurface: View {
         let dark = scheme == .dark
         // A soft edge underneath instead of a blurred shadow: looks lifted, costs nothing to draw while scrolling.
         shape.fill(Color.black.opacity(dark ? 0.45 : 0.045)).offset(y: dark ? 1.5 : 1)
+        face(shape, dark: dark)
+            // One flattened image per card: the gradients and the gradient edge are drawn once, not composited
+            // layer by layer (with an off-screen pass for the edge) on every scroll frame.
+            .drawingGroup()
+    }
+
+    private func face(_ shape: RoundedRectangle, dark: Bool) -> some View {
         shape.fill(LinearGradient(colors: [DS.Palette.elevated.mix(with: .white, by: dark ? 0.035 : 0.5), DS.Palette.elevated],
                                   startPoint: .top, endPoint: .bottom))
             .overlay {
@@ -128,6 +138,7 @@ struct PremiumBackdrop: ViewModifier {
             .background {
                 ZStack {
                     DS.Palette.canvas
+                    if EveningCalm.isEvening { Color(red: 1, green: 0.55, blue: 0.2).opacity(0.05) }    // warmer after sunset
                     EllipticalGradient(colors: [tint.opacity(0.16), tint.opacity(0.05), .clear], center: .top,
                                        startRadiusFraction: 0, endRadiusFraction: 0.85)
                         .frame(maxHeight: 560)
@@ -331,5 +342,32 @@ struct KeelTextSizeModifier: ViewModifier {
         let nav = UINavigationBar.appearance()
         nav.largeTitleTextAttributes = [.font: designed(.largeTitle, .semibold, .serif)]
         nav.titleTextAttributes = [.font: designed(.headline, .semibold, nil)]
+    }
+}
+
+
+/// The current accent and theme colors, worked out once and kept in memory.
+/// Refreshed when the app starts and whenever the accent or theme changes (RootView calls `sync`).
+enum PaletteCache {
+    nonisolated(unsafe) private static var key = ""
+    nonisolated(unsafe) private(set) static var accent: Color = Theme.indigo.color
+    nonisolated(unsafe) private(set) static var canvas: Color = KeelLook.standard.canvas
+    nonisolated(unsafe) private(set) static var elevated: Color = KeelLook.standard.elevated
+    nonisolated(unsafe) private(set) static var ink: Color = KeelLook.standard.ink
+    nonisolated(unsafe) private(set) static var inkSoft: Color = KeelLook.standard.inkSoft
+
+    /// Call with the stored accent and theme names; cheap when nothing changed.
+    static func sync(accent a: String, look l: String) {
+        let k = a + "|" + l
+        guard k != key else { return }
+        key = k
+        let theme = Theme(rawValue: a) ?? .indigo
+        let look = KeelLook(rawValue: l) ?? .standard
+        accent = theme.color
+        canvas = look.canvas; elevated = look.elevated; ink = look.ink; inkSoft = look.inkSoft
+    }
+
+    static func syncFromSettings() {
+        sync(accent: UserDefaults.standard.string(forKey: "accent") ?? "", look: UserDefaults.standard.string(forKey: KeelLook.key) ?? "")
     }
 }

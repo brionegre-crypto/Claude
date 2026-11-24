@@ -11,6 +11,7 @@ struct KeelApp: App {
     @Environment(\.scenePhase) private var scenePhase
 
     init() {
+        PaletteCache.syncFromSettings()         // theme colors in memory before the first screen draws
         KeelChrome.apply()                      // serif large titles everywhere, matching Keel's type
         SyncEngine.registerBackgroundTasks()
         WidgetActions.startListening()          // widget check-offs land at once while Keel is open
@@ -296,6 +297,7 @@ struct RootView: View {
     private var showsSidebarSettings: Bool { UIDevice.current.userInterfaceIdiom != .phone && sizeClass == .regular }
 
     var body: some View {
+        let _ = PaletteCache.sync(accent: accentName, look: lookRaw)      // theme colors kept in memory (refreshed when you change them)
         TabView(selection: $router.tab) {
             // Your tab bar (Settings → Look & Feel → Tab bar).
             ForEach(tabBarItems, id: \.self) { id in
