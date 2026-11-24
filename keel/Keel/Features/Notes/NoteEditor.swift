@@ -17,6 +17,12 @@ struct NoteEditor: View {
     @Query(sort: \Person.name) private var people: [Person]
 
     @FocusState private var focused: UUID?
+    @State private var editedSinceStamp = false
+
+    private func touchEdited() {
+        if Date().timeIntervalSince(note.updatedAt) > 20 { note.updatedAt = Date(); editedSinceStamp = false }
+        else { editedSinceStamp = true }
+    }
     @State private var showAllText = false
     @State private var editing: UUID?
     @State private var showHistory = false
@@ -169,7 +175,10 @@ struct NoteEditor: View {
                     .padding().accessibilityLabel("Leave focus mode")
             }
         }
-        .onDisappear { if note.isLocked { PageCrypto.encrypt(note) } }       // locked pages are stored encrypted whenever they're closed
+        .onDisappear {
+            if editedSinceStamp { note.updatedAt = Date(); editedSinceStamp = false }
+            if note.isLocked { PageCrypto.encrypt(note) }
+        }       // locked pages are stored encrypted whenever they're closed
         .sheet(isPresented: $showFindReplace) { FindReplaceSheet(note: note) { scrollTarget = $0 } }
         .background {
             Group {
@@ -253,8 +262,10 @@ struct NoteEditor: View {
             NavigationStack { PageAllTextView(title: note.title, text: PageAllTextView.plain(note)) }
                 .presentationDetents([.medium, .large])
         }
-        .onChange(of: note.blocks) { note.updatedAt = Date() }
-        .onChange(of: note.title) { note.updatedAt = Date() }
+        // "Last edited" moves at most every 20 s while you type (plus once when you leave): bumping it on every
+        // pause made the Notes list behind this page re-sort and rebuild the whole library twice a second.
+        .onChange(of: note.blocks) { touchEdited() }
+        .onChange(of: note.title) { touchEdited() }
         .onChange(of: photoItem) { _, item in Task { await insertPhoto(item) } }
         .onChange(of: coverItem) { _, item in
             Task {

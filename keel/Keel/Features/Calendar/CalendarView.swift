@@ -428,8 +428,20 @@ struct TimelineGrid: View {
     @AppStorage(Custom.calendarDensityKey) private var density = 1.0      // live, so a pinch resizes hours as you pinch
     private var hourHeight: CGFloat { (isDay ? 64 : 52) * CGFloat(density > 0 ? density : 1) }      // Customize → Calendar → Hour height
     private let gutter: CGFloat = 46
+    /// Per-update cache: each day's timed tasks and laid-out items are worked out once, not per column per pass.
+    @State private var memo = RenderMemo()
+
+    /// Open tasks with a time on the timeline, grouped by day (one pass, instead of one per day column).
+    private var timedByDay: [Date: [TaskItem]] {
+        memo.get("timedByDay") {
+            var out: [Date: [TaskItem]] = [:]
+            for t in tasks { if let s = t.timelineStart { out[cal.startOfDay(for: s), default: []].append(t) } }
+            return out
+        }
+    }
 
     var body: some View {
+        let _ = memo.reset()
         GeometryReader { geo in
             let colWidth = (geo.size.width - gutter - 4) / CGFloat(max(days.count, 1))
             VStack(spacing: 0) {
@@ -577,7 +589,7 @@ struct TimelineGrid: View {
 
     @ViewBuilder
     private func dayColumn(day: Date, index: Int, colWidth: CGFloat) -> some View {
-        let items = TimelineLayout.items(day: day, events: events, tasks: tasks, hourHeight: hourHeight,
+        let items = TimelineLayout.items(day: day, events: events, tasks: timedByDay[cal.startOfDay(for: day)] ?? [], hourHeight: hourHeight,
                                          maxLanes: isDay ? 3 : 2, slotMinutes: isDay ? 15 : 30)
         let dayStart = cal.startOfDay(for: day)
         let x0 = gutter + CGFloat(index) * colWidth + 2
