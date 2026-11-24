@@ -16,6 +16,7 @@ import { COHORT_DATES } from "./_booking.js";
 import { sendEmail } from "./_mail.js";
 import { centralHour, smsReady } from "./_sms.js";
 import { portalJobs } from "./_portaljobs.js";
+import { getRecord } from "./_portal.js";
 
 const now = () => Date.now();
 const DAY = 86400000;
@@ -94,7 +95,18 @@ async function askOne(env, m, week, nudge) {
     const r = await textContact(env, c, msg, "ledger", { key: "ledger:" + week, anyHour: false });
     done = r.ok;
   }
-  if (!done && c.status === "active") {
+  // Men with a portal do their Sunday review there: the button signs them in (7 days) and opens it.
+  const pd = await getRecord(env, c.email);
+  if (!done && c.status === "active" && pd && pd.access !== "readonly") {
+    const t = await sign(env, { p: "plogin", e: c.email, x: Math.floor(now() / 1000) + 7 * 86400 });
+    const url = `${SITE}/api/portal/verify?t=${t}&next=${encodeURIComponent("/portal/#review")}`;
+    const r = await sendToContact(env, c, {
+      subject: nudge ? "Still need your Sunday review" : "Your Sunday review",
+      body: `${nudge ? "{{first_name}}, I don't have your number yet for the week of " + weekLabel(week) + "." : "{{first_name}}, it's Sunday. Time to score the week."}\n\nYour daily taps already added it up. Open your Sunday review, check the number, and answer the four questions. Paper this week? Type your number or upload a photo.\n\n[[Do my Sunday review|${url}]]\n\nFour out of seven is four out of seven. Then take grace, make one change for Monday, and reset.\n\nBrian`,
+    }, "ledger", { key: "ledger:" + week });
+    done = r.ok;
+  }
+  if (!done && c.status === "active" && !pd) {
     const r = await sendToContact(env, c, {
       subject: nudge ? "Still need your number" : "Your Ledger: this week's number",
       body: `${nudge ? "{{first_name}}, I don't have your number yet for the week of " + weekLabel(week) + "." : "{{first_name}}, it's Sunday. Time to score the week."}\n\nMark each commitment kept, floor or missed, add it up, and send me the number. Four out of seven is four out of seven.\n\n[[Report my number|${link}]]\n\nThen take grace, make one change for Monday, and reset.\n\nBrian`,

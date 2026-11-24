@@ -23,7 +23,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@500&family=Caveat:wght@500&display=swap">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Khand:wght@700&display=swap&text=BETHEMAN%20">
-<link rel="stylesheet" href="/assets/site.css?v=a275befa4d">
+<link rel="stylesheet" href="/assets/site.css?v=b1165e4912">
 <script type="application/ld+json">
 {
  "@context": "https://schema.org",
@@ -165,64 +165,84 @@
 </header>
 
 <main id="main">
-<div class="wrap hero narrow">
+<div class="wrap mid hero sm">
   <p class="eyebrow">The Founding Cohort · Starts Thursday, December 10</p>
   <h1>Build your system with other men. <span class="grad">Prove it on the scorecard.</span></h1>
-  <p class="lead">Six live weeks, 10 men at most, Thursdays, 7 to 8 PM Central. You leave with a written plan, a bad-day version of every commitment, and six scorecards you can read for yourself.</p>
+  <p class="lead">You leave with a written plan, a bad-day version of every commitment, and six scorecards you can read for yourself.</p>
+  <div class="facts" aria-label="At a glance">
+    <div><b>6 live weeks</b><span>Starts Thursday, December 10</span></div>
+    <div><b>Thursdays</b><span>Thursdays, 7 to 8 PM Central</span></div>
+    <div><b>10 men at most</b><span>Live on Google Meet</span></div>
+    <div><b>$197</b><span>Founding rate, then $297</span></div>
+  </div>
 </div>
 
-<section class="section tight">
-  <div class="wrap">
-    <div class="tile hi price-card">
+<section class="section">
+  <div class="wrap mid">
+    <div class="tile hi cohort-buy">
       <div class="stack">
         <p class="label">Founding rate · 10 seats</p>
-        <p class="big">$197<span style="font-size:.35em;font-weight:500;letter-spacing:0"> for the six weeks</span></p>
-        <p>Then $297. Sessions: Dec 10, Dec 17, Jan 7, Jan 14, Jan 21, Jan 28. No class December 24 or 31.</p>
-        <div class="actions" id="join-cta"><a class="btn btn-primary btn-lg" href="https://buy.stripe.com/aFa4gzeST8Y56889t6frW00">Join the Cohort</a></div>
-        <form class="signup" id="waitlist" hidden novalidate style="display:grid;gap:10px">
-          <p style="color:var(--fg)"><b id="wl-why">The founding seats are taken.</b> Join the waitlist and you'll hear first when the next cohort opens.</p>
-          <input name="name" placeholder="First name" autocomplete="given-name" aria-label="First name" style="width:100%;font:inherit;font-size:17px;color:var(--fg);background:var(--bg);border:1px solid var(--line-2);border-radius:14px;padding:15px 16px">
-          <input name="email" type="email" placeholder="Email address" autocomplete="email" required aria-label="Email" style="width:100%;font:inherit;font-size:17px;color:var(--fg);background:var(--bg);border:1px solid var(--line-2);border-radius:14px;padding:15px 16px">
-          <div style="position:absolute;left:-9999px" aria-hidden="true"><input name="company" tabindex="-1" autocomplete="off"></div>
-          <button class="btn btn-primary btn-lg" type="submit">Join the waitlist</button>
-          <p class="muted" id="wl-msg" role="status"></p>
-        </form>
-        <p class="muted"><b>Refunds:</b> full refund up to 24 hours before the first session. After that, you can move to the next round. <a class="textlink" href="/refunds/">Full refund policy</a></p>
-        <p class="fine">Ten seats. Questions first? <a class="textlink" href="/call/">Book a free 15-minute call with Brian</a>.</p>
+        <p class="big">$197<small>for the six weeks</small></p>
+        <p>Sessions: Dec 10, Dec 17, Jan 7, Jan 14, Jan 21, Jan 28. No class December 24 or 31.</p>
       </div>
+      <div class="stack" style="justify-items:start">
+        <div class="actions" id="join-cta"><a class="btn btn-primary btn-lg" href="https://buy.stripe.com/aFa4gzeST8Y56889t6frW00">Join the Cohort</a></div>
+        <p class="fine">Questions first? <a class="textlink" href="/call/">Book a free 15-minute call</a></p>
+      </div>
+      <form class="signup waitlist" id="waitlist" hidden novalidate>
+        <p style="color:var(--fg)"><b id="wl-why">The founding seats are taken.</b> Join the waitlist and you'll hear first when the next cohort opens.</p>
+        <input name="name" placeholder="First name" autocomplete="given-name" aria-label="First name" style="width:100%;font:inherit;font-size:17px;color:var(--fg);background:var(--bg);border:1px solid var(--line-2);border-radius:14px;padding:15px 16px">
+        <input name="email" type="email" placeholder="Email address" autocomplete="email" required aria-label="Email" style="width:100%;font:inherit;font-size:17px;color:var(--fg);background:var(--bg);border:1px solid var(--line-2);border-radius:14px;padding:15px 16px">
+        <div style="position:absolute;left:-9999px" aria-hidden="true"><input name="company" tabindex="-1" autocomplete="off"></div>
+        <button class="btn btn-primary btn-lg" type="submit">Join the waitlist</button>
+        <p class="muted" id="wl-msg" role="status"></p>
+      </form>
+      <p class="muted" style="grid-column:1/-1;margin:0"><b>Refunds:</b> a full refund up to 24 hours before the first session. After that, you can move to the next round. <a class="textlink" href="/refunds/">Full refund policy</a></p>
     </div>
   </div>
 </section>
 
 <section class="section tight">
-  <div class="wrap narrow">
-    <div class="sec-head"><h2>What each call is.</h2></div>
-    <div class="tile stack">
-      <ul class="check">
-        <li><b>10 minutes</b> Scorecard roll call. Every man says his number.</li>
-        <li><b>15 minutes</b> One teaching, tied to a step.</li>
-        <li><b>25 minutes</b> Hot seat. One man's plan, troubleshot live.</li>
-        <li><b>10 minutes</b> Lock in your Monday.</li>
-      </ul>
+  <div class="wrap mid">
+    <div class="sec-head sm"><h2>What each call is.</h2><p class="lead">Sixty minutes. Not a sermon.</p></div>
+    <div class="agenda">
+      <div><b>10<small>min</small></b><p>Scorecard roll call<span>Every man says his number.</span></p></div>
+      <div><b>15<small>min</small></b><p>One teaching<span>Tied to the step you're on.</span></p></div>
+      <div><b>25<small>min</small></b><p>Hot seat<span>One man's plan, troubleshot live.</span></p></div>
+      <div><b>10<small>min</small></b><p>Lock in your Monday<span>Leave knowing exactly what happens next.</span></p></div>
     </div>
   </div>
 </section>
 
 <section class="section tight">
-  <div class="wrap narrow">
-    <div class="sec-head"><h2>Six weeks.</h2></div>
-    <div class="stack" style="gap:12px">
-      <div class="tile stack"><p class="label">Week 1</p><p><b>The Calling.</b> Write your identity sentence.</p></div>
-      <div class="tile stack"><p class="label">Week 2</p><p><b>The Commitments.</b> Cut to three you can check.</p></div>
-      <div class="tile stack"><p class="label">Weeks 3 and 4</p><p><b>The Floor.</b> Triggers, times, places and bad-day versions.</p></div>
-      <div class="tile stack"><p class="label">Week 5</p><p><b>The Ledger.</b> Score, report, take grace, reset.</p></div>
-      <div class="tile stack"><p class="label">Week 6</p><p><b>The reset.</b> Read your six scorecards and decide what stays. Graduates can continue in the Club.</p></div>
+  <div class="wrap mid">
+    <div class="sec-head sm"><h2>Six weeks.</h2></div>
+    <div class="weeks">
+      <div><p class="label">Week 1</p><b>The Calling</b><p>Write your identity sentence.</p></div>
+      <div><p class="label">Week 2</p><b>The Commitments</b><p>Cut to three you can check.</p></div>
+      <div><p class="label">Weeks 3 and 4</p><b>The Floor</b><p>Triggers, times, places and bad-day versions.</p></div>
+      <div><p class="label">Week 5</p><b>The Ledger</b><p>Score, report, take grace, reset.</p></div>
+      <div><p class="label">Week 6</p><b>The reset</b><p>Read your six scorecards and decide what stays. Graduates can continue in the Club.</p></div>
     </div>
   </div>
 </section>
 
 <section class="section tight">
-  <div class="wrap narrow">
+  <div class="wrap mid">
+    <div class="sec-head sm"><h2>What you get.</h2></div>
+    <div class="gets">
+      <div><b>Six live calls</b><p>Thursdays on Google Meet, with no more than 10 men.</p></div>
+      <div><b>Your own portal</b><p>Work each step, tap your commitments each day, and do your Sunday review on your phone or computer.</p></div>
+      <div><b>Paper, if you prefer</b><p>Every worksheet and the weekly Ledger print. Report your number, or upload a photo.</p></div>
+      <div><b>Brian reads your work</b><p>Each step goes to Brian before the next one opens. Private messages and prayer requests go straight to him.</p></div>
+      <div><b>A partner</b><p>One other man who sees your weekly number and your Sunday answers. Nothing else.</p></div>
+      <div><b>Teaching you can rewatch</b><p>The teaching part of each call is recorded. The men's sharing is never recorded.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="section tight">
+  <div class="wrap mid">
     <div class="tile stack">
       <p class="label">Who this is not for</p>
       <p>This is not therapy or medical treatment. It is not for a man who wants a quick fix or a guarantee. It is for a man who will write the plan, pick the time, and report the numbers honestly.</p>
@@ -246,7 +266,7 @@
 </section>
 
 <section class="section tight">
-  <div class="wrap">
+  <div class="wrap mid">
     <div class="closing">
       <p class="eyebrow">Not ready yet?</p>
       <h2>Start with Step 1.</h2>
