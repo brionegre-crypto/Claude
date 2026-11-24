@@ -87,6 +87,10 @@ export const FILES = {
  "step7_pdf": {
   "url": "https://d1yei2z3i6k35z.cloudfront.net/18912984/6ab3bbee13eb86.67921323_Step7-GodattheCenter.pdf",
   "name": "Step7-GodattheCenter.pdf"
+ },
+ "ledger_pdf": {
+  "url": "https://www.bethemansystem.com/downloads/the-ledger-weekly-scorecard.pdf",
+  "name": "the-ledger-weekly-scorecard.pdf"
  }
 };
 export const OFFERS = {
@@ -418,27 +422,7 @@ export const CLUB = {
  },
  "files": {
   "step1_pdf": 1,
-  "step2_pdf": 1,
-  "step3_pdf": 1,
-  "step4_pdf": 1,
-  "step5_pdf": 1,
-  "step6_pdf": 1,
-  "step7_pdf": 1,
-  "scorecard_pdf": 1,
-  "scorecard_xlsx": 1,
-  "forty_pdf": 1,
-  "devotional_pdf": 2,
-  "couples_pdf": 2,
-  "husband_pdf": 3,
-  "husband_xlsx": 3,
-  "father_pdf": 4,
-  "father_xlsx": 4,
-  "fatherson_pdf": 4,
-  "marriage_pdf": 5,
-  "prayer_pdf": 5,
-  "bible_pdf": 6,
-  "disc_pdf": 6,
-  "disc_xlsx": 6
+  "ledger_pdf": 1
  },
  "lessons": {
   "month-2": 2,

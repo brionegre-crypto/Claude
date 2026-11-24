@@ -447,9 +447,7 @@ def member_pages(products):
     MEMBERS_FOOT = MEMBERS_FOOT.replace("{portal}", cfg["portal"])
     labels = {**{k: v["label"] for k, v in products["files"].items()},
               **{k: v["label"] for k, v in club["step_files"].items()}}
-    ic_lessons = [{**l, "module": "The Inner Circle", "month": 1, "ic": True}
-                  for l in json.loads((ROOT / "club" / "more-lessons.json").read_text())["ic"]]
-    lessons = club["lessons"] + ic_lessons
+    lessons = club["lessons"]
     pages = []
     modules = []
     for l in lessons:
@@ -470,7 +468,7 @@ def member_pages(products):
     home = f"""<div class="wrap hero narrow">
   <p class="eyebrow">The Be The Man Club</p>
   <h1 style="font-size:clamp(40px,6vw,64px)">Welcome <span class="grad">back.</span></h1>
-  <p class="lead" id="who">Start with "Welcome to the club", then one step a week. Your monthly tools open every 30 days.</p>
+  <p class="lead" id="who">Start with "Welcome to the Club", then keep the Ledger every Sunday. A new monthly reset opens every 30 days.</p>
   <p class="signup-msg" id="locked" hidden>That one isn't open yet. It opens on the date shown below.</p>
 </div>
 {"".join(secs)}
