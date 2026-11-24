@@ -89,10 +89,7 @@ struct CustomizeHubView: View {
             Section {
                 link("Look & feel (theme, colors, fonts, text size)", "paintbrush.fill", .pink) { AppearanceSettings() }
                 link("Tab bar", "dock.rectangle", .gray) { TabBarSettings() }
-                Toggle(isOn: Binding(get: { UserDefaults.standard.object(forKey: FocusBarSetting.key) as? Bool ?? !ProcessInfo.processInfo.isMacCatalystApp },
-                                     set: { UserDefaults.standard.set($0, forKey: FocusBarSetting.key) })) {
-                    Label("Focus bar above the tabs", systemImage: "moon.zzz")
-                }
+                FocusBarToggle()
                 link("Inbox tabs", "rectangle.split.3x1", .blue) { InboxTabsSettings() }
             }
         }
@@ -392,4 +389,10 @@ struct QuietHoursView: View {
         Binding(get: { Calendar.current.date(bySettingHour: b.wrappedValue / 60, minute: b.wrappedValue % 60, second: 0, of: Date()) ?? Date() },
                 set: { d in let c = Calendar.current.dateComponents([.hour, .minute], from: d); b.wrappedValue = (c.hour ?? 0) * 60 + (c.minute ?? 0) })
     }
+}
+
+
+struct FocusBarToggle: View {
+    @AppStorage(FocusBarSetting.key) private var on = !ProcessInfo.processInfo.isMacCatalystApp
+    var body: some View { Toggle(isOn: $on) { Label("Focus bar above the tabs", systemImage: "moon.zzz") } }
 }
