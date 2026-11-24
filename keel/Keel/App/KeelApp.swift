@@ -17,7 +17,8 @@ struct KeelApp: App {
         UNUserNotificationCenter.current().delegate = NotificationHandler.shared
         TaskAlerts.registerCategories()
         WatchBridge.shared.activate()
-        KeelDiagnostics.shared.start()           // crash & hang reports (kept on device; shared only if you turn it on)
+        KeelDiagnostics.shared.start()
+        LagWatch.shared.start()                 // notes any freeze over 250 ms and where (Settings → Data & Storage)           // crash & hang reports (kept on device; shared only if you turn it on)
         if !KeelRuntime.isTesting {
             KeelTips.configure()                 // one-time tips that explain features where you use them
             KeychainStore.moveToICloudKeychain() // AI keys and sign-ins follow you to your Mac and iPad
@@ -60,7 +61,7 @@ struct KeelApp: App {
                     BreakReminders.schedule()
                     TaskDedupe.run(ctx: container.mainContext)           // clears duplicate tasks left by older builds
                     try? await Task.sleep(for: .seconds(1.5))           // let the first screen draw before the big sync
-                    await SyncEngine.shared.syncAll()
+                    await SyncEngine.shared.syncMail()                   // new mail now; housekeeping only if 10+ minutes since the last
                     SyncEngine.scheduleNextRefresh()
                     try? await Task.sleep(for: .seconds(2))
                     HTMLMailView.prewarm()                               // the first email you open shows at once
@@ -553,7 +554,7 @@ final class KeelAppDelegate: NSObject, UIApplicationDelegate {
         guard userInfo["keel"] as? String == "mail" else { completionHandler(.noData); return }
         nonisolated(unsafe) let done = completionHandler
         Task { @MainActor in
-            await SyncEngine.shared.syncAll()
+            await SyncEngine.shared.syncMail()          // just the new mail: this arrives while you're using Keel
             done(.newData)
         }
     }

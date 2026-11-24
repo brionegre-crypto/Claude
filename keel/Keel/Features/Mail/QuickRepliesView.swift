@@ -6,7 +6,7 @@ import SwiftData
 struct QuickRepliesView: View {
     @Environment(\.modelContext) private var ctx
     @Environment(\.dismiss) private var dismiss
-    @Query(InboxView.recentMail) private var mail: [EmailMessage]               // newest 2,500, like the Inbox
+    @Query(InboxView.recentMail) private var mail: [EmailMessage]               // newest 1,000, like the Inbox
     @Query private var accounts: [MailAccount]
     @Query private var senderScores: [SenderScore]
     @State private var queue: [EmailMessage] = []

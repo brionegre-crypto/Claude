@@ -1,4 +1,5 @@
 import Foundation
+import UIKit
 import EventKit
 import SwiftData
 import BackgroundTasks
@@ -81,24 +82,54 @@ final class SyncEngine {
     /// instead of dropping the request, so that mail isn't left waiting for the next scheduled sync.
     @ObservationIgnored private var syncAgain = false
 
-    func syncAll() async {
+    /// Everything: mail plus all the housekeeping. Pull to refresh, launch and background wake-ups use this.
+    func syncAll() async { await run(mailOnly: false) }
+
+    /// Just new mail: what a "new mail" push needs. Runs while you're using Keel, so it stays small;
+    /// the heavy housekeeping waits for a full sync (at most every 10 minutes).
+    func syncMail() async { await run(mailOnly: true) }
+
+    @ObservationIgnored private var wantFull = false
+
+    private func run(mailOnly: Bool) async {
         guard container != nil else { return }
+        if !mailOnly { wantFull = true }
         if isSyncing { syncAgain = true; return }
         var rounds = 0
         repeat {
             syncAgain = false
             rounds += 1
-            await syncOnce()
+            let full = wantFull
+            wantFull = false
+            await syncOnce(full: full)
         } while syncAgain && rounds < 3
     }
 
-    private func syncOnce() async {
+    /// The jobs that touch the whole library (reminders, every task's alerts, widgets, Spotlight, scans…).
+    /// They used to run on every new email, on the same thread that draws the screen: the lag while scrolling.
+    /// Now: when you ask (pull to refresh), at launch, in the background, or at most every 10 minutes.
+    private func heavyDue(_ full: Bool) -> Bool {
+        let inBackground = UIApplication.shared.applicationState != .active
+        if full || inBackground { UserDefaults.standard.set(Date().timeIntervalSince1970, forKey: "throttle.sync.heavy"); return true }
+        return Throttle.due("sync.heavy", every: 600)
+    }
+
+    private func syncOnce(full: Bool) async {
         guard let container, !isSyncing else { return }
         isSyncing = true; defer { isSyncing = false }
         let ctx = container.mainContext
+        let heavy = heavyDue(full)
+        let active = UIApplication.shared.applicationState == .active
 
         WidgetActions.applyPending(ctx: ctx)
         await SendLater.sendDue(ctx: ctx)
+        if heavy { await housekeepingBeforeMail(ctx) }
+        await mailPass(ctx, container: container, heavy: heavy, active: active)
+        guard heavy else { try? ctx.save(); return }
+        await housekeepingAfterMail(ctx)
+    }
+
+    private func housekeepingBeforeMail(_ ctx: ModelContext) async {
         await CalendarService.shared.requestAccess()
         await LeaveBy.refresh()
         MeetingBuffers.refresh()                 // breathing room after meetings (if you turned it on)
@@ -107,7 +138,9 @@ final class SyncEngine {
         await LocationReminders.refresh(ctx: ctx)
         await FocusForecast.refresh(ctx: ctx)
         await TransitionAlerts.refresh()
+    }
 
+    private func mailPass(_ ctx: ModelContext, container: ModelContainer, heavy: Bool, active: Bool) async {
         // 1. Mail: download on each account (network, off the main thread while waiting), then save
         //    everything in one background batch so open screens update once instead of per message.
         let accounts = (try? ctx.fetch(FetchDescriptor<MailAccount>())) ?? []
@@ -137,9 +170,9 @@ final class SyncEngine {
         MailTabs.classifyInBackground(fresh)                           // your plain-words inbox tabs
         AutoDrafts.generate(fresh, accounts: accounts)                 // replies waiting before you open them
         Task { await ReadStatus.refresh() }                            // opens on emails you chose to track
-        MailScanners.backfillIfNeeded(ctx: ctx)
+        if heavy { MailScanners.backfillIfNeeded(ctx: ctx) }
         MailScanners.scan(fresh, ctx: ctx)
-        Task { await TripScanner.backfillIfNeeded(ctx: ctx) }   // one-time, in the background
+        if heavy { Task { await TripScanner.backfillIfNeeded(ctx: ctx) } }   // one-time, in the background
         await TripScanner.scan(fresh, ctx: ctx)
         try? ctx.save()                                          // also stores each account's sync position, now that its mail is saved
 
@@ -171,7 +204,8 @@ final class SyncEngine {
         //    so the inbox re-sorts once instead of flickering through every email.
         let untriaged = (try? ctx.fetch(FetchDescriptor<EmailMessage>(predicate: #Predicate { $0.triagedAt == nil }))) ?? []
         var updates: [MailStore.TriageUpdate] = []
-        for email in untriaged.prefix(150) {
+        // While you're using Keel, sort in small bites (the rest follows next time); more when it's in the background.
+        for email in untriaged.prefix(active ? 25 : 150) {
             guard let r = await AIRouter.shared.triage(email) else { continue }
             var category = r.category
             var priority = r.priority
@@ -194,11 +228,14 @@ final class SyncEngine {
         }
         await worker.applyTriage(updates)
 
-        // 2c. Appointments in email (doctor, dentist, interviews…) → one-tap "Add to Calendar".
-        await AppointmentFinder.scan(ctx: ctx)
-
         // 2b. A heads-up only for VIPs and urgent mail.
         await InboxBrain.notify(fresh, ctx: ctx)
+    }
+
+    private func housekeepingAfterMail(_ ctx: ModelContext) async {
+        let accounts = (try? ctx.fetch(FetchDescriptor<MailAccount>())) ?? []
+        // 2c. Appointments in email (doctor, dentist, interviews…) → one-tap "Add to Calendar".
+        await AppointmentFinder.scan(ctx: ctx)
 
         // 2a. Replies close "remind me if no reply" follow-ups; blocked senders are archived;
         //     mail from people on your Keep in touch list counts as contact.

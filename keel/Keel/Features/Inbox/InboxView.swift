@@ -21,12 +21,12 @@ struct InboxView: View {
     @Environment(\.modelContext) private var ctx
     @Environment(\.openWindow) private var openWindow
     @Environment(\.supportsMultipleWindows) private var multiWindow
-    /// The newest 2,500 messages. Older mail is still found by Search (it asks the server), and keeping
-    /// the whole history in memory made every sync re-sort everything and stutter the app.
+    /// The newest 1,000 messages. Older mail is still found by Search (it asks the server). This stays live while
+    /// other tabs are open, and every save re-reads it, so it is kept to what the list can show.
     @Query(InboxView.recentMail) private var allEmails: [EmailMessage]
     static var recentMail: FetchDescriptor<EmailMessage> {
         var d = FetchDescriptor<EmailMessage>(sortBy: [SortDescriptor(\.receivedAt, order: .reverse)])
-        d.fetchLimit = 2500
+        d.fetchLimit = 1000
         return d
     }
     @Query private var accounts: [MailAccount]

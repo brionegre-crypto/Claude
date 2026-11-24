@@ -828,6 +828,9 @@ struct DataSettings: View {
                     Task { syncing = true; await SyncEngine.shared.syncAll(); syncing = false }
                 }
                 .disabled(syncing)
+                NavigationLink { LazyView(LagMomentsView()) } label: {
+                    LabeledContent("Slow moments", value: "\(LagWatch.moments.count)")
+                }
             }
             Section {
                 if let exportURL {

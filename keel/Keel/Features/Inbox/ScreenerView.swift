@@ -53,7 +53,7 @@ enum Screener {
 
 struct ScreenerView: View {
     @Environment(\.modelContext) private var ctx
-    @Query(InboxView.recentMail) private var emails: [EmailMessage]             // newest 2,500, like the Inbox
+    @Query(InboxView.recentMail) private var emails: [EmailMessage]             // newest 1,000, like the Inbox
     @Query(sort: \SenderRule.decidedAt, order: .reverse) private var rules: [SenderRule]
     @State private var showDecided = false
 
