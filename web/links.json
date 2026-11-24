@@ -1,0 +1,14 @@
+{
+ "_note": "The link-in-bio page at bethemansystem.com/links (bethemansystem.com/yt redirects here). Kept current by the weekly Thursday task. Each item: label, sub (short line under it), href, and optional until (YYYY-MM-DD, hidden after that date). Use {{cohort_*}} placeholders so dates and prices follow web/site-config.json. Primary is the one big button.",
+ "primary": {"label": "Start Step 1 Free", "sub": "The Calling: one sentence on who God has called you to be. 20 minutes.", "href": "/step-1/#get"},
+ "featured": [
+  {"label": "Join the Founding Cohort", "sub": "Six live weeks, {{cohort_seats}} men, starts {{cohort_start_short}}. {{cohort_price}} founding rate.", "href": "/cohort/", "until": "2026-12-10"}
+ ],
+ "always": [
+  {"label": "How It Works", "sub": "The four steps", "href": "/how-it-works/"},
+  {"label": "Watch on YouTube", "sub": "@BeTheManSystem", "href": "https://www.youtube.com/@BeTheManSystem"},
+  {"label": "Read on Substack", "sub": "Essays", "href": "https://bethemansystem.substack.com"},
+  {"label": "Facebook", "sub": "Be The Man", "href": "https://www.facebook.com/profile.php?id=61593655779820"},
+  {"label": "About Brian", "sub": "Pastor, husband, father of three", "href": "/about/"}
+ ]
+}

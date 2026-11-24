@@ -1,26 +1,20 @@
 # YouTube description block (kept current by the Thursday 6 PM check)
 
-Paste this at the bottom of every video description, once. After that, the links never need changing:
-bethemansystem.com/yt always opens the current list of links, and Claude keeps that list up to date.
+Paste this at the bottom of every video description, once. After that the links never need changing:
+bethemansystem.com/yt always opens the current link page (bethemansystem.com/links), and the weekly check keeps that page up to date from web/links.json.
 
-To replace the old links on all videos at once, TubeBuddy's free "Find & Replace" tool works in YouTube Studio:
-find `go.bethemansystem.com/framework`, replace with `bethemansystem.com/step-1`.
+To swap the old block on every video at once, TubeBuddy's free "Find & Replace" in YouTube Studio works: replace the old "Start here" block with the one below.
 
 ```
-▶ Start here, free: the Step 1 worksheet (do it in pieces)
+▶ Start Step 1 Free: The Calling, one sentence on who God has called you to be (20 minutes)
 https://bethemansystem.com/step-1/
 
-▶ Not lazy. Not faithless. Is this for you? Built for the brain God gave you
-https://bethemansystem.com/adhd/
+▶ How Be The Man works: four steps, built for the brain God gave you
+https://bethemansystem.com/how-it-works/
 
-▶ How humble are you, really? Take the free Low Seat Check (5 minutes)
-https://bethemansystem.com/humility/
-
-▶ The Be The Man Club: the whole system, $19 a month
-https://bethemansystem.com/the-club/
-
-▶ Everything else (workshops, the store, a free call)
+▶ Every current link (the Founding Cohort and more)
 https://bethemansystem.com/yt
 
+Be The Man is a faith-based coaching and consistency system, not medical treatment, diagnosis, or clinical therapy for ADHD.
 Be The Man · Built for the brain God gave you.
 ```

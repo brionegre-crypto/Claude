@@ -276,6 +276,35 @@ def guide_pages(o):
 D = "Be The Man is a faith-based coaching and consistency system, not medical treatment, diagnosis, or clinical therapy for ADHD."
 
 
+def links_page():
+    """The link-in-bio page (/links/) from web/links.json. Items past their 'until' date are dropped."""
+    L = json.loads((ROOT / "links.json").read_text())
+    today = datetime.date.today().isoformat()
+    live = [i for i in L["featured"] + L["always"] if not i.get("until") or today <= i["until"]]
+    a = lambda i, cls: (f'      <a class="{cls}" href="{html.escape(i["href"])}"><b>{html.escape(i["label"])}</b>'
+                        f'<span>{html.escape(i.get("sub", ""))}</span></a>')
+    p = L["primary"]
+    body = f"""<div class="wrap">
+  <div class="lp links">
+    <div class="lp-top">
+      <img class="avatar" src="/assets/brian.jpg" alt="" width="44" height="44">
+      <p><b>Brian Greene</b>Be The Man · Built for the brain God gave you.</p>
+    </div>
+    <p class="lead">A faith-based system that helps Black Christian men with ADHD finish what they start. Four steps. Step 1 is free.</p>
+    <a class="btn btn-primary btn-lg btn-block" href="{html.escape(p["href"])}">{html.escape(p["label"])}</a>
+    <p class="fine center">{html.escape(p["sub"])}</p>
+    <nav class="lp-links" aria-label="Be The Man links">
+{chr(10).join(a(i, "") for i in live)}
+    </nav>
+    <p class="fine center">{D}</p>
+    <p class="fine center"><a class="textlink" href="/">bethemansystem.com</a></p>
+  </div>
+</div>"""
+    meta = {"path": "/links/", "bare": True, "noindex": True, "title": "Links | Be The Man",
+            "description": "Start Step 1 free, join the Founding Cohort, and find Be The Man on YouTube, Substack and Facebook."}
+    return [(meta, body)]
+
+
 def delivery_pages(products):
     """Thank-you and download pages Stripe redirects to after payment."""
     pages = []
@@ -571,7 +600,7 @@ def main():
     urls = []
     products = json.loads((ROOT / "products.json").read_text())
     write_catalog(products)
-    entries = [read_page(p) for p in sorted((ROOT / "pages").glob("*.html"))] + delivery_pages(products) + member_pages(products)
+    entries = [read_page(p) for p in sorted((ROOT / "pages").glob("*.html"))] + delivery_pages(products) + member_pages(products) + links_page()
     for meta, body in entries:
         body = cohort_vars(swap_checkout_links(body, products))
         rel = "404.html" if meta["path"] == "/404" else (meta["path"].strip("/") + "/index.html").lstrip("/")

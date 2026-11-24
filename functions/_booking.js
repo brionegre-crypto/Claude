@@ -6,7 +6,6 @@
 // To block a day (travel, family), add it to OFF_DAYS as "YYYY-MM-DD".
 
 import { TZ, centralToUtc, centralDate } from "./_time.js";
-import { isSessionDate } from "./_workshop.js";
 
 export { TZ, centralToUtc };
 const DAYS = [1, 2, 3, 4]; // Mon to Thu
@@ -16,15 +15,16 @@ const HORIZON_DAYS = 14;
 const MIN_NOTICE_MS = 12 * 3600 * 1000;
 export const OFF_DAYS = ["2026-12-24", "2026-12-31"]; // Christmas Eve and New Year's Eve
 
+// Founding Cohort session dates (keep in step with web/site-config.json and the calendar).
+const COHORT_DATES = ["2026-12-10", "2026-12-17", "2027-01-07", "2027-01-14", "2027-01-21", "2027-01-28"];
+
 // Brian's standing commitments (from his calendar), as [from, to) in Central time.
 function busy(date, dow, dayOfMonth) {
   const out = [];
-  // Inner Circle weekly class: Thursdays 7 to 8 PM, from Dec 3, 2026.
-  if (dow === 4 && date >= "2026-12-03") out.push(["19:00", "20:00"]);
-  // Club live call: second Tuesday of the month, 7 to 8 PM.
-  if (dow === 2 && dayOfMonth >= 8 && dayOfMonth <= 14) out.push(["19:00", "20:00"]);
-  // Fix Your Wednesday workshop: every other Wednesday, 7 to 8 PM.
-  if (isSessionDate(date)) out.push(["19:00", "20:00"]);
+  // Founding Cohort: Thursdays 7 to 8 PM (no class Dec 24 or 31).
+  if (COHORT_DATES.includes(date)) out.push(["19:00", "20:00"]);
+  // Club live call: second Tuesday of the month, 7 to 8 PM, from February 2027 (after the first cohort).
+  if (dow === 2 && dayOfMonth >= 8 && dayOfMonth <= 14 && date >= "2027-02-01") out.push(["19:00", "20:00"]);
   return out;
 }
 
