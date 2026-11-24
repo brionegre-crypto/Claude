@@ -15,5 +15,8 @@ jobs:
         env:
           CRON_SECRET: ${{ secrets.CRON_SECRET }}
         run: |
-          if [ -z "$CRON_SECRET" ]; then echo "CRON_SECRET is not set; skipping."; exit 0; fi
-          curl -fsS -X POST https://bethemansystem.com/api/mail/tick -H "x-cron-secret: $CRON_SECRET"
+          if [ -z "$CRON_SECRET" ]; then echo "CRON_SECRET is not set in GitHub; skipping."; exit 0; fi
+          code=$(curl -sS -o response.txt -w '%{http_code}' -X POST https://bethemansystem.com/api/mail/tick -H "x-cron-secret: $CRON_SECRET")
+          echo "Website answered: $code"
+          cat response.txt; echo
+          [ "$code" = "200" ]
