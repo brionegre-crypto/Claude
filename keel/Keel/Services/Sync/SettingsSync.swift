@@ -26,6 +26,9 @@ final class SettingsSync {
         "savepoints.", "timer.", "backup.", "mirror.", "briefing.text", "briefing.polishedAt",
         "health.connected", "nutrition.health.sync", "printableRect", "paperRect", "autopilot.notified",
         "notes.autofile.last", "notes.autofile.seen", "spaces.seen", "batch.revealed",
+        // Device-only: calendar ids differ per device; these are about this device's screen, alarms or files.
+        "calendar.roles", "focus.bar.", "focus.live.", "alarms.asked", "tasks.timeZone", "md.mirror.", "health.metrics.asked",
+        "reminders.failed", "hub.tab.", "notes.search.recents", "routine.alarms",
     ]
 
     /// Keel's own settings start with a lowercase letter; iOS and its frameworks use NS…, Apple…, com.apple… and so on.
@@ -92,7 +95,16 @@ final class SettingsSync {
         defer { if changed { stamp() } }
         let mine = defaults.dictionaryRepresentation().filter { Self.syncs($0.key) }
         var used = 0
-        for (k, v) in mine.sorted(by: { $0.key < $1.key }) {
+        var count = 0
+        // Small settings first: iCloud holds 1 MB and 1,024 keys in total. Going alphabetically let a few big logs
+        // early in the alphabet use it all, so settings later on (routines, tasks, Today…) never reached your Mac.
+        let ordered = mine.map { item -> (k: String, v: Any, size: Int) in
+            if let obj = item.value as? NSObject, let prev = sent[item.key], prev.value.isEqual(obj) { return (item.key, item.value, prev.size) }
+            return (item.key, item.value, blob(item.value)?.count ?? .max)      // only re-measured when it changed
+        }.sorted { $0.size < $1.size }
+        for (k, v, _) in ordered {
+            count += 1
+            guard count <= 1_000 else { break }
             let obj = v as? NSObject
             if let obj, let prev = sent[k], prev.value.isEqual(obj) {          // unchanged since last time
                 used += prev.size

@@ -314,6 +314,8 @@ struct TodayView: View {
                 Text("JUST ONE THING").font(DS.Font.caption).foregroundStyle(DS.Palette.focus)
                 if let t = nextThing {
                     Text(t.title).font(DS.Font.title)
+                    let why = ADHDCoach.reason(t)
+                    if !why.isEmpty { Label(why, systemImage: "sparkles").font(DS.Font.caption).foregroundStyle(DS.Palette.focus) }   // why this one
                     if let step = t.microSteps.first(where: { !$0.done }) {
                         Label("Start with: \(step.text)", systemImage: "arrow.turn.down.right")
                             .font(DS.Font.body).foregroundStyle(DS.Palette.inkSoft)

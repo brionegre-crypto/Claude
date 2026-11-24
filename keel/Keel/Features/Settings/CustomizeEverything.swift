@@ -189,6 +189,7 @@ struct TasksCustomizeView: View {
         Form {
             Section {
                 Picker("Sort within each day", selection: $sort) {
+                    Text("Smart (what to do first)").tag("smart")
                     Text("Due time, then priority").tag("due"); Text("Priority first").tag("priority")
                     Text("A to Z").tag("title"); Text("Newest first").tag("newest")
                 }

@@ -467,6 +467,10 @@ struct TasksView: View {
             case "priority": return a.sorted { ($0.priority.rawValue, $1.dueDate ?? .distantFuture) > ($1.priority.rawValue, $0.dueDate ?? .distantFuture) }
             case "title": return a.sorted { $0.title.localizedCaseInsensitiveCompare($1.title) == .orderedAscending }
             case "newest": return a.sorted { $0.createdAt > $1.createdAt }
+            case "smart":                                       // what to do first: deadlines, importance, fit, energy
+                let energy = EnergyLevel(rawValue: UserDefaults.standard.integer(forKey: "energy")) ?? .medium
+                let scores = Dictionary(a.map { ($0.id, ADHDCoach.score($0, energy, 60)) }, uniquingKeysWith: { x, _ in x })
+                return a.sorted { (scores[$0.id] ?? 0) > (scores[$1.id] ?? 0) }
             default: return a.sorted { ($0.dueDate ?? .distantFuture, -$0.priority.rawValue) < ($1.dueDate ?? .distantFuture, -$1.priority.rawValue) }
             }
         }

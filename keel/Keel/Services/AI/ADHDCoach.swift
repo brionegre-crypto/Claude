@@ -15,14 +15,47 @@ enum ADHDCoach {
         return open.max { score($0, energy, minutesFree) < score($1, energy, minutesFree) }
     }
 
-    private static func score(_ t: TaskItem, _ energy: EnergyLevel, _ minutesFree: Int) -> Double {
-        var s = Double(t.priority.rawValue) * 2
-        if let due = t.dueDate { s += max(0, 5 - due.timeIntervalSinceNow / 86_400) }   // due soon ↑
-        s -= Double(abs(t.energy.rawValue - energy.rawValue)) * 2                         // energy match
+    /// How much a task deserves to be next. Weighs, in order: deadlines (overdue, today, a hard deadline coming up),
+    /// importance (priority, pinned, part of a goal, someone emailed you about it), fit (does it fit before your next
+    /// event, does it match your energy), momentum (already started) and avoidance (important things that keep slipping
+    /// get a nudge, but not on a low-energy day). Someday tasks sink.
+    static func score(_ t: TaskItem, _ energy: EnergyLevel, _ minutesFree: Int) -> Double {
+        let cal = Calendar.current, now = Date()
+        var s = Double(t.priority.rawValue) * 3
+        if let due = t.dueDate {
+            let startToday = cal.startOfDay(for: now)
+            if due < startToday { s += 8 + min(4, now.timeIntervalSince(due) / 86_400) }       // overdue
+            else if cal.isDateInToday(due) { s += t.hasDueTime && due < now.addingTimeInterval(3 * 3600) ? 9 : 6 }
+            else { s += max(0, 4 - due.timeIntervalSince(startToday) / 86_400) }              // soon
+        }
+        if let dl = TaskMeta.deadline(t) { s += max(0, 6 - dl.timeIntervalSince(now) / 86_400) }   // hard deadline
+        if t.isPinned { s += 4 }
+        if t.goalId != nil { s += 2 }
+        if t.sourceEmailId != nil { s += 1.5 }                                                // someone's waiting
+        s -= Double(abs(t.energy.rawValue - energy.rawValue)) * 2                             // energy match
         let est = calibratedMinutes(t)
-        if est > minutesFree { s -= 3 }                                                   // won't fit before next meeting
-        if !t.microSteps.isEmpty { s += 1 }                                               // easier to start
+        if est > minutesFree { s -= 3 }                                                       // won't fit before next event
+        if energy == .low && est <= 10 { s += 2 }                                             // low energy: quick wins
+        let steps = t.microSteps
+        if steps.contains(where: \.done) && steps.contains(where: { !$0.done }) { s += 2 }    // already started
+        else if !steps.isEmpty { s += 1 }                                                     // easier to start
+        if t.timesRescheduled >= 2 && t.priority.rawValue >= TaskPriority.medium.rawValue && energy != .low {
+            s += min(3, Double(t.timesRescheduled))                                           // stop it slipping again
+        }
+        if t.isSomeday { s -= 10 }
         return s
+    }
+
+    /// Why a task came out on top, in a few words ("Overdue · high priority · fits before your 2 PM").
+    static func reason(_ t: TaskItem) -> String {
+        var r: [String] = []
+        let cal = Calendar.current
+        if let d = t.dueDate { r.append(d < cal.startOfDay(for: Date()) ? "Overdue" : cal.isDateInToday(d) ? "Due today" : "Due soon") }
+        if TaskMeta.deadline(t) != nil { r.append("deadline coming") }
+        if t.priority.rawValue >= TaskPriority.high.rawValue { r.append("high priority") }
+        if t.goalId != nil { r.append("moves a goal forward") }
+        if t.timesRescheduled >= 2 { r.append("keeps slipping") }
+        return r.prefix(3).joined(separator: " · ")
     }
 
     // MARK: 2. Time-blindness calibrator — learns how long things REALLY take you
