@@ -201,21 +201,23 @@ export function cohortStarted(ms = now()) { return ms > Date.parse(COHORT_DATES[
 
 export async function cohortStatus(env) {
   const plink = OFFERS.cohort && OFFERS.cohort.plink;
-  let link = null;
+  let link = null, stripe = env.STRIPE_KEY ? "" : "no key";
   if (plink && env.STRIPE_KEY) {
     const r = await fetch("https://api.stripe.com/v1/payment_links/" + plink, { headers: { authorization: `Bearer ${env.STRIPE_KEY}` } });
-    if (r.ok) link = await r.json();
+    if (r.ok) { link = await r.json(); stripe = "ok"; }
+    else stripe = r.status === 401 ? "bad key" : r.status === 403 ? "missing permission: payment links" : "error " + r.status;
   }
   let cs = link && link.restrictions && link.restrictions.completed_sessions;
   if (!cs && plink && env.STRIPE_KEY) {
     // The key may not read payment links; count paid cohort checkouts instead.
     const r = await fetch(`https://api.stripe.com/v1/checkout/sessions?payment_link=${plink}&status=complete&limit=100`, { headers: { authorization: `Bearer ${env.STRIPE_KEY}` } });
     if (r.ok) { const d = await r.json(); cs = { count: (d.data || []).filter((s) => s.payment_status === "paid").length, limit: 10 }; }
+    else stripe += r.status === 403 ? "; missing permission: checkout sessions" : "";
   }
   const sold = cs ? cs.count : null, limit = cs ? cs.limit : 10;
   const full = (link && !link.active) || !!(cs && cs.count >= cs.limit);
   const started = cohortStarted();
-  return { open: !full && !started, full, started, sold, limit, start: COHORT_DATES[0] };
+  return { open: !full && !started, full, started, sold, limit, start: COHORT_DATES[0], stripe };
 }
 
 // ---------- reminders ----------
