@@ -9,6 +9,9 @@ struct TodayView: View {
     @Environment(\.openWindow) private var openWindow
     @Environment(\.supportsMultipleWindows) private var multiWindow
     @Query(filter: #Predicate<TaskItem> { !$0.isDone }) private var tasks: [TaskItem]
+    @AppStorage("custom.today.voyage") private var showVoyage = true            // Customize → Today
+    @AppStorage("custom.today.nextPeople") private var showNextPeople = true
+    @AppStorage("custom.today.waterline") private var showWaterline = true
     @Query(TodayView.topEmails) private var emails: [EmailMessage]     // top 60 by priority, not the whole mailbox
     /// Recently finished tasks, so cards on Today show what's already done (wherever you checked it off).
     @Query(TodayView.recentlyDoneQuery) private var recentlyDone: [TaskItem]
@@ -78,13 +81,13 @@ struct TodayView: View {
                     FavoritePagesCard()                             // starred pages, one tap away
                     ClashesCard()                                   // overlapping events this week, with a fix
                     PinnedEmailsCard()                              // emails you pinned in Inbox
-                    if UserDefaults.standard.object(forKey: "custom.today.voyage") as? Bool ?? true {
+                    if showVoyage {
                         VoyageView()                                // your day as a route: now, ports, open water, anchor
                     }
-                    if UserDefaults.standard.object(forKey: "custom.today.nextPeople") as? Bool ?? true {
+                    if showNextPeople {
                         NextMeetingPeopleCard()                     // who you're meeting next, with Running late and Prep
                     }
-                    if UserDefaults.standard.object(forKey: "custom.today.waterline") as? Bool ?? true {
+                    if showWaterline {
                         Waterline(label: "Below the waterline · the rest of your day")
                     }
                     ForEach((calm ? TodayCard.calm : TodayCard.current(phase: DayPhase.now)).filter { $0 != .upNext && $0 != .oneThing }) { card($0) }
