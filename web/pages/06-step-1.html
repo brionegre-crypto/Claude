@@ -78,9 +78,6 @@
         <input id="su-name" name="name" type="text" autocomplete="given-name" placeholder="First name" required>
         <label class="sr-only" for="su-email">Email</label>
         <input id="su-email" name="email" type="email" autocomplete="email" inputmode="email" placeholder="Email address" required>
-        <label class="sr-only" for="su-phone">Mobile number (optional)</label>
-        <input id="su-phone" name="phone" type="tel" autocomplete="tel" placeholder="Mobile number (optional, for text reminders)">
-        <label class="su-sms" id="su-sms-wrap" hidden><input type="checkbox" id="su-sms" name="sms" value="1"><span>{{sms_consent}}</span></label>
         <div class="hp" aria-hidden="true"><label for="su-company">Company</label><input id="su-company" name="company" tabindex="-1" autocomplete="off"></div>
         <button class="btn btn-primary btn-lg btn-block" type="submit">Start Step 1 Free</button>
         <p class="signup-msg" id="su-msg" role="alert" hidden></p>
@@ -115,14 +112,12 @@
 (function(){
   var f=document.getElementById('get'); if(!f||!window.fetch) return;
   var msg=document.getElementById('su-msg'), btn=f.querySelector('button');
-  f.phone.addEventListener('input',function(){document.getElementById('su-sms-wrap').hidden=!f.phone.value.trim();});
-  if(f.phone.value.trim())document.getElementById('su-sms-wrap').hidden=false;
   f.addEventListener('submit',function(e){
     e.preventDefault();
     var email=f.email.value.trim(), name=f.name.value.trim();
     if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)){msg.textContent='Please enter a valid email address.';msg.hidden=false;f.email.focus();return;}
     btn.disabled=true; btn.textContent='Sending…'; msg.hidden=true;
-    fetch('/api/subscribe',{method:'POST',headers:{'content-type':'application/json',accept:'application/json'},body:JSON.stringify(Object.assign({name:name,email:email,company:f.company.value,phone:f.phone.value.trim(),sms:f.sms.checked},window.btmAttr?window.btmAttr():{}))})
+    fetch('/api/subscribe',{method:'POST',headers:{'content-type':'application/json',accept:'application/json'},body:JSON.stringify(Object.assign({name:name,email:email,company:f.company.value},window.btmAttr?window.btmAttr():{}))})
       .then(function(r){return r.json().catch(function(){return {};}).then(function(d){return {r:r,d:d};});})
       .then(function(x){
         if(x.d.redirect){location.href=x.d.redirect;return;}

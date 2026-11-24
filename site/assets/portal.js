@@ -446,9 +446,8 @@
     var hours = []; for (var h = 6; h <= 21; h++) hours.push('<option value="' + h + '"' + ((r.hour || 20) === h ? " selected" : "") + ">" + ((h % 12) || 12) + (h < 12 ? " AM" : " PM") + "</option>");
     var ios = /iphone|ipad/i.test(navigator.userAgent);
     return '<p class="dim"><a href="#more">‹ More</a></p><h1>Settings.</h1>' +
-      '<section class="card"><label>Your name</label><input type="text" id="nm" value="' + esc(S.me.name) + '"><label>Mobile (for text codes and reminders)</label><input type="tel" id="ph" value="' + esc(S.me.phone) + '">' +
-      '<label class="check"><input type="checkbox" id="lg"' + (S.me.large ? " checked" : "") + "> Large text</label></section>" +
-      '<section class="card"><h2>Daily reminder</h2><label class="check"><input type="checkbox" id="ron"' + (r.on ? " checked" : "") + '> Remind me to mark my day</label><div class="row"><div style="flex:1"><label>At</label><select id="rh">' + hours.join("") + '</select></div><div style="flex:1"><label>By</label><select id="rc"><option value="email">Email</option><option value="sms"' + (r.channel === "sms" ? " selected" : "") + '>Text</option></select></div></div><p class="dim">Central time. Texts go only if you\'ve agreed to texts from Be The Man.</p></section>' +
+      '<section class="card"><label>Your name</label><input type="text" id="nm" value="' + esc(S.me.name) + '"><label class="check"><input type="checkbox" id="lg"' + (S.me.large ? " checked" : "") + "> Large text</label></section>" +
+      '<section class="card"><h2>Daily reminder</h2><label class="check"><input type="checkbox" id="ron"' + (r.on ? " checked" : "") + '> Remind me to mark my day</label><label>At</label><select id="rh">' + hours.join("") + '</select><p class="dim">By email, Central time, and only on days something is still unmarked.</p></section>' +
       (S.coach ? "" : '<p><button type="button" class="pb primary" id="saves">Save settings</button></p>') +
       '<section class="card"><h2>Put the portal on your home screen</h2><p class="muted">' + (ios ? "In Safari, tap Share, then Add to Home Screen." : "In Chrome, tap the menu (⋮), then Add to Home screen or Install app.") + "</p></section>" +
       '<section class="card"><h2>Calendar</h2><p class="muted">Your commitments, with a reminder ten minutes before.</p><a class="pb" href="' + esc(S.calendar.replace(/^https:/, "webcal:")) + '">Add to my calendar</a> <button type="button" class="pb small" id="copycal">Copy the link</button></section>' +
@@ -459,7 +458,7 @@
   };
   VIEWS.settings.after = function () {
     var s = $("#saves"); if (s) s.onclick = function () {
-      api("profile", { name: $("#nm").value, phone: $("#ph").value, large: $("#lg").checked, reminders: { on: $("#ron").checked, hour: Number($("#rh").value), channel: $("#rc").value } }).then(function () { flash("Saved."); return refresh(); }).catch(fail);
+      api("profile", { name: $("#nm").value, large: $("#lg").checked, reminders: { on: $("#ron").checked, hour: Number($("#rh").value), channel: "email" } }).then(function () { flash("Saved."); return refresh(); }).catch(fail);
     };
     var cc = $("#copycal"); if (cc) cc.onclick = function () { copy(S.calendar); };
     var sh = $("#sh"); if (sh) sh.onchange = function () { api("share", { on: sh.checked }).then(function (d) { flash(d.on ? "Sharing is on." : "Sharing is off. The old link no longer works."); return refresh(); }).catch(fail); };

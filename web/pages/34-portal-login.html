@@ -18,8 +18,8 @@
       <input id="e" class="pf" type="email" autocomplete="email" placeholder="Email address" required>
       <button class="btn btn-primary btn-lg btn-block" type="submit">Email me a sign-in link</button>
       <p class="muted" id="m" role="status"></p>
-      <p class="fine"><button type="button" class="textlink" id="usetext">Sign in with a text code instead</button></p>
     </form>
+    <!-- Text-code sign-in is off for now. To turn it back on, restore the "Sign in with a text code instead" button in the form above. -->
     <form class="tile lp-card signup" id="t" novalidate hidden>
       <label class="sr-only" for="ph">Mobile number</label>
       <input id="ph" class="pf" type="tel" autocomplete="tel" placeholder="Mobile number">
@@ -43,7 +43,7 @@
   if(q.get('expired')) document.getElementById('lead').textContent='That link expired. Enter your email for a new one.';
   var $=function(i){return document.getElementById(i);};
   function post(u,b){return fetch(u,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(b)}).then(function(r){return r.json();});}
-  $('usetext').onclick=function(){$('f').hidden=true;$('t').hidden=false;$('ph').focus();};
+  if($('usetext'))$('usetext').onclick=function(){$('f').hidden=true;$('t').hidden=false;$('ph').focus();};
   $('useemail').onclick=function(){$('t').hidden=true;$('f').hidden=false;$('e').focus();};
   $('f').addEventListener('submit',function(e){e.preventDefault();$('m').textContent='Sending…';
     post('/api/portal/login',{email:$('e').value,next:q.get('next')||''}).then(function(d){$('m').textContent=d.message||d.error;}).catch(function(){$('m').textContent='Please try again.';});});
