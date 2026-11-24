@@ -209,7 +209,7 @@ struct BodyView: View {
     @ViewBuilder private var todayPage: some View {
         if live {
             BodyDayStrip(days: engine.days, selected: $selectedDay)
-            BodyHeroCard(day: t, days: engine.days, isToday: isToday)
+            BodyHero(day: t, days: engine.days, isToday: isToday, steps: isToday ? extras.steps : 0)   // Rings, Story or Control room
             if engine.loading { ProgressView("Reading Apple Health…").font(DS.Font.caption).frame(maxWidth: .infinity) }
             if t?.calibrating ?? true {
                 Label("Learning your normal: Tide gets accurate after about 5 nights with your Apple Watch.", systemImage: "hourglass")
