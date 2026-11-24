@@ -13,7 +13,14 @@ enum CalendarRoles {
     }
     static let key = "calendar.roles"
 
-    private static var saved: [String: String] { UserDefaults.standard.dictionary(forKey: key) as? [String: String] ?? [:] }
+    // Read once and kept (looked up for every event, on every redraw of Today and every free-time search).
+    private static var cache: [String: String]?
+    private static var saved: [String: String] {
+        if let c = cache { return c }
+        let c = UserDefaults.standard.dictionary(forKey: key) as? [String: String] ?? [:]
+        cache = c
+        return c
+    }
 
     static func role(_ c: EKCalendar) -> Role {
         if let r = saved[c.calendarIdentifier].flatMap(Role.init(rawValue:)) { return r }
@@ -25,6 +32,7 @@ enum CalendarRoles {
     static func set(_ r: Role, for c: EKCalendar) {
         var s = saved; s[c.calendarIdentifier] = r.rawValue
         UserDefaults.standard.set(s, forKey: key)
+        cache = s
     }
 
     /// Someone else's event on a calendar shared with you, that you weren't invited to.
