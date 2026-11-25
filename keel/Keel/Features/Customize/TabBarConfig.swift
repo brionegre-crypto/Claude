@@ -63,7 +63,7 @@ enum TabBarConfig {
     @ViewBuilder
     static func screen(_ id: String) -> some View {
         switch id {
-        case "today": TodayView()
+        case "today": HomeRoot()
         case "inbox": InboxView()
         case "calendar": CalendarView()
         case "tasks": TasksView()
@@ -153,5 +153,13 @@ struct BuiltOnFirstVisit<Content: View>: View {
         } else {
             Color.clear
         }
+    }
+}
+
+
+/// The first tab: the redesigned Home for the nautical themes, the classic Today for the classic looks.
+struct HomeRoot: View {
+    var body: some View {
+        if PaletteCache.look.isNautical { HomeView() } else { TodayView() }
     }
 }
