@@ -238,7 +238,7 @@ targets:
         CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         WKApplication: true
         WKCompanionAppBundleIdentifier: com.briangreenejr.keel
-        WKBackgroundModes: [smart-alarm]          # the smart alarm runs in the half hour before your wake time
+        WKBackgroundModes: [alarm]                # smart alarm session (Apple's value is "alarm"); runs in the half hour before your wake time
 
   KeelWatchWidgets:
     type: app-extension
