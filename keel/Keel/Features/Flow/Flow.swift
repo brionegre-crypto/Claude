@@ -6,10 +6,10 @@ import UserNotifications
 // MARK: - One capture button everywhere
 
 enum CaptureKind: String, CaseIterable, Identifiable {
-    case task, event, note, reminder
+    case task, event, note, reminder, meal
     var id: String { rawValue }
     var title: String { rawValue.capitalized }
-    var icon: String { switch self { case .task: "checklist"; case .event: "calendar"; case .note: "doc.text"; case .reminder: "bell" } }
+    var icon: String { switch self { case .task: "checklist"; case .event: "calendar"; case .note: "doc.text"; case .reminder: "bell"; case .meal: "fork.knife" } }
 }
 
 enum CaptureClassifier {
@@ -20,6 +20,7 @@ enum CaptureClassifier {
         let low = t.lowercased()
         if low.hasPrefix("note:") || low.hasPrefix("idea:") || t.contains("\n") || t.count > 160 { return .note }
         if low.hasPrefix("remind me") || low.hasPrefix("reminder:") { return .reminder }
+        if low.hasPrefix("ate ") || low.hasPrefix("i ate ") || low.hasPrefix("had ") || low.hasPrefix("i had ") || low.hasPrefix("meal:") || low.hasPrefix("breakfast:") || low.hasPrefix("lunch:") || low.hasPrefix("dinner:") { return .meal }
         let eventWords = ["meeting", "lunch with", "dinner with", "coffee with", "call with", "appointment", "interview", "party", "flight", "dentist", "doctor", "standup", "1:1", "zoom with"]
         let hasTime = low.range(of: #"\b(\d{1,2})(:\d{2})?\s?(am|pm)\b|\bat \d{1,2}\b|\b(noon|tonight|tomorrow|monday|tuesday|wednesday|thursday|friday|saturday|sunday)\b"#, options: .regularExpression) != nil
         if hasTime && eventWords.contains(where: { low.contains($0) }) { return .event }
@@ -107,6 +108,7 @@ struct UniversalCaptureSheet: View {
         case .event: "Goes on your calendar: “lunch with Sam tomorrow 1pm for 90 min”."
         case .note: "Lands in your capture inbox to file later (or Keel files it overnight)."
         case .reminder: "A reminder that alerts you: “remind me to water plants every other Sunday”."
+        case .meal: "Logged in Body → Food, with calories and nutrients worked out: “2 eggs and toast”."
         }
     }
 
@@ -121,6 +123,18 @@ struct UniversalCaptureSheet: View {
             return
         }
         switch kind {
+        case .meal:
+            let food = t
+            let context = ctx
+            Task { @MainActor in
+                guard let est = await MealEstimator.estimate(food) else { UndoCenter.shared.notify("Couldn't work out that meal. Try Body → Food."); return }
+                let verdict = DietChecker.check(name: est.name, ingredientsText: est.ingredients, facts: est.facts).verdict
+                let h = Calendar.current.component(.hour, from: Date())
+                let meal = h < 11 ? "breakfast" : h < 15 ? "lunch" : h < 21 ? "dinner" : "snack"
+                _ = NutritionLog.logMeal(name: est.name, ingredients: est.ingredients, facts: est.facts, verdict: verdict, meal: meal, ctx: context)
+                try? context.save()
+                UndoCenter.shared.notify("Logged \(est.name) · \(Int(est.facts.calories ?? 0)) kcal")
+            }
         case .task, .reminder:
             let task = QuickAdd.create(t, in: ctx)
             if kind == .reminder, task.dueDate == nil { task.dueDate = Date().addingTimeInterval(3600) }
@@ -153,7 +167,7 @@ struct CaptureButton: View {
     var body: some View {
         ZStack {
             Color.clear.frame(width: 1, height: 1).allowsHitTesting(false)      // always here, so it hears the keyboard come and go
-            if on && !router.chromeHidden && !keyboardUp {
+            if on && !router.chromeHidden && !keyboardUp && !Binnacle.isOn {      // the Binnacle's Log button replaces it
                 Button { open = true; Haptics.tap() } label: {
                     Image(systemName: "plus").font(.title3.weight(.semibold)).foregroundStyle(.white)
                         .frame(width: 50, height: 50)

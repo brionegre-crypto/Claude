@@ -298,6 +298,7 @@ struct RootView: View {
     @AppStorage(TabBarConfig.revKey) private var tabBarRev = 0
     @AppStorage(SidebarStyle.key) private var sidebarHidden = false
     @State private var hiddenSection: HiddenSection?
+    @AppStorage(Binnacle.key) private var binnacleOn = true
 
     private func openTask(_ id: UUID) -> TaskItem? {
         try? KeelStore.container.mainContext.fetch(FetchDescriptor<TaskItem>(predicate: #Predicate { $0.id == id })).first
@@ -311,9 +312,13 @@ struct RootView: View {
     /// Only where there's a sidebar (Mac, and iPad at full width). Never on iPhone.
     private var showsSidebarSettings: Bool { UIDevice.current.userInterfaceIdiom != .phone && sizeClass == .regular }
 
-    var body: some View {
-        let _ = PaletteCache.sync(accent: accentName, look: lookRaw)      // theme colors kept in memory (refreshed when you change them)
-        TabView(selection: $router.tab) {
+    /// iPhone in a nautical look: the Binnacle (floating bar + Log). Otherwise the system tab bar / sidebar.
+    @ViewBuilder private var shell: some View {
+        let _ = binnacleOn          // redraw when the setting changes
+        if Binnacle.isOn {
+            BinnacleShell(router: router, items: tabBarItems)
+        } else {
+            TabView(selection: $router.tab) {
             // Your tab bar (Settings → Look & Feel → Tab bar).
             ForEach(tabBarItems, id: \.self) { id in
                 SwiftUI.Tab(TabBarConfig.title(id), systemImage: TabBarConfig.icon(id), value: TabBarConfig.value(id)) { TabBarConfig.content(id) }
@@ -325,7 +330,17 @@ struct RootView: View {
                     .tabPlacement(.sidebarOnly)
             }
         }
+            .modifier(SidebarStyle(hidden: sidebarHidden && showsSidebarSettings))   // tabs on iPhone; a sidebar on Mac and iPad (hideable)
+            // Focus lives above the tab bar (like Music's mini-player): always one tap away, shows the live timer.
+            .modifier(FocusBarSetting { router.showFocus = true })
+        }
+    }
+
+    var body: some View {
+        let _ = PaletteCache.sync(accent: accentName, look: lookRaw)      // theme colors kept in memory (refreshed when you change them)
+        shell
         .onChange(of: showsSidebarSettings) { _, shown in if !shown && router.tab == .settings { router.tab = .today } }
+
         // A section you took out of the tab bar still opens (from a link, widget or ⌘-shortcut), as a sheet.
         // Watched from a tiny background view, so switching tabs doesn't redraw this whole shell
         // (every overlay, sheet and banner below) on each tap.
@@ -338,9 +353,6 @@ struct RootView: View {
         .onContinueUserActivity(KeelHandoff.taskType) { a in
             if let s = a.userInfo?["id"] as? String, let id = UUID(uuidString: s) { router.openTaskId = id }
         }
-        .modifier(SidebarStyle(hidden: sidebarHidden && showsSidebarSettings))   // tabs on iPhone; a sidebar on Mac and iPad (hideable)
-        // Focus lives above the tab bar (like Music's mini-player): always one tap away, shows the live timer.
-        .modifier(FocusBarSetting { router.showFocus = true })
         .overlay(alignment: .bottom) { UndoToast() }
         .modifier(AppWideExtras())                                   // shake to undo, routine player, banners
         .overlay { EveningCalm() }                                   // warmer after sunset
@@ -714,7 +726,7 @@ struct FocusBarSetting: ViewModifier {
     @AppStorage(FocusBarSetting.key) private var on = !ProcessInfo.processInfo.isMacCatalystApp
     var open: () -> Void
     func body(content: Content) -> some View {
-        // iPhone: the tab bar and Focus bar shrink as you scroll down, so nothing stays hidden behind them.
-        if on { content.tabViewBottomAccessory { FocusAccessory(onOpen: open) }.tabBarMinimizeBehavior(.onScrollDown) } else { content }
+        // The tab bar stays put while you scroll: shrinking it on every scroll was the biggest scroll lag Instruments found.
+        if on { content.tabViewBottomAccessory { FocusAccessory(onOpen: open) }.tabBarMinimizeBehavior(.never) } else { content.tabBarMinimizeBehavior(.never) }
     }
 }

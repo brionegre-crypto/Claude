@@ -164,6 +164,8 @@ struct LookSettingsSection: View {
         }
     }
 
+    @AppStorage(Binnacle.key) private var binnacleOn = true
+
     private var layoutSection: some View {
         Group {
         Section {
@@ -173,7 +175,12 @@ struct LookSettingsSection: View {
             Toggle(isOn: Binding(get: { UserDefaults.standard.object(forKey: "capture.fab") as? Bool ?? true }, set: { UserDefaults.standard.set($0, forKey: "capture.fab") })) {
                 Label("Capture button on every screen", systemImage: "plus.circle")
             }
-        } header: { Text("Layout") }
+            Toggle(isOn: $binnacleOn) {
+                Label("Floating tab bar with Log button", systemImage: "capsule.bottomhalf.filled")
+            }
+        } header: { Text("Layout") } footer: {
+            Text("iPhone, nautical themes: a floating bar with your tabs and a red Log button in the middle. Tap Log to add a task, event, note, reminder or meal in one line; hold it to speak.")
+        }
         }
     }
 }
