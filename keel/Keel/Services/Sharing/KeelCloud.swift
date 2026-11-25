@@ -41,6 +41,8 @@ struct SharedListItem: Codable, Identifiable, Hashable {
     var text: String
     var done: Bool
     var by: String?
+    var who: String?          // who it's assigned to
+    var due: String?          // yyyy-MM-dd
 }
 
 struct SharedListData: Codable {
@@ -147,6 +149,8 @@ struct SharedListView: View {
     @State private var newItem = ""
     @State private var comment = ""
     @State private var error: String?
+    @State private var assigning: SharedListItem?
+    @State private var assignName = ""
     private let tick = Timer.publish(every: 15, on: .main, in: .common).autoconnect()
 
     var body: some View {
@@ -161,12 +165,26 @@ struct SharedListView: View {
                                 Image(systemName: i.done ? "checkmark.circle.fill" : "circle").foregroundStyle(i.done ? DS.Palette.calm : DS.Palette.inkSoft)
                                 VStack(alignment: .leading, spacing: 1) {
                                     Text(i.text).strikethrough(i.done).foregroundStyle(i.done ? DS.Palette.inkSoft : DS.Palette.ink)
-                                    if let by = i.by { Text("added by \(by)").font(.caption2).foregroundStyle(DS.Palette.inkSoft) }
+                                    let meta = [i.who.map { "for \($0)" }, i.due.map { "due \($0)" }, i.by.map { "added by \($0)" }].compactMap { $0 }
+                                    if !meta.isEmpty { Text(meta.joined(separator: " · ")).font(.caption2).foregroundStyle(DS.Palette.inkSoft) }
                                 }
                             }
                         }
                         .buttonStyle(.plain)
                         .swipeActions { Button("Remove", role: .destructive) { Task { await run(["op": "remove", "id": i.id]) } } }
+                        .contextMenu {
+                            Button("Assign to someone…", systemImage: "person.crop.circle.badge.plus") { assigning = i; assignName = i.who ?? "" }
+                            if i.who != nil { Button("Unassign", systemImage: "person.crop.circle.badge.minus") { Task { await run(["op": "assign", "id": i.id]) } } }
+                            Menu("Due", systemImage: "calendar") {
+                                ForEach([0, 1, 2, 7], id: \.self) { d in
+                                    let day = Calendar.current.date(byAdding: .day, value: d, to: Date()) ?? Date()
+                                    Button(d == 0 ? "Today" : d == 1 ? "Tomorrow" : d == 7 ? "Next week" : day.formatted(.dateTime.weekday(.wide))) {
+                                        Task { await run(["op": "due", "id": i.id, "due": ISO8601DateFormatter.dateOnly.string(from: day)]) }
+                                    }
+                                }
+                                Button("No date") { Task { await run(["op": "due", "id": i.id]) } }
+                            }
+                        }
                     }
                     HStack {
                         TextField("Add an item", text: $newItem).onSubmit(addItem)
@@ -192,6 +210,11 @@ struct SharedListView: View {
             }
         }
         .navigationTitle(data?.title ?? ref.title)
+        .alert("Assign to", isPresented: Binding(get: { assigning != nil }, set: { if !$0 { assigning = nil } })) {
+            TextField("Name", text: $assignName)
+            Button("Assign") { if let i = assigning { Task { await run(["op": "assign", "id": i.id, "who": assignName]) } }; assigning = nil }
+            Button("Cancel", role: .cancel) { assigning = nil }
+        }
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 if let url = URL(string: ref.url) { ShareLink(item: url) { Image(systemName: "square.and.arrow.up") } }

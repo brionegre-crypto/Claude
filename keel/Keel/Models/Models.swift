@@ -957,6 +957,8 @@ struct StoredAttachment: Codable {
 
     func matches(_ t: TaskItem, now: Date = Date()) -> Bool {
         guard !t.isDone, !t.isSomeday else { return false }
+        // A typed filter ("today & #work", "overdue | p1") replaces the pickers when there is one.
+        if let q = SmartQuery.text(for: id) { return SmartQuery.matches(q, t, now: now) }
         if !priorities.isEmpty && !priorities.contains(t.priority.rawValue) { return false }
         if !tags.isEmpty && !t.tags.contains(where: tags.contains) { return false }
         if !lists.isEmpty && !lists.contains(t.listName) { return false }

@@ -4,7 +4,7 @@ import SwiftData
 /// TickTick-style tasks, synced two-way with Apple Reminders:
 /// smart lists, your lists and #tags, an Eisenhower matrix, repeating tasks, alerts and subtasks.
 enum TaskFilter: Hashable {
-    case today, next7, inbox, all, matrix, completed, someday
+    case today, next7, upcoming, inbox, all, matrix, completed, someday
     case list(String)
     case tag(String)
     case smart(UUID)
@@ -13,6 +13,7 @@ enum TaskFilter: Hashable {
         switch self {
         case .today: "Today"
         case .next7: "Next 7 Days"
+        case .upcoming: "Upcoming"
         case .inbox: "Inbox"
         case .all: "All"
         case .matrix: "Matrix"
@@ -28,6 +29,7 @@ enum TaskFilter: Hashable {
         switch self {
         case .today: "sun.max"
         case .next7: "calendar.day.timeline.right"
+        case .upcoming: "calendar.badge.clock"
         case .inbox: "tray"
         case .all: "list.bullet"
         case .matrix: "square.grid.2x2"
@@ -121,6 +123,7 @@ struct TasksView: View {
         switch filterKey {
         case "today": .today
         case "next7": .next7
+        case "upcoming": .upcoming
         case "inbox": .inbox
         case "all": .all
         case "matrix": .matrix
@@ -135,7 +138,7 @@ struct TasksView: View {
 
     private func key(_ f: TaskFilter) -> String {
         switch f {
-        case .today: "today"; case .next7: "next7"; case .inbox: "inbox"; case .all: "all"
+        case .today: "today"; case .next7: "next7"; case .upcoming: "upcoming"; case .inbox: "inbox"; case .all: "all"
         case .matrix: "matrix"; case .completed: "completed"; case .someday: "someday"
         case .list(let l): "list:\(l)"; case .tag(let t): "tag:\(t)"; case .smart(let id): "smart:\(id.uuidString)"
         }
@@ -187,7 +190,8 @@ struct TasksView: View {
         return filter.title
     }
 
-    private var open: [TaskItem] { tasks.filter { !$0.isDone && !$0.isSomeday } }
+    /// Open tasks that have started (ones with a later start date wait in Upcoming).
+    private var open: [TaskItem] { memo.get(\.open) { tasks.filter { !$0.isDone && !$0.isSomeday && !TaskMeta.isDeferred($0) } } }
 
     private var filtered: [TaskItem] { memo.get(\.filtered) { computeFiltered() } }
 
@@ -202,6 +206,8 @@ struct TasksView: View {
         case .all, .matrix: base = open
         case .completed: base = tasks.filter(\.isDone).sorted { ($0.completedAt ?? .distantPast) > ($1.completedAt ?? .distantPast) }
         case .someday: base = tasks.filter { !$0.isDone && $0.isSomeday }
+        case .upcoming: base = tasks.filter { !$0.isDone && TaskMeta.isDeferred($0) }
+            .sorted { (TaskMeta.startDate($0) ?? .distantFuture) < (TaskMeta.startDate($1) ?? .distantFuture) }
         case .list(let l): base = open.filter { $0.listName == l }
         case .tag(let t): base = open.filter { $0.tags.contains(t) }
         case .smart(let id): base = smartLists.first { $0.id == id }.map { s in tasks.filter { s.matches($0) } } ?? []
@@ -231,7 +237,7 @@ struct TasksView: View {
                 } else if boardMode && filter != .completed {
                     ScrollView {
                         filterBar
-                        BoardView(tasks: boardTasks).containerRelativeFrame(.vertical)   // columns keep their own scrolling
+                        BoardView(tasks: boardTasks, listName: { if case .list(let l) = filter { return l }; return nil }()).containerRelativeFrame(.vertical)   // columns keep their own scrolling
                     }
                 } else {
                     list
@@ -290,6 +296,10 @@ struct TasksView: View {
                         }
                         Section("Lists") {
                             if case .list(let name) = filter {
+                                NavigationLink { LazyView(TaskTimelineView(title: name, tasks: tasks.filter { $0.listName == name })) } label: { Label("Timeline", systemImage: "chart.bar.xaxis") }
+                                NavigationLink { LazyView(TaskDashboardView(title: name, tasks: tasks.filter { $0.listName == name })) } label: { Label("Dashboard", systemImage: "gauge.with.dots.needle.67percent") }
+                                NavigationLink { LazyView(BoardColumnsEditor(list: name)) } label: { Label("Board columns", systemImage: "rectangle.split.3x1") }
+                                NavigationLink { LazyView(TaskFieldsEditor(list: name)) } label: { Label("Custom fields", systemImage: "list.bullet.rectangle.portrait") }
                                 Button("Share “\(name)”…", systemImage: "person.2") { sharingList = name }
                                 Button("Save “\(name)” as a template", systemImage: "square.and.arrow.down") {
                                     TemplateSaver.save(listName: name, tasks: tasks.filter { !$0.isDone }, ctx: ctx)
@@ -332,7 +342,7 @@ struct TasksView: View {
     private var filterBar: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: DS.Space.s) {
-                ForEach([TaskFilter.today, .next7, .inbox, .all, .matrix, .someday, .completed], id: \.self) { chip($0) }
+                ForEach([TaskFilter.today, .next7, .upcoming, .inbox, .all, .matrix, .someday, .completed], id: \.self) { chip($0) }
                 ForEach(lists, id: \.self) { chip(.list($0)) }
                 ForEach(tags, id: \.self) { chip(.tag($0)) }
                 ForEach(smartLists) { s in
@@ -400,6 +410,7 @@ struct TasksView: View {
                     HorizonHeader(title: screenTitle, detail: tasksHorizonDetail, compact: true)
                         .listRowInsets(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
                         .listRowBackground(Color.clear)
+                    if filter == .today { TaskGoalsCard(done: doneTasks).listRowBackground(Color.clear) }   // daily & weekly goals, streak
                 }
                 // Above the waterline: what's pinned, overdue, today and tonight. Below: what can wait, quieter.
                 let above: Set<String> = ["Pinned", "Overdue", "Today", "This Evening"]
@@ -466,6 +477,22 @@ struct TasksView: View {
 
     private func computeGroups() -> [(title: String, items: [TaskItem])] {
         let active = filtered.filter { !$0.isWaitingOn }
+        if filter == .upcoming {
+            // Grouped by the day each one starts.
+            let byDay = Dictionary(grouping: active) { TaskMeta.startDate($0).map { cal.startOfDay(for: $0) } ?? .distantFuture }
+            return byDay.keys.sorted().map { d in (title: "Starts " + d.formatted(.dateTime.weekday(.wide).month().day()), items: byDay[d] ?? []) }
+        }
+        // A list with headings (Things-style): one section per heading, in the order they first appear.
+        if case .list = filter, active.contains(where: { TaskMeta.heading($0) != nil }) {
+            var order: [String] = []
+            for t in active.sorted(by: { $0.createdAt < $1.createdAt }) {
+                let h = TaskMeta.heading(t) ?? "Tasks"
+                if !order.contains(h) { order.append(h) }
+            }
+            let byHeading = Dictionary(grouping: active) { TaskMeta.heading($0) ?? "Tasks" }
+            let pinnedFirst: ([TaskItem]) -> [TaskItem] = { $0.sorted { ($0.isPinned ? 0 : 1, $0.dueDate ?? .distantFuture) < ($1.isPinned ? 0 : 1, $1.dueDate ?? .distantFuture) } }
+            return order.map { (title: $0, items: pinnedFirst(byHeading[$0] ?? [])) }
+        }
         let start = cal.startOfDay(for: Date())
         let tomorrow = cal.date(byAdding: .day, value: 1, to: start)!
         let dayAfter = cal.date(byAdding: .day, value: 2, to: start)!
@@ -635,6 +662,9 @@ struct TaskRow: View {
                         Text(dueText(d)).foregroundStyle(isLate(d) && !task.isDone && !prefs.calm ? DS.Palette.warmth : DS.Palette.inkSoft)
                     }
                     if task.isPinned { Image(systemName: "pin.fill").foregroundStyle(DS.Palette.accent) }
+                    if TaskMeta.isWontDo(task) { Text("Won't do").foregroundStyle(.orange) }
+                    if let s = TaskMeta.startDate(task), s > Date() { Label(s.formatted(.dateTime.month(.abbreviated).day()), systemImage: "arrow.right.to.line") }
+                    if !TaskMeta.extraReminders(task).isEmpty { Image(systemName: "bell.badge") }
                     if task.blockedById != nil { Image(systemName: "lock.fill").accessibilityLabel("Blocked by another task") }
                     if TaskTimer.shared.isRunning(task) { Image(systemName: "stopwatch.fill").foregroundStyle(DS.Palette.warmth) }
                     if task.recurrence != nil { Image(systemName: "repeat") }
@@ -907,6 +937,7 @@ struct TaskDetailView: View {
             AssignSection(task: task)                       // hand it to someone
             WorkBackSection(task: task)                     // split a big deadline into dated steps
             Section("Notes") { BufferedTextEditor(text: $task.notes).frame(minHeight: 100) }
+            TaskExtrasSections(task: task)          // start date, more reminders, heading, fields, attachments, comments, won't do
             TaskAttachmentsSection(task: task)
 
             Section {
@@ -1034,13 +1065,14 @@ private struct ListName: Identifiable { var name: String; var id: String { name 
 /// A plain class in @State: writing to it never triggers another update.
 final class TasksMemo {
     var all: [TaskItem]?
+    var open: [TaskItem]?
     var lists: [String]?
     var tags: [String]?
     var filtered: [TaskItem]?
     var groups: [(title: String, items: [TaskItem])]?
     var searchDone: [TaskItem]?
     var waitingWho: String?
-    func reset() { all = nil; lists = nil; tags = nil; filtered = nil; groups = nil; searchDone = nil; waitingWho = nil }
+    func reset() { all = nil; open = nil; lists = nil; tags = nil; filtered = nil; groups = nil; searchDone = nil; waitingWho = nil }
     func get<T>(_ key: ReferenceWritableKeyPath<TasksMemo, T?>, _ make: () -> T) -> T {
         if let v = self[keyPath: key] { return v }
         let v = make(); self[keyPath: key] = v; return v

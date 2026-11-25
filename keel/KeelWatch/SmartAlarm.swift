@@ -60,9 +60,9 @@ final class WatchSmartAlarm: NSObject, WKExtendedRuntimeSessionDelegate {
         ringing = true
         motion.stopAccelerometerUpdates()
         // Taps every few seconds until you stop it.
-        s.notifyUser(hapticType: .notification) { next in
-            next.pointee = 3
-            return .notification
+        s.notifyUser(hapticType: .notification) { haptic in
+            haptic.pointee = .notification      // the next tap's style…
+            return 3                            // …and seconds until it
         }
     }
 

@@ -9,7 +9,7 @@ import { json } from "./ai";
  *   Published pages POST /publish (owner's device) → GET /p/:id read-only page; DELETE /publish/:id to take it down.
  *   Diagnostics    POST /diagnostics (owner's device): crash and hang reports, kept 30 days.
  */
-type Item = { id: string; text: string; done: boolean; by?: string };
+type Item = { id: string; text: string; done: boolean; by?: string; who?: string; due?: string };
 type SharedList = { title: string; items: Item[]; comments: { text: string; by: string; at: number }[]; updated: number };
 
 type Space = { name: string; pages: { id: string; title: string }[]; lists: { id: string; title: string; url: string }[]; members: string[] };
@@ -118,11 +118,13 @@ export async function handleShare(req: Request, env: Env, url: URL, device: bool
     const list = JSON.parse(raw) as SharedList;
     if (req.method === "GET") return json(list);
     if (req.method === "POST") {
-      const op = (await req.json()) as { op: string; id?: string; text?: string; by?: string; items?: Item[]; title?: string };
+      const op = (await req.json()) as { op: string; id?: string; text?: string; by?: string; items?: Item[]; title?: string; who?: string; due?: string };
       const by = (op.by ?? "Someone").slice(0, 40);
       if (op.op === "toggle") list.items = list.items.map((i) => (i.id === op.id ? { ...i, done: !i.done } : i));
       else if (op.op === "add" && op.text) list.items.push({ id: rid(6), text: op.text.slice(0, 300), done: false, by });
       else if (op.op === "remove") list.items = list.items.filter((i) => i.id !== op.id);
+      else if (op.op === "assign") list.items = list.items.map((i) => (i.id === op.id ? { ...i, who: op.who ? op.who.slice(0, 40) : undefined } : i));
+      else if (op.op === "due") list.items = list.items.map((i) => (i.id === op.id ? { ...i, due: op.due ? op.due.slice(0, 10) : undefined } : i));
       else if (op.op === "comment" && op.text) list.comments.push({ text: op.text.slice(0, 500), by, at: Date.now() });
       else if (op.op === "replace" && device && op.items) { list.items = op.items.slice(0, 500); if (op.title) list.title = op.title.slice(0, 120); }
       else if (op.op === "delete" && device) { await env.KEEL.delete(key); return json({ ok: true }); }
@@ -187,7 +189,7 @@ const who=localStorage.getItem("keel.name")||"";
 async function load(){const r=await fetch(api);if(!r.ok){document.body.innerHTML="<p>This list isn't shared anymore.</p>";return}render(await r.json())}
 function render(l){document.getElementById("t").textContent=l.title;const box=document.getElementById("items");box.innerHTML="";
 for(const i of l.items){const d=document.createElement("label");d.className="item"+(i.done?" done":"");const c=document.createElement("input");c.type="checkbox";c.checked=i.done;
-c.onchange=()=>post({op:"toggle",id:i.id});const s=document.createElement("span");s.textContent=i.text;d.append(c,s);box.append(d)}}
+c.onchange=()=>post({op:"toggle",id:i.id});const s=document.createElement("span");s.textContent=i.text+(i.who?" · "+i.who:"")+(i.due?" · due "+i.due:"");d.append(c,s);box.append(d)}}
 async function post(b){b.by=who||"Someone";const r=await fetch(api,{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify(b)});render(await r.json())}
 document.getElementById("f").onsubmit=e=>{e.preventDefault();const v=document.getElementById("new").value.trim();if(v){post({op:"add",text:v});document.getElementById("new").value=""}};
 load();setInterval(load,15000);

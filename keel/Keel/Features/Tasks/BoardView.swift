@@ -4,15 +4,25 @@ import SwiftData
 /// Kanban board for a list: To do → Doing → Done. Drag cards between columns.
 struct BoardView: View {
     let tasks: [TaskItem]          // open + done tasks for the current list/filter
-    private let stages: [(key: String, title: String, color: Color)] = [
-        ("todo", "To do", DS.Palette.inkSoft), ("doing", "Doing", DS.Palette.accent), ("done", "Done", DS.Palette.calm),
-    ]
+    var listName: String? = nil    // a list can have its own columns (Tasks → ⋯ → Board columns)
+
+    /// Your columns for this list; the first is "to do", the last is "done".
+    private var stages: [(key: String, title: String, color: Color)] {
+        let cols = BoardColumns.columns(for: listName)
+        let palette: [Color] = [DS.Palette.accent, .purple, .orange, .teal, .pink, .indigo]
+        return cols.enumerated().map { i, c in
+            let key = i == cols.count - 1 ? "done" : BoardColumns.stage(c, in: cols)
+            let color: Color = i == 0 ? DS.Palette.inkSoft : i == cols.count - 1 ? DS.Palette.calm : palette[(i - 1) % palette.count]
+            return (key, c, color)
+        }
+    }
 
     private func items(_ stage: String) -> [TaskItem] {
+        let middle = Set(stages.dropFirst().dropLast().map(\.key))
         switch stage {
-        case "done": tasks.filter(\.isDone).sorted { ($0.completedAt ?? .distantPast) > ($1.completedAt ?? .distantPast) }.prefix(20).map { $0 }
-        case "doing": tasks.filter { !$0.isDone && $0.stage == "doing" }
-        default: tasks.filter { !$0.isDone && $0.stage != "doing" }
+        case "done": return tasks.filter(\.isDone).sorted { ($0.completedAt ?? .distantPast) > ($1.completedAt ?? .distantPast) }.prefix(20).map { $0 }
+        case "todo": return tasks.filter { !$0.isDone && !middle.contains($0.stage) }      // anything not in a middle column
+        default: return tasks.filter { !$0.isDone && $0.stage == stage }
         }
     }
 

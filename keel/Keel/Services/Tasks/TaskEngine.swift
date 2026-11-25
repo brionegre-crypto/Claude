@@ -11,6 +11,8 @@ enum TaskActions {
     @discardableResult
     static func setDone(_ t: TaskItem, _ done: Bool) -> Date? {
         done ? Haptics.done() : Haptics.tap()          // feedback first, with the finger still on the glass
+        TaskActivity.log(t, done ? "Completed" : "Reopened")
+        if !done { t.tags.removeAll { $0 == TaskMeta.wontDoTag } }
         if done { Automations.taskCompleted(t, ctx: t.modelContext) }
         var rolledTo: Date?
         if done, let rule = t.recurrence {
@@ -160,6 +162,14 @@ enum TaskAlerts {
 
     static func schedule(_ t: TaskItem) {
         cancel(t)
+        // Extra reminders ("1 day before" + "1 hour before"…), as plain notifications.
+        if !t.isDone, let due = t.dueDate {
+            let base = t.hasDueTime ? due : (Calendar.current.date(bySettingHour: 9, minute: 0, second: 0, of: due) ?? due)
+            for m in TaskMeta.extraReminders(t) {
+                let fire = base.addingTimeInterval(-Double(m * 60))
+                if fire > Date() { add(t, at: fire, id: id(t) + "-r\(m)") }
+            }
+        }
         // A timed task with full-screen alarms on rings at its time even if no reminder time was picked
         // (before, those never rang at all).
         let alarmDefault: Int? = (t.hasDueTime && TaskAlarms.wanted(t)) ? 0 : nil
@@ -195,7 +205,8 @@ enum TaskAlerts {
     }
 
     static func cancel(_ t: TaskItem) {
-        UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [id(t)])
+        let extras = [5, 15, 30, 60, 120, 1_440, 2_880, 10_080].map { id(t) + "-r\($0)" }
+        UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [id(t)] + extras)
         TaskAlarms.cancel(t)
     }
 
@@ -362,6 +373,11 @@ enum QuickAdd {
         for lead in ["remind me to ", "remind me ", "don't forget to ", "dont forget to ", "i need to ", "need to "] where input.lowercased().hasPrefix(lead) {
             input = String(input.dropFirst(lead.count)); break
         }
+        // "every 2 weeks after done": the next one counts from when you finish it.
+        var afterDone = false
+        if let r = input.range(of: #"\s+after (done|completion|completing|i finish|finishing)\b"#, options: [.regularExpression, .caseInsensitive]) {
+            afterDone = true; input.removeSubrange(r)
+        }
         // "every other week / Tuesday" → every 2.
         input = input.replacingOccurrences(of: #"\bevery other (day|week|month|year)\b"#, with: "every 2 $1", options: [.regularExpression, .caseInsensitive])
         var everyOtherWeek = false
@@ -437,6 +453,7 @@ enum QuickAdd {
             }
             r.dueDate = start
         }
+        if afterDone, r.recurrence != nil { r.recurrence?.fromCompletion = true }
         return r
     }
 

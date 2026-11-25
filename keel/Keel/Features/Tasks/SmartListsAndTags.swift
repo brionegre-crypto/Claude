@@ -17,6 +17,7 @@ struct SmartListEditor: View {
     @State private var due: Int = -1                 // -1 any, 0 today, 7 week, 30 month
     @State private var includeNoDate = true
     @State private var energy: Int = 0               // 0 any
+    @State private var query = ""                     // typed filter, e.g. "today & #work | p1"
 
     private let icons = ["line.3.horizontal.decrease.circle", "star", "flame", "briefcase", "house", "cart", "heart", "bolt", "book", "person.2"]
 
@@ -64,7 +65,15 @@ struct SmartListEditor: View {
                     Section("Any of these tags") { ForEach(allTags, id: \.self) { Toggle("#\($0)", isOn: binding($tags, $0)) } }
                 }
                 Section("Any of these lists") { ForEach(allLists, id: \.self) { Toggle($0, isOn: binding($lists, $0)) } }
-                Section { Text("\(tasks.filter { preview.matches($0) }.count) tasks match right now").foregroundStyle(DS.Palette.inkSoft) }
+                Section {
+                    TextField("e.g. today & #work | p1", text: $query).autocorrectionDisabled().textInputAutocapitalization(.never)
+                } header: { Text("Or type a filter") } footer: { Text(SmartQuery.help + " A typed filter replaces the choices above.") }
+                Section {
+                    let n = query.trimmingCharacters(in: .whitespaces).isEmpty
+                        ? tasks.filter { preview.matches($0) }.count
+                        : tasks.filter { !$0.isDone && !$0.isSomeday && SmartQuery.matches(query, $0) }.count
+                    Text("\(n) tasks match right now").foregroundStyle(DS.Palette.inkSoft)
+                }
             }
             .navigationTitle(list == nil ? "New Smart List" : "Edit Smart List")
             .navigationBarTitleDisplayMode(.inline)
@@ -76,6 +85,7 @@ struct SmartListEditor: View {
                 guard let l = list else { return }
                 name = l.name; icon = l.icon; priorities = Set(l.priorities); tags = Set(l.tags); lists = Set(l.lists)
                 due = l.dueWithinDays ?? -1; includeNoDate = l.includeNoDate; energy = l.energy ?? 0
+                query = SmartQuery.text(for: l.id) ?? ""
             }
         }
     }
@@ -89,6 +99,7 @@ struct SmartListEditor: View {
         if list == nil { ctx.insert(s) }
         s.name = name; s.icon = icon; s.priorities = Array(priorities).sorted(); s.tags = Array(tags).sorted(); s.lists = Array(lists).sorted()
         s.dueWithinDays = due < 0 ? nil : due; s.includeNoDate = includeNoDate; s.energy = energy == 0 ? nil : energy
+        SmartQuery.set(query, for: s.id)
         Haptics.success()
         dismiss()
     }
