@@ -16,6 +16,7 @@ final class CalendarService {
     func requestAccess() async {
         hasCalendarAccess = (try? await store.requestFullAccessToEvents()) ?? false
         hasReminderAccess = (try? await store.requestFullAccessToReminders()) ?? false
+        invalidateEvents()          // what we can see may have just changed
     }
 
     // MARK: Calendars
@@ -49,7 +50,7 @@ final class CalendarService {
     private var changeObserver: NSObjectProtocol?
 
     /// Forget cached events (any calendar changed, here or in another app).
-    func invalidateEvents() { cache.removeAll() }
+    func invalidateEvents() { cache.removeAll(); reminderListCache = nil }
 
     init() {
         changeObserver = NotificationCenter.default.addObserver(forName: .EKEventStoreChanged, object: store, queue: .main) { _ in
@@ -157,7 +158,14 @@ final class CalendarService {
 
     // MARK: Reminders (two-way)
 
-    var reminderLists: [EKCalendar] { store.calendars(for: .reminder) }
+    /// Asked on every Tasks redraw (list chips); each call went to the calendar daemon. Kept until a calendar changes.
+    var reminderLists: [EKCalendar] {
+        if let r = reminderListCache { return r }
+        let r = store.calendars(for: .reminder)
+        reminderListCache = r
+        return r
+    }
+    private var reminderListCache: [EKCalendar]?
 
     func fetchReminders() async -> [EKReminder] {
         guard hasReminderAccess else { return [] }

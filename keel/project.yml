@@ -118,6 +118,21 @@ targets:
         SUPPORTS_MACCATALYST: NO
         TARGETED_DEVICE_FAMILY: "1,2"
 
+  KeelUITests:                    # screen tour for screenshots and profiling (KeelTour scheme; not part of the Keel test action)
+    type: bundle.ui-testing
+    platform: iOS
+    sources: [KeelUITests]
+    dependencies:
+      - target: Keel
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.briangreenejr.keel.uitests
+        GENERATE_INFOPLIST_FILE: YES
+        CODE_SIGN_STYLE: Automatic
+        SUPPORTS_MACCATALYST: NO
+        TARGETED_DEVICE_FAMILY: "1,2"
+        TEST_TARGET_NAME: Keel
+
   KeelWidgets:
     type: app-extension
     platform: iOS
@@ -278,3 +293,12 @@ schemes:
         - KeelTests
     archive:
       config: Release
+  KeelTour:  # walks every screen with made-up data (-KeelDemo) for screenshots and Instruments; see KeelUITests
+    build:
+      targets:
+        Keel: all
+        KeelUITests: [test]
+    test:
+      config: Debug
+      targets:
+        - KeelUITests

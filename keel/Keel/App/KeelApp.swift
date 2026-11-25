@@ -11,6 +11,9 @@ struct KeelApp: App {
     @Environment(\.scenePhase) private var scenePhase
 
     init() {
+        #if DEBUG
+        DemoData.prepare()                      // -KeelDemo YES: made-up data, no sign-ins (debug builds only)
+        #endif
         PaletteCache.syncFromSettings()         // theme colors in memory before the first screen draws
         KeelChrome.apply()                      // serif large titles everywhere, matching Keel's type
         SyncEngine.registerBackgroundTasks()
@@ -46,6 +49,9 @@ struct KeelApp: App {
                 }
                 .task {
                     // Task, focus, habit and promise alerts all need this once.
+                    #if DEBUG
+                    if KeelRuntime.isDemo { await DemoData.seedEvents(); SyncEngine.shared.configure(container: container); return }   // nothing real: no sync, no prompts
+                    #endif
                     _ = try? await UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge])
                     if !KeelRuntime.isTesting {
                         SettingsSync.shared.start()                          // your settings on every device
@@ -667,6 +673,14 @@ enum KeelRuntime {
     /// Health sign-ins, which a test simulator doesn't have and which have nothing to do with the tests.
     static let isTesting = ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil
         || NSClassFromString("XCTestCase") != nil
+    /// Debug builds launched with `-KeelDemo YES`: made-up data, nothing synced (see DemoData).
+    static var isDemo: Bool {
+        #if DEBUG
+        DemoData.isOn
+        #else
+        false
+        #endif
+    }
 }
 
 

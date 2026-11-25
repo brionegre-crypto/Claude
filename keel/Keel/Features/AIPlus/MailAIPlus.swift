@@ -34,20 +34,36 @@ enum AutoDrafts {
     static func setDraft(_ id: String, _ text: String) { store[id] = text }
 
     /// Only real people: never companies, shops, newsletters, notifications or no-reply addresses.
+    /// Inbox asks this for every unread email on every redraw, so each answer is kept (keyed to what it depends on).
     static func isRealPerson(_ e: EmailMessage) -> Bool {
+        let key = e.id + "|" + (e.category?.rawValue ?? "-") + "|" + e.from + "|" + e.fromName + (e.unsubscribeHeader == nil ? "" : "|u")
+        personLock.lock()
+        if let hit = personCache[key] { personLock.unlock(); return hit }
+        personLock.unlock()
+        let v = computeRealPerson(e)
+        personLock.lock()
+        if personCache.count > 5_000 { personCache.removeAll() }
+        personCache[key] = v
+        personLock.unlock()
+        return v
+    }
+    nonisolated(unsafe) private static var personCache: [String: Bool] = [:]
+    private static let personLock = NSLock()
+    private static let businessBoxes: Set<String> = ["info", "hello", "hi", "support", "help", "team", "contact", "sales", "billing", "accounts", "admin", "office",
+                                                     "service", "services", "customerservice", "care", "orders", "order", "shop", "store", "marketing", "news",
+                                                     "newsletter", "notifications", "notification", "alerts", "updates", "mail", "mailer", "bounce", "reply",
+                                                     "noreply", "no-reply", "donotreply", "do-not-reply", "feedback", "jobs", "careers", "hr", "events", "membership", "booking", "reservations"]
+    private static let businessWords: Set<String> = ["inc", "llc", "ltd", "corp", "company", "team", "support", "store", "shop", "bank", "services", "group", "official", "hq", "app"]
+    private static let bulkCategories: Set<TriageCategory> = [.newsletters, .promotions, .updates, .lowPriority]
+
+    private static func computeRealPerson(_ e: EmailMessage) -> Bool {
         if MailNoise.isAutomated(e) || e.unsubscribeHeader != nil || MailNoise.isSalesOrPromo(e) { return false }
-        if [.newsletters, .promotions, .updates, .lowPriority].contains(e.category) { return false }
+        if let c = e.category, bulkCategories.contains(c) { return false }
         let addr = e.from.lowercased()
         let local = String(addr.split(separator: "@").first ?? "")
-        let businessBoxes = ["info", "hello", "hi", "support", "help", "team", "contact", "sales", "billing", "accounts", "admin", "office",
-                             "service", "services", "customerservice", "care", "orders", "order", "shop", "store", "marketing", "news",
-                             "newsletter", "notifications", "notification", "alerts", "updates", "mail", "mailer", "bounce", "reply",
-                             "noreply", "no-reply", "donotreply", "do-not-reply", "feedback", "jobs", "careers", "hr", "events", "membership", "booking", "reservations"]
         if businessBoxes.contains(local) || local.contains("noreply") || local.contains("no-reply") || local.contains("notify") { return false }
         // A business name shown instead of a person's ("Acme Inc", "The Shop Team").
-        let name = e.fromName.lowercased()
-        if ["inc", "llc", "ltd", "corp", "company", "team", "support", "store", "shop", "bank", "services", "group", "official", "hq", "app"]
-            .contains(where: { name.split(separator: " ").map(String.init).contains($0) }) { return false }
+        if e.fromName.lowercased().split(separator: " ").contains(where: { businessWords.contains(String($0)) }) { return false }
         return true
     }
 

@@ -30,9 +30,9 @@ struct HomeDay {
         self.doneTasks = done
         let cal = Calendar.current
         let end = cal.date(byAdding: .day, value: 1, to: cal.startOfDay(for: now)) ?? now
-        let events = CalendarService.shared.todaysEvents().filter { !$0.isAllDay && $0.endDate > now && CalendarRoles.shows($0) }
+        let ekEvents = CalendarService.shared.todaysEvents().filter { !$0.isAllDay && $0.endDate > now && CalendarRoles.shows($0) }
         let todays = tasks.filter { !$0.isDone && !$0.isSomeday && ($0.dueDate ?? .distantFuture) < end && !TaskMeta.isDeferred($0, now: now) }
-        var timed: [Entry] = events.map { Entry(id: "e:" + ($0.eventIdentifier ?? UUID().uuidString), time: $0.startDate, title: $0.title ?? "Event", task: nil, place: $0.location) }
+        var timed: [Entry] = ekEvents.map { Entry(id: "e:" + ($0.eventIdentifier ?? UUID().uuidString), time: $0.startDate, title: $0.title ?? "Event", task: nil, place: $0.location) }
         timed += todays.filter(\.hasDueTime).map { Entry(id: "t:" + $0.id.uuidString, time: $0.dueDate, title: $0.title, task: $0, place: nil) }
         timed.sort { ($0.time ?? .distantFuture) < ($1.time ?? .distantFuture) }
         let untimed = todays.filter { !$0.hasDueTime }.sorted { $0.priority.rawValue > $1.priority.rawValue }
@@ -259,7 +259,8 @@ private struct ChartHome: View {
     private var eventsLine: some View {
         Button { showEvents = true } label: {
             HStack(spacing: 6) {
-                Image(systemName: "anchor").font(.caption)
+                // "anchor" isn't an SF Symbol: it drew nothing and was looked up again in the asset catalog on every layout.
+                Image(systemName: "calendar").font(.caption)
                 Text("\(day.events.count) \(day.events.count == 1 ? "event" : "events") · next")
                 if let n = day.events.first {
                     Text("\(n.title) \(day.time(n.time))").fontWeight(.semibold).foregroundStyle(DS.Palette.ink).lineLimit(1)
@@ -370,11 +371,7 @@ private struct WaypointChart: View {
             let start = cal.date(bySettingHour: 6, minute: 0, second: 0, of: day.now) ?? day.now
             let end = cal.date(bySettingHour: 23, minute: 0, second: 0, of: day.now) ?? day.now
             let span = max(1, end.timeIntervalSince(start))
-            let course = Path { p in
-                p.move(to: CGPoint(x: 10, y: h * 0.85))
-                p.addCurve(to: CGPoint(x: w * 0.55, y: h * 0.5), control1: CGPoint(x: w * 0.2, y: h * 0.15), control2: CGPoint(x: w * 0.38, y: h * 0.95))
-                p.addCurve(to: CGPoint(x: w - 14, y: h * 0.18), control1: CGPoint(x: w * 0.72, y: h * 0.1), control2: CGPoint(x: w * 0.85, y: h * 0.3))
-            }
+            let course = WaypointChart.course(w: w, h: h)
             let sailed = min(0.999, max(0.001, day.now.timeIntervalSince(start) / span))
             let points = Array(day.waypoints.prefix(7))
             // Timed tasks sit at their time; untimed ones are spaced evenly through what's left of the day.
@@ -387,26 +384,81 @@ private struct WaypointChart: View {
                     return sailed + (0.98 - sailed) * Double(k) / Double(untimedCount + 1)
                 }
             }()
+            // One measurement of the curve for every marker (each trimmedPath measured the whole curve again,
+            // nine times per layout, and the chart lays out on every frame while the tab bar shrinks on scroll).
+            let ruler = CourseRuler(w: w, h: h)
             ZStack(alignment: .topLeading) {
                 course.stroke(DS.Palette.ink.opacity(0.45), style: StrokeStyle(lineWidth: 1.4, dash: [2, 4]))
                 course.trimmedPath(from: 0, to: sailed).stroke(Nautical.chartRed, style: StrokeStyle(lineWidth: 3, lineCap: .round))
-                if let fix = course.trimmedPath(from: 0, to: sailed).currentPoint {
-                    Circle().fill(Nautical.chartRed).frame(width: 12, height: 12).position(fix)
-                    Circle().stroke(Nautical.chartRed.opacity(0.35), lineWidth: 1).frame(width: 26, height: 26).position(fix)
-                }
+                let fix = ruler.point(at: sailed)
+                Circle().fill(Nautical.chartRed).frame(width: 12, height: 12).position(fix)
+                Circle().stroke(Nautical.chartRed.opacity(0.35), lineWidth: 1).frame(width: 26, height: 26).position(fix)
                 ForEach(Array(Array(points.enumerated()).reversed()), id: \.element.id) { i, _ in
-                    if let p = course.trimmedPath(from: 0, to: fractions[i]).currentPoint {
-                        Text("\(i + 1)").font(.system(size: 10, weight: .semibold, design: .monospaced)).foregroundStyle(DS.Palette.canvas)
-                            .frame(width: 20, height: 20)
-                            .background(i == 0 ? Nautical.chartRed : DS.Palette.ink, in: Circle())
-                            .position(p)
-                    }
+                    Text("\(i + 1)").font(.system(size: 10, weight: .semibold, design: .monospaced)).foregroundStyle(DS.Palette.canvas)
+                        .frame(width: 20, height: 20)
+                        .background(i == 0 ? Nautical.chartRed : DS.Palette.ink, in: Circle())
+                        .position(ruler.point(at: fractions[i]))
                 }
             }
         }
         .drawingGroup()
         .accessibilityElement(children: .ignore)
         .accessibilityLabel("Today's course: \(day.waypoints.count) tasks charted")
+    }
+}
+
+extension WaypointChart {
+    /// The day's course: two curves across the chart.
+    static func course(w: CGFloat, h: CGFloat) -> Path {
+        let c = CourseRuler.controls(w: w, h: h)
+        return Path { p in
+            p.move(to: c[0])
+            p.addCurve(to: c[3], control1: c[1], control2: c[2])
+            p.addCurve(to: c[6], control1: c[4], control2: c[5])
+        }
+    }
+}
+
+/// Points along the course by fraction of its length (what `trimmedPath(from: 0, to: f).currentPoint` gives),
+/// measured once per chart size and kept, so layout passes don't re-measure the curve.
+struct CourseRuler {
+    private let pts: [CGPoint]
+    private let cum: [CGFloat]
+
+    @MainActor private static var cache: (size: CGSize, ruler: CourseRuler)?
+
+    @MainActor init(w: CGFloat, h: CGFloat) {
+        if let c = Self.cache, c.size == CGSize(width: w, height: h) { self = c.ruler; return }
+        let c = Self.controls(w: w, h: h)
+        var pts: [CGPoint] = []
+        for seg in 0..<2 {
+            let p0 = c[seg * 3], p1 = c[seg * 3 + 1], p2 = c[seg * 3 + 2], p3 = c[seg * 3 + 3]
+            for i in (seg == 0 ? 0 : 1)...160 {
+                let t = CGFloat(i) / 160, u = 1 - t
+                let a = u * u * u, b = 3 * u * u * t, d = 3 * u * t * t, e = t * t * t
+                pts.append(CGPoint(x: a * p0.x + b * p1.x + d * p2.x + e * p3.x, y: a * p0.y + b * p1.y + d * p2.y + e * p3.y))
+            }
+        }
+        var cum: [CGFloat] = [0]
+        for i in 1..<pts.count { cum.append(cum[i - 1] + hypot(pts[i].x - pts[i - 1].x, pts[i].y - pts[i - 1].y)) }
+        self.pts = pts; self.cum = cum
+        Self.cache = (CGSize(width: w, height: h), self)
+    }
+
+    static func controls(w: CGFloat, h: CGFloat) -> [CGPoint] {
+        [CGPoint(x: 10, y: h * 0.85),
+         CGPoint(x: w * 0.2, y: h * 0.15), CGPoint(x: w * 0.38, y: h * 0.95), CGPoint(x: w * 0.55, y: h * 0.5),
+         CGPoint(x: w * 0.72, y: h * 0.1), CGPoint(x: w * 0.85, y: h * 0.3), CGPoint(x: w - 14, y: h * 0.18)]
+    }
+
+    func point(at fraction: Double) -> CGPoint {
+        guard let total = cum.last, total > 0 else { return pts.first ?? .zero }
+        let target = CGFloat(min(1, max(0, fraction))) * total
+        var lo = 0, hi = cum.count - 1
+        while lo < hi { let mid = (lo + hi) / 2; if cum[mid] < target { lo = mid + 1 } else { hi = mid } }
+        guard lo > 0 else { return pts[0] }
+        let seg = cum[lo] - cum[lo - 1], k = seg > 0 ? (target - cum[lo - 1]) / seg : 0
+        return CGPoint(x: pts[lo - 1].x + (pts[lo].x - pts[lo - 1].x) * k, y: pts[lo - 1].y + (pts[lo].y - pts[lo - 1].y) * k)
     }
 }
 
