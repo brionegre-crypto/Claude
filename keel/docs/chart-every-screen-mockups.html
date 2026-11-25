@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chart Table · every screen</title>
+<style>
+  :root { --paper:#F3EEE2; --paper2:#FBF8F0; --ink:#1F2A36; --soft:#6B7380; --red:#BF3829; --rule:rgba(31,42,54,.18); --brass:#B8954F; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,"SF Pro Text",system-ui,sans-serif; background:#E6E1D4; color:var(--ink); }
+  header { max-width:1240px; margin:0 auto; padding:32px 20px 4px; }
+  header h1 { font-family:"New York",Georgia,serif; font-weight:600; font-size:30px; margin:0 0 6px; }
+  header p { color:var(--soft); margin:0 0 6px; max-width:860px; line-height:1.45; }
+  .row { display:flex; flex-wrap:wrap; gap:26px; justify-content:center; max-width:1240px; margin:22px auto; padding:0 20px; }
+  .opt { width:330px; }
+  .opt h2 { font-family:Georgia,serif; font-size:19px; margin:0 0 4px; }
+  .opt .why { font-size:12.5px; color:var(--soft); line-height:1.4; min-height:70px; margin:0 0 10px; }
+  .phone { width:330px; height:700px; border-radius:44px; background:var(--paper); border:10px solid #111; overflow:hidden; position:relative;
+           background-image: repeating-radial-gradient(circle at 85% 8%, transparent 0 22px, rgba(31,42,54,.04) 22px 23px); }
+  .bar { display:flex; justify-content:space-between; align-items:center; padding:44px 16px 2px; font-size:16px; }
+  .scr { padding:2px 16px; }
+  .mono { font-family:ui-monospace,Menlo,monospace; font-size:10.5px; letter-spacing:.07em; color:var(--soft); }
+  .title { font-family:"New York",Georgia,serif; font-weight:600; font-size:28px; margin:2px 0 8px; }
+  .serif { font-family:"New York",Georgia,serif; }
+  .sec { font-family:ui-monospace,Menlo,monospace; font-size:10.5px; letter-spacing:.12em; color:var(--soft); margin:12px 0 2px; }
+  .r { display:flex; gap:10px; align-items:center; padding:10px 0; border-bottom:1px dashed var(--rule); font-size:15px; }
+  .r .t { flex:1; min-width:0; }
+  .r .m { font-family:ui-monospace,Menlo,monospace; font-size:10.5px; color:var(--soft); }
+  .num { width:22px; height:22px; border-radius:50%; background:var(--ink); color:var(--paper); font:600 10.5px ui-monospace,Menlo,monospace; display:inline-flex; align-items:center; justify-content:center; flex:none; }
+  .num.next { background:var(--red); }
+  .dot { width:8px; height:8px; border-radius:50%; background:var(--red); flex:none; }
+  .chip { display:inline-block; padding:5px 11px; border-radius:99px; font-size:12px; border:1px solid rgba(31,42,54,.3); margin-right:4px; }
+  .chip.on { background:var(--ink); color:var(--paper); border-color:var(--ink); }
+  .card { background:var(--paper2); border:1px solid rgba(31,42,54,.28); border-radius:12px; padding:12px; }
+  .small { font-size:12.5px; color:var(--soft); }
+  .ell { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  /* Binnacle: the new floating navigation */
+  .binnacle { position:absolute; left:14px; right:14px; bottom:22px; height:62px; border-radius:31px; background:rgba(31,42,54,.94); color:#E9E2D0;
+              display:flex; align-items:center; justify-content:space-around; padding:0 8px; box-shadow:0 10px 30px rgba(31,42,54,.35); font-size:9.5px; }
+  .binnacle div { text-align:center; width:48px; opacity:.7; } .binnacle div.on { opacity:1; color:#F0C9A0; }
+  .binnacle i { display:block; font-style:normal; font-size:18px; }
+  .binnacle .log { width:54px; height:54px; border-radius:50%; background:var(--red); color:#fff; opacity:1; display:flex; align-items:center; justify-content:center; font-size:26px; margin-top:-26px; border:4px solid var(--paper); box-shadow:0 4px 12px rgba(191,56,41,.45); }
+  .band { background:rgba(31,42,54,.07); border-radius:7px; padding:6px 8px; font-size:12px; color:var(--soft); margin:4px 0; }
+  .ux { max-width:1040px; margin:10px auto 60px; padding:0 20px; }
+  .ux h2 { font-family:Georgia,serif; }
+  .ux table { width:100%; border-collapse:collapse; background:var(--paper2); border-radius:12px; overflow:hidden; font-size:14px; }
+  .ux td, .ux th { text-align:left; padding:10px 12px; border-bottom:1px solid var(--rule); vertical-align:top; }
+  .ux th { font-family:ui-monospace,Menlo,monospace; font-size:11px; letter-spacing:.1em; color:var(--soft); }
+</style>
+</head>
+<body>
+<header>
+  <h1>Chart Table, every screen</h1>
+  <p>Every screen follows the passage you chose (A): numbered waypoints for what to do, a red mark for what's next, events kept quiet, mono times, and ruled chart paper. Two new pieces make it feel like no other app: the <b>Binnacle</b>, a floating dark navigation bar with a red <b>Log</b> button in the middle (one tap to capture, hold to speak), and the <b>Bearing strip</b>, a slim day scrubber you drag to move through time on Tasks and Calendar.</p>
+</header>
+
+<div class="row">
+
+  <!-- INBOX -->
+  <div class="opt">
+    <h2>Inbox · Correspondence</h2>
+    <p class="why">Mail reads like a ship's correspondence log: no photos, sender in serif, a red mark for unread, and a mono time. "Needs you" floats to the top as numbered waypoints you can answer. Everything else sits below the waterline.</p>
+    <div class="phone">
+      <div class="bar"><span>✎</span><span>⌕ ⋯ ⚙︎</span></div>
+      <div class="scr">
+        <div class="mono">14 UNREAD · 3 NEED YOU</div>
+        <div class="title">Correspondence</div>
+        <div><span class="chip on">Needs you 3</span><span class="chip">Updates</span><span class="chip">Promos</span></div>
+        <div class="sec">NEEDS YOU</div>
+        <div class="r"><span class="num next">1</span><div class="t"><div class="serif"><b>Dana Morales</b></div><div class="small ell">Can you confirm the Friday quote?</div></div><span class="m">09:12</span></div>
+        <div class="r"><span class="num">2</span><div class="t"><div class="serif"><b>School office</b></div><div class="small ell">Permission slip due Thursday</div></div><span class="m">08:40</span></div>
+        <div class="r"><span class="num">3</span><div class="t"><div class="serif"><b>Leo Park</b></div><div class="small ell">Draft ready: tap to review and send</div></div><span class="m">Tue</span></div>
+        <div style="border-top:2px solid var(--ink);opacity:.25;margin:10px 0 0"></div>
+        <div class="mono" style="text-align:center;margin:-7px auto 0;background:var(--paper);width:110px">WATERLINE</div>
+        <div class="r"><span class="dot"></span><div class="t"><div class="serif">Bank alerts</div><div class="small ell">Your statement is ready</div></div><span class="m">07:02</span></div>
+        <div class="r"><span class="dot" style="background:transparent"></span><div class="t"><div class="serif">Weekly digest</div><div class="small ell">5 stories for you</div></div><span class="m">Mon</span></div>
+      </div>
+      <div class="binnacle"><div><i>🗺</i>Chart</div><div class="on"><i>✉︎</i>Mail</div><div class="log">+</div><div><i>☑︎</i>Tasks</div><div><i>❤︎</i>Body</div></div>
+    </div>
+  </div>
+
+  <!-- TASKS -->
+  <div class="opt">
+    <h2>Tasks · Voyage plan</h2>
+    <p class="why">The same waypoints as Home, for any day. Drag the Bearing strip to change day. Lists become "routes" you switch between at the top. Swipe right = done, left = later, hold = Start focus.</p>
+    <div class="phone">
+      <div class="bar"><span>☰</span><span>⌕ ⋯ ⚙︎</span></div>
+      <div class="scr">
+        <div class="mono">ROUTE · ALL TASKS</div>
+        <div class="title">Voyage plan</div>
+        <svg viewBox="0 0 300 40" width="100%" height="40">
+          <line x1="0" y1="26" x2="300" y2="26" stroke="#1F2A36" stroke-opacity=".25"/>
+          <g font-family="ui-monospace,Menlo" font-size="9" fill="#6B7380">
+            <text x="6" y="14">MON</text><text x="50" y="14">TUE</text><text x="92" y="14" fill="#BF3829" font-weight="700">WED</text><text x="138" y="14">THU</text><text x="182" y="14">FRI</text><text x="224" y="14">SAT</text><text x="266" y="14">SUN</text>
+          </g>
+          <rect x="88" y="20" width="32" height="12" rx="6" fill="#BF3829"/>
+          <g fill="#1F2A36"><circle cx="20" cy="26" r="2"/><circle cx="62" cy="26" r="3"/><circle cx="150" cy="26" r="4"/><circle cx="194" cy="26" r="2"/></g>
+        </svg>
+        <div><span class="chip on">Today 4</span><span class="chip">Work</span><span class="chip">Home</span><span class="chip">+</span></div>
+        <div class="sec">WAYPOINTS</div>
+        <div class="r"><span class="num next">1</span><span class="t">Send the client quote</span><span class="m">11:30</span></div>
+        <div class="r"><span class="num">2</span><span class="t">Call the dentist</span><span class="m">~5m</span></div>
+        <div class="r"><span class="num">3</span><span class="t">School pickup</span><span class="m">17:15</span></div>
+        <div class="sec">LATER THIS WEEK</div>
+        <div class="r" style="opacity:.75"><span class="num" style="background:transparent;border:1.5px solid var(--ink);color:var(--ink)">·</span><span class="t">Renew car registration</span><span class="m">FRI</span></div>
+        <div class="r" style="opacity:.75"><span class="num" style="background:transparent;border:1.5px solid var(--ink);color:var(--ink)">·</span><span class="t">Plan Sunday lunch</span><span class="m">SUN</span></div>
+      </div>
+      <div class="binnacle"><div><i>🗺</i>Chart</div><div><i>✉︎</i>Mail</div><div class="log">+</div><div class="on"><i>☑︎</i>Tasks</div><div><i>❤︎</i>Body</div></div>
+    </div>
+  </div>
+
+  <!-- CALENDAR -->
+  <div class="opt">
+    <h2>Calendar · Tide chart</h2>
+    <p class="why">The day on ruled chart paper with mono hours. Your tasks stand out as bold numbered waypoints. Meetings are soft shaded bands, and free time is labelled "open water" so you can drop a task into it by dragging.</p>
+    <div class="phone">
+      <div class="bar"><span>‹ Nov</span><span>⌕ ⋯ ⚙︎</span></div>
+      <div class="scr">
+        <div class="mono">WEDNESDAY 25 · 3 H OPEN WATER</div>
+        <div class="title">Tide chart</div>
+        <div style="display:flex;gap:6px;margin-bottom:6px"><span class="chip">Day</span><span class="chip on">3 days</span><span class="chip">Week</span><span class="chip">Month</span></div>
+        <div style="position:relative">
+          <div class="r" style="padding:6px 0"><span class="m" style="width:34px">10:00</span><span class="t"></span></div>
+          <div style="position:absolute;left:40px;right:0;top:20px;height:2px;background:var(--red)"></div>
+          <div class="r" style="padding:6px 0"><span class="m" style="width:34px">11:00</span><span class="num next" style="margin-left:6px">1</span><span class="t"><b>Send the client quote</b></span></div>
+          <div class="r" style="padding:6px 0"><span class="m" style="width:34px">12:00</span><span class="t small serif" style="font-style:italic">open water · 2 h</span></div>
+          <div class="r" style="padding:6px 0"><span class="m" style="width:34px">13:00</span><span class="t"></span></div>
+          <div class="r" style="padding:4px 0"><span class="m" style="width:34px">14:00</span><div class="t band">⚓ Standup · 30 min</div></div>
+          <div class="r" style="padding:6px 0"><span class="m" style="width:34px">15:00</span><span class="num" style="margin-left:6px">2</span><span class="t"><b>Call the dentist</b></span></div>
+          <div class="r" style="padding:6px 0"><span class="m" style="width:34px">16:00</span><span class="t small serif" style="font-style:italic">open water · 1 h</span></div>
+          <div class="r" style="padding:6px 0"><span class="m" style="width:34px">17:00</span><span class="num" style="margin-left:6px">3</span><span class="t"><b>School pickup</b></span><span class="m">17:15</span></div>
+          <div class="r" style="padding:4px 0"><span class="m" style="width:34px">18:00</span><div class="t band">⚓ Choir practice</div></div>
+        </div>
+      </div>
+      <div class="binnacle"><div><i>🗺</i>Chart</div><div><i>✉︎</i>Mail</div><div class="log">+</div><div class="on"><i>📅</i>Cal</div><div><i>❤︎</i>Body</div></div>
+    </div>
+  </div>
+
+  <!-- NOTES -->
+  <div class="opt">
+    <h2>Notes · Ship's library (new look)</h2>
+    <p class="why">A completely new Notes home. Pages are paper index cards in a two-column shelf, with the first lines of each page showing. Pinned pages sit in a "Chart drawer" strip at the top. "Ask your library" replaces the plain search bar.</p>
+    <div class="phone">
+      <div class="bar"><span>☰</span><span>⌕ ⋯ ⚙︎</span></div>
+      <div class="scr">
+        <div class="mono">212 PAGES · 4 NEW THIS WEEK</div>
+        <div class="title">Library</div>
+        <div class="card" style="display:flex;gap:8px;align-items:center;padding:9px 12px"><span>✦</span><span class="small">Ask your library…  "what did we decide about the trip?"</span></div>
+        <div class="sec">CHART DRAWER</div>
+        <div style="display:flex;gap:8px;overflow:hidden">
+          <div class="card" style="min-width:92px;padding:8px"><div>📌</div><div class="serif" style="font-size:13px">Family plan</div></div>
+          <div class="card" style="min-width:92px;padding:8px"><div>📒</div><div class="serif" style="font-size:13px">Work log</div></div>
+          <div class="card" style="min-width:92px;padding:8px"><div>🎯</div><div class="serif" style="font-size:13px">Goals</div></div>
+        </div>
+        <div class="sec">THE SHELF · RECENT</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <div class="card"><div class="serif" style="font-weight:600;font-size:14px">Sunday sermon notes</div><div class="small" style="margin-top:4px;line-height:1.35">Three ideas to share with the kids this week…</div><div class="mono" style="margin-top:6px">TODAY 08:10</div></div>
+          <div class="card"><div class="serif" style="font-weight:600;font-size:14px">Quote checklist</div><div class="small" style="margin-top:4px;line-height:1.35">☐ Labour ☐ Parts ☑ Travel…</div><div class="mono" style="margin-top:6px">YESTERDAY</div></div>
+          <div class="card"><div class="serif" style="font-weight:600;font-size:14px">Meal ideas</div><div class="small" style="margin-top:4px;line-height:1.35">Tacos, soup night, sheet-pan chicken</div><div class="mono" style="margin-top:6px">MON</div></div>
+          <div class="card" style="background:var(--ink);color:var(--paper)"><div class="serif" style="font-weight:600;font-size:14px">🗃 Reading list</div><div style="font-size:12px;opacity:.75;margin-top:4px">Database · 18 rows</div><div class="mono" style="margin-top:6px;color:#C9C2B2">SUN</div></div>
+        </div>
+      </div>
+      <div class="binnacle"><div><i>🗺</i>Chart</div><div><i>✉︎</i>Mail</div><div class="log">+</div><div class="on"><i>📚</i>Notes</div><div><i>❤︎</i>Body</div></div>
+    </div>
+  </div>
+
+  <!-- BODY -->
+  <div class="opt">
+    <h2>Body · Ship's condition</h2>
+    <p class="why">Tide, Swell and Anchor as three chart readings on one card, with a 7-day trace line under each. One numbered coaching waypoint gives today's most useful move. Food sits right below with a big "Log a meal" action.</p>
+    <div class="phone">
+      <div class="bar"><span>⌁</span><span>⌕ ⋯ ⚙︎</span></div>
+      <div class="scr">
+        <div class="mono">WED 25 NOV · WATCH SYNCED 07:40</div>
+        <div class="title">Condition</div>
+        <div class="card" style="display:flex;justify-content:space-between;text-align:center">
+          <div><div class="mono">TIDE</div><div class="serif" style="font-size:30px">74<span style="font-size:14px">%</span></div><svg width="70" height="16"><polyline points="0,12 12,10 24,13 36,6 48,8 60,4 70,5" fill="none" stroke="#2F6B8F" stroke-width="1.5"/></svg></div>
+          <div style="border-left:1px dashed var(--rule)"></div>
+          <div><div class="mono">SWELL</div><div class="serif" style="font-size:30px">9.8</div><svg width="70" height="16"><polyline points="0,8 12,10 24,6 36,9 48,11 60,7 70,9" fill="none" stroke="#BF3829" stroke-width="1.5"/></svg></div>
+          <div style="border-left:1px dashed var(--rule)"></div>
+          <div><div class="mono">ANCHOR</div><div class="serif" style="font-size:30px">82</div><svg width="70" height="16"><polyline points="0,10 12,7 24,9 36,5 48,6 60,8 70,4" fill="none" stroke="#4A5D7A" stroke-width="1.5"/></svg></div>
+        </div>
+        <div class="sec">TODAY'S WAYPOINT</div>
+        <div class="r"><span class="num next">1</span><span class="t">Good day for a hard session: aim for Swell 12–15</span></div>
+        <div class="sec">GALLEY · 1,240 / 2,100 KCAL</div>
+        <div class="card" style="display:flex;justify-content:space-between;align-items:center"><div><div class="serif" style="font-weight:600">Log a meal</div><div class="small">Type a brand, snap a photo or scan</div></div><span class="chip on">+ Food</span></div>
+        <div class="r"><span class="m" style="width:38px">08:05</span><span class="t">Oatmeal with berries</span><span class="m">320</span></div>
+        <div class="r"><span class="m" style="width:38px">12:40</span><span class="t">Chicken salad wrap</span><span class="m">540</span></div>
+      </div>
+      <div class="binnacle"><div><i>🗺</i>Chart</div><div><i>✉︎</i>Mail</div><div class="log">+</div><div><i>☑︎</i>Tasks</div><div class="on"><i>❤︎</i>Body</div></div>
+    </div>
+  </div>
+
+  <!-- LOG BUTTON -->
+  <div class="opt">
+    <h2>The Log button (new)</h2>
+    <p class="why">Tap the red button from any screen and one line opens that understands what you mean: a task, an event, a note, a meal or a reminder. Hold it to speak. It replaces several different add buttons with one.</p>
+    <div class="phone" style="background:#2A333E">
+      <div class="bar" style="color:#C9C2B2"><span></span><span></span></div>
+      <div style="position:absolute;left:0;right:0;bottom:0;background:var(--paper);border-radius:26px 26px 0 0;padding:16px 16px 120px">
+        <div class="mono">LOG ENTRY</div>
+        <div class="serif" style="font-size:22px;margin:6px 0 10px">call the dentist tomorrow 9am<span style="color:var(--red)">|</span></div>
+        <div class="card" style="display:flex;gap:10px;align-items:center"><span class="num next">✓</span><div class="t"><b>Task</b> · Call the dentist<div class="mono">TOMORROW 09:00 · WORK</div></div></div>
+        <div style="margin-top:10px"><span class="chip on">Task</span><span class="chip">Event</span><span class="chip">Note</span><span class="chip">Meal</span></div>
+        <div class="small" style="margin-top:12px">Also try: "lunch with Sam Friday 1pm" · "2 eggs and toast" · "idea: garage shelves"</div>
+      </div>
+      <div class="binnacle"><div><i>🗺</i>Chart</div><div><i>✉︎</i>Mail</div><div class="log">🎙</div><div><i>☑︎</i>Tasks</div><div><i>❤︎</i>Body</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="ux">
+  <h2>How it works differently across the whole app</h2>
+  <p style="color:#6B7380">These are new ways to do things you can already do. All the old ways still work.</p>
+  <table>
+    <tr><th>#</th><th>CHANGE</th><th>WHERE</th></tr>
+    <tr><td>1</td><td><b>Binnacle navigation:</b> a floating dark bar with a red Log button in the middle. Tabs you hide are still one swipe away. Calendar and Notes swap in for any tab you choose.</td><td>Everywhere</td></tr>
+    <tr><td>2</td><td><b>Log button:</b> one line that turns into a task, event, note, meal or reminder. Hold it to speak.</td><td>Everywhere</td></tr>
+    <tr><td>3</td><td><b>One swipe rule:</b> right = done or archive, left = later or snooze, hold = quick actions (Start focus, Break it down, Reply).</td><td>Mail, Tasks, Home, Calendar</td></tr>
+    <tr><td>4</td><td><b>Waypoint numbers</b> on everything you have to do. Tap the number to tick it off, with a fix-mark animation and a haptic.</td><td>Home, Tasks, Mail "Needs you", Calendar, Body</td></tr>
+    <tr><td>5</td><td><b>Bearing strip:</b> drag across the week to move between days.</td><td>Tasks, Calendar</td></tr>
+    <tr><td>6</td><td><b>Drag to open water:</b> drag a task onto free time to schedule it.</td><td>Calendar, Home</td></tr>
+    <tr><td>7</td><td><b>Ask your library:</b> ask a question and get an answer from your notes, with links to the pages.</td><td>Notes</td></tr>
+    <tr><td>8</td><td><b>Instant tabs:</b> tabs stay loaded, and background work waits until you stop touching the screen.</td><td>Everywhere</td></tr>
+  </table>
+</div>
+</body>
+</html>
