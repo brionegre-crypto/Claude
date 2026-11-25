@@ -213,7 +213,7 @@ struct BodyView: View {
     @ViewBuilder private var todayPage: some View {
         if live {
             BodyDayStrip(days: engine.days, selected: $selectedDay)
-            BodyHero(day: t, days: engine.days, isToday: isToday, steps: isToday ? extras.steps : 0)   // Rings, Story or Control room
+            BodyDials(day: t, days: engine.days)          // Tide · Swell · Anchor, one big dial at a time
             if engine.loading { ProgressView("Reading Apple Health…").font(DS.Font.caption).frame(maxWidth: .infinity) }
             if t?.calibrating ?? true {
                 Label("Learning your normal: Tide gets accurate after about 5 nights with your Apple Watch.", systemImage: "hourglass")
@@ -222,7 +222,11 @@ struct BodyView: View {
             if !engine.loading, engine.days.suffix(3).allSatisfy({ !$0.hasSleep && $0.hrv == nil && $0.swell == 0 }) { noDataCard }
             if isToday { IllnessWarningCard(days: engine.days).overlay(alignment: .topTrailing) { MetricInfoButton(id: "illness").padding(6) } }
             if isToday { adviceCard }
-            if isToday { LifeEventsCard(day: Date()) }          // "not a normal day": kept out of your baselines
+            if isToday {
+                StressNowCard(rhr: BodyDash.average(.rhr, days: engine.days, count: 30), hrvNormal: BodyDash.average(.hrv, days: engine.days, count: 30))
+                RecoveryPlanCard(tide: t?.tide)                 // book a workout on a good day; lighten the load on a low one
+                LifeEventsCard(day: Date())                     // "not a normal day": kept out of your baselines
+            }
             EnergyBankCard(day: t, days: engine.days)
             BodyMetricsGrid(day: t, days: engine.days)
             BodyTimelineCard(day: t, date: t?.day ?? Date())
@@ -238,6 +242,8 @@ struct BodyView: View {
                 stressCard
             }
             BodyWeekCard(days: engine.days)
+            NavigationLink { LazyView(MonthlyBodyReportView()) } label: { linkTile("Monthly report", "calendar.badge.clock", BodyStyle.tide) }
+                .buttonStyle(.plain)
             RecoveryDriversCard(days: engine.days).overlay(alignment: .topTrailing) { MetricInfoButton(id: "tide").padding(6) }
             BodyGoalsCard(days: engine.days)
         } else if BodyHealth.available {
@@ -252,6 +258,7 @@ struct BodyView: View {
         if live {
             BodyDayStrip(days: engine.days, selected: $selectedDay)
             anchorCard
+            if isToday { SleepPlannerCard(days: engine.days) }   // when to wind down, lights out, and the wake alarm
             BodyMetricsGrid(day: t, days: engine.days, metrics: [.sleep, .efficiency, .deep, .rem], title: "Sleep metrics")
             SleepScheduleCard(days: engine.days)
             SleepDebtCard(days: engine.days, base: need).overlay(alignment: .topTrailing) { MetricInfoButton(id: "sleepDebt").padding(6) }
@@ -276,11 +283,13 @@ struct BodyView: View {
                 WorkoutPickCard(tide: t?.tide, swell: t?.swell ?? 0)
             }
             CardioLoadCard(days: engine.days).overlay(alignment: .topTrailing) { MetricInfoButton(id: "cardioLoad").padding(6) }
+            MuscleRadarCard(days: engine.days)
             BodyMetricsGrid(day: t, days: engine.days, metrics: [.vo2, .rhr], title: "Fitness")
         } else if BodyHealth.available {
             BodyNeedsHealthCard(what: "your effort, heart-rate zones and workouts") { Task { await engine.connect() } }
         }
         LazyVGrid(columns: [GridItem(.flexible(), spacing: 10), GridItem(.flexible(), spacing: 10)], spacing: 10) {
+            NavigationLink { LazyView(TrainingPlanView()) } label: { linkTile("Training plan", "sparkles", BodyStyle.swell) }
             NavigationLink { LazyView(StrengthHomeView()) } label: { linkTile("Strength", "dumbbell.fill", BodyStyle.swell) }
             NavigationLink { LazyView(BodyMapView()) } label: { linkTile("Recovery map", "figure.stand", .green) }
             NavigationLink { LazyView(CardioChartsView()) } label: { linkTile("Cardio", "heart.circle.fill", .pink) }
@@ -294,6 +303,7 @@ struct BodyView: View {
     @ViewBuilder private var healthPage: some View {
         BodyMedsCard()
         if BodyHealth.available { BioAgeCard().overlay(alignment: .topTrailing) { MetricInfoButton(id: "bioAge").padding(6) } }
+        if BodyHealth.available { PaceOfAgingCard() }
         NutritionScoreCard().overlay(alignment: .topTrailing) { MetricInfoButton(id: "nutritionScore").padding(6) }
         HStack(spacing: 10) {
             NavigationLink { LazyView(HealthRecordsView()) } label: { linkTile("Health records", "cross.vial.fill", .red) }
@@ -303,7 +313,10 @@ struct BodyView: View {
         if live {
             vitalsCard
             CycleCard(x: extras).overlay(alignment: .topTrailing) { MetricInfoButton(id: "cycle").padding(6) }
+            CycleCoachCard(x: extras)                           // training and sleep advice for this phase
         }
+        NavigationLink { LazyView(MonthlyBodyReportView()) } label: { linkTile("Monthly report", "calendar.badge.clock", BodyStyle.tide) }
+            .buttonStyle(.plain)
         HealthTilesSection(extras: extras)
         DrinksCard()
         MoodBodyCard()
@@ -312,6 +325,8 @@ struct BodyView: View {
     @ViewBuilder private var habitsPage: some View {
         if live {
             journalCard
+            NavigationLink { LazyView(JournalImpactView()) } label: { linkTile("What moves your Tide: full report", "chart.bar.xaxis", .green) }
+                .buttonStyle(.plain)
             settingsCard
             explainer
         } else if BodyHealth.available {
@@ -411,7 +426,7 @@ struct BodyView: View {
                     }
                 }
                 .frame(height: 10)
-                Text(swell < target.lowerBound ? "Swell \(swell): room to do more today (aim for \(target.lowerBound)–\(target.upperBound))."
+                Text(swell < target.lowerBound ? "Swell \(swell) of \(target.lowerBound)–\(target.upperBound): about \(max(10, (target.lowerBound - swell) * 2)) minutes of brisk walking or \(max(5, (target.lowerBound - swell))) of a harder workout gets you there."
                      : swell > target.upperBound ? "Swell \(swell): you've done plenty. Ease off and recover."
                      : "Swell \(swell): right in your target range.")
                     .font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)

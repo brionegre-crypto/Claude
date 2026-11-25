@@ -192,6 +192,7 @@ struct WatchRoot: View {
                     link("Ask Keel", "sparkles", .cyan, nil) { AskPage() }
                     link("Capture", "plus.circle.fill", calm, nil) { AddPage() }
                     link("Breathe", "lungs.fill", .mint, nil) { BreathePage() }
+                    link("Smart alarm", "alarm.fill", .indigo, WatchSmartAlarm.shared.armedFor.map { $0.formatted(date: .omitted, time: .shortened) }) { SmartAlarmPage() }
                     if let r = store.payload.routines, !r.isEmpty { link("Routines", "list.number", .orange, nil) { RoutinesPage(routines: r) } }
                     if let d = store.payload.dopamine, !d.isEmpty { link("Need a boost?", "dice.fill", .orange, nil) { BoostPage(items: d) } }
                     if let f = store.payload.food, !f.isEmpty { link("Food", "fork.knife", .green, nil) { ListPage(title: "Food today", items: f) } }

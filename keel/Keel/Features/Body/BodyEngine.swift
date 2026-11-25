@@ -75,6 +75,11 @@ enum BodyHealth {
             HKCharacteristicType(.dateOfBirth),
         ]
         s.insert(HKQuantityType(.appleSleepingWristTemperature))
+        // Net energy (eaten vs burned) and micronutrients other apps save to Health.
+        s.formUnion([HKQuantityType(.basalEnergyBurned), HKQuantityType(.dietaryVitaminD), HKQuantityType(.dietaryVitaminC),
+                     HKQuantityType(.dietaryVitaminB12), HKQuantityType(.dietaryCalcium), HKQuantityType(.dietaryPotassium),
+                     HKQuantityType(.dietaryMagnesium), HKQuantityType(.dietaryIron), HKQuantityType(.dietaryZinc),
+                     HKQuantityType(.dietaryFolate), HKQuantityType(.dietaryVitaminA), HKQuantityType(.dietaryEnergyConsumed)])
         s.formUnion(HealthExtras.readTypes)        // steps, daylight, mindful minutes, weight, cycle
         return s
     }
@@ -526,7 +531,13 @@ final class BodyEngine {
 
     static let journalTags = ["Caffeine after 2 PM", "Alcohol", "Screens in bed", "Late meal", "Took my meds", "Worked out",
                               "Stressful day", "Napped", "Meditated", "Read before bed", "Sugar late", "Drank enough water",
-                              "Sick", "Traveled"]
+                              "Sick", "Traveled",
+                              // More behaviors, for a fuller picture of what moves your Tide.
+                              "Prayed or quiet time", "Morning sunlight", "Walked after a meal", "Stretched", "Sauna", "Cold shower",
+                              "Ate a big dinner", "High-protein day", "Ate fried food", "Skipped breakfast", "Fasted", "Took magnesium",
+                              "Took melatonin", "Late work", "Kids woke me", "Shared bed", "Room was hot", "Used a sleep mask",
+                              "Hydrated before bed", "Spent time outdoors", "Socialized", "Argued or upset", "Long drive", "Preached or spoke",
+                              "Energy drink", "Cannabis", "Nicotine", "Sex"]
 
     var journal: [String: [String]] {
         get { (UserDefaults.standard.dictionary(forKey: BodyPrefs.journalKey) as? [String: [String]]) ?? [:] }

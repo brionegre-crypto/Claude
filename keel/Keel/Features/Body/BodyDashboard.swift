@@ -5,7 +5,7 @@ import Charts
 
 /// The pages along the top of Body.
 enum BodyPage: String, CaseIterable, Identifiable {
-    case today = "Today", food = "Food", sleep = "Sleep", effort = "Effort", health = "Health", habits = "Habits"
+    case today = "Today", food = "Food", sleep = "Sleep", effort = "Training", health = "Healthspan", habits = "Journal"
     var id: String { rawValue }
     var icon: String {
         switch self {

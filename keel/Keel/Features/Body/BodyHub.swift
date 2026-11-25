@@ -118,6 +118,9 @@ struct HealthTilesSection: View {
             Tile(id: "sleepSounds", title: "Sleep sounds", icon: "moon.zzz.fill", color: BodyStyle.anchor, dest: { AnyView(SleepSoundsView()) }),
             Tile(id: "breathe", title: "Breathe", icon: "wind", color: .teal, dest: { AnyView(BreatheView()) }),
             Tile(id: "ask", title: "Ask about my body", icon: "sparkles", color: .indigo, dest: { AnyView(AskBodyView()) }),
+            Tile(id: "plan", title: "Training plan", icon: "calendar.badge.plus", color: BodyStyle.swell, dest: { AnyView(TrainingPlanView()) }),
+            Tile(id: "monthly", title: "Monthly report", icon: "calendar.badge.clock", color: BodyStyle.tide, dest: { AnyView(MonthlyBodyReportView()) }),
+            Tile(id: "impact", title: "What moves your Tide", icon: "chart.bar.xaxis", color: .green, dest: { AnyView(JournalImpactView()) }),
         ]
     }
 

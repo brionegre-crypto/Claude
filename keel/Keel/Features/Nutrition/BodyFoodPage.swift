@@ -21,6 +21,7 @@ struct BodyFoodPage: View {
         let shown = healthTotals ?? totals
 
         CalorieRingCard(eaten: shown, proteinGoal: NutritionGoals.protein(weightKg: weight))
+        TellKeelFoodBox()                                       // "two eggs and toast": logged like a message
 
         HStack(spacing: 10) {
             NavigationLink { LazyView(LogFoodView()) } label: { BigAction(title: "Log food", icon: "magnifyingglass", color: .green) }
@@ -30,16 +31,23 @@ struct BodyFoodPage: View {
         }
         .buttonStyle(.plain)
 
-        mealsCard(today)
-        planCard
+        Group {
+            mealsCard(today)
+            savedMealsRow
+            NetEnergyCard(eaten: shown.calories ?? 0)
+            planCard
+        }
         VStack(alignment: .leading, spacing: 10) {
             Text("Fiber & sugar").font(DS.Font.headline)
             GoalBar(title: "Fiber", value: shown.fiber ?? 0, goal: NutritionGoals.fiber, unit: "g", color: DS.Palette.calm)
             GoalBar(title: "Added sugar", value: totals.addedSugar ?? 0, goal: NutritionGoals.addedSugarCap, unit: "g", color: .orange, isCeiling: true)
         }
         .bodyCard()
-        brainFoods(today: today)
-        NutritionScoreCard().overlay(alignment: .topTrailing) { MetricInfoButton(id: "nutritionScore").padding(6) }
+        Group {
+            MicronutrientsCard(keel: totals)
+            brainFoods(today: today)
+            NutritionScoreCard().overlay(alignment: .topTrailing) { MetricInfoButton(id: "nutritionScore").padding(6) }
+        }
         tools
             .task {
                 weight = await NutritionHealth.weightKg()
@@ -73,6 +81,11 @@ struct BodyFoodPage: View {
                 if !items.isEmpty {
                     HStack {
                         Text(m.capitalized).font(DS.Font.caption.weight(.semibold)).foregroundStyle(DS.Palette.inkSoft)
+                        Menu {
+                            Button("Save as a meal", systemImage: "star") { SavedMeals.save(m.capitalized + " · " + Date().formatted(.dateTime.month().day()), entries: items); savedTick += 1; Haptics.success() }
+                            Button("Copy to tomorrow", systemImage: "arrow.right") { copy(items, meal: m, days: 1) }
+                            Button("Copy to yesterday", systemImage: "arrow.left") { copy(items, meal: m, days: -1) }
+                        } label: { Image(systemName: "ellipsis.circle").font(.caption) }
                         Spacer()
                         Text("\(Int(items.reduce(0) { $0 + ($1.facts.calories ?? 0) })) kcal").font(DS.Font.caption).monospacedDigit().foregroundStyle(DS.Palette.inkSoft)
                     }
@@ -84,6 +97,48 @@ struct BodyFoodPage: View {
             }
         }
         .bodyCard()
+    }
+
+    // MARK: Saved meals
+
+    @Environment(\.modelContext) private var ctx
+    @State private var savedTick = 0
+
+    private func copy(_ items: [FoodEntry], meal: String, days: Int) {
+        let day = Calendar.current.date(byAdding: .day, value: days, to: Date()) ?? Date()
+        SavedMeals.log(SavedMeals.items(items), meal: meal, on: day, ctx: ctx)
+        Haptics.success()
+        UndoCenter.shared.notify(days > 0 ? "Copied to tomorrow" : "Copied to yesterday")
+    }
+
+    @ViewBuilder private var savedMealsRow: some View {
+        let _ = savedTick
+        let saved = SavedMeals.all
+        if !saved.isEmpty {
+            VStack(alignment: .leading, spacing: 8) {
+                Text("Your meals").font(DS.Font.headline)
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 8) {
+                        ForEach(saved) { s in
+                            Button {
+                                let h = Calendar.current.component(.hour, from: Date())
+                                SavedMeals.log(s.items, meal: h < 11 ? "breakfast" : h < 15 ? "lunch" : h < 21 ? "dinner" : "snack", on: Date(), ctx: ctx)
+                                Haptics.success(); UndoCenter.shared.notify("Logged \(s.name)")
+                            } label: {
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(s.name).font(.subheadline.weight(.semibold)).lineLimit(1)
+                                    Text("\(s.items.count) items · \(s.kcal) kcal").font(.caption2).foregroundStyle(DS.Palette.inkSoft)
+                                }
+                                .padding(10)
+                                .background { PremiumSurface(tint: .green, radius: 14) }
+                            }
+                            .buttonStyle(.plain)
+                            .contextMenu { Button("Remove", systemImage: "trash", role: .destructive) { SavedMeals.all = SavedMeals.all.filter { $0.id != s.id }; savedTick += 1 } }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     // MARK: Your plan

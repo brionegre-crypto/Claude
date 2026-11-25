@@ -231,6 +231,78 @@ enum FoodWebSearch {
         return nil
     }
 
+    // MARK: As you type (with photos)
+
+    private static var suggestCache: [String: [CatalogFood]] = [:]
+
+    /// Brand and product suggestions while you type, with product photos: Open Food Facts' fast search, which
+    /// matches the start of each word ("kirkl chick" finds Kirkland chicken). Answers in a few milliseconds and is
+    /// remembered, so going back over the same letters is instant. Falls back to the slower search if it fails.
+    static func suggest(_ query: String) async -> [CatalogFood] {
+        let q = query.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        guard q.count >= 2 else { return [] }
+        if let c = suggestCache[q] { return c }
+        let words = q.split(whereSeparator: { $0.isWhitespace }).map { String($0).filter { $0.isLetter || $0.isNumber || $0 == "'" } }.filter { !$0.isEmpty }
+        guard !words.isEmpty else { return [] }
+        let lucene = words.map { $0.count >= 2 ? $0 + "*" : $0 }.joined(separator: " ")
+        var comps = URLComponents(string: "https://search.openfoodfacts.org/search")!
+        comps.queryItems = [
+            URLQueryItem(name: "q", value: lucene), URLQueryItem(name: "page_size", value: "16"), URLQueryItem(name: "langs", value: "en"),
+            URLQueryItem(name: "sort_by", value: "-unique_scans_n"),
+            URLQueryItem(name: "fields", value: "code,product_name,product_name_en,brands,image_front_small_url,serving_size,serving_quantity,nutriments,ingredients_text"),
+        ]
+        guard let url = comps.url else { return [] }
+        var req = URLRequest(url: url)
+        req.setValue("Keel/1.0 (iOS food search)", forHTTPHeaderField: "User-Agent")
+        req.timeoutInterval = 6
+        guard let (data, _) = try? await URLSession.shared.data(for: req),
+              let obj = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+              let hits = obj["hits"] as? [[String: Any]] else {
+            return q.count >= 3 ? await search(q) : []
+        }
+        var seen = Set<String>()
+        let foods = hits.compactMap { loose(from: $0) }
+            .filter { seen.insert(($0.brand + "|" + $0.name).lowercased()).inserted }
+            // Ones with a photo first: that's what makes the list easy to scan.
+            .sorted { ($0.imageURL != nil ? 1 : 0) > ($1.imageURL != nil ? 1 : 0) }
+        if suggestCache.count > 300 { suggestCache.removeAll() }
+        suggestCache[q] = foods
+        return foods
+    }
+
+    /// Like `food(from:)`, but keeps products that don't have their nutrition in the search result yet
+    /// (they're filled in by barcode when you pick one).
+    static func loose(from p: [String: Any]) -> CatalogFood? {
+        var item = p
+        // The fast search returns brands as a list ("xx:chobani"); the product page as text.
+        if let list = p["brands"] as? [String] {
+            item["brands"] = list.map { b -> String in
+                let raw = b.hasPrefix("xx:") ? String(b.dropFirst(3)) : b
+                return raw.replacingOccurrences(of: "-", with: " ").capitalized
+            }.first ?? ""
+        }
+        if let full = food(from: item) { return full }
+        let name = [p["product_name_en"], p["product_name"]].compactMap { $0 as? String }.first { !$0.isEmpty } ?? ""
+        guard !name.isEmpty, let code = p["code"] as? String, !code.isEmpty else { return nil }
+        var f = NutritionFacts(); f.servingLabel = "1 serving"
+        return CatalogFood(id: "w:" + code, emoji: FoodCatalog.emoji(for: name), name: name, serving: "Tap for details",
+                           grams: nil, facts: f, imageURL: p["image_front_small_url"] as? String, barcode: code,
+                           brand: (item["brands"] as? String) ?? "", ingredients: (p["ingredients_text"] as? String) ?? "", source: .web)
+    }
+
+    /// Fills in the nutrition for a suggestion that came without it, from the product's barcode page.
+    static func complete(_ f: CatalogFood) async -> CatalogFood {
+        guard f.facts.calories == nil, let code = f.barcode, let p = try? await OpenFoodFacts.fetch(code) else { return f }
+        var out = f
+        out.facts = p.facts
+        out.serving = p.facts.servingLabel.isEmpty ? "1 serving" : p.facts.servingLabel
+        out.grams = p.servingGrams
+        if out.ingredients.isEmpty { out.ingredients = p.ingredients }
+        if out.imageURL == nil { out.imageURL = p.imageURL }
+        if out.brand.isEmpty { out.brand = p.brand }
+        return out
+    }
+
     static func food(from p: [String: Any]) -> CatalogFood? {
         let name = [p["product_name_en"], p["product_name"]].compactMap { $0 as? String }.first { !$0.isEmpty } ?? ""
         guard !name.isEmpty else { return nil }
@@ -343,7 +415,7 @@ private struct FoodPickRow: View {
                     VStack(alignment: .leading, spacing: 2) {
                         Text(food.name).font(DS.Font.body).foregroundStyle(DS.Palette.ink).lineLimit(1)
                         HStack(spacing: 6) {
-                            Text([food.brand.isEmpty ? nil : food.brand, food.serving, "\(food.kcal) kcal"].compactMap { $0 }.joined(separator: " · "))
+                            Text([food.brand.isEmpty ? nil : food.brand, food.serving, food.facts.calories == nil ? nil : "\(food.kcal) kcal"].compactMap { $0 }.joined(separator: " · "))
                                 .font(.caption).foregroundStyle(DS.Palette.inkSoft).lineLimit(1)
                         }
                         MacroLine(facts: food.facts)
@@ -529,13 +601,13 @@ struct LogFoodView: View {
         .onChange(of: query) { recompute() }
         .onChange(of: pool.count) { recompute() }
         .task(id: query) {
-            web = []
             let q = query
-            guard q.count >= 3, MealPhrase.parts(q).count == 1 else { searchingWeb = false; return }
-            try? await Task.sleep(for: .milliseconds(650))           // wait for a pause in typing
+            // Earlier suggestions stay up until the new ones arrive (no empty flash between letters).
+            guard q.count >= 2, MealPhrase.parts(q).count == 1 else { web = []; searchingWeb = false; return }
+            try? await Task.sleep(for: .milliseconds(160))           // a beat between letters, then search
             if Task.isCancelled { return }
             searchingWeb = true
-            let found = await FoodWebSearch.search(q)
+            let found = await FoodWebSearch.suggest(q)               // brands and products with photos, as you type
             if Task.isCancelled { return }
             let localNames = Set(local.map { $0.name.lowercased() })
             web = found.filter { !localNames.contains($0.name.lowercased()) }
@@ -569,9 +641,12 @@ struct LogFoodView: View {
     private func rows(_ foods: [CatalogFood]) -> some View {
         ForEach(foods) { f in
             FoodPickRow(food: f, added: plate.contains { $0.food.id == f.id }, onAdd: {
-                withAnimation(DS.spring) { plate.append(PlateItem(food: f)) }
                 Haptics.tap()
-            }, onOpen: { portion = f })
+                Task {
+                    let full = await FoodWebSearch.complete(f)          // nutrition by barcode, if the suggestion had none
+                    withAnimation(DS.spring) { plate.append(PlateItem(food: full)) }
+                }
+            }, onOpen: { Task { portion = await FoodWebSearch.complete(f) } })
         }
     }
 

@@ -87,14 +87,14 @@ private struct RingsHero: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             HStack {
-                ring("Recovery", s.tide, 100, BodyStyle.tide, "tide")
-                ring("Effort", s.swell, 100, BodyStyle.swell, "swell")
-                ring("Sleep", s.anchor, 100, BodyStyle.anchor, "anchor")
+                ring("Tide", s.tide, 100, BodyStyle.tide, "tide")
+                ring("Swell", s.swell, 100, BodyStyle.swell, "swell")
+                ring("Anchor", s.anchor, 100, BodyStyle.anchor, "anchor")
             }
             VStack(alignment: .leading, spacing: 4) {
                 Text("TODAY").font(.caption.weight(.bold)).foregroundStyle(s.call.color)
                 Text(s.call.title).font(.title3.weight(.bold)).foregroundStyle(.white)
-                Text(s.call.detail + " · " + "Effort \(s.swell) so far").font(.caption).foregroundStyle(.white.opacity(0.7))
+                Text(s.call.detail + " · " + "Swell \(s.swell) so far").font(.caption).foregroundStyle(.white.opacity(0.7))
             }
             .padding(14).frame(maxWidth: .infinity, alignment: .leading)
             .background(LinearGradient(colors: [s.call.color.opacity(0.35), .white.opacity(0.05)], startPoint: .topLeading, endPoint: .bottomTrailing), in: .rect(cornerRadius: 18))
@@ -152,7 +152,7 @@ private struct StoryHero: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             VStack(alignment: .leading, spacing: 6) {
-                Text("Recovery").font(.subheadline.weight(.semibold)).foregroundStyle(DS.Palette.inkSoft)
+                Text("Tide").font(.subheadline.weight(.semibold)).foregroundStyle(DS.Palette.inkSoft)
                 Text(s.tide.map { "\($0)%" } ?? "–").font(.system(size: 56, weight: .heavy, design: .rounded)).foregroundStyle(BodyStyle.tide)
                 Text(s.story).font(.body).foregroundStyle(DS.Palette.ink)
                 HStack(spacing: 6) {
@@ -164,13 +164,13 @@ private struct StoryHero: View {
             .padding(18).frame(maxWidth: .infinity, alignment: .leading)
             .background(LinearGradient(colors: [BodyStyle.tide.opacity(0.14), DS.Palette.elevated], startPoint: .topLeading, endPoint: .bottomTrailing), in: .rect(cornerRadius: 24, style: .continuous))
             card {
-                HStack { Text("Effort").font(.headline); Spacer(); Text("\(s.swell) of \(s.target.lowerBound)–\(s.target.upperBound)").foregroundStyle(DS.Palette.inkSoft) }
+                HStack { Text("Swell").font(.headline); Spacer(); Text("\(s.swell) of \(s.target.lowerBound)–\(s.target.upperBound)").foregroundStyle(DS.Palette.inkSoft) }
                 ProgressView(value: Double(min(s.swell, s.target.upperBound)), total: Double(max(s.target.upperBound, 1))).tint(BodyStyle.swell)
                 Text(s.swell < s.target.lowerBound ? "About \(max(10, (s.target.lowerBound - s.swell) / 2)) more minutes of brisk activity gets you there." : "You've done enough today. Recover well.")
                     .font(.caption).foregroundStyle(DS.Palette.inkSoft)
             }
             card {
-                HStack { Text("Sleep").font(.headline); Spacer(); Text(s.sleepMin > 0 ? "\(BodySnapshot.hm(s.sleepMin)) · \(s.anchor ?? 0)" : "–").foregroundStyle(DS.Palette.inkSoft) }
+                HStack { Text("Anchor").font(.headline); Spacer(); Text(s.sleepMin > 0 ? "\(BodySnapshot.hm(s.sleepMin)) · \(s.anchor ?? 0)" : "–").foregroundStyle(DS.Palette.inkSoft) }
                 if let d = s.day, d.deep + d.rem + d.core > 0 {
                     GeometryReader { g in
                         let total = max(1, d.deep + d.rem + d.core + d.awake)
@@ -219,9 +219,9 @@ private struct ControlHero: View {
     var body: some View {
         VStack(spacing: 10) {
             HStack {
-                score("Recovery", s.tide.map { "\($0)" }, BodyStyle.tide)
-                score("Effort", "\(s.swell)", BodyStyle.swell)
-                score("Sleep", s.anchor.map { "\($0)" }, BodyStyle.anchor)
+                score("Tide", s.tide.map { "\($0)" }, BodyStyle.tide)
+                score("Swell", "\(s.swell)", BodyStyle.swell)
+                score("Anchor", s.anchor.map { "\($0)" }, BodyStyle.anchor)
             }
             .padding(.vertical, 12)
             .background(Color.white.opacity(0.06), in: .rect(cornerRadius: 18))
