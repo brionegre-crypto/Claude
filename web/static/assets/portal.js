@@ -387,27 +387,62 @@
   // ---------- Lessons ----------
 
   VIEWS.lessons = function () {
-    return "<h1>Lessons.</h1>" + '<section class="card steplist">' + S.lessons.map(function (l) {
+    return "<h1>Lessons.</h1><p class=\"muted\">One guided week for each part of the system: the teaching, the research behind it, and a plan for each day.</p>" + '<section class="card steplist">' + S.lessons.map(function (l) {
       var done = l.mine && l.mine.done;
-      return '<a href="' + (l.open ? "#lesson/" + l.id : "#lessons") + '"' + (l.open ? "" : ' aria-disabled="true"') + "><span><strong>Week " + l.week + ":</strong> " + esc(l.title) + (l.open ? "" : '<br><span class="dim">Opens ' + (l.date ? nice(l.date) : "later") + "</span>") + (l.missed && l.open ? '<br><span class="dim">Missed this one? There\'s a catch-up inside.</span>' : "") + "</span>" + (done ? '<span class="pill ok">Done</span>' : l.open ? '<span class="pill">Open</span>' : '<span class="pill">Locked</span>') + "</a>";
+      var daysDone = Object.keys(l.dayAnswers || {}).filter(function (k) { return k.charAt(0) === "d" && l.dayAnswers[k].done; }).length;
+      var badge = done ? '<span class="pill ok">Done</span>' : l.open ? '<span class="pill">' + (l.dayCount ? daysDone + " of " + l.dayCount + " days" : "Open") + "</span>" : '<span class="pill">Locked</span>';
+      return '<a href="' + (l.open ? "#lesson/" + l.id : "#lessons") + '"' + (l.open ? "" : ' aria-disabled="true"') + "><span><strong>Week " + l.week + ":</strong> " + esc(l.title) + (l.open ? (l.intro ? '<br><span class="dim">' + esc(l.intro) + "</span>" : "") : '<br><span class="dim">Opens ' + (l.date ? nice(l.date) : "later") + "</span>") + (l.missed && l.open ? '<br><span class="dim">Missed this one? There\'s a catch-up inside.</span>' : "") + "</span>" + badge + "</a>";
     }).join("") + "</section>" +
       '<section class="card"><h2>Printables</h2>' + S.materials.map(function (m) { return '<p><a href="' + esc(m.url) + '" target="_blank" rel="noopener">' + esc(m.title) + "</a></p>"; }).join("") + "</section>";
   };
+  function box(cls, eyebrow, x) { return x && x.t ? '<aside class="lbox ' + cls + '"><p class="eyebrow">' + eyebrow + "</p><h3>" + esc(x.t) + "</h3><p>" + esc(x.b) + "</p></aside>" : ""; }
   VIEWS.lesson = function (id) {
     var l = S.lessons.filter(function (x) { return x.id === id; })[0];
     if (!l || !l.open) return VIEWS.lessons();
-    var mine = l.mine || {};
-    return '<p class="dim"><a href="#lessons">‹ Lessons</a></p><p class="dim">Week ' + l.week + " · Step " + l.step + " · " + esc(l.scripture) + "</p><h1>" + esc(l.title) + "</h1>" +
-      (l.missed ? '<section class="card hi"><h2>You missed this session</h2>' + (l.catchup ? "<p>" + esc(l.catchup) + "</p>" : "<p>Read the lesson and do the action. Bring questions Thursday.</p>") + "</section>" : "") +
-      yt(l.video) + (l.recording ? "<h3>Session teaching</h3>" + yt(l.recording) : "") +
-      '<article class="lesson">' + md(l.body) + "</article>" +
-      '<section class="card hi"><h2>This week\'s action</h2><label class="check"><input type="checkbox" id="done"' + (mine.done ? " checked" : "") + (ro() ? " disabled" : "") + "> <span>" + esc(l.action) + "</span></label>" +
-      "<label>" + esc(l.reflection) + '</label><textarea id="refl"' + (ro() ? " disabled" : "") + ">" + esc(mine.text) + "</textarea>" +
-      (ro() ? "" : '<p><button type="button" class="pb primary" id="savel">Save</button></p>') + "</section>" +
-      (l.pdf ? '<p><a href="' + esc(l.pdf) + '" target="_blank" rel="noopener">Download this lesson (PDF)</a></p>' : "");
+    var mine = l.mine || {}, A = l.dayAnswers || {}, dis = ro() ? " disabled" : "";
+    var days = l.days || [];
+    var isDone = function (i) { return !!(A["d" + (i + 1)] && A["d" + (i + 1)].done); };
+    var doneN = days.filter(function (_, i) { return isDone(i); }).length;
+    var firstOpen = -1; for (var k = 0; k < days.length; k++) if (!isDone(k)) { firstOpen = k; break; }
+    var out = '<p class="dim"><a href="#lessons">‹ Lessons</a></p><p class="eyebrow">Week ' + l.week + " · Step " + l.step + " · " + esc(S.stepNames[l.step] || "") + "</p><h1>" + esc(l.title) + "</h1>";
+    if (days.length) out += '<div class="lprog" role="progressbar" aria-valuemin="0" aria-valuemax="' + days.length + '" aria-valuenow="' + doneN + '"><div style="width:' + Math.round((100 * doneN) / days.length) + '%"></div></div><p class="dim">' + doneN + " of " + days.length + " days done</p>";
+    if (l.intro) out += '<p class="lintro">' + esc(l.intro) + "</p>";
+    if (l.missed) out += '<section class="card hi"><h2>You missed this session</h2>' + (l.catchup ? "<p>" + esc(l.catchup) + "</p>" : "<p>Read the lesson and do the action. Bring questions Thursday.</p>") + "</section>";
+    if (l.verse) out += '<blockquote class="lverse">' + esc(l.verse) + "<cite>" + esc(l.scripture) + " (KJV)</cite></blockquote>";
+    out += yt(l.video) + (l.recording ? "<h3>Session teaching</h3>" + yt(l.recording) : "");
+    out += '<h2 class="lsec">The teaching</h2><article class="lesson">' + md(l.body) + "</article>";
+    (l.learn || []).forEach(function (x) { out += box("learn", "Learn", x); });
+    out += box("adhd", "ADHD", l.adhd) + box("tool", "Tool", l.tool);
+    if (days.length) {
+      out += '<h2 class="lsec">Your week, day by day</h2><p class="muted">One small thing a day. Answer the question in a sentence or two, then mark the day done. Missed a day? Do the next one. Don\'t try to make up the missed one.</p>';
+      out += days.map(function (d, i) {
+        var a = A["d" + (i + 1)] || {};
+        return '<details class="lday"' + (i === firstOpen ? " open" : "") + '><summary><span>Day ' + (i + 1) + ": " + esc(d.t) + "</span>" + (a.done ? '<span class="pill ok">Done</span>' : "") + "</summary>" +
+          "<p><strong>Do:</strong> " + esc(d.do) + '</p><label for="lday' + (i + 1) + '">' + esc(d.q) + '</label><textarea id="lday' + (i + 1) + '"' + dis + ">" + esc(a.text) + "</textarea>" +
+          (ro() ? "" : '<p><button type="button" class="pb small' + (a.done ? "" : " primary") + '" data-lday="' + (i + 1) + '">' + (a.done ? "Update" : "Mark Day " + (i + 1) + " done") + "</button></p>") + "</details>";
+      }).join("");
+    }
+    out += '<section class="card hi"><h2>This week\'s action</h2><label class="check"><input type="checkbox" id="done"' + (mine.done ? " checked" : "") + dis + "> <span>" + esc(l.action) + "</span></label>" +
+      '<label for="refl">' + esc(l.reflection) + '</label><textarea id="refl"' + dis + ">" + esc(mine.text) + "</textarea>" +
+      (l.questions || []).map(function (q, i) { var a = A["q" + i] || {}; return '<label for="lq' + i + '">' + esc(q) + '</label><textarea id="lq' + i + '"' + dis + ">" + esc(a.text) + "</textarea>"; }).join("") +
+      (ro() ? "" : '<p><button type="button" class="pb primary" id="savel">Save</button></p>') + "</section>";
+    if (l.prayer) out += '<section class="card"><p class="eyebrow">Prayer</p><p class="lprayer">' + esc(l.prayer) + "</p></section>";
+    if (l.pdf) out += '<p><a href="' + esc(l.pdf) + '" target="_blank" rel="noopener">Download this lesson (PDF)</a></p>';
+    return out;
   };
   VIEWS.lesson.after = function (id) {
-    var b = $("#savel"); if (b) b.onclick = function () { api("reflect", { id: id, text: $("#refl").value, done: $("#done").checked }).then(function (d) { crisis(d); flash("Saved."); return refresh(); }).catch(fail); };
+    $$("[data-lday]").forEach(function (b) {
+      b.onclick = function () {
+        var n = b.getAttribute("data-lday");
+        api("reflect", { id: id + "d" + n, text: $("#lday" + n).value, done: true }).then(function (d) { crisis(d); flash("Day " + n + " done."); return refresh(); }).catch(fail);
+      };
+    });
+    var b = $("#savel"); if (b) b.onclick = function () {
+      var l = S.lessons.filter(function (x) { return x.id === id; })[0] || {};
+      var calls = [api("reflect", { id: id, text: $("#refl").value, done: $("#done").checked })];
+      (l.questions || []).forEach(function (_, i) { var t = $("#lq" + i); if (t) calls.push(api("reflect", { id: id + "q" + i, text: t.value, done: !!t.value.trim() })); });
+      Promise.all(calls).then(function (rs) { rs.forEach(crisis); flash("Saved."); return refresh(); }).catch(fail);
+    };
   };
 
   // ---------- More ----------

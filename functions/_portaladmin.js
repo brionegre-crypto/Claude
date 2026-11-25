@@ -72,7 +72,7 @@ export async function portalAdmin(route, d, request, env, url, waitUntil) {
     const lib = await getLibrary(env);
     return json({ ok: true, record: pd, steps: stepStates(pd), stepNames: STEPS, insights: insights(pd, c), notes: await privateNotes(env, email), messages: await thread(env, email),
       contact: { name: c.name, email: c.email, phone: c.phone || "", tags: c.tags || [], ledger: c.ledger || {}, cohort: c.cohort || {} },
-      lessons: lib.lessons.map((l) => ({ id: l.id, week: l.week, title: l.title, reflection: l.reflection, action: l.action })), sessions: COHORT_DATES,
+      lessons: lib.lessons.map((l) => ({ id: l.id, week: l.week, title: l.title, reflection: l.reflection, action: l.action, questions: l.questions || [], days: (l.days || []).map((x) => ({ t: x.t, q: x.q })) })), sessions: COHORT_DATES,
       men: (await allRecords(env)).map((x) => x.email).filter((e) => e !== email), week: weekOf(today()) });
   }
 
@@ -213,6 +213,12 @@ export async function portalAdmin(route, d, request, env, url, waitUntil) {
     const lessons = (d.lessons || []).slice(0, 30).map((l, i) => ({
       id: str(l.id, 20) || "x" + uid(), week: Math.min(6, Math.max(1, Number(l.week) || i + 1)), step: Math.min(4, Math.max(1, Number(l.step) || 1)),
       title: str(l.title, 160), scripture: str(l.scripture, 120), video: str(l.video, 300), body: str(l.body, 30000), action: str(l.action, 400), reflection: str(l.reflection, 400), pdf: str(l.pdf, 300),
+      intro: str(l.intro, 600), verse: str(l.verse, 600), prayer: str(l.prayer, 600),
+      questions: (Array.isArray(l.questions) ? l.questions : []).slice(0, 5).map((q) => str(q, 300)).filter(Boolean),
+      learn: (Array.isArray(l.learn) ? l.learn : []).slice(0, 4).map((x) => ({ t: str(x && x.t, 120), b: str(x && x.b, 1500) })).filter((x) => x.t && x.b),
+      adhd: l.adhd && l.adhd.t ? { t: str(l.adhd.t, 120), b: str(l.adhd.b, 1500) } : null,
+      tool: l.tool && l.tool.t ? { t: str(l.tool.t, 120), b: str(l.tool.b, 1500) } : null,
+      days: (Array.isArray(l.days) ? l.days : []).slice(0, 7).map((x) => ({ t: str(x && x.t, 120), do: str(x && x.do, 600), q: str(x && x.q, 300) })).filter((x) => x.t),
     })).filter((l) => l.title);
     const materials = (d.materials || []).slice(0, 40).map((m) => ({ id: str(m.id, 20) || uid(), title: str(m.title, 160), url: str(m.url, 400), kind: m.kind === "pdf" ? "pdf" : "link" })).filter((m) => m.title && /^https?:\/\/|^\//.test(m.url));
     await saveLibrary(env, { lessons, materials });

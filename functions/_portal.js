@@ -331,7 +331,15 @@ export function calendarFile(pd, name) {
 
 export async function getLibrary(env) {
   const saved = (await env.FILES.get("lessons", "json")) || {};
-  return { lessons: saved.lessons || LESSONS, materials: saved.materials || MATERIALS, examples: EXAMPLES, edited: saved.edited || 0 };
+  // Brian's edits win; anything he hasn't set (a new field, a new day plan) comes from the drafts.
+  const byId = Object.fromEntries(LESSONS.map((l) => [l.id, l]));
+  const lessons = saved.lessons ? saved.lessons.map((l) => {
+    const d = byId[l.id] || {};
+    const out = { ...d };
+    for (const [k, v] of Object.entries(l)) if (v !== "" && v != null && !(Array.isArray(v) && !v.length)) out[k] = v;
+    return out;
+  }) : LESSONS;
+  return { lessons, materials: saved.materials || MATERIALS, examples: EXAMPLES, edited: saved.edited || 0 };
 }
 export async function saveLibrary(env, lib) { await env.FILES.put("lessons", JSON.stringify({ lessons: lib.lessons, materials: lib.materials, edited: now() })); }
 

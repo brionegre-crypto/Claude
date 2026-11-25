@@ -115,7 +115,7 @@
           (s.status === "locked" ? "<button class='btn btn-ghost btn-sm' data-open='" + n + "'>Open it now</button>" : "") + "</div></div>";
       };
       var revs = Object.keys(pd.reviews).sort().reverse().slice(0, 6);
-      var refl = d.lessons.filter(function (l) { return pd.reflections[l.id]; });
+      var refl = d.lessons.filter(function (l) { return Object.keys(pd.reflections).some(function (k) { return k === l.id || k.indexOf(l.id + "d") === 0 || k.indexOf(l.id + "q") === 0; }); });
       view.innerHTML =
         "<p class='small'><a href='#men'>‹ Men</a></p><div class='adm-row'><h2>" + esc(name) + "</h2><span class='muted'>" + esc(c.email) + (c.phone ? " · " + esc(c.phone) : "") + "</span>" +
         "<a class='btn btn-primary btn-sm' href='/portal/?as=" + encodeURIComponent(email) + "'>Coach view</a><button class='btn btn-ghost btn-sm' id='inv'>Send sign-in link</button></div>" +
@@ -139,7 +139,14 @@
         // Reviews, reflections, uploads
         "<div class='man-grid'><div class='adm-card'><h2>Sunday reviews</h2>" + (revs.length ? revs.map(function (w) { var r = pd.reviews[w]; return "<p class='small'><b>" + nice(w) + ": " + r.k + "/" + r.t + "</b>" + (r.paper ? " (paper)" : "") + "<br>Miss: " + esc(r.miss) + "<br>Change: " + esc(r.change) + "<br>Grace: " + esc(r.grace) + "<br>Reported to: " + esc(r.reported) + "</p>"; }).join("") : "<p class='muted small'>None yet.</p>") +
         (Object.keys(pd.callPrep).length ? "<h2>Call notes</h2>" + Object.keys(pd.callPrep).sort().reverse().map(function (k) { return "<p class='small'><b>" + nice(k) + ":</b> " + esc(pd.callPrep[k].text) + "</p>"; }).join("") : "") + "</div>" +
-        "<div class='adm-card'><h2>Lesson reflections</h2>" + (refl.length ? refl.map(function (l) { var r = pd.reflections[l.id]; return "<p class='small'><b>Week " + l.week + ":</b> " + (r.done ? "✓ action done" : "action not done") + "<br><span class='muted'>" + esc(l.reflection) + "</span><br>" + esc(r.text) + "</p>"; }).join("") : "<p class='muted small'>None yet.</p>") + "</div>" +
+        "<div class='adm-card'><h2>Lesson reflections</h2>" + (refl.length ? refl.map(function (l) {
+          var r = pd.reflections[l.id] || {};
+          var days = (l.days || []).map(function (dd, i) { var a = pd.reflections[l.id + "d" + (i + 1)]; return a ? "<p class='small'>" + (a.done ? "✓ " : "") + "<b>Day " + (i + 1) + ":</b> <span class='muted'>" + esc(dd.q) + "</span><br>" + esc(a.text) + "</p>" : ""; }).join("");
+          var qs = (l.questions || []).map(function (q, i) { var a = pd.reflections[l.id + "q" + i]; return a && a.text ? "<p class='small'><span class='muted'>" + esc(q) + "</span><br>" + esc(a.text) + "</p>" : ""; }).join("");
+          var n = (l.days || []).filter(function (_, i) { var a = pd.reflections[l.id + "d" + (i + 1)]; return a && a.done; }).length;
+          return "<details><summary class='small'><b>Week " + l.week + ":</b> " + n + " of " + (l.days || []).length + " days · " + (r.done ? "✓ action done" : "action not done") + "</summary>" +
+            (r.text ? "<p class='small'><span class='muted'>" + esc(l.reflection) + "</span><br>" + esc(r.text) + "</p>" : "") + qs + days + "</details>";
+        }).join("") : "<p class='muted small'>None yet.</p>") + "</div>" +
         "<div class='adm-card'><h2>Paper Ledger photos</h2>" + (pd.uploads.length ? pd.uploads.slice(0, 6).map(function (u) { return "<p class='small'>Week of " + nice(u.week) + " · " + when(u.at) + "</p><a href='/api/admin/man-upload?email=" + encodeURIComponent(email) + "&id=" + u.id + "' target='_blank'><img class='man-photo' loading='lazy' alt='Paper Ledger' src='/api/admin/man-upload?email=" + encodeURIComponent(email) + "&id=" + u.id + "'></a>"; }).join("") : "<p class='muted small'>None.</p>") + "</div></div>" +
         // Settings
         "<div class='adm-card'><h2>His portal</h2><div class='man-grid'>" +
@@ -190,8 +197,15 @@
           L.map(function (l, i) {
             return "<div class='adm-card' data-l='" + i + "'><div class='adm-row'><h2>Week " + l.week + "</h2><button class='btn btn-ghost btn-sm' data-ldel='" + i + "'>Remove</button></div>" +
               "<div class='man-grid'><label>Title<input data-k='title' value='" + esc(l.title) + "'></label><label>Scripture<input data-k='scripture' value='" + esc(l.scripture) + "'></label><label>Week<input data-k='week' type='number' min='1' max='6' value='" + l.week + "'></label><label>Step<input data-k='step' type='number' min='1' max='4' value='" + l.step + "'></label></div>" +
-              "<label>Video (YouTube link, optional)<input data-k='video' value='" + esc(l.video) + "'></label><label>Lesson<textarea data-k='body' style='min-height:240px'>" + esc(l.body) + "</textarea></label>" +
-              "<label>Action (checkbox)<input data-k='action' value='" + esc(l.action) + "'></label><label>Reflection question<input data-k='reflection' value='" + esc(l.reflection) + "'></label><label>PDF link (optional)<input data-k='pdf' value='" + esc(l.pdf || "") + "'></label></div>";
+              "<label>What this week is for<input data-k='intro' value='" + esc(l.intro || "") + "'></label><label>Verse text<textarea data-k='verse' style='min-height:70px'>" + esc(l.verse || "") + "</textarea></label>" +
+              "<label>Video (YouTube link, optional)<input data-k='video' value='" + esc(l.video) + "'></label><label>The teaching<textarea data-k='body' style='min-height:240px'>" + esc(l.body) + "</textarea></label>" +
+              "<label>Action (checkbox)<input data-k='action' value='" + esc(l.action) + "'></label><label>Reflection question<input data-k='reflection' value='" + esc(l.reflection) + "'></label><label>Prayer<textarea data-k='prayer' style='min-height:70px'>" + esc(l.prayer || "") + "</textarea></label><label>PDF link (optional)<input data-k='pdf' value='" + esc(l.pdf || "") + "'></label>" +
+              "<details><summary class='small'>Learn, ADHD and Tool boxes, extra questions and the seven days</summary>" +
+              (l.learn || []).map(function (x, j) { return "<label>Learn " + (j + 1) + " title<input data-x='learn." + j + ".t' value='" + esc(x.t) + "'></label><label>Learn " + (j + 1) + "<textarea data-x='learn." + j + ".b'>" + esc(x.b) + "</textarea></label>"; }).join("") +
+              ["adhd", "tool"].map(function (k) { var x = l[k] || { t: "", b: "" }; return "<label>" + (k === "adhd" ? "ADHD" : "Tool") + " title<input data-x='" + k + ".t' value='" + esc(x.t) + "'></label><label>" + (k === "adhd" ? "ADHD" : "Tool") + "<textarea data-x='" + k + ".b'>" + esc(x.b) + "</textarea></label>"; }).join("") +
+              (l.questions || []).map(function (q, j) { return "<label>Extra question " + (j + 1) + "<input data-x='questions." + j + "' value='" + esc(q) + "'></label>"; }).join("") +
+              (l.days || []).map(function (dd, j) { return "<div class='adm-card sub'><b>Day " + (j + 1) + "</b><label>Title<input data-x='days." + j + ".t' value='" + esc(dd.t) + "'></label><label>Do<textarea data-x='days." + j + ".do'>" + esc(dd.do) + "</textarea></label><label>Question<input data-x='days." + j + ".q' value='" + esc(dd.q) + "'></label></div>"; }).join("") +
+              "</details></div>";
           }).join("") + "<p><button class='btn btn-ghost btn-sm' id='ladd'>Add a lesson</button></p>" +
           "<div class='adm-card'><h2>Materials</h2><p class='muted small'>Printables and links every man sees.</p>" + M.map(function (m, i) { return "<div class='adm-row' data-m='" + i + "'><input data-k='title' value='" + esc(m.title) + "' style='flex:2' aria-label='Title'><input data-k='url' value='" + esc(m.url) + "' style='flex:2' aria-label='Link'><select data-k='kind'><option value='pdf'>PDF</option><option value='link'" + (m.kind === "link" ? " selected" : "") + ">Link</option></select><button class='btn btn-ghost btn-sm' data-mdel='" + i + "'>Remove</button></div>"; }).join("") +
           "<p><button class='btn btn-ghost btn-sm' id='madd'>Add material</button></p></div>";
@@ -203,7 +217,15 @@
         $("#lreset").onclick = function () { if (confirm("Throw away your edits and restore the drafted lessons?")) api("library-reset", {}).then(function () { flash("Restored."); VIEWS.library(); }); };
       }
       function collect() {
-        $$("[data-l]", view).forEach(function (card) { var l = L[+card.dataset.l]; $$("[data-k]", card).forEach(function (el) { l[el.dataset.k] = el.type === "number" ? Number(el.value) : el.value; }); });
+        $$("[data-l]", view).forEach(function (card) {
+          var l = L[+card.dataset.l];
+          $$("[data-k]", card).forEach(function (el) { l[el.dataset.k] = el.type === "number" ? Number(el.value) : el.value; });
+          $$("[data-x]", card).forEach(function (el) {
+            var path = el.dataset.x.split("."), o = l;
+            for (var i = 0; i < path.length - 1; i++) { var key = /^\d+$/.test(path[i]) ? +path[i] : path[i]; if (o[key] == null) o[key] = /^\d+$/.test(path[i + 1]) ? [] : {}; o = o[key]; }
+            var last = path[path.length - 1]; o[/^\d+$/.test(last) ? +last : last] = el.value;
+          });
+        });
         $$("[data-m]", view).forEach(function (row) { var m = M[+row.dataset.m]; $$("[data-k]", row).forEach(function (el) { m[el.dataset.k] = el.value; }); });
       }
       render();

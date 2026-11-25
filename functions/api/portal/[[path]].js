@@ -353,8 +353,12 @@ async function state(env, pd, contact, u) {
     const sess = sessions[date] || {};
     const missed = pd.role === "cohort" && date < t && !pd.attendance[date];
     return { id: l.id, week: l.week, step: l.step, title: l.title, scripture: l.scripture, open, date,
-      ...(open ? { body: l.body, video: l.video, action: l.action, reflection: l.reflection, pdf: l.pdf || "", recording: sess.video || "", catchup: missed ? sess.note || "" : "", missed } : {}),
-      mine: pd.reflections[l.id] || null };
+      ...(open ? { body: l.body, video: l.video, action: l.action, reflection: l.reflection, pdf: l.pdf || "", recording: sess.video || "", catchup: missed ? sess.note || "" : "", missed,
+        intro: l.intro || "", verse: l.verse || "", prayer: l.prayer || "", learn: l.learn || [], adhd: l.adhd || null, tool: l.tool || null, questions: l.questions || [], days: l.days || [] } : {}),
+      intro: l.intro || "", dayCount: (l.days || []).length,
+      // His answers: the lesson itself (id), each day (id + "d1".."d7") and each extra question (id + "q0", "q1").
+      mine: pd.reflections[l.id] || null,
+      dayAnswers: Object.fromEntries(Object.entries(pd.reflections).filter(([k]) => k.startsWith(l.id + "d") || k.startsWith(l.id + "q")).map(([k, v]) => [k.slice(l.id.length), v])) };
   });
   const msgs = await thread(env, pd.email);
   const next = nextSession(t);

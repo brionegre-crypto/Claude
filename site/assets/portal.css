@@ -82,3 +82,28 @@
 .pt.large .pb,.pt.large .taps button,.pt.large input,.pt.large textarea,.pt.large select{font-size:19px}
 .pt.large .mark .what{font-size:20px}
 @media (min-width:760px){.pt-nav{max-width:720px;margin:0 auto;left:50%;transform:translateX(-50%);border:1px solid var(--line);border-bottom:0;border-radius:18px 18px 0 0}}
+
+/* Lessons as a guided week */
+.eyebrow{font-size:13px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--accent);margin:0 0 4px}
+.lprog{height:8px;background:var(--line-2);border-radius:99px;overflow:hidden;margin:10px 0 4px}
+.lprog div{height:100%;background:var(--accent)}
+.lintro{background:var(--tile);border:1px solid var(--line);border-radius:14px;padding:14px 16px;font-size:17px;line-height:1.55;margin:14px 0}
+.lverse{margin:18px 0;padding:4px 0 4px 16px;border-left:3px solid var(--accent);font-size:21px;line-height:1.5;font-style:italic;color:var(--fg)}
+.lverse cite{display:block;font-style:normal;font-size:14px;color:var(--muted);margin-top:6px}
+.lsec{font-size:24px;margin:28px 0 12px}
+.lbox{border-radius:14px;padding:14px 16px;margin:14px 0;background:var(--tile);border:1px solid var(--line);border-left:4px solid var(--accent)}
+.lbox h3{margin:0 0 6px;font-size:18px}
+.lbox p{margin:0;line-height:1.6;color:var(--muted);font-size:16px}
+.lbox p.eyebrow{color:var(--accent);margin-bottom:4px;font-size:12px}
+.lbox.adhd{border-left-color:var(--accent-hi)}
+.lbox.tool{background:var(--accent-ink);border-color:var(--accent-ink);border-left-color:var(--accent)}
+.lbox.tool p{color:var(--fg)}
+.lday{background:var(--tile);border:1px solid var(--line);border-radius:14px;margin:0 0 8px;padding:0 14px}
+.lday summary{display:flex;justify-content:space-between;align-items:center;gap:10px;cursor:pointer;padding:14px 0;font-weight:600;font-size:16px;min-height:48px}
+.lday[open] summary{border-bottom:1px solid var(--line);margin-bottom:10px}
+.lday p{line-height:1.55}
+.lprayer{font-style:italic;font-size:18px;line-height:1.55;margin:0}
+.pt.large .lbox p,.pt.large .lday p,.pt.large .lintro{font-size:20px}
+.lesson p{margin:0 0 16px}
+.lesson ul{margin:0 0 16px}
+.lesson li{margin:0 0 6px}
