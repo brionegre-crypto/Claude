@@ -394,8 +394,9 @@ struct NotesView: View {
 
     private func sectionHeader(_ title: String, _ trailing: String?) -> some View {
         HStack {
-            Text(title).font(DS.Font.headline).foregroundStyle(DS.Palette.ink).textCase(nil)
-            if let trailing { Spacer(); Text(trailing).font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft).textCase(nil) }
+            if PaletteCache.look.isNautical { ThemedSectionHeader(title: title) }
+            else { Text(title).font(DS.Font.headline).foregroundStyle(DS.Palette.ink).textCase(nil) }
+            if let trailing { Spacer(); Text(trailing).themedTime().foregroundStyle(DS.Palette.inkSoft).textCase(nil) }
         }
     }
 

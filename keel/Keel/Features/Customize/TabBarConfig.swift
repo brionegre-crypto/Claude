@@ -43,13 +43,21 @@ enum TabBarConfig {
 
     static func title(_ id: String) -> String {
         switch id {
-        case "today": "Today"; case "inbox": "Inbox"; case "calendar": "Calendar"; case "tasks": "Tasks"; case "notes": "Notes"
+        case "today":
+            switch PaletteCache.look { case .helm: "Helm"; case .logbook: "Log"; case .panel: "Bridge"; default: "Today" }
+        case "calendar": PaletteCache.look == .chart ? "Chart" : "Calendar"
+        case "inbox": "Inbox"; case "tasks": "Tasks"; case "notes": "Notes"
         default: HubCatalog.tool(String(id.dropFirst(5)))?.title ?? "Tool"
         }
     }
     static func icon(_ id: String) -> String {
         switch id {
-        case "today": "sun.max"; case "inbox": "tray"; case "calendar": "calendar"; case "tasks": "checklist"; case "notes": "note.text"
+        case "today":
+            switch PaletteCache.look {
+            case .chart: "map"; case .helm: "steeringwheel"; case .tide: "water.waves"; case .logbook: "book.closed"
+            case .flags: "flag.fill"; case .lighthouse: "light.beacon.max"; case .panel: "gauge.with.needle"; default: "sun.max"
+            }
+        case "inbox": "tray"; case "calendar": "calendar"; case "tasks": "checklist"; case "notes": "note.text"
         default: HubCatalog.tool(String(id.dropFirst(5)))?.icon ?? "square.grid.2x2"
         }
     }

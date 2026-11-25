@@ -13,6 +13,49 @@ struct BodyDials: View {
     @ScaledMetric(relativeTo: .largeTitle) private var ring: CGFloat = 190
 
     var body: some View {
+        switch PaletteCache.look {
+        case .panel: panelGauges            // bridge instruments
+        case .flags: flagBlocks             // signal blocks
+        default: dials                      // Chart, Helm, Tide, Logbook, Lighthouse and classic: the big dial, in theme colours
+        }
+    }
+
+    private var panelGauges: some View {
+        VStack(spacing: 12) {
+            HStack(spacing: 10) {
+                NavigationLink { LazyView(BodyMetricDetailView(metric: .tide)) } label: { BridgeGauge(label: "TIDE", value: day?.tide, color: BodyStyle.tide) }
+                NavigationLink { LazyView(BodyMetricDetailView(metric: .swell)) } label: { BridgeGauge(label: "SWELL", value: day?.swell, color: BodyStyle.swell) }
+            }
+            .buttonStyle(.plain)
+            NavigationLink { LazyView(BodyMetricDetailView(metric: .anchor)) } label: { BridgeGauge(label: "ANCHOR", value: day?.anchor, color: BodyStyle.anchor) }
+                .buttonStyle(.plain)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 10)
+    }
+
+    private var flagBlocks: some View {
+        HStack(spacing: 8) {
+            block(.tide, "TIDE", day?.tide.map { "\($0)" } ?? "–", Nautical.signalBlue, .white)
+            block(.swell, "SWELL", day.map { "\($0.swell)" } ?? "–", Nautical.signalYellow, .black)
+            block(.anchor, "ANCHOR", day?.anchor.map { "\($0)" } ?? "–", Nautical.signalRed, .white)
+        }
+    }
+
+    private func block(_ m: BodyMetric, _ t: String, _ v: String, _ bg: Color, _ fg: Color) -> some View {
+        NavigationLink { LazyView(BodyMetricDetailView(metric: m)) } label: {
+            VStack(alignment: .leading, spacing: 2) {
+                Text(t).font(.caption2.weight(.bold)).tracking(1).opacity(0.8)
+                Text(v).font(.system(size: 40, weight: .heavy)).monospacedDigit().minimumScaleFactor(0.6)
+            }
+            .foregroundStyle(fg)
+            .padding(12).frame(maxWidth: .infinity, minHeight: 110, alignment: .topLeading)
+            .background(bg, in: .rect(cornerRadius: 16, style: .continuous))
+        }
+        .buttonStyle(.plain)
+    }
+
+    @ViewBuilder private var dials: some View {
         let target = BodyMath.swellTarget(day?.tide)
         VStack(spacing: 10) {
             TabView(selection: $page) {

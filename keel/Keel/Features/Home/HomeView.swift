@@ -551,7 +551,7 @@ private struct PanelHome: View {
 }
 
 /// A bridge instrument: a 270° dial with ticks and a red needle.
-private struct BridgeGauge: View {
+struct BridgeGauge: View {
     let label: String
     let value: Int?
     let color: Color

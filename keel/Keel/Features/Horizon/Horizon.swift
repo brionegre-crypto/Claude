@@ -70,7 +70,8 @@ struct HorizonHeader: View {
         switch PaletteCache.look {
         case .chart: ChartCourseHeader(title: title, detail: detail, compact: compact)
         case .logbook: LogbookHeader(title: title, detail: detail, compact: compact)
-        default: skyHeader
+        case .helm, .lighthouse, .flags, .panel: ThemedScreenHeader(title: title, detail: detail ?? HorizonSky.daylightLeft(), compact: compact)
+        default: skyHeader          // Living Tide and the classic looks: the sky and the sea
         }
     }
 
@@ -472,5 +473,67 @@ struct LogbookHeader: View {
         .padding(.horizontal, 6).padding(.vertical, 8)
         .frame(maxWidth: .infinity, alignment: .leading)
         .accessibilityElement(children: .combine)
+    }
+}
+
+
+/// Screen headers for the Helm, Lighthouse, Signal Flags and Instrument Panel themes.
+struct ThemedScreenHeader: View {
+    let title: String
+    let detail: String
+    var compact = false
+
+    var body: some View {
+        let now = Date()
+        switch PaletteCache.look {
+        case .helm:
+            VStack(alignment: .leading, spacing: 6) {
+                Text(now.formatted(.dateTime.weekday(.wide)).uppercased() + " · HEADING").font(.caption.weight(.semibold)).tracking(1.5).foregroundStyle(Nautical.brass)
+                Text(title).font(.system(compact ? .title2 : .title, design: .serif, weight: .semibold)).foregroundStyle(DS.Palette.ink)
+                Text(detail).font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
+            }
+            .padding(16).frame(maxWidth: .infinity, alignment: .leading)
+            .background(RadialGradient(colors: [Color(red: 0.14, green: 0.29, blue: 0.45), Color(red: 0.05, green: 0.1, blue: 0.17)], center: .topLeading, startRadius: 0, endRadius: 320),
+                        in: .rect(cornerRadius: 22, style: .continuous))
+            .overlay(RoundedRectangle(cornerRadius: 22, style: .continuous).strokeBorder(Nautical.brass.opacity(0.45), lineWidth: 1))
+        case .lighthouse:
+            VStack(alignment: .leading, spacing: 6) {
+                Text(now.formatted(date: .omitted, time: .shortened).uppercased()).font(.caption.weight(.semibold)).tracking(1.2).foregroundStyle(Nautical.amber)
+                Text(title).font(.system(compact ? .title2 : .title, design: .serif)).foregroundStyle(DS.Palette.ink)
+                Text(detail).font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
+            }
+            .padding(16).frame(maxWidth: .infinity, alignment: .leading)
+            .background {
+                ZStack {
+                    Color(white: 0.04)
+                    AngularGradient(colors: [.clear, Nautical.amber.opacity(0.22), .clear], center: .topLeading, startAngle: .degrees(15), endAngle: .degrees(60)).blur(radius: 10)
+                }
+                .clipShape(.rect(cornerRadius: 22, style: .continuous))
+            }
+        case .flags:
+            VStack(alignment: .leading, spacing: 8) {
+                Text(title).font(.system(size: compact ? 30 : 38, weight: .heavy)).tracking(-0.5).foregroundStyle(DS.Palette.ink)
+                HStack(spacing: 4) {
+                    Nautical.signalBlue.frame(height: 6); Nautical.signalYellow.frame(height: 6); Nautical.signalRed.frame(height: 6)
+                }
+                .clipShape(Capsule())
+                Text(detail).font(.subheadline.weight(.medium)).foregroundStyle(DS.Palette.inkSoft)
+            }
+            .padding(.vertical, 6)
+        default:          // Instrument Panel
+            HStack(alignment: .center, spacing: 14) {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("BRIDGE · " + now.formatted(date: .omitted, time: .shortened)).font(.caption.weight(.semibold)).tracking(1.2).foregroundStyle(DS.Palette.inkSoft)
+                    Text(title).font(.system(compact ? .title2 : .title, design: .serif, weight: .semibold)).foregroundStyle(DS.Palette.ink)
+                    Text(detail).font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
+                }
+                Spacer()
+                if let t = BodyEngine.shared.today?.tide {
+                    BridgeGauge(label: "TIDE", value: t, color: BodyStyle.tide).scaleEffect(0.55).frame(width: 82, height: 82)
+                }
+            }
+            .padding(16).frame(maxWidth: .infinity, alignment: .leading)
+            .background { PremiumSurface(radius: 22) }
+        }
     }
 }

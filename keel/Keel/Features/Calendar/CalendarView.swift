@@ -718,8 +718,7 @@ struct EventCard: View {
             Spacer(minLength: 0)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-        .background(color.opacity(scheme == .dark ? 0.30 : 0.16))
-        .clipShape(.rect(cornerRadius: 8))
+        .modifier(ThemedEventBackground(color: color))          // inked note, brass plate, signal block… per theme
         .opacity(Custom.dimPastEvents && end < Date() ? 0.55 : 1)          // Customize → Calendar → Fade events that are over
         .accessibilityElement(children: .combine)
     }

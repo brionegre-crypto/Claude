@@ -427,7 +427,7 @@ struct TasksView: View {
                     if !above.contains(g.title), gs.first(where: { !above.contains($0.title) })?.title == g.title, gs.contains(where: { above.contains($0.title) }) {
                         Section { Waterline() }.listRowBackground(Color.clear)
                     }
-                    Section(g.title) { ForEach(g.items) { t in row(t).opacity(above.contains(g.title) ? 1 : 0.82) } }
+                    Section { ForEach(g.items) { t in row(t).opacity(above.contains(g.title) ? 1 : 0.82) } } header: { ThemedSectionHeader(title: g.title) }
                 }
                 let waiting = filtered.filter(\.isWaitingOn)
                 if !waiting.isEmpty {
@@ -659,6 +659,10 @@ struct TaskRow: View {
                 if let next = TaskActions.setDone(task, done) { onRolled?(next) }
             }))
             .tint(task.priority.color)
+            .overlay(alignment: .topTrailing) {
+                // Signal Flags theme: priority flies as a maritime signal flag.
+                if PaletteCache.look == .flags && !task.isDone { SignalFlag(kind: task.priority).frame(width: 12, height: 8).offset(x: 6, y: -3) }
+            }
             .overlay {
                 // TickTick-style: the checkbox ring takes the priority color
                 if task.priority != .none && !task.isDone {
@@ -678,7 +682,7 @@ struct TaskRow: View {
                 }
                 HStack(spacing: 6) {
                     if let d = task.dueDate {
-                        Text(dueText(d)).foregroundStyle(isLate(d) && !task.isDone && !prefs.calm ? DS.Palette.warmth : DS.Palette.inkSoft)
+                        Text(dueText(d)).themedTime().foregroundStyle(isLate(d) && !task.isDone && !prefs.calm ? DS.Palette.warmth : DS.Palette.inkSoft)
                     }
                     if task.isPinned { Image(systemName: "pin.fill").foregroundStyle(DS.Palette.accent) }
                     if TaskMeta.isWontDo(task) { Text("Won't do").foregroundStyle(.orange) }

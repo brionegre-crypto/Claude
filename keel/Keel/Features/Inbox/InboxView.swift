@@ -471,7 +471,7 @@ struct InboxView: View {
             }
 
             if !pinned.isEmpty {
-                Section("Pinned") { ForEach(pinned) { e in row(e) } }
+                Section { ForEach(pinned) { e in row(e) } } header: { ThemedSectionHeader(title: "Pinned") }
             }
             if mailbox == .inbox && search.isEmpty {
                 inboxContent
@@ -546,7 +546,7 @@ struct InboxView: View {
             ForEach(["Today", "Yesterday", "This week", "Older"], id: \.self) { name in
                 let group = rest.filter { InboxBrain.section(for: $0.receivedAt) == name }
                 if !group.isEmpty {
-                    Section(name) { ForEach(group) { e in row(e).opacity(e.isRead ? 0.72 : 0.9) } }
+                    Section { ForEach(group) { e in row(e).opacity(e.isRead ? 0.72 : 0.9) } } header: { ThemedSectionHeader(title: name) }
                 }
             }
         case .priority:
@@ -563,7 +563,7 @@ struct InboxView: View {
             ForEach(["Today", "Yesterday", "This week", "Older"], id: \.self) { name in
                 let group = items.filter { InboxBrain.section(for: $0.receivedAt) == name }
                 if !group.isEmpty {
-                    Section(name) { ForEach(group) { e in row(e) } }
+                    Section { ForEach(group) { e in row(e) } } header: { ThemedSectionHeader(title: name) }
                 }
             }
         case .updates, .newsletters, .promos:
@@ -1003,10 +1003,10 @@ struct EmailRow: View {
             if layout.avatars {
                 SenderAvatar(name: email.fromName, email: email.from, size: layout.avatarSize)
                     .overlay(alignment: .topLeading) {
-                        if unread { Circle().fill(DS.Palette.accent).frame(width: 10, height: 10).overlay(Circle().stroke(DS.Palette.canvas, lineWidth: 2)).offset(x: -3, y: -3) }
+                        if unread { ThemedUnreadMark(size: 10).offset(x: -3, y: -3) }
                     }
             } else {
-                Circle().fill(unread ? DS.Palette.accent : .clear).frame(width: 8, height: 8).padding(.top, 6)
+                ThemedUnreadMark(size: 8).opacity(unread ? 1 : 0).frame(width: 8, height: 8).padding(.top, 6)
             }
             VStack(alignment: .leading, spacing: 3) {
                 HStack(spacing: 4) {
@@ -1022,7 +1022,7 @@ struct EmailRow: View {
                             .foregroundStyle(tag.color).background(tag.color.opacity(0.14), in: Capsule())
                             .accessibilityLabel("To \(tag.label)")
                     }
-                    Text(Self.time(email.receivedAt)).font(DS.Font.caption).foregroundStyle(unread ? DS.Palette.accent : DS.Palette.inkSoft)
+                    Text(Self.time(email.receivedAt)).themedTime().foregroundStyle(unread ? DS.Palette.accent : DS.Palette.inkSoft)
                 }
                 if searchTerms.isEmpty {
                     Text(email.subject).font(DS.Font.body).foregroundStyle(unread ? DS.Palette.ink : DS.Palette.inkSoft).lineLimit(1)

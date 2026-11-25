@@ -580,9 +580,7 @@ private struct Glyph: View {
     let color: Color
     var size: CGFloat = 36
     var body: some View {
-        Image(systemName: icon).font(.system(size: size * 0.45, weight: .semibold)).foregroundStyle(.white)
-            .frame(width: size, height: size)
-            .background(color.gradient, in: .rect(cornerRadius: size * 0.32, style: .continuous))
+        ThemedGlyph(icon: icon, color: color, size: size)          // drawn in the theme's language
     }
 }
 
@@ -660,9 +658,9 @@ private struct ToolTile: View {
         }
         .padding(12)
         .frame(maxWidth: .infinity, minHeight: wide ? 0 : 104, alignment: .topLeading)
-        .background(RoundedRectangle(cornerRadius: 20, style: .continuous).fill(DS.Palette.elevated))
+        .background { PremiumSurface(radius: 20) }
         .overlay(alignment: .topTrailing) {
-            if stat != nil { Circle().fill(color).frame(width: 7, height: 7).padding(12) }   // something live here
+            if stat != nil { ThemedUnreadMark(size: 7).padding(12) }   // something live here
         }
         .accessibilityElement(children: .combine)
     }
