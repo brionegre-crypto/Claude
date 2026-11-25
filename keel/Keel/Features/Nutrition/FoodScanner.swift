@@ -1,4 +1,5 @@
 import SwiftUI
+import AVFoundation
 import SwiftData
 import PhotosUI
 import Vision
@@ -69,11 +70,14 @@ struct FoodScanView: View {
     @State private var typed = ""
     @State private var lastCode = ""
 
+    @State private var cameraAccess = AVCaptureDevice.authorizationStatus(for: .video)
+
     private var cameraOK: Bool {
         #if targetEnvironment(macCatalyst)
         return false              // Macs don't have the live scanner: type the barcode or paste the label
         #else
-        return DataScannerViewController.isSupported && DataScannerViewController.isAvailable
+        // isAvailable stays false until camera access is granted, which this screen never used to ask for.
+        return cameraAccess == .authorized && DataScannerViewController.isSupported
         #endif
     }
 
@@ -135,6 +139,12 @@ struct FoodScanView: View {
             }
             .padding()
             .background(.bar)
+        }
+        .task {
+            if cameraAccess == .notDetermined {
+                _ = await AVCaptureDevice.requestAccess(for: .video)
+                cameraAccess = AVCaptureDevice.authorizationStatus(for: .video)
+            }
         }
         .navigationTitle("Scan food")
         .navigationBarTitleDisplayMode(.inline)

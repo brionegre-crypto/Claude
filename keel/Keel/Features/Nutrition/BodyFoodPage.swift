@@ -14,45 +14,62 @@ struct BodyFoodPage: View {
         _entries = Query(filter: #Predicate<FoodEntry> { $0.date >= start }, sort: \FoodEntry.date, order: .reverse)
     }
 
+    @State private var quickAdd = false
+    @State private var scanning = false
+    @AppStorage("galley.more") private var more = false
+
     var body: some View {
         let cal = Calendar.current
         let today = entries.filter { cal.isDateInToday($0.date) }
         let totals = today.reduce(NutritionFacts()) { $0 + $1.facts }
         let shown = healthTotals ?? totals
+        let proteinGoal = NutritionGoals.protein(weightKg: weight)
 
-        CalorieRingCard(eaten: shown, proteinGoal: NutritionGoals.protein(weightKg: weight))
-        TellKeelFoodBox()                                       // "two eggs and toast": logged like a message
+        // The Galley: score first, then fuel, one-tap repeats and today's meals. Logging is the bar at the bottom.
+        GalleyHeader(eaten: shown.calories ?? 0)
+        GalleyScoreCard(entries: today, proteinGoal: proteinGoal)
+        FuelGauges(eaten: shown, proteinGoal: proteinGoal)
+        GalleyChips { quickAdd = true }
+        ThemedSectionHeader(title: "Today")
+        MealTimeline(today: today)
+        savedMealsRow
 
-        HStack(spacing: 10) {
-            NavigationLink { LazyView(LogFoodView()) } label: { BigAction(title: "Log food", icon: "magnifyingglass", color: .green) }
-            NavigationLink { LazyView(LogFoodView(startWithCamera: true)) } label: { BigAction(title: "Snap meal", icon: "camera.fill", color: .orange) }
-            NavigationLink { LazyView(FoodScanView()) } label: { BigAction(title: "Barcode", icon: "barcode.viewfinder", color: DS.Palette.accent) }
-            NavigationLink { LazyView(FoodHistoryView()) } label: { BigAction(title: "History", icon: "calendar", color: .purple) }
-        }
-        .buttonStyle(.plain)
-
-        Group {
-            mealsCard(today)
-            savedMealsRow
-            NetEnergyCard(eaten: shown.calories ?? 0)
-            planCard
-        }
-        VStack(alignment: .leading, spacing: 10) {
-            Text("Fiber & sugar").font(DS.Font.headline)
-            GoalBar(title: "Fiber", value: shown.fiber ?? 0, goal: NutritionGoals.fiber, unit: "g", color: DS.Palette.calm)
-            GoalBar(title: "Added sugar", value: totals.addedSugar ?? 0, goal: NutritionGoals.addedSugarCap, unit: "g", color: .orange, isCeiling: true)
-        }
-        .bodyCard()
-        Group {
-            MicronutrientsCard(keel: totals)
-            brainFoods(today: today)
-            NutritionScoreCard().overlay(alignment: .topTrailing) { MetricInfoButton(id: "nutritionScore").padding(6) }
-        }
-        tools
-            .task {
-                weight = await NutritionHealth.weightKg()
-                healthTotals = await NutritionHealth.todayTotals()
+        // Everything else Food had, one tap away.
+        DisclosureGroup(isExpanded: $more) {
+            VStack(alignment: .leading, spacing: DS.Space.m) {
+                NetEnergyCard(eaten: shown.calories ?? 0)
+                planCard
+                VStack(alignment: .leading, spacing: 10) {
+                    Text("Fiber & sugar").font(DS.Font.headline)
+                    GoalBar(title: "Fiber", value: shown.fiber ?? 0, goal: NutritionGoals.fiber, unit: "g", color: DS.Palette.calm)
+                    GoalBar(title: "Added sugar", value: totals.addedSugar ?? 0, goal: NutritionGoals.addedSugarCap, unit: "g", color: .orange, isCeiling: true)
+                }
+                .bodyCard()
+                MicronutrientsCard(keel: totals)
+                brainFoods(today: today)
+                CalorieRingCard(eaten: shown, proteinGoal: proteinGoal)
+                TellKeelFoodBox()
+                HStack(spacing: 10) {
+                    NavigationLink { LazyView(LogFoodView()) } label: { BigAction(title: "Search", icon: "magnifyingglass", color: .green) }
+                    NavigationLink { LazyView(LogFoodView(startWithCamera: true)) } label: { BigAction(title: "Snap meal", icon: "camera.fill", color: .orange) }
+                    Button { scanning = true } label: { BigAction(title: "Barcode", icon: "barcode.viewfinder", color: DS.Palette.accent) }
+                    NavigationLink { LazyView(FoodHistoryView()) } label: { BigAction(title: "History", icon: "calendar", color: .purple) }
+                }
+                .buttonStyle(.plain)
+                mealsCard(today)
+                tools
             }
+            .padding(.top, 8)
+        } label: {
+            Text("More: your plan, micronutrients, brain foods, tools").font(.subheadline.weight(.medium)).foregroundStyle(DS.Palette.ink)
+        }
+        .tint(DS.Palette.ink)
+        .task {
+            weight = await NutritionHealth.weightKg()
+            healthTotals = await NutritionHealth.todayTotals()
+        }
+        .sheet(isPresented: $quickAdd) { QuickAddSheet() }
+        .fullScreenCover(isPresented: $scanning) { BarcodeReaderView() }
     }
 
     // MARK: Meals

@@ -140,6 +140,10 @@ struct BodyView: View {
             .padding(.bottom, DS.Space.l)
             .animation(.easeOut(duration: 0.16), value: pageRaw)
         }
+        .safeAreaInset(edge: .bottom, spacing: 0) {
+            // Food: one bar to log anything (type, say, snap or scan).
+            if page.wrappedValue == .food { GalleyLogBar().padding(.horizontal, 12).padding(.bottom, 6) }
+        }
         .premiumBackground(BodyStyle.tide)
         .navigationTitle(ChartNames.title("body", fallback: "Body"))
         .navigationBarTitleDisplayMode(.inline)
