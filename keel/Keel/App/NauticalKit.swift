@@ -113,7 +113,10 @@ struct ThemedEventBackground: ViewModifier {
     func body(content: Content) -> some View {
         let shape = RoundedRectangle(cornerRadius: Nautical.look == .flags ? 4 : 8, style: .continuous)
         switch Nautical.look {
-        case .chart, .logbook:
+        case .chart:
+            // Tide chart: meetings are soft shaded bands, so your own tasks (bold, outlined) stand out.
+            content.background(DS.Palette.ink.opacity(scheme == .dark ? 0.16 : 0.07)).clipShape(shape)
+        case .logbook:
             content.background(DS.Palette.elevated.opacity(0.95)).clipShape(shape)
                 .overlay(shape.strokeBorder(DS.Palette.ink.opacity(0.3), lineWidth: 0.7))
         case .helm:

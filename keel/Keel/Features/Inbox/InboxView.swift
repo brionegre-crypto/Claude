@@ -410,7 +410,7 @@ struct InboxView: View {
                 }
             }
             if mailbox == .inbox && search.isEmpty && !selecting {
-                HorizonHeader(title: "Inbox", detail: inboxHorizonDetail, compact: true)
+                HorizonHeader(title: ChartNames.title("inbox", fallback: "Inbox"), detail: inboxHorizonDetail, compact: true)
                     .listRowSeparator(.hidden)
                     .listRowInsets(EdgeInsets(top: 6, leading: 12, bottom: 4, trailing: 12))
                     .selectionDisabled()
@@ -531,10 +531,14 @@ struct InboxView: View {
                 if fresh.isEmpty {
                     Label("Nobody's waiting on you. Calm waters.", systemImage: "sailboat").font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
                 }
-                ForEach(fresh) { e in row(e) }
+                ForEach(Array(fresh.enumerated()), id: \.element.id) { i, e in row(e).environment(\.waypointNumber, i + 1) }
             } header: {
                 HStack {
-                    Label("Needs you · \(fresh.count)", systemImage: "person.wave.2.fill").foregroundStyle(DS.Palette.accent)
+                    if PaletteCache.look == .chart {
+                        ThemedSectionHeader(title: "Needs you · \(fresh.count)")
+                    } else {
+                        Label("Needs you · \(fresh.count)", systemImage: "person.wave.2.fill").foregroundStyle(DS.Palette.accent)
+                    }
                     Spacer()
                     if !(fresh + newOther).isEmpty { Button("Mark all read") { markAllRead(fresh + newOther) }.font(DS.Font.caption).buttonStyle(.borderless) }
                 }
@@ -965,6 +969,7 @@ struct EmailRow: View {
     @Environment(\.mailSearchTerms) private var searchTerms
     @Environment(\.accountTags) private var accountTags
     @Environment(\.mailLayout) private var layout
+    @Environment(\.waypointNumber) private var waypoint
     let email: EmailMessage
     var count: Int = 1
     var unreadInThread = false
@@ -1001,7 +1006,9 @@ struct EmailRow: View {
         let chips = self.chips          // worked out once per row, not twice
         HStack(alignment: .top, spacing: DS.Space.m) {
             // Chart Table and Logbook read mail like letters in a log: no faces, a mark and the sender's name.
-            if layout.avatars && !Nautical.usesMono {
+            if let n = waypoint, PaletteCache.look == .chart {
+                WaypointBadge(number: n, isNext: n == 1).padding(.top, 1)        // Chart Table: mail that needs you is a numbered waypoint
+            } else if layout.avatars && !Nautical.usesMono {
                 SenderAvatar(name: email.fromName, email: email.from, size: layout.avatarSize)
                     .overlay(alignment: .topLeading) {
                         if unread { ThemedUnreadMark(size: 10).offset(x: -3, y: -3) }

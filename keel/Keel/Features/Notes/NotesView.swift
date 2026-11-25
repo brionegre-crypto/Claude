@@ -39,6 +39,7 @@ struct NotesView: View {
     private var layout: Layout { Layout(rawValue: layoutRaw) ?? .cards }
     private var sortMode: SortMode { SortMode(rawValue: sortRaw) ?? .manual }
     private var recent: [Note] { memo.get("recent") { Array(notes.lazy.filter { !$0.title.isEmpty || !NoteSnippet.text($0).isEmpty }.prefix(Custom.notesRecentCount)) } }
+    private var newThisWeek: Int { memo.get("newThisWeek") { let since = Date().addingTimeInterval(-7 * 86_400); return notes.filter { $0.createdAt > since }.count } }
     private var editedToday: Int { memo.get("editedToday") { notes.filter { Calendar.current.isDateInToday($0.updatedAt) }.count } }
 
     var body: some View {
@@ -52,16 +53,42 @@ struct NotesView: View {
                 } else if notes.isEmpty {
                     emptyState
                 } else {
+                    let library = PaletteCache.look == .chart          // Chart Table: Notes is a ship's library
                     Section {
+                        if library {
+                            LibraryHeader(total: notes.count, newThisWeek: newThisWeek)
+                                .listRowInsets(EdgeInsets(top: 4, leading: 20, bottom: 0, trailing: 20))
+                                .listRowBackground(Color.clear)
+                                .listRowSeparator(.hidden)
+                            AskLibraryBar()
+                                .listRowInsets(EdgeInsets(top: 6, leading: 16, bottom: 6, trailing: 16))
+                                .listRowBackground(Color.clear)
+                                .listRowSeparator(.hidden)
+                        } else {
                         greeting
                             .listRowInsets(EdgeInsets(top: 4, leading: 20, bottom: 0, trailing: 20))
                             .listRowBackground(Color.clear)
+                        }
                         quickActions
                             .inlineTip(AskAITip())                      // shown once: how to write with AI; no empty row while hidden
                             .listRowInsets(EdgeInsets(top: 8, leading: 0, bottom: 8, trailing: 0))
                             .listRowBackground(Color.clear)
                     }
-                    if recent.count >= 2 && Custom.notesJumpBackIn {
+                    let pinnedPages = notes.filter(\.isPinned)
+                    if library && !pinnedPages.isEmpty {
+                        Section {
+                            ChartDrawer(notes: Array(pinnedPages.prefix(12))) { opened = $0 }
+                                .listRowInsets(EdgeInsets())
+                                .listRowBackground(Color.clear)
+                        } header: { sectionHeader("Chart drawer", nil) }
+                    }
+                    if library && !recent.isEmpty {
+                        Section {
+                            LibraryShelf(notes: Array(recent.prefix(6))) { opened = $0 }
+                                .listRowInsets(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
+                                .listRowBackground(Color.clear)
+                        } header: { sectionHeader("The shelf · recent", editedToday > 0 ? "\(editedToday) edited today" : nil) }
+                    } else if recent.count >= 2 && Custom.notesJumpBackIn {
                         Section {
                             ScrollView(.horizontal, showsIndicators: false) {
                                 LazyHStack(spacing: DS.Space.m) {
@@ -79,7 +106,7 @@ struct NotesView: View {
                             .listRowBackground(Color.clear)
                         } header: { sectionHeader("Jump back in", editedToday > 0 ? "\(editedToday) edited today" : nil) }
                     }
-                    let favorites = Custom.notesFavorites ? notes.filter(\.isPinned) : []
+                    let favorites = Custom.notesFavorites && !library ? pinnedPages : []
                     if !favorites.isEmpty {
                         Section { ForEach(favorites) { row($0, showSnippet: false) } } header: { sectionHeader("Favorites", nil) }
                     }

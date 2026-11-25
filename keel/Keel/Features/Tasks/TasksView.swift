@@ -48,6 +48,7 @@ struct TasksView: View {
     // on every save anywhere in the app, even while you were on another tab.) No list-wide animation.
     @Query(filter: #Predicate<TaskItem> { !$0.isDone }, sort: \TaskItem.createdAt, order: .reverse) private var openTasks: [TaskItem]
     @Query(TasksView.recentDone) private var doneTasks: [TaskItem]
+    @State private var bearingDay = Calendar.current.startOfDay(for: Date())
     static var recentDone: FetchDescriptor<TaskItem> {
         var d = FetchDescriptor<TaskItem>(predicate: #Predicate { $0.isDone }, sortBy: [SortDescriptor(\.completedAt, order: .reverse)])
         d.fetchLimit = 500
@@ -415,9 +416,16 @@ struct TasksView: View {
                 ForEach(filtered) { t in row(t) }
             } else {
                 if !selecting {
-                    HorizonHeader(title: screenTitle, detail: tasksHorizonDetail, compact: true)
+                    HorizonHeader(title: PaletteCache.look == .chart && filter == .today ? ChartNames.title("tasks", fallback: screenTitle) : screenTitle,
+                                  detail: PaletteCache.look == .chart && filter == .today ? "Route · \(screenTitle) · " + tasksHorizonDetail : tasksHorizonDetail, compact: true)
                         .listRowInsets(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
                         .listRowBackground(Color.clear)
+                    if PaletteCache.look == .chart && filter == .today && search.isEmpty {
+                        // The Bearing strip: drag across the week to see what's due each day.
+                        BearingStrip(day: $bearingDay) { d in dueCount(on: d) }
+                            .listRowBackground(Color.clear)
+                            .listRowSeparator(.hidden)
+                    }
                     if filter == .today, ThemedLayout.usesNowCard, search.isEmpty, let next = filtered.first(where: { !$0.isDone }) {
                         TasksNowCard(task: next).listRowBackground(Color.clear)     // Helm, Tide, Lighthouse, Panel open on the one next thing
                     }
@@ -426,11 +434,25 @@ struct TasksView: View {
                 // Above the waterline: what's pinned, overdue, today and tonight. Below: what can wait, quieter.
                 let above: Set<String> = ["Pinned", "Overdue", "Today", "This Evening"]
                 let gs = groups
+                if let d = bearingDayIfAhead {
+                    let items = tasksDue(on: d)
+                    Section {
+                        if items.isEmpty {
+                            Text("Open water: nothing due that day.").font(.system(.body, design: .serif).italic()).foregroundStyle(DS.Palette.inkSoft)
+                        }
+                        ForEach(Array(items.enumerated()), id: \.element.id) { i, t in row(t).environment(\.waypointNumber, i + 1) }
+                    } header: { ThemedSectionHeader(title: d.formatted(.dateTime.weekday(.wide).day().month(.abbreviated))) }
+                } else {
+                // Chart Table: what's above the waterline is numbered as waypoints, in order.
+                let numbers: [UUID: Int] = PaletteCache.look == .chart && filter == .today
+                    ? Dictionary(gs.filter { above.contains($0.title) }.flatMap(\.items).enumerated().map { ($1.id, $0 + 1) }, uniquingKeysWith: { a, _ in a })
+                    : [:]
                 ForEach(gs, id: \.title) { g in
                     if !above.contains(g.title), gs.first(where: { !above.contains($0.title) })?.title == g.title, gs.contains(where: { above.contains($0.title) }) {
                         Section { Waterline() }.listRowBackground(Color.clear)
                     }
-                    Section { ForEach(g.items) { t in row(t).opacity(above.contains(g.title) ? 1 : 0.82) } } header: { ThemedSectionHeader(title: g.title) }
+                    Section { ForEach(g.items) { t in row(t).environment(\.waypointNumber, numbers[t.id]).opacity(above.contains(g.title) ? 1 : 0.82) } } header: { ThemedSectionHeader(title: g.title) }
+                }
                 }
                 let waiting = filtered.filter(\.isWaitingOn)
                 if !waiting.isEmpty {
@@ -559,12 +581,17 @@ struct TasksView: View {
     @ViewBuilder
     private func row(_ t: TaskItem) -> some View {
         rowLink(t)
-        .swipeActions(edge: .trailing) {
-            Button(role: .destructive) { withAnimation { TaskActions.delete(t, ctx: ctx) } } label: { Label("Delete", systemImage: "trash") }
-        }
+        // One swipe rule across Keel: swipe right = done, swipe left = later (delete is at the end of the left swipe).
         .swipeActions(edge: .leading) {
+            Button {
+                withAnimation(DS.spring) { _ = TaskActions.setDone(t, !t.isDone) }
+                try? ctx.save(); Haptics.success()
+            } label: { Label(t.isDone ? "Not done" : "Done", systemImage: t.isDone ? "circle" : "checkmark") }.tint(DS.Palette.calm)
+        }
+        .swipeActions(edge: .trailing) {
             Button { move(t, days: 1) } label: { Label("Tomorrow", systemImage: "sunrise") }.tint(DS.Palette.warmth)
             Button { move(t, days: 7) } label: { Label("Next week", systemImage: "calendar") }.tint(DS.Palette.meeting)
+            Button(role: .destructive) { withAnimation { TaskActions.delete(t, ctx: ctx) } } label: { Label("Delete", systemImage: "trash") }
         }
         .contextMenu {
             Button(t.isDone ? "Mark Not Done" : "Done", systemImage: t.isDone ? "circle" : "checkmark.circle") {
@@ -613,6 +640,18 @@ struct TasksView: View {
         }
     }
 
+    /// The day picked on the Bearing strip, if it isn't today (today shows the usual list).
+    private var bearingDayIfAhead: Date? { cal.isDateInToday(bearingDay) ? nil : bearingDay }
+    private func tasksDue(on d: Date) -> [TaskItem] {
+        let start = cal.startOfDay(for: d), end = start.addingTimeInterval(86_400)
+        return openTasks.filter { guard let due = $0.dueDate else { return false }; return due >= start && due < end }
+            .sorted { ($0.hasDueTime ? $0.dueDate! : .distantFuture) < ($1.hasDueTime ? $1.dueDate! : .distantFuture) }
+    }
+    private func dueCount(on d: Date) -> Int {
+        let start = cal.startOfDay(for: d), end = start.addingTimeInterval(86_400)
+        return openTasks.reduce(0) { n, t in (t.dueDate.map { $0 >= start && $0 < end } ?? false) ? n + 1 : n }
+    }
+
     private func move(_ t: TaskItem, days: Int) {
         let day = cal.date(byAdding: .day, value: days, to: cal.startOfDay(for: Date()))!
         withAnimation(DS.spring) { TaskActions.reschedule(t, to: day) }
@@ -648,6 +687,8 @@ extension TaskPriority {
 
 struct TaskRow: View {
     @Environment(\.taskSearchTerms) private var searchTerms
+    @Environment(\.waypointNumber) private var waypoint
+    @State private var ticking = false
     @Bindable var task: TaskItem
     var showList = true
     var onRolled: ((Date) -> Void)? = nil
@@ -660,6 +701,20 @@ struct TaskRow: View {
         HStack(spacing: DS.Space.m) {
             // Chart Table and Logbook: a ship's-log time column down the left.
             if ThemedLayout.usesTimeColumn { ThemedTimeColumn(date: task.hasDueTime ? task.dueDate : nil) }
+            if let n = waypoint, PaletteCache.look == .chart, !task.isDone {
+                // Chart Table: a numbered waypoint; tap the number to tick it off.
+                Button {
+                    withAnimation(.spring(response: 0.25, dampingFraction: 0.6)) { ticking = true }
+                    Haptics.success()
+                    Task { @MainActor in
+                        try? await Task.sleep(for: .milliseconds(300))
+                        if let next = TaskActions.setDone(task, true) { onRolled?(next) }
+                        ticking = false
+                    }
+                } label: { WaypointBadge(number: n, isNext: n == 1, ticked: ticking).scaleEffect(ticking ? 1.15 : 1) }
+                .buttonStyle(.plain)
+                .accessibilityLabel("Mark \(task.title) done")
+            } else {
             CompletionCheck(isDone: Binding(get: { task.isDone }, set: { done in
                 if let next = TaskActions.setDone(task, done) { onRolled?(next) }
             }))
@@ -673,6 +728,7 @@ struct TaskRow: View {
                 if task.priority != .none && !task.isDone {
                     Circle().strokeBorder(task.priority.color, lineWidth: 2).frame(width: 22, height: 22).allowsHitTesting(false)
                 }
+            }
             }
             VStack(alignment: .leading, spacing: 3) {
                 if searchTerms.isEmpty {

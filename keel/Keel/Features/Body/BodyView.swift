@@ -141,7 +141,7 @@ struct BodyView: View {
             .animation(.easeOut(duration: 0.16), value: pageRaw)
         }
         .premiumBackground(BodyStyle.tide)
-        .navigationTitle("Body")
+        .navigationTitle(ChartNames.title("body", fallback: "Body"))
         .navigationBarTitleDisplayMode(.inline)
         .toolbar { ToolbarItem(placement: .topBarTrailing) { logMenu } }
         .sheet(isPresented: $logDose) { LogDoseSheet() }

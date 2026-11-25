@@ -154,3 +154,105 @@ struct ThemedNoteIcon: View {
         }
     }
 }
+
+// MARK: - Waypoints everywhere (Chart Table)
+
+/// Chart Table's own names for each screen, so the whole app reads as one voyage.
+enum ChartNames {
+    static func title(_ screen: String, fallback: String) -> String {
+        guard PaletteCache.look == .chart else { return fallback }
+        switch screen {
+        case "inbox": return "Correspondence"
+        case "tasks": return "Voyage plan"
+        case "calendar": return "Tide chart"
+        case "notes": return "Library"
+        case "body": return "Condition"
+        default: return fallback
+        }
+    }
+}
+
+/// A numbered waypoint: ink, or chart red when it's next. Tap it to tick the thing off (where there's an action).
+struct WaypointBadge: View {
+    let number: Int
+    var isNext = false
+    var ticked = false
+    var body: some View {
+        ZStack {
+            Circle().fill(isNext ? Nautical.chartRed : DS.Palette.ink)
+            if ticked { Image(systemName: "checkmark").font(.system(size: 11, weight: .bold)) }
+            else { Text("\(number)").font(.system(size: 11, weight: .semibold, design: .monospaced)) }
+        }
+        .foregroundStyle(DS.Palette.canvas)
+        .frame(width: 24, height: 24)
+        .accessibilityHidden(true)
+    }
+}
+
+private struct WaypointNumberKey: EnvironmentKey { static let defaultValue: Int? = nil }
+extension EnvironmentValues {
+    /// Set on rows that are waypoints ("Needs you" mail, today's tasks) so they show their number on Chart Table.
+    var waypointNumber: Int? {
+        get { self[WaypointNumberKey.self] }
+        set { self[WaypointNumberKey.self] = newValue }
+    }
+}
+
+// MARK: - Bearing strip
+
+/// A slim week scrubber: tap or drag across the days to move through time. Dots show how much is due each day.
+struct BearingStrip: View {
+    @Binding var day: Date
+    var counts: (Date) -> Int
+    private var cal: Calendar { Calendar.current }
+
+    private var days: [Date] {
+        let today = cal.startOfDay(for: Date())
+        return (0..<7).compactMap { cal.date(byAdding: .day, value: $0, to: today) }
+    }
+
+    var body: some View {
+        let ds = days
+        GeometryReader { g in
+            let w = g.size.width / CGFloat(ds.count)
+            ZStack(alignment: .topLeading) {
+                Rectangle().fill(DS.Palette.ink.opacity(0.22)).frame(height: 0.7).offset(y: 30)
+                HStack(spacing: 0) {
+                    ForEach(ds, id: \.self) { d in
+                        let on = cal.isDate(d, inSameDayAs: day)
+                        let n = counts(d)
+                        VStack(spacing: 6) {
+                            Text(cal.isDateInToday(d) ? "TODAY" : d.formatted(.dateTime.weekday(.abbreviated)).uppercased())
+                                .font(.system(size: 9, weight: on ? .bold : .medium, design: .monospaced))
+                                .foregroundStyle(on ? Nautical.chartRed : DS.Palette.inkSoft)
+                            ZStack {
+                                if on { Capsule().fill(Nautical.chartRed).frame(width: 30, height: 12) }
+                                Circle().fill(on ? DS.Palette.canvas : DS.Palette.ink)
+                                    .frame(width: n == 0 ? 0 : CGFloat(min(8, 3 + n)), height: n == 0 ? 0 : CGFloat(min(8, 3 + n)))
+                            }
+                            .frame(height: 12)
+                        }
+                        .frame(width: w)
+                        .contentShape(Rectangle())
+                        .accessibilityElement(children: .ignore)
+                        .accessibilityLabel("\(d.formatted(.dateTime.weekday(.wide).day().month())), \(n) due")
+                        .accessibilityAddTraits(on ? [.isButton, .isSelected] : .isButton)
+                        .accessibilityAction { pick(d) }
+                    }
+                }
+            }
+            .contentShape(Rectangle())
+            .gesture(DragGesture(minimumDistance: 0).onChanged { v in
+                let i = max(0, min(ds.count - 1, Int(v.location.x / w)))
+                pick(ds[i])
+            })
+        }
+        .frame(height: 38)
+    }
+
+    private func pick(_ d: Date) {
+        guard !cal.isDate(d, inSameDayAs: day) else { return }
+        withAnimation(.snappy(duration: 0.18)) { day = d }
+        UISelectionFeedbackGenerator().selectionChanged()
+    }
+}

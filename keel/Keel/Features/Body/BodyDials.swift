@@ -16,6 +16,7 @@ struct BodyDials: View {
         switch PaletteCache.look {
         case .panel: panelGauges            // bridge instruments
         case .flags: flagBlocks             // signal blocks
+        case .chart: chartReadings          // three chart readings on one card, each with its 7-day trace
         default: dials                      // Chart, Helm, Tide, Logbook, Lighthouse and classic: the big dial, in theme colours
         }
     }
@@ -32,6 +33,55 @@ struct BodyDials: View {
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 10)
+    }
+
+    private var chartReadings: some View {
+        HStack(spacing: 0) {
+            reading(.tide, "TIDE", day?.tide.map { "\($0)" }, "%", BodyStyle.tide)
+            Rectangle().fill(DS.Palette.ink.opacity(0.18)).frame(width: 0.7).padding(.vertical, 6)
+            reading(.swell, "SWELL", day.map { "\($0.swell)" }, "", BodyStyle.swell)
+            Rectangle().fill(DS.Palette.ink.opacity(0.18)).frame(width: 0.7).padding(.vertical, 6)
+            reading(.anchor, "ANCHOR", day?.anchor.map { "\($0)" }, "", BodyStyle.anchor)
+        }
+        .padding(.vertical, 14)
+        .background(DS.Palette.elevated, in: .rect(cornerRadius: 14))
+        .overlay(RoundedRectangle(cornerRadius: 14).strokeBorder(DS.Palette.ink.opacity(0.25), lineWidth: 0.8))
+    }
+
+    private func reading(_ m: BodyMetric, _ label: String, _ value: String?, _ unit: String, _ color: Color) -> some View {
+        let last7 = days.suffix(7).map { m.value($0) ?? 0 }
+        return NavigationLink { LazyView(BodyMetricDetailView(metric: m)) } label: {
+            VStack(spacing: 4) {
+                Text(label).font(DS.Font.mono).tracking(1).foregroundStyle(DS.Palette.inkSoft)
+                HStack(alignment: .firstTextBaseline, spacing: 1) {
+                    Text(value ?? "–").font(.system(size: 34, weight: .regular, design: .serif)).monospacedDigit().foregroundStyle(DS.Palette.ink)
+                    if value != nil && !unit.isEmpty { Text(unit).font(.system(size: 14, design: .serif)).foregroundStyle(DS.Palette.inkSoft) }
+                }
+                .minimumScaleFactor(0.6).lineLimit(1)
+                Trace(values: last7).stroke(color, style: StrokeStyle(lineWidth: 1.6, lineCap: .round, lineJoin: .round))
+                    .frame(width: 64, height: 16)
+            }
+            .frame(maxWidth: .infinity)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(label.capitalized): \(value ?? "no data")\(unit == "%" && value != nil ? " percent" : ""). Opens the full story.")
+    }
+
+    /// A 7-day line, scaled to its own range.
+    private struct Trace: Shape {
+        let values: [Double]
+        func path(in r: CGRect) -> Path {
+            guard values.count > 1 else { return Path() }
+            let lo = values.min() ?? 0, hi = values.max() ?? 1, span = max(1, hi - lo)
+            return Path { p in
+                for (i, v) in values.enumerated() {
+                    let pt = CGPoint(x: r.width * CGFloat(i) / CGFloat(values.count - 1), y: r.height - r.height * CGFloat((v - lo) / span))
+                    if i == 0 { p.move(to: pt) } else { p.addLine(to: pt) }
+                }
+            }
+        }
     }
 
     private var flagBlocks: some View {

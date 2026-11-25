@@ -118,7 +118,7 @@ struct CalendarView: View {
                     .onEnded { _ in pinchStart = nil; Haptics.tap() }
             )
             .premiumBackground(DS.Palette.meeting)
-            .navigationTitle(title)
+            .navigationTitle(PaletteCache.look == .chart ? "Tide chart · " + title : title)
             .keelSettingsButton(help: .calendar)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -594,13 +594,32 @@ struct TimelineGrid: View {
         let dayStart = cal.startOfDay(for: day)
         let x0 = gutter + CGFloat(index) * colWidth + 2
 
+        // Chart Table: tasks are numbered waypoints in time order; free stretches are labelled "open water".
+        let chart = PaletteCache.look == .chart
+        let numbers: [String: Int] = chart
+            ? Dictionary(items.filter(\.isTask).sorted { $0.start < $1.start }.enumerated().map { ($1.id, $0 + 1) }, uniquingKeysWith: { a, _ in a })
+            : [:]
         ForEach(items) { item in
             let laneWidth = (colWidth - 4) / CGFloat(item.lanes)
             let y = CGFloat(item.start.timeIntervalSince(dayStart) / 3600) * hourHeight + 1
             let h = max(26, CGFloat(item.end.timeIntervalSince(item.start) / 3600) * hourHeight - 2)
             itemView(item, height: h, colWidth: colWidth)
+                .environment(\.waypointNumber, numbers[item.id])
                 .frame(width: laneWidth - 2, height: h)
                 .offset(x: x0 + CGFloat(item.lane) * laneWidth, y: y)
+        }
+        if chart && colWidth > 90 {
+            ForEach(OpenWater.gaps(items: items, day: day), id: \.start) { gap in
+                let y = CGFloat(gap.start.timeIntervalSince(dayStart) / 3600) * hourHeight
+                let hrs = gap.duration / 3600
+                Text("open water · \(hrs >= 2 ? "\(Int(hrs)) h" : hrs >= 1 ? "1 h" : "\(Int(gap.duration / 60)) min")")
+                    .font(.system(size: 11, design: .serif).italic())
+                    .foregroundStyle(DS.Palette.inkSoft.opacity(0.8))
+                    .frame(width: colWidth - 8, alignment: .leading)
+                    .offset(x: x0 + 6, y: y + min(CGFloat(hrs) * hourHeight / 2 - 7, 18))
+                    .allowsHitTesting(false)
+                    .accessibilityHidden(true)
+            }
         }
     }
 
@@ -728,20 +747,26 @@ struct EventCard: View {
 struct TaskPill: View {
     @Bindable var task: TaskItem
     let compact: Bool
+    @Environment(\.waypointNumber) private var waypoint
 
     var body: some View {
         HStack(spacing: 5) {
             Button {
                 TaskActions.setDone(task, true)
+                Haptics.success()
             } label: {
-                Image(systemName: "circle")
-                    .scaledFont(size: compact ? 10 : 13, weight: .semibold, maxScale: 1.4)
-                    .foregroundStyle(task.priority == .none ? DS.Palette.accent : task.priority.color)
+                if let n = waypoint, !compact {
+                    WaypointBadge(number: n, isNext: n == 1)          // Chart Table: a numbered waypoint
+                } else {
+                    Image(systemName: "circle")
+                        .scaledFont(size: compact ? 10 : 13, weight: .semibold, maxScale: 1.4)
+                        .foregroundStyle(task.priority == .none ? DS.Palette.accent : task.priority.color)
+                }
             }
             .buttonStyle(.plain)
             .accessibilityLabel("Complete \(task.title)")
             Text(task.title)
-                .scaledFont(size: compact ? 10.5 : 13, weight: .medium, maxScale: 1.4)
+                .scaledFont(size: compact ? 10.5 : 13, weight: waypoint != nil ? .bold : .medium, maxScale: 1.4)
                 .foregroundStyle(DS.Palette.ink)
                 .lineLimit(1)
             Spacer(minLength: 0)
@@ -752,7 +777,26 @@ struct TaskPill: View {
         .padding(.horizontal, compact ? 4 : 8)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .padding(.top, compact ? 4 : 6)
-        .background(DS.Palette.accent.opacity(0.14), in: .rect(cornerRadius: 8))
+        .background(waypoint != nil ? DS.Palette.elevated.opacity(0.9) : DS.Palette.accent.opacity(0.14), in: .rect(cornerRadius: 8))
+        .overlay { if waypoint != nil { RoundedRectangle(cornerRadius: 8).strokeBorder(DS.Palette.ink.opacity(0.45), lineWidth: 1) } }
+    }
+}
+
+/// Free stretches of an hour or more between 8 AM and 8 PM: "open water" on the Tide chart.
+enum OpenWater {
+    struct Gap { let start: Date; let duration: TimeInterval }
+    static func gaps(items: [TimelineItem], day: Date) -> [Gap] {
+        let cal = Calendar.current
+        guard let from = cal.date(bySettingHour: 8, minute: 0, second: 0, of: day),
+              let to = cal.date(bySettingHour: 20, minute: 0, second: 0, of: day) else { return [] }
+        var cursor = cal.isDateInToday(day) ? max(from, Date()) : from
+        var out: [Gap] = []
+        for it in items.sorted(by: { $0.start < $1.start }) where it.end > cursor {
+            if it.start.timeIntervalSince(cursor) >= 3600 && it.start <= to { out.append(Gap(start: cursor, duration: min(it.start, to).timeIntervalSince(cursor))) }
+            cursor = max(cursor, it.end)
+        }
+        if to.timeIntervalSince(cursor) >= 3600 { out.append(Gap(start: cursor, duration: to.timeIntervalSince(cursor))) }
+        return out
     }
 }
 

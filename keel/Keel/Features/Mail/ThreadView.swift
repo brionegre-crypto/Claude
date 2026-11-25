@@ -4,7 +4,8 @@ import SwiftData
 /// Swipe and conversation preferences.
 enum MailSwipe {
     static let threadsKey = "mail.threads", leadingKey = "swipe.leading", trailingKey = "swipe.trailing"
-    static let defaultLeading = "task,snooze,star", defaultTrailing = "archive,trash"
+    // One swipe rule across Keel: swipe right = done (archive), swipe left = later (snooze). Changeable in Settings.
+    static let defaultLeading = "archive,task,star", defaultTrailing = "snooze,trash"
     static let all: [(id: String, label: String, icon: String)] = [
         ("archive", "Archive", "checkmark"), ("trash", "Trash", "trash"), ("task", "Make a Task", "checklist"),
         ("snooze", "Snooze", "clock"), ("star", "Flag", "flag"), ("read", "Read / Unread", "envelope.open"), ("pin", "Pin", "pin"),
