@@ -273,7 +273,7 @@ struct RootView: View {
     @AppStorage("onboarding.done") private var onboarded = false
     @AppStorage(Prefs.appearance) private var appearance = "system"
     @AppStorage("accent") private var accentName = "indigo"
-    @AppStorage(KeelLook.key) private var lookRaw = KeelLook.standard.rawValue
+    @AppStorage(KeelLook.key) private var lookRaw = KeelLook.chart.rawValue      // Chart Table is Keel's own look
     @AppStorage(KeelLook.fontKey) private var fontRaw = KeelFontStyle.system.rawValue
     @State private var appLock = AppLock.shared
     @State private var savePoints = SavePointCenter.shared

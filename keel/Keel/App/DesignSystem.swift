@@ -34,8 +34,11 @@ enum DS {
 
     // MARK: Type — an editorial serif (New York) for display, crisp SF Pro for reading. Dynamic Type everywhere.
     enum Font {
-        static let hero = SwiftUI.Font.system(.largeTitle, design: .serif, weight: .semibold)
-        static let title = SwiftUI.Font.system(.title2, design: .serif, weight: .semibold)
+        // Display type follows the theme (serif for most; heavy sans for Signal Flags). Cached per theme.
+        static var hero: SwiftUI.Font { SwiftUI.Font.system(.largeTitle, design: PaletteCache.look.display, weight: PaletteCache.look.displayWeight) }
+        static var title: SwiftUI.Font { SwiftUI.Font.system(.title2, design: PaletteCache.look.display, weight: PaletteCache.look.displayWeight) }
+        /// A navigator's mono for times, coordinates and counts (Chart Table and Logbook).
+        static let mono = SwiftUI.Font.system(.caption2, design: .monospaced).weight(.medium)
         static let headline = SwiftUI.Font.system(.headline, design: .default, weight: .semibold)
         static let body = SwiftUI.Font.system(.body, design: .default)
         static let caption = SwiftUI.Font.system(.caption, design: .default, weight: .medium)
@@ -122,8 +125,19 @@ struct PremiumSurface: View {
                 }
             }
             .overlay {
-                shape.strokeBorder(LinearGradient(colors: [Color.white.opacity(dark ? 0.12 : 0.95), Color.primary.opacity(dark ? 0.04 : 0.07)],
-                                                  startPoint: .top, endPoint: .bottom), lineWidth: 0.5)
+                switch PaletteCache.look {
+                case .chart, .logbook:          // a printed, inked edge
+                    shape.strokeBorder(DS.Palette.ink.opacity(dark ? 0.22 : 0.16), lineWidth: 0.6)
+                case .helm:                     // brass trim
+                    shape.strokeBorder(Color(red: 0.85, green: 0.71, blue: 0.42).opacity(0.32), lineWidth: 0.8)
+                case .lighthouse:               // a faint amber rim
+                    shape.strokeBorder(Color(red: 1, green: 0.77, blue: 0.33).opacity(0.2), lineWidth: 0.6)
+                case .flags:                    // flat and graphic
+                    EmptyView()
+                default:
+                    shape.strokeBorder(LinearGradient(colors: [Color.white.opacity(dark ? 0.12 : 0.95), Color.primary.opacity(dark ? 0.04 : 0.07)],
+                                                      startPoint: .top, endPoint: .bottom), lineWidth: 0.5)
+                }
             }
     }
 }
@@ -139,10 +153,7 @@ struct PremiumBackdrop: ViewModifier {
                 ZStack {
                     DS.Palette.canvas
                     if EveningCalm.isEvening { Color(red: 1, green: 0.55, blue: 0.2).opacity(0.05) }    // warmer after sunset
-                    EllipticalGradient(colors: [tint.opacity(0.16), tint.opacity(0.05), .clear], center: .top,
-                                       startRadiusFraction: 0, endRadiusFraction: 0.85)
-                        .frame(maxHeight: 560)
-                        .frame(maxHeight: .infinity, alignment: .top)
+                    ThemeBackdrop(tint: tint)
                 }
                 .ignoresSafeArea()
             }
@@ -340,7 +351,8 @@ struct KeelTextSizeModifier: ViewModifier {
             return UIFontMetrics(forTextStyle: style).scaledFont(for: UIFont(descriptor: desc, size: 0))
         }
         let nav = UINavigationBar.appearance()
-        nav.largeTitleTextAttributes = [.font: designed(.largeTitle, .semibold, .serif)]
+        let look = PaletteCache.look
+        nav.largeTitleTextAttributes = [.font: look == .flags ? designed(.largeTitle, .heavy, nil) : designed(.largeTitle, .semibold, .serif)]
         nav.titleTextAttributes = [.font: designed(.headline, .semibold, nil)]
     }
 }
@@ -350,6 +362,7 @@ struct KeelTextSizeModifier: ViewModifier {
 /// Refreshed when the app starts and whenever the accent or theme changes (RootView calls `sync`).
 enum PaletteCache {
     nonisolated(unsafe) private static var key = ""
+    nonisolated(unsafe) private(set) static var look: KeelLook = .chart
     nonisolated(unsafe) private(set) static var accent: Color = Theme.indigo.color
     nonisolated(unsafe) private(set) static var canvas: Color = KeelLook.standard.canvas
     nonisolated(unsafe) private(set) static var elevated: Color = KeelLook.standard.elevated
@@ -357,17 +370,110 @@ enum PaletteCache {
     nonisolated(unsafe) private(set) static var inkSoft: Color = KeelLook.standard.inkSoft
 
     /// Call with the stored accent and theme names; cheap when nothing changed.
-    static func sync(accent a: String, look l: String) {
-        let k = a + "|" + l
+    @MainActor static func sync(accent a: String, look l: String) {
+        // An accent you picked yourself wins; otherwise the theme brings its own (brass, signal blue, amber…).
+        let chosen = UserDefaults.standard.string(forKey: "accent")
+        let k = a + "|" + l + "|" + (chosen ?? "-")
         guard k != key else { return }
         key = k
         let theme = Theme(rawValue: a) ?? .indigo
-        let look = KeelLook(rawValue: l) ?? .standard
-        accent = theme.color
+        let look = KeelLook(rawValue: l) ?? .chart
+        let changedLook = look != Self.look
+        Self.look = look
+        accent = (chosen == nil ? look.accent : nil) ?? theme.color
+        if changedLook { KeelChrome.apply() }
         canvas = look.canvas; elevated = look.elevated; ink = look.ink; inkSoft = look.inkSoft
     }
 
-    static func syncFromSettings() {
+    @MainActor static func syncFromSettings() {
         sync(accent: UserDefaults.standard.string(forKey: "accent") ?? "", look: UserDefaults.standard.string(forKey: KeelLook.key) ?? "")
+    }
+}
+
+
+// MARK: - Theme backdrops (all static: drawn once per screen size, nothing animates while you scroll)
+
+struct ThemeBackdrop: View {
+    let tint: Color
+    @Environment(\.colorScheme) private var scheme
+
+    var body: some View {
+        let dark = scheme == .dark
+        switch PaletteCache.look {
+        case .chart:
+            // Chart paper: depth contours, a faint grid and the screen's colour as a soft wash.
+            ZStack {
+                ChartContours(ink: DS.Palette.ink.opacity(dark ? 0.10 : 0.075), grid: DS.Palette.inkSoft.opacity(dark ? 0.08 : 0.06))
+                EllipticalGradient(colors: [tint.opacity(0.08), .clear], center: .top, startRadiusFraction: 0, endRadiusFraction: 0.8)
+                    .frame(maxHeight: 520).frame(maxHeight: .infinity, alignment: .top)
+            }
+        case .helm:
+            RadialGradient(colors: [Color(red: 0.12, green: 0.23, blue: 0.36), .clear], center: .top, startRadius: 0, endRadius: 560)
+        case .tide:
+            SeaBand()
+        case .lighthouse:
+            // A still, warm beam from the top corner.
+            AngularGradient(colors: [.clear, Color(red: 1, green: 0.77, blue: 0.33).opacity(0.16), .clear], center: .topLeading,
+                            startAngle: .degrees(20), endAngle: .degrees(70))
+                .blur(radius: 18)
+        case .panel:
+            LinearGradient(colors: [Color.white.opacity(dark ? 0.04 : 0.5), .clear], startPoint: .top, endPoint: .center)
+        case .logbook, .flags:
+            Color.clear
+        default:
+            EllipticalGradient(colors: [tint.opacity(0.16), tint.opacity(0.05), .clear], center: .top, startRadiusFraction: 0, endRadiusFraction: 0.85)
+                .frame(maxHeight: 560).frame(maxHeight: .infinity, alignment: .top)
+        }
+    }
+}
+
+/// Nautical-chart depth lines and a light grid.
+struct ChartContours: View {
+    let ink: Color
+    let grid: Color
+    var body: some View {
+        Canvas { ctx, size in
+            let w = size.width, h = size.height
+            for (i, base) in [0.16, 0.2, 0.24, 0.62, 0.66, 0.7].enumerated() {
+                var p = Path()
+                let y = h * base
+                p.move(to: CGPoint(x: -20, y: y))
+                p.addCurve(to: CGPoint(x: w + 20, y: y - 18 + CGFloat(i % 3) * 6),
+                           control1: CGPoint(x: w * 0.3, y: y - 46), control2: CGPoint(x: w * 0.6, y: y + 44))
+                ctx.stroke(p, with: .color(ink), lineWidth: 0.8)
+            }
+            var g = Path()
+            stride(from: 0.0, through: Double(w), by: Double(w) / 3).forEach { x in g.move(to: CGPoint(x: x, y: 0)); g.addLine(to: CGPoint(x: x, y: h)) }
+            stride(from: 0.0, through: Double(h), by: Double(h) / 5).forEach { y in g.move(to: CGPoint(x: 0, y: y)); g.addLine(to: CGPoint(x: w, y: y)) }
+            ctx.stroke(g, with: .color(grid), lineWidth: 0.5)
+        }
+        .drawingGroup()
+        .allowsHitTesting(false)
+    }
+}
+
+/// Living Tide: the sky at this time of day over a gentle swell at the top of the page.
+struct SeaBand: View {
+    var body: some View {
+        let sky = HorizonSky.colors(at: Date())
+        VStack(spacing: 0) {
+            ZStack(alignment: .bottom) {
+                LinearGradient(colors: sky, startPoint: .top, endPoint: .bottom)
+                Canvas { ctx, size in
+                    for (i, (y, a)) in [(0.55, 0.22), (0.7, 0.35), (0.84, 1.0)].enumerated() {
+                        var p = Path()
+                        let base = size.height * y
+                        p.move(to: CGPoint(x: 0, y: base))
+                        p.addCurve(to: CGPoint(x: size.width, y: base + CGFloat(i) * 2),
+                                   control1: CGPoint(x: size.width * 0.33, y: base - 18), control2: CGPoint(x: size.width * 0.66, y: base + 18))
+                        p.addLine(to: CGPoint(x: size.width, y: size.height)); p.addLine(to: CGPoint(x: 0, y: size.height)); p.closeSubpath()
+                        ctx.fill(p, with: .color(i == 2 ? DS.Palette.canvas : .white.opacity(a)))
+                    }
+                }
+            }
+            .frame(height: 230)
+            Spacer(minLength: 0)
+        }
+        .allowsHitTesting(false)
     }
 }

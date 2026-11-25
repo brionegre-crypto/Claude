@@ -67,6 +67,14 @@ struct HorizonHeader: View {
     @Environment(\.colorScheme) private var scheme
 
     var body: some View {
+        switch PaletteCache.look {
+        case .chart: ChartCourseHeader(title: title, detail: detail, compact: compact)
+        case .logbook: LogbookHeader(title: title, detail: detail, compact: compact)
+        default: skyHeader
+        }
+    }
+
+    private var skyHeader: some View {
         TimelineView(.periodic(from: .now, by: reduceMotion ? 3_600 : 60)) { ctx in
             let now = ctx.date
             ZStack(alignment: .bottomLeading) {
@@ -394,5 +402,75 @@ struct VoyageView: View {
         case .water: Image(systemName: "water.waves").font(.caption2).foregroundStyle(Color(red: 0.2, green: 0.5, blue: 0.75)).background(DS.Palette.elevated)
         case .anchor: Text("⚓").font(.callout).background(DS.Palette.elevated)
         }
+    }
+}
+
+
+// MARK: - Chart Table header: today's passage plotted on chart paper
+
+struct ChartCourseHeader: View {
+    let title: String
+    var detail: String?
+    var compact = false
+
+    var body: some View {
+        TimelineView(.periodic(from: .now, by: 300)) { ctx in
+            let now = ctx.date
+            let cal = Calendar.current
+            let start = cal.date(bySettingHour: 7, minute: 0, second: 0, of: now) ?? now
+            let end = cal.date(bySettingHour: 23, minute: 0, second: 0, of: now) ?? now
+            let sailed = min(1, max(0, now.timeIntervalSince(start) / end.timeIntervalSince(start)))
+            ZStack(alignment: .topLeading) {
+                RoundedRectangle(cornerRadius: 20, style: .continuous).fill(DS.Palette.elevated)
+                ChartContours(ink: DS.Palette.ink.opacity(0.08), grid: DS.Palette.inkSoft.opacity(0.07))
+                    .clipShape(.rect(cornerRadius: 20, style: .continuous))
+                // The day's course: dotted ahead, solid chart-red behind you, a fix where you are now.
+                GeometryReader { g in
+                    let w = g.size.width, h = g.size.height
+                    let course = Path { p in
+                        p.move(to: CGPoint(x: 16, y: h * 0.8))
+                        p.addCurve(to: CGPoint(x: w - 16, y: h * 0.42), control1: CGPoint(x: w * 0.35, y: h * 0.35), control2: CGPoint(x: w * 0.6, y: h * 0.95))
+                    }
+                    course.stroke(DS.Palette.ink.opacity(0.35), style: StrokeStyle(lineWidth: 1.2, dash: [2, 4]))
+                    course.trimmedPath(from: 0, to: sailed).stroke(Color(red: 0.75, green: 0.22, blue: 0.17), style: StrokeStyle(lineWidth: 2.2, lineCap: .round))
+                    if let fix = course.trimmedPath(from: 0, to: max(0.001, sailed)).currentPoint {
+                        Circle().fill(Color(red: 0.75, green: 0.22, blue: 0.17)).frame(width: 9, height: 9).position(fix)
+                        Circle().stroke(Color(red: 0.75, green: 0.22, blue: 0.17).opacity(0.35), lineWidth: 1).frame(width: 20, height: 20).position(fix)
+                    }
+                }
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(now.formatted(.dateTime.weekday(.abbreviated).day().month(.abbreviated)).uppercased() + " · " + now.formatted(date: .omitted, time: .shortened)
+                         + " · DAY \(cal.ordinality(of: .day, in: .year, for: now) ?? 0)")
+                        .font(DS.Font.mono).tracking(0.8).foregroundStyle(DS.Palette.inkSoft)
+                    Text(title).font(.system(compact ? .title2 : .title, design: .serif, weight: .semibold)).foregroundStyle(DS.Palette.ink)
+                    Text(detail ?? HorizonSky.daylightLeft(now)).font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
+                }
+                .padding(.horizontal, 16).padding(.top, 12)
+            }
+            .overlay(RoundedRectangle(cornerRadius: 20, style: .continuous).strokeBorder(DS.Palette.ink.opacity(0.16), lineWidth: 0.6))
+        }
+        .frame(height: compact ? 112 : 150)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(title). \(detail ?? HorizonSky.daylightLeft())")
+    }
+}
+
+// MARK: - Logbook header
+
+struct LogbookHeader: View {
+    let title: String
+    var detail: String?
+    var compact = false
+    var body: some View {
+        let now = Date()
+        VStack(alignment: .leading, spacing: 6) {
+            Text("SHIP'S LOG · NO. \(Calendar.current.ordinality(of: .day, in: .year, for: now) ?? 0)").font(DS.Font.mono).tracking(1).foregroundStyle(DS.Palette.inkSoft)
+            Text(title).font(.system(compact ? .title2 : .largeTitle, design: .serif, weight: .regular)).foregroundStyle(DS.Palette.ink)
+            Rectangle().fill(DS.Palette.ink).frame(height: 1)
+            Text(detail ?? HorizonSky.daylightLeft(now)).font(.system(.subheadline, design: .serif).italic()).foregroundStyle(DS.Palette.inkSoft)
+        }
+        .padding(.horizontal, 6).padding(.vertical, 8)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .accessibilityElement(children: .combine)
     }
 }
