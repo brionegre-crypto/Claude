@@ -261,6 +261,7 @@
 		CEC80500FF3B6A8635117D83 /* TripsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A5B1E7A1E0D45F5C7E98F71 /* TripsView.swift */; };
 		CF1624DA4B3A66E317B98BEF /* CalendarService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2158A7A622BDADF4767554DB /* CalendarService.swift */; };
 		CFB06C4BB93A7209D1021291 /* ImportFormats.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24FA7F49E3F696600E033D41 /* ImportFormats.swift */; };
+		D081CF13AE79ECA0DFAB4965 /* BodyCondition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 379DF14BF778DA587C704511 /* BodyCondition.swift */; };
 		D1962FC6878BD5983284532A /* BodyDashboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92F183D63F239DC7FF9366C4 /* BodyDashboard.swift */; };
 		D352A41621EC9BF3CC4B7EE8 /* BoldFeatures.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29986E68E18049507C3EC77B /* BoldFeatures.swift */; };
 		D374DC661187592AF9ED2214 /* DayExtras.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EAD0E01B16F8ABB400D110D /* DayExtras.swift */; };
@@ -469,6 +470,7 @@
 		362A8D5E981B31791026F4BF /* RoutineAlarms.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoutineAlarms.swift; sourceTree = "<group>"; };
 		367E3B118319EFDECE14242C /* MailProviders.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MailProviders.swift; sourceTree = "<group>"; };
 		3688009374794C7994754097 /* MailSearch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MailSearch.swift; sourceTree = "<group>"; };
+		379DF14BF778DA587C704511 /* BodyCondition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BodyCondition.swift; sourceTree = "<group>"; };
 		3872D74D620C536806E02BB9 /* TemplatesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemplatesView.swift; sourceTree = "<group>"; };
 		39FC0EA4DA979A316468F4CB /* FocusMusic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FocusMusic.swift; sourceTree = "<group>"; };
 		3A2EF21C72E2388EC55FDE88 /* KeelWidgetsMac.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = KeelWidgetsMac.entitlements; sourceTree = "<group>"; };
@@ -1405,6 +1407,7 @@
 				3BB795CAD8C6942F63916DA7 /* BioAge.swift */,
 				65AA02984F8EDA731B3FC59E /* BodyAnatomy.swift */,
 				22370257B68140D21EAB77E8 /* BodyCoach.swift */,
+				379DF14BF778DA587C704511 /* BodyCondition.swift */,
 				92F183D63F239DC7FF9366C4 /* BodyDashboard.swift */,
 				FAB039BA792EE8C976BBB434 /* BodyDials.swift */,
 				223D4C65864A0F4B11C94C9A /* BodyElite.swift */,
@@ -1846,6 +1849,7 @@
 				CDA516AC319494E5718E2CEA /* BoardView.swift in Sources */,
 				9620DDBCA2454C686EDBCE2E /* BodyAnatomy.swift in Sources */,
 				142B2A77818F98E65153BAFC /* BodyCoach.swift in Sources */,
+				D081CF13AE79ECA0DFAB4965 /* BodyCondition.swift in Sources */,
 				D1962FC6878BD5983284532A /* BodyDashboard.swift in Sources */,
 				8448DAD646B9DD15E3703022 /* BodyDials.swift in Sources */,
 				BED5E1A2422CBD9EF3E7B2A7 /* BodyElite.swift in Sources */,
