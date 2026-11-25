@@ -81,7 +81,8 @@ struct CalendarView: View {
                                  onTapTask: { openTask = $0 },
                                  onTapTaskGroup: { taskGroup = TaskGroupRef(tasks: $0) },
                                  onTapDay: { anchor = $0; modeRaw = CalendarMode.day.rawValue },
-                                 onMoveEvent: moveEvent, onMoveTask: moveTask)
+                                 onMoveEvent: moveEvent, onMoveTask: moveTask,
+                                 onTapOpenWater: { planning = true })
                 case .month:
                     ScrollView {
                         MonthGrid(days: visibleDays, month: anchor, selected: anchor, events: events, tasks: showTasks ? tasks : []) { day in
@@ -420,6 +421,8 @@ struct TimelineGrid: View {
     var onTapDay: (Date) -> Void
     var onMoveEvent: (EKEvent, Date) -> Void
     var onMoveTask: (TaskItem, Date) -> Void
+    /// Tide chart: tapping today's "open water" opens the day planner, where you drag tasks onto free hours.
+    var onTapOpenWater: (() -> Void)? = nil
 
     @State private var allDayExpanded = false
     @State private var scrolledFor: Date?
@@ -612,13 +615,22 @@ struct TimelineGrid: View {
             ForEach(OpenWater.gaps(items: items, day: day), id: \.start) { gap in
                 let y = CGFloat(gap.start.timeIntervalSince(dayStart) / 3600) * hourHeight
                 let hrs = gap.duration / 3600
-                Text("open water · \(hrs >= 2 ? "\(Int(hrs)) h" : hrs >= 1 ? "1 h" : "\(Int(gap.duration / 60)) min")")
-                    .font(.system(size: 11, design: .serif).italic())
+                let canPlan = cal.isDateInToday(day) && onTapOpenWater != nil
+                let label = "open water · \(hrs >= 2 ? "\(Int(hrs)) h" : hrs >= 1 ? "1 h" : "\(Int(gap.duration / 60)) min")"
+                Button { onTapOpenWater?(); Haptics.tap() } label: {
+                    HStack(spacing: 4) {
+                        Text(label).font(.system(size: 11, design: .serif).italic())
+                        if canPlan { Text("· drop a task here ›").font(.system(size: 10, weight: .medium)).foregroundStyle(Nautical.chartRed.opacity(0.8)) }
+                    }
                     .foregroundStyle(DS.Palette.inkSoft.opacity(0.8))
                     .frame(width: colWidth - 8, alignment: .leading)
-                    .offset(x: x0 + 6, y: y + min(CGFloat(hrs) * hourHeight / 2 - 7, 18))
-                    .allowsHitTesting(false)
-                    .accessibilityHidden(true)
+                    .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+                .disabled(!canPlan)
+                .offset(x: x0 + 6, y: y + min(CGFloat(hrs) * hourHeight / 2 - 7, 18))
+                .accessibilityLabel(label)
+                .accessibilityHint(canPlan ? "Opens the day planner to drag a task into this time" : "")
             }
         }
     }

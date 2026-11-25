@@ -208,6 +208,7 @@ private struct ChartHome: View {
     @Environment(\.modelContext) private var ctx
     @State private var showEvents = false
     @State private var showAll = false
+    @State private var planning = false
 
     var body: some View {
         let points = day.waypoints
@@ -218,6 +219,14 @@ private struct ChartHome: View {
             Text("Today's passage").font(.system(.largeTitle, design: .serif, weight: .semibold)).foregroundStyle(DS.Palette.ink)
             WaypointChart(day: day).frame(height: 128).padding(.vertical, 4)
             if !day.events.isEmpty { eventsLine }
+            // Drag your waypoints onto free hours (the day planner); they land on your calendar.
+            Button { planning = true; Haptics.tap() } label: {
+                Label("Plan the day: drag tasks onto open water", systemImage: "calendar.day.timeline.left")
+                    .font(.footnote.weight(.medium)).foregroundStyle(Nautical.chartRed)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
+            .buttonStyle(.plain)
+            .padding(.top, 2)
             HStack {
                 ThemedSectionHeader(title: "Waypoints · \(points.count) left · \(day.doneToday) done")
                 Spacer()
@@ -253,6 +262,7 @@ private struct ChartHome: View {
         }
         .padding(.top, 2)
         .sheet(isPresented: $showEvents) { HomeEventsSheet(events: day.events) }
+        .sheet(isPresented: $planning) { DayPlannerView() }
     }
 
     /// Meetings stay out of the way: one quiet line, tap for the list.
@@ -306,7 +316,7 @@ private struct WaypointRow: View {
                     Text(task.title).font(.body).foregroundStyle(DS.Palette.ink).lineLimit(1)
                         .strikethrough(ticked)
                     Spacer()
-                    Text(time.map { $0.formatted(.dateTime.hour(.twoDigits(amPM: .omitted)).minute(.twoDigits)) } ?? "~\(ADHDCoach.minutes(task))m")
+                    Text(time.map { Nautical.clock($0) } ?? "~\(ADHDCoach.minutes(task))m")
                         .font(DS.Font.mono).foregroundStyle(DS.Palette.inkSoft)
                 }
                 .contentShape(Rectangle())
@@ -376,12 +386,19 @@ private struct WaypointChart: View {
             let points = Array(day.waypoints.prefix(7))
             // Timed tasks sit at their time; untimed ones are spaced evenly through what's left of the day.
             let untimedCount = max(1, points.filter { $0.time == nil }.count)
+            // Numbers always run in order along the course: each stop sits at its time (or evenly spaced if untimed),
+            // but never before the one ahead of it in the list.
             let fractions: [Double] = {
-                var k = 0
+                var k = 0, last = sailed
+                let room = max(0.05, 0.98 - sailed), step = min(0.08, room / Double(max(1, points.count)))
                 return points.map { e in
-                    if let t = e.time { return min(0.995, max(sailed + 0.01, t.timeIntervalSince(start) / span)) }
-                    k += 1
-                    return sailed + (0.98 - sailed) * Double(k) / Double(untimedCount + 1)
+                    var f: Double
+                    if let t = e.time { f = t.timeIntervalSince(start) / span } else {
+                        k += 1; f = sailed + room * Double(k) / Double(untimedCount + 1)
+                    }
+                    f = min(0.99, max(f, last + step))
+                    last = f
+                    return f
                 }
             }()
             // One measurement of the curve for every marker (each trimmedPath measured the whole curve again,

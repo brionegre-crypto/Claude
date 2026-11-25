@@ -60,8 +60,8 @@ struct GalleyCard: View {
             .buttonStyle(.plain)
             ForEach(today.suffix(5)) { e in
                 HStack {
-                    Text(e.date.formatted(.dateTime.hour(.twoDigits(amPM: .omitted)).minute(.twoDigits)))
-                        .font(DS.Font.mono).foregroundStyle(DS.Palette.inkSoft).frame(width: 44, alignment: .leading)
+                    Text(Nautical.clock(e.date))
+                        .font(DS.Font.mono).foregroundStyle(DS.Palette.inkSoft).frame(width: 64, alignment: .leading)
                     Text(e.name).lineLimit(1).foregroundStyle(DS.Palette.ink)
                     Spacer()
                     Text("\(Int(e.facts.calories ?? 0))").font(DS.Font.mono).foregroundStyle(DS.Palette.inkSoft)

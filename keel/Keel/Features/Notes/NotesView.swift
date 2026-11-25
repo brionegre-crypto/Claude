@@ -223,6 +223,7 @@ struct NotesView: View {
                 Button("Cancel", role: .cancel) { newFolderFor = nil }
             }
             .navigationTitle("Notes")
+            .chartInlineTitle()
             .keelSettingsButton(help: .notes)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {

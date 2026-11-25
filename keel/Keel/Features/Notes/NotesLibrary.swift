@@ -107,7 +107,7 @@ struct ShelfCard: View {
 
     private func stamp(_ d: Date) -> String {
         let cal = Calendar.current
-        if cal.isDateInToday(d) { return "TODAY " + d.formatted(.dateTime.hour(.twoDigits(amPM: .omitted)).minute(.twoDigits)) }
+        if cal.isDateInToday(d) { return "TODAY " + Nautical.clock(d).uppercased() }
         if cal.isDateInYesterday(d) { return "YESTERDAY" }
         return d.formatted(.dateTime.weekday(.abbreviated).day()).uppercased()
     }

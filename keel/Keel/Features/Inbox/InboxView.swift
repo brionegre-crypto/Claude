@@ -244,6 +244,7 @@ struct InboxView: View {
                 }
             }
             .navigationTitle(mailbox.rawValue)
+            .chartInlineTitle()
             .keelSettingsButton(help: .inbox)
             .searchable(text: $search, prompt: "Search mail, or try from: has:attachment")
             .searchSuggestions {

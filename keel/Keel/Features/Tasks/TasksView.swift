@@ -247,6 +247,7 @@ struct TasksView: View {
                 }
             }
             .navigationTitle(screenTitle)
+            .chartInlineTitle()
             .keelSettingsButton(help: .tasks)
             .inspector(isPresented: Binding(get: { inspected != nil && Self.sideBySide && sizeClass == .regular }, set: { if !$0 { inspected = nil } })) {
                 if let t = inspected {

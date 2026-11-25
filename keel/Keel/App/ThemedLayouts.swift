@@ -47,10 +47,11 @@ enum ThemedLayout {
 struct ThemedTimeColumn: View {
     let date: Date?
     var body: some View {
-        Text(date.map { $0.formatted(.dateTime.hour(.twoDigits(amPM: .omitted)).minute(.twoDigits)) } ?? "—")
+        Text(date.map { Nautical.clock($0) } ?? "—")
             .font(DS.Font.mono)
             .foregroundStyle(date == nil ? DS.Palette.inkSoft.opacity(0.5) : DS.Palette.inkSoft)
-            .frame(width: 44, alignment: .leading)
+            .frame(width: 58, alignment: .leading)
+            .lineLimit(1).minimumScaleFactor(0.8)
             .accessibilityHidden(date == nil)
     }
 }
@@ -254,5 +255,17 @@ struct BearingStrip: View {
         guard !cal.isDate(d, inSameDayAs: day) else { return }
         withAnimation(.snappy(duration: 0.18)) { day = d }
         UISelectionFeedbackGenerator().selectionChanged()
+    }
+}
+
+extension Nautical {
+    /// A list time in the phone's own 12- or 24-hour style ("2:00 PM" or "14:00").
+    static func clock(_ d: Date) -> String { d.formatted(date: .omitted, time: .shortened) }
+}
+
+extension View {
+    /// Chart Table draws its own big serif title on these screens, so the system's large title would say it twice.
+    @ViewBuilder func chartInlineTitle() -> some View {
+        if PaletteCache.look == .chart { navigationBarTitleDisplayMode(.inline) } else { self }
     }
 }

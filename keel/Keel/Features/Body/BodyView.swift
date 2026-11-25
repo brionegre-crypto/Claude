@@ -214,6 +214,10 @@ struct BodyView: View {
         if live {
             BodyDayStrip(days: engine.days, selected: $selectedDay)
             BodyDials(day: t, days: engine.days)          // Tide · Swell · Anchor, one big dial at a time
+            if PaletteCache.look == .chart && isToday {
+                ConditionWaypoint(text: BodyEngine.advice(t?.tide))                       // today's one most useful move
+                GalleyCard { withAnimation(DS.spring) { page.wrappedValue = .food } }     // food, right under your readings
+            }
             if engine.loading { ProgressView("Reading Apple Health…").font(DS.Font.caption).frame(maxWidth: .infinity) }
             if t?.calibrating ?? true {
                 Label("Learning your normal: Tide gets accurate after about 5 nights with your Apple Watch.", systemImage: "hourglass")
@@ -248,6 +252,7 @@ struct BodyView: View {
             BodyGoalsCard(days: engine.days)
         } else if BodyHealth.available {
             connectCard
+            if PaletteCache.look == .chart && isToday { GalleyCard { withAnimation(DS.spring) { page.wrappedValue = .food } } }
         }
         EnergyCheckCard()
         if !live { DrinksCard() }
