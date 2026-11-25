@@ -5,11 +5,12 @@ import Charts
 
 /// The pages along the top of Body.
 enum BodyPage: String, CaseIterable, Identifiable {
-    case today = "Today", sleep = "Sleep", effort = "Effort", health = "Health", habits = "Habits"
+    case today = "Today", food = "Food", sleep = "Sleep", effort = "Effort", health = "Health", habits = "Habits"
     var id: String { rawValue }
     var icon: String {
         switch self {
         case .today: "sun.horizon.fill"
+        case .food: "fork.knife"
         case .sleep: "moon.zzz.fill"
         case .effort: "wind"
         case .health: "heart.text.square.fill"

@@ -142,7 +142,9 @@ struct BodyMapView: View {
                     figure(back: false, load: load, sore: sore, ready: ready)
                     figure(back: true, load: load, sore: sore, ready: ready)
                 }
-                .frame(height: 340)
+                .frame(height: 420)
+                .padding(.vertical, 8)
+                .background { PremiumSurface(tint: BodyStyle.swell) }
                 legend
                 if let c = BodyMapData.caution() {
                     Label(c, systemImage: "exclamationmark.triangle.fill").font(DS.Font.caption).foregroundStyle(.orange)
@@ -182,44 +184,11 @@ struct BodyMapView: View {
     // MARK: Figure
 
     private func figure(back: Bool, load: [String: Double], sore: [String: SoreSpot], ready: BodyRecovery.Readiness) -> some View {
-        VStack(spacing: 4) {
-            GeometryReader { g in
-                let scale = min(g.size.width / 100, g.size.height / 182)
-                let xOff = (g.size.width - 100 * scale) / 2
-                let regions = BodyRegions.all.filter { $0.back == back }
-                ZStack(alignment: .topLeading) {
-                    // The silhouette: every region slightly enlarged, so the figure reads as one body.
-                    ForEach(regions) { r in
-                        let rect = place(r.rect.insetBy(dx: -1.6, dy: -1.6), scale, xOff)
-                        RoundedRectangle(cornerRadius: min(rect.width, rect.height) * max(r.round, 0.45), style: .continuous)
-                            .fill(Color.primary.opacity(0.07))
-                            .frame(width: rect.width, height: rect.height)
-                            .position(x: rect.midX, y: rect.midY)
-                    }
-                    ForEach(regions) { r in
-                        let rect = place(r.rect.insetBy(dx: 0.6, dy: 0.6), scale, xOff)
-                        let shape = RoundedRectangle(cornerRadius: min(rect.width, rect.height) * max(r.round, 0.45), style: .continuous)
-                        let s = sore[r.id]
-                        let worked = load[r.id] ?? 0
-                        shape
-                            .fill(LinearGradient(colors: [color(ready.region[r.id] ?? 1, worked: worked), color(ready.region[r.id] ?? 1, worked: worked).opacity(0.65)],
-                                                 startPoint: .top, endPoint: .bottom))
-                            .overlay {
-                                if let s {
-                                    shape.strokeBorder(s.level >= 3 ? Color.red : .orange, style: StrokeStyle(lineWidth: s.level >= 3 ? 2.2 : 1.6, dash: s.level >= 3 ? [] : [3, 2]))
-                                }
-                            }
-                            .overlay { if picked?.id == r.id { shape.strokeBorder(DS.Palette.accent, lineWidth: 2) } }
-                            .frame(width: rect.width, height: rect.height)
-                            .position(x: rect.midX, y: rect.midY)
-                            .onTapGesture { picked = r; Haptics.tap() }
-                            .accessibilityElement()
-                            .accessibilityLabel(r.name + ", \(Int(((ready.region[r.id] ?? 1) * 100).rounded()))% ready" + (s.map { ", \(level($0.level))" } ?? ""))
-                            .accessibilityAddTraits(.isButton)
-                    }
-                }
-            }
-            Text(back ? "Back" : "Front").font(.caption2.weight(.semibold)).foregroundStyle(DS.Palette.inkSoft)
+        VStack(spacing: 6) {
+            AnatomyFigure(back: back, fill: { id in color(ready.region[id] ?? 1, worked: load[id] ?? 0) },
+                          sore: sore, selected: picked?.id, onTap: { picked = $0 })
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            Text(back ? "BACK" : "FRONT").font(.caption2.weight(.semibold)).tracking(1.2).foregroundStyle(DS.Palette.inkSoft)
         }
     }
 
@@ -229,18 +198,18 @@ struct BodyMapView: View {
 
     /// Green when fresh, yellow while recovering, orange when worked hard. Untouched parts stay quiet.
     private func color(_ ready: Double, worked: Double) -> Color {
-        if ready >= 0.95 && worked < 0.05 { return Color.primary.opacity(0.10) }
-        if ready >= 0.8 { return .green.opacity(0.55) }
-        if ready >= 0.5 { return .yellow.opacity(0.75) }
-        return .orange.opacity(0.85)
+        if ready >= 0.95 && worked < 0.05 { return Color(red: 0.62, green: 0.66, blue: 0.74).opacity(0.55) }   // rested, untouched
+        if ready >= 0.8 { return Color(red: 0.20, green: 0.74, blue: 0.52) }       // fresh
+        if ready >= 0.5 { return Color(red: 0.98, green: 0.76, blue: 0.24) }       // recovering
+        return Color(red: 0.97, green: 0.45, blue: 0.22)                           // worked hard
     }
     private func level(_ l: Int) -> String { l >= 3 ? "pain" : l == 2 ? "sore" : "a bit sore" }
 
     private var legend: some View {
         HStack(spacing: 12) {
-            dot(.green.opacity(0.55), "Fresh")
-            dot(.yellow.opacity(0.75), "Recovering")
-            dot(.orange.opacity(0.85), "Worked hard")
+            dot(Color(red: 0.20, green: 0.74, blue: 0.52), "Fresh")
+            dot(Color(red: 0.98, green: 0.76, blue: 0.24), "Recovering")
+            dot(Color(red: 0.97, green: 0.45, blue: 0.22), "Worked hard")
             HStack(spacing: 4) { RoundedRectangle(cornerRadius: 3).strokeBorder(.red, lineWidth: 2).frame(width: 12, height: 12); Text("Pain") }
         }
         .font(.caption2)

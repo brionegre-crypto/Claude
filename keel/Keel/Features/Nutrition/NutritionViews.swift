@@ -291,7 +291,7 @@ struct NutritionView: View {
     }
 }
 
-private struct BigAction: View {
+struct BigAction: View {
     let title: String
     let icon: String
     let color: Color
@@ -311,7 +311,7 @@ private struct BigAction: View {
     }
 }
 
-private struct GoalBar: View {
+struct GoalBar: View {
     let title: String
     let value: Double
     let goal: Double
@@ -333,7 +333,7 @@ private struct GoalBar: View {
     }
 }
 
-private struct EntryRow: View {
+struct EntryRow: View {
     let e: FoodEntry
     var body: some View {
         HStack(spacing: 10) {

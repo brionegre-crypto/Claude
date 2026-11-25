@@ -6,8 +6,13 @@ import SwiftData
 struct BodyMedsCard: View {
     @Environment(\.modelContext) private var ctx
     @Query(sort: \Medication.createdAt) private var meds: [Medication]
-    @Query(sort: \MedDose.takenAt, order: .reverse) private var doses: [MedDose]
+    @Query(BodyMedsCard.recent) private var doses: [MedDose]          // last 30 days, not every dose ever logged
     @State private var adding = false
+
+    static var recent: FetchDescriptor<MedDose> {
+        let since = Calendar.current.date(byAdding: .day, value: -30, to: Date()) ?? Date()
+        return FetchDescriptor<MedDose>(predicate: #Predicate { $0.takenAt >= since }, sortBy: [SortDescriptor(\.takenAt, order: .reverse)])
+    }
     @State private var logging = false
     @State private var tick = 0
 
@@ -85,38 +90,50 @@ struct HealthTilesSection: View {
     let extras: HealthExtras
     private struct Tile: Identifiable { let id: String; let title: String; let icon: String; let color: Color; let dest: () -> AnyView }
 
+    // Every Body screen gets its own tile (they used to hide inside combined screens with tabs).
     private var tiles: [Tile] {
         [
-            Tile(id: "strength", title: "Training", icon: "dumbbell.fill", color: BodyStyle.swell, dest: { BodyHubs.training }),
-            Tile(id: "bioage", title: "Biological age", icon: "hourglass.circle.fill", color: .purple, dest: { AnyView(BioAgeView()) }),
-            Tile(id: "records", title: "Medical", icon: "cross.vial.fill", color: .red, dest: { BodyHubs.medical }),
-            Tile(id: "biology", title: "Biology", icon: "drop.fill", color: .red, dest: { AnyView(BiologyView()) }),
-            Tile(id: "ask", title: "Ask about my body", icon: "sparkles", color: .indigo, dest: { AnyView(AskBodyView()) }),
-            Tile(id: "metrics", title: "Health metrics", icon: "heart.text.clipboard", color: .red, dest: { BodyHubs.metrics }),
-            Tile(id: "guides", title: "Metric guides", icon: "book.pages", color: .indigo, dest: { AnyView(MetricGuideIndex()) }),
+            Tile(id: "food", title: "Food today", icon: "fork.knife.circle.fill", color: .green, dest: { AnyView(NutritionView()) }),
+            Tile(id: "log", title: "Log a meal", icon: "fork.knife", color: .green, dest: { AnyView(LogFoodView()) }),
+            Tile(id: "scan", title: "Scan food", icon: "barcode.viewfinder", color: .green, dest: { AnyView(FoodScanView()) }),
+            Tile(id: "diets", title: "Your diets", icon: "list.bullet.clipboard.fill", color: .green, dest: { AnyView(MyDietsView()) }),
+            Tile(id: "strength", title: "Strength", icon: "dumbbell.fill", color: BodyStyle.swell, dest: { AnyView(StrengthHomeView()) }),
             Tile(id: "map", title: "Recovery map", icon: "figure.stand", color: BodyStyle.swell, dest: { AnyView(BodyMapView()) }),
-            Tile(id: "meds", title: "Medications", icon: "pills.fill", color: .mint, dest: { BodyHubs.meds }),
+            Tile(id: "cardio", title: "Cardio & load", icon: "heart.circle.fill", color: .pink, dest: { AnyView(CardioChartsView()) }),
+            Tile(id: "workouts", title: "Workouts", icon: "figure.run", color: BodyStyle.swell, dest: { AnyView(WorkoutHistoryView()) }),
+            Tile(id: "metrics", title: "All Health metrics", icon: "heart.text.clipboard", color: .red, dest: { AnyView(HealthMetricsView()) }),
+            Tile(id: "trends", title: "90-day trends", icon: "chart.xyaxis.line", color: .purple, dest: { AnyView(BodyTrendsView()) }),
+            Tile(id: "guides", title: "Metric guides", icon: "book.pages", color: .indigo, dest: { AnyView(MetricGuideIndex()) }),
+            Tile(id: "bioage", title: "Biological age", icon: "hourglass.circle.fill", color: .purple, dest: { AnyView(BioAgeView()) }),
+            Tile(id: "meds", title: "Medications", icon: "pills.fill", color: .mint, dest: { AnyView(MedsView()) }),
+            Tile(id: "prn", title: "As-needed meds", icon: "cross.case.fill", color: .mint, dest: { AnyView(PRNView()) }),
+            Tile(id: "records", title: "Health records", icon: "cross.vial.fill", color: .red, dest: { AnyView(HealthRecordsView()) }),
+            Tile(id: "biology", title: "Biology", icon: "drop.fill", color: .red, dest: { AnyView(BiologyView()) }),
+            Tile(id: "card", title: "Medical card", icon: "staroflife.fill", color: .red, dest: { AnyView(MedicalCardView()) }),
+            Tile(id: "doctor", title: "For my doctor", icon: "stethoscope", color: .blue, dest: { AnyView(DoctorSummaryView()) }),
             Tile(id: "symptoms", title: "Symptoms", icon: "thermometer.medium", color: .pink, dest: { AnyView(SymptomsView()) }),
             Tile(id: "bp", title: "Blood pressure", icon: "heart.text.square.fill", color: .red, dest: { AnyView(BloodPressureView()) }),
             Tile(id: "weight", title: "Weight", icon: "scalemass.fill", color: .blue, dest: { AnyView(WeightView(x: extras)) }),
-            Tile(id: "food", title: "Food", icon: "fork.knife.circle.fill", color: .green, dest: { BodyHubs.food }),
+            Tile(id: "fasting", title: "Fasting", icon: "timer", color: .orange, dest: { AnyView(FastingView()) }),
             Tile(id: "sleepSounds", title: "Sleep sounds", icon: "moon.zzz.fill", color: BodyStyle.anchor, dest: { AnyView(SleepSoundsView()) }),
             Tile(id: "breathe", title: "Breathe", icon: "wind", color: .teal, dest: { AnyView(BreatheView()) }),
+            Tile(id: "ask", title: "Ask about my body", icon: "sparkles", color: .indigo, dest: { AnyView(AskBodyView()) }),
         ]
     }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text("Health").font(DS.Font.headline)
+            Text("Everything in Body").font(DS.Font.headline)
             LazyVGrid(columns: [GridItem(.adaptive(minimum: 104), spacing: 10)], spacing: 10) {
                 ForEach(tiles) { t in
-                    NavigationLink { LazyView(t.dest()) } label: {
+                    NavigationLink { LazyView(t.dest().premiumBackground(t.color)) } label: {
                         VStack(spacing: 6) {
                             Image(systemName: t.icon).font(.title3).foregroundStyle(t.color)
                             Text(t.title).font(.caption.weight(.medium)).multilineTextAlignment(.center).lineLimit(2).foregroundStyle(DS.Palette.ink)
                         }
-                        .frame(maxWidth: .infinity, minHeight: 74)
-                        .background(DS.Palette.elevated, in: .rect(cornerRadius: 14, style: .continuous))
+                        .padding(.horizontal, 4)
+                        .frame(maxWidth: .infinity, minHeight: 78)
+                        .background { PremiumSurface(radius: 16) }
                     }
                     .buttonStyle(.plain)
                 }

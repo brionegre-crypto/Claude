@@ -124,20 +124,21 @@ struct BodyView: View {
                     Group {
                         switch page.wrappedValue {
                         case .today: todayPage
+                        case .food: BodyFoodPage()
                         case .sleep: sleepPage
                         case .effort: effortPage
                         case .health: healthPage
                         case .habits: habitsPage
                         }
                     }
-                    .transition(.opacity.combined(with: .offset(y: 6)))
+                    .transition(.opacity)            // a quick fade (sliding a whole page of cards cost frames)
                 } header: {
                     BodyPageBar(page: page)
                 }
             }
             .padding(.horizontal, DS.Space.m)
             .padding(.bottom, DS.Space.l)
-            .animation(.smooth(duration: 0.28), value: pageRaw)
+            .animation(.easeOut(duration: 0.16), value: pageRaw)
         }
         .premiumBackground(BodyStyle.tide)
         .navigationTitle("Body")
@@ -244,6 +245,7 @@ struct BodyView: View {
         }
         EnergyCheckCard()
         if !live { DrinksCard() }
+        HealthTilesSection(extras: extras)          // every Body tool, one tap away
     }
 
     @ViewBuilder private var sleepPage: some View {

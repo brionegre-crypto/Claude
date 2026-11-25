@@ -409,20 +409,11 @@ enum HubCatalog {
         return ToolHubs.specs.compactMap { ToolHubs.hubTool($0, from: originals) } + originals
     }()
 
-    /// Every group as Compass shows it: the everyday toolkit (KitCatalog) added to the matching group, and tools
-    /// that do the same job combined into one (Ask Keel, Journal, Reviews, Timers, Calm toolkit, Food, Medications).
+    /// Every group as Compass shows it: each tool on its own card (the combined versions were undone; they still
+    /// open from search and links).
     static let groups: [HubGroup] = {
-        let originals = baseGroups.flatMap(\.tools) + KitCatalog.all.values.flatMap { $0 }
-        let merged = ToolHubs.memberIds
-        return baseGroups.map { g in
-            var tools = g.tools + KitCatalog.tools(for: g.id)
-            for spec in ToolHubs.specs where spec.group == g.id {
-                guard let hub = ToolHubs.hubTool(spec, from: originals) else { continue }
-                let at = tools.firstIndex { t in spec.members.contains { $0.id == t.id } } ?? tools.count
-                tools.insert(hub, at: at)
-            }
-            tools.removeAll { merged.contains($0.id) || ToolHubs.inBodyTab.contains($0.id) }
-            return HubGroup(id: g.id, title: g.title, subtitle: g.subtitle, icon: g.icon, color: g.color, tools: tools)
+        baseGroups.map { g in
+            HubGroup(id: g.id, title: g.title, subtitle: g.subtitle, icon: g.icon, color: g.color, tools: g.tools + KitCatalog.tools(for: g.id))
         }
     }()
 
