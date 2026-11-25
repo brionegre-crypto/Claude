@@ -72,9 +72,10 @@ struct KeelApp: App {
         .commands { KeelCommands() }          // menu bar on Mac (and keyboard shortcuts on iPad)
         .onChange(of: scenePhase) { _, phase in
             if phase == .active {
+                // Only what you'd notice is missing runs at once; everything else waits until Keel has drawn and
+                // then runs one small job at a time, each at most every few minutes (coming back to Keel used to run
+                // fifteen jobs on the screen's thread at once: the stutter on every return).
                 WidgetActions.applyPending(ctx: container.mainContext)   // taps on interactive widgets
-                SyncEngine.shared.scheduleReminderSync()                 // ticks made in Reminders while Keel was away
-                TaskTimeZone.adjustIfMoved(ctx: container.mainContext)   // travelled: date-only tasks stay on their day
                 ShutdownManager.shared.restoreAfterRelaunch(ctx: container.mainContext)   // focus that ran while Keel was closed
                 if Throttle.due("routine.alarms", every: 3600) { RoutineAlarms.refresh() }
                 #if !targetEnvironment(macCatalyst)
@@ -84,18 +85,20 @@ struct KeelApp: App {
                     Task { if await TaskAlarms.authorize() { TaskAlerts.rescheduleAll((try? container.mainContext.fetch(FetchDescriptor<TaskItem>(predicate: #Predicate { !$0.isDone }))) ?? []) } }
                 }
                 #endif
-                Task { await HealthHabits.check(ctx: container.mainContext) }
-                Task { await KeelFocusFilter.syncCurrent() }
                 #if !targetEnvironment(macCatalyst)
                 FocusActivityMusic.installLockScreenControls()           // Lock Screen music buttons during focus
                 #endif
-                LinkSaver.importShared(into: container.mainContext)     // links saved from Safari's share sheet
-                SafariHighlights.importQueued(ctx: container.mainContext) // highlights saved with the Safari extension
-                LinkSaver.importSharedNotes(into: container.mainContext) // text/images shared from Notes, Messages, Photos…
-                Task { await ReadStatus.refresh() }                      // who opened your tracked emails (every 5 min at most)
-                MorningRollover.runIfDue(ctx: container.mainContext)     // opt-in: yesterday's leftovers move to today
-                DayWrap.reschedule(ctx: container.mainContext)           // tonight's wrap-up, up to date
                 MeetingAutopilot.syncActivity()                         // Lock Screen timer for a meeting in progress
+                // Shared items and the morning rollover: right after the first frame, they change what's on screen.
+                Task { @MainActor in
+                    try? await Task.sleep(for: .milliseconds(600))
+                    guard UIApplication.shared.applicationState == .active else { return }
+                    let ctx = container.mainContext
+                    LinkSaver.importShared(into: ctx)                   // links saved from Safari's share sheet
+                    SafariHighlights.importQueued(ctx: ctx)             // highlights saved with the Safari extension
+                    LinkSaver.importSharedNotes(into: ctx)              // text/images shared from Notes, Messages, Photos…
+                    MorningRollover.runIfDue(ctx: ctx)                  // opt-in: yesterday's leftovers move to today
+                }
                 // Housekeeping waits until Keel has settled, so opening it is instant, and each job runs only occasionally.
                 Task { @MainActor in
                     try? await Task.sleep(for: .seconds(2.5))
@@ -103,6 +106,12 @@ struct KeelApp: App {
                     let ctx = container.mainContext
                     // One small job at a time with a pause between, so a tap or a swipe never waits behind them.
                     func breathe() async { try? await Task.sleep(for: .milliseconds(250)) }
+                    if Throttle.due("fg.reminders", every: 120) { SyncEngine.shared.scheduleReminderSync() }   // ticks made in Reminders while away
+                    await breathe(); if Throttle.due("fg.timezone", every: 900) { TaskTimeZone.adjustIfMoved(ctx: ctx) }   // travelled: date-only tasks stay on their day
+                    await breathe(); if Throttle.due("fg.daywrap", every: 900) { DayWrap.reschedule(ctx: ctx) }            // tonight's wrap-up, up to date
+                    await breathe(); if Throttle.due("fg.habits", every: 900) { await HealthHabits.check(ctx: ctx) }
+                    await breathe(); await KeelFocusFilter.syncCurrent()
+                    await breathe(); await ReadStatus.refresh()          // who opened your tracked emails (every 5 min at most)
                     if Throttle.due("dedupe", every: 600) { TaskDedupe.run(ctx: ctx) }
                     if Throttle.due("meeting.recover", every: 1800) { await MeetingRecovery.runIfNeeded(ctx: ctx) }   // a meeting cut off mid-recording
                     await breathe(); WeeklyDigest.makeIfDue(ctx: ctx)

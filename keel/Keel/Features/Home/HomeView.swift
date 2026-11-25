@@ -14,6 +14,9 @@ struct HomeDay {
 
     let now: Date
     let entries: [Entry]          // timed things today, in order (events + timed tasks), then untimed tasks
+    let waypoints: [Entry]        // today's tasks only: timed in time order, then untimed by priority (Chart Table's passage)
+    let events: [Entry]           // today's remaining events, kept quiet on the chart
+    let doneTasks: [TaskItem]     // ticked off today, most recent first
     let next: Entry?
     let nextTask: TaskItem?
     let tide: Int?, swell: Int, anchor: Int?
@@ -21,9 +24,10 @@ struct HomeDay {
     let target: ClosedRange<Int>
     let doneToday: Int
 
-    @MainActor init(tasks: [TaskItem], doneToday: Int, now: Date = Date()) {
+    @MainActor init(tasks: [TaskItem], doneToday: Int, done: [TaskItem] = [], now: Date = Date()) {
         self.now = now
         self.doneToday = doneToday
+        self.doneTasks = done
         let cal = Calendar.current
         let end = cal.date(byAdding: .day, value: 1, to: cal.startOfDay(for: now)) ?? now
         let events = CalendarService.shared.todaysEvents().filter { !$0.isAllDay && $0.endDate > now && CalendarRoles.shows($0) }
@@ -34,6 +38,8 @@ struct HomeDay {
         let untimed = todays.filter { !$0.hasDueTime }.sorted { $0.priority.rawValue > $1.priority.rawValue }
             .map { Entry(id: "t:" + $0.id.uuidString, time: nil, title: $0.title, task: $0, place: nil) }
         entries = timed + untimed
+        waypoints = timed.filter { $0.task != nil } + untimed
+        events = timed.filter { $0.task == nil }
         let energy = EnergyLevel(rawValue: UserDefaults.standard.integer(forKey: "energy")) ?? .medium
         nextTask = ADHDCoach.nextThing(tasks: tasks.filter { !$0.isDone }, energy: energy)
         next = timed.first { ($0.time ?? now) > now.addingTimeInterval(-15 * 60) } ?? nextTask.map { Entry(id: "t:" + $0.id.uuidString, time: $0.dueDate, title: $0.title, task: $0, place: nil) }
@@ -92,7 +98,9 @@ struct HomeView: View {
     private func rebuild() {
         let cal = Calendar.current
         let doneToday = recentlyDone.filter { $0.completedAt.map { cal.isDateInToday($0) } ?? false }.count
-        day = HomeDay(tasks: open, doneToday: doneToday)
+        let done = recentlyDone.filter { $0.completedAt.map { cal.isDateInToday($0) } ?? false }
+            .sorted { ($0.completedAt ?? .distantPast) > ($1.completedAt ?? .distantPast) }
+        day = HomeDay(tasks: open, doneToday: doneToday, done: Array(done.prefix(5)))
     }
 
     var body: some View {
@@ -197,30 +205,153 @@ private struct HomeEntryLink<Content: View>: View {
 
 private struct ChartHome: View {
     let day: HomeDay
+    @Environment(\.modelContext) private var ctx
+    @State private var showEvents = false
+    @State private var showAll = false
+
     var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
+        let points = day.waypoints
+        let shown = showAll ? points : Array(points.prefix(7))
+        VStack(alignment: .leading, spacing: 6) {
             Text(day.now.formatted(.dateTime.weekday(.abbreviated).day().month(.abbreviated)).uppercased() + " · " + day.time(day.now) + " · DAY \(day.dayOfYear)")
                 .font(DS.Font.mono).tracking(0.8).foregroundStyle(DS.Palette.inkSoft)
             Text("Today's passage").font(.system(.largeTitle, design: .serif, weight: .semibold)).foregroundStyle(DS.Palette.ink)
-            HomeCourseChart(day: day).frame(height: 170).padding(.vertical, 6)
+            WaypointChart(day: day).frame(height: 128).padding(.vertical, 4)
+            if !day.events.isEmpty { eventsLine }
+            HStack {
+                ThemedSectionHeader(title: "Waypoints · \(points.count) left · \(day.doneToday) done")
+                Spacer()
+            }
+            .padding(.top, 10)
             VStack(spacing: 0) {
-                ForEach(day.entries.prefix(8)) { e in
-                    HomeEntryLink(entry: e) {
-                        HStack {
-                            Text(e.title).font(.body).foregroundStyle(DS.Palette.ink).lineLimit(1)
-                            Spacer()
-                            Text(e.time.map { day.time($0) } ?? "—").font(DS.Font.mono).foregroundStyle(DS.Palette.inkSoft)
-                        }
-                        .padding(.vertical, 12)
-                        .overlay(alignment: .bottom) { DashLine().stroke(DS.Palette.inkSoft.opacity(0.5), style: StrokeStyle(lineWidth: 0.7, dash: [3, 3])).frame(height: 1) }
-                    }
+                ForEach(Array(shown.enumerated()), id: \.element.id) { i, e in
+                    if let t = e.task { WaypointRow(number: i + 1, isNext: i == 0, task: t, time: e.time) }
                 }
-                if day.entries.isEmpty {
-                    Text("Open water: nothing charted for today.").font(.system(.body, design: .serif).italic()).foregroundStyle(DS.Palette.inkSoft).padding(.vertical, 12)
+                if points.count > 7 {
+                    Button { withAnimation(DS.spring) { showAll.toggle() } } label: {
+                        Text(showAll ? "Show fewer" : "\(points.count - 7) more waypoints").font(DS.Font.mono).foregroundStyle(DS.Palette.inkSoft)
+                            .frame(maxWidth: .infinity, alignment: .leading).padding(.vertical, 10)
+                    }
+                    .buttonStyle(.plain)
+                }
+                ForEach(day.doneTasks.prefix(3)) { t in
+                    HStack(spacing: 12) {
+                        Button { _ = TaskActions.setDone(t, false); try? ctx.save(); Haptics.tap() } label: {
+                            Image(systemName: "checkmark").font(.system(size: 11, weight: .bold)).foregroundStyle(DS.Palette.canvas)
+                                .frame(width: 24, height: 24).background(DS.Palette.ink.opacity(0.55), in: Circle())
+                        }
+                        .buttonStyle(.plain).accessibilityLabel("Mark \(t.title) not done")
+                        Text(t.title).strikethrough().foregroundStyle(DS.Palette.inkSoft).lineLimit(1)
+                        Spacer()
+                    }
+                    .padding(.vertical, 10)
+                }
+                if points.isEmpty && day.doneTasks.isEmpty {
+                    Text("Open water: no tasks charted for today.").font(.system(.body, design: .serif).italic()).foregroundStyle(DS.Palette.inkSoft).padding(.vertical, 12)
                 }
             }
         }
-        .padding(.top, 8)
+        .padding(.top, 2)
+        .sheet(isPresented: $showEvents) { HomeEventsSheet(events: day.events) }
+    }
+
+    /// Meetings stay out of the way: one quiet line, tap for the list.
+    private var eventsLine: some View {
+        Button { showEvents = true } label: {
+            HStack(spacing: 6) {
+                Image(systemName: "anchor").font(.caption)
+                Text("\(day.events.count) \(day.events.count == 1 ? "event" : "events") · next")
+                if let n = day.events.first {
+                    Text("\(n.title) \(day.time(n.time))").fontWeight(.semibold).foregroundStyle(DS.Palette.ink).lineLimit(1)
+                }
+                Spacer(minLength: 0)
+                Image(systemName: "chevron.right").font(.caption2)
+            }
+            .font(.footnote).foregroundStyle(DS.Palette.inkSoft)
+            .padding(.horizontal, 12).padding(.vertical, 9)
+            .background(DS.Palette.elevated.opacity(0.5), in: .rect(cornerRadius: 10))
+            .overlay(RoundedRectangle(cornerRadius: 10).strokeBorder(DS.Palette.ink.opacity(0.15), lineWidth: 0.7))
+        }
+        .buttonStyle(.plain)
+    }
+}
+
+/// One task on the passage: its waypoint number (red when it's next), tap the number to tick it off,
+/// tap the row to open it, hold for Start focus / Later / Done.
+private struct WaypointRow: View {
+    let number: Int
+    let isNext: Bool
+    let task: TaskItem
+    let time: Date?
+    @Environment(\.modelContext) private var ctx
+    @State private var ticked = false
+
+    var body: some View {
+        HStack(spacing: 12) {
+            Button(action: tick) {
+                ZStack {
+                    Circle().fill(isNext ? Nautical.chartRed : DS.Palette.ink)
+                    if ticked { Image(systemName: "checkmark").font(.system(size: 11, weight: .bold)) }
+                    else { Text("\(number)").font(.system(size: 11, weight: .semibold, design: .monospaced)) }
+                }
+                .foregroundStyle(DS.Palette.canvas)
+                .frame(width: 24, height: 24)
+                .scaleEffect(ticked ? 1.15 : 1)
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel("Mark \(task.title) done")
+            NavigationLink { LazyView(TaskDetailView(task: task)) } label: {
+                HStack {
+                    Text(task.title).font(.body).foregroundStyle(DS.Palette.ink).lineLimit(1)
+                        .strikethrough(ticked)
+                    Spacer()
+                    Text(time.map { $0.formatted(.dateTime.hour(.twoDigits(amPM: .omitted)).minute(.twoDigits)) } ?? "~\(ADHDCoach.minutes(task))m")
+                        .font(DS.Font.mono).foregroundStyle(DS.Palette.inkSoft)
+                }
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+        }
+        .padding(.vertical, 11)
+        .overlay(alignment: .bottom) { DashLine().stroke(DS.Palette.inkSoft.opacity(0.45), style: StrokeStyle(lineWidth: 0.7, dash: [3, 3])).frame(height: 1) }
+        .contextMenu {
+            Button { NowTimer.start(task, ctx: ctx); try? ctx.save(); AppRouter.shared.showFocus = true } label: { Label("Start focus", systemImage: "play.fill") }
+            Button(action: tick) { Label("Done", systemImage: "checkmark.circle") }
+            Button {
+                TaskActions.reschedule(task, to: Calendar.current.date(byAdding: .day, value: 1, to: Date()) ?? Date()); try? ctx.save()
+            } label: { Label("Later (tomorrow)", systemImage: "arrow.uturn.right") }
+        }
+    }
+
+    private func tick() {
+        withAnimation(.spring(response: 0.25, dampingFraction: 0.6)) { ticked = true }
+        Haptics.tap()
+        Task { @MainActor in
+            try? await Task.sleep(for: .milliseconds(350))      // let the fix mark land before the row leaves
+            _ = TaskActions.setDone(task, true); try? ctx.save()
+        }
+    }
+}
+
+private struct HomeEventsSheet: View {
+    let events: [HomeDay.Entry]
+    @Environment(\.dismiss) private var dismiss
+    var body: some View {
+        NavigationStack {
+            List(events) { e in
+                HStack {
+                    Text(e.time?.formatted(date: .omitted, time: .shortened) ?? "").font(DS.Font.mono).foregroundStyle(DS.Palette.inkSoft).frame(width: 70, alignment: .leading)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(e.title)
+                        if let p = e.place, !p.isEmpty { Text(p).font(.caption).foregroundStyle(DS.Palette.inkSoft) }
+                    }
+                }
+            }
+            .navigationTitle("Today's events")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar { ToolbarItem(placement: .confirmationAction) { Button("Done") { dismiss() } } }
+        }
+        .presentationDetents([.medium, .large])
     }
 }
 
@@ -228,8 +359,9 @@ private struct DashLine: Shape {
     func path(in r: CGRect) -> Path { Path { $0.move(to: CGPoint(x: 0, y: r.midY)); $0.addLine(to: CGPoint(x: r.maxX, y: r.midY)) } }
 }
 
-/// Today as a plotted course: stops for what's timed, a red line for how far you've sailed, a fix where you are.
-private struct HomeCourseChart: View {
+/// Today as a plotted course with only your tasks on it: numbered waypoints matching the list (red = next),
+/// a red line for how far through the day you are. No labels, so it never gets cluttered.
+private struct WaypointChart: View {
     let day: HomeDay
     var body: some View {
         GeometryReader { g in
@@ -237,34 +369,44 @@ private struct HomeCourseChart: View {
             let cal = Calendar.current
             let start = cal.date(bySettingHour: 6, minute: 0, second: 0, of: day.now) ?? day.now
             let end = cal.date(bySettingHour: 23, minute: 0, second: 0, of: day.now) ?? day.now
-            let span = end.timeIntervalSince(start)
+            let span = max(1, end.timeIntervalSince(start))
             let course = Path { p in
-                p.move(to: CGPoint(x: 10, y: h * 0.82))
-                p.addCurve(to: CGPoint(x: w * 0.55, y: h * 0.45), control1: CGPoint(x: w * 0.2, y: h * 0.2), control2: CGPoint(x: w * 0.38, y: h * 0.95))
-                p.addCurve(to: CGPoint(x: w - 10, y: h * 0.18), control1: CGPoint(x: w * 0.72, y: h * 0.1), control2: CGPoint(x: w * 0.85, y: h * 0.35))
+                p.move(to: CGPoint(x: 10, y: h * 0.85))
+                p.addCurve(to: CGPoint(x: w * 0.55, y: h * 0.5), control1: CGPoint(x: w * 0.2, y: h * 0.15), control2: CGPoint(x: w * 0.38, y: h * 0.95))
+                p.addCurve(to: CGPoint(x: w - 14, y: h * 0.18), control1: CGPoint(x: w * 0.72, y: h * 0.1), control2: CGPoint(x: w * 0.85, y: h * 0.3))
             }
-            let sailed = min(1, max(0.001, day.now.timeIntervalSince(start) / span))
-            let red = Color(red: 0.75, green: 0.22, blue: 0.17)
-            ZStack(alignment: .topLeading) {
-                course.stroke(DS.Palette.ink.opacity(0.5), style: StrokeStyle(lineWidth: 1.4, dash: [2, 4]))
-                course.trimmedPath(from: 0, to: sailed).stroke(red, style: StrokeStyle(lineWidth: 3, lineCap: .round))
-                ForEach(Array(day.entries.filter { $0.time != nil }.prefix(5).enumerated()), id: \.offset) { i, e in
-                    let f = min(0.999, max(0.001, (e.time ?? day.now).timeIntervalSince(start) / span))
-                    if let p = course.trimmedPath(from: 0, to: f).currentPoint {
-                        Circle().fill(DS.Palette.ink).frame(width: 9, height: 9).position(p)
-                        Text(e.title).font(.system(size: 11, design: .serif)).foregroundStyle(DS.Palette.ink).lineLimit(1)
-                            .frame(maxWidth: 110, alignment: .leading)
-                            .position(x: min(w - 55, p.x + 58), y: p.y + (i.isMultiple(of: 2) ? -14 : 14))
-                    }
+            let sailed = min(0.999, max(0.001, day.now.timeIntervalSince(start) / span))
+            let points = Array(day.waypoints.prefix(7))
+            // Timed tasks sit at their time; untimed ones are spaced evenly through what's left of the day.
+            let untimedCount = max(1, points.filter { $0.time == nil }.count)
+            let fractions: [Double] = {
+                var k = 0
+                return points.map { e in
+                    if let t = e.time { return min(0.995, max(sailed + 0.01, t.timeIntervalSince(start) / span)) }
+                    k += 1
+                    return sailed + (0.98 - sailed) * Double(k) / Double(untimedCount + 1)
                 }
+            }()
+            ZStack(alignment: .topLeading) {
+                course.stroke(DS.Palette.ink.opacity(0.45), style: StrokeStyle(lineWidth: 1.4, dash: [2, 4]))
+                course.trimmedPath(from: 0, to: sailed).stroke(Nautical.chartRed, style: StrokeStyle(lineWidth: 3, lineCap: .round))
                 if let fix = course.trimmedPath(from: 0, to: sailed).currentPoint {
-                    Circle().fill(red).frame(width: 13, height: 13).position(fix)
-                    Circle().stroke(red.opacity(0.35), lineWidth: 1).frame(width: 28, height: 28).position(fix)
+                    Circle().fill(Nautical.chartRed).frame(width: 12, height: 12).position(fix)
+                    Circle().stroke(Nautical.chartRed.opacity(0.35), lineWidth: 1).frame(width: 26, height: 26).position(fix)
+                }
+                ForEach(Array(Array(points.enumerated()).reversed()), id: \.element.id) { i, _ in
+                    if let p = course.trimmedPath(from: 0, to: fractions[i]).currentPoint {
+                        Text("\(i + 1)").font(.system(size: 10, weight: .semibold, design: .monospaced)).foregroundStyle(DS.Palette.canvas)
+                            .frame(width: 20, height: 20)
+                            .background(i == 0 ? Nautical.chartRed : DS.Palette.ink, in: Circle())
+                            .position(p)
+                    }
                 }
             }
         }
+        .drawingGroup()
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel("Today's course: \(day.entries.filter { $0.time != nil }.count) timed stops")
+        .accessibilityLabel("Today's course: \(day.waypoints.count) tasks charted")
     }
 }
 
