@@ -278,7 +278,7 @@ struct InboxView: View {
                             Text("All accounts").tag(String?.none)
                             ForEach(accounts) { a in Text("\(a.provider.displayName) · \(a.address)").tag(Optional(a.id)) }
                         }
-                    } label: { Image(systemName: "sidebar.left") }
+                    } label: { Image(systemName: "tray.2") }      // not a second sidebar icon next to the system's own
                     .accessibilityLabel("Mailboxes and accounts")
                 }
                 ToolbarItem(placement: .topBarTrailing) {

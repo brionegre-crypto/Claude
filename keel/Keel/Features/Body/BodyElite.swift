@@ -11,6 +11,7 @@ import Charts
 struct StressNowCard: View {
     let rhr: Double?
     let hrvNormal: Double?
+    @ScaledMetric(relativeTo: .largeTitle) private var big: CGFloat = 40
     @State private var score: Double?
     @State private var at: Date?
     @State private var moving = false
@@ -24,7 +25,7 @@ struct StressNowCard: View {
             }
             if let s = score {
                 HStack(alignment: .firstTextBaseline, spacing: 6) {
-                    Text(String(format: "%.1f", s)).font(.system(size: 40, weight: .light)).monospacedDigit()
+                    Text(String(format: "%.1f", s)).font(.system(size: big, weight: .light)).monospacedDigit()
                     Text("of 3 · \(word(s))").font(.subheadline.weight(.medium)).foregroundStyle(color)
                 }
                 GeometryReader { g in
@@ -35,6 +36,7 @@ struct StressNowCard: View {
                     }
                 }
                 .frame(height: 14)
+                .accessibilityHidden(true)
                 Text(moving ? "You've been moving, so some of this is effort, not stress." :
                         s >= 1.5 ? "Your body is revved up. Two minutes of slow breathing brings it down." : "Nicely settled.")
                     .font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
@@ -219,7 +221,8 @@ struct PaceOfAgingCard: View {
             Label("Pace of Aging", systemImage: "speedometer").font(DS.Font.headline).foregroundStyle(.purple)
             if let pace = Self.pace(h) {
                 HStack(alignment: .firstTextBaseline, spacing: 6) {
-                    Text(String(format: "%.1f×", pace)).font(.system(size: 40, weight: .light)).monospacedDigit()
+                    Text(String(format: "%.1f×", pace)).font(.system(size: 40, weight: .light, design: .default)).monospacedDigit()
+                        .dynamicTypeSize(...DynamicTypeSize.accessibility3)
                     Text(pace < 0.95 ? "slower than the calendar" : pace > 1.05 ? "faster than the calendar" : "in step with the calendar")
                         .font(.subheadline.weight(.medium)).foregroundStyle(pace < 0.95 ? DS.Palette.calm : pace > 1.05 ? .orange : DS.Palette.inkSoft)
                 }
@@ -228,6 +231,7 @@ struct PaceOfAgingCard: View {
                 }
                 .chartXAxis(.hidden)
                 .frame(height: 90)
+                .accessibilityLabel("Biological age over \(min(26, h.count)) weeks, from \(String(format: "%.1f", h.suffix(26).first?.bioAge ?? 0)) to \(String(format: "%.1f", h.last?.bioAge ?? 0)) years")
                 Text("Sleep, fitness (VO₂ max), resting heart rate and HRV move it most. Weeks of better habits slow it down.")
                     .font(.caption2).foregroundStyle(DS.Palette.inkSoft)
             } else {
@@ -319,6 +323,8 @@ struct MuscleRadarCard: View {
                 }
             }
             .frame(height: 220)
+            .accessibilityElement()
+            .accessibilityLabel("Muscle balance: " + zip(Self.groups.map(\.0), values).map { "\($0.0) \(Int(($0.1 * 100).rounded()))%" }.joined(separator: ", "))
             let low = zip(Self.groups.map(\.0), values).filter { $0.1 < 0.1 }.map(\.0)
             Text(low.isEmpty ? "Nicely balanced over the last few days." : "Not trained lately: \(low.joined(separator: ", ")).")
                 .font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
@@ -362,6 +368,7 @@ struct TrainingPlanView: View {
             }
         }
         .navigationTitle("Training plan")
+        .premiumBackground()
     }
 
     private func make() async {
@@ -497,6 +504,7 @@ struct JournalImpactView: View {
             } header: { Text("Effect on next morning's Tide") } footer: { Text("A pattern from your own data, not proof of cause.") }
         }
         .navigationTitle("What moves your Tide")
+        .premiumBackground()
     }
 }
 
@@ -508,7 +516,7 @@ struct NetEnergyCard: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Label("Net energy", systemImage: "flame.fill").font(DS.Font.headline).foregroundStyle(.orange)
+            Label("Net energy", systemImage: "flame.fill").font(DS.Font.headline).foregroundStyle(DS.Palette.warmth)
             if let b = burned {
                 let net = eaten - b
                 HStack(spacing: 0) {
@@ -592,13 +600,13 @@ struct TellKeelFoodBox: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 10) {
-                Image(systemName: "bubble.left.and.text.bubble.right.fill").foregroundStyle(.green)
+                Image(systemName: "bubble.left.and.text.bubble.right.fill").foregroundStyle(DS.Palette.calm)
                 TextField("Tell Keel what you ate…", text: $text, axis: .vertical)
                     .lineLimit(1...3)
                     .submitLabel(.send)
                     .onSubmit { Task { await log() } }
                 if working { ProgressView() } else if !text.isEmpty {
-                    Button { Task { await log() } } label: { Image(systemName: "arrow.up.circle.fill").font(.title2) }.tint(.green)
+                    Button { Task { await log() } } label: { Image(systemName: "arrow.up.circle.fill").font(.title2) }.tint(DS.Palette.calm)
                 }
             }
             if let done { Label(done, systemImage: "checkmark.circle.fill").font(.caption).foregroundStyle(DS.Palette.calm) }

@@ -616,7 +616,9 @@ struct SettingsButton: ViewModifier {
                     .accessibilityLabel("Help with \(help.title)")
                 }
             }
-            ToolbarItem(placement: .topBarTrailing) {
+            // Mac: Settings lives in the sidebar, and one more toolbar button pushed the others into a "…" overflow
+            // that covered the search field.
+            if !ProcessInfo.processInfo.isMacCatalystApp { ToolbarItem(placement: .topBarTrailing) {
                 Button { AppRouter.shared.showSettings = true } label: {
                     Image(systemName: "gearshape")
                         .overlay(alignment: .topTrailing) {
@@ -624,7 +626,7 @@ struct SettingsButton: ViewModifier {
                         }
                 }
                 .accessibilityLabel(account.isSignedIn ? "Settings" : "Settings. Sign in to sync your devices")
-            }
+            } }
         }
         .fullScreenCover(isPresented: $showTour) { WelcomeTour() }
         .sheet(isPresented: $showHelp) {

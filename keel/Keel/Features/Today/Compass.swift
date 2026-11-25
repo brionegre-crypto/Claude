@@ -27,6 +27,7 @@ struct HubView: View {
                 if search.isEmpty {
                     header
                     forRightNow
+                    mostUsedRow                                   // the tools you open most, first
                     if !recent.isEmpty { recentRow }
                     ForEach(groups.filter { !Custom.compassHidden.contains($0.id) }) { g in groupView(g) }
                     footer
@@ -110,6 +111,32 @@ struct HubView: View {
         }
         .id(stateRaw)
         .transition(.opacity.combined(with: .move(edge: .trailing)))
+    }
+
+    @ViewBuilder private var mostUsedRow: some View {
+        let counts = UserDefaults.standard.dictionary(forKey: "hub.counts") as? [String: Int] ?? [:]
+        let top = counts.filter { $0.value >= 3 }.sorted { $0.value > $1.value }.prefix(6).compactMap { tool($0.key) }
+        if top.count >= 2 {
+            VStack(alignment: .leading, spacing: DS.Space.s) {
+                Text("Your most used").font(DS.Font.caption.weight(.semibold)).foregroundStyle(DS.Palette.inkSoft).textCase(.uppercase)
+                    .padding(.horizontal)
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 8) {
+                        ForEach(top) { t in
+                            NavigationLink { LazyView(t.dest()) } label: {
+                                Label(t.title, systemImage: t.icon).font(DS.Font.caption.weight(.semibold))
+                                    .padding(.horizontal, 12).padding(.vertical, 8)
+                                    .background { PremiumSurface(tint: color(of: t.id), radius: 18) }
+                                    .foregroundStyle(color(of: t.id))
+                            }
+                            .buttonStyle(PressStyle()).hoverEffect(.lift)
+                            .simultaneousGesture(TapGesture().onEnded { remember(t.id) })
+                        }
+                    }
+                    .padding(.horizontal)
+                }
+            }
+        }
     }
 
     private var recentRow: some View {
@@ -225,6 +252,9 @@ struct HubView: View {
     // MARK: Data
 
     private func remember(_ id: String) {
+        var counts = UserDefaults.standard.dictionary(forKey: "hub.counts") as? [String: Int] ?? [:]
+        counts[id, default: 0] += 1
+        UserDefaults.standard.set(counts, forKey: "hub.counts")
         var r = recent.filter { $0 != id }
         r.insert(id, at: 0)
         recent = Array(r.prefix(6))

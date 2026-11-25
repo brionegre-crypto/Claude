@@ -9,6 +9,8 @@ struct BodyDials: View {
     let day: BodyDay?
     let days: [BodyDay]
     @State private var page = 0
+    @ScaledMetric(relativeTo: .largeTitle) private var number: CGFloat = 58      // grows with your text size
+    @ScaledMetric(relativeTo: .largeTitle) private var ring: CGFloat = 190
 
     var body: some View {
         let target = BodyMath.swellTarget(day?.tide)
@@ -22,7 +24,7 @@ struct BodyDials: View {
                      word: anchorWord(day), sub: "Sleep").tag(2)
             }
             .tabViewStyle(.page(indexDisplayMode: .never))
-            .frame(height: 300)
+            .frame(height: min(ring, 260) + 110)
             HStack(spacing: 18) {
                 chip("Tide", day?.tide.map { "\($0)%" }, BodyStyle.tide, 0)
                 chip("Swell", day.map { "\($0.swell)" }, BodyStyle.swell, 1)
@@ -59,12 +61,13 @@ struct BodyDials: View {
                     VStack(spacing: 2) {
                         Text(m == .tide ? "TIDE" : m == .swell ? "SWELL" : "ANCHOR").font(.caption.weight(.bold)).tracking(2).foregroundStyle(color)
                         Text(value.map { "\($0)\(suffix)" } ?? "–")
-                            .font(.system(size: 58, weight: .light)).monospacedDigit().foregroundStyle(DS.Palette.ink)
+                            .font(.system(size: number, weight: .light)).monospacedDigit().foregroundStyle(DS.Palette.ink)
+                            .minimumScaleFactor(0.6).lineLimit(1)
                             .contentTransition(.numericText())
                         Text(word).font(.footnote.weight(.medium)).foregroundStyle(DS.Palette.inkSoft)
                     }
                 }
-                .frame(width: 190, height: 190)
+                .frame(width: min(ring, 260), height: min(ring, 260))
                 HStack(spacing: 14) {
                     if let n = normal, let v = value {
                         let diff = Double(v) - n
@@ -87,7 +90,11 @@ struct BodyDials: View {
             .frame(maxWidth: .infinity)
         }
         .buttonStyle(.plain)
-        .accessibilityElement(children: .combine)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(m == .tide ? "Tide" : m == .swell ? "Swell" : "Anchor"), \(sub): \(value.map { "\($0)\(suffix == "%" ? " percent" : "")" } ?? "no data"). \(word)." +
+                            (normal.map { ", your 30-day normal is \(Int($0.rounded()))" } ?? ""))
+        .accessibilityHint("Opens the full story")
+        .accessibilityAddTraits(.isButton)
     }
 
     private func tideWord(_ t: Int?) -> String {

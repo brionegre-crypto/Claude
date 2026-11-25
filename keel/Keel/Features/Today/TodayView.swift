@@ -78,6 +78,7 @@ struct TodayView: View {
                     if Calendar.current.component(.hour, from: Date()) >= Custom.tomorrowHour {
                         TomorrowPreviewCard()                       // evenings: tomorrow at a glance (not built during the day)
                     }
+                    DidYouKnowCard()                                // one feature a day for your first week
                     FavoritePagesCard()                             // starred pages, one tap away
                     ClashesCard()                                   // overlapping events this week, with a fix
                     PinnedEmailsCard()                              // emails you pinned in Inbox

@@ -234,7 +234,7 @@ struct TaskExtrasSections: View {
             Button(TaskMeta.isWontDo(task) ? "Reopen task" : "Won't do", systemImage: TaskMeta.isWontDo(task) ? "arrow.uturn.backward" : "xmark.circle") {
                 TaskMeta.setWontDo(task, !TaskMeta.isWontDo(task)); tick += 1; Haptics.tap()
             }
-            .tint(.orange)
+            .tint(DS.Palette.warmth)
         } footer: { Text("Closes the task without counting it as done, so your stats and goals stay honest.") }
     }
 
@@ -321,6 +321,7 @@ struct TaskFieldsEditor: View {
             }
         }
         .navigationTitle("Fields")
+        .premiumBackground()
         .onAppear { defs = TaskFieldDefs.fields(for: list) }
     }
 }
@@ -369,6 +370,7 @@ struct BoardColumnsEditor: View {
         }
         .environment(\.editMode, .constant(.active))
         .navigationTitle("Board columns")
+        .premiumBackground()
         .onAppear { cols = BoardColumns.columns(for: list) }
     }
 }

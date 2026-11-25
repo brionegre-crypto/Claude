@@ -116,6 +116,8 @@ struct TasksView: View {
     @FocusState private var addFocused: Bool
     /// Per-update cache: filtering, grouping and sorting run once per screen update instead of once per use.
     @State private var memo = TasksMemo()
+    @State private var inspected: TaskItem?                         // Mac / iPad: the task open beside the list
+    @Environment(\.horizontalSizeClass) private var sizeClass
 
     private let cal = Calendar.current
 
@@ -245,6 +247,12 @@ struct TasksView: View {
             }
             .navigationTitle(screenTitle)
             .keelSettingsButton(help: .tasks)
+            .inspector(isPresented: Binding(get: { inspected != nil && Self.sideBySide && sizeClass == .regular }, set: { if !$0 { inspected = nil } })) {
+                if let t = inspected {
+                    NavigationStack { TaskDetailView(task: t).id(t.id) }
+                        .inspectorColumnWidth(min: 340, ideal: 420, max: 560)
+                }
+            }
             .searchable(text: $search, prompt: "Search tasks")
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
@@ -466,6 +474,19 @@ struct TasksView: View {
         }
     }
 
+    /// iPhone: tap opens the task. Mac and wide iPad: it opens in an inspector beside the list (list + detail side by side).
+    @ViewBuilder private func rowLink(_ t: TaskItem) -> some View {
+        let label = TaskRow(task: t, showList: { if case .list = filter { return false }; return true }(), onRolled: showRolled)
+        if Self.sideBySide && sizeClass == .regular {
+            Button { inspected = t } label: { label.contentShape(Rectangle()) }
+                .buttonStyle(.plain)
+                .listRowBackground(inspected?.id == t.id ? DS.Palette.accent.opacity(0.12) : nil)
+        } else {
+            NavigationLink { LazyView(TaskDetailView(task: t)) } label: { label }
+        }
+    }
+    static var sideBySide: Bool { ProcessInfo.processInfo.isMacCatalystApp || UIDevice.current.userInterfaceIdiom == .pad }
+
     private var tasksHorizonDetail: String {
         let end = cal.startOfDay(for: Date()).addingTimeInterval(86_400)
         let due = filtered.filter { ($0.dueDate ?? .distantFuture) < end }.count
@@ -534,9 +555,7 @@ struct TasksView: View {
 
     @ViewBuilder
     private func row(_ t: TaskItem) -> some View {
-        NavigationLink { LazyView(TaskDetailView(task: t)) } label: {
-            TaskRow(task: t, showList: { if case .list = filter { return false }; return true }(), onRolled: showRolled)
-        }
+        rowLink(t)
         .swipeActions(edge: .trailing) {
             Button(role: .destructive) { withAnimation { TaskActions.delete(t, ctx: ctx) } } label: { Label("Delete", systemImage: "trash") }
         }

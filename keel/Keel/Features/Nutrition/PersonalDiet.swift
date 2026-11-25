@@ -328,7 +328,7 @@ struct DietEditor: View {
                     header: { Label("Avoid", systemImage: "xmark.octagon.fill").foregroundStyle(.red) }
                     footer: { Text("Anything on a label that matches is marked 🔴 Skip it.") }
                 Section { TextField("honey, natural flavors…", text: $caution, axis: .vertical).lineLimit(2...8) }
-                    header: { Label("Careful", systemImage: "exclamationmark.triangle.fill").foregroundStyle(.orange) }
+                    header: { Label("Careful", systemImage: "exclamationmark.triangle.fill").foregroundStyle(DS.Palette.warmth) }
                     footer: { Text("Marked 🟡 Okay sometimes.") }
                 Section { TextField("salmon, leafy greens…", text: $favor, axis: .vertical).lineLimit(2...8) }
                     header: { Label("Good", systemImage: "checkmark.seal.fill").foregroundStyle(DS.Palette.calm) }

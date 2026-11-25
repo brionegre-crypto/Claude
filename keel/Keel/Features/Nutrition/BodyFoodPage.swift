@@ -60,7 +60,7 @@ struct BodyFoodPage: View {
     private func mealsCard(_ today: [FoodEntry]) -> some View {
         VStack(alignment: .leading, spacing: 10) {
             HStack {
-                Label("Eaten today", systemImage: "fork.knife").font(DS.Font.headline).foregroundStyle(.green)
+                Label("Eaten today", systemImage: "fork.knife").font(DS.Font.headline).foregroundStyle(DS.Palette.calm)
                 Spacer()
                 if !today.isEmpty {
                     let tally = Dictionary(grouping: today, by: \.verdict).mapValues(\.count)
@@ -147,7 +147,7 @@ struct BodyFoodPage: View {
         let diets = PersonalDiets.active
         return NavigationLink { LazyView(MyDietsView()) } label: {
             HStack(spacing: 12) {
-                Image(systemName: "list.bullet.clipboard.fill").font(.title2).foregroundStyle(.green)
+                Image(systemName: "list.bullet.clipboard.fill").font(.title2).foregroundStyle(DS.Palette.calm)
                     .frame(width: 44, height: 44).background(Color.green.opacity(0.12), in: .rect(cornerRadius: 12, style: .continuous))
                 VStack(alignment: .leading, spacing: 2) {
                     Text("Your plan").font(DS.Font.headline).foregroundStyle(DS.Palette.ink)
