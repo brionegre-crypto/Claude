@@ -78,11 +78,25 @@ struct HomeView: View {
     @AppStorage(HomeModules.key) private var modulesRaw = ""
     @State private var editing = false
     @State private var fullToday = false
+    @State private var showSOS = false
+    @State private var showBrainDump = false
+    /// Worked out when tasks change or the minute turns, not on every redraw (redraws were re-reading the
+    /// calendar, the coach and Body each time, which made Home stutter).
+    @State private var day: HomeDay?
+    @State private var minute = Date()
 
-    var body: some View {
+    private var dayKey: String {
+        "\(open.count)|\(open.reduce(0.0) { max($0, $1.updatedAt.timeIntervalSince1970) })|\(recentlyDone.count)|\(Int(minute.timeIntervalSince1970 / 60))|\(engine.today?.tide ?? -1)"
+    }
+
+    private func rebuild() {
         let cal = Calendar.current
         let doneToday = recentlyDone.filter { $0.completedAt.map { cal.isDateInToday($0) } ?? false }.count
-        let day = HomeDay(tasks: open, doneToday: doneToday)
+        day = HomeDay(tasks: open, doneToday: doneToday)
+    }
+
+    var body: some View {
+        let day = self.day ?? HomeDay(tasks: open, doneToday: 0)
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 18) {
@@ -102,11 +116,45 @@ struct HomeView: View {
             }
             .scrollIndicators(.hidden)
             .premiumBackground()
-            .toolbar(.hidden, for: .navigationBar)
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbarBackground(.hidden, for: .navigationBar)
+            .toolbar { homeToolbar }
             .refreshable { await SyncEngine.shared.syncAll() }
+            .task(id: dayKey) { rebuild() }
+            .task {
+                while !Task.isCancelled {          // the passage moves with the clock, once a minute
+                    try? await Task.sleep(for: .seconds(60))
+                    minute = Date()
+                }
+            }
+            .sheet(isPresented: $showBrainDump) { BrainDumpView() }
+            .fullScreenCover(isPresented: $showSOS) { OverwhelmedView() }
             .sheet(isPresented: $editing) { HomeModulesEditor() }
             .sheet(isPresented: $fullToday) { TodayView() }          // every classic Today card, as before
             .task { await engine.refresh() }
+        }
+    }
+
+    /// The same top bar the classic Today has: overwhelmed, brain dump, search, edit Home, settings.
+    @ToolbarContentBuilder private var homeToolbar: some ToolbarContent {
+        ToolbarItem(placement: .topBarLeading) {
+            Button { showSOS = true } label: { Image(systemName: "lifepreserver") }.accessibilityLabel("I'm overwhelmed")
+        }
+        ToolbarItem(placement: .topBarLeading) {
+            Button { showBrainDump = true } label: { Image(systemName: "brain.head.profile") }.accessibilityLabel("Brain dump")
+        }
+        ToolbarItem(placement: .topBarTrailing) {
+            NavigationLink { LazyView(SearchView()) } label: { Image(systemName: "magnifyingglass") }.accessibilityLabel("Search everything")
+        }
+        ToolbarItem(placement: .topBarTrailing) {
+            Menu {
+                Button { editing = true } label: { Label("Edit Home", systemImage: "square.grid.2x2") }
+                Button { fullToday = true } label: { Label("Full Today", systemImage: "list.bullet.below.rectangle") }
+            } label: { Image(systemName: "ellipsis.circle") }
+            .accessibilityLabel("Home options")
+        }
+        ToolbarItem(placement: .topBarTrailing) {
+            Button { AppRouter.shared.showSettings = true } label: { Image(systemName: "gearshape") }.accessibilityLabel("Settings")
         }
     }
 
