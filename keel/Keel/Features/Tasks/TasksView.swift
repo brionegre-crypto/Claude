@@ -418,6 +418,9 @@ struct TasksView: View {
                     HorizonHeader(title: screenTitle, detail: tasksHorizonDetail, compact: true)
                         .listRowInsets(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
                         .listRowBackground(Color.clear)
+                    if filter == .today, ThemedLayout.usesNowCard, search.isEmpty, let next = filtered.first(where: { !$0.isDone }) {
+                        TasksNowCard(task: next).listRowBackground(Color.clear)     // Helm, Tide, Lighthouse, Panel open on the one next thing
+                    }
                     if filter == .today { TaskGoalsCard(done: doneTasks).listRowBackground(Color.clear) }   // daily & weekly goals, streak
                 }
                 // Above the waterline: what's pinned, overdue, today and tonight. Below: what can wait, quieter.
@@ -457,7 +460,7 @@ struct TasksView: View {
                     .listRowBackground(Color.clear)
             }
         }
-        .listStyle(.insetGrouped)
+        .themedListStyle()
         .environment(\.taskSearchTerms, search.isEmpty ? [] : TaskSearch.terms(search))
         .premiumBackground(DS.Palette.warmth)
         .environment(\.editMode, .constant(selecting ? .active : .inactive))
@@ -655,6 +658,8 @@ struct TaskRow: View {
         let deadline = tags.first { $0.hasPrefix(TaskMeta.deadlinePrefix) }.flatMap { ISO8601DateFormatter.dateOnly.date(from: String($0.dropFirst(TaskMeta.deadlinePrefix.count))) }
         let steps = task.microSteps
         HStack(spacing: DS.Space.m) {
+            // Chart Table and Logbook: a ship's-log time column down the left.
+            if ThemedLayout.usesTimeColumn { ThemedTimeColumn(date: task.hasDueTime ? task.dueDate : nil) }
             CompletionCheck(isDone: Binding(get: { task.isDone }, set: { done in
                 if let next = TaskActions.setDone(task, done) { onRolled?(next) }
             }))
@@ -671,7 +676,7 @@ struct TaskRow: View {
             }
             VStack(alignment: .leading, spacing: 3) {
                 if searchTerms.isEmpty {
-                    Text(task.title).strikethrough(task.isDone).foregroundStyle(task.isDone ? DS.Palette.inkSoft : DS.Palette.ink)
+                    Text(task.title).themedRowTitle().strikethrough(task.isDone).foregroundStyle(task.isDone ? DS.Palette.inkSoft : DS.Palette.ink)
                 } else {
                     Text(EmailRow.lit(task.title, searchTerms, trim: false)).strikethrough(task.isDone)
                         .foregroundStyle(task.isDone ? DS.Palette.inkSoft : DS.Palette.ink)

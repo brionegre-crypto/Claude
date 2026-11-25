@@ -1000,7 +1000,8 @@ struct EmailRow: View {
     var body: some View {
         let chips = self.chips          // worked out once per row, not twice
         HStack(alignment: .top, spacing: DS.Space.m) {
-            if layout.avatars {
+            // Chart Table and Logbook read mail like letters in a log: no faces, a mark and the sender's name.
+            if layout.avatars && !Nautical.usesMono {
                 SenderAvatar(name: email.fromName, email: email.from, size: layout.avatarSize)
                     .overlay(alignment: .topLeading) {
                         if unread { ThemedUnreadMark(size: 10).offset(x: -3, y: -3) }
@@ -1011,7 +1012,7 @@ struct EmailRow: View {
             VStack(alignment: .leading, spacing: 3) {
                 HStack(spacing: 4) {
                     Text(email.fromName.isEmpty ? email.from : email.fromName)
-                        .font(unread ? DS.Font.headline : DS.Font.body).lineLimit(1)
+                        .font(PaletteCache.look.isNautical ? ThemedLayout.rowTitleFont(emphasised: unread) : (unread ? DS.Font.headline : DS.Font.body)).lineLimit(1)
                     if score?.isVIP == true { Image(systemName: "star.fill").font(.caption2).foregroundStyle(.yellow) }
                     if count > 1 { Text("\(count)").font(.caption2.weight(.semibold)).foregroundStyle(DS.Palette.inkSoft) }
                     if email.isStarred { Image(systemName: "flag.fill").font(.caption2).foregroundStyle(.orange) }

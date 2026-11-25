@@ -558,13 +558,13 @@ struct TimelineGrid: View {
             ForEach(0..<24, id: \.self) { h in
                 HStack(alignment: .top, spacing: 0) {
                     Text(hourLabel(h))
-                        .scaledFont(size: 10, weight: .medium, design: .rounded, maxScale: 1.4)
+                        .scaledFont(size: 10, weight: .medium, design: Nautical.usesMono ? .monospaced : .rounded, maxScale: 1.4)
                         .foregroundStyle(DS.Palette.inkSoft.opacity(0.8))
                         .frame(width: gutter - 8, alignment: .trailing)
                         .padding(.trailing, 8)
                         .offset(y: -7)
                     VStack(spacing: 0) {
-                        Rectangle().fill(DS.Palette.inkSoft.opacity(0.14)).frame(height: 0.5)
+                        ThemedHourLine()
                         Spacer()
                     }
                 }

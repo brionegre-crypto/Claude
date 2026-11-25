@@ -172,7 +172,7 @@ struct NotesView: View {
                     }
                 }
             }
-            .listStyle(.insetGrouped)
+            .themedListStyle()
             .premiumBackground(DS.Palette.focus)
             .searchable(text: $search, prompt: "Search every page")
             .searchSuggestions { if search.isEmpty { NoteSearchSuggestions(text: $search) } }
@@ -414,13 +414,10 @@ struct NotesView: View {
         let children = childMap[n.id]?.count ?? 0          // looked up, not a scan of every note per row
         Button { opened = n } label: {
             HStack(spacing: DS.Space.m) {
-                Text(n.icon ?? (n.isDatabase ? "🗃️" : "📄"))
-                    .font(.system(size: 18))
-                    .frame(width: 34, height: 34)
-                    .background((n.isDatabase ? Color.purple : DS.Palette.accent).opacity(0.1), in: .rect(cornerRadius: 9))
+                ThemedNoteIcon(icon: n.icon ?? (n.isDatabase ? "🗃️" : "📄"), isDatabase: n.isDatabase)
                 VStack(alignment: .leading, spacing: 2) {
                     HStack(spacing: 5) {
-                        Text(n.title.isEmpty ? "Untitled" : n.title).font(DS.Font.body.weight(.medium))
+                        Text(n.title.isEmpty ? "Untitled" : n.title).font(PaletteCache.look.isNautical ? ThemedLayout.rowTitleFont(emphasised: true) : DS.Font.body.weight(.medium))
                             .foregroundStyle(n.title.isEmpty ? DS.Palette.inkSoft : DS.Palette.ink).lineLimit(1)
                         if n.isLocked { Image(systemName: "lock.fill").font(.caption2).foregroundStyle(DS.Palette.inkSoft) }
                         if n.isPinned && !showSnippet { Image(systemName: "star.fill").font(.caption2).foregroundStyle(.yellow) }
@@ -428,7 +425,7 @@ struct NotesView: View {
                     if showSnippet && !n.isLocked {
                         Text(n.aiSummary ?? NoteSnippet.text(n)).font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft).lineLimit(2)
                     }
-                    Text(subtitle(n, children: children)).font(.caption2).foregroundStyle(DS.Palette.inkSoft).lineLimit(1)
+                    Text(subtitle(n, children: children)).font(Nautical.usesMono ? DS.Font.mono : .caption2).foregroundStyle(DS.Palette.inkSoft).lineLimit(1)
                 }
                 Spacer(minLength: 0)
             }
@@ -530,7 +527,7 @@ struct NotesView: View {
                 }
             }
         }
-        .listStyle(.insetGrouped)
+        .themedListStyle()
         .overlay {
             if list.isEmpty {
                 ContentUnavailableView(ref.name == nil ? "Everything's filed" : "Empty folder", systemImage: "folder",
