@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chart Table · Today's passage · 3 options</title>
+<style>
+  :root { --paper:#F3EEE2; --paper2:#FBF8F0; --ink:#1F2A36; --soft:#6B7380; --red:#BF3829; --rule:rgba(31,42,54,.18); }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,"SF Pro Text",system-ui,sans-serif; background:#E6E1D4; color:var(--ink); }
+  header { max-width:1180px; margin:0 auto; padding:32px 20px 8px; }
+  header h1 { font-family:"New York",Georgia,serif; font-weight:600; font-size:30px; margin:0 0 6px; }
+  header p { color:var(--soft); margin:0; max-width:760px; line-height:1.45; }
+  .row { display:flex; flex-wrap:wrap; gap:28px; justify-content:center; max-width:1180px; margin:24px auto; padding:0 20px; }
+  .opt { width:340px; }
+  .opt h2 { font-family:Georgia,serif; font-size:20px; margin:0 0 4px; }
+  .opt .why { font-size:13px; color:var(--soft); line-height:1.4; min-height:54px; margin:0 0 12px; }
+  .phone { width:340px; height:720px; border-radius:46px; background:var(--paper); border:10px solid #111; overflow:hidden; position:relative;
+           background-image: radial-gradient(circle at 20% 30%, rgba(31,42,54,.035) 0 40%, transparent 41%), repeating-radial-gradient(circle at 80% 10%, transparent 0 22px, rgba(31,42,54,.04) 22px 23px); }
+  .bar { display:flex; justify-content:space-between; align-items:center; padding:46px 18px 4px; color:var(--ink); font-size:17px; }
+  .bar span { display:flex; gap:16px; }
+  .scr { padding:4px 18px; }
+  .mono { font-family:"SF Mono",ui-monospace,Menlo,monospace; font-size:11px; letter-spacing:.06em; color:var(--soft); }
+  .title { font-family:"New York",Georgia,serif; font-weight:600; font-size:30px; margin:2px 0 10px; }
+  .serif { font-family:"New York",Georgia,serif; }
+  .chk { width:22px; height:22px; border-radius:50%; border:1.5px solid var(--ink); flex:none; display:inline-flex; align-items:center; justify-content:center; font-size:12px; }
+  .chk.p { border-color:var(--red); border-width:2px; }
+  .chk.done { background:var(--ink); color:var(--paper); }
+  .task { display:flex; gap:12px; align-items:center; padding:11px 0; border-bottom:1px dashed var(--rule); font-size:16px; }
+  .task .t { flex:1; }
+  .task .m { font-family:ui-monospace,Menlo,monospace; font-size:11px; color:var(--soft); }
+  .num { width:22px; height:22px; border-radius:50%; background:var(--ink); color:var(--paper); font:600 11px ui-monospace,Menlo,monospace; display:inline-flex; align-items:center; justify-content:center; flex:none; }
+  .num.next { background:var(--red); }
+  .events { font-size:12px; color:var(--soft); display:flex; gap:8px; align-items:center; padding:8px 10px; border:1px solid var(--rule); border-radius:10px; background:rgba(255,255,255,.35); }
+  .card { background:var(--paper2); border:1px solid rgba(31,42,54,.3); border-radius:14px; padding:14px; }
+  .btn { display:inline-block; padding:8px 16px; border-radius:99px; font-size:14px; font-weight:600; }
+  .btn.ink { background:var(--ink); color:var(--paper); }
+  .btn.line { border:1px solid rgba(31,42,54,.4); }
+  .sec { font-family:ui-monospace,Menlo,monospace; font-size:11px; letter-spacing:.12em; color:var(--soft); margin:16px 0 2px; }
+  .tabs { position:absolute; bottom:0; left:0; right:0; height:78px; background:rgba(251,248,240,.92); border-top:1px solid var(--rule); display:flex; justify-content:space-around; padding-top:10px; font-size:10px; color:var(--soft); }
+  .tabs div { text-align:center; } .tabs .on { color:var(--red); }
+  .tabs i { display:block; font-style:normal; font-size:20px; margin-bottom:2px; }
+  .ux { max-width:1000px; margin:12px auto 60px; padding:0 20px; }
+  .ux h2 { font-family:Georgia,serif; }
+  .ux table { width:100%; border-collapse:collapse; background:var(--paper2); border-radius:12px; overflow:hidden; font-size:14px; }
+  .ux td, .ux th { text-align:left; padding:10px 12px; border-bottom:1px solid var(--rule); vertical-align:top; }
+  .ux th { font-family:ui-monospace,Menlo,monospace; font-size:11px; letter-spacing:.1em; color:var(--soft); }
+</style>
+</head>
+<body>
+<header>
+  <h1>Today's passage, three ways</h1>
+  <p>In all three, tasks are the main thing on screen. Events drop to a quiet line, the chart has no event labels, and the top bar (overwhelmed, brain dump, search, options, settings) is back. Pick one, or mix them (for example A's chart with B's Next card).</p>
+</header>
+
+<div class="row">
+
+  <!-- A -->
+  <div class="opt">
+    <h2>A · Waypoints</h2>
+    <p class="why">The chart stays but plots only your tasks, as numbered waypoints. The numbers match the list below, and the red one is next. Meetings become one quiet line.</p>
+    <div class="phone">
+      <div class="bar"><span>🛟 🧠</span><span>⌕ ⋯ ⚙︎</span></div>
+      <div class="scr">
+        <div class="mono">WED 25 NOV · 10:42 · DAY 330</div>
+        <div class="title">Today's passage</div>
+        <svg viewBox="0 0 300 120" width="100%" height="120">
+          <path d="M8 100 C 60 20, 110 110, 165 60 S 260 10, 292 22" fill="none" stroke="#1F2A36" stroke-opacity=".45" stroke-width="1.4" stroke-dasharray="2 4"/>
+          <path d="M8 100 C 40 50, 70 60, 92 72" fill="none" stroke="#BF3829" stroke-width="3" stroke-linecap="round"/>
+          <circle cx="92" cy="72" r="6" fill="#BF3829"/><circle cx="92" cy="72" r="13" fill="none" stroke="#BF3829" stroke-opacity=".35"/>
+          <g font-family="ui-monospace,Menlo" font-size="10" font-weight="600" fill="#F3EEE2">
+            <circle cx="128" cy="78" r="10" fill="#BF3829"/><text x="125" y="82">1</text>
+            <circle cx="178" cy="54" r="10" fill="#1F2A36"/><text x="175" y="58">2</text>
+            <circle cx="228" cy="30" r="10" fill="#1F2A36"/><text x="225" y="34">3</text>
+            <circle cx="276" cy="22" r="10" fill="#1F2A36"/><text x="273" y="26">4</text>
+          </g>
+        </svg>
+        <div class="events">⚓ 2 meetings · next <b style="color:#1F2A36">Standup 2:00</b> · tap to see</div>
+        <div class="sec">WAYPOINTS · 4 LEFT · 2 DONE</div>
+        <div class="task"><span class="num next">1</span><span class="t">Send the client quote</span><span class="m">11:30</span></div>
+        <div class="task"><span class="num">2</span><span class="t">Call the dentist</span><span class="m">~5m</span></div>
+        <div class="task"><span class="num">3</span><span class="t">School pickup</span><span class="m">17:15</span></div>
+        <div class="task"><span class="num">4</span><span class="t">Plan Sunday lunch</span><span class="m">~20m</span></div>
+        <div class="task" style="opacity:.45"><span class="chk done">✓</span><span class="t" style="text-decoration:line-through">Pay water bill</span></div>
+      </div>
+      <div class="tabs"><div class="on"><i>🗺</i>Chart</div><div><i>✉︎</i>Inbox</div><div><i>☑︎</i>Tasks</div><div><i>📅</i>Calendar</div><div><i>❤︎</i>Body</div></div>
+    </div>
+  </div>
+
+  <!-- B -->
+  <div class="opt">
+    <h2>B · Next waypoint</h2>
+    <p class="why">No drawn course. One big card holds the next task, with Start and Done. Under it, a thin day bar shows your tasks as dots and your meetings as grey blocks, then the rest of the list.</p>
+    <div class="phone">
+      <div class="bar"><span>🛟 🧠</span><span>⌕ ⋯ ⚙︎</span></div>
+      <div class="scr">
+        <div class="mono">WED 25 NOV · 10:42 · DAY 330</div>
+        <div class="title">Today's passage</div>
+        <div class="card">
+          <div class="mono" style="color:#BF3829">NEXT WAYPOINT</div>
+          <div class="serif" style="font-size:24px;font-weight:600;margin:4px 0 2px">Send the client quote</div>
+          <div class="mono">DUE 11:30 · ~15 MIN · HIGH</div>
+          <div style="margin-top:12px;display:flex;gap:8px"><span class="btn ink">▶ Start</span><span class="btn line">✓ Done</span><span class="btn line">Later</span></div>
+        </div>
+        <div class="sec">THE DAY · 06–23</div>
+        <svg viewBox="0 0 300 34" width="100%" height="34">
+          <line x1="2" y1="17" x2="298" y2="17" stroke="#1F2A36" stroke-opacity=".3" stroke-dasharray="2 3"/>
+          <rect x="140" y="9" width="22" height="16" rx="3" fill="#1F2A36" fill-opacity=".12"/>
+          <rect x="196" y="9" width="30" height="16" rx="3" fill="#1F2A36" fill-opacity=".12"/>
+          <line x1="2" y1="17" x2="84" y2="17" stroke="#BF3829" stroke-width="3" stroke-linecap="round"/>
+          <circle cx="84" cy="17" r="5" fill="#BF3829"/>
+          <circle cx="100" cy="17" r="4" fill="#1F2A36"/><circle cx="182" cy="17" r="4" fill="#1F2A36"/><circle cx="246" cy="17" r="4" fill="#1F2A36"/>
+        </svg>
+        <div class="mono" style="display:flex;justify-content:space-between"><span>06</span><span>12</span><span>18</span><span>23</span></div>
+        <div class="sec">STILL TO SAIL · 3</div>
+        <div class="task"><span class="chk p"></span><span class="t">Call the dentist</span><span class="m">~5m</span></div>
+        <div class="task"><span class="chk"></span><span class="t">School pickup</span><span class="m">17:15</span></div>
+        <div class="task"><span class="chk"></span><span class="t">Plan Sunday lunch</span><span class="m">~20m</span></div>
+        <div class="events" style="margin-top:12px">⚓ Standup 2:00 · Choir practice 6:30</div>
+      </div>
+      <div class="tabs"><div class="on"><i>🗺</i>Chart</div><div><i>✉︎</i>Inbox</div><div><i>☑︎</i>Tasks</div><div><i>📅</i>Calendar</div><div><i>❤︎</i>Body</div></div>
+    </div>
+  </div>
+
+  <!-- C -->
+  <div class="opt">
+    <h2>C · Tide table</h2>
+    <p class="why">A ruled log page. Tasks are the bold, checkable rows. Meetings sit as faint shaded bands between them at their times, so you see your open time without them taking over.</p>
+    <div class="phone">
+      <div class="bar"><span>🛟 🧠</span><span>⌕ ⋯ ⚙︎</span></div>
+      <div class="scr">
+        <div class="mono">WED 25 NOV · 10:42 · DAY 330</div>
+        <div class="title">Today's passage</div>
+        <div style="display:flex;gap:6px;margin-bottom:6px">
+          <span class="btn ink" style="font-size:12px;padding:5px 12px">Tasks 4</span>
+          <span class="btn line" style="font-size:12px;padding:5px 12px">Done 2</span>
+          <span class="btn line" style="font-size:12px;padding:5px 12px">+ Add</span>
+        </div>
+        <div class="sec">NOW</div>
+        <div class="task" style="border-bottom:2px solid #BF3829"><span class="m" style="width:38px">10:42</span><span class="chk p"></span><span class="t"><b>Send the client quote</b></span><span class="m">11:30</span></div>
+        <div class="task"><span class="m" style="width:38px">—</span><span class="chk"></span><span class="t"><b>Call the dentist</b></span><span class="m">~5m</span></div>
+        <div class="task" style="background:rgba(31,42,54,.06);border-radius:8px;padding:7px 8px;color:#6B7380;font-size:13px"><span class="m" style="width:30px">14:00</span>⚓ Standup · 30 min</div>
+        <div class="task"><span class="m" style="width:38px">—</span><span class="chk"></span><span class="t"><b>Plan Sunday lunch</b></span><span class="m">~20m</span></div>
+        <div class="task"><span class="m" style="width:38px">17:15</span><span class="chk"></span><span class="t"><b>School pickup</b></span></div>
+        <div class="task" style="background:rgba(31,42,54,.06);border-radius:8px;padding:7px 8px;color:#6B7380;font-size:13px"><span class="m" style="width:30px">18:30</span>⚓ Choir practice</div>
+        <div class="serif" style="font-style:italic;color:#6B7380;margin-top:12px;font-size:14px">Fair weather. 3 hours of open water after noon.</div>
+      </div>
+      <div class="tabs"><div class="on"><i>🗺</i>Chart</div><div><i>✉︎</i>Inbox</div><div><i>☑︎</i>Tasks</div><div><i>📅</i>Calendar</div><div><i>❤︎</i>Body</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="ux">
+  <h2>How it will work differently (for your approval)</h2>
+  <p style="color:#6B7380">Each change below is a new way to do something you can already do. All the old ways keep working.</p>
+  <table>
+    <tr><th>#</th><th>CHANGE</th><th>TODAY</th><th>NEW</th></tr>
+    <tr><td>1</td><td>Check off from Home</td><td>Open the task, or go to Tasks</td><td>Tap the circle on any passage row; a fix-mark animation and a haptic</td></tr>
+    <tr><td>2</td><td>Swipe rows everywhere</td><td>Swipe menus differ by screen</td><td>One rule in every list: swipe right = done or archive, swipe left = later. Long swipe acts at once</td></tr>
+    <tr><td>3</td><td>Press and hold to Focus</td><td>Open the task, then Focus</td><td>Hold any task anywhere for a quick peek with Start focus, Later, and Break it down</td></tr>
+    <tr><td>4</td><td>Add from where you are</td><td>Add field at the top of Tasks</td><td>An "Add to today's passage" line at the bottom of Home that understands "call mom 5pm"</td></tr>
+    <tr><td>5</td><td>Plan the day by dragging</td><td>Set times in task details</td><td>On the Home day bar, drag a task dot into open time to schedule it</td></tr>
+    <tr><td>6</td><td>Instant screen switching</td><td>Each tab rebuilds when opened</td><td>Tabs stay ready in the background, so switching is instant, plus a lighter open animation</td></tr>
+  </table>
+</div>
+</body>
+</html>
