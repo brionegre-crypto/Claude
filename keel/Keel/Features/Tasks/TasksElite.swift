@@ -375,7 +375,7 @@ struct BoardColumnsEditor: View {
 
 // MARK: - Filter queries for smart lists ("today & #work", "overdue | p1", "!no date & @Home")
 
-enum SmartQuery {
+enum TaskFilterQuery {
     private static let key = "smart.queries"
     static func text(for id: UUID) -> String? {
         let q = (UserDefaults.standard.dictionary(forKey: key) as? [String: String])?[id.uuidString]

@@ -67,11 +67,11 @@ struct SmartListEditor: View {
                 Section("Any of these lists") { ForEach(allLists, id: \.self) { Toggle($0, isOn: binding($lists, $0)) } }
                 Section {
                     TextField("e.g. today & #work | p1", text: $query).autocorrectionDisabled().textInputAutocapitalization(.never)
-                } header: { Text("Or type a filter") } footer: { Text(SmartQuery.help + " A typed filter replaces the choices above.") }
+                } header: { Text("Or type a filter") } footer: { Text(TaskFilterQuery.help + " A typed filter replaces the choices above.") }
                 Section {
                     let n = query.trimmingCharacters(in: .whitespaces).isEmpty
                         ? tasks.filter { preview.matches($0) }.count
-                        : tasks.filter { !$0.isDone && !$0.isSomeday && SmartQuery.matches(query, $0) }.count
+                        : tasks.filter { !$0.isDone && !$0.isSomeday && TaskFilterQuery.matches(query, $0) }.count
                     Text("\(n) tasks match right now").foregroundStyle(DS.Palette.inkSoft)
                 }
             }
@@ -85,7 +85,7 @@ struct SmartListEditor: View {
                 guard let l = list else { return }
                 name = l.name; icon = l.icon; priorities = Set(l.priorities); tags = Set(l.tags); lists = Set(l.lists)
                 due = l.dueWithinDays ?? -1; includeNoDate = l.includeNoDate; energy = l.energy ?? 0
-                query = SmartQuery.text(for: l.id) ?? ""
+                query = TaskFilterQuery.text(for: l.id) ?? ""
             }
         }
     }
@@ -99,7 +99,7 @@ struct SmartListEditor: View {
         if list == nil { ctx.insert(s) }
         s.name = name; s.icon = icon; s.priorities = Array(priorities).sorted(); s.tags = Array(tags).sorted(); s.lists = Array(lists).sorted()
         s.dueWithinDays = due < 0 ? nil : due; s.includeNoDate = includeNoDate; s.energy = energy == 0 ? nil : energy
-        SmartQuery.set(query, for: s.id)
+        TaskFilterQuery.set(query, for: s.id)
         Haptics.success()
         dismiss()
     }
