@@ -21,42 +21,74 @@ final class KeelTourUITests: XCTestCase {
     }
 
     func testTourEveryScreen() {
-        XCTAssertTrue(tab("Inbox").waitForExistence(timeout: 20), "tab bar never appeared")
-        checkpoint("01-home")
+        XCTAssertTrue(tab("inbox").waitForExistence(timeout: 20), "tab bar never appeared")
+        checkpoint("home")
 
         // Settings → Customize Keel → Look & feel → Chart Table
         tap(app.buttons["Settings"])
         XCTAssertTrue(app.navigationBars["Settings"].waitForExistence(timeout: 5))
-        checkpoint("07-settings")
+        checkpoint("settings")
         tap(find("Customize Keel"))
         tap(find("Look & feel"))
         let chart = find("Chart Table")
-        checkpoint("00a-customize-look")
+        checkpoint("customize-look")
         tap(chart)
-        checkpoint("00b-customize-chart-table")
+        checkpoint("customize-chart-table")
         tap(app.navigationBars["Appearance"].buttons.element(boundBy: 0))         // back from Look & feel
         tap(app.navigationBars["Customize Keel"].buttons.element(boundBy: 0))     // back from Customize
         tap(app.navigationBars["Settings"].buttons["Done"])
 
         for lap in 0..<laps {
             let first = lap == 0
-            visit("Inbox", shot: first ? "02-inbox" : nil)
-            visit("Tasks", shot: first ? "03-tasks" : nil)
-            visit(calendarTabName, shot: first ? "04-calendar" : nil)
-            visit("Notes", shot: first ? "05-notes" : nil)
-            visit("Today", shot: nil)
+            visit("inbox", shot: first ? "inbox" : nil)
+            visit("tasks", shot: first ? "tasks" : nil)
+            visit("calendar", shot: nil)
+            if first {
+                tap(app.buttons.matching(NSPredicate(format: "label == 'Day'")).firstMatch)     // Calendar → Day
+                checkpoint("calendar-day")
+                scroll()
+            }
+            visit("notes", shot: first ? "notes" : nil)
+            visit("today", shot: nil)
         }
 
+        // The Log button in the middle of the floating bar: the one-line capture sheet.
+        tap(barButton("log"))
+        checkpoint("log")
+        tap(app.navigationBars["Capture"].buttons["Cancel"])     // close the sheet
+        let gone = expectation(for: NSPredicate(format: "exists == false"), evaluatedWith: app.navigationBars["Capture"])
+        wait(for: [gone], timeout: 5)
+
         // Body: the Body card on Home opens the full Body screen.
-        tap(find("Body"))
-        _ = app.navigationBars["Body"].waitForExistence(timeout: 5)
-        checkpoint("06-body")
+        let body = find("Body")
+        clearOfBar(body)
+        tap(body)
+        let opened = app.navigationBars.matching(NSPredicate(format: "identifier IN %@", ["Body", "Condition"])).firstMatch   // "Condition" in Chart Table
+        XCTAssertTrue(opened.waitForExistence(timeout: 8), "Body didn't open")
+        checkpoint("body")
         scroll()
+    }
+
+    /// For Instruments: switch between Inbox, Tasks and Calendar (week and day) and scroll each, three times over.
+    func testProfileSwitchAndScroll() {
+        XCTAssertTrue(tab("inbox").waitForExistence(timeout: 20), "tab bar never appeared")
+        for _ in 0..<3 {
+            for id in ["inbox", "tasks", "calendar"] {
+                tap(tab(id))
+                scroll()
+                if id == "calendar" {
+                    for mode in ["Week", "Day"] {
+                        tap(app.buttons.matching(NSPredicate(format: "label == %@", mode)).firstMatch)
+                        scroll()
+                    }
+                }
+            }
+        }
     }
 
     /// Routines on the Voyage (Home → ⋯ → Full Today): tick steps, skip one today, take one out, tick a whole routine, edit.
     func testRoutinesOnVoyage() {
-        XCTAssertTrue(tab("Inbox").waitForExistence(timeout: 20), "tab bar never appeared")
+        XCTAssertTrue(tab("inbox").waitForExistence(timeout: 20), "tab bar never appeared")
         tap(app.buttons["Home options"])
         tap(find("Full Today"))
         let morning = find("Morning routine")
@@ -88,12 +120,25 @@ final class KeelTourUITests: XCTestCase {
         while !(e.exists && e.isHittable) && n < 10 { app.swipeUp(velocity: .slow); n += 1 }
     }
 
-    /// The calendar tab is named per theme ("Chart" in Chart Table).
-    private var calendarTabName: String { tab("Chart").exists ? "Chart" : "Calendar" }
+    /// The floating bar sits over the bottom of each screen; scroll until `e` is above it so a tap lands on `e`.
+    private func clearOfBar(_ e: XCUIElement) {
+        let bar = barButton("log")
+        guard bar.exists else { return }
+        var n = 0
+        while e.exists && e.frame.maxY > bar.frame.minY - 90 && n < 6 {
+            app.swipeUp(velocity: .slow); n += 1
+        }
+    }
 
-    private func tab(_ name: String) -> XCUIElement {
-        let t = app.tabBars.buttons[name]
-        return t.exists ? t : app.buttons[name]
+    /// A button on Keel's floating tab bar ("tab.inbox", "tab.log"…).
+    private func barButton(_ id: String) -> XCUIElement { app.descendants(matching: .any)["tab." + id].firstMatch }
+
+    /// A tab by id (today, inbox, calendar, tasks, notes): the floating bar, or the system tab bar in classic looks.
+    private func tab(_ id: String) -> XCUIElement {
+        let b = barButton(id)
+        if b.exists { return b }
+        let names = ["today": ["Today", "Helm", "Log", "Bridge"], "calendar": ["Calendar", "Chart"]][id] ?? [id.capitalized]
+        return names.lazy.map { self.app.tabBars.buttons[$0] }.first { $0.exists } ?? app.tabBars.buttons[names[0]]
     }
 
     private func visit(_ name: String, shot: String?) {

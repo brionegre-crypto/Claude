@@ -67,37 +67,41 @@ final class BrainIndex {
         guard !building, force || Date().timeIntervalSince(lastBuild) > 120 else { return }
         building = true
         lastBuild = Date()
-        var jobs: [(key: String, kind: String, id: String, title: String, text: String, stamp: Double)] = []
-        var live = Set<String>()
-        for n in (try? ctx.fetch(FetchDescriptor<Note>())) ?? [] where !n.isLocked && !n.isTemplate {
-            let key = "note:\(n.id.uuidString)"; live.insert(key)
-            let stamp = n.updatedAt.timeIntervalSince1970
-            if items[key]?.stamp != stamp { jobs.append((key, "note", n.id.uuidString, n.title, n.title + ". " + String(n.plainText.prefix(1_200)), stamp)) }
-        }
-        for t in (try? ctx.fetch(FetchDescriptor<TaskItem>(predicate: #Predicate { !$0.isDone }))) ?? [] {
-            let key = "task:\(t.id.uuidString)"; live.insert(key)
-            let stamp = t.updatedAt.timeIntervalSince1970
-            if items[key]?.stamp != stamp { jobs.append((key, "task", t.id.uuidString, t.title, t.title + ". " + String(t.notes.prefix(400)), stamp)) }
-        }
-        var md = FetchDescriptor<EmailMessage>(sortBy: [SortDescriptor(\.receivedAt, order: .reverse)])
-        md.fetchLimit = 1_500
-        for e in (try? ctx.fetch(md)) ?? [] {
-            let key = "mail:\(e.id)"; live.insert(key)
-            let stamp = e.receivedAt.timeIntervalSince1970
-            if items[key] == nil { jobs.append((key, "mail", e.id, e.subject, e.subject + ". " + (e.aiSummary ?? e.snippet), stamp)) }
-        }
-        for k in items.keys where !live.contains(k) { items[k] = nil }
-        guard !jobs.isEmpty else { building = false; save(); return }
-        let work = jobs
+        // Reading every page, task and up to 1,500 emails ran on the screen's thread (a stall while you scrolled).
+        // Now a background context does the reading; only the small dictionary update comes back here.
+        let known = items.mapValues(\.stamp)
+        let container = ctx.container
         Task.detached(priority: .utility) {
+            let bg = ModelContext(container)
+            var jobs: [(key: String, kind: String, id: String, title: String, text: String, stamp: Double)] = []
+            var live = Set<String>()
+            for n in (try? bg.fetch(FetchDescriptor<Note>())) ?? [] where !n.isLocked && !n.isTemplate {
+                let key = "note:\(n.id.uuidString)"; live.insert(key)
+                let stamp = n.updatedAt.timeIntervalSince1970
+                if known[key] != stamp { jobs.append((key, "note", n.id.uuidString, n.title, n.title + ". " + String(n.plainText.prefix(1_200)), stamp)) }
+            }
+            for t in (try? bg.fetch(FetchDescriptor<TaskItem>(predicate: #Predicate { !$0.isDone }))) ?? [] {
+                let key = "task:\(t.id.uuidString)"; live.insert(key)
+                let stamp = t.updatedAt.timeIntervalSince1970
+                if known[key] != stamp { jobs.append((key, "task", t.id.uuidString, t.title, t.title + ". " + String(t.notes.prefix(400)), stamp)) }
+            }
+            var md = FetchDescriptor<EmailMessage>(sortBy: [SortDescriptor(\.receivedAt, order: .reverse)])
+            md.fetchLimit = 1_500
+            for e in (try? bg.fetch(md)) ?? [] {
+                let key = "mail:\(e.id)"; live.insert(key)
+                if known[key] == nil { jobs.append((key, "mail", e.id, e.subject, e.subject + ". " + (e.aiSummary ?? e.snippet), e.receivedAt.timeIntervalSince1970)) }
+            }
             var out: [(String, Item)] = []
-            for j in work {
+            for j in jobs {
                 if let v = BrainIndex.embed(j.text) { out.append((j.key, Item(kind: j.kind, id: j.id, title: j.title, stamp: j.stamp, vec: BrainIndex.pack(v)))) }
             }
+            let liveKeys = live, results = out
             await MainActor.run {
-                for (k, v) in out { BrainIndex.shared.items[k] = v }
-                BrainIndex.shared.building = false
-                BrainIndex.shared.save()
+                let index = BrainIndex.shared
+                for k in index.items.keys where !liveKeys.contains(k) { index.items[k] = nil }
+                for (k, v) in results { index.items[k] = v }
+                index.building = false
+                index.save()
             }
         }
     }

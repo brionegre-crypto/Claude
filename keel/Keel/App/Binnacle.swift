@@ -35,7 +35,9 @@ struct BinnacleShell: View {
         ZStack {
             ForEach(items, id: \.self) { id in
                 if built.contains(id) || id == sel {
-                    TabBarConfig.content(id)
+                    // The screen itself, not TabBarConfig.content: that wrapper waits until the tab is selected,
+                    // which undid the build-ahead below. `built` already decides when each tab is made.
+                    TabBarConfig.screen(id)
                         .opacity(id == sel ? 1 : 0)
                         .allowsHitTesting(id == sel)
                         .accessibilityHidden(id != sel)
@@ -59,6 +61,17 @@ struct BinnacleShell: View {
         }
         .animation(.easeOut(duration: 0.18), value: keyboardUp)
         .onAppear { built.insert(sel) }
+        // Build the other tabs ahead of time, one at a time while Keel is idle after launch. Each screen's first build
+        // (SwiftUI and Swift setting up its view types, the first fetch and layout) took 250–450 ms on the main thread,
+        // and it used to happen on your first tap of Inbox, Tasks or Calendar.
+        .task {
+            try? await Task.sleep(for: .seconds(3))
+            for id in items where !built.contains(id) {
+                guard !Task.isCancelled, UIApplication.shared.applicationState == .active else { return }
+                built.insert(id)
+                try? await Task.sleep(for: .milliseconds(1200))
+            }
+        }
         .onChange(of: router.tab) { _, _ in built.insert(current) }
         .sheet(isPresented: $showLog) { UniversalCaptureSheet() }
         .sheet(isPresented: $showVoice) { VoiceNoteView() }
@@ -102,6 +115,7 @@ struct BinnacleShell: View {
         }
         .buttonStyle(.plain)
         .accessibilityLabel(TabBarConfig.title(id))
+        .accessibilityIdentifier("tab." + id)              // stable for UI tests ("Today" also labels Calendar's button)
         .accessibilityAddTraits(on ? [.isSelected, .isButton] : .isButton)
     }
 
@@ -121,6 +135,7 @@ struct BinnacleShell: View {
             .onLongPressGesture(minimumDuration: 0.35) { Haptics.capture(); showVoice = true }
             .accessibilityElement()
             .accessibilityLabel("Log")
+            .accessibilityIdentifier("tab.log")
             .accessibilityHint("Add a task, event, note, reminder or meal. Hold to speak.")
             .accessibilityAddTraits(.isButton)
             .accessibilityAction { showLog = true }
