@@ -2,7 +2,7 @@
 import html
 from content import *
 from build import TONIGHT
-from steps import TECHNIQUES, DAY_STEPS
+from steps import TECHNIQUES, DAY_STEPS, PURPOSE, TROUBLE
 TECH_NAME = {k: n for k, n, *_ in TECHNIQUES}
 
 e = html.escape
@@ -44,9 +44,11 @@ def build(path):
   <h4>{e(SCIENCE[k]['title'])}</h4><p>{e(SCIENCE[k]['finding'])}</p>
   <p><b>In your system:</b> {e(SCIENCE[k]['use'])}</p>
   <p class="src"><a href="{e(SCIENCE[k]['url'])}" target="_blank" rel="noopener">{e(SCIENCE[k]['source'])}</a> · Used on Days {', '.join(str(d) for d in sorted(DAY_SCI) if DAY_SCI[d] == k)}</p></article>''' for k in order)
-    practice = '<h2 id="practice">How to practice</h2><p>The core skills, step by step. Each day tells you which one to use. Come back here whenever a day feels unclear.</p>' + ''.join(
-        f'''<article class="techcard" id="tech-{k}"><h3 class="h3s">{e(name)}</h3><p class="when"><b>When:</b> {e(when)}</p>
-  <ol class="how">{''.join(f"<li>{e(s)}</li>" for s in st)}</ol><p class="howh">Example</p><pre>{e(ex)}</pre></article>'''
+    practice = ('<h2 id="practice">How to practice</h2><p>The 15 skills this program uses, step by step. Each day links to the skill it needs. Every skill has an example and a list of what to do when it isn\'t working. Come back here whenever a day feels unclear.</p>'
+        + '<nav class="skills">' + ''.join(f'<a href="#tech-{k}">{e(name)}</a>' for k, name, *_ in TECHNIQUES) + '</nav>') + ''.join(
+        f'''<article class="techcard" id="tech-{k}"><h3 class="h3s">{e(name)}</h3><p class="when"><b>When:</b> {e(when)}</p><p class="when"><b>Why it works:</b> {e(PURPOSE[k])}</p>
+  <p class="howh">Steps</p><ol class="how">{''.join(f"<li>{e(s)}</li>" for s in st)}</ol><p class="howh">Example</p><pre>{e(ex)}</pre>
+  <p class="howh">If it's not working</p><dl class="fix">{''.join(f"<dt>{e(p)}</dt><dd>{e(f)}</dd>" for p, f in TROUBLE[k])}</dl></article>'''
         for k, name, when, st, ex in TECHNIQUES)
     tonight = TONIGHT.split('\n')
     page = f'''<!DOCTYPE html>
@@ -107,6 +109,8 @@ cite{{display:block;font:500 12px Oswald;letter-spacing:.2em;text-transform:uppe
 .howh{{font:500 12px Oswald;letter-spacing:.2em;text-transform:uppercase;color:var(--em);margin:10px 0 2px!important}}
 .how{{margin:4px 0 6px;padding-left:20px}}.how li{{margin:4px 0;font-size:15px}}
 .tech{{font-size:14px!important;color:var(--soft)}}.tech a{{color:var(--ink)}}
+.skills{{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 4px}}.skills a{{font-size:13px;color:var(--soft);border:1px solid var(--rule);padding:4px 9px;text-decoration:none}}.skills a:hover,.skills a:focus-visible{{color:var(--ink);border-color:var(--em)}}
+.fix{{margin:4px 0 6px}}.fix dt{{font-weight:600;font-size:15px;margin-top:8px}}.fix dd{{margin:2px 0 0;font-size:15px;color:var(--soft)}}
 .techcard{{background:var(--panel);padding:4px 18px 14px;margin:12px 0;scroll-margin-top:100px}}.techcard .when{{color:var(--soft);font-size:15px}}.techcard .when b{{color:var(--em)}}
 .legend{{font-size:14px;color:var(--soft);line-height:2.2}}
 footer{{margin-top:64px;padding-top:24px;border-top:2px solid var(--em);color:var(--mute);font-size:14px}}

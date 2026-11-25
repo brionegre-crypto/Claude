@@ -5,7 +5,7 @@ CALSCALE:GREGORIAN
 X-WR-CALNAME:Be The Man: Truth Ledger
 BEGIN:VEVENT
 UID:truth-ledger-0@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261126T063000
 DTEND:20261126T063500
 SUMMARY:Day 1 Morning: The count begins
@@ -33,7 +33,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-1@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261126T123000
 DTEND:20261126T123500
 SUMMARY:Day 1 Midday check
@@ -47,7 +47,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-2@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261126T210000
 DTEND:20261126T211000
 SUMMARY:Day 1 Evening Ledger
@@ -67,7 +67,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-3@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261127T063000
 DTEND:20261127T063500
 SUMMARY:Day 2 Morning: Name the kind
@@ -92,7 +92,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-4@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261127T123000
 DTEND:20261127T123500
 SUMMARY:Day 2 Midday check
@@ -106,7 +106,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-5@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261127T210000
 DTEND:20261127T211000
 SUMMARY:Day 2 Evening Ledger
@@ -126,7 +126,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-6@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261128T063000
 DTEND:20261128T063500
 SUMMARY:Day 3 Morning: Where and when
@@ -152,7 +152,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-7@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261128T123000
 DTEND:20261128T123500
 SUMMARY:Day 3 Midday check
@@ -166,7 +166,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-8@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261128T210000
 DTEND:20261128T211000
 SUMMARY:Day 3 Evening Ledger
@@ -186,7 +186,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-9@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261129T063000
 DTEND:20261129T063500
 SUMMARY:Day 4 Morning: Who gets the lies
@@ -210,7 +210,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-10@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261129T123000
 DTEND:20261129T123500
 SUMMARY:Day 4 Midday check
@@ -224,7 +224,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-11@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261129T210000
 DTEND:20261129T211000
 SUMMARY:Day 4 Evening Ledger
@@ -244,7 +244,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-12@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261130T063000
 DTEND:20261130T063500
 SUMMARY:Day 5 Morning: The alarm in your body
@@ -255,13 +255,13 @@ DESCRIPTION:Week 1: See It. You can't fix what you won't count.\n\nNotice
  ur body from head to stomach.\n2. Write what you notice in two or three wo
  rds: "hot face\," "tight chest\," "fast talking."\n3. Count\, roughly\, ho
  w many seconds pass between the feeling and the words. That gap is where t
- he pause will go.\n(Full instructions: "The three-second pause" in How to 
- practice\, in your guide.)\n\nBefore you go\, write today's if-then: "If _
- __ happens\, then I'll say ___."\n\nWhy it works: Break an automatic habit
- : notice it\, then replace it. Day 5 teaches you your body's alarm. The pa
- use and a prepared true sentence (Week 4) are the replacement response. (B
- ate\, Malouff\, Thorsteinsson & Bhullar (2011)\, Clinical Psychology Revie
- w (meta-analysis))
+ he pause will go.\n(Full instructions: "Finding your alarm" in How to prac
+ tice\, in your guide.)\n\nBefore you go\, write today's if-then: "If ___ h
+ appens\, then I'll say ___."\n\nWhy it works: Break an automatic habit: no
+ tice it\, then replace it. Day 5 teaches you your body's alarm. The pause 
+ and a prepared true sentence (Week 4) are the replacement response. (Bate\
+ , Malouff\, Thorsteinsson & Bhullar (2011)\, Clinical Psychology Review (m
+ eta-analysis))
 BEGIN:VALARM
 ACTION:DISPLAY
 DESCRIPTION:Day 5 Morning: The alarm in your body
@@ -270,7 +270,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-13@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261130T123000
 DTEND:20261130T123500
 SUMMARY:Day 5 Midday check
@@ -284,7 +284,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-14@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261130T210000
 DTEND:20261130T211000
 SUMMARY:Day 5 Evening Ledger
@@ -304,7 +304,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-15@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261201T063000
 DTEND:20261201T063500
 SUMMARY:Day 6 Morning: The cost
@@ -328,7 +328,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-16@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261201T123000
 DTEND:20261201T123500
 SUMMARY:Day 6 Midday check
@@ -342,7 +342,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-17@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261201T210000
 DTEND:20261201T211000
 SUMMARY:Day 6 Evening Ledger
@@ -362,7 +362,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-18@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261202T063000
 DTEND:20261202T063500
 SUMMARY:Day 7 Morning: Week 1 review
@@ -372,12 +372,12 @@ DESCRIPTION:Week 1: See It. You can't fix what you won't count.\n\nKeep co
  told\, caught and corrected.\n3. Find your worst day and write three thing
  s that were different about it (sleep\, stress\, people\, place).\n4. Writ
  e one sentence about what you learned this week.\n(Full instructions: "The
-  nightly ledger" in How to practice\, in your guide.)\n\nBefore you go\, w
- rite today's if-then: "If ___ happens\, then I'll say ___."\n\nWhy it work
- s: Tracking your behavior changes your behavior. The nightly ledger is the
-  written record\, and the weekly review compares your numbers week to week
- . You can also enter your three numbers on each day in this guide. (Harkin
-  et al. (2016)\, Psychological Bulletin)
+  weekly review" in How to practice\, in your guide.)\n\nBefore you go\, wr
+ ite today's if-then: "If ___ happens\, then I'll say ___."\n\nWhy it works
+ : Tracking your behavior changes your behavior. The nightly ledger is the 
+ written record\, and the weekly review compares your numbers week to week.
+  You can also enter your three numbers on each day in this guide. (Harkin 
+ et al. (2016)\, Psychological Bulletin)
 BEGIN:VALARM
 ACTION:DISPLAY
 DESCRIPTION:Day 7 Morning: Week 1 review
@@ -386,7 +386,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-19@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261202T123000
 DTEND:20261202T123500
 SUMMARY:Day 7 Midday check
@@ -400,7 +400,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-20@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261202T190000
 DTEND:20261202T192000
 SUMMARY:Week 1 review
@@ -418,7 +418,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-21@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261202T210000
 DTEND:20261202T211000
 SUMMARY:Day 7 Evening Ledger
@@ -439,7 +439,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-22@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261203T063000
 DTEND:20261203T063500
 SUMMARY:Day 8 Morning: The fear of failing
@@ -462,7 +462,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-23@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261203T123000
 DTEND:20261203T123500
 SUMMARY:Day 8 Midday check
@@ -476,7 +476,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-24@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261203T210000
 DTEND:20261203T211000
 SUMMARY:Day 8 Evening Ledger
@@ -497,7 +497,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-25@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261204T063000
 DTEND:20261204T063500
 SUMMARY:Day 9 Morning: The fear of not being accepted
@@ -521,7 +521,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-26@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261204T123000
 DTEND:20261204T123500
 SUMMARY:Day 9 Midday check
@@ -535,7 +535,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-27@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261204T210000
 DTEND:20261204T211000
 SUMMARY:Day 9 Evening Ledger
@@ -555,7 +555,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-28@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261205T063000
 DTEND:20261205T063500
 SUMMARY:Day 10 Morning: Where it started
@@ -579,7 +579,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-29@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261205T123000
 DTEND:20261205T123500
 SUMMARY:Day 10 Midday check
@@ -593,7 +593,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-30@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261205T210000
 DTEND:20261205T211000
 SUMMARY:Day 10 Evening Ledger
@@ -613,7 +613,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-31@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261206T063000
 DTEND:20261206T063500
 SUMMARY:Day 11 Morning: Shame vs. guilt
@@ -623,11 +623,12 @@ DESCRIPTION:Week 2: The Fear Underneath. Every lie is protecting something
  O DO IT\n1. Keep a list today of every harsh thing your mind says about yo
  u: "I'm a liar\," "I'm a failure\," "I'm worthless."\n2. Tonight\, pick th
  e three loudest.\n3. Rewrite each in this exact form: "I did ___. I can ma
- ke it right by ___."\n\nBefore you go\, write today's if-then: "If ___ hap
- pens\, then I'll say ___."\n\nWhy it works: Shame hides. Guilt repairs. Da
- y 11 teaches you to turn shame sentences into guilt sentences. You can rep
- air something you did. You can't repair who you are. (Tangney & Dearing\, 
- Shame and Guilt (2002) and later reviews)
+ ke it right by ___."\n(Full instructions: "Turning shame into guilt" in Ho
+ w to practice\, in your guide.)\n\nBefore you go\, write today's if-then: 
+ "If ___ happens\, then I'll say ___."\n\nWhy it works: Shame hides. Guilt 
+ repairs. Day 11 teaches you to turn shame sentences into guilt sentences. 
+ You can repair something you did. You can't repair who you are. (Tangney &
+  Dearing\, Shame and Guilt (2002) and later reviews)
 BEGIN:VALARM
 ACTION:DISPLAY
 DESCRIPTION:Day 11 Morning: Shame vs. guilt
@@ -636,7 +637,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-32@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261206T123000
 DTEND:20261206T123500
 SUMMARY:Day 11 Midday check
@@ -650,7 +651,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-33@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261206T210000
 DTEND:20261206T211000
 SUMMARY:Day 11 Evening Ledger
@@ -670,7 +671,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-34@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261207T063000
 DTEND:20261207T063500
 SUMMARY:Day 12 Morning: What lying pays you
@@ -696,7 +697,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-35@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261207T123000
 DTEND:20261207T123500
 SUMMARY:Day 12 Midday check
@@ -710,7 +711,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-36@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261207T210000
 DTEND:20261207T211000
 SUMMARY:Day 12 Evening Ledger
@@ -730,7 +731,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-37@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261208T063000
 DTEND:20261208T063500
 SUMMARY:Day 13 Morning: Test your prediction
@@ -756,7 +757,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-38@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261208T123000
 DTEND:20261208T123500
 SUMMARY:Day 13 Midday check
@@ -770,7 +771,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-39@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261208T210000
 DTEND:20261208T211000
 SUMMARY:Day 13 Evening Ledger
@@ -790,7 +791,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-40@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261209T063000
 DTEND:20261209T063500
 SUMMARY:Day 14 Morning: Week 2 review: your Fear Map
@@ -800,12 +801,13 @@ DESCRIPTION:Week 2: The Fear Underneath. Every lie is protecting something
  lumns on one page: My fear | The lie it makes me tell | The truth I'm avoi
  ding.\n2. Fill in one row for each of your top three fears\, using your le
  dger from the last two weeks.\n3. Keep this page. It's your Fear Map\, and
-  you'll come back to it.\n\nBefore you go\, write today's if-then: "If ___
-  happens\, then I'll say ___."\n\nWhy it works: Lies are safety behaviors.
-  Dropping them teaches you that the truth is survivable. Each lie you don'
- t tell is a test of your prediction. The prediction test (Day 13) and the 
- truth ladder (Week 5) are behavioral experiments. (Clark & Wells cognitive
-  model\; Morgan & Raffle (1999)\; Salkovskis)
+  you'll come back to it.\n(Full instructions: "The weekly review" in How t
+ o practice\, in your guide.)\n\nBefore you go\, write today's if-then: "If
+  ___ happens\, then I'll say ___."\n\nWhy it works: Lies are safety behavi
+ ors. Dropping them teaches you that the truth is survivable. Each lie you 
+ don't tell is a test of your prediction. The prediction test (Day 13) and 
+ the truth ladder (Week 5) are behavioral experiments. (Clark & Wells cogni
+ tive model\; Morgan & Raffle (1999)\; Salkovskis)
 BEGIN:VALARM
 ACTION:DISPLAY
 DESCRIPTION:Day 14 Morning: Week 2 review: your Fear Map
@@ -814,7 +816,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-41@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261209T123000
 DTEND:20261209T123500
 SUMMARY:Day 14 Midday check
@@ -828,7 +830,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-42@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261209T190000
 DTEND:20261209T192000
 SUMMARY:Week 2 review
@@ -845,7 +847,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-43@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261209T210000
 DTEND:20261209T211000
 SUMMARY:Day 14 Evening Ledger
@@ -865,7 +867,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-44@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261210T063000
 DTEND:20261210T063500
 SUMMARY:Day 15 Morning: The three-second pause
@@ -889,7 +891,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-45@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261210T123000
 DTEND:20261210T123500
 SUMMARY:Day 15 Midday check
@@ -903,7 +905,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-46@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261210T210000
 DTEND:20261210T211000
 SUMMARY:Day 15 Evening Ledger
@@ -923,7 +925,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-47@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261211T063000
 DTEND:20261211T063500
 SUMMARY:Day 16 Morning: Ride the urge
@@ -948,7 +950,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-48@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261211T123000
 DTEND:20261211T123500
 SUMMARY:Day 16 Midday check
@@ -962,7 +964,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-49@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261211T210000
 DTEND:20261211T211000
 SUMMARY:Day 16 Evening Ledger
@@ -982,7 +984,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-50@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261212T063000
 DTEND:20261212T063500
 SUMMARY:Day 17 Morning: "I don't know"
@@ -992,12 +994,13 @@ DESCRIPTION:Week 3: The Pause. Lies are fast. Truth needs three seconds.\n
  s morning: at least once today\, when you don't know something\, you'll sa
  y "I don't know" or "I'm not sure."\n2. Watch for moments where you'd norm
  ally guess\, bluff or pretend to remember.\n3. Say it plainly\, with no ap
- ology after it.\n\nBefore you go\, write today's if-then: "If ___ happens\
- , then I'll say ___."\n\nWhy it works: Lies are safety behaviors. Dropping
-  them teaches you that the truth is survivable. Each lie you don't tell is
-  a test of your prediction. The prediction test (Day 13) and the truth lad
- der (Week 5) are behavioral experiments. (Clark & Wells cognitive model\; 
- Morgan & Raffle (1999)\; Salkovskis)
+ ology after it.\n(Full instructions: "The three-second pause" in How to pr
+ actice\, in your guide.)\n\nBefore you go\, write today's if-then: "If ___
+  happens\, then I'll say ___."\n\nWhy it works: Lies are safety behaviors.
+  Dropping them teaches you that the truth is survivable. Each lie you don'
+ t tell is a test of your prediction. The prediction test (Day 13) and the 
+ truth ladder (Week 5) are behavioral experiments. (Clark & Wells cognitive
+  model\; Morgan & Raffle (1999)\; Salkovskis)
 BEGIN:VALARM
 ACTION:DISPLAY
 DESCRIPTION:Day 17 Morning: "I don't know"
@@ -1006,7 +1009,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-51@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261212T123000
 DTEND:20261212T123500
 SUMMARY:Day 17 Midday check
@@ -1020,7 +1023,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-52@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261212T210000
 DTEND:20261212T211000
 SUMMARY:Day 17 Evening Ledger
@@ -1040,7 +1043,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-53@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261213T063000
 DTEND:20261213T063500
 SUMMARY:Day 18 Morning: The 60-second correction
@@ -1064,7 +1067,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-54@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261213T123000
 DTEND:20261213T123500
 SUMMARY:Day 18 Midday check
@@ -1078,7 +1081,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-55@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261213T210000
 DTEND:20261213T211000
 SUMMARY:Day 18 Evening Ledger
@@ -1099,7 +1102,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-56@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261214T063000
 DTEND:20261214T063500
 SUMMARY:Day 19 Morning: Slow down
@@ -1122,7 +1125,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-57@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261214T123000
 DTEND:20261214T123500
 SUMMARY:Day 19 Midday check
@@ -1136,7 +1139,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-58@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261214T210000
 DTEND:20261214T211000
 SUMMARY:Day 19 Evening Ledger
@@ -1156,7 +1159,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-59@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261215T063000
 DTEND:20261215T063500
 SUMMARY:Day 20 Morning: No rounding up
@@ -1181,7 +1184,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-60@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261215T123000
 DTEND:20261215T123500
 SUMMARY:Day 20 Midday check
@@ -1195,7 +1198,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-61@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261215T210000
 DTEND:20261215T211000
 SUMMARY:Day 20 Evening Ledger
@@ -1215,7 +1218,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-62@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261216T063000
 DTEND:20261216T063500
 SUMMARY:Day 21 Morning: Week 3 review
@@ -1224,13 +1227,13 @@ DESCRIPTION:Week 3: The Pause. Lies are fast. Truth needs three seconds.\n
  morning\, read your three lie situations from Day 3 and your Fear Map from
   Day 14.\n2. Tonight\, add up the week and compare it with Weeks 1 and 2.\
  n3. Write which situation still beats you most. That's your first if-then 
- plan tomorrow.\n(Full instructions: "The nightly ledger" in How to practic
- e\, in your guide.)\n\nBefore you go\, write today's if-then: "If ___ happ
- ens\, then I'll say ___."\n\nWhy it works: Tracking your behavior changes 
- your behavior. The nightly ledger is the written record\, and the weekly r
- eview compares your numbers week to week. You can also enter your three nu
- mbers on each day in this guide. (Harkin et al. (2016)\, Psychological Bul
- letin)
+ plan tomorrow.\n(Full instructions: "The weekly review" in How to practice
+ \, in your guide.)\n\nBefore you go\, write today's if-then: "If ___ happe
+ ns\, then I'll say ___."\n\nWhy it works: Tracking your behavior changes y
+ our behavior. The nightly ledger is the written record\, and the weekly re
+ view compares your numbers week to week. You can also enter your three num
+ bers on each day in this guide. (Harkin et al. (2016)\, Psychological Bull
+ etin)
 BEGIN:VALARM
 ACTION:DISPLAY
 DESCRIPTION:Day 21 Morning: Week 3 review
@@ -1239,7 +1242,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-63@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261216T123000
 DTEND:20261216T123500
 SUMMARY:Day 21 Midday check
@@ -1253,7 +1256,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-64@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261216T190000
 DTEND:20261216T192000
 SUMMARY:Week 3 review
@@ -1271,7 +1274,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-65@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261216T210000
 DTEND:20261216T211000
 SUMMARY:Day 21 Evening Ledger
@@ -1292,7 +1295,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-66@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261217T063000
 DTEND:20261217T063500
 SUMMARY:Day 22 Morning: Write your if-then plans
@@ -1318,7 +1321,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-67@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261217T123000
 DTEND:20261217T123500
 SUMMARY:Day 22 Midday check
@@ -1332,7 +1335,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-68@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261217T210000
 DTEND:20261217T211000
 SUMMARY:Day 22 Evening Ledger
@@ -1352,7 +1355,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-69@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261218T063000
 DTEND:20261218T063500
 SUMMARY:Day 23 Morning: Rehearse out loud
@@ -1377,7 +1380,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-70@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261218T123000
 DTEND:20261218T123500
 SUMMARY:Day 23 Midday check
@@ -1391,7 +1394,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-71@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261218T210000
 DTEND:20261218T211000
 SUMMARY:Day 23 Evening Ledger
@@ -1411,7 +1414,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-72@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261219T063000
 DTEND:20261219T063500
 SUMMARY:Day 24 Morning: Say the feeling instead
@@ -1423,11 +1426,12 @@ DESCRIPTION:Week 4: Replace the Lie. You can't just stop. You have to say
  afraid\, ashamed\, guilty\, tired.\n2. Say it to yourself in a full senten
  ce: "I'm embarrassed that I forgot."\n3. If it's safe and useful\, say the
   feeling out loud to the person instead of the lie.\n4. Log each feeling y
- ou named tonight.\n\nBefore you go\, write today's if-then: "If ___ happen
- s\, then I'll say ___."\n\nWhy it works: Writing about hard things helps a
-  little. The evening questions and letters are writing exercises. They hel
- p\, but they're one tool among several\, not a cure. (Frattaroli (2006)\, 
- Psychological Bulletin)
+ ou named tonight.\n(Full instructions: "Naming the feeling" in How to prac
+ tice\, in your guide.)\n\nBefore you go\, write today's if-then: "If ___ h
+ appens\, then I'll say ___."\n\nWhy it works: Writing about hard things he
+ lps a little. The evening questions and letters are writing exercises. The
+ y help\, but they're one tool among several\, not a cure. (Frattaroli (200
+ 6)\, Psychological Bulletin)
 BEGIN:VALARM
 ACTION:DISPLAY
 DESCRIPTION:Day 24 Morning: Say the feeling instead
@@ -1436,7 +1440,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-73@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261219T123000
 DTEND:20261219T123500
 SUMMARY:Day 24 Midday check
@@ -1450,7 +1454,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-74@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261219T210000
 DTEND:20261219T211000
 SUMMARY:Day 24 Evening Ledger
@@ -1470,7 +1474,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-75@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261220T063000
 DTEND:20261220T063500
 SUMMARY:Day 25 Morning: Private is not a lie
@@ -1483,11 +1487,12 @@ DESCRIPTION:Week 4: Replace the Lie. You can't just stop. You have to say
  g\, decline instead of inventing a story.\n3. Tonight\, review what you ke
  pt private. Ask yourself honestly: does this affect someone else's life\, 
  money or safety? If yes\, it isn't just private. Add it to your list of tr
- uths to tell.\n\nBefore you go\, write today's if-then: "If ___ happens\, 
- then I'll say ___."\n\nWhy it works: If-then plans work. Every morning you
-  write one if-then plan for the day's risk moment: "If she asks about the 
- money\, then I'll say the real number." (Gollwitzer & Sheeran (2006)\, Adv
- ances in Experimental Social Psychology)
+ uths to tell.\n(Full instructions: "Declining without lying" in How to pra
+ ctice\, in your guide.)\n\nBefore you go\, write today's if-then: "If ___ 
+ happens\, then I'll say ___."\n\nWhy it works: If-then plans work. Every m
+ orning you write one if-then plan for the day's risk moment: "If she asks 
+ about the money\, then I'll say the real number." (Gollwitzer & Sheeran (2
+ 006)\, Advances in Experimental Social Psychology)
 BEGIN:VALARM
 ACTION:DISPLAY
 DESCRIPTION:Day 25 Morning: Private is not a lie
@@ -1496,7 +1501,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-76@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261220T123000
 DTEND:20261220T123500
 SUMMARY:Day 25 Midday check
@@ -1510,7 +1515,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-77@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261220T210000
 DTEND:20261220T211000
 SUMMARY:Day 25 Evening Ledger
@@ -1531,7 +1536,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-78@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261221T063000
 DTEND:20261221T063500
 SUMMARY:Day 26 Morning: No made-up excuses
@@ -1556,7 +1561,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-79@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261221T123000
 DTEND:20261221T123500
 SUMMARY:Day 26 Midday check
@@ -1570,7 +1575,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-80@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261221T210000
 DTEND:20261221T211000
 SUMMARY:Day 26 Evening Ledger
@@ -1590,7 +1595,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-81@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261222T063000
 DTEND:20261222T063500
 SUMMARY:Day 27 Morning: When you're tired
@@ -1617,7 +1622,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-82@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261222T123000
 DTEND:20261222T123500
 SUMMARY:Day 27 Midday check
@@ -1631,7 +1636,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-83@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261222T210000
 DTEND:20261222T211000
 SUMMARY:Day 27 Evening Ledger
@@ -1651,7 +1656,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-84@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261223T063000
 DTEND:20261223T063500
 SUMMARY:Day 28 Morning: Week 4 review
@@ -1660,12 +1665,12 @@ DESCRIPTION:Week 4: Replace the Lie. You can't just stop. You have to say
  IT\n1. This morning\, read all your if-then plans out loud once.\n2. Tonig
  ht\, mark each plan: Worked\, Didn't come up\, or Failed.\n3. Rewrite ever
  y plan that failed so it's shorter or more specific.\n(Full instructions: 
- "If-then plans" in How to practice\, in your guide.)\n\nBefore you go\, wr
- ite today's if-then: "If ___ happens\, then I'll say ___."\n\nWhy it works
- : Tracking your behavior changes your behavior. The nightly ledger is the 
- written record\, and the weekly review compares your numbers week to week.
-  You can also enter your three numbers on each day in this guide. (Harkin 
- et al. (2016)\, Psychological Bulletin)
+ "The weekly review" in How to practice\, in your guide.)\n\nBefore you go\
+ , write today's if-then: "If ___ happens\, then I'll say ___."\n\nWhy it w
+ orks: Tracking your behavior changes your behavior. The nightly ledger is 
+ the written record\, and the weekly review compares your numbers week to w
+ eek. You can also enter your three numbers on each day in this guide. (Har
+ kin et al. (2016)\, Psychological Bulletin)
 BEGIN:VALARM
 ACTION:DISPLAY
 DESCRIPTION:Day 28 Morning: Week 4 review
@@ -1674,7 +1679,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-85@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261223T123000
 DTEND:20261223T123500
 SUMMARY:Day 28 Midday check
@@ -1688,7 +1693,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-86@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261223T190000
 DTEND:20261223T192000
 SUMMARY:Week 4 review
@@ -1706,7 +1711,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-87@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261223T210000
 DTEND:20261223T211000
 SUMMARY:Day 28 Evening Ledger
@@ -1726,7 +1731,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-88@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261224T063000
 DTEND:20261224T063500
 SUMMARY:Day 29 Morning: Build your truth ladder
@@ -1751,7 +1756,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-89@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261224T123000
 DTEND:20261224T123500
 SUMMARY:Day 29 Midday check
@@ -1765,7 +1770,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-90@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261224T210000
 DTEND:20261224T211000
 SUMMARY:Day 29 Evening Ledger
@@ -1785,7 +1790,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-91@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261225T063000
 DTEND:20261225T063500
 SUMMARY:Day 30 Morning: An honest no
@@ -1809,7 +1814,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-92@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261225T123000
 DTEND:20261225T123500
 SUMMARY:Day 30 Midday check
@@ -1823,7 +1828,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-93@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261225T210000
 DTEND:20261225T211000
 SUMMARY:Day 30 Evening Ledger
@@ -1843,7 +1848,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-94@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261226T063000
 DTEND:20261226T063500
 SUMMARY:Day 31 Morning: Admit it first
@@ -1865,7 +1870,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-95@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261226T123000
 DTEND:20261226T123500
 SUMMARY:Day 31 Midday check
@@ -1879,7 +1884,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-96@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261226T210000
 DTEND:20261226T211000
 SUMMARY:Day 31 Evening Ledger
@@ -1899,7 +1904,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-97@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261227T063000
 DTEND:20261227T063500
 SUMMARY:Day 32 Morning: Climb a rung
@@ -1922,7 +1927,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-98@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261227T123000
 DTEND:20261227T123500
 SUMMARY:Day 32 Midday check
@@ -1936,7 +1941,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-99@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261227T210000
 DTEND:20261227T211000
 SUMMARY:Day 32 Evening Ledger
@@ -1956,7 +1961,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-100@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261228T063000
 DTEND:20261228T063500
 SUMMARY:Day 33 Morning: Take the reaction
@@ -1970,12 +1975,12 @@ DESCRIPTION:Week 5: Small Truths\, Out Loud. Courage is a muscle. Train it
  tell the truth. If the person reacts with anger or hurt\, don't defend or 
  explain. Say "I understand" and let it land.\n4. Log what you wanted to sa
  y in your defense\, and what you said instead.\n(Full instructions: "The t
- ruth ladder" in How to practice\, in your guide.)\n\nBefore you go\, write
-  today's if-then: "If ___ happens\, then I'll say ___."\n\nWhy it works: R
- emembering your values makes you less defensive. Before a hard truth\, spe
- nd two minutes writing about what matters most to you: your faith\, your c
- hildren\, the man you've decided to be (Day 33). (Sherman & Cohen (2002)\,
-  Current Directions in Psychological Science)
+ wo-minute values reset" in How to practice\, in your guide.)\n\nBefore you
+  go\, write today's if-then: "If ___ happens\, then I'll say ___."\n\nWhy 
+ it works: Remembering your values makes you less defensive. Before a hard 
+ truth\, spend two minutes writing about what matters most to you: your fai
+ th\, your children\, the man you've decided to be (Day 33). (Sherman & Coh
+ en (2002)\, Current Directions in Psychological Science)
 BEGIN:VALARM
 ACTION:DISPLAY
 DESCRIPTION:Day 33 Morning: Take the reaction
@@ -1984,7 +1989,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-101@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261228T123000
 DTEND:20261228T123500
 SUMMARY:Day 33 Midday check
@@ -1998,7 +2003,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-102@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261228T210000
 DTEND:20261228T211000
 SUMMARY:Day 33 Evening Ledger
@@ -2018,7 +2023,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-103@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261229T063000
 DTEND:20261229T063500
 SUMMARY:Day 34 Morning: Climb again
@@ -2041,7 +2046,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-104@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261229T123000
 DTEND:20261229T123500
 SUMMARY:Day 34 Midday check
@@ -2055,7 +2060,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-105@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261229T210000
 DTEND:20261229T211000
 SUMMARY:Day 34 Evening Ledger
@@ -2076,7 +2081,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-106@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261230T063000
 DTEND:20261230T063500
 SUMMARY:Day 35 Morning: Week 5 review
@@ -2085,12 +2090,12 @@ DESCRIPTION:Week 5: Small Truths\, Out Loud. Courage is a muscle. Train it
  OW TO DO IT\n1. Look at your ladder and mark every rung you've climbed.\n2
  . For each one\, write the fear rating before and after.\n3. Tonight\, add
   up the week. Write the truth that you feared most and what really happene
- d.\n(Full instructions: "The truth ladder" in How to practice\, in your gu
- ide.)\n\nBefore you go\, write today's if-then: "If ___ happens\, then I'l
- l say ___."\n\nWhy it works: Tracking your behavior changes your behavior.
-  The nightly ledger is the written record\, and the weekly review compares
-  your numbers week to week. You can also enter your three numbers on each 
- day in this guide. (Harkin et al. (2016)\, Psychological Bulletin)
+ d.\n(Full instructions: "The weekly review" in How to practice\, in your g
+ uide.)\n\nBefore you go\, write today's if-then: "If ___ happens\, then I'
+ ll say ___."\n\nWhy it works: Tracking your behavior changes your behavior
+ . The nightly ledger is the written record\, and the weekly review compare
+ s your numbers week to week. You can also enter your three numbers on each
+  day in this guide. (Harkin et al. (2016)\, Psychological Bulletin)
 BEGIN:VALARM
 ACTION:DISPLAY
 DESCRIPTION:Day 35 Morning: Week 5 review
@@ -2099,7 +2104,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-107@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261230T123000
 DTEND:20261230T123500
 SUMMARY:Day 35 Midday check
@@ -2113,7 +2118,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-108@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261230T190000
 DTEND:20261230T192000
 SUMMARY:Week 5 review
@@ -2131,7 +2136,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-109@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261230T210000
 DTEND:20261230T211000
 SUMMARY:Day 35 Evening Ledger
@@ -2151,7 +2156,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-110@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261231T063000
 DTEND:20261231T063500
 SUMMARY:Day 36 Morning: Money
@@ -2176,7 +2181,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-111@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261231T123000
 DTEND:20261231T123500
 SUMMARY:Day 36 Midday check
@@ -2190,7 +2195,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-112@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20261231T210000
 DTEND:20261231T211000
 SUMMARY:Day 36 Evening Ledger
@@ -2210,7 +2215,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-113@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20270101T063000
 DTEND:20270101T063500
 SUMMARY:Day 37 Morning: Work
@@ -2233,7 +2238,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-114@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20270101T123000
 DTEND:20270101T123500
 SUMMARY:Day 37 Midday check
@@ -2247,7 +2252,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-115@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20270101T210000
 DTEND:20270101T211000
 SUMMARY:Day 37 Evening Ledger
@@ -2267,7 +2272,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-116@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20270102T063000
 DTEND:20270102T063500
 SUMMARY:Day 38 Morning: Answer the whole question
@@ -2292,7 +2297,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-117@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20270102T123000
 DTEND:20270102T123500
 SUMMARY:Day 38 Midday check
@@ -2306,7 +2311,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-118@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20270102T210000
 DTEND:20270102T211000
 SUMMARY:Day 38 Evening Ledger
@@ -2326,7 +2331,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-119@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20270103T063000
 DTEND:20270103T063500
 SUMMARY:Day 39 Morning: Correct an old lie
@@ -2336,13 +2341,13 @@ DESCRIPTION:Week 6: Hard Truths. Tell the truth where it costs the most.\n
  Pick one small old lie that's still standing\, one where the stakes are lo
  w.\n2. Plan your words: "I told you ___. That wasn't true. The truth is __
  _."\n3. Say it today\, without a long explanation.\n4. Tonight\, write the
-  next old lie you want to correct.\n(Full instructions: "The correction" i
- n How to practice\, in your guide.)\n\nBefore you go\, write today's if-th
- en: "If ___ happens\, then I'll say ___."\n\nWhy it works: Secrets weigh o
- n you even when nobody is asking. The lies you're still standing behind co
- st you every day\, not just when you're questioned. That's why Week 6 has 
- you start taking old lies down\, one at a time. (Slepian\, Chun & Mason (2
- 017)\, Journal of Personality and Social Psychology)
+  next old lie you want to correct.\n(Full instructions: "Taking down an ol
+ d lie" in How to practice\, in your guide.)\n\nBefore you go\, write today
+ 's if-then: "If ___ happens\, then I'll say ___."\n\nWhy it works: Secrets
+  weigh on you even when nobody is asking. The lies you're still standing b
+ ehind cost you every day\, not just when you're questioned. That's why Wee
+ k 6 has you start taking old lies down\, one at a time. (Slepian\, Chun & 
+ Mason (2017)\, Journal of Personality and Social Psychology)
 BEGIN:VALARM
 ACTION:DISPLAY
 DESCRIPTION:Day 39 Morning: Correct an old lie
@@ -2351,7 +2356,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-120@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20270103T123000
 DTEND:20270103T123500
 SUMMARY:Day 39 Midday check
@@ -2365,7 +2370,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-121@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20270103T210000
 DTEND:20270103T211000
 SUMMARY:Day 39 Evening Ledger
@@ -2385,7 +2390,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-122@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20270104T063000
 DTEND:20270104T063500
 SUMMARY:Day 40 Morning: No covering lies
@@ -2395,12 +2400,13 @@ DESCRIPTION:Week 6: Hard Truths. Tell the truth where it costs the most.\n
  HOW TO DO IT\n1. Before you leave the house\, decide: if an old lie comes 
  up today\, you will not add a new lie to protect it.\n2. If you're not rea
  dy to correct it\, say nothing\, or say "I'd rather not get into that righ
- t now."\n3. Tonight\, note whether an old lie came up and what you did.\n\
- nBefore you go\, write today's if-then: "If ___ happens\, then I'll say __
- _."\n\nWhy it works: Small lies make bigger lies easier. There's no such t
- hing as a harmless small lie for you. Every exaggeration trains the slope.
-  That's why Day 20 is "No rounding up." (Garrett\, Lazzaro\, Ariely & Shar
- ot (2016)\, Nature Neuroscience)
+ t now."\n3. Tonight\, note whether an old lie came up and what you did.\n(
+ Full instructions: "Taking down an old lie" in How to practice\, in your g
+ uide.)\n\nBefore you go\, write today's if-then: "If ___ happens\, then I'
+ ll say ___."\n\nWhy it works: Small lies make bigger lies easier. There's 
+ no such thing as a harmless small lie for you. Every exaggeration trains t
+ he slope. That's why Day 20 is "No rounding up." (Garrett\, Lazzaro\, Arie
+ ly & Sharot (2016)\, Nature Neuroscience)
 BEGIN:VALARM
 ACTION:DISPLAY
 DESCRIPTION:Day 40 Morning: No covering lies
@@ -2409,7 +2415,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-123@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20270104T123000
 DTEND:20270104T123500
 SUMMARY:Day 40 Midday check
@@ -2423,7 +2429,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-124@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20270104T210000
 DTEND:20270104T211000
 SUMMARY:Day 40 Evening Ledger
@@ -2443,7 +2449,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-125@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20270105T063000
 DTEND:20270105T063500
 SUMMARY:Day 41 Morning: Keep one small promise
@@ -2467,7 +2473,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-126@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20270105T123000
 DTEND:20270105T123500
 SUMMARY:Day 41 Midday check
@@ -2481,7 +2487,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-127@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20270105T210000
 DTEND:20270105T211000
 SUMMARY:Day 41 Evening Ledger
@@ -2501,7 +2507,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-128@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20270106T063000
 DTEND:20270106T063500
 SUMMARY:Day 42 Morning: Week 6 review
@@ -2509,13 +2515,13 @@ DESCRIPTION:Week 6: Hard Truths. Tell the truth where it costs the most.\n
  \nRead your list of truths you still owe.\n\nHOW TO DO IT\n1. This morning
  \, read your list of truths you still owe.\n2. Tonight\, add up the week a
  nd compare it with Week 1.\n3. Pick the next truth on your list and set a 
- date to tell it.\n(Full instructions: "The nightly ledger" in How to pract
- ice\, in your guide.)\n\nBefore you go\, write today's if-then: "If ___ ha
- ppens\, then I'll say ___."\n\nWhy it works: Tracking your behavior change
- s your behavior. The nightly ledger is the written record\, and the weekly
-  review compares your numbers week to week. You can also enter your three 
- numbers on each day in this guide. (Harkin et al. (2016)\, Psychological B
- ulletin)
+ date to tell it.\n(Full instructions: "The weekly review" in How to practi
+ ce\, in your guide.)\n\nBefore you go\, write today's if-then: "If ___ hap
+ pens\, then I'll say ___."\n\nWhy it works: Tracking your behavior changes
+  your behavior. The nightly ledger is the written record\, and the weekly 
+ review compares your numbers week to week. You can also enter your three n
+ umbers on each day in this guide. (Harkin et al. (2016)\, Psychological Bu
+ lletin)
 BEGIN:VALARM
 ACTION:DISPLAY
 DESCRIPTION:Day 42 Morning: Week 6 review
@@ -2524,7 +2530,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-129@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20270106T123000
 DTEND:20270106T123500
 SUMMARY:Day 42 Midday check
@@ -2538,7 +2544,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-130@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20270106T190000
 DTEND:20270106T192000
 SUMMARY:Week 6 review
@@ -2555,7 +2561,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-131@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20270106T210000
 DTEND:20270106T211000
 SUMMARY:Day 42 Evening Ledger
@@ -2575,7 +2581,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-132@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20270107T063000
 DTEND:20270107T063500
 SUMMARY:Day 43 Morning: Your identity sentence
@@ -2598,7 +2604,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-133@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20270107T123000
 DTEND:20270107T123500
 SUMMARY:Day 43 Midday check
@@ -2612,7 +2618,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-134@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20270107T210000
 DTEND:20270107T211000
 SUMMARY:Day 43 Evening Ledger
@@ -2632,7 +2638,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-135@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20270108T063000
 DTEND:20270108T063500
 SUMMARY:Day 44 Morning: Your warning signs
@@ -2656,7 +2662,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-136@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20270108T123000
 DTEND:20270108T123500
 SUMMARY:Day 44 Midday check
@@ -2670,7 +2676,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-137@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20270108T210000
 DTEND:20270108T211000
 SUMMARY:Day 44 Evening Ledger
@@ -2690,7 +2696,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-138@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20270109T063000
 DTEND:20270109T063500
 SUMMARY:Day 45 Morning: Your relapse plan
@@ -2701,12 +2707,12 @@ DESCRIPTION:Week 7: A Man Whose Word Holds. Not a streak. An identity.\n\n
  rt over at Day 1.\n\nHOW TO DO IT\n1. Write the relapse plan from the morn
  ing focus in your own handwriting.\n2. Sign and date it.\n3. Take a photo 
  and set it as a favorite\, or keep it in your wallet.\n4. Read it once ton
- ight.\n(Full instructions: "The correction" in How to practice\, in your g
- uide.)\n\nBefore you go\, write today's if-then: "If ___ happens\, then I'
- ll say ___."\n\nWhy it works: A slip doesn't have to become a relapse. If 
- you lie\, you correct it\, log it\, and keep going. You never go back to D
- ay 1. (Marlatt & Gordon\, Relapse Prevention\; Larimer\, Palmer & Marlatt 
- (1999))
+ ight.\n(Full instructions: "After a slip" in How to practice\, in your gui
+ de.)\n\nBefore you go\, write today's if-then: "If ___ happens\, then I'll
+  say ___."\n\nWhy it works: A slip doesn't have to become a relapse. If yo
+ u lie\, you correct it\, log it\, and keep going. You never go back to Day
+  1. (Marlatt & Gordon\, Relapse Prevention\; Larimer\, Palmer & Marlatt (1
+ 999))
 BEGIN:VALARM
 ACTION:DISPLAY
 DESCRIPTION:Day 45 Morning: Your relapse plan
@@ -2715,7 +2721,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-139@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20270109T123000
 DTEND:20270109T123500
 SUMMARY:Day 45 Midday check
@@ -2729,7 +2735,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-140@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20270109T210000
 DTEND:20270109T211000
 SUMMARY:Day 45 Evening Ledger
@@ -2749,7 +2755,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-141@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20270110T063000
 DTEND:20270110T063500
 SUMMARY:Day 46 Morning: A full honest day
@@ -2773,7 +2779,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-142@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20270110T123000
 DTEND:20270110T123500
 SUMMARY:Day 46 Midday check
@@ -2787,7 +2793,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-143@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20270110T210000
 DTEND:20270110T211000
 SUMMARY:Day 46 Evening Ledger
@@ -2807,7 +2813,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-144@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20270111T063000
 DTEND:20270111T063500
 SUMMARY:Day 47 Morning: What the truth gave you
@@ -2829,7 +2835,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-145@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20270111T123000
 DTEND:20270111T123500
 SUMMARY:Day 47 Midday check
@@ -2843,7 +2849,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-146@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20270111T210000
 DTEND:20270111T211000
 SUMMARY:Day 47 Evening Ledger
@@ -2863,7 +2869,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-147@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20270112T063000
 DTEND:20270112T063500
 SUMMARY:Day 48 Morning: Your ongoing system
@@ -2886,7 +2892,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-148@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20270112T123000
 DTEND:20270112T123500
 SUMMARY:Day 48 Midday check
@@ -2900,7 +2906,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-149@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20270112T210000
 DTEND:20270112T211000
 SUMMARY:Day 48 Evening Ledger
@@ -2920,7 +2926,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-150@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20270113T063000
 DTEND:20270113T063500
 SUMMARY:Day 49 Morning: Day 49
@@ -2928,12 +2934,12 @@ DESCRIPTION:Week 7: A Man Whose Word Holds. Not a streak. An identity.\n\n
  Read your Day 1 numbers this morning.\n\nHOW TO DO IT\n1. Find your Day 1 
  numbers in your ledger and read them.\n2. Compare them with this week's nu
  mbers.\n3. Tonight\, write a one-page letter to the man who started on Day
-  1.\n(Full instructions: "The nightly ledger" in How to practice\, in your
-  guide.)\n\nBefore you go\, write today's if-then: "If ___ happens\, then 
- I'll say ___."\n\nWhy it works: Self-compassion makes men more likely to m
- ake amends. Beating yourself up feeds shame\, and shame feeds hiding. Afte
- r a slip\, you write yourself two honest\, kind sentences\, then you go fi
- x it. (Breines & Chen (2012)\, Personality and Social Psychology Bulletin)
+  1.\n(Full instructions: "The weekly review" in How to practice\, in your 
+ guide.)\n\nBefore you go\, write today's if-then: "If ___ happens\, then I
+ 'll say ___."\n\nWhy it works: Self-compassion makes men more likely to ma
+ ke amends. Beating yourself up feeds shame\, and shame feeds hiding. After
+  a slip\, you write yourself two honest\, kind sentences\, then you go fix
+  it. (Breines & Chen (2012)\, Personality and Social Psychology Bulletin)
 BEGIN:VALARM
 ACTION:DISPLAY
 DESCRIPTION:Day 49 Morning: Day 49
@@ -2942,7 +2948,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-151@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20270113T123000
 DTEND:20270113T123500
 SUMMARY:Day 49 Midday check
@@ -2956,7 +2962,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-152@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20270113T190000
 DTEND:20270113T192000
 SUMMARY:Week 7 review
@@ -2972,7 +2978,7 @@ END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:truth-ledger-153@bethemansystem.com
-DTSTAMP:20261125T142333Z
+DTSTAMP:20261125T142700Z
 DTSTART:20270113T210000
 DTEND:20270113T211000
 SUMMARY:Day 49 Evening Ledger
