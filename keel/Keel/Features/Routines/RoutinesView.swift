@@ -13,6 +13,7 @@ enum RoutineStore {
         }
         set {
             if let d = try? JSONEncoder().encode(newValue) { UserDefaults.standard.set(d, forKey: key) }
+            RoutineProgress.shared.reload()                     // the Voyage shows the change at once
             Task { @MainActor in RoutineAlarms.refresh() }      // alarms follow your routine times
         }
     }
@@ -131,7 +132,7 @@ struct RoutineEditor: View {
                     if routine.startMinute != nil {
                         Toggle("Full-screen alarm to start", isOn: Binding(get: { routine.alarm ?? false }, set: { routine.alarm = $0 }))
                     }
-                } footer: { Text("Timed routines show on Today as one stop (not each step), and can ring like an alarm clock when it's time to begin.") }
+                } footer: { Text("Every routine shows on Today's Voyage as one line you can tick off (open it for the steps left). Timed ones sit at their time and can ring like an alarm clock when it's time to begin.") }
                 Section {
                     TextField("Name, e.g. Morning", text: $routine.name)
                     ScrollView(.horizontal, showsIndicators: false) {
@@ -301,6 +302,7 @@ struct RoutinePlayer: View {
 
     private func next(skipped: Bool = false) {
         skipped ? Haptics.tap() : Haptics.success()
+        if !skipped, let step = current { RoutineProgress.shared.markFromPlayer(step, routineId: routine.id) }   // ticked on the Voyage too
         withAnimation(DS.spring) { index += 1 }
         stepStarted = Date(); extra = 0; buzzed = false
         if current == nil {

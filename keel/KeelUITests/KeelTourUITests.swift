@@ -54,7 +54,39 @@ final class KeelTourUITests: XCTestCase {
         scroll()
     }
 
+    /// Routines on the Voyage (Home → ⋯ → Full Today): tick steps, skip one today, take one out, tick a whole routine, edit.
+    func testRoutinesOnVoyage() {
+        XCTAssertTrue(tab("Inbox").waitForExistence(timeout: 20), "tab bar never appeared")
+        tap(app.buttons["Home options"])
+        tap(find("Full Today"))
+        let morning = find("Morning routine")
+        app.swipeUp(velocity: .slow)                         // a little room below it for the steps
+        scrollTo(morning)
+        checkpoint("r1-voyage-collapsed")
+        tap(morning)
+        checkpoint("r2-morning-expanded")
+        tap(app.buttons["Mark Shower done"])
+        checkpoint("r3-ticked-a-step")
+        tap(app.buttons["More for Get dressed"]); tap(find("Skip today"))
+        checkpoint("r4-skipped-today")
+        tap(app.buttons["More for Breakfast"]); tap(find("Remove from routine"))
+        checkpoint("r5-removed-step")
+        let leaving = app.buttons["Mark Leaving the house routine done"]
+        scrollTo(leaving)
+        tap(leaving)
+        checkpoint("r6-whole-routine-done")
+        scrollTo(find("Edit routine"))
+        tap(find("Edit routine"))
+        checkpoint("r7-edit-routine")
+        tap(app.buttons["Cancel"])
+    }
+
     // MARK: Helpers
+
+    private func scrollTo(_ e: XCUIElement) {
+        var n = 0
+        while !(e.exists && e.isHittable) && n < 10 { app.swipeUp(velocity: .slow); n += 1 }
+    }
 
     /// The calendar tab is named per theme ("Chart" in Chart Table).
     private var calendarTabName: String { tab("Chart").exists ? "Chart" : "Calendar" }

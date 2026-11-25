@@ -244,17 +244,21 @@ struct VoyageView: View {
             out.append(VoyageStop(id: "e" + (e.calendarItemIdentifier) + "\(e.startDate.timeIntervalSince1970)", kind: .port, time: e.startDate,
                                   title: listed ? (e.title ?? "Event") : "Busy", detail: "\(e.startDate.formatted(date: .omitted, time: .shortened))–\(e.endDate.formatted(date: .omitted, time: .shortened))", gapEnd: e.endDate))
         }
-        // Timed routines are one stop ("Morning routine · 6 steps"), and their steps don't also show as tasks.
-        let routines = RoutineStore.all.filter { $0.startMinute != nil }
-        let stepTitles = Set(routines.flatMap { r in r.steps.map { NoteText.fold($0.title) } })
-        for r in routines {
+        // Each timed routine is one stop ("Morning routine · 2 of 6 done"), and no routine's steps also show as tasks.
+        let all = RoutineProgress.shared.routines
+        let stepTitles = Set(all.flatMap { r in r.steps.map { NoteText.fold($0.title) } })
+        for r in all where r.startMinute != nil {
             let m = r.startMinute ?? 0
             guard let start = cal.date(bySettingHour: max(0, m) / 60, minute: max(0, m) % 60, second: 0, of: now) else { continue }
             let end = start.addingTimeInterval(Double(r.totalMinutes * 60))
-            guard end > now, start < anchor else { continue }
-            out.append(VoyageStop(id: "r" + r.id.uuidString, kind: .waypoint, time: start, title: "\(r.name) routine",
-                                  detail: "\(start.formatted(date: .omitted, time: .shortened)) · \(r.steps.count) steps · \(r.totalMinutes) min",
-                                  gapEnd: end, routineId: r.id))
+            // Routines stay on today's route: one not yet done moves along with you once its time has passed,
+            // and a finished one keeps its tick (tap again to undo) without taking up time.
+            guard start < anchor else { continue }
+            let finished = RoutineProgress.shared.isComplete(r)
+            let pastDue = end <= now
+            let at = pastDue && !finished ? now.addingTimeInterval(-60) : start
+            let busyUntil = finished ? at : pastDue ? now.addingTimeInterval(Double(RoutineProgress.shared.minutesLeft(r) * 60)) : end
+            out.append(VoyageStop(id: "r" + r.id.uuidString, kind: .waypoint, time: at, title: "\(r.name) routine", gapEnd: busyUntil, routineId: r.id))
         }
         for t in live where t.hasDueTime && t.id != next?.id && !stepTitles.contains(NoteText.fold(t.title)) {
             if let d = t.dueDate, cal.isDateInToday(d), d >= now.addingTimeInterval(-3600), d < anchor {
@@ -290,6 +294,7 @@ struct VoyageView: View {
         let next = ADHDCoach.nextThing(tasks: live, energy: EnergyLevel(rawValue: energyRaw) ?? .medium)
         VStack(alignment: .leading, spacing: 0) {
             bow(next)
+            untimedRoutines
             ForEach(stops(next: next, live: live)) { s in stopRow(s) }
         }
         .padding(DS.Space.m)
@@ -314,6 +319,23 @@ struct VoyageView: View {
                 }
             }
             .presentationDetents([.height(240)])
+        }
+    }
+
+    /// Routines without a set time ride along just below the bow: one line each, ticked off whenever you do them.
+    @ViewBuilder private var untimedRoutines: some View {
+        let list = RoutineProgress.shared.routines.filter { $0.startMinute == nil && !$0.steps.isEmpty }
+        if !list.isEmpty {
+            ForEach(list) { r in
+                HStack(alignment: .top, spacing: 12) {
+                    ZStack {
+                        Rectangle().fill(DS.Palette.accent.opacity(0.35)).frame(width: 2)
+                        marker(.waypoint).padding(.top, 8).frame(maxHeight: .infinity, alignment: .top)
+                    }
+                    .frame(width: 30)
+                    RoutineStopRow(routine: r).padding(.vertical, 6)
+                }
+            }
         }
     }
 
@@ -378,6 +400,9 @@ struct VoyageView: View {
                         Text(s.detail).font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
                     }
                 default:
+                    if let rid = s.routineId, let r = RoutineProgress.shared.routines.first(where: { $0.id == rid }) {
+                        RoutineStopRow(routine: r)
+                    } else {
                     HStack {
                         VStack(alignment: .leading, spacing: 1) {
                             Text(s.title).font(DS.Font.body.weight(s.kind == .port ? .semibold : .regular)).lineLimit(2)
@@ -389,6 +414,7 @@ struct VoyageView: View {
                                 .buttonStyle(.plain).accessibilityLabel("Start \(s.title)")
                         }
                         if let t = s.task, !t.isDeleted { Button { TaskActions.setDone(t, true) } label: { Image(systemName: "circle").font(.title3).foregroundStyle(DS.Palette.inkSoft) }.buttonStyle(.plain).accessibilityLabel("Mark \(t.title) done") }
+                    }
                     }
                 }
             }

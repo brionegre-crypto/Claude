@@ -75,6 +75,7 @@
 		34A3D52DD7EA2B2F5CD93879 /* ICloudMail.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3B66ACF0AB320A058F6291F /* ICloudMail.swift */; };
 		34C7B0F669E06B29E34C955D /* AppleMessages.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4F176C7EDB18B05EBF6AE81 /* AppleMessages.swift */; };
 		35886D8589B5147C0843866D /* IMAPServers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88F0F0F8D28ED6F60B61B3A7 /* IMAPServers.swift */; };
+		3743811A3393AB3D339F35CE /* RoutineVoyage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 843449FE928FD8536D75ADD2 /* RoutineVoyage.swift */; };
 		37DED23C27B7FD0D653C7617 /* RoutinesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23ADF7A72D12A070C5F39979 /* RoutinesView.swift */; };
 		396EE8501C287D21B3405C18 /* ToolHubs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 942DCCFA062979FF14515813 /* ToolHubs.swift */; };
 		3A891E525241317051D27D67 /* HabitsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 430FEBA07DBE819D0BEA460D /* HabitsView.swift */; };
@@ -555,6 +556,7 @@
 		8300900802D995CA615B4FE0 /* TodayWins.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayWins.swift; sourceTree = "<group>"; };
 		8333F9AFADEF31B2BBB524D1 /* TaskAlarms.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskAlarms.swift; sourceTree = "<group>"; };
 		83A06C580A0352DA59548C19 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		843449FE928FD8536D75ADD2 /* RoutineVoyage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoutineVoyage.swift; sourceTree = "<group>"; };
 		84BAC79E066C20D28E6143A4 /* ImportEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportEngine.swift; sourceTree = "<group>"; };
 		85FB2595633B660B60D4620C /* BodyLife.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BodyLife.swift; sourceTree = "<group>"; };
 		86503DA6CCB3EDDAA215CF40 /* BrainIndex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrainIndex.swift; sourceTree = "<group>"; };
@@ -820,6 +822,7 @@
 			children = (
 				362A8D5E981B31791026F4BF /* RoutineAlarms.swift */,
 				23ADF7A72D12A070C5F39979 /* RoutinesView.swift */,
+				843449FE928FD8536D75ADD2 /* RoutineVoyage.swift */,
 			);
 			path = Routines;
 			sourceTree = "<group>";
@@ -2023,6 +2026,7 @@
 				777B3A3FBE532E223BF3D566 /* ReadStatus.swift in Sources */,
 				0FF1472C5B6A994AFAF3DB7F /* ReadingAids.swift in Sources */,
 				1DC2048E418D477EDF22A625 /* RoutineAlarms.swift in Sources */,
+				3743811A3393AB3D339F35CE /* RoutineVoyage.swift in Sources */,
 				37DED23C27B7FD0D653C7617 /* RoutinesView.swift in Sources */,
 				CB64E7F6984FC8D142D11C4E /* SavePoints.swift in Sources */,
 				9BCAF8B6CA315536E008BC16 /* ScheduledMailView.swift in Sources */,

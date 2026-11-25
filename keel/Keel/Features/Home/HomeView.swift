@@ -138,7 +138,7 @@ struct HomeView: View {
             .sheet(isPresented: $showBrainDump) { BrainDumpView() }
             .fullScreenCover(isPresented: $showSOS) { OverwhelmedView() }
             .sheet(isPresented: $editing) { HomeModulesEditor() }
-            .sheet(isPresented: $fullToday) { TodayView() }          // every classic Today card, as before
+            .sheet(isPresented: $fullToday) { TodayView().overlay(alignment: .bottom) { UndoToast() } }   // every classic Today card, as before (Undo shows over the sheet too)
             .task { await engine.refresh() }
         }
     }
