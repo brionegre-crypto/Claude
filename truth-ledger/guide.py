@@ -2,6 +2,8 @@
 import html
 from content import *
 from build import TONIGHT
+from steps import TECHNIQUES, DAY_STEPS
+TECH_NAME = {k: n for k, n, *_ in TECHNIQUES}
 
 e = html.escape
 def hm(t): h, m = t; return f"{(h - 1) % 12 + 1}:{m:02d} {'AM' if h < 12 else 'PM'}"
@@ -25,7 +27,9 @@ def build(path):
             days.append(f'''<article class="day" id="day-{d}" data-day="{d}">
   <label class="check"><input type="checkbox" data-day="{d}"><span></span></label>
   <div><p class="dnum">Day {d}{' · Review' if d % 7 == 0 else ''}</p><h4>{e(t)}</h4>
-  <p><b>Morning.</b> {e(f)}</p><p><b>Tonight.</b> {e(q)}</p>
+  <p><b>Morning.</b> {e(f)}</p>
+  <p class="howh">How to do it</p><ol class="how">{''.join(f"<li>{e(s)}</li>" for s in DAY_STEPS[d][0])}</ol>{f'<p class="tech">Technique: <a href="#tech-{DAY_STEPS[d][1]}">{e(TECH_NAME[DAY_STEPS[d][1]])}</a></p>' if DAY_STEPS[d][1] else ''}
+  <p><b>Tonight.</b> {e(q)}</p>
   <div class="nums"><label>Told <input type="number" min="0" inputmode="numeric" id="n-{d}-t" data-n="t" data-day="{d}"></label><label>Caught <input type="number" min="0" inputmode="numeric" id="n-{d}-c" data-n="c" data-day="{d}"></label><label>Corrected <input type="number" min="0" inputmode="numeric" id="n-{d}-x" data-n="x" data-day="{d}"></label></div>
   <p class="why"><a href="#sci-{k}">Why it works: {e(SCIENCE[k]['title'])}</a></p></div></article>''')
         weeks.append(f'''<section class="week" id="week-{w['n']}">
@@ -40,9 +44,14 @@ def build(path):
   <h4>{e(SCIENCE[k]['title'])}</h4><p>{e(SCIENCE[k]['finding'])}</p>
   <p><b>In your system:</b> {e(SCIENCE[k]['use'])}</p>
   <p class="src"><a href="{e(SCIENCE[k]['url'])}" target="_blank" rel="noopener">{e(SCIENCE[k]['source'])}</a> · Used on Days {', '.join(str(d) for d in sorted(DAY_SCI) if DAY_SCI[d] == k)}</p></article>''' for k in order)
+    practice = '<h2 id="practice">How to practice</h2><p>The core skills, step by step. Each day tells you which one to use. Come back here whenever a day feels unclear.</p>' + ''.join(
+        f'''<article class="techcard" id="tech-{k}"><h3 class="h3s">{e(name)}</h3><p class="when"><b>When:</b> {e(when)}</p>
+  <ol class="how">{''.join(f"<li>{e(s)}</li>" for s in st)}</ol><p class="howh">Example</p><pre>{e(ex)}</pre></article>'''
+        for k, name, when, st, ex in TECHNIQUES)
     tonight = TONIGHT.split('\n')
-    page = f'''<title>The Truth Ledger</title>
-<meta charset="utf-8"><meta name="claude:viewport-fit-sides" content="cover">
+    page = f'''<!DOCTYPE html>
+<title>The Truth Ledger</title>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="claude:viewport-fit-sides" content="cover">
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;700&family=Lora:ital,wght@1,500&family=Inter:wght@400;600&display=swap" rel="stylesheet">
 <style>
 :root{{--bg:#0B0B0C;--panel:#141416;--ink:#F2EEE6;--em:#E18B1F;--soft:#BFBCB6;--mute:#8C877E;--rule:#2a2925;color-scheme:dark}}
@@ -95,6 +104,10 @@ cite{{display:block;font:500 12px Oswald;letter-spacing:.2em;text-transform:uppe
 .b-strong{{background:var(--em);color:var(--bg)}}.b-moderate{{border:1px solid var(--em);color:var(--em)}}.b-early{{border:1px solid var(--mute);color:var(--soft)}}
 .sci .badge{{margin-bottom:10px}}
 .h3s{{font-size:22px;margin:28px 0 8px;color:var(--em)}}
+.howh{{font:500 12px Oswald;letter-spacing:.2em;text-transform:uppercase;color:var(--em);margin:10px 0 2px!important}}
+.how{{margin:4px 0 6px;padding-left:20px}}.how li{{margin:4px 0;font-size:15px}}
+.tech{{font-size:14px!important;color:var(--soft)}}.tech a{{color:var(--ink)}}
+.techcard{{background:var(--panel);padding:4px 18px 14px;margin:12px 0;scroll-margin-top:100px}}.techcard .when{{color:var(--soft);font-size:15px}}.techcard .when b{{color:var(--em)}}
 .legend{{font-size:14px;color:var(--soft);line-height:2.2}}
 footer{{margin-top:64px;padding-top:24px;border-top:2px solid var(--em);color:var(--mute);font-size:14px}}
 @media print{{.bar{{display:none}}body{{background:#fff;color:#000}}.day,.note,.lines li,.rhythm div,pre{{background:#f4f1ea}}}}
@@ -105,7 +118,7 @@ footer{{margin-top:64px;padding-top:24px;border-top:2px solid var(--em);color:va
 <header class="hero"><p class="label">A Be The Man daily system</p><h1>The Truth<br>Ledger</h1>
 <p class="serif">49 days to become a man whose word holds.</p></header>
 
-<nav class="toc"><a href="#tonight">Tonight</a><a href="#rhythm">Daily rhythm</a><a href="#science">The science</a><a href="#home">At home</a><a href="#week-1">The 49 days</a><a href="#relapse">If you lie</a><a href="#setup">Reminders</a></nav>
+<nav class="toc"><a href="#tonight">Tonight</a><a href="#rhythm">Daily rhythm</a><a href="#practice">How to practice</a><a href="#science">The science</a><a href="#home">At home</a><a href="#week-1">The 49 days</a><a href="#relapse">If you lie</a><a href="#setup">Reminders</a></nav>
 
 <div class="note"><b>Read this first.</b> This is a program one man does on his own, for one goal: to stop lying. Researchers who study pathological lying say no proven treatment exists yet, and they point to cognitive behavioral therapy (CBT) as the best place to start. Self-guided CBT, done with no therapist, has solid evidence behind it, and the men who keep doing the work every day get the most from it. So this guide gives you the CBT methods with the strongest evidence (tracking, if-then plans, habit reversal, exposure and relapse prevention) in 49 short days. Every day links to the study behind it, rated honestly as Strong, Moderate or Early. If you ever feel hopeless or think about harming yourself, call or text <b>988</b> (Suicide &amp; Crisis Lifeline, US).</div>
 
@@ -128,6 +141,8 @@ footer{{margin-top:64px;padding-top:24px;border-top:2px solid var(--em);color:va
 <div><strong>{hm(TIMES['evening'])}</strong>Evening Ledger · 10 min<br><span>Fill in the ledger and answer tonight's question.</span></div>
 <div><strong>Every 7th day</strong>{hm(TIMES['review'])} · 20 min<br><span>Add up the week and compare it with the last one. Write a new if-then for the situation that beat you.</span></div>
 </div>
+
+{practice}
 
 <h2>The pause: true sentences to use</h2>
 <p>A lie fills a silence. Have true sentences ready so you have something else to say.</p>
