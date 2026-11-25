@@ -42,7 +42,16 @@ enum TaskFilter: Hashable {
 
 struct TasksView: View {
     @Environment(\.modelContext) private var ctx
-    @Query(sort: \TaskItem.createdAt, order: .reverse) private var tasks: [TaskItem]      // no list-wide animation: sync and AI autofill updates no longer animate the whole list
+    // Open tasks, plus your 500 most recently finished ones. (It kept every task you ever finished live, re-read
+    // on every save anywhere in the app, even while you were on another tab.) No list-wide animation.
+    @Query(filter: #Predicate<TaskItem> { !$0.isDone }, sort: \TaskItem.createdAt, order: .reverse) private var openTasks: [TaskItem]
+    @Query(TasksView.recentDone) private var doneTasks: [TaskItem]
+    static var recentDone: FetchDescriptor<TaskItem> {
+        var d = FetchDescriptor<TaskItem>(predicate: #Predicate { $0.isDone }, sortBy: [SortDescriptor(\.completedAt, order: .reverse)])
+        d.fetchLimit = 500
+        return d
+    }
+    private var tasks: [TaskItem] { memo.get(\.all) { openTasks + doneTasks } }
     @Query(sort: \SmartList.createdAt) private var smartLists: [SmartList]
     @State private var deadlineFor: TaskItem?
     @State private var editingSmart: SmartList?
@@ -1024,13 +1033,14 @@ private struct ListName: Identifiable { var name: String; var id: String { name 
 /// Remembers derived lists (filtered, grouped, sorted) for the length of one screen update.
 /// A plain class in @State: writing to it never triggers another update.
 final class TasksMemo {
+    var all: [TaskItem]?
     var lists: [String]?
     var tags: [String]?
     var filtered: [TaskItem]?
     var groups: [(title: String, items: [TaskItem])]?
     var searchDone: [TaskItem]?
     var waitingWho: String?
-    func reset() { lists = nil; tags = nil; filtered = nil; groups = nil; searchDone = nil; waitingWho = nil }
+    func reset() { all = nil; lists = nil; tags = nil; filtered = nil; groups = nil; searchDone = nil; waitingWho = nil }
     func get<T>(_ key: ReferenceWritableKeyPath<TasksMemo, T?>, _ make: () -> T) -> T {
         if let v = self[keyPath: key] { return v }
         let v = make(); self[keyPath: key] = v; return v

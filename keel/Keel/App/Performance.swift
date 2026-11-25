@@ -1,4 +1,5 @@
 import SwiftUI
+import SwiftData
 
 // MARK: - Speed helpers shared by the busiest screens
 
@@ -41,5 +42,16 @@ extension EnvironmentValues {
     var mailSearchTerms: [String] {
         get { self[MailSearchTermsKey.self] }
         set { self[MailSearchTermsKey.self] = newValue }
+    }
+}
+
+
+/// Newest-first fetches with a cap, for cards that only look at recent history.
+enum Limits {
+    static func checkIns(_ n: Int) -> FetchDescriptor<CheckIn> {
+        var d = FetchDescriptor<CheckIn>(sortBy: [SortDescriptor(\.day, order: .reverse)]); d.fetchLimit = n; return d
+    }
+    static func sessions(_ n: Int) -> FetchDescriptor<FocusSession> {
+        var d = FetchDescriptor<FocusSession>(sortBy: [SortDescriptor(\.startedAt, order: .reverse)]); d.fetchLimit = n; return d
     }
 }

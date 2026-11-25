@@ -33,7 +33,8 @@ final class CalendarService {
         guard hasCalendarAccess else { return [] }
         // Screens ask for the same day many times while they redraw; reading EventKit each time made scrolling
         // and taps stutter. Cache briefly, and drop the cache whenever any calendar changes.
-        let key = calendars == nil ? "\(start.timeIntervalSince1970)|\(end.timeIntervalSince1970)" : nil
+        // Keyed to the minute: screens asking for "from now" used a new key every redraw and never hit the cache.
+        let key = calendars == nil ? "\(Int(start.timeIntervalSince1970 / 60))|\(Int(end.timeIntervalSince1970 / 60))" : nil
         if let key, let hit = cache[key], Date().timeIntervalSince(hit.at) < 20 { return hit.events }
         let pred = store.predicateForEvents(withStart: start, end: end, calendars: calendars)
         let result = Self.mergeDuplicates(store.events(matching: pred)).sorted { $0.startDate < $1.startDate }

@@ -4,7 +4,7 @@ import SwiftData
 /// Ten-second daily check-in: how you feel and one good thing. Feeds the weekly review's mood trend.
 struct CheckInCard: View {
     @Environment(\.modelContext) private var ctx
-    @Query(sort: \CheckIn.day, order: .reverse) private var checkIns: [CheckIn]
+    @Query(Limits.checkIns(400)) private var checkIns: [CheckIn]       // a year is plenty for the streak
     @State private var highlight = ""
     @State private var picked: Int?
     @State private var energy: Int?

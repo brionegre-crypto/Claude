@@ -258,8 +258,9 @@ extension BodyMath {
 }
 
 struct MoodBodyCard: View {
-    @Query(sort: \CheckIn.day, order: .reverse) private var checkIns: [CheckIn]
-    @Query(sort: \FocusSession.startedAt, order: .reverse) private var sessions: [FocusSession]
+    // Only what it uses: the newest 90 check-ins and 300 sessions (it loaded the whole history).
+    @Query(Limits.checkIns(90)) private var checkIns: [CheckIn]
+    @Query(Limits.sessions(300)) private var sessions: [FocusSession]
     var body: some View {
         let insights = BodyMath.moodInsights(
             moods: checkIns.prefix(90).filter { $0.mood > 0 }.map { (day: $0.day, mood: $0.mood) },

@@ -348,7 +348,7 @@ struct FocusForecastCard: View {
         return d
     }
     @Query(filter: #Predicate<TaskItem> { !$0.isDone }) private var tasks: [TaskItem]
-    @Query(sort: \CheckIn.day, order: .reverse) private var checkIns: [CheckIn]
+    @Query(Limits.checkIns(60)) private var checkIns: [CheckIn]
 
     var body: some View {
         // Only once it's personal: a focus med is set up, or there's enough focus history to learn from.
