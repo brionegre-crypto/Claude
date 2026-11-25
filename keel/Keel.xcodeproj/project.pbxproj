@@ -209,6 +209,7 @@
 		A74D5AF348C778FF18E0F4D8 /* WorldClock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EDAAA19B48707F958508317 /* WorldClock.swift */; };
 		A78E54C4A7E587196BFD08AF /* ProjectsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F185BAE437D06D559B87D87A /* ProjectsView.swift */; };
 		A8C7BE58B4695E0FD7896EFA /* KeelServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F49A27B3A7F949D494C1BC /* KeelServer.swift */; };
+		A8F96DBB2D451016FA565192 /* BarcodeReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04428F7272FD8F9171334A5 /* BarcodeReader.swift */; };
 		A90317FD323C493C85316874 /* FocusHistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25C6E387E93108E996F49ADF /* FocusHistoryView.swift */; };
 		AA32DD97B2B626DCBDF3DF0E /* QuickRepliesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58A7117AF711F0FF03CAF930 /* QuickRepliesView.swift */; };
 		AA6C09BE45132CDCBB2D136D /* BodyHub.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0917C141784853BCCE05FEF /* BodyHub.swift */; };
@@ -244,6 +245,7 @@
 		C3FBFE8663EC83670D75E7BF /* FocusRoomView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C8DABB95D11D41F56953391 /* FocusRoomView.swift */; };
 		C47D427217918E8C75B2B94D /* PromisesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6BC64A281F313E34B666753 /* PromisesView.swift */; };
 		C533E7530F4ECD3B938DFE3C /* BodyEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 464470D17A8240ED7E947FF4 /* BodyEngine.swift */; };
+		C53B0B8A171A7C6934D6266D /* FoodAI.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA103433DC6E9691990C11AE /* FoodAI.swift */; };
 		C56B3A5E647FA5EDDE0057F2 /* popup.js in Resources */ = {isa = PBXBuildFile; fileRef = 4B93DC2BF1088C5F47C334BD /* popup.js */; };
 		C71EBAD855FE7CFD1D5C73A0 /* Autopilot.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0BDD443EF6D29F67974CA1A /* Autopilot.swift */; };
 		C839FB522B933BB2847EB9FF /* FeatureGuide.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDD70B09903F05C64E2DAD41 /* FeatureGuide.swift */; };
@@ -270,6 +272,7 @@
 		D6CAFF3618BD3932F329A1D8 /* HealthRecords.swift in Sources */ = {isa = PBXBuildFile; fileRef = 062A99467852730A68895E84 /* HealthRecords.swift */; };
 		D9226170733D6B7F58B7BB57 /* TodayWins.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8300900802D995CA615B4FE0 /* TodayWins.swift */; };
 		D9E877822D1A03B85F2F4BAA /* KeelAccount.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5764611969E29FE8CB9557F /* KeelAccount.swift */; };
+		DC2849BA0B736D5083F2D237 /* GalleyHome.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAC71922027FF779C3009210 /* GalleyHome.swift */; };
 		DCB26DD19A2EBFDE8962412A /* MemoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C77FADEF257BE19FE81BB66 /* MemoryView.swift */; };
 		DD0573D6872D27C06BF65623 /* Performance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 303BCF7F771A3E764CA4858F /* Performance.swift */; };
 		DDB2FF8FB3B87CF2A24DD9D8 /* TaskDuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 533556E73599FD19F8CD373A /* TaskDuration.swift */; };
@@ -292,6 +295,7 @@
 		ECB85DAE2254C11B414BDE07 /* NeedsYouCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66A436D40C2EF27A4F9D04A1 /* NeedsYouCard.swift */; };
 		ECBA22E7C73B9A34880E0E69 /* UndoCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = D448509E2BC3A18B0E637939 /* UndoCenter.swift */; };
 		ED064E6EBCC2F5C3F8330CD5 /* MailStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63CA9B40624156B635F02802 /* MailStore.swift */; };
+		F07CB28CD46DFBBF67E0698F /* GalleyLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4B6C84EA3F46A23133A26F /* GalleyLog.swift */; };
 		F20BF4EAE62B6CDA4664F769 /* BrainPro.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A87127B07B1DC16D042E21E /* BrainPro.swift */; };
 		F27CF0E2C2C4EB6507312277 /* HabitEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACB5B7727DBF2E63305F51B2 /* HabitEngine.swift */; };
 		F304617DA73BBE103CD6AD4A /* Assistant.swift in Sources */ = {isa = PBXBuildFile; fileRef = C582D11F72C1D13929026FAA /* Assistant.swift */; };
@@ -493,6 +497,7 @@
 		4B5F4C049C2323D6DBD0DFE0 /* KitGrowth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KitGrowth.swift; sourceTree = "<group>"; };
 		4B93DC2BF1088C5F47C334BD /* popup.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = popup.js; sourceTree = "<group>"; };
 		4BC1E866A5D9F364DF141BDD /* Binnacle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Binnacle.swift; sourceTree = "<group>"; };
+		4C4B6C84EA3F46A23133A26F /* GalleyLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GalleyLog.swift; sourceTree = "<group>"; };
 		4C8DABB95D11D41F56953391 /* FocusRoomView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FocusRoomView.swift; sourceTree = "<group>"; };
 		4D0B9D5FF32ED24F051A1187 /* WidgetSync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetSync.swift; sourceTree = "<group>"; };
 		4D5DCE0B262316F182FD0A3B /* ImportArchive.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportArchive.swift; sourceTree = "<group>"; };
@@ -609,6 +614,7 @@
 		A7C9F724474BBD7C3A7CE3D5 /* TeamBoards.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamBoards.swift; sourceTree = "<group>"; };
 		A8497D044B629F3825BBD0B3 /* OverwhelmedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverwhelmedView.swift; sourceTree = "<group>"; };
 		A86DA1F72F9345E4EE402CF6 /* WeeklyRecap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeeklyRecap.swift; sourceTree = "<group>"; };
+		AAC71922027FF779C3009210 /* GalleyHome.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GalleyHome.swift; sourceTree = "<group>"; };
 		AB62EF3D17A17E14F6923B77 /* PromiseTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromiseTracker.swift; sourceTree = "<group>"; };
 		AC5DF313CDFD078F6B4CA79F /* Briefing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Briefing.swift; sourceTree = "<group>"; };
 		ACB5B7727DBF2E63305F51B2 /* HabitEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HabitEngine.swift; sourceTree = "<group>"; };
@@ -638,6 +644,7 @@
 		BED9412B2B2AEFE78F26D463 /* MailAIPlus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MailAIPlus.swift; sourceTree = "<group>"; };
 		BF8B8321C55ECAB84D3FFC64 /* FoundInMailViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoundInMailViews.swift; sourceTree = "<group>"; };
 		C00C8353C2B2BFF697F0C6DE /* FoodCatalogData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoodCatalogData.swift; sourceTree = "<group>"; };
+		C04428F7272FD8F9171334A5 /* BarcodeReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarcodeReader.swift; sourceTree = "<group>"; };
 		C1869CA1FD5478B5D544C8E9 /* KeelMemory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeelMemory.swift; sourceTree = "<group>"; };
 		C362FDE436C510F92226E5A7 /* KitMind.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KitMind.swift; sourceTree = "<group>"; };
 		C3D6C65D586B3C3032BDE5C6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -681,6 +688,7 @@
 		E6DA31B1269D064E20C25AD4 /* MacWindows.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacWindows.swift; sourceTree = "<group>"; };
 		E7ACA3D1DD7457A3D7631DA4 /* Together.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Together.swift; sourceTree = "<group>"; };
 		E8B2D4D1DC965F4FC5A3477D /* DemoData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoData.swift; sourceTree = "<group>"; };
+		EA103433DC6E9691990C11AE /* FoodAI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoodAI.swift; sourceTree = "<group>"; };
 		EAAF02252EE2C633D8BD47D5 /* NotesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotesView.swift; sourceTree = "<group>"; };
 		EB4780547E9A45B01E52B352 /* BrainMap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrainMap.swift; sourceTree = "<group>"; };
 		EB9F51008F5680B7967B16CD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -990,14 +998,18 @@
 		60727DD2A252CBE89D9C9487 /* Nutrition */ = {
 			isa = PBXGroup;
 			children = (
+				C04428F7272FD8F9171334A5 /* BarcodeReader.swift */,
 				AD14000BFD21DF468CCD5FD9 /* BodyFoodPage.swift */,
 				9C093C263FFEE41054DA9FFC /* DietEngine.swift */,
 				24BFDF78F0CF750947EC2C4C /* DietGuide.json */,
+				EA103433DC6E9691990C11AE /* FoodAI.swift */,
 				C00C8353C2B2BFF697F0C6DE /* FoodCatalogData.swift */,
 				60BDC8ACC2EA12B71B32BD5A /* FoodHistory.swift */,
 				A166EBB11330D392586E0D1C /* FoodLookup.swift */,
 				0E4FDB0CE8DC2CAD8B9F42D8 /* FoodScanner.swift */,
 				998C75E30A7E3EAD31B54669 /* FoodSearch.swift */,
+				AAC71922027FF779C3009210 /* GalleyHome.swift */,
+				4C4B6C84EA3F46A23133A26F /* GalleyLog.swift */,
 				72378D95B5FD656710148846 /* NutritionHealth.swift */,
 				72A56BAA85C5ECA175F21729 /* NutritionModels.swift */,
 				B31BC3B9C481D779A808D467 /* NutritionViews.swift */,
@@ -1843,6 +1855,7 @@
 				9DEFEE608D1EBE0563F1F158 /* AutopilotView.swift in Sources */,
 				98E3688358CE8EC93A7C843F /* Availability.swift in Sources */,
 				643DBBF9382AB7D1FE6AB4F6 /* Backup.swift in Sources */,
+				A8F96DBB2D451016FA565192 /* BarcodeReader.swift in Sources */,
 				1AC457AFE618142C79910E52 /* Binnacle.swift in Sources */,
 				926EE8DDC3CCB0A64FABA89F /* BioAge.swift in Sources */,
 				03975DB3BA427651C4160195 /* Blocks.swift in Sources */,
@@ -1915,12 +1928,15 @@
 				C3FBFE8663EC83670D75E7BF /* FocusRoomView.swift in Sources */,
 				5246001A13436AC71D164A86 /* FocusSound.swift in Sources */,
 				27E9B13DE7B45A5FF13DE173 /* FocusView.swift in Sources */,
+				C53B0B8A171A7C6934D6266D /* FoodAI.swift in Sources */,
 				BEA36DAA7F66AE259FA34882 /* FoodCatalogData.swift in Sources */,
 				9C16B6380133D97E5A51335A /* FoodHistory.swift in Sources */,
 				CC131DB5837ECA2B055448DD /* FoodLookup.swift in Sources */,
 				E5EABFF08BCECEFFBECCF6D7 /* FoodScanner.swift in Sources */,
 				6214D029E9015AD2BF5C7E03 /* FoodSearch.swift in Sources */,
 				1FBDDE62A5462CB2C632284A /* FoundInMailViews.swift in Sources */,
+				DC2849BA0B736D5083F2D237 /* GalleyHome.swift in Sources */,
+				F07CB28CD46DFBBF67E0698F /* GalleyLog.swift in Sources */,
 				005C6DEC7CE6E0CD912093F5 /* GoalsView.swift in Sources */,
 				CA2D3821E5A280010A905247 /* HTMLMailView.swift in Sources */,
 				F27CF0E2C2C4EB6507312277 /* HabitEngine.swift in Sources */,
