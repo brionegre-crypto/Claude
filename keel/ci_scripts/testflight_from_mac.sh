@@ -6,6 +6,7 @@
 #   keel/ci_scripts/testflight_from_mac.sh <build-number>            archive, then upload to App Store Connect
 #   CHECK=1 keel/ci_scripts/testflight_from_mac.sh <build-number>    prepare and compile only (unsigned, no upload)
 #   ARCHIVE_ONLY=1 keel/ci_scripts/testflight_from_mac.sh <build>    signed archive, no upload
+#   PLATFORM=mac keel/ci_scripts/testflight_from_mac.sh <build>      the Mac app (Mac Catalyst) instead of iPhone/iPad
 #
 # The build number must be higher than the last one in App Store Connect (Xcode Cloud's last was 235).
 # Signing: either sign in to Xcode (Settings → Accounts, team NT3YQF6DM5), or use an App Store Connect API key:
@@ -22,12 +23,18 @@ BUILD="${1:?usage: testflight_from_mac.sh <build-number>}"
 ROOT="$(git -C "$(dirname "$0")" rev-parse --show-toplevel)"
 TMP="$(mktemp -d)"
 WORK="$TMP/repo"
-OUT="${OUT:-$HOME/Desktop/Keel-$BUILD}"
+PLATFORM="${PLATFORM:-ios}"
+case "$PLATFORM" in
+  ios) DEST='generic/platform=iOS'; SUFFIX="" ;;
+  mac) DEST='generic/platform=macOS,variant=Mac Catalyst'; SUFFIX="-mac" ;;
+  *) echo "PLATFORM must be ios or mac" >&2; exit 1 ;;
+esac
+OUT="${OUT:-$HOME/Desktop/Keel-$BUILD$SUFFIX}"
 
 git -C "$ROOT" worktree add --detach --quiet "$WORK" HEAD
 cleanup() { local s=$?; git -C "$ROOT" worktree remove --force "$WORK" 2>/dev/null || true; rm -rf "$TMP"; exit $s; }
 trap cleanup EXIT
-echo "Preparing build $BUILD from commit $(git -C "$WORK" rev-parse --short HEAD)…"
+echo "Preparing $PLATFORM build $BUILD from commit $(git -C "$WORK" rev-parse --short HEAD)…"
 
 # Exactly what Xcode Cloud runs after cloning (minus installing XcodeGen, which this Mac already has).
 command -v xcodegen >/dev/null || { echo "XcodeGen is needed: brew install xcodegen" >&2; exit 1; }
@@ -42,14 +49,14 @@ if [[ -n "${ASC_KEY_PATH:-}" ]]; then
 fi
 
 if [[ "${CHECK:-0}" == "1" ]]; then
-  xcodebuild -project Keel.xcodeproj -scheme Keel -configuration Release -destination 'generic/platform=iOS' \
+  xcodebuild -project Keel.xcodeproj -scheme Keel -configuration Release -destination "$DEST" \
     -derivedDataPath "$TMP/dd" CODE_SIGNING_ALLOWED=NO build -quiet
   echo "Check passed: build $BUILD compiles with Xcode Cloud's settings. Nothing was signed or uploaded."
   exit 0
 fi
 
 mkdir -p "$OUT"
-xcodebuild -project Keel.xcodeproj -scheme Keel -configuration Release -destination 'generic/platform=iOS' \
+xcodebuild -project Keel.xcodeproj -scheme Keel -configuration Release -destination "$DEST" \
   -archivePath "$OUT/Keel.xcarchive" -allowProvisioningUpdates ${AUTH[@]+"${AUTH[@]}"} archive -quiet
 echo "Archived: $OUT/Keel.xcarchive"
 if [[ "${ARCHIVE_ONLY:-0}" == "1" ]]; then echo "ARCHIVE_ONLY=1: signed archive made, nothing uploaded."; exit 0; fi
