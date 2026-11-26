@@ -178,7 +178,7 @@ final class CalendarService {
     /// Two-way sync with Apple Reminders. Whichever side changed last wins; a reminder deleted in the
     /// Reminders app is removed from Keel; tasks made in Keel are created in Reminders.
     func syncReminders(tasks: [TaskItem], insert: (TaskItem) -> Void, delete: (TaskItem) -> Void) async {
-        guard hasReminderAccess, RemindersBridge.isThisDevice else { return }
+        guard hasReminderAccess, RemindersBridge.isThisDevice, !KeelRuntime.isDemo else { return }   // demo data stays out of Reminders
         // Retry anything that didn't make it last time.
         let failed = ReminderFailures.ids
         if !failed.isEmpty {
@@ -205,7 +205,8 @@ final class CalendarService {
                     t.isDone = r.isCompleted
                     t.completedAt = r.completionDate
                     t.dueDate = Self.date(from: r.dueDateComponents)
-                    t.listName = r.calendar?.title ?? t.listName
+                    t.listName = Self.listAfterPull(keel: t.listName, reminders: r.calendar?.title, lists: reminderLists.map(\.title),
+                                                    defaultList: store.defaultCalendarForNewReminders()?.title)
                     t.notes = r.notes ?? t.notes
                     t.priority = Self.priority(fromEK: r.priority)
                     t.recurrence = r.recurrenceRules?.first.flatMap(Recurrence.init(ek:))
@@ -236,12 +237,21 @@ final class CalendarService {
         for t in tasks where t.ekReminderId == nil && !t.isDone { try? push(t) }
     }
 
+    /// The list a task should be in after reading its reminder. A Keel list that doesn't exist in Reminders is kept:
+    /// such a task's reminder sits in your default list, and copying that name back moved it out of its Keel list
+    /// (and out of any routine that list feeds). Moving a reminder into a real list in Reminders still moves the task.
+    nonisolated static func listAfterPull(keel: String, reminders: String?, lists: [String], defaultList: String?) -> String {
+        guard let reminders, reminders != keel else { return keel }
+        if reminders == defaultList && !lists.contains(keel) { return keel }
+        return reminders
+    }
+
     /// Sends a task to Apple Reminders. Only the device that runs the Reminders sync does this (normally your
     /// iPhone): a reminder's id differs from device to device, so iPad or Mac writing too made duplicates.
     /// Other devices' changes reach Reminders on that device's next sync. A failure is remembered and retried,
     /// and Tasks says so, instead of the task silently never reaching Reminders.
     func push(_ t: TaskItem) throws {
-        guard hasReminderAccess, RemindersBridge.isThisDevice else { return }
+        guard hasReminderAccess, RemindersBridge.isThisDevice, !KeelRuntime.isDemo else { return }
         do {
             try pushNow(t)
             ReminderFailures.clear(t.id)

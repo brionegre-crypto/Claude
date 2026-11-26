@@ -1,4 +1,5 @@
 import SwiftUI
+import SwiftData
 import UserNotifications
 
 /// Routines are kept on this iPhone (and copied to Apple Watch).
@@ -44,10 +45,15 @@ struct RoutinesView: View {
     @Environment(\.modelContext) private var ctx
     @State private var pickingList = false
     @State private var pendingEdit: Routine?         // opened once the list picker has closed (one sheet at a time)
+    @Query(filter: #Predicate<TaskItem> { !$0.isDone }) private var openTasks: [TaskItem]
+    @State private var fitCounts: [UUID: Int] = [:]  // loose tasks that look like they belong in each routine
+    @State private var fitting: Routine?             // the "Add to …" sheet
+    @State private var justSaved: Routine?           // offer fitting tasks once the editor closes
+    @State private var justLinked: UUID?             // a list just turned into a routine counts as new
 
     var body: some View {
         List {
-            RoutineSuggestionsSection(onLinked: { linked in routines = RoutineStore.all; editing = linked },
+            RoutineSuggestionsSection(onLinked: { linked in routines = RoutineStore.all; justLinked = linked.id; editing = linked },
                                       onPickList: { pickingList = true })
             Section {
                 ForEach(routines) { r in
@@ -58,6 +64,15 @@ struct RoutinesView: View {
                             Text("\(r.steps.count) steps · \(r.totalMinutes) min" + (r.finishBy.map { " · done by \(Self.clock($0))" } ?? "")
                                  + (r.sourceList.map { " · from “\($0)”" } ?? ""))
                                 .font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
+                            if let n = fitCounts[r.id], n > 0 {
+                                Button { fitting = r } label: {
+                                    Label("\(n) task\(n == 1 ? "" : "s") fit\(n == 1 ? "s" : "")", systemImage: "sparkles")
+                                        .font(DS.Font.caption.weight(.semibold)).padding(.horizontal, 8).padding(.vertical, 3)
+                                        .background(DS.Palette.accent.opacity(0.12), in: Capsule())
+                                }
+                                .buttonStyle(.borderless)
+                                .accessibilityLabel("\(n) tasks fit \(r.name)")
+                            }
                         }
                         Spacer()
                         Button { playing = r } label: {
@@ -82,17 +97,27 @@ struct RoutinesView: View {
         }
         .navigationTitle("Routines")
         .toolbar { EditButton() }
-        .sheet(item: $editing) { r in
+        .sheet(item: $editing, onDismiss: {
+            // Just made or linked a routine: if loose tasks look like they belong in it, offer them (you approve each).
+            if let r = justSaved { justSaved = nil; if !RoutineFit.candidates(for: r, from: openTasks).isEmpty { fitting = r } }
+        }) { r in
             RoutineEditor(routine: r) { saved in
+                let isNew = !routines.contains { $0.id == saved.id } || saved.id == justLinked
                 if let i = routines.firstIndex(where: { $0.id == saved.id }) { routines[i] = saved } else { routines.append(saved) }
                 RoutineStore.all = routines
+                if isNew { justSaved = saved; justLinked = nil }
             }
         }
+        .sheet(item: $fitting, onDismiss: { routines = RoutineStore.all; countFits() }) { r in RoutineFitSheet(routine: r) }
         .fullScreenCover(item: $playing) { r in RoutinePlayer(routine: r) }
-        .task { RoutineLists.refresh(ctx); routines = RoutineStore.all }
+        .task { RoutineLists.refresh(ctx); routines = RoutineStore.all; countFits() }
         .sheet(isPresented: $pickingList, onDismiss: { if let r = pendingEdit { pendingEdit = nil; editing = r } }) {
-            RoutineListPicker { list in routines = RoutineStore.all; pendingEdit = RoutineLists.link(list, ctx: ctx); routines = RoutineStore.all }
+            RoutineListPicker { list in let r = RoutineLists.link(list, ctx: ctx); routines = RoutineStore.all; justLinked = r.id; pendingEdit = r }
         }     // linked lists may have changed in Reminders
+    }
+
+    private func countFits() {
+        fitCounts = Dictionary(uniqueKeysWithValues: routines.map { ($0.id, RoutineFit.candidates(for: $0, from: openTasks).count) })
     }
 
     static func clock(_ minutes: Int) -> String {
@@ -105,6 +130,7 @@ struct RoutineEditor: View {
     @State var routine: Routine
     let save: (Routine) -> Void
     @Environment(\.dismiss) private var dismiss
+    @State private var addingTasks = false
     private let icons = ["sunrise.fill", "moon.stars.fill", "door.left.hand.open", "figure.walk", "fork.knife", "bed.double.fill",
                          "backpack.fill", "house.fill", "briefcase.fill", "dumbbell.fill", "list.bullet", "sparkles"]
 
@@ -193,10 +219,20 @@ struct RoutineEditor: View {
                     if routine.sourceList == nil {
                         Button { routine.steps.append(.init(title: "", minutes: 5)) } label: { Label("Add Step", systemImage: "plus") }
                     }
+                    if RoutineStore.all.contains(where: { $0.id == routine.id }) {
+                        Button { addingTasks = true } label: { Label("Add from your tasks…", systemImage: "checklist") }
+                    }
                 } header: { Text("Steps · \(routine.totalMinutes) min total") }
             }
             .navigationTitle(routine.name.isEmpty ? "New Routine" : routine.name)
             .navigationBarTitleDisplayMode(.inline)
+            .sheet(isPresented: $addingTasks) {
+                // Saves what's on screen first, so the tasks land in this version of the routine; then shows the new steps.
+                RoutineFitSheet(routine: routine, preselect: false) {
+                    if let fresh = RoutineStore.all.first(where: { $0.id == routine.id }) { routine.steps = fresh.steps; routine.skipTitles = fresh.skipTitles }
+                }
+                .onAppear { save(routine) }
+            }
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() } }
                 ToolbarItem(placement: .confirmationAction) {

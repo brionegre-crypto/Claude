@@ -950,6 +950,18 @@ struct TaskDetailView: View {
                     ForEach(goals) { g in Text("\(g.emoji) \(g.title)").tag(Optional(g.id)) }
                 }
                 Button("New list…") { showNewList = true }
+                let routines = RoutineProgress.shared.routines.filter { RoutineFit.eligible(task, for: $0) }
+                if !routines.isEmpty {
+                    Menu {
+                        ForEach(routines) { r in
+                            Button(r.sourceList.map { "\(r.name) (moves to “\($0)”)" } ?? r.name, systemImage: r.icon) {
+                                let becomesStep = r.sourceList == nil          // the loose task is cleared, so close this page
+                                RoutineFit.add([task], to: r, ctx: ctx)
+                                if becomesStep { dismiss() }
+                            }
+                        }
+                    } label: { Label("Add to a routine", systemImage: "list.bullet.rectangle") }
+                }
                 TextField("Tags (comma separated)", text: Binding(
                     get: { TaskMeta.visibleTags(task).joined(separator: ", ") },
                     set: { task.tags = task.tags.filter(TaskMeta.isHidden) + $0.split(separator: ",").map { $0.trimmingCharacters(in: .whitespaces).replacingOccurrences(of: "#", with: "") }.filter { !$0.isEmpty } }))

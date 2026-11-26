@@ -19,8 +19,23 @@ enum DemoData {
         d.set(true, forKey: "onboarding.done")
         d.set(Discover.version, forKey: Discover.seenKey)
         d.set(true, forKey: "alarms.asked")
+        if d.bool(forKey: "KeelDemoReset") { reset(KeelStore.container.mainContext) }   // -KeelDemoReset YES: each UI test starts fresh
         seedBody()
         seedStore(KeelStore.container.mainContext)
+    }
+
+    /// Clears what the demo seeds and what routines remember, so the next seed starts from scratch.
+    @MainActor private static func reset(_ ctx: ModelContext) {
+        try? ctx.delete(model: TaskItem.self)
+        try? ctx.delete(model: Note.self)
+        try? ctx.delete(model: EmailMessage.self)
+        try? ctx.delete(model: MailAccount.self)
+        try? ctx.save()
+        let d = UserDefaults.standard
+        for key in d.dictionaryRepresentation().keys where key.hasPrefix("routinefit.") || key.hasPrefix("routines.") || key == RoutineStore.key {
+            d.removeObject(forKey: key)
+        }
+        RoutineProgress.shared.reload()
     }
 
     private static let demoAccount = "gmail:alex.demo@example.com"
@@ -72,6 +87,14 @@ enum DemoData {
             item.recurrence = Recurrence(frequency: .daily)
             item.estimatedMinutes = [2, 1, 5][i]
             item.energy = .low
+            ctx.insert(item)
+        }
+        // Loose tasks that belong in routines (Routines suggests moving them in).
+        for (title, h, m, list) in [("Take vitamins", 7, 30, "Personal"), ("Floss", 21, 50, "Personal"), ("Lay out gym clothes", 21, 0, "Home")] {
+            let item = TaskItem(title: title, dueDate: at(0, h, m))
+            item.listName = list
+            item.recurrence = Recurrence(frequency: .daily)
+            item.estimatedMinutes = 3
             ctx.insert(item)
         }
         for t in ["Morning pages", "Inbox zero", "Stretch for 5 minutes"] {

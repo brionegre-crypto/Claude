@@ -143,6 +143,7 @@ struct RoutineStopRow: View {
     @State private var expanded = false
     @State private var showDone = false
     @State private var editing: Routine?
+    @State private var addingTasks = false
 
     var body: some View {
         let r = routine
@@ -200,6 +201,7 @@ struct RoutineStopRow: View {
         .sheet(item: $editing) { e in
             RoutineEditor(routine: e) { progress.replace($0) }
         }
+        .sheet(isPresented: $addingTasks) { RoutineFitSheet(routine: routine, preselect: false).overlay(alignment: .bottom) { UndoToast() } }
     }
 
     private func summary(_ r: Routine, done: Int, total: Int, complete: Bool) -> String {
@@ -231,6 +233,7 @@ struct RoutineStopRow: View {
                     }
                 }
                 Spacer()
+                Button("Add tasks…") { addingTasks = true }
                 Button("Edit routine…") { editing = r }
             }
             .font(DS.Font.caption.weight(.semibold))

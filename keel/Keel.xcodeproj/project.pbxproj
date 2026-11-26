@@ -112,6 +112,7 @@
 		55F5E5D6E3C774C086301604 /* DemoData.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8B2D4D1DC965F4FC5A3477D /* DemoData.swift */; };
 		564E1BA5AB1AB64EA1E57121 /* CommandBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC81D332BB367C4D33D8162 /* CommandBar.swift */; };
 		576346E361E24DA7BEA8FD58 /* MedsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D09AF569CDD6E09A77F370E3 /* MedsView.swift */; };
+		57818EA76585469F0A8FFCE8 /* RoutineFit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37030C291AA38D61442093E9 /* RoutineFit.swift */; };
 		57AAB4524B7A0D27DF8DDDDA /* KitTime.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A65C134D2D1C74B3B23F03F /* KitTime.swift */; };
 		59651B53554FB91C75C7231C /* AppleNotesImport.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0A0A17F23DEE779D971974A /* AppleNotesImport.swift */; };
 		5C2E89A72B9675D59B1D7CF4 /* NotionConnector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D925336B8A5B70344FC0132 /* NotionConnector.swift */; };
@@ -475,6 +476,7 @@
 		362A8D5E981B31791026F4BF /* RoutineAlarms.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoutineAlarms.swift; sourceTree = "<group>"; };
 		367E3B118319EFDECE14242C /* MailProviders.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MailProviders.swift; sourceTree = "<group>"; };
 		3688009374794C7994754097 /* MailSearch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MailSearch.swift; sourceTree = "<group>"; };
+		37030C291AA38D61442093E9 /* RoutineFit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoutineFit.swift; sourceTree = "<group>"; };
 		379DF14BF778DA587C704511 /* BodyCondition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BodyCondition.swift; sourceTree = "<group>"; };
 		3872D74D620C536806E02BB9 /* TemplatesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemplatesView.swift; sourceTree = "<group>"; };
 		39FC0EA4DA979A316468F4CB /* FocusMusic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FocusMusic.swift; sourceTree = "<group>"; };
@@ -837,6 +839,7 @@
 			isa = PBXGroup;
 			children = (
 				362A8D5E981B31791026F4BF /* RoutineAlarms.swift */,
+				37030C291AA38D61442093E9 /* RoutineFit.swift */,
 				7AABCD62DA702275B626CA6A /* RoutineLists.swift */,
 				23ADF7A72D12A070C5F39979 /* RoutinesView.swift */,
 				843449FE928FD8536D75ADD2 /* RoutineVoyage.swift */,
@@ -2057,6 +2060,7 @@
 				777B3A3FBE532E223BF3D566 /* ReadStatus.swift in Sources */,
 				0FF1472C5B6A994AFAF3DB7F /* ReadingAids.swift in Sources */,
 				1DC2048E418D477EDF22A625 /* RoutineAlarms.swift in Sources */,
+				57818EA76585469F0A8FFCE8 /* RoutineFit.swift in Sources */,
 				3327299DED486805F99B74CF /* RoutineLists.swift in Sources */,
 				3743811A3393AB3D339F35CE /* RoutineVoyage.swift in Sources */,
 				37DED23C27B7FD0D653C7617 /* RoutinesView.swift in Sources */,

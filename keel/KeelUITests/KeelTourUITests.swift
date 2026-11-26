@@ -15,7 +15,7 @@ final class KeelTourUITests: XCTestCase {
     override func setUp() {
         continueAfterFailure = true
         app = XCUIApplication()
-        app.launchArguments += ["-KeelDemo", "YES"]
+        app.launchArguments += ["-KeelDemo", "YES", "-KeelDemoReset", "YES"]     // fresh demo data for every test
         // KEEL_ATTACH=1: Keel was already launched (by Instruments, with -KeelDemo YES); drive that copy.
         if ProcessInfo.processInfo.environment["KEEL_ATTACH"] == "1" { app.activate() } else { app.launch() }
     }
@@ -98,11 +98,13 @@ final class KeelTourUITests: XCTestCase {
         tap(app.buttons.matching(NSPredicate(format: "label == 'Use'")).firstMatch)
         checkpoint("rl2-linked-editor")
         tap(app.buttons["Save"])
+        closeFitOffer()
         checkpoint("rl3-routines")
         tap(find("Use a Reminders list as a routine"))
         checkpoint("rl4-list-picker")
         tap(find("Errands"))
         tap(app.buttons["Save"])
+        closeFitOffer()
         XCTAssertTrue(find("Errands").waitForExistence(timeout: 5))
         checkpoint("rl5-routines-linked")
 
@@ -117,6 +119,40 @@ final class KeelTourUITests: XCTestCase {
         checkpoint("rl6-voyage-bedtime")
         tap(app.buttons["Mark Take magnesium done"])
         checkpoint("rl7-ticked")
+    }
+
+    /// Loose tasks into routines: Keel's suggestions (approved), adding by hand, and the offer after linking a list.
+    func testTasksFitRoutines() {
+        XCTAssertTrue(tab("inbox").waitForExistence(timeout: 20), "tab bar never appeared")
+        tap(tab("tasks"))
+        tap(app.buttons["Schedule"])
+        tap(find("Routines"))
+        XCTAssertTrue(app.navigationBars["Routines"].waitForExistence(timeout: 8))
+        let chip = app.buttons.matching(NSPredicate(format: "label ENDSWITH 'fit Morning'")).firstMatch
+        XCTAssertTrue(chip.waitForExistence(timeout: 8), "no routine shows tasks that fit")
+        checkpoint("fit1-chips")
+        tap(chip)
+        checkpoint("fit2-suggested")
+        tap(app.buttons.matching(NSPredicate(format: "label BEGINSWITH 'Add '")).firstMatch)
+        checkpoint("fit3-added")
+
+        // By hand: Evening wind-down → Edit → Add from your tasks → pick "Water the plants".
+        tap(find("Evening wind-down"))
+        tap(find("Add from your tasks"))
+        let field = app.searchFields["Find a task"]           // not Inbox's search (that tab is kept ready behind)
+        tap(field); field.typeText("plants")
+        tap(find("Water the plants"))
+        checkpoint("fit4-manual-pick")
+        tap(app.buttons["Add 1 to Evening wind-down"])          // the bottom button stays reachable while searching
+        checkpoint("fit5-manual-added")
+        tap(app.buttons["Save"])
+
+        // Link the Bedtime list: Keel offers the loose tasks that fit it as soon as the routine is saved.
+        tap(app.buttons.matching(NSPredicate(format: "label == 'Use'")).firstMatch)
+        tap(app.buttons["Save"])
+        XCTAssertTrue(app.navigationBars.matching(NSPredicate(format: "identifier BEGINSWITH 'Add to'")).firstMatch.waitForExistence(timeout: 8),
+                      "no offer after linking Bedtime")
+        checkpoint("fit6-offer-after-link")
     }
 
     /// Routines on the Voyage (Home → ⋯ → Full Today): tick steps, skip one today, take one out, tick a whole routine, edit.
@@ -147,6 +183,12 @@ final class KeelTourUITests: XCTestCase {
     }
 
     // MARK: Helpers
+
+    /// After a list becomes a routine, Keel may offer loose tasks that fit it; this test isn't about that, so close it.
+    private func closeFitOffer() {
+        let offer = app.navigationBars.matching(NSPredicate(format: "identifier BEGINSWITH 'Add to'")).firstMatch
+        if offer.waitForExistence(timeout: 3) { offer.buttons["Cancel"].tap() }
+    }
 
     private func scrollTo(_ e: XCUIElement) {
         var n = 0

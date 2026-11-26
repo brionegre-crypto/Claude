@@ -1076,4 +1076,14 @@ final class KeelTests: XCTestCase {
         XCTAssertTrue(SendChecks.warnings(body: "Thanks!\n> see attached", subject: "Re: x", attachments: 0, recipients: 1, isForward: false).isEmpty, "quoted text doesn't count")
         XCTAssertEqual(SendChecks.warnings(body: "Hi", subject: " ", attachments: 0, recipients: 12, isForward: false).count, 2)
     }
+
+    // A Keel-only list (not in Reminders) survives a sync: its reminder sits in the default list, and that name
+    // must not be copied back (it emptied routines linked to the list). Real moves in Reminders still count.
+    func testReminderListAfterPull() {
+        let lists = ["Reminders", "Groceries", "Morning"]
+        XCTAssertEqual(CalendarService.listAfterPull(keel: "Bedtime", reminders: "Reminders", lists: lists, defaultList: "Reminders"), "Bedtime")
+        XCTAssertEqual(CalendarService.listAfterPull(keel: "Bedtime", reminders: "Groceries", lists: lists, defaultList: "Reminders"), "Groceries")
+        XCTAssertEqual(CalendarService.listAfterPull(keel: "Morning", reminders: "Reminders", lists: lists, defaultList: "Reminders"), "Reminders")
+        XCTAssertEqual(CalendarService.listAfterPull(keel: "Morning", reminders: nil, lists: lists, defaultList: "Reminders"), "Morning")
+    }
 }
