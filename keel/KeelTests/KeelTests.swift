@@ -1158,5 +1158,28 @@ final class KeelTests: XCTestCase {
         XCTAssertTrue(text.localizedCaseInsensitiveContains("budget"), text)
         XCTAssertTrue(text.localizedCaseInsensitiveContains("Thursday"), text)
     }
+
+    func testVoiceCommandMode() {
+        XCTAssertEqual(VoiceCommandMode.instruction(in: "Keel, make this shorter."), "Make this shorter")
+        XCTAssertEqual(VoiceCommandMode.instruction(in: "Hey Keel make it warmer"), "Make it warmer")
+        XCTAssertEqual(VoiceCommandMode.instruction(in: "Kiel, write a thank-you to Sam for the deck"), "Write a thank-you to Sam for the deck")
+        XCTAssertEqual(VoiceCommandMode.instruction(in: "keel translate this to Spanish"), "Translate this to Spanish")
+        XCTAssertNil(VoiceCommandMode.instruction(in: "Keel boats are fast"), "just words, no pause, not an instruction")
+        XCTAssertNil(VoiceCommandMode.instruction(in: "The keel of the boat needs paint"), "only at the very start")
+        XCTAssertNil(VoiceCommandMode.instruction(in: "Keel."), "nothing to do")
+        XCTAssertEqual(VoiceCommandMode.greeting(in: "Hi Marcus,\n\nThanks for Sunday."), "Hi Marcus,")
+        XCTAssertNil(VoiceCommandMode.greeting(in: "Thanks for Sunday, it was great."), "no greeting to keep")
+    }
+
+    func testVoiceLearnsFromFixes() {
+        let dictated = "Call Priya Shal on Thursday about the Q4 budget"
+        XCTAssertEqual(VoiceLearning.correction(dictated: dictated, before: dictated, after: "Call Priya Shah on Thursday about the Q4 budget"), "Shah")
+        XCTAssertNil(VoiceLearning.correction(dictated: dictated, before: dictated, after: "Call Priya Shal on Friday about the Q4 budget"),
+                     "a different word, not a spelling fix")
+        XCTAssertNil(VoiceLearning.correction(dictated: "see teh plan", before: "see teh plan", after: "see the plan"), "an ordinary word teaches nothing")
+        XCTAssertNil(VoiceLearning.correction(dictated: "Call Sam tomorrow", before: "Call Sam tomorrow", after: "Call Sam on Friday morning"), "rewording")
+        XCTAssertNil(VoiceLearning.correction(dictated: "Book the room", before: "Note. Ask Jon. Book the room", after: "Note. Ask John. Book the room"),
+                     "a fix outside what was dictated")
+    }
 }
 

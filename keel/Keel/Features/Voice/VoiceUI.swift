@@ -1,69 +1,119 @@
 import SwiftUI
 import SwiftData
 
-/// One Keel Voice session at a time, shared by every mic: who's listening, the live words, and the last result
-/// (so "Use what I said" can put the raw words back).
+/// What a mic writes into. Each mic makes one: Keel Voice puts words in at once, upgrades them when they're
+/// polished (only if you haven't touched them), edits the text on "Keel, …", and can swap in your exact words.
+struct VoiceTarget {
+    /// The text already there (context for the polish, and what "Keel, …" edits).
+    var current: () -> String
+    /// Put new words in. Returns false if it couldn't.
+    var insert: (String) -> Void
+    /// Replace the words just put in (`old`) with `new`, if they're still exactly there. True if it did.
+    var replace: (_ old: String, _ new: String) -> Bool
+    /// Replace the editable text as a whole ("Keel, make this shorter").
+    var setAll: (String) -> Void
+}
+
+/// One Keel Voice session at a time, shared by every mic.
 @MainActor @Observable
 final class KeelVoiceCenter {
     static let shared = KeelVoiceCenter()
     let engine = KeelVoice()
 
-    enum Phase: Equatable { case idle, listening, cleaning, done(polished: Bool) }
+    enum Phase: Equatable {
+        case idle, listening
+        case working(String)                           // "Editing: make it shorter"
+        case inserted(polishing: Bool)                 // the words are in; polishing may still be running
+        case done(String, undo: String?)               // "Tidied up" + "Use what I said" / "Undo edit"
+    }
     private(set) var phase: Phase = .idle
-    private(set) var host: UUID?                  // which screen shows the bar
-    private(set) var owner: UUID?                 // which mic is listening
+    private(set) var host: UUID?                       // which screen shows the bar
+    private(set) var owner: UUID?                      // which mic is listening
     private var context: VoiceContext = .general
-    private var insert: ((VoiceCleanup.Result) -> Void)?
-    private var undoRaw: (() -> Void)?
+    private var target: VoiceTarget?
+    private var ctx: ModelContext?
+    private var undo: (() -> Void)?
     private var doneTimer: Task<Void, Never>?
+    /// The last words a mic put in, so the mic can learn from your fixes to them.
+    private(set) var lastInserted: (mic: UUID, text: String, at: Date)?
 
-    func isListening(_ mic: UUID) -> Bool { owner == mic && (phase == .listening || engine.isActive) }
+    func isListening(_ mic: UUID) -> Bool { owner == mic && phase == .listening }
+    func isBusy(_ mic: UUID) -> Bool { owner == mic && phase != .idle }
 
-    func start(mic: UUID, host: UUID?, context: VoiceContext, ctx: ModelContext, insert: @escaping (VoiceCleanup.Result) -> Void) {
+    func start(mic: UUID, host: UUID?, context: VoiceContext, ctx: ModelContext, target: VoiceTarget) {
         if engine.isActive { engine.cancel() }
         doneTimer?.cancel()
-        owner = mic; self.host = host; self.context = context; self.insert = insert; undoRaw = nil
+        owner = mic; self.host = host; self.context = context; self.target = target; self.ctx = ctx; undo = nil
         phase = .listening
         let words = VoiceVocabulary.words(ctx)
         Task {
             await engine.start(vocabulary: words)
             if engine.error != nil { phase = .idle; owner = nil }
         }
-        pendingCtx = ctx
     }
-    private var pendingCtx: ModelContext?
 
-    /// Stop, tidy up, put the words in.
+    /// Stop; put the words in at once (instant cleanup); then upgrade them in place when the polish is ready.
     func finish() {
-        guard phase == .listening else { return }
-        phase = .cleaning
+        guard phase == .listening, let target else { return }
+        phase = .working("")
         Task {
-            let raw = await engine.stop()
-            let ctx = pendingCtx
-            let result = await VoiceCleanup.clean(raw, context: context,
-                                                  vocabulary: ctx.map(VoiceVocabulary.words) ?? [],
-                                                  snippets: ctx.map(VoiceVocabulary.snippets) ?? [])
-            guard !result.text.isEmpty else { phase = .idle; owner = nil; return }
-            insert?(result)
+            let raw = await engine.stop().trimmingCharacters(in: .whitespacesAndNewlines)
+            guard !raw.isEmpty else { end(); return }
+            let words = ctx.map(VoiceVocabulary.words) ?? []
+            let snippets = ctx.map(VoiceVocabulary.snippets) ?? []
+
+            // "Keel, …": an instruction for the text, not words to type.
+            if let instruction = VoiceCommandMode.instruction(in: raw) {
+                phase = .working("Keel: " + instruction)
+                let before = target.current()
+                if let out = await VoiceCommandMode.apply(instruction, to: before, context: context) {
+                    target.setAll(out)
+                    lastInserted = nil
+                    undo = { target.setAll(before) }
+                    Haptics.success()
+                    show(before.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? "Written" : "Edited", undo: "Undo")
+                } else {
+                    show("Couldn't do that one. Nothing changed.", undo: nil)
+                }
+                return
+            }
+
+            let before = target.current()
+            let quick = VoiceCleanup.quick(raw, context: context, vocabulary: words, snippets: snippets)
+            guard !quick.isEmpty else { end(); return }
+            target.insert(quick)                                   // instant: no waiting on AI
+            lastInserted = (owner ?? UUID(), quick, Date())
             Haptics.success()
-            phase = .done(polished: result.polished)
-            doneTimer = Task { try? await Task.sleep(for: .seconds(5)); if !Task.isCancelled { phase = .idle; owner = nil; undoRaw = nil } }
+            var shown = quick
+            undo = { _ = target.replace(shown, raw) }
+            phase = .inserted(polishing: VoiceCleanup.isOn)
+            if let polished = await VoiceCleanup.polish(quick, context: context, vocabulary: words, snippets: snippets, before: before),
+               target.replace(quick, polished) {
+                shown = polished
+                lastInserted = (owner ?? UUID(), polished, Date())
+                undo = { _ = target.replace(shown, raw) }
+                show("Tidied up", undo: "Use what I said")
+            } else {
+                show("Added", undo: raw != quick ? "Use what I said" : nil)
+            }
         }
     }
 
-    func cancel() {
-        engine.cancel()
-        phase = .idle; owner = nil
+    private func show(_ message: String, undo label: String?) {
+        phase = .done(message, undo: label)
+        doneTimer = Task { try? await Task.sleep(for: .seconds(5)); if !Task.isCancelled { end() } }
     }
 
-    /// Registered by the mic that inserted the text: swaps the tidied words for exactly what was said.
-    func setUndo(_ f: @escaping () -> Void) { undoRaw = f }
-    func useWhatISaid() {
-        undoRaw?(); undoRaw = nil
-        doneTimer?.cancel(); phase = .idle; owner = nil
+    private func end() { phase = .idle; owner = nil; undo = nil; target = nil }
+
+    func cancel() { engine.cancel(); end() }
+
+    func runUndo() {
+        undo?(); undo = nil
+        lastInserted = nil
+        doneTimer?.cancel(); end()
         Haptics.tap()
     }
-    var canUseRaw: Bool { undoRaw != nil }
 }
 
 private struct VoiceHostKey: EnvironmentKey { static let defaultValue: UUID? = nil }
@@ -71,7 +121,7 @@ extension EnvironmentValues {
     var voiceHost: UUID? { get { self[VoiceHostKey.self] } set { self[VoiceHostKey.self] = newValue } }
 }
 
-/// Shows Keel Voice's bar on this screen (or sheet) while one of its mics is listening.
+/// Shows Keel Voice's bar on this screen (or sheet) while one of its mics is busy.
 private struct VoiceHostModifier: ViewModifier {
     @State private var id = UUID()
     @State private var center = KeelVoiceCenter.shared
@@ -93,7 +143,7 @@ extension View {
     func keelVoiceHost() -> some View { modifier(VoiceHostModifier()) }
 }
 
-/// The listening bar: a live waveform, the words as they come, Done and Cancel; then "Use what I said".
+/// The bar: a live waveform and your words as they come, then what happened, with Undo / "Use what I said".
 struct VoiceBar: View {
     @State private var center = KeelVoiceCenter.shared
 
@@ -105,7 +155,6 @@ struct VoiceBar: View {
                 Text(center.engine.liveText.isEmpty ? (center.engine.state == .preparing ? "Getting ready…" : "Listening…") : center.engine.liveText)
                     .font(DS.Font.body).foregroundStyle(center.engine.liveText.isEmpty ? DS.Palette.inkSoft : DS.Palette.ink)
                     .lineLimit(2).truncationMode(.head).frame(maxWidth: .infinity, alignment: .leading)
-                    .contentTransition(.opacity)
                 Button { center.cancel() } label: { Image(systemName: "xmark").font(.body.weight(.semibold)).frame(width: 34, height: 34) }
                     .buttonStyle(.plain).foregroundStyle(DS.Palette.inkSoft).accessibilityLabel("Cancel dictation")
                 Button { center.finish() } label: {
@@ -113,15 +162,18 @@ struct VoiceBar: View {
                         .background(DS.Palette.accent, in: Circle())
                 }
                 .buttonStyle(.plain).accessibilityLabel("Done dictating")
-            case .cleaning:
+            case .working(let what):
                 ProgressView().controlSize(.small)
-                Text("Tidying up…").font(DS.Font.body).foregroundStyle(DS.Palette.inkSoft).frame(maxWidth: .infinity, alignment: .leading)
-            case .done(let polished):
+                Text(what.isEmpty ? "One moment…" : what).font(DS.Font.body).foregroundStyle(DS.Palette.inkSoft).lineLimit(2)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            case .inserted(let polishing):
                 Image(systemName: "checkmark.circle.fill").foregroundStyle(DS.Palette.calm)
-                Text(polished ? "Tidied up" : "Added").font(DS.Font.body).frame(maxWidth: .infinity, alignment: .leading)
-                if polished && center.canUseRaw {
-                    Button("Use what I said") { center.useWhatISaid() }.font(DS.Font.caption.weight(.semibold))
-                }
+                Text(polishing ? "Added · polishing…" : "Added").font(DS.Font.body).frame(maxWidth: .infinity, alignment: .leading)
+                if polishing { ProgressView().controlSize(.mini) }
+            case .done(let message, let undo):
+                Image(systemName: "checkmark.circle.fill").foregroundStyle(DS.Palette.calm)
+                Text(message).font(DS.Font.body).lineLimit(2).frame(maxWidth: .infinity, alignment: .leading)
+                if let undo { Button(undo) { center.runUndo() }.font(DS.Font.caption.weight(.semibold)) }
             case .idle:
                 EmptyView()
             }
@@ -156,7 +208,7 @@ private struct Waveform: View {
 }
 
 /// A Keel Voice mic for a text field. Tap to start and tap again (or ✓) to finish; or hold, talk, and let go.
-/// The tidied words go after what's already there; "Use what I said" swaps in the exact words.
+/// Words go after what's there (above an email's signature); "Keel, …" edits the text instead.
 struct KeelMicButton: View {
     @Binding var text: String
     var context: VoiceContext = .general
@@ -165,6 +217,8 @@ struct KeelMicButton: View {
     var size: CGFloat = 17
     /// Put the words above the first of these that's in the text (an email's signature or quoted reply), not at the end.
     var above: [String] = []
+    /// A custom place for the words (notes put them in as blocks); nil writes into `text`.
+    var customTarget: VoiceTarget? = nil
 
     @Environment(\.modelContext) private var ctx
     @Environment(\.voiceHost) private var host
@@ -172,6 +226,7 @@ struct KeelMicButton: View {
     @State private var id = UUID()
     @State private var holdTask: Task<Void, Never>?
     @State private var holding = false
+    @State private var snapshot: String?               // the field right after Keel Voice wrote in it (to learn from your fixes)
 
     private var listening: Bool { center.isListening(id) }
 
@@ -186,10 +241,11 @@ struct KeelMicButton: View {
             .onLongPressGesture(minimumDuration: 0.3, maximumDistance: 60, perform: {}, onPressingChanged: pressing)
             .accessibilityElement()
             .accessibilityLabel(listening ? "Stop dictating" : "Dictate")
-            .accessibilityHint("Tap to talk, tap again to finish. Or hold, talk, and let go.")
+            .accessibilityHint("Tap to talk, tap again to finish. Or hold, talk, and let go. Start with “Keel” to edit what's written.")
             .accessibilityAddTraits(.isButton)
             .accessibilityAction { toggle() }
             .accessibilityIdentifier("keelVoice.mic")
+            .onChange(of: text) { _, now in learnFromFix(now) }
     }
 
     private func pressing(_ down: Bool) {
@@ -206,24 +262,63 @@ struct KeelMicButton: View {
     private func toggle() { if listening { center.finish() } else { begin() } }
 
     private func begin() {
-        let binding = $text
-        let sep = separator
-        let anchors = above
-        center.start(mic: id, host: host, context: context, ctx: ctx) { result in
-            let place = Self.placer(binding.wrappedValue, separator: sep, above: anchors)
-            binding.wrappedValue = place(result.text)
-            if result.polished {
-                let raw = result.raw
-                KeelVoiceCenter.shared.setUndo { binding.wrappedValue = place(raw) }
-            }
+        center.start(mic: id, host: host, context: context, ctx: ctx, target: customTarget ?? fieldTarget())
+    }
+
+    /// Writes into `text`: after what's there, or above a signature / quoted reply.
+    private func fieldTarget() -> VoiceTarget {
+        let binding = $text, sep = separator, anchors = above
+        var place: ((String) -> String)?
+        return VoiceTarget(
+            current: { Self.split(binding.wrappedValue, above: anchors).head },
+            insert: { words in
+                let p = Self.placer(binding.wrappedValue, separator: sep, above: anchors)
+                place = p
+                binding.wrappedValue = p(words)
+                snapshotLater(binding.wrappedValue)
+            },
+            replace: { old, new in
+                guard let p = place, binding.wrappedValue == p(old) else { return false }    // you've edited it since: leave it
+                binding.wrappedValue = p(new)
+                snapshotLater(binding.wrappedValue)
+                return true
+            },
+            setAll: { new in
+                let parts = Self.split(binding.wrappedValue, above: anchors)
+                binding.wrappedValue = parts.tail.map { new + "\n\n" + $0 } ?? new
+                snapshotLater(nil)
+            })
+    }
+
+    private func snapshotLater(_ value: String?) {
+        // After SwiftUI applies the change, so onChange doesn't take our own write for your fix.
+        Task { @MainActor in snapshot = value }
+    }
+
+    /// You typed over a word Keel Voice wrote ("Shal" → "Shah"): remember the spelling.
+    private func learnFromFix(_ now: String) {
+        guard let before = snapshot, before != now, let last = center.lastInserted, last.mic == id,
+              Date().timeIntervalSince(last.at) < 600 else { return }
+        if let word = VoiceLearning.correction(dictated: last.text, before: before, after: now) {
+            VoiceLearning.add(word)
         }
+        snapshot = now
+    }
+
+    /// The text split at the first signature / quoted reply: what you're writing, and what stays below it.
+    static func split(_ current: String, above: [String]) -> (head: String, tail: String?) {
+        if let a = above.first(where: { !$0.isEmpty && current.contains($0) }), let r = current.range(of: a) {
+            let head = String(current[..<r.lowerBound]).replacingOccurrences(of: #"\s+$"#, with: "", options: .regularExpression)
+            return (head, String(current[r.lowerBound...]))
+        }
+        return (current, nil)
     }
 
     /// Where new words go in `current`: after what you've written, above a signature or quoted reply if there is one.
     static func placer(_ current: String, separator: String, above: [String]) -> (String) -> String {
-        if let a = above.first(where: { !$0.isEmpty && current.contains($0) }), let r = current.range(of: a) {
-            let head = String(current[..<r.lowerBound]).replacingOccurrences(of: #"\s+$"#, with: "", options: .regularExpression)
-            let tail = String(current[r.lowerBound...])
+        let parts = split(current, above: above)
+        if let tail = parts.tail {
+            let head = parts.head
             return { words in (head.isEmpty ? "" : head + separator) + words + "\n\n" + tail }
         }
         let trimmed = current.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -244,6 +339,9 @@ struct KeelVoiceSettings: View {
     @State private var work = VoiceVocabulary.work
     @State private var fieldTerms = VoiceVocabulary.fieldTerms
     @State private var generating = false
+    @State private var language = VoiceLanguage.chosen
+    @State private var languages: [Locale] = []
+    @State private var fixes = VoiceLearning.learned
 
     var body: some View {
         Form {
@@ -252,6 +350,13 @@ struct KeelVoiceSettings: View {
             } footer: {
                 Text("Removes “um” and repeats, keeps only your corrections (“Friday, no, Thursday”), adds punctuation and lists, and fits the tone to where you're writing. Apple Intelligence does it on this iPhone; Claude only if Apple Intelligence can't and you've connected it. “Use what I said” always puts back your exact words.")
             }
+            Section {
+                Picker("Language", selection: $language) {
+                    Text("iPhone's language").tag("")
+                    ForEach(languages, id: \.identifier) { l in Text(VoiceLanguage.name(l)).tag(l.identifier) }
+                }
+                .onChange(of: language) { _, l in VoiceLanguage.chosen = l }
+            } footer: { Text("Keel Voice listens on this iPhone in the language you pick; the first time, Apple downloads it once.") }
             Section {
                 TextField("e.g. Pastor and men's coach, ICU nurse, tax attorney", text: $work, axis: .vertical)
                     .onSubmit(saveWork)
@@ -282,6 +387,14 @@ struct KeelVoiceSettings: View {
             } header: { Text("Your words") } footer: {
                 Text("Names, places and terms Keel Voice should always spell your way.")
             }
+            if !fixes.isEmpty {
+                Section {
+                    ForEach(fixes, id: \.self) { Text($0) }
+                        .onDelete { offs in offs.map { fixes[$0] }.forEach(VoiceLearning.forget); fixes = VoiceLearning.learned }
+                } header: { Text("Learned from your fixes") } footer: {
+                    Text("When you correct a name or term Keel Voice wrote, it remembers your spelling.")
+                }
+            }
             if !learned.isEmpty {
                 Section {
                     Text(learned.prefix(30).joined(separator: " · ")).font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
@@ -293,13 +406,15 @@ struct KeelVoiceSettings: View {
                     KeelMicButton(text: $tryText, context: .note, separator: "\n\n")
                 }
             } header: { Text("Try it") } footer: {
-                Text("Tap the mic to talk and tap again to finish, or hold it while you talk and let go. Say “new line”, “new paragraph”, “bullet point” or “scratch that”, and “insert …” with a Snippet's name.")
+                Text("Tap the mic to talk and tap again to finish, or hold it while you talk and let go. Say “new line”, “new paragraph”, “bullet point” or “scratch that”, and “insert …” with a Snippet's name. Start with “Keel” to edit what's written (“Keel, make this shorter”, “Keel, make it warmer”) or to have it written (“Keel, write a thank-you to Sam for the deck”).")
             }
         }
         .navigationTitle("Keel Voice")
         .keelVoiceHost()
         .task {
-            learned = VoiceVocabulary.words(ctx).filter { w in !custom.contains(w) }
+            languages = await VoiceLanguage.available()
+            fixes = VoiceLearning.learned
+            learned = VoiceVocabulary.words(ctx).filter { w in !custom.contains(w) && !fixes.contains(w) }
             await VoiceVocabulary.mine(ctx)                      // at most once a day
             learned = VoiceVocabulary.words(ctx).filter { w in !custom.contains(w) }
         }

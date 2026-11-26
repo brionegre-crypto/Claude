@@ -106,7 +106,7 @@ enum VoiceVocabulary {
     /// Your own words first, then what you use most (mined), people and projects, then your field's terms.
     private static func mergeCustom(_ words: [String]) -> [String] {
         var seen = Set<String>()
-        let ordered = custom + Array(mined.prefix(40)) + words + Array(fieldTerms.prefix(40))
+        let ordered = custom + Array(VoiceLearning.learned.prefix(40)) + Array(mined.prefix(40)) + words + Array(fieldTerms.prefix(40))
         return ordered.filter { seen.insert($0.lowercased()).inserted }.prefix(100).map { $0 }
     }
 

@@ -132,7 +132,7 @@ final class KeelVoice {
     // MARK: SpeechAnalyzer (iOS 26)
 
     private func startAnalyzer(vocabulary: [String]) async throws -> Bool {
-        guard SpeechTranscriber.isAvailable, let locale = await SpeechTranscriber.supportedLocale(equivalentTo: Locale.current) else { return false }
+        guard SpeechTranscriber.isAvailable, let locale = await SpeechTranscriber.supportedLocale(equivalentTo: VoiceLanguage.locale) else { return false }
         let transcriber = SpeechTranscriber(locale: locale, transcriptionOptions: [], reportingOptions: [.volatileResults], attributeOptions: [])
         // The language model downloads once (Apple keeps it on the device); after that dictation starts at once.
         if let install = try await AssetInventory.assetInstallationRequest(supporting: [transcriber]) { try await install.downloadAndInstall() }
@@ -176,7 +176,7 @@ final class KeelVoice {
     // MARK: Fallback: SFSpeechRecognizer
 
     private func startLegacy(vocabulary: [String]) throws {
-        guard let recognizer = SFSpeechRecognizer(locale: Locale.current) ?? SFSpeechRecognizer(locale: Locale(identifier: "en-US")),
+        guard let recognizer = SFSpeechRecognizer(locale: VoiceLanguage.locale) ?? SFSpeechRecognizer(locale: Locale(identifier: "en-US")),
               recognizer.isAvailable else { throw NSError(domain: "KeelVoice", code: 1, userInfo: [NSLocalizedDescriptionKey: "Speech recognition isn't available right now."]) }
         let req = SFSpeechAudioBufferRecognitionRequest()
         req.shouldReportPartialResults = true
@@ -210,7 +210,7 @@ final class KeelVoice {
 
     /// Transcribes a recording. Uses SpeechAnalyzer when it can, else the older recognizer.
     static func transcribe(file url: URL, vocabulary: [String] = []) async throws -> String {
-        if SpeechTranscriber.isAvailable, let locale = await SpeechTranscriber.supportedLocale(equivalentTo: Locale.current) {
+        if SpeechTranscriber.isAvailable, let locale = await SpeechTranscriber.supportedLocale(equivalentTo: VoiceLanguage.locale) {
             let transcriber = SpeechTranscriber(locale: locale, transcriptionOptions: [], reportingOptions: [], attributeOptions: [])
             if let install = try await AssetInventory.assetInstallationRequest(supporting: [transcriber]) { try await install.downloadAndInstall() }
             let analyzer = SpeechAnalyzer(modules: [transcriber])
@@ -228,7 +228,7 @@ final class KeelVoice {
             try await analyzer.start(inputAudioFile: file, finishAfterFile: true)
             return try await collected.trimmingCharacters(in: .whitespaces)
         }
-        guard let recognizer = SFSpeechRecognizer(locale: Locale.current) ?? SFSpeechRecognizer(locale: Locale(identifier: "en-US")) else { return "" }
+        guard let recognizer = SFSpeechRecognizer(locale: VoiceLanguage.locale) ?? SFSpeechRecognizer(locale: Locale(identifier: "en-US")) else { return "" }
         let req = SFSpeechURLRecognitionRequest(url: url)
         req.addsPunctuation = true
         req.contextualStrings = vocabulary

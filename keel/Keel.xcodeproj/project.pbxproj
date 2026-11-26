@@ -238,6 +238,7 @@
 		BB37D6D301743E3B3EA1EBF5 /* DayReviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1015BE0618176262791A788 /* DayReviewView.swift */; };
 		BBB393D148D819AC05C56A70 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = B61DA5462D268B94B225AE59 /* PrivacyInfo.xcprivacy */; };
 		BDC99D3BC398D66BBC701C85 /* AchievementsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD614D96EF3BF030F09C7242 /* AchievementsView.swift */; };
+		BE75E18F27CC236446162ACE /* VoiceCommands.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13503BEF35A713696C333CDC /* VoiceCommands.swift */; };
 		BEA36DAA7F66AE259FA34882 /* FoodCatalogData.swift in Sources */ = {isa = PBXBuildFile; fileRef = C00C8353C2B2BFF697F0C6DE /* FoodCatalogData.swift */; };
 		BEB0F8B871D0F707EE0D0CC6 /* SendLater.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44045CE6ECBF9900EC605BDF /* SendLater.swift */; };
 		BED5E1A2422CBD9EF3E7B2A7 /* BodyElite.swift in Sources */ = {isa = PBXBuildFile; fileRef = 223D4C65864A0F4B11C94C9A /* BodyElite.swift */; };
@@ -432,6 +433,7 @@
 		1013CD45CEFBAD0827DC0A2C /* SmartListsAndTags.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmartListsAndTags.swift; sourceTree = "<group>"; };
 		11EAE1042D541850E075DAC3 /* MailTabs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MailTabs.swift; sourceTree = "<group>"; };
 		131DAD5DF86362CE76AFE36D /* Blocks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Blocks.swift; sourceTree = "<group>"; };
+		13503BEF35A713696C333CDC /* VoiceCommands.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceCommands.swift; sourceTree = "<group>"; };
 		14D1D78C56734503A909291D /* ClaudeBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeBridge.swift; sourceTree = "<group>"; };
 		15825755A21442E303748192 /* HealthLogs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthLogs.swift; sourceTree = "<group>"; };
 		17C252D173987B00D25462AF /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
@@ -1206,6 +1208,7 @@
 			children = (
 				1CF9F92FB410D61C18EA15B1 /* KeelVoice.swift */,
 				015907BC4A3F668AD72458E9 /* VoiceCleanup.swift */,
+				13503BEF35A713696C333CDC /* VoiceCommands.swift */,
 				D18105B5159EAD7CE2F254FA /* VoiceVocabulary.swift */,
 			);
 			path = Voice;
@@ -2149,6 +2152,7 @@
 				ECBA22E7C73B9A34880E0E69 /* UndoCenter.swift in Sources */,
 				695654AC935393D6832256F8 /* UnsubscribePrompt.swift in Sources */,
 				C75D019A645F0B1B4137A31A /* VoiceCleanup.swift in Sources */,
+				BE75E18F27CC236446162ACE /* VoiceCommands.swift in Sources */,
 				C6627B8D58B435CEF8EE6B2F /* VoiceUI.swift in Sources */,
 				754327B4C3B869AD985A368F /* VoiceVocabulary.swift in Sources */,
 				483A72AD8DE300B3AC5980AF /* WatchBridge.swift in Sources */,

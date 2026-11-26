@@ -143,7 +143,12 @@ final class KeelTourUITests: XCTestCase {
         tap(field); field.typeText("plants")
         tap(find("Water the plants"))
         checkpoint("fit4-manual-pick")
-        tap(app.buttons["Add 1 to Evening wind-down"])          // the bottom button stays reachable while searching
+        // The bottom button stays reachable while searching.
+        let addButton = app.buttons.matching(NSPredicate(format: "label BEGINSWITH 'Add ' AND label ENDSWITH 'to Evening wind-down'")).firstMatch
+        if !addButton.waitForExistence(timeout: 8) {
+            add(XCTAttachment(string: app.debugDescription))      // what was on screen, for the record
+        }
+        tap(addButton)
         checkpoint("fit5-manual-added")
         tap(app.buttons["Save"])
 
