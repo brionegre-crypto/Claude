@@ -85,6 +85,7 @@ final class KeelAccount {
     }
 
     func refreshICloudStatus() async {
+        guard KeelStore.cloudKitAvailable else { iCloudStatus = "iCloud sync isn't available in this build"; return }   // CloudKit would stop the app
         let s = try? await CKContainer(identifier: KeelStore.cloudID).accountStatus()
         iCloudStatus = switch s {
         case .available: "Signed in to iCloud"

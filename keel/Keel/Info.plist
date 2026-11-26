@@ -39,6 +39,8 @@
 	<false/>
 	<key>KeelAIProxyURL</key>
 	<string>https://keel-backend.bbritt2223.workers.dev/v1/messages</string>
+	<key>KeelCloudKit</key>
+	<true/>
 	<key>LSApplicationCategoryType</key>
 	<string>public.app-category.productivity</string>
 	<key>NSAlarmKitUsageDescription</key>

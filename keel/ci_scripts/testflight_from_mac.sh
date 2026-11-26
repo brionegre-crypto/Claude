@@ -10,8 +10,12 @@
 # The build number must be higher than the last one in App Store Connect (Xcode Cloud's last was 235).
 # Signing: either sign in to Xcode (Settings → Accounts, team NT3YQF6DM5), or use an App Store Connect API key:
 #   ASC_KEY_PATH=/path/AuthKey_XXXX.p8 ASC_KEY_ID=XXXX ASC_ISSUER_ID=xxxxxxxx-... keel/ci_scripts/testflight_from_mac.sh 236
-# Same environment switches as the Xcode Cloud workflow (KEEL_ICLOUD, KEEL_SAFARI, KEEL_WATCH, …) apply.
+# Same environment switches as the Xcode Cloud workflow (KEEL_ICLOUD, KEEL_SAFARI, KEEL_WATCH, …) apply; KEEL_ICLOUD defaults to 1 here.
 set -euo pipefail
+
+# iCloud sync is on in the Xcode Cloud workflow (KEEL_ICLOUD=1); ci_post_clone.sh's own default leaves it out.
+# A build without it can't sync (and before KeelCloudKit, crashed at launch for anyone with sync on: build 236).
+export KEEL_ICLOUD="${KEEL_ICLOUD:-1}"
 
 BUILD="${1:?usage: testflight_from_mac.sh <build-number>}"
 [[ "$BUILD" =~ ^[0-9]+$ ]] || { echo "Build number must be a whole number." >&2; exit 1; }

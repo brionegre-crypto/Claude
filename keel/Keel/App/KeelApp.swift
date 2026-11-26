@@ -178,6 +178,9 @@ struct KeelApp: App {
     static let syncKey = "icloud.sync"                 // turned on when you sign in; takes effect next launch
     static let splitKey = "store.split.v1"
     static var syncWanted: Bool { UserDefaults.standard.bool(forKey: syncKey) }
+    /// Whether this build carries the iCloud entitlements. CloudKit stops the app outright when they're missing,
+    /// so a build made without them (ci_post_clone.sh with KEEL_ICLOUD unset) must never start it, even with sync on.
+    static var cloudKitAvailable: Bool { Bundle.main.object(forInfoDictionaryKey: "KeelCloudKit") as? Bool == true }
     /// What actually happened at launch: "on", "off", or why sync couldn't start.
     static private(set) var syncState = "off"
 
@@ -206,14 +209,14 @@ struct KeelApp: App {
         // A copied store keeps the original's identity; two stores with the same ID get mixed up
         // ("Failed to find entity for this object in the schema"). Give the mail store its own.
         giveOwnIdentity(mailURL, unlike: single.url)
-        let wantCloud = syncWanted
+        let wantCloud = syncWanted && cloudKitAvailable
         do {
             let content = ModelConfiguration("Content", schema: Schema(syncedTypes), url: single.url,
                                              cloudKitDatabase: wantCloud ? .private(cloudID) : .none)
             let mail = ModelConfiguration("Mail", schema: Schema(localTypes), url: mailURL, cloudKitDatabase: .none)
             let c = try ModelContainer(for: all, configurations: content, mail)
             UserDefaults.standard.set(true, forKey: splitKey)
-            syncState = wantCloud ? "on" : "off"
+            syncState = wantCloud ? "on" : syncWanted ? "iCloud sync isn't available in this build" : "off"
             return c
         } catch {
             syncState = "Couldn't start iCloud sync: \(error.localizedDescription)"

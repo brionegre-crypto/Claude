@@ -56,6 +56,7 @@ targets:
         CFBundleShortVersionString: $(MARKETING_VERSION)
         CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         ITSAppUsesNonExemptEncryption: false   # only standard HTTPS, so TestFlight skips the export-compliance question
+        KeelCloudKit: true                     # iCloud sync (KEEL_ICLOUD): ci_post_clone drops this line with the entitlements, so Keel never starts CloudKit without them
         UILaunchScreen: {}
         UIBackgroundModes: [fetch, processing, audio, remote-notification]
         NSUserActivityTypes: [com.keel.note, com.keel.task]   # Handoff between iPhone, iPad and Mac
