@@ -6,35 +6,93 @@ import SwiftUI
 /// the tidied version (only if you haven't typed since).
 final class KeyboardViewController: UIInputViewController {
     private let model = KeyboardModel()
+    private let keysView = KeysView()
+    private let assist = TextAssist()
+    static let barHeight: CGFloat = 46
+
+    /// The system keyboard's own background and key clicks (UIInputViewAudioFeedback).
+    override func loadView() {
+        let v = ClickInputView(frame: .zero, inputViewStyle: .keyboard)
+        v.allowsSelfSizing = true
+        inputView = v
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
         model.controller = self
-        let host = UIHostingController(rootView: KeyboardView(model: model, globe: GlobeKey(controller: self)))
+        model.assist = assist
+        assist.proxy = textDocumentProxy
+        // The Keel Voice bar on top (also suggestions while you type).
+        let host = UIHostingController(rootView: KeyboardBar(model: model))
         host.view.backgroundColor = .clear
         host.sizingOptions = []
         addChild(host)
         view.addSubview(host.view)
+        view.addSubview(keysView)                         // above the bar, so the top row's popups can rise over it
         host.view.translatesAutoresizingMaskIntoConstraints = false
+        keysView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             host.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             host.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             host.view.topAnchor.constraint(equalTo: view.topAnchor),
-            host.view.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            view.heightAnchor.constraint(equalToConstant: 268),
+            host.view.heightAnchor.constraint(equalToConstant: Self.barHeight),
+            keysView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            keysView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            keysView.topAnchor.constraint(equalTo: host.view.bottomAnchor),
+            keysView.heightAnchor.constraint(equalToConstant: KeysView.height),
+            keysView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
         ])
         host.didMove(toParent: self)
+        wireKeys()
+    }
+
+    private func wireKeys() {
+        let k = keysView, a = assist, m = model
+        k.atSentenceStart = { a.atSentenceStart }
+        k.onType = { s in a.type(s); m.textEdited() }
+        k.onPunctuation = { s in a.punctuation(s); m.textEdited() }
+        k.onSpace = { a.space(); m.textEdited() }
+        k.onReturn = { a.newline(); m.textEdited() }
+        k.onDelete = { a.delete(); m.textEdited() }
+        k.onDeleteWord = { a.deleteWord(); m.textEdited() }
+        k.onMoveCursor = { [weak self] n in self?.textDocumentProxy.adjustTextPosition(byCharacterOffset: n) }
+        k.onGlobe = { [weak self] view, event in
+            guard let self, let event else { return }
+            self.handleInputModeList(from: view, with: event)
+        }
+        k.onSwipe = { path, keys in
+            let words = SwipeDecoder.shared.decode(path: path, centre: { keys.centre(of: $0) }, nearest: { keys.nearestLetters($0, $1) }, keyWidth: keys.keyWidth)
+            guard let first = words.first else { return }
+            let cap = keys.shift != .off || a.atSentenceStart
+            a.insertSwiped(first, capitalise: cap)
+            m.swiped(first, alternatives: Array(words.dropFirst()), capitalised: cap)
+        }
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         model.appeared()
+        refreshReturnKey()
+        keysView.showsGlobe = needsInputModeSwitchKey
+        keysView.autoShift()
     }
 
-    /// iOS tells the keyboard when the text or cursor changes (also right after it appears): recheck the capital.
+    /// iOS tells the keyboard when the text or cursor changes (also right after it appears).
     override func textDidChange(_ textInput: (any UITextInput)?) {
         super.textDidChange(textInput)
-        model.contextChanged()
+        refreshReturnKey()
+        keysView.autoShift()
+        model.textEdited()
+    }
+
+    /// The return key says what the app wants ("Send", "Search", "Go"…), blue like Apple's when it's an action.
+    private func refreshReturnKey() {
+        let t = textDocumentProxy.returnKeyType ?? .default
+        let titles: [UIReturnKeyType: String] = [.go: "go", .google: "search", .join: "join", .next: "next", .route: "route",
+                                                 .search: "search", .send: "send", .yahoo: "search", .done: "done",
+                                                 .emergencyCall: "emergency", .continue: "continue"]
+        keysView.returnTitle = titles[t]
+        keysView.returnIsBlue = [.go, .google, .join, .route, .search, .send, .yahoo, .done, .continue].contains(t)
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -62,6 +120,10 @@ final class KeyboardViewController: UIInputViewController {
 @MainActor @Observable
 final class KeyboardModel {
     weak var controller: KeyboardViewController?
+    var assist: TextAssist?
+    /// The bar's three suggestions while you type (or the other words a slide could have meant).
+    private(set) var suggestions: [String] = []
+    private var lastSwipe: (word: String, alternatives: [String])?
     private(set) var state: VoiceBridge.State = .off
     private(set) var partial = ""
     private(set) var alive = false
@@ -145,101 +207,80 @@ final class KeyboardModel {
         return "general"
     }
 
-    // Keys
-    func type(_ s: String) { controller?.textDocumentProxy.insertText(s) }
-    /// True at the start of the field or after ". ", "? ", "! " or a new line (for the automatic capital).
-    var atSentenceStart: Bool {
-        let before = controller?.textDocumentProxy.documentContextBeforeInput ?? ""
-        let t = before.replacingOccurrences(of: #"[ \t]+$"#, with: "", options: .regularExpression)
-        return t.isEmpty || before.hasSuffix("\n") || ((t.hasSuffix(".") || t.hasSuffix("?") || t.hasSuffix("!")) && before.hasSuffix(" "))
+    // Suggestions
+    func textEdited() {
+        guard let a = assist else { return }
+        if let sw = lastSwipe, (controller?.textDocumentProxy.documentContextBeforeInput ?? "").hasSuffix(sw.word) {
+            suggestions = Array(([sw.word] + sw.alternatives).prefix(3))
+        } else {
+            lastSwipe = nil
+            suggestions = a.suggestions()
+        }
     }
-    func space() { controller?.textDocumentProxy.insertText(" ") }
-    func newline() { controller?.textDocumentProxy.insertText("\n") }
-    func delete() { controller?.textDocumentProxy.deleteBackward() }
+
+    func swiped(_ word: String, alternatives: [String], capitalised: Bool) {
+        let alts = alternatives.map { capitalised ? $0.prefix(1).uppercased() + $0.dropFirst() : $0 }
+        let w = capitalised ? word.prefix(1).uppercased() + word.dropFirst() : word
+        lastSwipe = (w, alts)
+        suggestions = Array(([w] + alts).prefix(3))
+    }
+
+    func choose(_ s: String) {
+        guard let a = assist else { return }
+        if let sw = lastSwipe {
+            a.replaceSwiped(sw.word, with: s)
+            lastSwipe = (s, ([sw.word] + sw.alternatives).filter { $0 != s })
+        } else {
+            a.accept(s.trimmingCharacters(in: CharacterSet(charactersIn: "“”")))
+        }
+        textEdited()
+    }
+
     func dismissNote() { note = nil }
     /// Bumped when the text around the cursor changes, so the keys can update the automatic capital.
     private(set) var contextVersion = 0
     func contextChanged() { contextVersion += 1 }
 }
 
-/// The 🌐 key: has to be a UIKit control so iOS can show the keyboard list on it.
-struct GlobeKey: UIViewRepresentable {
-    weak var controller: UIInputViewController?
-    func makeUIView(context: Context) -> UIButton {
-        let b = UIButton(type: .system)
-        b.setImage(UIImage(systemName: "globe"), for: .normal)
-        b.tintColor = .label
-        b.accessibilityLabel = "Next keyboard"
-        if let c = controller { b.addTarget(c, action: #selector(UIInputViewController.handleInputModeList(from:with:)), for: .allTouchEvents) }
-        return b
-    }
-    func updateUIView(_ uiView: UIButton, context: Context) {}
+/// The system keyboard view with key clicks (Settings → Sounds → Keyboard Clicks).
+final class ClickInputView: UIInputView, UIInputViewAudioFeedback {
+    var enableInputClicksWhenVisible: Bool { true }
 }
 
-/// A full keyboard with Keel Voice built in (like Flow): letters, numbers and symbols, and a mic always one tap
-/// away in the bar on top, which also shows your words as you talk.
-struct KeyboardView: View {
+/// The bar above the keys: Keel Voice (status, live words, the mic) and, while you type, three suggestions like
+/// Apple's predictive bar.
+struct KeyboardBar: View {
     let model: KeyboardModel
-    let globe: GlobeKey
     @State private var holdTask: Task<Void, Never>?
     @State private var holding = false
-    @State private var deleteTimer: Timer?
-    @State private var page: Page = .letters
-    @State private var shift: Shift = .off
-    @State private var lastShiftTap = Date.distantPast
-
-    enum Page { case letters, numbers, symbols }
-    enum Shift { case off, once, locked }
-
-    private static let letters = [["q","w","e","r","t","y","u","i","o","p"], ["a","s","d","f","g","h","j","k","l"], ["z","x","c","v","b","n","m"]]
-    private static let numbers = [["1","2","3","4","5","6","7","8","9","0"], ["-","/",":",";","(",")","$","&","@","\""], [".",",","?","!","'"]]
-    private static let symbols = [["[","]","{","}","#","%","^","*","+","="], ["_","\\","|","~","<",">","€","£","¥","•"], [".",",","?","!","'"]]
 
     var body: some View {
-        VStack(spacing: 8) {
-            voiceBar
-            ForEach(Array(rows.enumerated()), id: \.offset) { i, row in
-                HStack(spacing: 5) {
-                    if i == 2 { leftOfThirdRow }
-                    ForEach(row, id: \.self) { k in charKey(k) }
-                    if i == 2 { deleteKey }
+        HStack(spacing: 8) {
+            if showStatus {
+                if model.listening { Image(systemName: "waveform").symbolEffect(.variableColor.iterative).foregroundStyle(.red) }
+                else if model.working { ProgressView().controlSize(.small) }
+                Text(status).font(.subheadline).foregroundStyle(model.listening && !model.partial.isEmpty ? .primary : .secondary)
+                    .lineLimit(2).truncationMode(.head).frame(maxWidth: .infinity, alignment: .leading)
+                    .onTapGesture { model.dismissNote() }
+                if model.listening {
+                    Button { model.cancel() } label: { Image(systemName: "xmark.circle.fill").font(.title2).foregroundStyle(.secondary) }
+                        .accessibilityLabel("Cancel dictation")
                 }
-                .padding(.horizontal, i == 1 && page == .letters ? 18 : 3)
-            }
-            HStack(spacing: 5) {
-                Button { page = page == .letters ? .numbers : .letters } label: { Text(page == .letters ? "123" : "ABC").frame(width: 46, height: 42) }
-                    .buttonStyle(.plain).background(special, in: .rect(cornerRadius: 6))
-                if model.needsGlobe { globe.frame(width: 42, height: 42).background(special, in: .rect(cornerRadius: 6)) }
-                Button { model.space(); autoShift() } label: { Text("space").frame(maxWidth: .infinity, minHeight: 42) }
-                    .buttonStyle(.plain).background(key, in: .rect(cornerRadius: 6))
-                Button { model.newline(); autoShift() } label: { Image(systemName: "return").frame(width: 70, height: 42) }
-                    .buttonStyle(.plain).background(special, in: .rect(cornerRadius: 6)).accessibilityLabel("Return")
-            }
-            .padding(.horizontal, 3)
-        }
-        .font(.system(size: 21))
-        .foregroundStyle(.primary)
-        .padding(.top, 4).padding(.bottom, 2)
-        .onAppear { autoShiftLater() }
-        .onChange(of: model.contextVersion) { autoShift() }
-    }
-
-    // MARK: Keel Voice bar
-
-    private var voiceBar: some View {
-        HStack(spacing: 10) {
-            if model.listening { Image(systemName: "waveform").symbolEffect(.variableColor.iterative).foregroundStyle(.red) }
-            else if model.working { ProgressView().controlSize(.small) }
-            Text(status).font(.subheadline).foregroundStyle(model.listening && !model.partial.isEmpty ? .primary : .secondary)
-                .lineLimit(2).truncationMode(.head).frame(maxWidth: .infinity, alignment: .leading)
-                .onTapGesture { model.dismissNote() }
-            if model.listening {
-                Button { model.cancel() } label: { Image(systemName: "xmark.circle.fill").font(.title2).foregroundStyle(.secondary) }
-                    .accessibilityLabel("Cancel dictation")
+            } else {
+                HStack(spacing: 0) {
+                    ForEach(Array(model.suggestions.enumerated()), id: \.offset) { i, s in
+                        if i > 0 { Divider().frame(height: 22) }
+                        Button { model.choose(s) } label: {
+                            Text(s).font(.system(size: 17)).lineLimit(1).frame(maxWidth: .infinity, minHeight: 40)
+                        }
+                        .buttonStyle(.plain)
+                    }
+                    if model.suggestions.isEmpty { Text(status).font(.subheadline).foregroundStyle(.secondary).frame(maxWidth: .infinity, alignment: .leading) }
+                }
             }
             ZStack {
-                Capsule().fill(model.listening ? Color.red : Color.accentColor).frame(width: 64, height: 40)
-                Image(systemName: model.listening ? "stop.fill" : "mic.fill").font(.system(size: 18, weight: .bold)).foregroundStyle(.white)
+                Capsule().fill(model.listening ? Color.red : Color.accentColor).frame(width: 56, height: 36)
+                Image(systemName: model.listening ? "stop.fill" : "mic.fill").font(.system(size: 17, weight: .bold)).foregroundStyle(.white)
             }
             .contentShape(Capsule())
             .onLongPressGesture(minimumDuration: 0.3, maximumDistance: 60, perform: {}, onPressingChanged: pressing)
@@ -248,9 +289,11 @@ struct KeyboardView: View {
             .accessibilityAddTraits(.isButton)
             .accessibilityAction { model.mic() }
         }
-        .frame(height: 44)
         .padding(.horizontal, 10)
+        .frame(maxHeight: .infinity)
     }
+
+    private var showStatus: Bool { model.listening || model.working || model.note != nil || !model.hasFullAccess || model.suggestions.isEmpty }
 
     private var status: String {
         if let n = model.note { return n }
@@ -260,67 +303,6 @@ struct KeyboardView: View {
         return model.alive ? "Tap the mic and talk · “Keel, …” edits" : "Tap the mic to talk with Keel Voice"
     }
 
-    // MARK: Keys
-
-    private var rows: [[String]] {
-        switch page {
-        case .letters: Self.letters.map { $0.map { shift == .off ? $0 : $0.uppercased() } }
-        case .numbers: Self.numbers
-        case .symbols: Self.symbols
-        }
-    }
-
-    private var key: Color { Color(uiColor: .systemBackground).opacity(0.95) }
-    private var special: Color { Color(uiColor: .systemGray3).opacity(0.7) }
-
-    private func charKey(_ k: String) -> some View {
-        Button {
-            model.type(k)
-            if shift == .once { shift = .off }
-            if ".?!".contains(k) { autoShiftLater() }
-        } label: {
-            Text(k).frame(maxWidth: .infinity, minHeight: 42)
-        }
-        .buttonStyle(.plain)
-        .background(key, in: .rect(cornerRadius: 6))
-        .shadow(color: .black.opacity(0.18), radius: 0, y: 1)
-    }
-
-    @ViewBuilder private var leftOfThirdRow: some View {
-        switch page {
-        case .letters:
-            Button {
-                // Tap: once. Tap again quickly: caps lock. Tap when on: off.
-                if shift == .off { shift = Date().timeIntervalSince(lastShiftTap) < 0.35 ? .locked : .once }
-                else if shift == .once && Date().timeIntervalSince(lastShiftTap) < 0.35 { shift = .locked }
-                else { shift = .off }
-                lastShiftTap = Date()
-            } label: {
-                Image(systemName: shift == .locked ? "capslock.fill" : (shift == .once ? "shift.fill" : "shift")).frame(width: 44, height: 42)
-            }
-            .buttonStyle(.plain).background(shift == .off ? special : key, in: .rect(cornerRadius: 6)).accessibilityLabel("Shift")
-        case .numbers:
-            Button { page = .symbols } label: { Text("#+=").font(.system(size: 15)).frame(width: 44, height: 42) }
-                .buttonStyle(.plain).background(special, in: .rect(cornerRadius: 6))
-        case .symbols:
-            Button { page = .numbers } label: { Text("123").font(.system(size: 15)).frame(width: 44, height: 42) }
-                .buttonStyle(.plain).background(special, in: .rect(cornerRadius: 6))
-        }
-    }
-
-    private var deleteKey: some View {
-        Image(systemName: "delete.left").frame(width: 44, height: 42).background(special, in: .rect(cornerRadius: 6))
-            .onLongPressGesture(minimumDuration: 0.4, maximumDistance: 40, perform: {}, onPressingChanged: deleting)
-            .accessibilityElement().accessibilityLabel("Delete").accessibilityAddTraits(.isButton).accessibilityAction { model.delete() }
-    }
-
-    /// Capital at the start of a sentence, like the system keyboard.
-    private func autoShift() {
-        guard page == .letters, shift != .locked else { return }
-        shift = model.atSentenceStart ? .once : .off
-    }
-    private func autoShiftLater() { Task { @MainActor in try? await Task.sleep(for: .milliseconds(120)); autoShift() } }
-
     private func pressing(_ down: Bool) {
         if down {
             guard !model.listening else { return }
@@ -329,18 +311,6 @@ struct KeyboardView: View {
             holdTask?.cancel(); holdTask = nil
             if holding { holding = false; if model.listening || model.alive { VoiceBridge.post(.stop) } }
             else { model.mic() }
-        }
-    }
-
-    /// Delete: once on tap; keeps deleting while held.
-    private func deleting(_ down: Bool) {
-        if down {
-            model.delete()
-            deleteTimer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { _ in MainActor.assumeIsolated { model.delete() } }
-            deleteTimer?.fireDate = Date().addingTimeInterval(0.45)
-        } else {
-            deleteTimer?.invalidate(); deleteTimer = nil
-            autoShift()
         }
     }
 }

@@ -49,13 +49,12 @@ struct BodyFoodPage: View {
                 brainFoods(today: today)
                 CalorieRingCard(eaten: shown, proteinGoal: proteinGoal)
                 TellKeelFoodBox()
-                HStack(spacing: 10) {
-                    NavigationLink { LazyView(LogFoodView()) } label: { BigAction(title: "Search", icon: "magnifyingglass", color: .green) }
-                    NavigationLink { LazyView(LogFoodView(startWithCamera: true)) } label: { BigAction(title: "Snap meal", icon: "camera.fill", color: .orange) }
-                    Button { scanning = true } label: { BigAction(title: "Barcode", icon: "barcode.viewfinder", color: DS.Palette.accent) }
-                    NavigationLink { LazyView(FoodHistoryView()) } label: { BigAction(title: "History", icon: "calendar", color: .purple) }
+                FoodActionStrip {
+                    NavigationLink { LazyView(LogFoodView()) } label: { BigAction(title: "Search", icon: "magnifyingglass") }
+                    NavigationLink { LazyView(LogFoodView(startWithCamera: true)) } label: { BigAction(title: "Snap meal", icon: "camera") }
+                    Button { scanning = true } label: { BigAction(title: "Barcode", icon: "barcode.viewfinder") }
+                    NavigationLink { LazyView(FoodHistoryView()) } label: { BigAction(title: "History", icon: "calendar") }
                 }
-                .buttonStyle(.plain)
                 mealsCard(today)
                 tools
             }

@@ -211,13 +211,12 @@ struct NutritionView: View {
                 CalorieRingCard(eaten: healthTotals ?? totals, proteinGoal: NutritionGoals.protein(weightKg: weight))
                     .listRowInsets(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
                     .listRowBackground(Color.clear)
-                HStack(spacing: 10) {
-                    NavigationLink { LazyView(LogFoodView()) } label: { BigAction(title: "Log food", icon: "magnifyingglass", color: .green) }
-                    NavigationLink { LazyView(LogFoodView(startWithCamera: true)) } label: { BigAction(title: "Snap meal", icon: "camera.fill", color: .orange) }
-                    NavigationLink { LazyView(FoodScanView()) } label: { BigAction(title: "Barcode", icon: "barcode.viewfinder", color: DS.Palette.accent) }
-                    NavigationLink { LazyView(FoodHistoryView()) } label: { BigAction(title: "History", icon: "calendar", color: .purple) }
+                FoodActionStrip {
+                    NavigationLink { LazyView(LogFoodView()) } label: { BigAction(title: "Log food", icon: "magnifyingglass") }
+                    NavigationLink { LazyView(LogFoodView(startWithCamera: true)) } label: { BigAction(title: "Snap meal", icon: "camera") }
+                    NavigationLink { LazyView(FoodScanView()) } label: { BigAction(title: "Barcode", icon: "barcode.viewfinder") }
+                    NavigationLink { LazyView(FoodHistoryView()) } label: { BigAction(title: "History", icon: "calendar") }
                 }
-                .buttonStyle(.plain)
                 .listRowInsets(EdgeInsets(top: 8, leading: 0, bottom: 8, trailing: 0))
                 .listRowBackground(Color.clear)
             }
@@ -291,23 +290,39 @@ struct NutritionView: View {
     }
 }
 
+/// One food action (Search, Snap meal, Barcode, History) in Keel's quiet style: an ink icon over a small label,
+/// no colour block. Sits in a `FoodActionStrip`, which draws the shared card and the hairlines between actions.
 struct BigAction: View {
     let title: String
     let icon: String
-    let color: Color
+    var color: Color = DS.Palette.accent           // kept for callers; the strip uses Keel's ink accent throughout
     var body: some View {
-        VStack(spacing: 10) {
-            Image(systemName: icon).font(.system(size: 24, weight: .semibold))
-            Text(title).font(.subheadline.weight(.semibold)).lineLimit(1).minimumScaleFactor(0.8)
+        VStack(spacing: 6) {
+            Image(systemName: icon).font(.system(size: 20, weight: .regular)).foregroundStyle(DS.Palette.accent)
+                .frame(height: 24)
+            Text(title).font(.footnote.weight(.medium)).foregroundStyle(DS.Palette.ink).lineLimit(1).minimumScaleFactor(0.8)
         }
-        .foregroundStyle(.white)
-        .frame(maxWidth: .infinity, minHeight: 84).padding(.vertical, 2)
-        .background {
-            let shape = RoundedRectangle(cornerRadius: DS.Radius.card, style: .continuous)
-            shape.fill(LinearGradient(colors: [color.mix(with: .white, by: 0.12), color, color.mix(with: .black, by: 0.18)], startPoint: .topLeading, endPoint: .bottomTrailing))
-                .overlay { shape.strokeBorder(Color.white.opacity(0.22), lineWidth: 0.75) }
-                .shadow(color: color.opacity(0.35), radius: 10, y: 5)
+        .frame(maxWidth: .infinity, minHeight: 66)
+        .contentShape(Rectangle())
+    }
+}
+
+/// The food actions as one calm card (paper, hairline edge, dividers between), matching Keel's other cards.
+struct FoodActionStrip<Content: View>: View {
+    @ViewBuilder let content: Content
+    var body: some View {
+        HStack(spacing: 0) {
+            Group(subviews: content) { subs in
+                ForEach(Array(subs.enumerated()), id: \.offset) { i, v in
+                    if i > 0 { Rectangle().fill(DS.Palette.ink.opacity(0.10)).frame(width: 0.75, height: 34) }
+                    v
+                }
+            }
         }
+        .padding(.vertical, 4)
+        .background(DS.Palette.elevated, in: .rect(cornerRadius: DS.Radius.card, style: .continuous))
+        .overlay(RoundedRectangle(cornerRadius: DS.Radius.card, style: .continuous).strokeBorder(DS.Palette.ink.opacity(0.10), lineWidth: 0.75))
+        .buttonStyle(.plain)
     }
 }
 

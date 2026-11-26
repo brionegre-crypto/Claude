@@ -490,10 +490,10 @@ struct LogFoodView: View {
         List {
             if query.isEmpty {
                 Section {
-                    HStack(spacing: 10) {
-                        quick("Snap meal", "camera.fill", .orange) { snapping = true }
-                        quick("Barcode", "barcode.viewfinder", DS.Palette.accent) { scanning = true }
-                        quick("Say it", "text.bubble.fill", .green) { query = "" ; focusHint = true }
+                    FoodActionStrip {
+                        Button { snapping = true } label: { BigAction(title: "Snap meal", icon: "camera") }
+                        Button { scanning = true } label: { BigAction(title: "Barcode", icon: "barcode.viewfinder") }
+                        Button { query = ""; focusHint = true } label: { BigAction(title: "Say it", icon: "text.bubble") }
                     }
                     .listRowInsets(EdgeInsets(top: 6, leading: 0, bottom: 6, trailing: 0))
                     .listRowBackground(Color.clear)
@@ -650,23 +650,6 @@ struct LogFoodView: View {
         }
     }
 
-    private func quick(_ title: String, _ icon: String, _ color: Color, _ run: @escaping () -> Void) -> some View {
-        Button(action: run) {
-            VStack(spacing: 8) {
-                Image(systemName: icon).font(.system(size: 22, weight: .semibold))
-                Text(title).font(.caption.weight(.semibold))
-            }
-            .foregroundStyle(.white)
-            .frame(maxWidth: .infinity, minHeight: 76)
-            .background {
-                let shape = RoundedRectangle(cornerRadius: 18, style: .continuous)
-                shape.fill(LinearGradient(colors: [color.mix(with: .white, by: 0.12), color, color.mix(with: .black, by: 0.18)], startPoint: .topLeading, endPoint: .bottomTrailing))
-                    .overlay { shape.strokeBorder(Color.white.opacity(0.22), lineWidth: 0.75) }
-                    .shadow(color: color.opacity(0.35), radius: 10, y: 5)
-            }
-        }
-        .buttonStyle(.plain)
-    }
 
     private var tray: some View {
         let total = plate.reduce(NutritionFacts()) { $0 + $1.facts }

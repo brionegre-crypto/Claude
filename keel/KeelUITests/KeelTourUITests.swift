@@ -139,9 +139,11 @@ final class KeelTourUITests: XCTestCase {
         // By hand: Evening wind-down → Edit → Add from your tasks → pick "Water the plants".
         tap(find("Evening wind-down"))
         tap(find("Add from your tasks"))
-        let field = app.searchFields["Find a task"]           // not Inbox's search (that tab is kept ready behind)
-        tap(field); field.typeText("plants")
-        tap(find("Water the plants"))
+        // Pick it from the list (scrolling; typing into the sheet's search was unreliable late in long test runs).
+        let plants = app.buttons.matching(NSPredicate(format: "label == 'Water the plants'")).firstMatch
+        var n = 0
+        while !(plants.exists && plants.isHittable) && n < 12 { app.swipeUp(velocity: .slow); n += 1 }
+        tap(plants)
         checkpoint("fit4-manual-pick")
         // The bottom button stays reachable while searching.
         let addButton = app.buttons.matching(NSPredicate(format: "label BEGINSWITH 'Add ' AND label ENDSWITH 'to Evening wind-down'")).firstMatch
@@ -237,8 +239,11 @@ final class KeelTourUITests: XCTestCase {
         XCTAssertTrue(mic.waitForExistence(timeout: 5), "the Keel keyboard didn't come up")
         // A full keyboard: type "Hi" with its keys (the capital comes by itself at the start).
         let field = app.textFields.matching(NSPredicate(format: "placeholderValue BEGINSWITH 'Add a task'")).firstMatch
-        app.buttons["H"].tap(); app.buttons["i"].tap()
+        app.keys["H"].tap(); app.keys["i"].tap()                 // shift comes on by itself at the start
         XCTAssertEqual(field.value as? String, "Hi", "typing with the Keel keyboard")
+        // Slide to type: t → o is "to", with the space put in for you.
+        app.keys["t"].press(forDuration: 0.05, thenDragTo: app.keys["o"])
+        XCTAssertEqual(field.value as? String, "Hi to", "slide to type")
         checkpoint("kb1-keyboard")
         mic.tap()
         let on = app.staticTexts.matching(NSPredicate(format: "label BEGINSWITH 'Keel Voice is on' OR label BEGINSWITH 'Starting Keel Voice'")).firstMatch
@@ -249,6 +254,22 @@ final class KeelTourUITests: XCTestCase {
         // Leave the simulator on the standard keyboard, so later tests can type.
         let next = app.buttons.matching(NSPredicate(format: "label == 'Next keyboard'")).firstMatch
         if next.waitForExistence(timeout: 3) { next.tap() }
+    }
+
+    /// Body → Food: the food actions (Search, Snap meal, Barcode, History) as one calm strip.
+    func testFoodActions() {
+        XCTAssertTrue(tab("inbox").waitForExistence(timeout: 20), "tab bar never appeared")
+        let body = find("Body")
+        clearOfBar(body)
+        tap(body)
+        tap(app.buttons.matching(NSPredicate(format: "label CONTAINS 'Food'")).firstMatch)
+        let more = find("More: your plan")
+        clearOfBar(more)
+        tap(more)
+        let snap = find("Snap meal")
+        clearOfBar(snap)
+        XCTAssertTrue(snap.waitForExistence(timeout: 5), "no food actions")
+        checkpoint("food-actions")
     }
 
     /// Routines on the Voyage (Home → ⋯ → Full Today): tick steps, skip one today, take one out, tick a whole routine, edit.
