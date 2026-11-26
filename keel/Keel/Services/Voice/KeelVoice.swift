@@ -24,6 +24,7 @@ final class KeelVoice {
     var onBuffer: (@Sendable (AVAudioPCMBuffer) -> Void)?
 
     private let audio = AVAudioEngine()
+    private let router = TapRouter()
     private var feeder: Feeder?
     // SpeechAnalyzer
     private var analyzer: SpeechAnalyzer?
@@ -33,43 +34,85 @@ final class KeelVoice {
     private var legacyTask: SFSpeechRecognitionTask?
     private var legacyDone: CheckedContinuation<Void, Never>?
 
+    /// Standby (the Keel keyboard's session): the microphone keeps running between dictations, so Keel stays
+    /// listening-ready in the background and each dictation starts at once. iOS shows its orange mic dot meanwhile.
+    private(set) var inStandby = false
+
+    // MARK: Microphone
+
+    private func prepareAudio() async -> Bool {
+        guard await AVAudioApplication.requestRecordPermission() else {
+            error = "Allow the microphone for Keel in Settings."; return false
+        }
+        do {
+            let session = AVAudioSession.sharedInstance()
+            try session.setCategory(.playAndRecord, mode: .spokenAudio, options: [.defaultToSpeaker, .allowBluetoothHFP, .mixWithOthers])
+            try session.setActive(true)
+            guard session.isInputAvailable else { error = "No microphone is available right now."; return false }
+            return true
+        } catch { self.error = "Couldn't use the microphone: \(error.localizedDescription)"; return false }
+    }
+
+    /// Attaches to the microphone once; every dictation plugs into the router.
+    private func startMic() throws {
+        if !tapInstalled {
+            let input = audio.inputNode.outputFormat(forBus: 0)
+            let router = self.router
+            audio.inputNode.installTap(onBus: 0, bufferSize: 2048, format: input) { buf, _ in router.route(buf) }
+            tapInstalled = true
+            router.onLevel = { [weak self] lvl in Task { @MainActor in self?.level = lvl } }
+        }
+        router.onBuffer = onBuffer
+        if !audio.isRunning { audio.prepare(); try audio.start() }
+    }
+
+    /// Only touches the microphone if Keel attached to it: reading `inputNode` starts the audio hardware, and with
+    /// nothing to stop that was a crash (an audio timeout aborts the app) when speech couldn't start at all.
+    private var tapInstalled = false
+    private func teardownAudio() {
+        if audio.isRunning { audio.stop() }
+        if tapInstalled { audio.inputNode.removeTap(onBus: 0); tapInstalled = false }
+    }
+
+    func enterStandby() async -> Bool {
+        if inStandby { return true }
+        guard await prepareAudio() else { return false }
+        do { try startMic(); inStandby = true; return true }
+        catch { self.error = error.localizedDescription; teardownAudio(); return false }
+    }
+
+    func leaveStandby() {
+        guard inStandby else { return }
+        inStandby = false
+        if state == .idle { teardownAudio(); try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation) }
+    }
+
     // MARK: Start / stop
 
     func start(vocabulary: [String] = []) async {
         guard state == .idle else { return }
         error = nil; finalized = ""; volatile = ""; level = 0; engineName = ""
         state = .preparing
-        guard await AVAudioApplication.requestRecordPermission() else {
-            error = "Allow the microphone for Keel in Settings."
-            state = .idle; return
-        }
+        if !inStandby { guard await prepareAudio() else { state = .idle; return } }
         do {
-            let session = AVAudioSession.sharedInstance()
-            try session.setCategory(.playAndRecord, mode: .spokenAudio, options: [.defaultToSpeaker, .allowBluetoothHFP, .duckOthers])
-            try session.setActive(true)
-            guard session.isInputAvailable else {
-                error = "No microphone is available right now."
-                state = .idle; return
-            }
             // SpeechAnalyzer runs on this iPhone, so try it before asking for speech-recognition permission (iOS's
             // prompt for that talks about sending audio to Apple, which is about the older recognizer).
             var started = (try? await startAnalyzer(vocabulary: vocabulary)) ?? false
             if !started, await Self.speechAuthorized() {
-                teardownAudio()                              // a half-started attempt mustn't leave the mic attached
                 started = (try? await startAnalyzer(vocabulary: vocabulary)) ?? false
-                if !started { teardownAudio(); try startLegacy(vocabulary: vocabulary); engineName = "Speech" }
+                if !started { try startLegacy(vocabulary: vocabulary); engineName = "Speech" }
                 else { engineName = "SpeechAnalyzer" }
             } else if started { engineName = "SpeechAnalyzer" }
             guard started || engineName == "Speech" else {
                 error = "Allow speech recognition for Keel in Settings to dictate."
-                teardownAudio(); state = .idle; return
+                release(); state = .idle; return
             }
+            try startMic()
             state = .listening
             Haptics.tap()
         } catch {
             self.error = "Couldn't start listening: \(error.localizedDescription)"
-            teardownAudio()
-            state = .idle
+            release(); state = .idle
         }
     }
 
@@ -78,7 +121,7 @@ final class KeelVoice {
     func stop() async -> String {
         guard state == .listening || state == .preparing else { return liveText }
         state = .finishing
-        teardownAudio()
+        router.clear()
         if let analyzer {
             feeder?.finish()
             try? await analyzer.finalizeAndFinishThroughEndOfInput()
@@ -99,7 +142,7 @@ final class KeelVoice {
     /// Stops and throws the words away.
     func cancel() {
         guard state != .idle else { return }
-        teardownAudio()
+        router.clear()
         feeder?.finish()
         resultsTask?.cancel()
         legacyTask?.cancel()
@@ -111,15 +154,15 @@ final class KeelVoice {
         legacyRequest = nil; legacyTask = nil
         volatile = ""; level = 0
         state = .idle
-        try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
+        release()
     }
 
-    /// Only touches the microphone if Keel attached to it: reading `inputNode` starts the audio hardware, and with
-    /// nothing to stop that was a crash (an audio timeout aborts the app) when speech couldn't start at all.
-    private var tapInstalled = false
-    private func teardownAudio() {
-        if audio.isRunning { audio.stop() }
-        if tapInstalled { audio.inputNode.removeTap(onBus: 0); tapInstalled = false }
+    /// Lets go of the microphone, unless the keyboard session wants it kept ready.
+    private func release() {
+        router.clear()
+        guard !inStandby else { return }
+        teardownAudio()
+        try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
     }
 
     private func finishLegacyWait() { legacyDone?.resume(); legacyDone = nil }
@@ -145,7 +188,6 @@ final class KeelVoice {
         guard let format = await SpeechAnalyzer.bestAvailableAudioFormat(compatibleWith: [transcriber]) else { return false }
         let (stream, continuation) = AsyncStream.makeStream(of: AnalyzerInput.self)
         try await analyzer.start(inputSequence: stream)
-
         resultsTask = Task { @MainActor [weak self] in
             do {
                 for try await r in transcriber.results {
@@ -160,15 +202,9 @@ final class KeelVoice {
                 }
             } catch { self?.error = error.localizedDescription }
         }
-        let input = audio.inputNode.outputFormat(forBus: 0)
-        let feeder = Feeder(input: input, output: format, continuation: continuation, onBuffer: onBuffer) { [weak self] lvl in
-            Task { @MainActor in self?.level = lvl }
-        }
+        let feeder = Feeder(output: format, continuation: continuation)
         self.feeder = feeder
-        audio.inputNode.installTap(onBus: 0, bufferSize: 2048, format: input) { buf, _ in feeder.feed(buf) }
-        tapInstalled = true
-        audio.prepare()
-        try audio.start()
+        router.set(feeder: feeder)
         self.analyzer = analyzer
         return true
     }
@@ -184,17 +220,7 @@ final class KeelVoice {
         req.contextualStrings = Array(vocabulary.prefix(100))
         if recognizer.supportsOnDeviceRecognition { req.requiresOnDeviceRecognition = true }
         legacyRequest = req
-        let input = audio.inputNode.outputFormat(forBus: 0)
-        let onBuffer = self.onBuffer
-        tapInstalled = true
-        audio.inputNode.installTap(onBus: 0, bufferSize: 2048, format: input) { [weak self] buf, _ in
-            req.append(buf)
-            onBuffer?(buf)
-            let lvl = Feeder.level(of: buf)
-            Task { @MainActor in self?.level = lvl }
-        }
-        audio.prepare()
-        try audio.start()
+        router.set(legacy: req)
         legacyTask = recognizer.recognitionTask(with: req) { [weak self] r, err in
             let text = r?.bestTranscription.formattedString
             let done = r?.isFinal == true || err != nil
@@ -244,28 +270,44 @@ final class KeelVoice {
     }
 }
 
-/// Runs on the audio thread: converts the microphone's buffers to the analyzer's format and passes them on.
-private final class Feeder: @unchecked Sendable {
-    private let converter: AVAudioConverter?
-    private let output: AVAudioFormat
-    private let continuation: AsyncStream<AnalyzerInput>.Continuation
-    private let onBuffer: (@Sendable (AVAudioPCMBuffer) -> Void)?
-    private let onLevel: @Sendable (Float) -> Void
+/// Runs on the audio thread: hands each microphone buffer to whatever is listening now (or to nothing, in standby).
+private final class TapRouter: @unchecked Sendable {
+    private let lock = NSLock()
+    private var feeder: Feeder?
+    private var legacy: SFSpeechAudioBufferRecognitionRequest?
+    var onBuffer: (@Sendable (AVAudioPCMBuffer) -> Void)?
+    var onLevel: (@Sendable (Float) -> Void)?
     private var lastLevel = Date.distantPast
 
-    init(input: AVAudioFormat, output: AVAudioFormat, continuation: AsyncStream<AnalyzerInput>.Continuation,
-         onBuffer: (@Sendable (AVAudioPCMBuffer) -> Void)?, onLevel: @escaping @Sendable (Float) -> Void) {
-        self.converter = input == output ? nil : AVAudioConverter(from: input, to: output)
+    func set(feeder: Feeder) { lock.lock(); self.feeder = feeder; legacy = nil; lock.unlock() }
+    func set(legacy: SFSpeechAudioBufferRecognitionRequest) { lock.lock(); self.legacy = legacy; feeder = nil; lock.unlock() }
+    func clear() { lock.lock(); feeder = nil; legacy = nil; lock.unlock() }
+
+    func route(_ buf: AVAudioPCMBuffer) {
+        lock.lock(); let f = feeder, l = legacy, b = onBuffer, lv = onLevel; lock.unlock()
+        guard f != nil || l != nil else { return }               // standby: heard, not kept
+        b?(buf)
+        if let lv, Date().timeIntervalSince(lastLevel) > 0.05 { lastLevel = Date(); lv(Feeder.level(of: buf)) }
+        if let f { f.feed(buf) } else { l?.append(buf) }
+    }
+}
+
+/// Converts the microphone's buffers to the analyzer's format and passes them on.
+private final class Feeder: @unchecked Sendable {
+    private var converter: AVAudioConverter?
+    private var from: AVAudioFormat?
+    private let output: AVAudioFormat
+    private let continuation: AsyncStream<AnalyzerInput>.Continuation
+
+    init(output: AVAudioFormat, continuation: AsyncStream<AnalyzerInput>.Continuation) {
         self.output = output
         self.continuation = continuation
-        self.onBuffer = onBuffer
-        self.onLevel = onLevel
     }
 
     func feed(_ buffer: AVAudioPCMBuffer) {
-        onBuffer?(buffer)
-        if Date().timeIntervalSince(lastLevel) > 0.05 { lastLevel = Date(); onLevel(Self.level(of: buffer)) }   // ~20 updates a second
-        guard let converter else { continuation.yield(AnalyzerInput(buffer: buffer)); return }
+        if buffer.format == output { continuation.yield(AnalyzerInput(buffer: buffer)); return }
+        if from != buffer.format { converter = AVAudioConverter(from: buffer.format, to: output); from = buffer.format }
+        guard let converter else { return }
         let ratio = output.sampleRate / buffer.format.sampleRate
         let capacity = AVAudioFrameCount((Double(buffer.frameLength) * ratio).rounded(.up)) + 16
         guard let out = AVAudioPCMBuffer(pcmFormat: output, frameCapacity: capacity) else { return }

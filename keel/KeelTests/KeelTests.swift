@@ -1181,5 +1181,39 @@ final class KeelTests: XCTestCase {
         XCTAssertNil(VoiceLearning.correction(dictated: "Book the room", before: "Note. Ask Jon. Book the room", after: "Note. Ask John. Book the room"),
                      "a fix outside what was dictated")
     }
+
+    // MARK: Keel keyboard (VoiceBridge)
+
+    func testKeyboardTypesResults() {
+        let req = UUID()
+        // Words go in with a space if needed.
+        XCTAssertEqual(VoiceBridge.edit(for: .init(request: req, kind: .insert, text: "See you Thursday."), before: "Sounds good.")?.insert, " See you Thursday.")
+        XCTAssertEqual(VoiceBridge.edit(for: .init(request: req, kind: .insert, text: "Hi Sam"), before: "")?.insert, "Hi Sam")
+        // The polish replaces the words just typed…
+        let polish = VoiceBridge.Result(request: req, kind: .polish, text: "Call Priya on Thursday", replacing: "call Priya Friday no Thursday")
+        XCTAssertEqual(VoiceBridge.edit(for: polish, before: "Note: call Priya Friday no Thursday")?.delete, "call Priya Friday no Thursday".count)
+        // …but not if you've typed since.
+        XCTAssertNil(VoiceBridge.edit(for: polish, before: "Note: call Priya Friday no Thursday!!"))
+        // "Keel, make this shorter" replaces the paragraph it edited.
+        let edit = VoiceBridge.Result(request: req, kind: .replaceBefore, text: "Short.", replacing: "A long paragraph.")
+        XCTAssertEqual(VoiceBridge.edit(for: edit, before: "Intro\n\nA long paragraph.")?.delete, "A long paragraph.".count)
+    }
+
+    func testVoiceBridgeRoundTrip() {
+        let r = VoiceBridge.Result(request: UUID(), kind: .polish, text: "Tidied", replacing: "tidied um")
+        let d = try! JSONEncoder().encode(r)
+        XCTAssertEqual(try! JSONDecoder().decode(VoiceBridge.Result.self, from: d), r)
+        XCTAssertEqual(KeyboardVoiceSession.lastParagraph("Hi Sam,\n\nThanks for the deck. It was great."), "Thanks for the deck. It was great.")
+        XCTAssertEqual(KeyboardVoiceSession.context("message"), .message)
+        XCTAssertEqual(KeyboardVoiceSession.context("anything"), .general)
+    }
+
+    /// The signal the keyboard sends reaches an observer (Darwin notifications, as between the two processes).
+    func testVoiceBridgeSignals() {
+        let got = expectation(description: "signal received")
+        VoiceBridge.observe(.partial) { got.fulfill() }
+        VoiceBridge.post(.partial)
+        wait(for: [got], timeout: 2)
+    }
 }
 

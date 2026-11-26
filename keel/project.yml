@@ -22,6 +22,8 @@ targets:
         platformFilter: iOS
       - target: KeelSafari                # Safari extension: save pages and highlights (KEEL_SAFARI)
         platformFilter: iOS
+      - target: KeelKeyboard              # Keel Voice in any app (iPhone/iPad keyboard)
+        platformFilter: iOS
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.briangreenejr.keel   # must be unique across all Apple developers
@@ -228,6 +230,37 @@ targets:
               NSExtensionActivationSupportsWebURLWithMaxCount: 1
               NSExtensionActivationSupportsText: true
               NSExtensionActivationSupportsImageWithMaxCount: 10
+
+  KeelKeyboard:                     # the Keel keyboard: Keel Voice dictation in any app (the app listens; see VoiceBridge)
+    type: app-extension
+    platform: iOS
+    sources: [KeelKeyboard, Keel/Shared/VoiceBridge.swift]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.briangreenejr.keel.keyboard
+        MARKETING_VERSION: "0.1.0"
+        CURRENT_PROJECT_VERSION: "1"
+        CODE_SIGN_STYLE: Automatic
+        TARGETED_DEVICE_FAMILY: "1,2"
+        SUPPORTS_MACCATALYST: NO
+    entitlements:
+      path: KeelKeyboard/KeelKeyboard.entitlements
+      properties:
+        com.apple.security.application-groups: [group.com.briangreenejr.keel]
+    info:
+      path: KeelKeyboard/Info.plist
+      properties:
+        CFBundleDisplayName: Keel
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.keyboard-service
+          NSExtensionPrincipalClass: $(PRODUCT_MODULE_NAME).KeyboardViewController
+          NSExtensionAttributes:
+            IsASCIICapable: false
+            PrefersRightToLeft: false
+            PrimaryLanguage: en-US
+            RequestsOpenAccess: true
 
   KeelWatch:
     type: application

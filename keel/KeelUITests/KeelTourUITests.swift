@@ -167,6 +167,8 @@ final class KeelTourUITests: XCTestCase {
         tap(find("Keel Voice"))
         XCTAssertTrue(app.navigationBars["Keel Voice"].waitForExistence(timeout: 5))
         let work = app.textFields.matching(NSPredicate(format: "placeholderValue BEGINSWITH 'e.g.'")).firstMatch
+        var n = 0
+        while !(work.exists && work.isHittable) && n < 8 { app.swipeUp(velocity: .slow); n += 1 }      // below the keyboard setup
         tap(work); work.typeText("Pastor and men's ministry coach")
         checkpoint("kv1-settings")
         tap(app.navigationBars["Keel Voice"].buttons.element(boundBy: 0))
@@ -178,6 +180,75 @@ final class KeelTourUITests: XCTestCase {
         checkpoint("kv2-log-mic")
         mic.tap()
         checkpoint("kv3-listening")
+    }
+
+    /// The Keel keyboard end to end: add it in Settings (with Full Access), switch to it in a Keel text field, tap
+    /// its mic, and check Keel's session starts and the keyboard sees it. Drives the Settings app, so it runs only
+    /// when asked: TEST_RUNNER_KEEL_KEYBOARD_TEST=1.
+    func testKeelKeyboard() throws {
+        guard ProcessInfo.processInfo.environment["KEEL_KEYBOARD_TEST"] == "1" else { throw XCTSkip("set KEEL_KEYBOARD_TEST=1") }
+        let settings = XCUIApplication(bundleIdentifier: "com.apple.Preferences")
+        settings.launch()
+        // Rows only (a page's title can share the row's name: General → Keyboard → "Keyboards"), from the top.
+        func tapCell(_ label: String, fromTop: Bool = true) {
+            let c = settings.descendants(matching: .any).matching(NSPredicate(format: "label BEGINSWITH %@ AND (elementType == %d OR elementType == %d)",
+                label, XCUIElement.ElementType.cell.rawValue, XCUIElement.ElementType.button.rawValue)).firstMatch
+            _ = c.waitForExistence(timeout: 3)
+            if fromTop { for _ in 0..<3 where !(c.exists && c.isHittable) { settings.swipeDown(velocity: .fast) } }
+            var n = 0
+            while !(c.exists && c.isHittable) && n < 8 { settings.swipeUp(velocity: .slow); n += 1 }
+            XCTAssertTrue(c.waitForExistence(timeout: 5), "Settings: no \(label)"); c.tap()
+        }
+        tapCell("General"); tapCell("Keyboard"); tapCell("Keyboards")
+        if !settings.descendants(matching: .any).matching(NSPredicate(format: "label BEGINSWITH 'Keel' AND (elementType == %d OR elementType == %d)",
+                XCUIElement.ElementType.cell.rawValue, XCUIElement.ElementType.button.rawValue)).firstMatch.waitForExistence(timeout: 2) {
+            tapCell("Add New Keyboard")
+            // Find it with the sheet's search ("Keel" alone also matches the status bar's "◀ Keel" back link).
+            let search = settings.searchFields.firstMatch
+            XCTAssertTrue(search.waitForExistence(timeout: 5)); search.tap(); search.typeText("Keel")
+            checkpoint("kb-add-list")
+            let row = settings.cells.matching(NSPredicate(format: "label CONTAINS 'Keel'")).firstMatch
+            XCTAssertTrue(row.waitForExistence(timeout: 5), "Keel isn't in Add New Keyboard"); row.tap()
+        }
+        let keelRow = settings.cells.matching(NSPredicate(format: "label BEGINSWITH 'Keel'")).firstMatch
+        XCTAssertTrue(keelRow.waitForExistence(timeout: 5), "Keel isn't in Keyboards"); keelRow.tap()
+        let fullAccess = settings.switches.firstMatch
+        XCTAssertTrue(fullAccess.waitForExistence(timeout: 5))
+        if (fullAccess.value as? String) != "1" {
+            fullAccess.coordinate(withNormalizedOffset: CGVector(dx: 0.93, dy: 0.5)).tap()       // the switch itself, not the label
+            let allow = settings.alerts.buttons.matching(NSPredicate(format: "label == 'Allow'")).firstMatch
+            if allow.waitForExistence(timeout: 4) { allow.tap() }
+        }
+        checkpoint("kb0-settings")
+        XCTAssertEqual(fullAccess.value as? String, "1", "Full Access didn't turn on")
+
+        app.activate()
+        XCTAssertTrue(tab("inbox").waitForExistence(timeout: 20))
+        tap(tab("tasks"))
+        tap(app.textFields.matching(NSPredicate(format: "placeholderValue BEGINSWITH 'Add a task'")).firstMatch)
+        // Switch keyboards until the Keel keyboard is up.
+        let mic = app.descendants(matching: .any)["Dictate with Keel Voice"]
+        var n = 0
+        while !mic.exists && n < 6 {
+            let globe = app.buttons.matching(NSPredicate(format: "label == 'Next keyboard' OR label == 'Next Keyboard' OR label == 'Emoji'")).firstMatch
+            if globe.exists { globe.tap() } else { break }
+            n += 1
+        }
+        XCTAssertTrue(mic.waitForExistence(timeout: 5), "the Keel keyboard didn't come up")
+        // A full keyboard: type "Hi" with its keys (the capital comes by itself at the start).
+        let field = app.textFields.matching(NSPredicate(format: "placeholderValue BEGINSWITH 'Add a task'")).firstMatch
+        app.buttons["H"].tap(); app.buttons["i"].tap()
+        XCTAssertEqual(field.value as? String, "Hi", "typing with the Keel keyboard")
+        checkpoint("kb1-keyboard")
+        mic.tap()
+        let on = app.staticTexts.matching(NSPredicate(format: "label BEGINSWITH 'Keel Voice is on' OR label BEGINSWITH 'Starting Keel Voice'")).firstMatch
+        XCTAssertTrue(on.waitForExistence(timeout: 10), "the keyboard didn't open Keel's session")
+        checkpoint("kb2-session")
+        app.buttons.matching(NSPredicate(format: "label == 'Done'")).firstMatch.tap()
+        checkpoint("kb3-back-listening")
+        // Leave the simulator on the standard keyboard, so later tests can type.
+        let next = app.buttons.matching(NSPredicate(format: "label == 'Next keyboard'")).firstMatch
+        if next.waitForExistence(timeout: 3) { next.tap() }
     }
 
     /// Routines on the Voyage (Home → ⋯ → Full Today): tick steps, skip one today, take one out, tick a whole routine, edit.

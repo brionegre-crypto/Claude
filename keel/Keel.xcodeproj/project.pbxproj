@@ -34,6 +34,7 @@
 		10186E3639A923784ACBDFC2 /* Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3287DA94E24BE3D12C1622EF /* Database.swift */; };
 		12140D785E5F4426253D2801 /* MetricGuides.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2803BA78A246649D8060A9D5 /* MetricGuides.swift */; };
 		1353B8274DDFC4B7A2987991 /* KeelShare.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 6A713FF0E72F2CE1AEE80CC5 /* KeelShare.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		139B61BAD90946CB5639FC4B /* KeyboardSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC37BF6C47C489D8C9EB71CE /* KeyboardSession.swift */; };
 		142B2A77818F98E65153BAFC /* BodyCoach.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22370257B68140D21EAB77E8 /* BodyCoach.swift */; };
 		150126542635988F8DF5B5AB /* MailRulesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35DD7C2CFF91615712226165 /* MailRulesView.swift */; };
 		183175152423DE195249AB9D /* NotesPro.swift in Sources */ = {isa = PBXBuildFile; fileRef = 542A07100EB60D7967735175 /* NotesPro.swift */; };
@@ -140,10 +141,12 @@
 		6EAD2491A10AB63C0C24A19D /* DietEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C093C263FFEE41054DA9FFC /* DietEngine.swift */; };
 		6EC470A6BDD5A94A40238C00 /* SmartQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3F2CADAE673DC4FBB085C28 /* SmartQuery.swift */; };
 		703316A85D485F3BF37746D2 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 05EE7EFEB647CB021A10FB83 /* PrivacyInfo.xcprivacy */; };
+		70C556827A184A4B0A34DF5F /* KeelKeyboard.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 13FF358B9E4EDFE0FF591873 /* KeelKeyboard.appex */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		711C1369E1F400D2CEBA3256 /* HelpCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE011CD048ECB582FB18D295 /* HelpCenter.swift */; };
 		7174C18B1354C9B1E3049443 /* KeelWidgets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 285646C7689519D8ACD6E589 /* KeelWidgets.swift */; };
 		720E017F4A375D9C1F58321D /* NoteEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CCF5829E6F9ABA2CEC0AAAC /* NoteEditor.swift */; };
 		724249CCD447FF62492F866A /* LocationReminders.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CDCB91AAB4C751A82E4CA92 /* LocationReminders.swift */; };
+		730361083689B50C5C62B2FF /* VoiceBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3A763D4D514B7DA566E4454 /* VoiceBridge.swift */; };
 		7326A3813975C1374AE6FAD5 /* BodyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D271D58BBBDC7C0D6180A312 /* BodyView.swift */; };
 		73BC1CF8AFAF0158EC11027D /* TemplatesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3872D74D620C536806E02BB9 /* TemplatesView.swift */; };
 		7416782B661DE84504AF0AB9 /* dictation-sample.aiff in Resources */ = {isa = PBXBuildFile; fileRef = 2E71D795357103872F6F84CB /* dictation-sample.aiff */; };
@@ -210,6 +213,7 @@
 		A4458C60361DA75F59A0693F /* KeelWatchWidgets.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 9CEFD40EA6635DD508CB76E5 /* KeelWatchWidgets.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		A446D4963BFA2F12EA7524DA /* TaskEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F965AFDF10B5B9C9369DA47 /* TaskEngine.swift */; };
 		A463861D2476CE7DFDD25B8F /* ThemedLayouts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60722B67938A5EF51A79499E /* ThemedLayouts.swift */; };
+		A4941C8020467199C7280BBB /* VoiceBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3A763D4D514B7DA566E4454 /* VoiceBridge.swift */; };
 		A61B0FCCB0C3EA27DB241781 /* WidgetSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D0B9D5FF32ED24F051A1187 /* WidgetSync.swift */; };
 		A74D5AF348C778FF18E0F4D8 /* WorldClock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EDAAA19B48707F958508317 /* WorldClock.swift */; };
 		A78E54C4A7E587196BFD08AF /* ProjectsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F185BAE437D06D559B87D87A /* ProjectsView.swift */; };
@@ -289,6 +293,7 @@
 		DECE4337C07439C2E18BEB85 /* IntegrationIntents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99D5907D2523105CA4049715 /* IntegrationIntents.swift */; };
 		DF0E2247EDD62E4F0CAF37F4 /* KeelWatchWidgets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D92E3761BA913AA4C9CF5F9 /* KeelWatchWidgets.swift */; };
 		E053C585567DDC029FB720D8 /* ClaudeBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14D1D78C56734503A909291D /* ClaudeBridge.swift */; };
+		E12932E0A7C3C9E59B737D54 /* KeyboardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E683FD8BDF0A3C665F9A52EB /* KeyboardViewController.swift */; };
 		E2B8FEF02893FAD636AE6E23 /* NotesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAAF02252EE2C633D8BD47D5 /* NotesView.swift */; };
 		E3FC05F1F09D2444CCCD7114 /* LeaveBy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CFA486172DB7ECD5C089D13 /* LeaveBy.swift */; };
 		E4E08F57725162EE14955F89 /* NutritionHealth.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72378D95B5FD656710148846 /* NutritionHealth.swift */; };
@@ -313,6 +318,7 @@
 		F7F604F41E216C77C702C6B7 /* LogDose.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E4EC80833441B8F40AABA20 /* LogDose.swift */; };
 		F8026AAF16871E54EB858AB2 /* MeetingAutopilot.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6608B0BD68E48656AA69FDE /* MeetingAutopilot.swift */; };
 		F8BB10505FB72550A69EC114 /* MailSearch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3688009374794C7994754097 /* MailSearch.swift */; };
+		F8C8816D3A19A650F22ACF2F /* VoiceBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3A763D4D514B7DA566E4454 /* VoiceBridge.swift */; };
 		F992DF26E7F19F998DCD9387 /* DopamineMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 578C13A3E96EA027B1A7E80B /* DopamineMenu.swift */; };
 		FA074A35DED1741317CE2E20 /* AutoScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EBC0FF28B7428993634313A /* AutoScheduler.swift */; };
 		FA4B731A950A9A072C1A398D /* BodyLoad.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACC3D3890766F3B5569525F4 /* BodyLoad.swift */; };
@@ -370,6 +376,13 @@
 			remoteGlobalIDString = 0349D24B5128121921653E51;
 			remoteInfo = KeelWidgets;
 		};
+		F47EFB172EB89E54DAF8A1C9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 21CE5A12478C27C89D8E099F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 54297F7B03F12FDACBC57E6B;
+			remoteInfo = KeelKeyboard;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -393,6 +406,7 @@
 				D5D338A07EA42AA2AEACBBEC /* KeelWidgets.appex in Embed Foundation Extensions */,
 				1353B8274DDFC4B7A2987991 /* KeelShare.appex in Embed Foundation Extensions */,
 				AACF114B5053D76DD9FC3638 /* KeelSafari.appex in Embed Foundation Extensions */,
+				70C556827A184A4B0A34DF5F /* KeelKeyboard.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -434,6 +448,7 @@
 		11EAE1042D541850E075DAC3 /* MailTabs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MailTabs.swift; sourceTree = "<group>"; };
 		131DAD5DF86362CE76AFE36D /* Blocks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Blocks.swift; sourceTree = "<group>"; };
 		13503BEF35A713696C333CDC /* VoiceCommands.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceCommands.swift; sourceTree = "<group>"; };
+		13FF358B9E4EDFE0FF591873 /* KeelKeyboard.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = KeelKeyboard.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		14D1D78C56734503A909291D /* ClaudeBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeBridge.swift; sourceTree = "<group>"; };
 		15825755A21442E303748192 /* HealthLogs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthLogs.swift; sourceTree = "<group>"; };
 		17C252D173987B00D25462AF /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
@@ -495,6 +510,7 @@
 		3A65C134D2D1C74B3B23F03F /* KitTime.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KitTime.swift; sourceTree = "<group>"; };
 		3BB1D4FBC77EA9C22FF7D1C4 /* MailOutbox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MailOutbox.swift; sourceTree = "<group>"; };
 		3BB795CAD8C6942F63916DA7 /* BioAge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BioAge.swift; sourceTree = "<group>"; };
+		3C7BA8DD887586217E12E6EB /* KeelKeyboard.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = KeelKeyboard.entitlements; sourceTree = "<group>"; };
 		41D9E89F2811C04F9A356D75 /* Polish.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Polish.swift; sourceTree = "<group>"; };
 		42A27BFD8A306D1105C6A257 /* MailExtras.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MailExtras.swift; sourceTree = "<group>"; };
 		430FEBA07DBE819D0BEA460D /* HabitsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HabitsView.swift; sourceTree = "<group>"; };
@@ -584,6 +600,7 @@
 		83A06C580A0352DA59548C19 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		843449FE928FD8536D75ADD2 /* RoutineVoyage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoutineVoyage.swift; sourceTree = "<group>"; };
 		84BAC79E066C20D28E6143A4 /* ImportEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportEngine.swift; sourceTree = "<group>"; };
+		85ABD456897CFC1ECD136636 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		85FB2595633B660B60D4620C /* BodyLife.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BodyLife.swift; sourceTree = "<group>"; };
 		86503DA6CCB3EDDAA215CF40 /* BrainIndex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrainIndex.swift; sourceTree = "<group>"; };
 		86815C21DB20F9F66C64623D /* KeelSafari.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = KeelSafari.appex; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -671,6 +688,7 @@
 		C809CF37A035B76F7A13A833 /* MonthlyReviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MonthlyReviewView.swift; sourceTree = "<group>"; };
 		C8F556A0353D464C0C7136C5 /* ConnectedApps.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectedApps.swift; sourceTree = "<group>"; };
 		CA8BA63942415A5242F995B7 /* LifeAdmin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LifeAdmin.swift; sourceTree = "<group>"; };
+		CC37BF6C47C489D8C9EB71CE /* KeyboardSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardSession.swift; sourceTree = "<group>"; };
 		CD57A5D556F492976F0DB0F5 /* TripScanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TripScanner.swift; sourceTree = "<group>"; };
 		CDE261303178128DC2353530 /* CheckInCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckInCard.swift; sourceTree = "<group>"; };
 		CEC81D332BB367C4D33D8162 /* CommandBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandBar.swift; sourceTree = "<group>"; };
@@ -698,8 +716,10 @@
 		E0A0A17F23DEE779D971974A /* AppleNotesImport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleNotesImport.swift; sourceTree = "<group>"; };
 		E194B882DB5DE7A249039088 /* ReadStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadStatus.swift; sourceTree = "<group>"; };
 		E1BB9670748528112F79215C /* KeelWatch.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = KeelWatch.entitlements; sourceTree = "<group>"; };
+		E3A763D4D514B7DA566E4454 /* VoiceBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceBridge.swift; sourceTree = "<group>"; };
 		E3BE193F1FF25E6760C6616E /* TimeViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeViews.swift; sourceTree = "<group>"; };
 		E5D16D5BEF0A07E9F3C78C7F /* Flow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Flow.swift; sourceTree = "<group>"; };
+		E683FD8BDF0A3C665F9A52EB /* KeyboardViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardViewController.swift; sourceTree = "<group>"; };
 		E6A2061B48E622B6F53EBEE5 /* TodayLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayLayout.swift; sourceTree = "<group>"; };
 		E6DA31B1269D064E20C25AD4 /* MacWindows.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacWindows.swift; sourceTree = "<group>"; };
 		E7ACA3D1DD7457A3D7631DA4 /* Together.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Together.swift; sourceTree = "<group>"; };
@@ -739,6 +759,7 @@
 			isa = PBXGroup;
 			children = (
 				DFFC4DBF7D60E11E05E9A292 /* Keel.app */,
+				13FF358B9E4EDFE0FF591873 /* KeelKeyboard.appex */,
 				86815C21DB20F9F66C64623D /* KeelSafari.appex */,
 				6A713FF0E72F2CE1AEE80CC5 /* KeelShare.appex */,
 				FBB08F7C577200675EDE09B3 /* KeelTests.xctest */,
@@ -1207,6 +1228,7 @@
 			isa = PBXGroup;
 			children = (
 				1CF9F92FB410D61C18EA15B1 /* KeelVoice.swift */,
+				CC37BF6C47C489D8C9EB71CE /* KeyboardSession.swift */,
 				015907BC4A3F668AD72458E9 /* VoiceCleanup.swift */,
 				13503BEF35A713696C333CDC /* VoiceCommands.swift */,
 				D18105B5159EAD7CE2F254FA /* VoiceVocabulary.swift */,
@@ -1261,6 +1283,7 @@
 			isa = PBXGroup;
 			children = (
 				BAA9D68F3521070927D3A867 /* FocusMusicIntents.swift */,
+				E3A763D4D514B7DA566E4454 /* VoiceBridge.swift */,
 				4FAE3DDA9D4006FAEA5CA68D /* WatchShared.swift */,
 				DFBF2D2887E33D304F45258F /* WidgetQueue.swift */,
 				1CD836265E2BB9D895940B33 /* WidgetShared.swift */,
@@ -1304,6 +1327,16 @@
 				17C252D173987B00D25462AF /* Models.swift */,
 			);
 			path = Models;
+			sourceTree = "<group>";
+		};
+		B55A6C20C68B34BD215F269D /* KeelKeyboard */ = {
+			isa = PBXGroup;
+			children = (
+				85ABD456897CFC1ECD136636 /* Info.plist */,
+				3C7BA8DD887586217E12E6EB /* KeelKeyboard.entitlements */,
+				E683FD8BDF0A3C665F9A52EB /* KeyboardViewController.swift */,
+			);
+			path = KeelKeyboard;
 			sourceTree = "<group>";
 		};
 		B57BD95EC1914113D7DB5E0A /* Projects */ = {
@@ -1380,6 +1413,7 @@
 			children = (
 				B20532AA531EF53E3211CB48 /* _locales */,
 				F42D77EC062728740A115C6A /* Keel */,
+				B55A6C20C68B34BD215F269D /* KeelKeyboard */,
 				95F4F4B795154F16E97FD26A /* KeelSafari */,
 				ADF8E1797BD783F52B170ACD /* KeelShare */,
 				42D5A7981CBA6AD24E4D2149 /* KeelTests */,
@@ -1648,6 +1682,23 @@
 			productReference = 86815C21DB20F9F66C64623D /* KeelSafari.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
+		54297F7B03F12FDACBC57E6B /* KeelKeyboard */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 21CD13061D85479E78D071B6 /* Build configuration list for PBXNativeTarget "KeelKeyboard" */;
+			buildPhases = (
+				27F25E81FE60C9C5E7EBDA00 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = KeelKeyboard;
+			packageProductDependencies = (
+			);
+			productName = KeelKeyboard;
+			productReference = 13FF358B9E4EDFE0FF591873 /* KeelKeyboard.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		6D16ED1FDD27E9112AC3E516 /* KeelWatchWidgets */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 78C62F685D737B6BA1B61483 /* Build configuration list for PBXNativeTarget "KeelWatchWidgets" */;
@@ -1701,6 +1752,7 @@
 				4358F7EC036F3F523FB54568 /* PBXTargetDependency */,
 				BE3D11127B2AD405D6CB1273 /* PBXTargetDependency */,
 				BD07D9A6A82CC167E6E5A066 /* PBXTargetDependency */,
+				A150A87073E836FE375457B6 /* PBXTargetDependency */,
 			);
 			name = Keel;
 			packageProductDependencies = (
@@ -1768,6 +1820,10 @@
 						DevelopmentTeam = NT3YQF6DM5;
 						ProvisioningStyle = Automatic;
 					};
+					54297F7B03F12FDACBC57E6B = {
+						DevelopmentTeam = NT3YQF6DM5;
+						ProvisioningStyle = Automatic;
+					};
 					6D16ED1FDD27E9112AC3E516 = {
 						DevelopmentTeam = NT3YQF6DM5;
 						ProvisioningStyle = Automatic;
@@ -1811,6 +1867,7 @@
 				0349D24B5128121921653E51 /* KeelWidgets */,
 				4E661495CF439B10D6168301 /* KeelSafari */,
 				0D45B085DAEF233D57776430 /* KeelShare */,
+				54297F7B03F12FDACBC57E6B /* KeelKeyboard */,
 				D6B83E7921FCC48287D47155 /* KeelWatch */,
 				6D16ED1FDD27E9112AC3E516 /* KeelWatchWidgets */,
 			);
@@ -2022,6 +2079,7 @@
 				3D5A47E4040041315D9E5E27 /* KeelTips.swift in Sources */,
 				516B30B3E025DE5EEA29E898 /* KeelVoice.swift in Sources */,
 				199BE7207EC9F1909E83F526 /* KeelWeather.swift in Sources */,
+				139B61BAD90946CB5639FC4B /* KeyboardSession.swift in Sources */,
 				9F5EB69C39477EB52EB971C5 /* KeyboardShortcutsView.swift in Sources */,
 				0F1CEEA9A50ABDA704D394D6 /* KitCatalog.swift in Sources */,
 				8B271461FEFBD60BA30C86A6 /* KitCore.swift in Sources */,
@@ -2151,6 +2209,7 @@
 				CEC80500FF3B6A8635117D83 /* TripsView.swift in Sources */,
 				ECBA22E7C73B9A34880E0E69 /* UndoCenter.swift in Sources */,
 				695654AC935393D6832256F8 /* UnsubscribePrompt.swift in Sources */,
+				F8C8816D3A19A650F22ACF2F /* VoiceBridge.swift in Sources */,
 				C75D019A645F0B1B4137A31A /* VoiceCleanup.swift in Sources */,
 				BE75E18F27CC236446162ACE /* VoiceCommands.swift in Sources */,
 				C6627B8D58B435CEF8EE6B2F /* VoiceUI.swift in Sources */,
@@ -2169,12 +2228,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		27F25E81FE60C9C5E7EBDA00 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E12932E0A7C3C9E59B737D54 /* KeyboardViewController.swift in Sources */,
+				A4941C8020467199C7280BBB /* VoiceBridge.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		2B6B5311927CA14EA32DB4F2 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				A2863D392C8DFB24FEC2DEA8 /* FocusMusicIntents.swift in Sources */,
 				7174C18B1354C9B1E3049443 /* KeelWidgets.swift in Sources */,
+				730361083689B50C5C62B2FF /* VoiceBridge.swift in Sources */,
 				E81410121036D3D7149D29FC /* WatchShared.swift in Sources */,
 				89AB2D4DF2D186D1F1D5E9FA /* WidgetQueue.swift in Sources */,
 				68A171A776915882DE934EA3 /* WidgetShared.swift in Sources */,
@@ -2260,6 +2329,12 @@
 			target = 6D16ED1FDD27E9112AC3E516 /* KeelWatchWidgets */;
 			targetProxy = 17CFF7C5213D19A884426EFA /* PBXContainerItemProxy */;
 		};
+		A150A87073E836FE375457B6 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			platformFilter = ios;
+			target = 54297F7B03F12FDACBC57E6B /* KeelKeyboard */;
+			targetProxy = F47EFB172EB89E54DAF8A1C9 /* PBXContainerItemProxy */;
+		};
 		BD07D9A6A82CC167E6E5A066 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			platformFilter = ios;
@@ -2294,6 +2369,26 @@
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
+		};
+		02B9B013052E0CE4E7BF80AC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = KeelKeyboard/KeelKeyboard.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				INFOPLIST_FILE = KeelKeyboard/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 0.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.briangreenejr.keel.keyboard;
+				SDKROOT = iphoneos;
+				SUPPORTS_MACCATALYST = NO;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
 		};
 		2AB3542EAB3D9B571209A976 /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -2452,6 +2547,26 @@
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
+		};
+		79B0EC49EC7F01172F2262DD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = KeelKeyboard/KeelKeyboard.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				INFOPLIST_FILE = KeelKeyboard/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 0.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.briangreenejr.keel.keyboard;
+				SDKROOT = iphoneos;
+				SUPPORTS_MACCATALYST = NO;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
 		};
 		82FD8EBF29644D7C98DC7791 /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -2730,6 +2845,15 @@
 			buildConfigurations = (
 				9E195F5024A23A4D27B2B7E6 /* Debug */,
 				00CE8D247EBEDB6233F6D42D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		21CD13061D85479E78D071B6 /* Build configuration list for PBXNativeTarget "KeelKeyboard" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				02B9B013052E0CE4E7BF80AC /* Debug */,
+				79B0EC49EC7F01172F2262DD /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;

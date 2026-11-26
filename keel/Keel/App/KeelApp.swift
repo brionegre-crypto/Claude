@@ -436,6 +436,7 @@ private struct RouterSheets: ViewModifier {
             .sheet(isPresented: $router.showSettings) { AccountsView() }
             .sheet(isPresented: $router.showPlan) { PlanRitualView() }
             .modifier(MoreRouterSheets(router: router))
+            .fullScreenCover(isPresented: $router.showVoiceSession) { VoiceSessionView() }
     }
 }
 

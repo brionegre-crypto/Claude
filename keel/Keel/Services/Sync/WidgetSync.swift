@@ -158,6 +158,7 @@ final class AppRouter {
     var showQuickOpen = false
     var showShortcuts = false
     var showVoice = false
+    var showVoiceSession = false          // the Keel keyboard started a Keel Voice session
     var textDraft: TextDraft?            // Keel's text composer (Messages)
     var mailHandoff: MailHandoffDraft?   // a draft for Apple Mail
     var teamInvite: TeamInvite?          // an invitation link was opened
@@ -189,6 +190,10 @@ final class AppRouter {
         case "groceries": openTool = ToolRoute(id: "mealplan")
         case "open": showQuickOpen = true
         case "voice": showVoice = true
+        case "voice-session":       // from the Keel keyboard: keep the mic ready for dictation in other apps
+            let start = URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems?.first { $0.name == "start" }?.value == "1"
+            showVoiceSession = true
+            Task { await KeyboardVoiceSession.shared.begin(startListening: start) }
         case "claude-drafts": ClaudeBridge.openPendingDrafts()
         case "join":
             // com.keel.app://join?code=…&host=…  (from an invitation page)

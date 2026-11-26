@@ -342,6 +342,8 @@ struct KeelVoiceSettings: View {
     @State private var language = VoiceLanguage.chosen
     @State private var languages: [Locale] = []
     @State private var fixes = VoiceLearning.learned
+    @State private var sessionMinutes = KeyboardVoiceSession.minutes
+    @State private var keyboardSession = KeyboardVoiceSession.shared
 
     var body: some View {
         Form {
@@ -349,6 +351,24 @@ struct KeelVoiceSettings: View {
                 Toggle("Tidy up as I speak", isOn: $cleanup)
             } footer: {
                 Text("Removes “um” and repeats, keeps only your corrections (“Friday, no, Thursday”), adds punctuation and lists, and fits the tone to where you're writing. Apple Intelligence does it on this iPhone; Claude only if Apple Intelligence can't and you've connected it. “Use what I said” always puts back your exact words.")
+            }
+            Section {
+                VStack(alignment: .leading, spacing: 8) {
+                    Label("Settings → General → Keyboard → Keyboards → Add New Keyboard → Keel", systemImage: "1.circle")
+                    Label("Tap Keel there and turn on Allow Full Access (that's how the keyboard reaches Keel; nothing you type is collected)", systemImage: "2.circle")
+                    Label("In any app, tap 🌐 to switch to Keel, then tap the mic", systemImage: "3.circle")
+                }
+                .font(DS.Font.caption)
+                Button("Open Settings", systemImage: "gear") { if let u = URL(string: UIApplication.openSettingsURLString) { UIApplication.shared.open(u) } }
+                Picker("Stay ready for", selection: $sessionMinutes) {
+                    ForEach([5, 15, 30, 60], id: \.self) { Text("\($0) minutes").tag($0) }
+                }
+                .onChange(of: sessionMinutes) { _, m in KeyboardVoiceSession.minutes = m }
+                if keyboardSession.active {
+                    Button("End the session now", systemImage: "mic.slash", role: .destructive) { keyboardSession.end() }
+                }
+            } header: { Text("Keel keyboard: dictate in any app") } footer: {
+                Text("Like Wispr Flow: the first time you tap the mic, Keel opens for a moment to turn the microphone on; go back to your app and talk. Keel stays ready (iOS shows the orange dot) until you haven't dictated for the time above. Everything is heard and tidied on this iPhone.")
             }
             Section {
                 Picker("Language", selection: $language) {
@@ -430,5 +450,42 @@ struct KeelVoiceSettings: View {
         guard !w.isEmpty, !custom.contains(w) else { return }
         custom.append(w); VoiceVocabulary.custom = custom; VoiceVocabulary.forget()
         newWord = ""
+    }
+}
+
+// MARK: - Keel keyboard session
+
+/// What you see for a moment when the Keel keyboard opens Keel: the mic is on, go back to your app.
+struct VoiceSessionView: View {
+    @Environment(\.dismiss) private var dismiss
+    @State private var session = KeyboardVoiceSession.shared
+
+    var body: some View {
+        VStack(spacing: 22) {
+            Spacer()
+            Image(systemName: session.voice.state == .listening ? "waveform" : "mic.circle.fill")
+                .font(.system(size: 64, weight: .semibold)).foregroundStyle(DS.Palette.accent)
+                .symbolEffect(.variableColor.iterative, isActive: session.voice.state == .listening)
+            Text(session.active ? "Keel Voice is on" : "Starting Keel Voice…").font(.title.weight(.bold))
+            if session.voice.state == .listening {
+                Text(session.voice.liveText.isEmpty ? "Listening… go back and talk." : session.voice.liveText)
+                    .font(DS.Font.body).foregroundStyle(DS.Palette.inkSoft).multilineTextAlignment(.center).lineLimit(3)
+            }
+            VStack(alignment: .leading, spacing: 10) {
+                Label("Go back to your app: swipe right along the bottom edge, or tap ‹ at the top left.", systemImage: "arrow.uturn.backward")
+                Label("Talk, then tap the mic on the Keel keyboard. Your words appear, tidied.", systemImage: "keyboard")
+                Label("Keel keeps listening-ready for \(KeyboardVoiceSession.minutes) minutes after you last dictate (the orange dot). Change it in Settings → Keel Voice.", systemImage: "timer")
+            }
+            .font(DS.Font.body).foregroundStyle(DS.Palette.ink).padding().background(DS.Palette.elevated, in: .rect(cornerRadius: 18))
+            if let e = session.voice.error { Text(e).font(.caption).foregroundStyle(.red) }
+            Spacer()
+            HStack {
+                Button("End session", role: .destructive) { session.end(); dismiss() }.buttonStyle(.bordered)
+                Spacer()
+                Button("Done") { dismiss() }.buttonStyle(.borderedProminent).tint(DS.Palette.accent)
+            }
+        }
+        .padding(24)
+        .background(DS.Palette.canvas.ignoresSafeArea())
     }
 }
