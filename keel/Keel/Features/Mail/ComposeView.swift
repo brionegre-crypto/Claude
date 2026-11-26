@@ -165,6 +165,11 @@ struct ComposeView: View {
                     TextEditor(text: $draft.body)
                         .frame(minHeight: 220)
                         .focused($bodyFocused)
+                        .overlay(alignment: .bottomTrailing) {
+                            // Keel Voice: written as an email, in your style, above your signature and the quoted reply.
+                            KeelMicButton(text: $draft.body, context: .email, separator: "\n\n", above: [signature(for: accountId), "\nOn ", "\n>"].filter { !$0.isEmpty })
+                                .padding(6)
+                        }
                     let flags = ToneCheck.flags(draft.body)
                     if !flags.isEmpty || toneNote != nil {
                         VStack(alignment: .leading, spacing: 6) {
@@ -206,6 +211,7 @@ struct ComposeView: View {
                 if let error { Section { Text(error).foregroundStyle(.red) } }
             }
             .navigationTitle(draft.replyTo != nil ? "Reply" : (draft.forwardSource != nil || draft.subject.hasPrefix("Fwd:") ? "Forward" : "New Message"))
+            .keelVoiceHost()                       // Keel Voice's listening bar
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {

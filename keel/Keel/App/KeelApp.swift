@@ -126,6 +126,7 @@ struct KeelApp: App {
                     await breathe(); Coach.weeklyIfDue(ctx: ctx)
                     try? await Task.sleep(for: .seconds(1.5))
                     BrainIndex.shared.refresh(ctx: ctx)                 // only what changed, at most every 2 minutes
+                    await breathe(); await VoiceVocabulary.mine(ctx)     // names and terms you use, for Keel Voice (at most daily)
                     await breathe(); if Throttle.due("backup", every: 6 * 3600) { BrainBackup.backupIfDue(ctx: ctx) }
                     await breathe(); if Throttle.due("trash", every: 24 * 3600) { NoteTrash.purgeOld() }
                     await breathe(); if MarkdownMirror.isOn, Throttle.due("mdpull", every: 600) { _ = MarkdownMirror.pull(ctx: ctx) }

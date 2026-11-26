@@ -1086,4 +1086,77 @@ final class KeelTests: XCTestCase {
         XCTAssertEqual(CalendarService.listAfterPull(keel: "Morning", reminders: "Reminders", lists: lists, defaultList: "Reminders"), "Reminders")
         XCTAssertEqual(CalendarService.listAfterPull(keel: "Morning", reminders: nil, lists: lists, defaultList: "Reminders"), "Morning")
     }
+
+    // MARK: Keel Voice
+
+    func testVoiceCommands() {
+        let snip: [(name: String, body: String)] = [(name: "address", body: "12 Harbour Rd, Leeds")]
+        XCTAssertEqual(VoiceCleanup.tidy(VoiceCleanup.applyCommands("first thing new line second thing")), "First thing\nSecond thing")
+        XCTAssertEqual(VoiceCleanup.tidy(VoiceCleanup.applyCommands("intro new paragraph body")), "Intro\n\nBody")
+        XCTAssertEqual(VoiceCleanup.tidy(VoiceCleanup.applyCommands("groceries bullet point milk bullet point eggs")), "Groceries\n- Milk\n- Eggs")
+        XCTAssertEqual(VoiceCleanup.tidy(VoiceCleanup.applyCommands("Call Sam. Buy a boat. scratch that")), "Call Sam.")
+        XCTAssertEqual(VoiceCleanup.tidy(VoiceCleanup.applyCommands("send it to insert my address please", snippets: snip)), "Send it to 12 Harbour Rd, Leeds please")
+    }
+
+    func testVoiceTidy() {
+        XCTAssertEqual(VoiceCleanup.tidy("um so I I think uh we should go"), "So I think we should go")
+        XCTAssertEqual(VoiceCleanup.tidy("she had had enough , really ."), "She had had enough, really.")      // "had had" is right
+        XCTAssertEqual(VoiceCleanup.tidy("the umbrella is here"), "The umbrella is here")                 // "um" inside a word stays
+        XCTAssertEqual(VoiceCleanup.finish("Call the dentist.", .task), "Call the dentist")
+        XCTAssertEqual(VoiceCleanup.finish("pricing, Q4 deck!", .search), "pricing Q4 deck")
+    }
+
+    func testVoiceCorrectsNames() {
+        let vocab = ["Priya Shah", "Ecclesiastes", "Jordan"]
+        XCTAssertEqual(VoiceCleanup.correctNames("So I need to call Priya Shal on Thursday.", vocabulary: vocab), "So I need to call Priya Shah on Thursday.")
+        XCTAssertEqual(VoiceCleanup.correctNames("Reading Eclesiastes tonight", vocabulary: vocab), "Reading Ecclesiastes tonight")
+        XCTAssertEqual(VoiceCleanup.correctNames("Priya shall decide", vocabulary: vocab), "Priya shall decide", "two letters off: left alone")
+        XCTAssertEqual(VoiceCleanup.correctNames("the jordan river", vocabulary: vocab), "the jordan river", "short words aren't guessed")
+    }
+
+    func testVoiceEmailSentences() {
+        // Seen from Apple's on-device model in testing: an email as short unpunctuated lines.
+        let ai = "hey Sam\nthanks for the deck\nI think the numbers look good\nbut can we move the meeting to Wednesday at two"
+        XCTAssertEqual(VoiceCleanup.finish(ai, .email), "Hey Sam,\nThanks for the deck. I think the numbers look good. But can we move the meeting to Wednesday at two.")
+        XCTAssertEqual(VoiceCleanup.finish("Thanks for the deck. See you Wednesday.", .email), "Thanks for the deck. See you Wednesday.")
+    }
+
+    func testVoiceCleanupGuards() {
+        let said = "remind me to send the budget to Priya on Thursday and book the room"
+        XCTAssertTrue(VoiceCleanup.looksFaithful("Remind me to send the budget to Priya on Thursday and book the room.", to: said))
+        XCTAssertFalse(VoiceCleanup.looksFaithful("Sure! I've added that reminder for you. Anything else I can help with today?", to: said), "an answer, not a cleanup")
+        XCTAssertFalse(VoiceCleanup.looksFaithful("Budget.", to: said), "too much dropped")
+        XCTAssertFalse(VoiceCleanup.looksFaithful("Priya Shah, thanks for the deck. Can we move it to Wednesday?",
+                                                  to: "hey Sam thanks for the deck can we move it to Wednesday"), "a name I didn't say")
+        XCTAssertEqual(VoiceCleanup.stripChatter("Here's the cleaned text:\nCall Sam at 3."), "Call Sam at 3.")
+        XCTAssertEqual(VoiceCleanup.stripChatter("\"Call Sam at 3.\""), "Call Sam at 3.")
+    }
+
+    func testVoicePlacementAboveSignature() {
+        let body = "\n\nThanks,\nBrian\n\nOn Mon, Sam wrote:\n> hi"
+        let place = KeelMicButton.placer(body, separator: "\n\n", above: ["Thanks,\nBrian", "\nOn "])
+        XCTAssertEqual(place("Sounds good, see you Thursday."), "Sounds good, see you Thursday.\n\nThanks,\nBrian\n\nOn Mon, Sam wrote:\n> hi")
+        XCTAssertEqual(KeelMicButton.placer("Buy milk", separator: " ", above: [])("and eggs"), "Buy milk and eggs")
+    }
+
+    func testVocabularyMiner() {
+        let texts = ["Call Priya Shah about the Q4 budget", "Priya Shah sent the Q4 deck", "Sermon prep: Ecclesiastes study", "Ecclesiastes outline for Sunday"]
+        let c = VocabularyMiner.candidates(in: texts)
+        let terms = VocabularyMiner.terms(from: c)
+        XCTAssertTrue(terms.contains { $0.localizedCaseInsensitiveContains("Priya") }, "a person named twice: \(terms)")
+        XCTAssertFalse(terms.contains("budget"), "an ordinary word isn't vocabulary")
+        XCTAssertTrue(terms.contains("Q4"), "acronyms and codes count: \(terms)")
+    }
+
+    /// End to end: real speech (made with macOS `say`) through the engine. Skipped where speech isn't available.
+    func testKeelVoiceTranscribesSpeech() async throws {
+        guard let url = Bundle(for: KeelTests.self).url(forResource: "dictation-sample", withExtension: "aiff") else { throw XCTSkip("no fixture") }
+        let text: String
+        do { text = try await KeelVoice.transcribe(file: url, vocabulary: ["Priya Shah"]) }
+        catch { throw XCTSkip("speech recognition unavailable here: \(error.localizedDescription)") }
+        XCTAssertFalse(text.isEmpty, "heard nothing")
+        XCTAssertTrue(text.localizedCaseInsensitiveContains("budget"), text)
+        XCTAssertTrue(text.localizedCaseInsensitiveContains("Thursday"), text)
+    }
 }
+

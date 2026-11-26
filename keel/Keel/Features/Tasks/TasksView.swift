@@ -247,6 +247,7 @@ struct TasksView: View {
                 }
             }
             .navigationTitle(screenTitle)
+            .keelVoiceHost()                       // Keel Voice's listening bar
             .chartInlineTitle()
             .keelSettingsButton(help: .tasks)
             .inspector(isPresented: Binding(get: { inspected != nil && Self.sideBySide && sizeClass == .regular }, set: { if !$0 { inspected = nil } })) {
@@ -404,6 +405,7 @@ struct TasksView: View {
                             .focused($addFocused)
                             .onSubmit(add)
                             .submitLabel(.done)
+                        KeelMicButton(text: $newTitle, context: .task, size: 14)      // say it; it arrives as a tidy task
                     }
                 } footer: {
                     if addFocused {
@@ -1033,7 +1035,11 @@ struct TaskDetailView: View {
             }
             AssignSection(task: task)                       // hand it to someone
             WorkBackSection(task: task)                     // split a big deadline into dated steps
-            Section("Notes") { BufferedTextEditor(text: $task.notes).frame(minHeight: 100) }
+            Section {
+                BufferedTextEditor(text: $task.notes).frame(minHeight: 100)
+            } header: {
+                HStack { Text("Notes"); Spacer(); KeelMicButton(text: $task.notes, context: .note, separator: "\n", size: 13) }
+            }
             TaskExtrasSections(task: task)          // start date, more reminders, heading, fields, attachments, comments, won't do
             TaskAttachmentsSection(task: task)
 
@@ -1042,6 +1048,7 @@ struct TaskDetailView: View {
             }
         }
         .navigationTitle("Task")
+        .keelVoiceHost()
         .userActivity(KeelHandoff.taskType) { a in            // Handoff to your other devices
             a.title = task.title
             a.userInfo = ["id": task.id.uuidString]

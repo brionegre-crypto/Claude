@@ -284,56 +284,51 @@ struct CaptureInboxView: View {
 
 // MARK: - Voice notes (audio kept)
 
+/// Voice notes on Keel Voice (SpeechAnalyzer, your vocabulary), keeping the recording as well as the words.
 @MainActor @Observable
 final class VoiceNoteRecorder {
-    var transcript = ""
-    var recording = false
-    var error: String?
-    private let engine = AVAudioEngine()
-    private var request: SFSpeechAudioBufferRecognitionRequest?
-    private var task: SFSpeechRecognitionTask?
-    private var file: AVAudioFile?
+    let voice = KeelVoice()
+    private var finalText: String?
+    private var writer: AudioFileWriter?
     private(set) var fileURL: URL?
 
-    func start() async {
-        let ok = await withCheckedContinuation { c in SFSpeechRecognizer.requestAuthorization { c.resume(returning: $0 == .authorized) } }
-        guard ok, await AVAudioApplication.requestRecordPermission() else { error = "Allow microphone and speech recognition in Settings."; return }
-        do {
-            let s = AVAudioSession.sharedInstance()
-            try s.setCategory(.playAndRecord, mode: .spokenAudio, options: [.defaultToSpeaker, .allowBluetooth])
-            try s.setActive(true)
-            let dir = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0].appendingPathComponent("VoiceNotes", isDirectory: true)
-            try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
-            let url = dir.appendingPathComponent("\(UUID().uuidString).caf")
-            let fmt = engine.inputNode.outputFormat(forBus: 0)
-            file = try AVAudioFile(forWriting: url, settings: fmt.settings)
-            fileURL = url
-            let req = SFSpeechAudioBufferRecognitionRequest()
-            req.shouldReportPartialResults = true
-            if SFSpeechRecognizer()?.supportsOnDeviceRecognition == true { req.requiresOnDeviceRecognition = true }
-            request = req
-            let f = file
-            engine.inputNode.installTap(onBus: 0, bufferSize: 2048, format: fmt) { buf, _ in
-                req.append(buf); try? f?.write(from: buf)
-            }
-            engine.prepare(); try engine.start()
-            task = SFSpeechRecognizer()?.recognitionTask(with: req) { [weak self] r, _ in
-                guard let r else { return }
-                let t = r.bestTranscription.formattedString
-                Task { @MainActor in self?.transcript = t }
-            }
-            recording = true
-        } catch { self.error = error.localizedDescription }
+    var transcript: String { finalText ?? voice.liveText }
+    var recording: Bool { voice.state == .listening || voice.state == .preparing }
+    var error: String? { voice.error }
+
+    func start(vocabulary: [String] = []) async {
+        finalText = nil
+        let dir = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0].appendingPathComponent("VoiceNotes", isDirectory: true)
+        try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+        let url = dir.appendingPathComponent("\(UUID().uuidString).caf")
+        let w = AudioFileWriter(url: url)
+        writer = w; fileURL = url
+        voice.onBuffer = { buf in w.write(buf) }
+        await voice.start(vocabulary: vocabulary)
     }
 
     func stop() {
-        guard recording else { return }
-        engine.stop(); engine.inputNode.removeTap(onBus: 0)
-        request?.endAudio(); task?.finish()
-        file = nil
-        recording = false
-        try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
+        guard voice.isActive else { return }
+        Task {
+            let text = await voice.stop()
+            finalText = text
+            writer?.close()
+        }
     }
+}
+
+/// Writes microphone buffers to a file, on the audio thread (the file is made with the first buffer's format).
+final class AudioFileWriter: @unchecked Sendable {
+    private let url: URL
+    private var file: AVAudioFile?
+    private let lock = NSLock()
+    init(url: URL) { self.url = url }
+    func write(_ buf: AVAudioPCMBuffer) {
+        lock.lock(); defer { lock.unlock() }
+        if file == nil { file = try? AVAudioFile(forWriting: url, settings: buf.format.settings) }
+        try? file?.write(from: buf)
+    }
+    func close() { lock.lock(); file = nil; lock.unlock() }
 }
 
 struct VoiceNoteView: View {
@@ -353,7 +348,7 @@ struct VoiceNoteView: View {
                 .background { PremiumSurface() }
                 if let e = rec.error { Text(e).font(.caption).foregroundStyle(.red) }
                 Button {
-                    if rec.recording { rec.stop() } else { Task { await rec.start() } }
+                    if rec.recording { rec.stop() } else { Task { await rec.start(vocabulary: VoiceVocabulary.words(ctx)) } }
                 } label: {
                     Image(systemName: rec.recording ? "stop.fill" : "mic.fill").font(.system(size: 30)).foregroundStyle(.white)
                         .frame(width: 80, height: 80).background(rec.recording ? Color.red : DS.Palette.accent, in: Circle())
@@ -367,14 +362,14 @@ struct VoiceNoteView: View {
             .padding()
             .navigationTitle("Voice note").navigationBarTitleDisplayMode(.inline)
             .toolbar { ToolbarItem(placement: .cancellationAction) { Button("Cancel") { rec.stop(); dismiss() } } }
-            .task { await rec.start() }
+            .task { await rec.start(vocabulary: VoiceVocabulary.words(ctx)) }
         }
     }
 
     /// Cleans up the words (keeps your meaning), files it in the capture inbox, and keeps the recording on the page.
     private func save() async {
         saving = true; defer { saving = false }
-        let raw = rec.transcript
+        let raw = VoiceCleanup.tidy(VoiceCleanup.applyCommands(rec.transcript, snippets: VoiceVocabulary.snippets(ctx)))   // commands, fillers, repeats
         // A spoken list ("grocery list: milk, eggs and bread", "first… then… finally…") becomes a list, not a paragraph.
         if let list = SpokenList.detect(raw) {
             var blocks = list.items.map { NoteBlock(kind: list.checklist ? .todo : .bullet, text: $0) }

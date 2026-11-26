@@ -68,7 +68,7 @@
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Keel uses your location for today's weather, time-to-leave alerts for events, and finding places for location reminders.</string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>Keel records meetings you choose to record and turns them into notes.</string>
+	<string>Keel listens when you tap or hold a mic to dictate, and records meetings you choose to record and turns them into notes.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>Keel can save images from your notes to Photos.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
@@ -78,7 +78,7 @@
 	<key>NSRemindersUsageDescription</key>
 	<string>Keel syncs with Apple Reminders so your tasks live in one place.</string>
 	<key>NSSpeechRecognitionUsageDescription</key>
-	<string>Keel transcribes your meeting recordings on this iPhone.</string>
+	<string>Keel turns what you dictate, and meetings you record, into text on this iPhone.</string>
 	<key>NSSupportsLiveActivities</key>
 	<true/>
 	<key>NSUserActivityTypes</key>

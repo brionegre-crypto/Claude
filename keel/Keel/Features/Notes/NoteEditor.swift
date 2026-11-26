@@ -80,6 +80,37 @@ struct NoteEditor: View {
 
     var body: some View {
         editorBody.savePoint { SavePoints.note(note, focusedBlock: focused ?? editing) }
+            .keelVoiceHost()                       // Keel Voice's listening bar
+    }
+
+    // MARK: Keel Voice
+
+    @State private var voiceInserted: [UUID] = []
+
+    /// Dictation lands as new blocks (paragraphs, or bullets for a spoken list) after the block you're in, or at the
+    /// end. "Use what I said" sets it again while the result is showing: the same blocks are replaced, not added twice.
+    private var voiceText: Binding<String> {
+        Binding(get: { "" }, set: { text in
+            buffer.flush?()
+            let blocks: [NoteBlock] = text.components(separatedBy: "\n").map { $0.trimmingCharacters(in: .whitespaces) }.filter { !$0.isEmpty }.map { l in
+                l.hasPrefix("- ") || l.hasPrefix("• ") ? NoteBlock(kind: .bullet, text: String(l.dropFirst(2))) : NoteBlock(kind: .text, text: l)
+            }
+            guard !blocks.isEmpty else { return }
+            var at = note.blocks.count
+            if case .done = KeelVoiceCenter.shared.phase, let first = voiceInserted.first, let i = note.blocks.firstIndex(where: { $0.id == first }) {
+                at = i
+                note.blocks.removeAll { voiceInserted.contains($0.id) }
+            } else if let anchor = focused ?? editing, let i = note.blocks.firstIndex(where: { $0.id == anchor }) {
+                if note.blocks[i].kind == .text && note.blocks[i].text.trimmingCharacters(in: .whitespaces).isEmpty {
+                    note.blocks.remove(at: i); at = i                // an empty line you were on becomes the dictation
+                } else { at = i + 1 }
+            } else if let last = note.blocks.last, last.kind == .text, last.text.trimmingCharacters(in: .whitespaces).isEmpty {
+                at = note.blocks.count - 1; note.blocks.removeLast()
+            }
+            note.blocks.insert(contentsOf: blocks, at: min(at, note.blocks.count))
+            voiceInserted = blocks.map(\.id)
+            note.updatedAt = Date()
+        })
     }
 
     @ViewBuilder private var editorBody: some View {
@@ -1051,6 +1082,7 @@ struct NoteEditor: View {
     @ToolbarContentBuilder
     private var toolbar: some ToolbarContent {
         ToolbarItemGroup(placement: .topBarTrailing) {
+            if !note.isLocked { KeelMicButton(text: voiceText, context: .note, size: 13) }
             Button { note.isPinned.toggle(); Haptics.tap() } label: { Image(systemName: note.isPinned ? "star.fill" : "star") }
                 .accessibilityLabel(note.isPinned ? "Remove from favorites" : "Add to favorites")
             Menu {
@@ -1172,6 +1204,7 @@ struct NoteEditor: View {
                 .disabled(note.isLocked)
             }
             Spacer()
+            if !note.isLocked { KeelMicButton(text: voiceText, context: .note, size: 13) }
             Button("Done") { buffer.flush?(); focused = nil; editing = nil; slashFor = nil; mentionFor = nil }
         }
     }

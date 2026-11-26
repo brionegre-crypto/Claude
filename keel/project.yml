@@ -96,9 +96,9 @@ targets:
         NSCameraUsageDescription: Keel uses the camera to scan documents into your notes and to scan food barcodes and labels to check them against your diet.
         NSPhotoLibraryAddUsageDescription: Keel can save images from your notes to Photos.
         NSAppleMusicUsageDescription: Keel lists your Apple Music playlists so you can pick one to play while you focus.
-        NSMicrophoneUsageDescription: Keel records meetings you choose to record and turns them into notes.
+        NSMicrophoneUsageDescription: Keel listens when you tap or hold a mic to dictate, and records meetings you choose to record and turns them into notes.
         NSAppleEventsUsageDescription: On Mac, Keel reads your Apple Notes once, when you choose Import all of Apple Notes, to bring them into Keel.
-        NSSpeechRecognitionUsageDescription: Keel transcribes your meeting recordings on this iPhone.
+        NSSpeechRecognitionUsageDescription: Keel turns what you dictate, and meetings you record, into text on this iPhone.
         NSAlarmKitUsageDescription: Keel shows full-screen alarms for tasks you choose, so important ones are impossible to miss.
         NSFaceIDUsageDescription: Keel uses Face ID to unlock the app and your locked notes.
         CFBundleURLTypes:

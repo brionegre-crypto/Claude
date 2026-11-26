@@ -81,7 +81,11 @@ struct UniversalCaptureSheet: View {
                         .font(DS.Font.caption).foregroundStyle(DS.Palette.warmth)
                 }
                 HStack {
-                    Button { voice = true } label: { Label("Talk", systemImage: "mic.fill") }.buttonStyle(.bordered)
+                    // Keel Voice: tap to talk (tap again to finish) or hold and let go; the words land in the field, tidied.
+                    HStack(spacing: 8) {
+                        KeelMicButton(text: $text, context: kind == .note ? .note : kind == .meal ? .general : .task, size: 15)
+                        Text("Talk").font(DS.Font.body.weight(.medium)).foregroundStyle(DS.Palette.accent)
+                    }
                     Button {
                         if let s = UIPasteboard.general.string { text = s }
                     } label: { Label("Paste", systemImage: "doc.on.clipboard") }.buttonStyle(.bordered)
@@ -98,6 +102,7 @@ struct UniversalCaptureSheet: View {
             }
             .sheet(isPresented: $voice) { VoiceNoteView() }
             .onAppear { focused = true }
+            .keelVoiceHost()
         }
         .presentationDetents([.medium, .large])
     }

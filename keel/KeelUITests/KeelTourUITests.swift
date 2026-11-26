@@ -155,6 +155,26 @@ final class KeelTourUITests: XCTestCase {
         checkpoint("fit6-offer-after-link")
     }
 
+    /// Keel Voice: Settings (your work, your words), the mic in the Log sheet and the listening bar.
+    func testKeelVoiceScreens() {
+        XCTAssertTrue(tab("inbox").waitForExistence(timeout: 20), "tab bar never appeared")
+        tap(app.buttons["Settings"])
+        tap(find("Keel Voice"))
+        XCTAssertTrue(app.navigationBars["Keel Voice"].waitForExistence(timeout: 5))
+        let work = app.textFields.matching(NSPredicate(format: "placeholderValue BEGINSWITH 'e.g.'")).firstMatch
+        tap(work); work.typeText("Pastor and men's ministry coach")
+        checkpoint("kv1-settings")
+        tap(app.navigationBars["Keel Voice"].buttons.element(boundBy: 0))
+        tap(app.navigationBars["Settings"].buttons["Done"])
+
+        tap(barButton("log"))
+        let mic = app.descendants(matching: .any)["keelVoice.mic"].firstMatch
+        XCTAssertTrue(mic.waitForExistence(timeout: 5), "no mic in the Log sheet")
+        checkpoint("kv2-log-mic")
+        mic.tap()
+        checkpoint("kv3-listening")
+    }
+
     /// Routines on the Voyage (Home → ⋯ → Full Today): tick steps, skip one today, take one out, tick a whole routine, edit.
     func testRoutinesOnVoyage() {
         XCTAssertTrue(tab("inbox").waitForExistence(timeout: 20), "tab bar never appeared")

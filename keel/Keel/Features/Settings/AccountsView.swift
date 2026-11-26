@@ -101,6 +101,7 @@ struct AccountsView: View {
                 Section {
                     // Every section's options in one place (Today, Tasks, Calendar, Focus bar, Body, Compass…).
                     SettingsRow(title: "Customize Keel", symbol: "slider.horizontal.3", color: .pink) { CustomizeHubView() }
+                    SettingsRow(title: "Keel Voice", symbol: "waveform", color: .indigo) { KeelVoiceSettings() }
                     SettingsRow(title: "Appearance", symbol: "textformat.size", color: .gray, value: appearance.capitalized) { AppearanceSettings() }
                     SettingsRow(title: "Siri & Shortcuts", symbol: "waveform", color: .purple) { SiriSettings() }
                     SettingsRow(title: "AI & Privacy", symbol: "hand.raised.fill", color: .blue, value: privateMode ? "Private" : nil) { PrivacySettings() }
