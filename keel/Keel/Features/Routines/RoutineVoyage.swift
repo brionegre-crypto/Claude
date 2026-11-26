@@ -54,7 +54,7 @@ final class RoutineProgress {
         if done { s.insert(step.id) } else { s.remove(step.id) }
         today.done[r.id] = s
         save()
-        if done { completeMatchingTasks([step.title], ctx: ctx) }
+        if done { completeMatchingTasks([step.title], list: r.sourceList, ctx: ctx) }
         logIfFinished(r)
     }
 
@@ -64,7 +64,7 @@ final class RoutineProgress {
         let left = remaining(r)
         today.done[r.id, default: []].formUnion(left.map(\.id))
         save()
-        completeMatchingTasks(left.map(\.title), ctx: ctx)
+        completeMatchingTasks(left.map(\.title), list: r.sourceList, ctx: ctx)
         logIfFinished(r)
     }
 
@@ -101,12 +101,14 @@ final class RoutineProgress {
         Haptics.success()
     }
 
-    private func completeMatchingTasks(_ titles: [String], ctx: ModelContext?) {
+    /// `list`: a routine linked to a list completes that list's item whatever its date (it is the step);
+    /// otherwise only a same-named task due today counts.
+    private func completeMatchingTasks(_ titles: [String], list: String? = nil, ctx: ModelContext?) {
         guard let ctx, !titles.isEmpty else { return }
         let wanted = Set(titles.map(NoteText.fold))
         let end = Calendar.current.date(byAdding: .day, value: 1, to: Calendar.current.startOfDay(for: Date())) ?? Date()
         let open = (try? ctx.fetch(FetchDescriptor<TaskItem>(predicate: #Predicate { !$0.isDone }))) ?? []
-        for t in open where wanted.contains(NoteText.fold(t.title)) && (t.dueDate ?? .distantFuture) < end {
+        for t in open where wanted.contains(NoteText.fold(t.title)) && (list.map { t.listName == $0 } ?? ((t.dueDate ?? .distantFuture) < end)) {
             TaskActions.setDone(t, true)
         }
         try? ctx.save()
@@ -118,6 +120,7 @@ final class RoutineProgress {
         guard let ri = all.firstIndex(where: { $0.id == r.id }), let si = all[ri].steps.firstIndex(where: { $0.id == step.id }) else { return }
         let before = all[ri]
         all[ri].steps.remove(at: si)
+        if all[ri].sourceList != nil { all[ri].skipTitles = (all[ri].skipTitles ?? []) + [NoteText.fold(step.title)] }   // stays out of a linked list's routine
         RoutineStore.all = all
         UndoCenter.shared.offer("Removed “\(step.title)” from \(r.name)") {
             var again = RoutineStore.all

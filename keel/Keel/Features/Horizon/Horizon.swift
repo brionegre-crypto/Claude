@@ -299,6 +299,7 @@ struct VoyageView: View {
         }
         .padding(DS.Space.m)
         .background(DS.Palette.elevated, in: .rect(cornerRadius: 22, style: .continuous))
+        .task { RoutineLists.refresh(ctx) }          // routines linked to a Reminders list follow it
         .sheet(item: $addingInto) { s in
             NavigationStack {
                 Form {

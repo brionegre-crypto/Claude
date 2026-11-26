@@ -65,6 +65,15 @@ enum DemoData {
             if i == 0 { item.microSteps = [MicroStep(text: "Open the budget sheet", minutes: 2), MicroStep(text: "Check the totals", minutes: 8), MicroStep(text: "Attach and send", minutes: 3)] }
             ctx.insert(item)
         }
+        // A Reminders-style list of daily repeats: Routines suggests using it as a routine.
+        for (i, title) in ["Take magnesium", "Set tomorrow's alarm", "Journal three lines"].enumerated() {
+            let item = TaskItem(title: title, dueDate: at(0, 21, 30 + i * 10))
+            item.listName = "Bedtime"
+            item.recurrence = Recurrence(frequency: .daily)
+            item.estimatedMinutes = [2, 1, 5][i]
+            item.energy = .low
+            ctx.insert(item)
+        }
         for t in ["Morning pages", "Inbox zero", "Stretch for 5 minutes"] {
             let done = TaskItem(title: t, dueDate: today)
             done.isDone = true; done.completedAt = Date().addingTimeInterval(-3600); done.stage = "done"

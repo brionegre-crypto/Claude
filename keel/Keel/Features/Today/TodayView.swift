@@ -589,7 +589,11 @@ struct TodayView: View {
         let ctxData = DayContext(
             now: Date().formatted(date: .abbreviated, time: .shortened),
             events: events.map { "\($0.startDate.formatted(date: .omitted, time: .shortened))-\($0.endDate.formatted(date: .omitted, time: .shortened)) \($0.title ?? "")" },
-            tasks: tasks.prefix(20).map { "\($0.title) [~\(ADHDCoach.calibratedMinutes($0))m, energy \($0.energy.label)]" },
+            // A list used as a routine is planned as that one routine, not item by item (like the Voyage).
+            tasks: tasks.filter { !RoutineLists.linkedNames.contains($0.listName) }.prefix(20)
+                .map { "\($0.title) [~\(ADHDCoach.calibratedMinutes($0))m, energy \($0.energy.label)]" }
+                + RoutineProgress.shared.routines.filter { $0.sourceList != nil && !RoutineProgress.shared.isComplete($0) }
+                .map { "\($0.name) routine [~\(RoutineProgress.shared.minutesLeft($0))m]" },
             importantEmails: emails.filter { $0.category == .important }.prefix(5).map { $0.subject },
             habitStacks: stacks.map { "\($0.name): \($0.anchor.label)" },
             weather: KeelWeather.shared.today?.plannerLine ?? "",

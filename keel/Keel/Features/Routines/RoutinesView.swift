@@ -41,15 +41,22 @@ struct RoutinesView: View {
     @State private var editing: Routine?
     @State private var playing: Routine?
 
+    @Environment(\.modelContext) private var ctx
+    @State private var pickingList = false
+    @State private var pendingEdit: Routine?         // opened once the list picker has closed (one sheet at a time)
+
     var body: some View {
         List {
+            RoutineSuggestionsSection(onLinked: { linked in routines = RoutineStore.all; editing = linked },
+                                      onPickList: { pickingList = true })
             Section {
                 ForEach(routines) { r in
                     HStack(spacing: DS.Space.m) {
                         Image(systemName: r.icon).font(.title2).foregroundStyle(DS.Palette.accent).frame(width: 36)
                         VStack(alignment: .leading, spacing: 2) {
                             Text(r.name).font(DS.Font.headline)
-                            Text("\(r.steps.count) steps · \(r.totalMinutes) min" + (r.finishBy.map { " · done by \(Self.clock($0))" } ?? ""))
+                            Text("\(r.steps.count) steps · \(r.totalMinutes) min" + (r.finishBy.map { " · done by \(Self.clock($0))" } ?? "")
+                                 + (r.sourceList.map { " · from “\($0)”" } ?? ""))
                                 .font(DS.Font.caption).foregroundStyle(DS.Palette.inkSoft)
                         }
                         Spacer()
@@ -82,6 +89,10 @@ struct RoutinesView: View {
             }
         }
         .fullScreenCover(item: $playing) { r in RoutinePlayer(routine: r) }
+        .task { RoutineLists.refresh(ctx); routines = RoutineStore.all }
+        .sheet(isPresented: $pickingList, onDismiss: { if let r = pendingEdit { pendingEdit = nil; editing = r } }) {
+            RoutineListPicker { list in routines = RoutineStore.all; pendingEdit = RoutineLists.link(list, ctx: ctx); routines = RoutineStore.all }
+        }     // linked lists may have changed in Reminders
     }
 
     static func clock(_ minutes: Int) -> String {
@@ -154,10 +165,16 @@ struct RoutineEditor: View {
                         DatePicker("Done by", selection: finishTime, displayedComponents: .hourAndMinute)
                     }
                 } footer: { Text("Keel warns you while it's running if you're behind.") }
+                if let list = routine.sourceList {
+                    Section {
+                        Label("Steps come from your “\(list)” list", systemImage: "checklist")
+                        Button("Stop following the list (keep these steps)", systemImage: "link.badge.plus") { routine = RoutineLists.unlink(routine) }
+                    } footer: { Text("Add or rename steps in Reminders and the routine follows. Removing a step here takes it out of the routine; the reminder stays.") }
+                }
                 Section {
                     ForEach($routine.steps) { $step in
                         VStack(alignment: .leading, spacing: 4) {
-                            TextField("Step", text: $step.title)
+                            if routine.sourceList != nil { Text(step.title) } else { TextField("Step", text: $step.title) }
                             HStack {
                                 Stepper("\(step.minutes) min", value: $step.minutes, in: 1...120)
                                 Toggle("Skippable", isOn: $step.optional).labelsHidden()
@@ -166,9 +183,16 @@ struct RoutineEditor: View {
                             }
                         }
                     }
-                    .onDelete { routine.steps.remove(atOffsets: $0) }
+                    .onDelete { offsets in
+                        if routine.sourceList != nil {      // linked: remember it's out, or the next refresh brings it back
+                            routine.skipTitles = (routine.skipTitles ?? []) + offsets.map { NoteText.fold(routine.steps[$0].title) }
+                        }
+                        routine.steps.remove(atOffsets: offsets)
+                    }
                     .onMove { routine.steps.move(fromOffsets: $0, toOffset: $1) }
-                    Button { routine.steps.append(.init(title: "", minutes: 5)) } label: { Label("Add Step", systemImage: "plus") }
+                    if routine.sourceList == nil {
+                        Button { routine.steps.append(.init(title: "", minutes: 5)) } label: { Label("Add Step", systemImage: "plus") }
+                    }
                 } header: { Text("Steps · \(routine.totalMinutes) min total") }
             }
             .navigationTitle(routine.name.isEmpty ? "New Routine" : routine.name)

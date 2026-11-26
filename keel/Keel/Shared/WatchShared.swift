@@ -174,6 +174,8 @@ struct Routine: Codable, Hashable, Identifiable {
     var finishBy: Int? = nil          // minutes after midnight, e.g. 510 = out the door by 8:30
     var startAt: Int? = nil           // minutes after midnight it begins (shows on Today, and can ring)
     var alarm: Bool? = nil            // full-screen alarm when it's time to start (iPhone)
+    var sourceList: String? = nil     // linked to a Reminders / Keel list: its open items are the steps (kept in step by RoutineLists)
+    var skipTitles: [String]? = nil   // items of that list taken out of the routine (folded titles)
 
     /// When it starts today: its start time, or worked back from "finish by".
     var startMinute: Int? { startAt ?? finishBy.map { $0 - totalMinutes } }

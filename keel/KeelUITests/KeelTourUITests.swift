@@ -86,6 +86,39 @@ final class KeelTourUITests: XCTestCase {
         }
     }
 
+    /// Routines from lists: a suggested Reminders list, picking any list, then the linked routine on the Voyage.
+    func testRoutinesFromLists() {
+        XCTAssertTrue(tab("inbox").waitForExistence(timeout: 20), "tab bar never appeared")
+        tap(tab("tasks"))
+        tap(app.buttons["Schedule"])                       // Tasks → wand menu → Routines
+        tap(find("Routines"))
+        XCTAssertTrue(app.navigationBars["Routines"].waitForExistence(timeout: 8))
+        XCTAssertTrue(find("Use “Bedtime” as a routine").waitForExistence(timeout: 5), "Bedtime list not suggested")
+        checkpoint("rl1-suggested")
+        tap(app.buttons.matching(NSPredicate(format: "label == 'Use'")).firstMatch)
+        checkpoint("rl2-linked-editor")
+        tap(app.buttons["Save"])
+        checkpoint("rl3-routines")
+        tap(find("Use a Reminders list as a routine"))
+        checkpoint("rl4-list-picker")
+        tap(find("Errands"))
+        tap(app.buttons["Save"])
+        XCTAssertTrue(find("Errands").waitForExistence(timeout: 5))
+        checkpoint("rl5-routines-linked")
+
+        // The Bedtime routine on the Voyage: tick a step, which completes that reminder.
+        app.navigationBars.buttons.element(boundBy: 0).tap()
+        tap(tab("today"))
+        tap(app.buttons["Home options"])
+        tap(find("Full Today"))
+        let bedtime = find("Bedtime routine")
+        clearOfBar(bedtime)
+        tap(bedtime)
+        checkpoint("rl6-voyage-bedtime")
+        tap(app.buttons["Mark Take magnesium done"])
+        checkpoint("rl7-ticked")
+    }
+
     /// Routines on the Voyage (Home → ⋯ → Full Today): tick steps, skip one today, take one out, tick a whole routine, edit.
     func testRoutinesOnVoyage() {
         XCTAssertTrue(tab("inbox").waitForExistence(timeout: 20), "tab bar never appeared")

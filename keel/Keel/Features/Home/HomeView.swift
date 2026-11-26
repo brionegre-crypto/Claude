@@ -31,7 +31,9 @@ struct HomeDay {
         let cal = Calendar.current
         let end = cal.date(byAdding: .day, value: 1, to: cal.startOfDay(for: now)) ?? now
         let ekEvents = CalendarService.shared.todaysEvents().filter { !$0.isAllDay && $0.endDate > now && CalendarRoles.shows($0) }
-        let todays = tasks.filter { !$0.isDone && !$0.isSomeday && ($0.dueDate ?? .distantFuture) < end && !TaskMeta.isDeferred($0, now: now) }
+        let routineLists = RoutineLists.linkedNames          // a list used as a routine shows as its routine, not item by item
+        let todays = tasks.filter { !$0.isDone && !$0.isSomeday && ($0.dueDate ?? .distantFuture) < end && !TaskMeta.isDeferred($0, now: now)
+            && !routineLists.contains($0.listName) }
         var timed: [Entry] = ekEvents.map { Entry(id: "e:" + ($0.eventIdentifier ?? UUID().uuidString), time: $0.startDate, title: $0.title ?? "Event", task: nil, place: $0.location) }
         timed += todays.filter(\.hasDueTime).map { Entry(id: "t:" + $0.id.uuidString, time: $0.dueDate, title: $0.title, task: $0, place: nil) }
         timed.sort { ($0.time ?? .distantFuture) < ($1.time ?? .distantFuture) }
