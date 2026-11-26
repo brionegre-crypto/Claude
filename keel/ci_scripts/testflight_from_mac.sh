@@ -21,7 +21,7 @@ WORK="$TMP/repo"
 OUT="${OUT:-$HOME/Desktop/Keel-$BUILD}"
 
 git -C "$ROOT" worktree add --detach --quiet "$WORK" HEAD
-cleanup() { git -C "$ROOT" worktree remove --force "$WORK" 2>/dev/null || true; rm -rf "$TMP"; }
+cleanup() { local s=$?; git -C "$ROOT" worktree remove --force "$WORK" 2>/dev/null || true; rm -rf "$TMP"; exit $s; }
 trap cleanup EXIT
 echo "Preparing build $BUILD from commit $(git -C "$WORK" rev-parse --short HEAD)…"
 
@@ -46,7 +46,7 @@ fi
 
 mkdir -p "$OUT"
 xcodebuild -project Keel.xcodeproj -scheme Keel -configuration Release -destination 'generic/platform=iOS' \
-  -archivePath "$OUT/Keel.xcarchive" -allowProvisioningUpdates "${AUTH[@]}" archive -quiet
+  -archivePath "$OUT/Keel.xcarchive" -allowProvisioningUpdates ${AUTH[@]+"${AUTH[@]}"} archive -quiet
 echo "Archived: $OUT/Keel.xcarchive"
 if [[ "${ARCHIVE_ONLY:-0}" == "1" ]]; then echo "ARCHIVE_ONLY=1: signed archive made, nothing uploaded."; exit 0; fi
 
@@ -63,5 +63,5 @@ cat > "$TMP/ExportOptions.plist" <<'PLIST'
 </dict></plist>
 PLIST
 xcodebuild -exportArchive -archivePath "$OUT/Keel.xcarchive" -exportOptionsPlist "$TMP/ExportOptions.plist" \
-  -exportPath "$OUT/export" -allowProvisioningUpdates "${AUTH[@]}"
+  -exportPath "$OUT/export" -allowProvisioningUpdates ${AUTH[@]+"${AUTH[@]}"}
 echo "Uploaded build $BUILD to App Store Connect. It appears in TestFlight after Apple finishes processing (usually 5–30 minutes)."
