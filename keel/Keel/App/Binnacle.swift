@@ -25,6 +25,7 @@ struct BinnacleShell: View {
     @State private var showVoice = false
     @State private var keyboardUp = false
     @AppStorage(FocusBarSetting.key) private var focusBarOn = true
+    @State private var pushed = false                 // the visible tab has gone into a screen: bar steps aside
 
     private var current: String {
         items.first { TabBarConfig.value($0) == router.tab } ?? items.first ?? "today"
@@ -45,7 +46,7 @@ struct BinnacleShell: View {
             }
         }
         .safeAreaInset(edge: .bottom, spacing: 0) {
-            if !keyboardUp && !router.chromeHidden {
+            if !keyboardUp && !router.chromeHidden && !pushed {
                 VStack(spacing: 8) {
                     if focusBarOn {
                         FocusAccessory { router.showFocus = true }
@@ -60,6 +61,17 @@ struct BinnacleShell: View {
             }
         }
         .animation(.easeOut(duration: 0.18), value: keyboardUp)
+        .animation(.easeOut(duration: 0.2), value: pushed)
+        // Like iOS's hidesBottomBarWhenPushed: on a screen you've gone into, the floating bar steps aside so that
+        // screen's own bottom buttons aren't hidden behind it (meeting notes' "Write up" was). Back on the tab's
+        // first screen, it returns. (The bar's space doesn't reach screens pushed inside a tab, so it can't make room.)
+        .task {
+            while !Task.isCancelled {
+                let now = NavDepth.visibleTabIsPushed()
+                if now != pushed { pushed = now }
+                try? await Task.sleep(for: .milliseconds(250))
+            }
+        }
         .onAppear { built.insert(sel) }
         // Build the other tabs ahead of time, one at a time while Keel is idle after launch. Each screen's first build
         // (SwiftUI and Swift setting up its view types, the first fetch and layout) took 250–450 ms on the main thread,
@@ -140,5 +152,31 @@ struct BinnacleShell: View {
             .accessibilityAddTraits(.isButton)
             .accessibilityAction { showLog = true }
             .accessibilityAction(named: "Speak") { showVoice = true }
+    }
+}
+
+/// Whether the tab on screen has gone deeper than its first page (a UINavigationController that's visible, not in a
+/// sheet, with more than one screen). Hidden tabs are kept built at opacity 0, so only visible ones count.
+@MainActor
+enum NavDepth {
+    static func visibleTabIsPushed() -> Bool {
+        guard let root = UIApplication.shared.connectedScenes.compactMap({ ($0 as? UIWindowScene)?.keyWindow }).first?.rootViewController
+        else { return false }
+        return search(root)
+    }
+
+    private static func search(_ vc: UIViewController) -> Bool {
+        if let nav = vc as? UINavigationController, nav.viewControllers.count > 1, isVisible(nav.view) { return true }
+        return vc.children.contains { search($0) }              // not presentedViewController: sheets have no tab bar
+    }
+
+    private static func isVisible(_ v: UIView?) -> Bool {
+        var view = v
+        guard view?.window != nil else { return false }
+        while let x = view {
+            if x.isHidden || x.alpha < 0.01 || x.layer.opacity < 0.01 { return false }
+            view = x.superview
+        }
+        return true
     }
 }

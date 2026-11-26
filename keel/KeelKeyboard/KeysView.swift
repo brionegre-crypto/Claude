@@ -52,9 +52,11 @@ final class KeysView: UIView {
         super.init(frame: frame)
         isMultipleTouchEnabled = true
         clipsToBounds = false                 // the top row's popups rise into the bar above
-        trail.strokeColor = UIColor.systemBlue.withAlphaComponent(0.55).cgColor
+        // Apple's slide-to-type trail: a soft neutral stroke (grey on the light keyboard, white on the dark one),
+        // only the last stretch of the path, fading away when you lift.
+        trail.strokeColor = Self.trailColor.resolvedColor(with: traitCollection).cgColor
         trail.fillColor = nil
-        trail.lineWidth = 9
+        trail.lineWidth = 7
         trail.lineCap = .round
         trail.lineJoin = .round
         layer.addSublayer(trail)
@@ -220,6 +222,7 @@ final class KeysView: UIView {
     override func traitCollectionDidChange(_ previous: UITraitCollection?) {
         super.traitCollectionDidChange(previous)
         refreshLabels()
+        trail.strokeColor = Self.trailColor.resolvedColor(with: traitCollection).cgColor
     }
 
     // MARK: Finding keys
@@ -311,13 +314,14 @@ final class KeysView: UIView {
             // Slide to type: far enough across the letters, on the letters page.
             if !tr.swiping, page == .letters, hypot(p.x - tr.start.x, p.y - tr.start.y) > keyWidth * 1.15 {
                 tr.swiping = true
+                trail.removeAnimation(forKey: "fade")
                 tr.timer?.invalidate(); tr.timer = nil
                 popup.isHidden = true
                 highlight(tr.key, false)
             }
             if tr.swiping {
                 let path = UIBezierPath()
-                let pts = tr.path.suffix(60)
+                let pts = tr.path.suffix(28)
                 if let f = pts.first { path.move(to: f); pts.dropFirst().forEach { path.addLine(to: $0) } }
                 trail.path = path.cgPath
             } else if let k = key(at: p), k.frame != tr.key.frame {
@@ -345,13 +349,27 @@ final class KeysView: UIView {
         }
     }
 
+    static let trailColor = UIColor { $0.userInterfaceStyle == .dark ? UIColor(white: 1, alpha: 0.42) : UIColor(white: 0.25, alpha: 0.26) }
+
+    private func fadeTrail() {
+        let fade = CABasicAnimation(keyPath: "opacity")
+        fade.fromValue = 1; fade.toValue = 0; fade.duration = 0.18
+        fade.fillMode = .forwards; fade.isRemovedOnCompletion = false
+        trail.add(fade, forKey: "fade")
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { [weak self] in
+            guard let self, self.tracks.values.allSatisfy({ !$0.swiping }) else { return }
+            self.trail.path = nil
+            self.trail.removeAnimation(forKey: "fade")
+        }
+    }
+
     private func release(_ tr: Track) {
         tr.timer?.invalidate(); tr.timer = nil
         highlight(tr.key, false)
         popup.isHidden = true
         if tr.trackpad { setTrackpad(false); return }
         if tr.swiping {
-            trail.path = nil
+            fadeTrail()
             onSwipe?(tr.path, self)
             if shift == .once { shift = .off; refreshLabels() }
             return

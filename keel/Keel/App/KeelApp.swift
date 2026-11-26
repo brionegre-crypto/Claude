@@ -95,6 +95,7 @@ struct KeelApp: App {
                 FocusActivityMusic.installLockScreenControls()           // Lock Screen music buttons during focus
                 #endif
                 MeetingAutopilot.syncActivity()                         // Lock Screen timer for a meeting in progress
+                KeyboardVoiceSession.shared.keelOpened()                 // keyboard mic ready without a trip to Keel (if chosen)
                 // Shared items and the morning rollover: right after the first frame, they change what's on screen.
                 Task { @MainActor in
                     try? await Task.sleep(for: .milliseconds(600))

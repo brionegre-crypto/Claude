@@ -10,6 +10,82 @@ struct GuideSection: Identifiable {
     let title: String
     let summary: String
     let tips: [String]
+    /// Where it sits in the guide (sections written before chapters existed are placed by title).
+    var chapter: GuideChapter? = nil
+
+    var place: GuideChapter { chapter ?? GuideChapter.byTitle[title] ?? .yours }
+}
+
+/// The guide's chapters, in the order you'd learn Keel.
+enum GuideChapter: String, CaseIterable, Identifiable {
+    case basics, day, mail, time, tasks, routines, notes, body, voice, ai, everywhere, yours
+    var id: String { rawValue }
+    var title: String {
+        switch self {
+        case .basics: "Start here"; case .day: "Today & your day"; case .mail: "Email"; case .time: "Calendar & time"
+        case .tasks: "Tasks & promises"; case .routines: "Routines, habits & focus"; case .notes: "Notes & meetings"
+        case .body: "Body, food & health"; case .voice: "Keel Voice & the keyboard"; case .ai: "AI, Claude & privacy"
+        case .everywhere: "Watch, Mac, widgets & Siri"; case .yours: "Make it yours"
+        }
+    }
+    var blurb: String {
+        switch self {
+        case .basics: "The tabs, the Log button, where your information comes from, and getting help."
+        case .day: "Today, Compass, planning, check-ins and the hard days."
+        case .mail: "Inbox, Needs you, replies in your voice and the power tools."
+        case .time: "Calendar, planning the week, scheduling and where time went."
+        case .tasks: "Tasks (the same as Apple Reminders), promises and projects."
+        case .routines: "Routines on the Voyage, Reminders lists as routines, habits and focus."
+        case .notes: "Pages, databases, linked notes and AI meeting notes."
+        case .body: "Recovery, food, medications, workouts and records."
+        case .voice: "Dictation that writes like you, in Keel and in every app."
+        case .ai: "Apple Intelligence, Claude and the other AIs, Autopilot and privacy."
+        case .everywhere: "Apple Watch, Mac, iPad, widgets, Live Activities and Siri."
+        case .yours: "Looks, layout, text size, templates and moving your stuff in."
+        }
+    }
+    var icon: String {
+        switch self {
+        case .basics: "map.fill"; case .day: "sun.max.fill"; case .mail: "tray.fill"; case .time: "calendar"
+        case .tasks: "checklist"; case .routines: "sailboat.fill"; case .notes: "note.text"; case .body: "heart.fill"
+        case .voice: "waveform"; case .ai: "sparkles"; case .everywhere: "applewatch"; case .yours: "paintpalette.fill"
+        }
+    }
+    var color: Color {
+        switch self {
+        case .basics: .indigo; case .day: .orange; case .mail: .blue; case .time: .red; case .tasks: .green
+        case .routines: .teal; case .notes: .yellow; case .body: .pink; case .voice: .purple; case .ai: .cyan
+        case .everywhere: .gray; case .yours: .brown
+        }
+    }
+
+    static let byTitle: [String: GuideChapter] = [
+        "How Keel fits together": .basics,
+        "Today": .day, "Compass & your AI coach": .day, "Make Today yours": .day, "Goals & life areas": .day,
+        "Weekly review": .day, "Odyssey plan": .day, "Daily check-in": .day, "Daily log & breathing": .day,
+        "Plan your day": .day, "When it's all too much": .day, "Morning briefing & meeting prep": .day,
+        "Sales & promos stay out of your way": .mail, "Smart Inbox": .mail, "Inbox": .mail, "Smarter email": .mail,
+        "Replies in your voice": .mail, "Email power tools": .mail, "Screener & keep in touch": .mail,
+        "Conversations & bulk actions": .mail, "Reading, translation & backup": .mail, "Found in your email": .mail,
+        "Snippets & digest": .mail,
+        "Calendar": .time, "Time audit & ideal week": .time, "Auto-schedule & focus rounds": .time,
+        "Scheduling from email": .time, "Plan the week & statistics": .time, "Trips & catch up": .time,
+        "Time to leave & pinned tasks": .time, "Shared calendars & habit library": .time,
+        "Tasks": .tasks, "Promises": .tasks, "Dread Radar": .tasks, "Location reminders": .tasks,
+        "Task power tools": .tasks, "Projects & sorting": .tasks,
+        "Habit stacks": .routines, "Focus & shutdown": .routines, "Focus Forecast": .routines, "Save Points": .routines,
+        "Focus Room (body doubling)": .routines, "Routines with timers": .routines, "Momentum & achievements": .routines,
+        "Weather & focus history": .routines,
+        "Notes workspace": .notes, "Smart notes organizing": .notes, "Brain map": .notes, "Meeting autopilot": .notes,
+        "AI meeting notes": .notes, "Read later": .notes, "Vision board, folders & people": .notes, "Linked & daily notes": .notes,
+        "Food, like a premium health app": .body, "Food scanner & your diet": .body, "Nutrition & Apple Health": .body,
+        "Medications": .body,
+        "Autopilot": .ai, "Keel Memory & Talk to Keel": .ai, "Ask Keel & Siri": .ai, "Privacy lock": .ai,
+        "Connected apps": .ai, "AI & privacy": .ai,
+        "Widgets & Live Activity": .everywhere, "Interactive widgets": .everywhere, "Apple Watch": .everywhere,
+        "Move to Keel": .yours, "Text size & Display Zoom": .yours, "Make it yours": .yours,
+        "Countdowns, boards & undo": .yours, "Search, templates & places": .yours,
+    ]
 }
 
 enum Guide {
@@ -21,6 +97,30 @@ enum Guide {
                             "The + button captures anything (task, event, note, reminder). It steps aside while you type; hold it to move or hide it.",
                             "Compass (the grid button on Today) holds every other tool, grouped by what you need: Ask & coach, Get going, Calm down, Stay on top, Body & health, Second brain, Look back, Think ahead and Your people.",
                             "The ? on each screen explains that screen. Hold it to take this tour again."]),
+        GuideSection(icon: "dock.rectangle", color: .indigo, title: "The tabs and the Log button",
+                     summary: "Everything starts from the bar at the bottom: your tabs, and the red Log button in the middle.",
+                     tips: ["The tabs are Today, Inbox, Calendar (called Chart in the nautical looks), Tasks and Notes.",
+                            "Log (the red button): tap and type one line. Keel works out whether it's a task, an event, a note, a reminder or a meal (\"lunch with Sam Thursday 1pm\" becomes an event). Hold it to say it instead.",
+                            "The bar gets out of the way: it hides while you type and on screens you've opened from a tab, so buttons at the bottom are never covered. Go back and it returns.",
+                            "Choose your tabs (any tool can be a tab) in Settings → Appearance → Tab bar. The floating bar can be turned off there too.",
+                            "Body, Focus, Habits, Routines and every other tool live in Compass (the ⊞ button on Today), and in search."],
+                     chapter: .basics),
+        GuideSection(icon: "arrow.triangle.2.circlepath", color: .indigo, title: "Where your information comes from",
+                     summary: "Keel brings in what you already use. It doesn't make you start over.",
+                     tips: ["Email: the accounts you add in Settings → Accounts (Gmail, iCloud, Outlook and others).",
+                            "Calendar: your Apple Calendar, including Google and Outlook calendars added to your iPhone.",
+                            "Tasks are Apple Reminders. A task added in Keel shows in Reminders and the other way round, lists included.",
+                            "Health: Apple Health (sleep, heart, workouts, steps) for Body, recovery and food.",
+                            "People: your Contacts. Notes, routines, habits and everything else live in Keel and sync through your iCloud to your iPad and Mac.",
+                            "Most of the thinking happens on this iPhone. Anything sent to an AI service is only sent if you connected one (see AI, Claude & privacy)."],
+                     chapter: .basics),
+        GuideSection(icon: "questionmark.circle.fill", color: .indigo, title: "Getting help",
+                     summary: "Three ways to find out how anything works.",
+                     tips: ["The ? on a screen explains that screen.",
+                            "Settings → Help: How do I… has step-by-step answers you can search in your own words (\"stop emails about sales\").",
+                            "Ask Keel (Compass → Ask & coach) answers questions about the app and about your own day.",
+                            "Keel status (in Help) checks that mail, calendar, Reminders, Health and AI are connected and says what to fix."],
+                     chapter: .basics),
         GuideSection(icon: "sun.max.fill", color: .orange, title: "Today",
                      summary: "Your day on one screen, with one clear next step.",
                      tips: ["“Just One Thing” picks your best next task from your energy, deadlines and free time.",
@@ -460,6 +560,73 @@ enum Guide {
                             "In a task, tap Location to be reminded when you arrive at or leave a place.",
                             "Calendar → + → Quick event: “Lunch with Sam Thu 1pm for 90 min”.",
                             "In the evening, Today shows Day in review: see what you did and set up tomorrow."]),
+        GuideSection(icon: "sailboat.fill", color: .teal, title: "Your day as a voyage",
+                     summary: "The Voyage card on Today lays your routines out in the order you'll live them, and you tick steps off right there.",
+                     tips: ["Each routine is a stop on the day. Tap a step's circle to tick it off; no need to open the routine.",
+                            "Long routines stay short: steps are grouped, so you see what's next instead of every step. Open the group to see the rest.",
+                            "Not doing a step today? Take it out for today only; it's back tomorrow. To change a routine for good, edit it (Routines → the routine → Edit) and remove or reorder steps.",
+                            "It starts fresh every morning, and a finished routine is written to your daily log."],
+                     chapter: .routines),
+        GuideSection(icon: "checklist", color: .teal, title: "Routines from your Reminders lists",
+                     summary: "A Reminders list you already keep (\"Morning\", \"Bedtime\", \"Sunday reset\") can be a routine.",
+                     tips: ["Routines → Use a Reminders list as a routine… and pick the list. Its open items become the steps.",
+                            "Ticking a step on the Voyage completes that reminder, so Reminders stays in step. A repeating reminder rolls to its next date and stays in the routine.",
+                            "Add something to the list in Reminders and it appears in the routine the next time Keel looks.",
+                            "Suggested for you (top of Routines): lists that look like routines, with why Keel thinks so. Nothing is linked until you say yes."],
+                     chapter: .routines),
+        GuideSection(icon: "arrow.down.right.and.arrow.up.left", color: .teal, title: "Tasks that fit a routine",
+                     summary: "Loose tasks that really belong in a routine (\"Take vitamins\" in Morning) are found for you. You approve each one.",
+                     tips: ["Keel matches by meaning, the time of day a task is due, and whether it repeats. Each suggestion says why.",
+                            "When you link a routine, Keel offers the tasks that fit. Untick any you don't want, then Add.",
+                            "Add by hand any time: open the routine → Add tasks… shows the suggestions first and every other task below.",
+                            "In a routine linked to a Reminders list, the task moves into that list. In any other routine it becomes a step and the loose task is cleared. Undo puts it back."],
+                     chapter: .routines),
+        GuideSection(icon: "waveform", color: .purple, title: "Keel Voice: talk, and it writes like you",
+                     summary: "Tap the mic in any Keel text box, talk naturally, tap again. You get clean, punctuated writing, not a transcript.",
+                     tips: ["It removes \"um\" and repeats, keeps only your correction (\"Friday, no, Thursday\" → Thursday), adds punctuation, paragraphs and lists, and fits the tone to where you're writing (an email reads like an email).",
+                            "Your words appear instantly, then tidy themselves a moment later. \"Use what I said\" always puts back your exact words.",
+                            "Listening happens on this iPhone. The tidying is done by Apple Intelligence; only if it can't and you've connected Claude does Claude help.",
+                            "Turn tidying off, or pick a language, in Settings → Keel Voice."],
+                     chapter: .voice),
+        GuideSection(icon: "text.book.closed.fill", color: .purple, title: "It knows your words",
+                     summary: "Names, places and the language of your work come out spelled right.",
+                     tips: ["Keel already knows the people, projects, lists and senders in your Keel, and words it finds in your notes and tasks.",
+                            "Settings → Keel Voice → Your work: say what you do (\"pastor and men's coach\", \"ICU nurse\") and Keel adds the terms of your field.",
+                            "Your words: add anything it keeps getting wrong. Your Snippets work too: say \"insert my address\" and it writes it out.",
+                            "It learns from your fixes: when you correct a dictated word, Keel remembers and gets it right next time. See or remove them under Learned from your fixes."],
+                     chapter: .voice),
+        GuideSection(icon: "wand.and.stars", color: .purple, title: "Edit by voice: \"Keel, …\"",
+                     summary: "Start with \"Keel\" to change what you've written instead of adding to it.",
+                     tips: ["\"Keel, make this shorter.\" \"Keel, make it friendlier.\" \"Keel, turn this into a list.\" \"Keel, translate this into Spanish.\"",
+                            "It works on the paragraph you're in (in the keyboard, the text before the cursor). With nothing written yet, \"Keel, write a thank-you to Sam for the meeting\" writes it for you."],
+                     chapter: .voice),
+        GuideSection(icon: "keyboard", color: .purple, title: "The Keel keyboard in every app",
+                     summary: "Keel Voice in Messages, Mail, Notes, Slack or anywhere you type, on a keyboard that works just like Apple's.",
+                     tips: ["Set it up once: Settings → General → Keyboard → Keyboards → Add New Keyboard → Keel. Tap Keel and turn on Allow Full Access (that's how the keyboard talks to Keel; nothing you type is collected).",
+                            "In any app, hold or tap 🌐 to switch to Keel. The bar on top has suggestions and the mic.",
+                            "It types like Apple's: the same keys and sizes, suggestions as you type, autocorrect (press Delete straight after to undo it), a period when you tap space twice, hold a letter for accents, and hold the space bar to move the cursor.",
+                            "Tap the mic, talk, tap it again: your words go in tidied, already fitted to the app (an email in Mail, a casual text in Messages)."],
+                     chapter: .voice),
+        GuideSection(icon: "scribble", color: .purple, title: "Slide to type",
+                     summary: "Draw a word by sliding across its letters without lifting your finger.",
+                     tips: ["Slide from the first letter through each letter to the last, then lift. A soft trail follows your finger.",
+                            "Keel picks the most likely word and puts a space before the next one for you. If it guessed wrong, tap one of the other words in the bar to swap it.",
+                            "Tapping and sliding mix freely: tap short words, slide long ones."],
+                     chapter: .voice),
+        GuideSection(icon: "arrow.uturn.backward.circle", color: .purple, title: "Why the keyboard opens Keel (and how to make it rare)",
+                     summary: "iOS never lets a keyboard use the microphone itself. Every dictation keyboard, Wispr Flow included, borrows its app's mic.",
+                     tips: ["The first time you tap the keyboard's mic, Keel opens for a moment and turns the microphone on. Go back (swipe right along the bottom edge, or tap ‹ at the top left) and talk.",
+                            "After that, every tap of the mic dictates right where you are, as long as Keel stays ready. iOS shows the orange dot while it is.",
+                            "Make the trip rare: Settings → Keel Voice → Stay ready for → Until I end it. Then it only happens again if you end the session, restart your iPhone, or iOS closes Keel.",
+                            "Make it almost never: turn on Get the keyboard ready when I open Keel. Just opening Keel arms the keyboard, so you never get sent there mid-message.",
+                            "End it any time with End the session now (Settings → Keel Voice)."],
+                     chapter: .voice),
+        GuideSection(icon: "laptopcomputer.and.iphone", color: .gray, title: "Keel on Mac and iPad",
+                     summary: "The same Keel, with the same tasks, notes, routines and settings, through your iCloud.",
+                     tips: ["Install Keel on your Mac or iPad from TestFlight or the App Store and sign in with the same Apple Account.",
+                            "On Mac and iPad, the tabs are a sidebar, with a menu bar and keyboard shortcuts (⌘N new, ⌘F search everything, ⌘O open a page, ⇧⌘P plan my day).",
+                            "Handoff: what you're reading on one device can be picked up on the other."],
+                     chapter: .everywhere),
         GuideSection(icon: "sparkles", color: .cyan, title: "AI & privacy",
                      summary: "Keel's AI runs on your iPhone with Apple Intelligence. It's free and private.",
                      tips: ["Prefer Claude, ChatGPT or Gemini? Add your own API key in Settings → AI & Privacy (billed by that provider).",
@@ -469,28 +636,100 @@ enum Guide {
     ]
 }
 
-/// Settings → How Keel works
+/// Settings → How Keel works: the whole app, chapter by chapter, searchable.
 struct FeatureGuideView: View {
+    @State private var search = ""
+
+    private var hits: [GuideSection] {
+        let q = search.trimmingCharacters(in: .whitespaces).lowercased()
+        guard !q.isEmpty else { return [] }
+        let words = q.split(separator: " ").map(String.init)
+        return Guide.sections.filter { s in
+            let text = ([s.title, s.summary] + s.tips).joined(separator: " ").lowercased()
+            return words.allSatisfy { text.contains($0) }
+        }
+    }
+
     var body: some View {
         List {
-            ForEach(Guide.sections) { s in
+            if !search.isEmpty {
+                if hits.isEmpty {
+                    ContentUnavailableView.search(text: search)
+                } else {
+                    ForEach(hits) { GuideSectionBlock(section: $0, showChapter: true) }
+                }
+            } else {
                 Section {
                     VStack(alignment: .leading, spacing: DS.Space.s) {
-                        Label { Text(s.title).font(DS.Font.title) } icon: {
-                            Image(systemName: s.icon).foregroundStyle(s.color)
-                        }
-                        Text(s.summary).font(DS.Font.body).foregroundStyle(DS.Palette.inkSoft)
+                        Text("Keel in one minute").font(DS.Font.title)
+                        Text("Keel puts your email, calendar, tasks, notes, routines and health in one calm place, and does the sorting for you. Today tells you what matters now. The Log button takes anything in one line. Compass holds every other tool. Keel Voice lets you talk instead of type, in Keel and in every app. Most of it runs on this iPhone, and nothing changes in your mail, calendar or Reminders without you.")
+                            .font(DS.Font.body).foregroundStyle(DS.Palette.inkSoft)
                     }
                     .padding(.vertical, DS.Space.xs)
-                    ForEach(s.tips, id: \.self) { tip in
-                        Label { Text(tip).font(DS.Font.body) } icon: {
-                            Image(systemName: "checkmark.circle.fill").foregroundStyle(s.color.opacity(0.8))
+                }
+                Section("Chapters") {
+                    ForEach(GuideChapter.allCases) { c in
+                        let count = Guide.sections.filter { $0.place == c }.count
+                        NavigationLink { LazyView(GuideChapterView(chapter: c)) } label: {
+                            HStack(spacing: 12) {
+                                Image(systemName: c.icon).font(.callout.weight(.semibold)).foregroundStyle(.white)
+                                    .frame(width: 30, height: 30).background(c.color.gradient, in: .rect(cornerRadius: 8))
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(c.title).font(DS.Font.body)
+                                    Text(c.blurb).font(.caption).foregroundStyle(DS.Palette.inkSoft).lineLimit(2)
+                                }
+                                Spacer(minLength: 4)
+                                Text("\(count)").font(.caption.monospacedDigit()).foregroundStyle(DS.Palette.inkSoft)
+                            }
+                            .padding(.vertical, 2)
                         }
+                        .accessibilityIdentifier("guide.\(c.rawValue)")
                     }
+                }
+                Section {
+                    NavigationLink { LazyView(HelpCenterView()) } label: { Label("Step-by-step: How do I…", systemImage: "questionmark.bubble") }
+                    NavigationLink { LazyView(AssistantView()) } label: { Label("Ask Keel anything", systemImage: "bubble.left.and.text.bubble.right") }
                 }
             }
         }
+        .listStyle(.insetGrouped)
+        .searchable(text: $search, prompt: "Search the guide")
         .navigationTitle("How Keel works")
+    }
+}
+
+/// One chapter of the guide, every section in full.
+struct GuideChapterView: View {
+    let chapter: GuideChapter
+    var body: some View {
+        List {
+            ForEach(Guide.sections.filter { $0.place == chapter }) { GuideSectionBlock(section: $0) }
+        }
+        .listStyle(.insetGrouped)
+        .navigationTitle(chapter.title)
+        .navigationBarTitleDisplayMode(.inline)
+    }
+}
+
+private struct GuideSectionBlock: View {
+    let section: GuideSection
+    var showChapter = false
+    var body: some View {
+        Section {
+            VStack(alignment: .leading, spacing: DS.Space.s) {
+                Label { Text(section.title).font(DS.Font.title) } icon: {
+                    Image(systemName: section.icon).foregroundStyle(section.color)
+                }
+                if showChapter { Text(section.place.title).font(.caption2).foregroundStyle(DS.Palette.inkSoft) }
+                Text(section.summary).font(DS.Font.body).foregroundStyle(DS.Palette.inkSoft)
+            }
+            .padding(.vertical, DS.Space.xs)
+            ForEach(section.tips, id: \.self) { tip in
+                Label { Text(tip).font(DS.Font.body).fixedSize(horizontal: false, vertical: true) } icon: {
+                    Image(systemName: "checkmark.circle.fill").foregroundStyle(section.color.opacity(0.8))
+                }
+            }
+        }
     }
 }
 

@@ -436,6 +436,16 @@ enum HelpLibrary {
         HowTo(id: "safarihelp", area: .notes, question: "Save pages and highlights from Safari",
               steps: ["Safari → the puzzle piece (or aA) → Keel.", "Save the page to Read Later, or select text first and save it as a highlight."],
               keywords: "safari extension save highlight web clipper"),
+        HowTo(id: "keelvoice", area: .ai, question: "Dictate with Keel Voice (talk instead of type)",
+              steps: ["Tap the mic in any Keel text box, talk naturally, and tap again to finish.", "Your words appear at once, then tidy themselves: no \"um\", punctuation added, your corrections kept (\"Friday, no, Thursday\").", "Start with \"Keel, …\" to change what you wrote: \"Keel, make this shorter\".", "Settings → Keel Voice: your work and field terms, your words, language, and tidying on or off."],
+              tip: "When you correct a dictated word, Keel learns it for next time.",
+              keywords: "dictation dictate voice speech talk microphone mic wispr flow transcribe"),
+        HowTo(id: "keelkeyboard", area: .ai, question: "Use the Keel keyboard in other apps (dictation and slide to type)",
+              steps: ["iPhone Settings → General → Keyboard → Keyboards → Add New Keyboard → Keel.", "Tap Keel in that list and turn on Allow Full Access.", "In any app, tap 🌐 until you see the Keel keyboard. Tap the mic to dictate, or slide across the letters to type a word.", "Wrong word after a slide? Tap another word in the bar above the keys."],
+              keywords: "keyboard extension swipe slide type dictation other apps messages mail wispr flow"),
+        HowTo(id: "keyboardbounce", area: .ai, question: "Stop the keyboard sending me to Keel",
+              steps: ["iOS doesn't let keyboards use the microphone, so the first mic tap opens Keel to switch it on. Go back and talk; later taps dictate in place.", "Settings → Keel Voice → Stay ready for → Until I end it: Keel stays ready until you end the session.", "Turn on Get the keyboard ready when I open Keel, so just opening Keel arms the keyboard.", "End the session now (same screen) turns the microphone off."],
+              keywords: "keyboard opens keel jumps switches app bounce microphone session orange dot"),
         HowTo(id: "voicehelp", area: .today, question: "Talk to Keel hands-free (\"Hey Keel\")",
               steps: ["Open Today → ⊞ → Talk to Keel and switch on Hands-free.", "While that screen is open, just say \"Hey Keel\" and your request: \"Add milk to groceries\", \"What's next?\". Keel answers out loud, listens for a follow-up, then waits for \"Hey Keel\" again. Say \"that's all\" to end a conversation.", "Everything is heard on your device. iPhone only lets Siri listen when Keel isn't open, so from anywhere say \"Hey Siri, talk to Keel\".", "Shortcuts and Siri: Read My Important Email, Add to Capture Inbox, Record a Voice Note, Search My Second Brain."],
               keywords: "voice hands free airpods siri talk"),
@@ -752,7 +762,7 @@ struct HelpCenterView: View {
                     }
                 }
                 Section {
-                    NavigationLink { LazyView(FeatureGuideView()) } label: { Label("Every feature, explained", systemImage: "book.pages") }
+                    NavigationLink { LazyView(FeatureGuideView()) } label: { Label("How Keel works: the full guide", systemImage: "book.pages") }
                     NavigationLink { LazyView(AssistantView()) } label: { Label("Ask Keel anything", systemImage: "bubble.left.and.text.bubble.right") }
                     NavigationLink { LazyView(KeelStatusView()) } label: { Label("Keel status (is everything connected?)", systemImage: "checkmark.seal") }
                     if let support = KeelServer.baseURL?.appendingPathComponent("support") {

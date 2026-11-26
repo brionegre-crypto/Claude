@@ -272,6 +272,33 @@ final class KeelTourUITests: XCTestCase {
         checkpoint("food-actions")
     }
 
+    /// Notes → Record: the meeting screen's bottom content must sit above the floating tab bar.
+    /// Screens opened from a tab (here AI Meeting Notes) hide the floating bar, so nothing at the bottom is covered;
+    /// going back brings it back.
+    func testMeetingScreenClearsTabBar() {
+        XCTAssertTrue(tab("inbox").waitForExistence(timeout: 20), "tab bar never appeared")
+        tap(tab("notes"))
+        tap(find("Record"))
+        XCTAssertTrue(app.navigationBars["AI Meeting Notes"].waitForExistence(timeout: 8))
+        let gone = expectation(for: NSPredicate(format: "exists == false"), evaluatedWith: barButton("log"))
+        wait(for: [gone], timeout: 3)
+        checkpoint("meeting-screen")
+        tap(app.navigationBars["AI Meeting Notes"].buttons.element(boundBy: 0))
+        XCTAssertTrue(barButton("log").waitForExistence(timeout: 3), "the bar didn't come back")
+    }
+
+    /// Settings → How Keel Works: chapters, a chapter, and search.
+    func testGuide() {
+        XCTAssertTrue(tab("inbox").waitForExistence(timeout: 20), "tab bar never appeared")
+        tap(app.buttons["Settings"])
+        tap(find("How Keel Works"))
+        XCTAssertTrue(app.navigationBars["How Keel works"].waitForExistence(timeout: 5))
+        checkpoint("guide1-chapters")
+        tap(find("Keel Voice & the keyboard"))
+        XCTAssertTrue(app.staticTexts["Why the keyboard opens Keel (and how to make it rare)"].waitForExistence(timeout: 5))
+        checkpoint("guide2-voice")
+    }
+
     /// Routines on the Voyage (Home → ⋯ → Full Today): tick steps, skip one today, take one out, tick a whole routine, edit.
     func testRoutinesOnVoyage() {
         XCTAssertTrue(tab("inbox").waitForExistence(timeout: 20), "tab bar never appeared")

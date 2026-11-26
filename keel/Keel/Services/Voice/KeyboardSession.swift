@@ -1,6 +1,7 @@
 import Foundation
 import SwiftData
 import UIKit
+import AVFoundation
 
 /// The app's half of the Keel keyboard (like Wispr Flow's "Flow session"): the keyboard opens Keel once, Keel
 /// keeps the microphone ready in the background, and every tap of the keyboard's mic after that dictates at once
@@ -18,10 +19,31 @@ final class KeyboardVoiceSession {
     private var observing = false
 
     static let lengthKey = "voice.kb.minutes"
+    /// "Until I end it": the session never times out, so the keyboard only sends you to Keel once
+    /// (until you end it, restart the iPhone, or iOS closes Keel).
+    static let untilEnded = -1
     /// How long the session waits for the next dictation before letting the microphone go.
     static var minutes: Int {
-        get { let m = UserDefaults.standard.integer(forKey: lengthKey); return m > 0 ? m : 15 }
+        get { let m = UserDefaults.standard.integer(forKey: lengthKey); return m != 0 ? m : 15 }
         set { UserDefaults.standard.set(newValue, forKey: lengthKey) }
+    }
+    static var lengthText: String { minutes == untilEnded ? "until you end it" : "for \(minutes) minutes after you last dictate" }
+
+    static let autoReadyKey = "voice.kb.autoReady"
+    /// Get the keyboard ready whenever Keel opens, so the keyboard's mic works at once later instead of
+    /// bouncing to Keel first.
+    static var readyWhenKeelOpens: Bool {
+        get { UserDefaults.standard.bool(forKey: autoReadyKey) }
+        set { UserDefaults.standard.set(newValue, forKey: autoReadyKey) }
+    }
+
+    /// Keel came to the front: start the session quietly if you asked for that (and the mic is already allowed,
+    /// so no prompt appears out of nowhere).
+    func keelOpened() {
+        #if !targetEnvironment(macCatalyst)
+        guard Self.readyWhenKeelOpens, !active, AVAudioApplication.shared.recordPermission == .granted else { return }
+        Task { await begin(startListening: false) }
+        #endif
     }
 
     /// From the keyboard (com.keel.app://voice-session): get the microphone ready and, if asked, start listening.
@@ -51,7 +73,7 @@ final class KeyboardVoiceSession {
     }
 
     private func extend() {
-        endsAt = Date().addingTimeInterval(Double(Self.minutes * 60))
+        endsAt = Self.minutes == Self.untilEnded ? nil : Date().addingTimeInterval(Double(Self.minutes * 60))
         VoiceBridge.sessionEnds = endsAt
     }
 

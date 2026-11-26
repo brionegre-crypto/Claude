@@ -343,6 +343,7 @@ struct KeelVoiceSettings: View {
     @State private var languages: [Locale] = []
     @State private var fixes = VoiceLearning.learned
     @State private var sessionMinutes = KeyboardVoiceSession.minutes
+    @State private var readyOnOpen = KeyboardVoiceSession.readyWhenKeelOpens
     @State private var keyboardSession = KeyboardVoiceSession.shared
 
     var body: some View {
@@ -362,13 +363,19 @@ struct KeelVoiceSettings: View {
                 Button("Open Settings", systemImage: "gear") { if let u = URL(string: UIApplication.openSettingsURLString) { UIApplication.shared.open(u) } }
                 Picker("Stay ready for", selection: $sessionMinutes) {
                     ForEach([5, 15, 30, 60], id: \.self) { Text("\($0) minutes").tag($0) }
+                    Text("Until I end it").tag(KeyboardVoiceSession.untilEnded)
                 }
                 .onChange(of: sessionMinutes) { _, m in KeyboardVoiceSession.minutes = m }
+                Toggle("Get the keyboard ready when I open Keel", isOn: $readyOnOpen)
+                    .onChange(of: readyOnOpen) { _, on in
+                        KeyboardVoiceSession.readyWhenKeelOpens = on
+                        if on { keyboardSession.keelOpened() }
+                    }
                 if keyboardSession.active {
                     Button("End the session now", systemImage: "mic.slash", role: .destructive) { keyboardSession.end() }
                 }
             } header: { Text("Keel keyboard: dictate in any app") } footer: {
-                Text("Like Wispr Flow: the first time you tap the mic, Keel opens for a moment to turn the microphone on; go back to your app and talk. Keel stays ready (iOS shows the orange dot) until you haven't dictated for the time above. Everything is heard and tidied on this iPhone.")
+                Text("iOS doesn't let any keyboard use the microphone itself (Wispr Flow has the same limit), so the keyboard borrows Keel's: the first tap of its mic opens Keel for a moment, then you go back and talk. After that every tap dictates right where you are, as long as Keel stays ready (iOS shows the orange dot). To almost never see the trip: choose “Until I end it”, and turn on “Get the keyboard ready when I open Keel” so simply opening Keel arms it. Everything is heard and tidied on this iPhone.")
             }
             Section {
                 Picker("Language", selection: $language) {
@@ -474,7 +481,7 @@ struct VoiceSessionView: View {
             VStack(alignment: .leading, spacing: 10) {
                 Label("Go back to your app: swipe right along the bottom edge, or tap ‹ at the top left.", systemImage: "arrow.uturn.backward")
                 Label("Talk, then tap the mic on the Keel keyboard. Your words appear, tidied.", systemImage: "keyboard")
-                Label("Keel keeps listening-ready for \(KeyboardVoiceSession.minutes) minutes after you last dictate (the orange dot). Change it in Settings → Keel Voice.", systemImage: "timer")
+                Label("Keel stays ready \(KeyboardVoiceSession.lengthText) (the orange dot), so you won't come back here. Change it in Settings → Keel Voice.", systemImage: "timer")
             }
             .font(DS.Font.body).foregroundStyle(DS.Palette.ink).padding().background(DS.Palette.elevated, in: .rect(cornerRadius: 18))
             if let e = session.voice.error { Text(e).font(.caption).foregroundStyle(.red) }
